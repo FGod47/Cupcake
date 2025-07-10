@@ -1,0 +1,209 @@
+// -*- mode: jsonc -*-
+{
+  "height": 40,
+
+  "modules-left": [
+    "custom/space",
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+
+  "modules-center": [
+    "custom/logo"
+  ],
+
+  "modules-right": [
+    "network",
+    "custom/hw",
+    "custom/rec",
+    "tray",
+    "group/control",
+    "custom/clock",
+    "custom/notification",
+    // "custom/perf_toggle",
+    "custom/power",
+    "custom/space"
+  ],
+
+  // ──────────────── Custom Spacers ────────────────
+  "custom/space": {
+    "format": "  "
+  },
+
+  // ──────────────── Center Logo ────────────────
+  "custom/logo": {
+    "format": " Arch",
+    "on-click": "kitty",
+    "tooltip": false
+  },
+
+  // ──────────────── Hardware Toggle ────────────────
+  "custom/hw": {
+    "return-type": "json",
+    "exec": ".config/cupcake/scripts/hw_toggle_display.sh",
+    "on-click": ".config/cupcake/scripts/hw_toggle_state.sh",
+    "interval": 1,
+    "tooltip": true
+  },
+
+  // ──────────────── Workspaces ────────────────
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "persistent-workspaces": {
+      "*": 5
+    },
+    "format-icons": {
+      "active": "⬤",
+      "default": "◯",
+      "special": "⊚"
+    }
+  },
+
+  "hyprland/window": {},
+
+  // ──────────────── System Tray ────────────────
+  "tray": {
+    "icon-size": 17,
+    "spacing": 15
+  },
+
+  // ──────────────── Controls Group ────────────────
+  "group/control": {
+    "orientation": "horizontal",
+    "modules": [
+      "battery",
+      "pulseaudio",
+      "backlight"
+    ]
+  },
+
+  // ──────────────── Battery ────────────────
+  "battery": {
+    "format": "<span color='#c3e88d'>{icon}</span> {capacity}%",
+    "format-charging": "<span color='#c3e88d'>󱐋</span> {capacity}%",
+    "format-plugged": "<span color='#c3e88d'></span> {capacity}%",
+    "tooltip-format": "{time} left",
+    "format-icons": [
+      "󰁺", "󰁼", "󰁾", "󰂁", "󰁹"
+    ]
+  },
+
+  // ──────────────── Network ────────────────
+  "network": {
+    "format": " {bandwidthDownBytes}  {bandwidthUpBytes}",
+    "format-disconnected": "󰖪",
+    "tooltip": true,
+    "tooltip-format": "Network: <big><b>{essid}</b></big>\nSignal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\nFrequency: <b>{frequency}MHz</b>\nInterface: <b>{ifname}</b>\nIP: <b>{ipaddr}/{cidr}</b>\nGateway: <b>{gwaddr}</b>\nNetmask: <b>{netmask}</b>",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 2
+  },
+
+  // ──────────────── Bluetooth ────────────────
+  "bluetooth": {
+    "format": "<span color='#212b38'></span> {status}",
+    "format-connected-battery": "<span color='#212b38'></span> {device_battery_percentage}%",
+    "tooltip-format": "{device_alias} {status}",
+    "on-click": "blueman-manager"
+  },
+
+  // ──────────────── Screen Recorder Status ────────────────
+  "custom/rec": {
+    "exec": ".config/cupcake/scripts/rec-status.sh",
+    "interval": 1,
+    "tooltip": true,
+    "return-type": "json"
+  },
+
+  // ──────────────── Audio ────────────────
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰸈",
+    "format-bluetooth": "{icon} {volume}%",
+    "format-bluetooth-muted": " {icon}",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pamixer --toggle-mute",
+    "on-click-right": "pavucontrol -t 3",
+    "tooltip": false
+  },
+
+  // ──────────────── Backlight ────────────────
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "<span color='#ffcb6b'>☀</span> {percent}%",
+    "tooltip": false
+  },
+
+  // ──────────────── Clock ────────────────
+  "custom/clock": {
+    "exec": ".config/cupcake/scripts/display_clock.sh",
+    "on-click": ".config/cupcake/scripts/toggle_clock.sh",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 10,
+    "tooltip": false
+  },
+
+  // ──────────────── Temperature ────────────────
+  "temperature": {
+    "interval": 10,
+    "tooltip": true,
+    "hwmon-path": [
+      "/sys/class/hwmon/hwmon1/temp1_input",
+      "/sys/class/thermal/thermal_zone0/temp"
+    ],
+    "critical-threshold": 82,
+    "format": "{temperatureC}°C {icon}",
+    "format-critical": "{temperatureC}°C {icon}",
+    "format-icons": ["󰈸"],
+    "on-click-right": "~.config/hypr/scripts/WaybarScripts.sh --nvtop"
+  },
+
+  // ──────────────── Performance Toggle (commented) ────────────────
+  "custom/perf_toggle": {
+    "format": "󰾵",
+    "tooltip": true,
+    "tooltip-format": "Toggle Performance Mode",
+    "on-click": "~.config/cupcake/scripts/perfmode.sh"
+  },
+
+  // ──────────────── Notifications ────────────────
+  "custom/notification": {
+    "format": "{icon}",
+    "tooltip": false,
+    "escape": true,
+    "margin-left": 10,
+    "margin-right": 5,
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "format-icons": {
+      "notification": "󰅸",
+      "none": "󰂜",
+      "dnd-notification": "󰅸",
+      "dnd-none": "󱏨",
+      "inhibited-notification": "󰅸",
+      "inhibited-none": "󰂜",
+      "dnd-inhibited-notification": "󰅸",
+      "dnd-inhibited-none": "󱏨"
+    }
+  },
+
+  // ──────────────── Power Menu ────────────────
+  "custom/power": {
+    "format": "",
+    "on-click": "wlogout",
+    "tooltip": false
+  }
+}

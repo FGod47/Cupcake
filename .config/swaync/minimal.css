@@ -1,0 +1,20 @@
+* {
+  all: unset;
+  background-color: #1e1e2e;
+  color: #ffffff;
+  box-shadow: none;
+  transition: none !important;
+  animation: none !important;
+  opacity: 1;
+}
+
+.notification,
+.notification-row,
+#control-center,
+#notification-center,
+#swaync-window {
+  background-color: #1e1e2e;
+  box-shadow: none;
+  animation: none;
+  opacity: 1;
+}

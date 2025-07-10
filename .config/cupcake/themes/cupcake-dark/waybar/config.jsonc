@@ -1,0 +1,177 @@
+// -*- mode: jsonc -*-
+{
+  "height": 40,
+
+  "modules-left": [
+    "custom/space",
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+
+  "modules-center": [
+    "custom/logo"
+  ],
+
+  "modules-right": [
+    "network",
+    "custom/hw",
+    "tray",
+    "group/control",
+    "custom/clock",
+    "custom/notification",
+    "custom/power",
+    "custom/space"
+  ],
+
+  "custom/space": {
+    "format": "  "
+  },
+
+  "custom/logo": {
+    "format": " Arch",
+    "on-click": "kitty",
+    "tooltip": false
+  },
+
+  "custom/hw": {
+    "return-type": "json",
+    "exec": "~/.config/cupcake/scripts/hw_toggle_display.sh",
+    "on-click": "~/.config/cupcake/scripts/hw_toggle_state.sh",
+    "interval": 1,
+    "tooltip": true
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "persistent-workspaces": {
+      "*": 5
+    },
+    "format-icons": {
+      "active": "󰮯",
+      "default": "󰊠",
+      "special": "S"
+    }
+  },
+
+  "hyprland/window": {},
+
+  "tray": {
+    "icon-size": 17,
+    "spacing": 15
+  },
+
+  "group/control": {
+    "orientation": "horizontal",
+    "modules": [
+      "battery",
+      "pulseaudio",
+      "backlight"
+    ]
+  },
+
+  "battery": {
+    "format": "<span color='#c3e88d'>{icon}</span> {capacity}%",
+    "format-charging": "<span color='#c3e88d'>󱐋</span> {capacity}%",
+    "format-plugged": "<span color='#c3e88d'></span> {capacity}%",
+    "tooltip-format": "{time} left",
+    "format-icons": [
+      "󰁺", "󰁼", "󰁾", "󰂁", "󰁹"
+    ]
+  },
+
+  "network": {
+    "format": " {bandwidthDownBytes}  {bandwidthUpBytes}",
+    "format-disconnected": "󰖪",
+    "tooltip": true,
+    "tooltip-format": "Network: <big><b>{essid}</b></big>\nSignal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\nFrequency: <b>{frequency}MHz</b>\nInterface: <b>{ifname}</b>\nIP: <b>{ipaddr}/{cidr}</b>\nGateway: <b>{gwaddr}</b>\nNetmask: <b>{netmask}</b>",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 2
+  },
+
+  "bluetooth": {
+    "format": "<span color='#212b38'></span> {status}",
+    "format-connected-battery": "<span color='#212b38'></span> {device_battery_percentage}%",
+    "tooltip-format": "{device_alias} {status}",
+    "on-click": "blueman-manager"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰸈",
+    "format-bluetooth": "{icon} {volume}%",
+    "format-bluetooth-muted": " {icon}",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pamixer --toggle-mute",
+    "on-click-right": "pavucontrol -t 3",
+    "tooltip": false
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "<span color='#ffcb6b'>☀</span> {percent}%",
+    "tooltip": false
+  },
+
+  "custom/clock": {
+  "exec": "/home/fgod/.config/cupcake/scripts/display_clock.sh",
+  "on-click": "/home/fgod/.config/cupcake/scripts/toggle_clock.sh",
+  "return-type": "json",
+  "interval": 1,
+  "signal": 10,
+  "tooltip": false
+},
+
+
+  "temperature": {
+    "interval": 10,
+    "tooltip": true,
+    "hwmon-path": [
+      "/sys/class/hwmon/hwmon1/temp1_input",
+      "/sys/class/thermal/thermal_zone0/temp"
+    ],
+    "critical-threshold": 82,
+    "format": "{temperatureC}°C {icon}",
+    "format-critical": "{temperatureC}°C {icon}",
+    "format-icons": ["󰈸"],
+    "on-click-right": "~/.config/hypr/scripts/WaybarScripts.sh --nvtop"
+  },
+
+  "custom/notification": {
+    "format": "{icon}",
+    "tooltip": false,
+    "escape": true,
+    "margin-left": 10,
+    "margin-right": 5,
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "format-icons": {
+      "notification": "󰅸",
+      "none": "󰂜",
+      "dnd-notification": "󰅸",
+      "dnd-none": "󱏨",
+      "inhibited-notification": "󰅸",
+      "inhibited-none": "󰂜",
+      "dnd-inhibited-notification": "󰅸",
+      "dnd-inhibited-none": "󱏨"
+    }
+  },
+
+  "custom/power": {
+    "format": "",
+    "on-click": "~/.config/rofi/powermenu/powermenu.sh",
+    "tooltip": false
+  }
+}
