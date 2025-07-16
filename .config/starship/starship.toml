@@ -1,0 +1,96 @@
+
+# █▀ ▀█▀ ▄▀█ █▀█ █▀ █░█ █ █▀█   █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀   █▄▄ █▄█   █▀▀ █▀▀ █▀█ █▀▄ ░
+# ▄█ ░█░ █▀█ █▀▄ ▄█ █▀█ █ █▀▀   █▄▄ █▄█ █░▀█ █▀░ █ █▄█   █▄█ ░█░   █▀░ █▄█ █▄█ █▄▀ ▄
+
+# ──────────────────────── Base Settings ────────────────────────
+add_newline = true
+continuation_prompt = "[▸▹ ](bold dimmed white)"
+
+# Format: Full-width prompt
+format = """
+$os$username$hostname$directory\
+$line_break$character
+"""
+
+# Disable right prompt
+right_format = "$git_branch$cmd_duration$time"
+
+# ──────────────────────── Username & Hostname ────────────────────────
+[username]
+format = "[$user]($style) "
+style_user = "bright-yellow bold italic"
+show_always = true
+
+[hostname]
+format = "on [$hostname]($style) "
+style = "bold dimmed white"
+
+# ──────────────────────── OS Symbol ────────────────────────
+[os]
+format = "[$symbol]($style) "
+style = "bold bright-green"
+disabled = false
+
+[os.symbols]
+Windows = ""
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇 Arch"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+
+# ──────────────────────── Shell Info ────────────────────────
+[shell]
+disabled = true
+
+# ──────────────────────── Current Directory ────────────────────────
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold italic blue"
+read_only = " ◈"
+read_only_style = "bold italic red"
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "~/"
+
+# ──────────────────────── Git  ────────────────────────
+[git_branch]
+format = '[$symbol $branch (:$remote_branch)]($style)'
+style = 'bold italic purple'
+symbol = ""
+truncation_length = 12
+truncation_symbol = ""
+
+# ──────────────────────── Command Duration ────────────────────────
+[cmd_duration]
+format = "[⏱ $duration]($style) "
+style = "bold italic white"
+min_time = 500
+
+# ──────────────────────── Clock / Time ────────────────────────
+[time]
+disabled = false
+format = "[󱑈 $time]($style)"
+time_format = "%R"
+style = "bold italic dimmed white"
+
+# ──────────────────────── Prompt Character ────────────────────────
+[character]
+success_symbol = "[⭘](bold bright-yellow)"
+error_symbol = "[○](bold italic red)"
+vimcmd_symbol = "[■](bold italic green)"
+format = "$symbol "
+

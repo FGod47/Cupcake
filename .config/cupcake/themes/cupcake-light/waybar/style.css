@@ -1,0 +1,166 @@
+@define-color bg #f5f5f7;
+@define-color fg #1e1e2e;
+
+/* Smooth background animations */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+* {
+  font-family: JetBrainsMono Nerd Font Propo;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 0;
+  border-color: @bg;
+}
+
+/* Uniform spacing */
+#custom-spacer-left,
+#custom-spacer-right {
+  min-width: 20px;
+}
+
+/* Interactive hover animation */
+#control:hover,
+#network:hover,
+#tray:hover,
+#custom-clock:hover,
+#custom-hw:hover,
+#custom-notification:hover {
+  background: repeating-linear-gradient(
+    45deg,
+    #f5e0dc, #f2cdcd, #fab387, #a6e3a1,
+    #94e2d5, #89dceb, #74c7ec, #b4befe,
+    #cba6f7, #eba0ac, #f5e0dc
+  );
+  background-size: 600% 600%;
+  animation: gradientShift 4s ease-in-out infinite;
+  color: #1a1b26;
+  box-shadow: 0 0 8px rgba(203, 166, 247, 0.3);
+}
+
+/* Logo */
+#custom-logo {
+  color: #1a1b26;
+  background: repeating-linear-gradient(
+    90deg,
+    #f5e0dc, #f2cdcd, #fab387, #a6e3a1,
+    #94e2d5, #89dceb, #74c7ec, #b4befe,
+    #cba6f7, #eba0ac, #f5e0dc
+  );
+  background-size: 600% 100%;
+  animation: gradientShift 10s linear infinite;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin: 8px 8px 0 4px;
+}
+
+window#waybar {
+  background-color: transparent;
+  color: @fg;
+}
+
+#workspaces {
+  background-color: #e7e7f0;
+  border-radius: 18px;
+  padding: 0 4px;
+  margin: 8px 4px 0 8px;
+}
+#workspaces button {
+  background-color: transparent;
+  border: none;
+  color: @fg;
+  padding: 2.5px 10px;
+  margin: 4px 2px;
+  border-radius: 12px;
+  transition: all 0.25s ease-in-out;
+}
+#workspaces button.active {
+  color: #d46795;
+}
+#workspaces button:hover {
+  background: linear-gradient(135deg, #a6e3a1, #94e2d5);
+  color: #1e1e2e;
+  border-radius: 20px;
+}
+
+#window {
+  color: #4f664c;
+  background-color: #dde7d9;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin: 8px 4px 0 4px;
+}
+window#waybar.empty #window {
+  background-color: transparent;
+}
+
+#tray, #network, #custom-clock, #control, #custom-notification {
+  background-color: #f0f1f5;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin: 8px 4px 0 4px;
+  color: @fg;
+  transition: background 0.3s ease-in-out;
+}
+
+#custom-hw {
+  background: linear-gradient(135deg, #dfe3ea, #e8e9f1);
+  color: #3e4451;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin: 8px 8px 0 4px;
+}
+
+#custom-notification.dnd-none {
+  color: #89dceb;
+  opacity: 0.6;
+}
+
+#custom-notification.notification {
+  background: repeating-linear-gradient(
+    90deg,
+    #f5e0dc, #f2cdcd, #fab387, #a6e3a1,
+    #94e2d5, #89dceb, #74c7ec, #b4befe,
+    #cba6f7, #eba0ac, #f5e0dc
+  );
+  background-size: 600% 100%;
+  animation: gradientShift 6s ease-in-out infinite;
+  color: #1a1b26;
+  box-shadow: 0 0 8px rgba(203, 166, 247, 0.3);
+}
+
+#custom-power {
+  background-color: #f6ced6;
+  border-radius: 18px;
+  padding: 0 16px;
+  margin: 8px 4px 0 4px;
+  color: @bg;
+  transition: background 0.3s ease-in-out;
+}
+
+#custom-power:hover {
+  background: repeating-linear-gradient(
+    45deg,
+    #f5e0dc, #fab387, #f895a6, #fa5d77, #f33958
+  );
+  background-size: 1000% 100%;
+  animation: gradientShift 3s linear infinite;
+  color: #000;
+  box-shadow: 0 0 8px rgba(255, 134, 170, 0.4);
+}
+
+tooltip {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #4b4b4b;
+  border-radius: 16px;
+  padding: 10px 14px;
+  margin: 4px;
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #d0b5e0;
+  transition: all 150ms ease-in-out;
+}
