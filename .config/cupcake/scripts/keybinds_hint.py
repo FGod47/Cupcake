@@ -10,10 +10,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, Pango, GLib
 
 MODMASKS = {
-    64: "Super",
-    8: "Alt",
-    4: "Ctrl",
-    1: "Shift",
+    64: "SUPER",
+    8: "ALT",
+    4: "CTRL",
+    1: "SHIFT",
 }
 
 CSS_TEMPLATE = """
@@ -237,7 +237,7 @@ class keybinds hintWindow(Gtk.Window):
                     
                     key_lbl = Gtk.Label(label=m)
                     key_lbl.get_style_context().add_class("keycap")
-                    if m == "Super":
+                    if m == "SUPER":
                         key_lbl.get_style_context().add_class("keycap-super")
                     keys_box.pack_start(key_lbl, False, False, 0)
                 
@@ -247,7 +247,7 @@ class keybinds hintWindow(Gtk.Window):
                     keys_box.pack_start(plus, False, False, 0)
 
                 if key:
-                    key_lbl = Gtk.Label(label=key.upper() if len(key) == 1 else key)
+                    key_lbl = Gtk.Label(label=key.upper())
                     key_lbl.get_style_context().add_class("keycap")
                     keys_box.pack_start(key_lbl, False, False, 0)
 
