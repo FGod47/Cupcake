@@ -2,6 +2,8 @@
 import sys
 import json
 import subprocess
+import os
+import re
 import gi
 
 gi.require_version('Gtk', '3.0')
@@ -14,96 +16,109 @@ MODMASKS = {
     1: "Shift",
 }
 
-CSS = """
-window {
-    background-color: #1e1e2e;
-    color: #cdd6f4;
+CSS_TEMPLATE = """
+window {{
+    background-color: {main_bg};
+    color: {main_fg};
     font-family: 'JetBrains Mono', sans-serif;
-}
-headerbar {
-    background-color: #11111b;
-    border: none;
-    box-shadow: none;
-}
-notebook header {
-    background-color: #181825;
-}
-notebook tab {
+}}
+notebook tab {{
     background-color: transparent;
-    color: #a6adc8;
+    color: {main_fg};
     padding: 8px 16px;
     border: none;
     font-weight: bold;
-}
-notebook tab:checked {
-    color: #cdd6f4;
-    border-bottom: 2px solid #cba6f7;
-}
-.search-bar {
-    background-color: #181825;
-    color: #cdd6f4;
-    border: 1px solid #313244;
+}}
+notebook tab:checked {{
+    color: {main_br};
+    border-bottom: 2px solid {main_br};
+}}
+.search-bar {{
+    background-color: {main_bg};
+    color: {main_fg};
+    border: 1px solid {main_br};
     border-radius: 8px;
     padding: 8px 12px;
-}
-.search-bar:focus {
-    border-color: #cba6f7;
-}
-flowbox {
+}}
+.search-bar:focus {{
+    border-color: {main_br};
+}}
+flowbox {{
     padding: 10px;
-    background-color: #1e1e2e;
-}
-flowboxchild {
-    background-color: #181825;
-    border: 1px solid #313244;
+    background-color: {main_bg};
+}}
+flowboxchild {{
+    background-color: alpha({main_fg}, 0.05);
+    border: 1px solid alpha({main_fg}, 0.1);
     border-radius: 10px;
     padding: 12px;
     margin: 5px;
-}
-flowboxchild:selected {
-    background-color: #181825;
-    border: 1px solid #cba6f7;
-}
-.keycap {
-    background-color: #1e1e2e;
-    color: #cdd6f4;
+}}
+flowboxchild:selected {{
+    background-color: alpha({main_br}, 0.1);
+    border: 1px solid {main_br};
+}}
+.keycap {{
+    background-color: {main_bg};
+    color: {main_fg};
     font-weight: 800;
     padding: 4px 10px;
     border-radius: 6px;
-    border-bottom: 3px solid #11111b;
-    border-left: 1px solid #313244;
-    border-top: 1px solid #313244;
-    border-right: 1px solid #313244;
-}
-.keycap-super {
-    background-color: #cba6f7;
-    color: #1e1e2e;
-    border-bottom: 3px solid #b4befe;
-    border-left: 1px solid #cba6f7;
-    border-top: 1px solid #cba6f7;
-    border-right: 1px solid #cba6f7;
-}
-.plus {
-    color: #a6adc8;
+    border-bottom: 3px solid alpha({main_fg}, 0.2);
+    border-left: 1px solid alpha({main_fg}, 0.1);
+    border-top: 1px solid alpha({main_fg}, 0.1);
+    border-right: 1px solid alpha({main_fg}, 0.1);
+}}
+.keycap-super {{
+    background-color: {main_br};
+    color: {main_bg};
+    border-bottom: 3px solid alpha({main_bg}, 0.3);
+    border-left: 1px solid {main_br};
+    border-top: 1px solid {main_br};
+    border-right: 1px solid {main_br};
+}}
+.plus {{
+    color: alpha({main_fg}, 0.6);
     font-weight: bold;
     margin: 0 4px;
-}
-.command {
-    color: #a6adc8;
+}}
+.command {{
+    color: alpha({main_fg}, 0.6);
     font-size: 13px;
     margin-top: 8px;
-}
-.description {
-    color: #cdd6f4;
+}}
+.description {{
+    color: {main_fg};
     font-size: 14px;
     font-weight: bold;
     margin-top: 8px;
-}
+}}
 """
 
+def get_theme_colors():
+    colors = {
+        "main_bg": "#1e1e2e",
+        "main_fg": "#cdd6f4",
+        "main_br": "#cba6f7",
+        "select_bg": "#cba6f7",
+        "select_fg": "#11111b"
+    }
+    
+    theme_path = os.path.expanduser("~/.config/rofi/theme.rasi")
+    if os.path.exists(theme_path):
+        with open(theme_path, "r") as f:
+            content = f.read()
+            for match in re.finditer(r"([a-z-]+):\s*(#[a-fA-F0-9]+)", content):
+                key = match.group(1).replace("-", "_")
+                val = match.group(2)
+                colors[key] = val
+    return colors
+
 def apply_css():
+    colors = get_theme_colors()
+    css_data = CSS_TEMPLATE.format(**colors)
     provider = Gtk.CssProvider()
-    provider.load_from_data(CSS.encode('utf-8'))
+    provider.load_from_data(css_data.encode('utf-8'))
     Gtk.StyleContext.add_provider_for_screen(
         Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     )
@@ -133,9 +148,8 @@ class keybinds hintWindow(Gtk.Window):
         self.set_decorated(False)
         self.connect("key-press-event", self.on_key_press)
 
+        # Remove forced dark theme, let the dynamic CSS handle it
         settings = Gtk.Settings.get_default()
-        if settings:
-            settings.set_property("gtk-application-prefer-dark-theme", True)
 
         self.binds = get_binds()
         self.categories = {}
@@ -247,7 +261,6 @@ class keybinds hintWindow(Gtk.Window):
                 child = Gtk.FlowBoxChild()
                 child.add(card)
                 
-                # Store search string directly on child
                 search_str = f"{' '.join(mods)} {key} {desc} {command}".lower()
                 child.search_str = search_str
                 
