@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # ──────────────── Load Colors ────────────────
-source "$HOME/Cupcake/Source/Scripts/colors.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/colors.sh"
 
 # ──────────────── Pastel Banner Colors ────────────────
 COLORS=(15)
@@ -39,13 +40,14 @@ echo
 echo "[*] Updating package database..."
 sudo pacman -Sy --noconfirm >/dev/null 2>&1
 
-# ──────────────── Install Yay (if missing) ────────────────
-if ! command -v yay &>/dev/null; then
-    echo -e "${YELLOW}[INFO]${RESET} yay not found. Installing yay..."
-    (git clone https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si --noconfirm) &
-    spinner "yay"
-    wait $!
-    echo -e "\r\033[K${GREEN}[DONE]${RESET} yay installed\n"
+# ──────────────── Detect AUR Helper ────────────────
+if command -v yay &>/dev/null; then
+    AUR_HELPER="yay"
+elif command -v paru &>/dev/null; then
+    AUR_HELPER="paru"
+else
+    echo -e "${RED}[ERROR]${RESET} No AUR helper found. Please run install_aur.sh first."
+    exit 1
 fi
 
 # ──────────────── Handle Pacman Packages ────────────────
@@ -75,10 +77,10 @@ handle_package() {
 # ──────────────── Handle AUR Packages ────────────────
 handle_aur_package() {
     local pkg="$1"
-    if yay -Qi "$pkg" &>/dev/null; then
+    if $AUR_HELPER -Qi "$pkg" &>/dev/null; then
         echo -e "${YELLOW}[SKIP]${RESET} $pkg (AUR) already installed"
     else
-        (yay -S --noconfirm "$pkg" >/dev/null 2>&1) &
+        ($AUR_HELPER -S --noconfirm "$pkg" >/dev/null 2>&1) &
         spinner "$pkg (AUR)"
         wait $!
         if [ $? -eq 0 ]; then
@@ -102,7 +104,7 @@ packages=(
 
 # ──────────────── AUR Package List ────────────────
 aur_packages=(
-    atuin fzf swww starship nitch zip unzip
+    atuin fzf swww starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting
     wlogout ttf-firacode-nerd ttf-jetbrains-mono-nerd
@@ -122,9 +124,4 @@ done
 # ──────────────── Completion Notice ────────────────
 echo -e "\n${GREEN}[DONE]${RESET} ${TEXT}All packages processed successfully!${RESET}\n"
 
-# ──────────────── Run Config Script ────────────────
-if [[ -f ./Source/Scripts/install_config.sh ]]; then
-    bash ./Source/Scripts/install_config.sh
-else
-    echo -e "${RED}[WARN]${RESET} install_config.sh not found!"
-fi
+

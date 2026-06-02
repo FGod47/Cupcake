@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # ──────────────── Load Colors ────────────────
-source "$HOME/Cupcake/Source/Scripts/colors.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/colors.sh"
 
 # ──────────────── Pastel Banner Colors ────────────────
 COLORS=(15)
@@ -37,7 +38,7 @@ done
 echo
 
 # ──────────────── Variables ────────────────
-SRC="$HOME/Cupcake/.config/grub/cupcake"
+SRC="$(cd "$SCRIPT_DIR/../../.config/grub/cupcake" && pwd)"
 DEST="/usr/share/grub/themes/cupcake"
 GRUB_CFG="/etc/default/grub"
 THEME_LINE='GRUB_THEME="/usr/share/grub/themes/cupcake/theme.txt"'

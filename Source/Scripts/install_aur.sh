@@ -2,7 +2,8 @@
 
 # ──────────────── Clear and Load Colors ────────────────
 clear
-source "$HOME/Cupcake/Source/Scripts/colors.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/colors.sh"
 
 COLORS=(15)
 
@@ -70,6 +71,3 @@ else
     echo -e "${GREEN}[SKIP]${RESET} $aur_helper already installed."
 fi
 
-# ──────────────── Continue to Package Script ────────────────
-echo -e "\n${YELLOW}[*] Running install_pkg.sh...${RESET}"
-bash "$SCRIPT_DIR/install_pkg.sh"

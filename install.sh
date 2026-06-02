@@ -99,7 +99,23 @@ prompt_centered "➤ Do you want to install/update packages? [Y/N]: "
 
 if [[ "$user_input" =~ ^[Yy]$ ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    
+    echo -e "\n[*] Step 1: Setting up AUR Helper..."
     bash "$SCRIPT_DIR/Source/Scripts/install_aur.sh"
+    
+    echo -e "\n[*] Step 2: Installing Packages..."
+    bash "$SCRIPT_DIR/Source/Scripts/install_pkg.sh"
+    
+    echo -e "\n[*] Step 3: Installing Configurations..."
+    bash "$SCRIPT_DIR/Source/Scripts/install_config.sh"
+    
+    echo -e "\n[*] Step 4: Configuring ZSH Shell..."
+    bash "$SCRIPT_DIR/Source/Scripts/setup_zsh.sh"
+    
+    echo -e "\n[*] Step 5: Configuring GRUB Theme..."
+    bash "$SCRIPT_DIR/Source/Scripts/setup_grub.sh"
+    
+    echo -e "\n[SUCCESS] Cupcake installation is complete! Please reboot your system."
 else
     echo
     print_lines_centered CANCEL_BANNER 1

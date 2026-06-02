@@ -19,7 +19,8 @@ for line in "${BANNER_LINES[@]}"; do
 done
 
 # ──────────────── Load Colors ────────────────
-source "$HOME/Cupcake/Source/Scripts/colors.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/colors.sh"
 
 ZSHRC="$HOME/.zshrc"
 
@@ -108,7 +109,6 @@ EVAL_LINES=(
     'eval "$(starship init zsh)"'
     'export PATH="$HOME/.local/bin:$PATH"'
     '#fastfetch'
-    'nitch'
 )
 
 for line in "${EVAL_LINES[@]}"; do
@@ -143,6 +143,3 @@ if [ "$SETUP_SUCCESS" = true ]; then
 else
     echo -e "\n${RED}[WARN]${RESET} ${TEXT}Some parts of Zsh setup may have failed. Please review the above messages.${RESET}"
 fi
-
-# ──────────────── Run GRUB Setup ────────────────
-bash "$HOME/Cupcake/Source/Scripts/setup_grub.sh"

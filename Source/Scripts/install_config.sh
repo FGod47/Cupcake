@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # ──────────────── Load Colors ────────────────
-source "$HOME/Cupcake/Source/Scripts/colors.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/colors.sh"
 
 # ──────────────── Color & Config Setup ────────────────
 COLORS=(15)
 CONFIGS=(
   cupcake cava dunst fastfetch hypr kitty nvim rofi swaync waybar wlogout
 )
-SOURCE_DIR="$HOME/Cupcake/.config"
+SOURCE_DIR="$(cd "$SCRIPT_DIR/../../.config" && pwd)"
 BACKUP_DIR="$HOME/.config_backup"
 
 # ──────────────── Banner Function ────────────────
@@ -101,10 +102,4 @@ else
   echo -e "${YELLOW}[SKIP]${RESET} cupcake/scripts folder not found.\n"
 fi
 
-# ──────────────── Run Zsh Setup ────────────────
-ZSH_SETUP="$HOME/Cupcake/Source/Scripts/setup_zsh.sh"
-if [ -f "$ZSH_SETUP" ]; then
-  bash "$ZSH_SETUP"
-else
-  echo -e "${RED}[WARN]${RESET} setup_zsh.sh not found at $ZSH_SETUP"
-fi
+
