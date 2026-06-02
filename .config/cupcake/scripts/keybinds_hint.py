@@ -22,17 +22,6 @@ window {{
     color: {main_fg};
     font-family: 'JetBrains Mono', sans-serif;
 }}
-notebook tab {{
-    background-color: transparent;
-    color: {main_fg};
-    padding: 8px 16px;
-    border: none;
-    font-weight: bold;
-}}
-notebook tab:checked {{
-    color: {main_br};
-    border-bottom: 2px solid {main_br};
-}}
 .search-bar {{
     background-color: {main_bg};
     color: {main_fg};
@@ -93,6 +82,13 @@ flowboxchild:selected {{
     font-weight: bold;
     margin-top: 8px;
 }}
+.category-label {{
+    color: {main_br};
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}}
 """
 
 def get_theme_colors():
@@ -148,33 +144,10 @@ class keybinds hintWindow(Gtk.Window):
         self.set_decorated(False)
         self.connect("key-press-event", self.on_key_press)
 
-        # Remove forced dark theme, let the dynamic CSS handle it
         settings = Gtk.Settings.get_default()
 
         self.binds = get_binds()
-        self.categories = {}
         
-        for bind in self.binds:
-            if bind.get('has_description'):
-                desc = bind.get('description', '')
-            else:
-                desc = bind.get('dispatcher', '') + " " + bind.get('arg', '')
-            
-            if not desc.strip():
-                continue
-
-            mods = get_mods(bind.get('modmask', 0))
-            key = bind.get('key', '')
-            if key == "mouse:272": key = "LMB"
-            if key == "mouse:273": key = "RMB"
-            
-            command = f"{bind.get('dispatcher', '')} {bind.get('arg', '')}".strip()
-            category = bind.get('dispatcher', 'Other')
-            
-            if category not in self.categories:
-                self.categories[category] = []
-            self.categories[category].append((mods, key, desc, command))
-
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(vbox)
 
@@ -192,94 +165,105 @@ class keybinds hintWindow(Gtk.Window):
         search_box.pack_start(self.search_entry, True, True, 0)
         vbox.pack_start(search_box, False, False, 0)
 
-        self.notebook = Gtk.Notebook()
-        self.notebook.set_scrollable(True)
-        vbox.pack_start(self.notebook, True, True, 0)
+        # Create a single FlowBox for everything
+        self.flowbox = Gtk.FlowBox()
+        self.flowbox.set_valign(Gtk.Align.START)
+        self.flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.flowbox.set_max_children_per_line(10)
+        self.flowbox.set_min_children_per_line(1)
+        self.flowbox.set_row_spacing(10)
+        self.flowbox.set_column_spacing(10)
 
-        self.flowboxes = []
+        for bind in self.binds:
+            if bind.get('has_description'):
+                desc = bind.get('description', '')
+            else:
+                desc = bind.get('dispatcher', '') + " " + bind.get('arg', '')
+            
+            if not desc.strip():
+                continue
 
-        for category, items in sorted(self.categories.items()):
-            flowbox = Gtk.FlowBox()
-            flowbox.set_valign(Gtk.Align.START)
-            flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
-            flowbox.set_max_children_per_line(10)
-            flowbox.set_min_children_per_line(1)
-            flowbox.set_row_spacing(10)
-            flowbox.set_column_spacing(10)
+            mods = get_mods(bind.get('modmask', 0))
+            key = bind.get('key', '')
+            if key == "mouse:272": key = "LMB"
+            if key == "mouse:273": key = "RMB"
+            
+            command = f"{bind.get('dispatcher', '')} {bind.get('arg', '')}".strip()
+            category = bind.get('dispatcher', 'Other').replace("to", " to ").replace("workspace", "Workspace").title()
 
-            for item in items:
-                mods, key, desc, command = item
-                
-                card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-                card.set_margin_top(5)
-                card.set_margin_bottom(5)
-                card.set_margin_start(5)
-                card.set_margin_end(5)
+            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            card.set_margin_top(5)
+            card.set_margin_bottom(5)
+            card.set_margin_start(5)
+            card.set_margin_end(5)
 
-                keys_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-                keys_box.set_valign(Gtk.Align.CENTER)
-                
-                for i, m in enumerate(mods):
-                    if i > 0:
-                        plus = Gtk.Label(label="+")
-                        plus.get_style_context().add_class("plus")
-                        keys_box.pack_start(plus, False, False, 0)
-                    
-                    key_lbl = Gtk.Label(label=m)
-                    key_lbl.get_style_context().add_class("keycap")
-                    if m == "Super":
-                        key_lbl.get_style_context().add_class("keycap-super")
-                    keys_box.pack_start(key_lbl, False, False, 0)
-                
-                if mods and key:
+            # Optional: show category as a tiny label on the card
+            cat_lbl = Gtk.Label(label=category)
+            cat_lbl.set_xalign(0.0)
+            cat_lbl.get_style_context().add_class("category-label")
+            card.pack_start(cat_lbl, False, False, 0)
+
+            keys_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+            keys_box.set_valign(Gtk.Align.CENTER)
+            
+            for i, m in enumerate(mods):
+                if i > 0:
                     plus = Gtk.Label(label="+")
                     plus.get_style_context().add_class("plus")
                     keys_box.pack_start(plus, False, False, 0)
-
-                if key:
-                    key_lbl = Gtk.Label(label=key.upper() if len(key) == 1 else key)
-                    key_lbl.get_style_context().add_class("keycap")
-                    keys_box.pack_start(key_lbl, False, False, 0)
-
-                card.pack_start(keys_box, False, False, 0)
-
-                desc_lbl = Gtk.Label(label=desc)
-                desc_lbl.set_line_wrap(True)
-                desc_lbl.set_max_width_chars(30)
-                desc_lbl.set_xalign(0.0)
-                desc_lbl.get_style_context().add_class("description")
-                card.pack_start(desc_lbl, False, False, 0)
-
-                cmd_lbl = Gtk.Label(label=command)
-                cmd_lbl.set_line_wrap(True)
-                cmd_lbl.set_max_width_chars(30)
-                cmd_lbl.set_xalign(0.0)
-                cmd_lbl.set_selectable(True)
-                cmd_lbl.get_style_context().add_class("command")
-                card.pack_start(cmd_lbl, False, False, 0)
-
-                child = Gtk.FlowBoxChild()
-                child.add(card)
                 
-                search_str = f"{' '.join(mods)} {key} {desc} {command}".lower()
-                child.search_str = search_str
-                
-                flowbox.insert(child, -1)
+                key_lbl = Gtk.Label(label=m)
+                key_lbl.get_style_context().add_class("keycap")
+                if m == "Super":
+                    key_lbl.get_style_context().add_class("keycap-super")
+                keys_box.pack_start(key_lbl, False, False, 0)
+            
+            if mods and key:
+                plus = Gtk.Label(label="+")
+                plus.get_style_context().add_class("plus")
+                keys_box.pack_start(plus, False, False, 0)
 
-            flowbox.set_filter_func(self.filter_func)
-            self.flowboxes.append(flowbox)
+            if key:
+                key_lbl = Gtk.Label(label=key.upper() if len(key) == 1 else key)
+                key_lbl.get_style_context().add_class("keycap")
+                keys_box.pack_start(key_lbl, False, False, 0)
 
-            scrolled = Gtk.ScrolledWindow()
-            scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-            scrolled.add(flowbox)
+            card.pack_start(keys_box, False, False, 0)
 
-            cat_name = category.replace("to", " to ").replace("workspace", "Workspace").title()
-            self.notebook.append_page(scrolled, Gtk.Label(label=cat_name))
+            desc_lbl = Gtk.Label(label=desc)
+            desc_lbl.set_line_wrap(True)
+            desc_lbl.set_max_width_chars(30)
+            desc_lbl.set_xalign(0.0)
+            desc_lbl.get_style_context().add_class("description")
+            card.pack_start(desc_lbl, False, False, 0)
+
+            cmd_lbl = Gtk.Label(label=command)
+            cmd_lbl.set_line_wrap(True)
+            cmd_lbl.set_max_width_chars(30)
+            cmd_lbl.set_xalign(0.0)
+            cmd_lbl.set_selectable(True)
+            cmd_lbl.get_style_context().add_class("command")
+            card.pack_start(cmd_lbl, False, False, 0)
+
+            child = Gtk.FlowBoxChild()
+            child.add(card)
+            
+            search_str = f"{category} {' '.join(mods)} {key} {desc} {command}".lower()
+            child.search_str = search_str
+            
+            self.flowbox.insert(child, -1)
+
+        self.flowbox.set_filter_func(self.filter_func)
+
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled.add(self.flowbox)
+
+        vbox.pack_start(scrolled, True, True, 0)
 
     def on_search_changed(self, entry):
         self.search_query = entry.get_text().lower()
-        for flowbox in self.flowboxes:
-            flowbox.invalidate_filter()
+        self.flowbox.invalidate_filter()
 
     def filter_func(self, child):
         if not hasattr(self, 'search_query') or not self.search_query:
