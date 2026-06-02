@@ -99,7 +99,7 @@ packages=(
     rofi wget swaync pamixer pavucontrol telegram-desktop bat dunst nwg-look
     nwg-displays libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc jmtpfs mtpfs libmtp repo os-prober cpio 7zip
-    python-pipx ccache erofs-utils
+    python-pipx ccache erofs-utils jq
 )
 
 # ──────────────── AUR Package List ────────────────

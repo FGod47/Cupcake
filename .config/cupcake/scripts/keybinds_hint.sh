@@ -21,7 +21,7 @@ categoryFile="${hydeConfDir}/category.kb"
 dispatcherFile="${hydeConfDir}/dispatcher.kb"
 
 roDir="$confDir/rofi"
-roconf="$roDir/clipboard/clipboard.rasi"
+roconf="$roDir/launcher/style.rasi"
 
 HELP() {
   cat <<HELP
@@ -135,7 +135,7 @@ substitute_vars() {
 #   echo "$s"
 # }
 
-initialized_comments=$(awk -F ',' '!/^#/ && /bind*/ && $3 ~ /exec/ && NF && $4 !~ /^ *$/ { print $4}' ${kb_hint_conf[@]} | sed "s#\"#'#g")
+initialized_comments=$(awk -F ',' '!/^#/ && /bind*/ && $3 ~ /exec/ && NF && $4 !~ /^ *$/ { print $4}' ${kb_hint_conf[@]} | sed "s#\\\\#\\\\\\\\#g; s#\"#'#g")
 comments=$(substitute_vars "$initialized_comments" | awk -F'#' \
   '{gsub(/^ */, "", $1);\
     gsub(/ *$/, "", $1);\
@@ -339,8 +339,8 @@ DISPLAY() { awk -v kb_hint_delim="${kb_hint_delim:->}" -F '!=!' '{if ($0 ~ /=/ &
 
 #? Extra design use for distinction
 header="$(printf "%-35s %-1s %-20s\n" "󰌌 Keybinds" "󱧣" "Description")"
-cols=$(tput cols)
-cols=${cols:-999}
+cols=$(tput cols 2>/dev/null)
+cols=${cols:-65}
 linebreak="$(printf '%.0s━' $(seq 1 "${cols}") "")"
 
 #! this Part Gives extra loading time as I don't have efforts to make single space for each class
@@ -363,6 +363,8 @@ fi
 
 #? Put rofi configuration here 
 # Read hypr theme border
+hypr_border=${hypr_border:-2}
+hypr_width=${hypr_width:-2}
 wind_border=$((hypr_border * 3 / 2))
 elem_border=$([ "$hypr_border" -eq 0 ] && echo "5" || echo "$hypr_border")
 
@@ -381,7 +383,7 @@ icon_override=$(gsettings get org.gnome.desktop.interface icon-theme | sed "s/'/
 icon_override="configuration {icon-theme: \"${icon_override}\";}"
 
 #? Actions to do when selected
-selected=$(echo "$output" | rofi -dmenu -p -i -theme-str "${fnt_override}" -theme-str "${r_override}" -theme-str "${icon_override}" -config "${roconf}" | sed 's/.*\s*//')
+selected=$(echo "$output" | rofi -dmenu -i -p "🔎 Search" -theme-str "${fnt_override}" -theme-str "${r_override}" -theme-str "${icon_override}" -config "${roconf}" | sed 's/.*\s*//')
 if [ -z "$selected" ]; then exit 0; fi
 
 sel_1=$(awk -F "${kb_hint_delim:->}" '{print $1}' <<< "$selected" | awk '{$1=$1};1')
