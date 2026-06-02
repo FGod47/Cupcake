@@ -22,13 +22,16 @@ echo "$NEW" > "$STATE"
 # Paths
 THEME_DIR="$HOME/.config/cupcake/themes/$NEW"
 WAYBAR_CONFIG="$HOME/.config/waybar/style.css"
-ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
+ROFI_CONFIG="$HOME/.config/rofi/theme.rasi"
 WALLPAPER_DEST="$HOME/.config/hypr/wall.jpg"
 
 # Apply new theme
-cp "$THEME_DIR/waybar.css" "$WAYBAR_CONFIG"
-cp "$THEME_DIR/rofi.rasi" "$ROFI_CONFIG"
-cp "$THEME_DIR/wallpaper.jpg" "$WALLPAPER_DEST"
+cp "$THEME_DIR/waybar/style.css" "$WAYBAR_CONFIG"
+cp "$THEME_DIR/rofi/theme.rasi" "$ROFI_CONFIG"
+
+# Select the first wallpaper dynamically
+DEFAULT_WALL=$(find "$THEME_DIR/walls" -type f | head -n 1)
+[[ -n "$DEFAULT_WALL" ]] && cp "$DEFAULT_WALL" "$WALLPAPER_DEST"
 
 # Reload wallpaper and waybar
 swww img "$WALLPAPER_DEST" --transition-type grow --transition-fps 60 --transition-duration 1
