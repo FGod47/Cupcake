@@ -108,7 +108,7 @@ aur_packages=(
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting
     wlogout ttf-firacode-nerd ttf-jetbrains-mono-nerd
-    catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe
+    catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe keybinds hint-bin
 )
 
 # ──────────────── Install All Pacman Packages ────────────────
