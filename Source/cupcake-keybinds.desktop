@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Keybinds Hint (Cupcake)
 Comment=View all Cupcake system shortcuts and keybinds
-Exec=bash -c 'keybinds hint --hyprland "$HOME/.config/hypr/hyprland.conf"'
+Exec=bash -c '$HOME/.config/cupcake/scripts/keybinds_hint.sh'
 Icon=keyboard
 Terminal=false
 Type=Application

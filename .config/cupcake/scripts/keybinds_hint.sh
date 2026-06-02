@@ -335,10 +335,10 @@ END {
 [ "$kb_hint_json" = true ] && jq <<< "$jsonData" && exit 0
 
 #? Format this is how the keybinds are displayed.
-DISPLAY() { awk -v kb_hint_delim="${kb_hint_delim:->}" -F '!=!' '{if ($0 ~ /=/ && $6 != "") printf "%-25s %-2s %-30s\n", $5, kb_hint_delim, $6; else if ($0 ~ /=/) printf "%-25s\n", $5; else print $0}'; }
+DISPLAY() { awk -v kb_hint_delim="${kb_hint_delim:->}" -F '!=!' '{if ($0 ~ /=/ && $6 != "") printf "<span color=\"#89b4fa\"><b>%-25s</b></span> <span color=\"#f38ba8\">%-2s</span> <span color=\"#cdd6f4\">%-30s</span>\n", $5, kb_hint_delim, $6; else if ($0 ~ /=/) printf "<span color=\"#89b4fa\"><b>%-25s</b></span>\n", $5; else if ($0 ~ /━/) print "<span color=\"#45475a\">" $0 "</span>"; else print "\n<span color=\"#cba6f7\" size=\"large\"><b>" $0 "</b></span>" }'; }
 
 #? Extra design use for distinction
-header="$(printf "%-35s %-1s %-20s\n" "󰌌 Keybinds" "󱧣" "Description")"
+header="$(printf "<span color=\"#a6e3a1\"><b>%-35s %-1s %-20s</b></span>\n" "󰌌 Keybinds" "󱧣" "Description")"
 cols=$(tput cols 2>/dev/null)
 cols=${cols:-65}
 linebreak="$(printf '%.0s━' $(seq 1 "${cols}") "")"
@@ -382,39 +382,6 @@ fnt_override="configuration {font: \"JetBrainsMono Nerd Font ${fnt_override}\";}
 icon_override=$(gsettings get org.gnome.desktop.interface icon-theme | sed "s/'//g")
 icon_override="configuration {icon-theme: \"${icon_override}\";}"
 
-#? Actions to do when selected
-selected=$(echo "$output" | rofi -dmenu -i -p "🔎 Search" -theme-str "${fnt_override}" -theme-str "${r_override}" -theme-str "${icon_override}" -config "${roconf}" | sed 's/.*\s*//')
-if [ -z "$selected" ]; then exit 0; fi
-
-sel_1=$(awk -F "${kb_hint_delim:->}" '{print $1}' <<< "$selected" | awk '{$1=$1};1')
-sel_2=$(awk -F "${kb_hint_delim:->}" '{print $2}' <<< "$selected" | awk '{$1=$1};1')
-run="$(grep "$sel_1" <<< "$metaData" | grep "$sel_2")"
-
-run_flg="$(echo "$run" | awk -F '!=!' '{print $8}')"
-run_sel="$(echo "$run" | awk -F '!=!' '{gsub(/^ *| *$/, "", $5); if ($5 ~ /[[:space:]]/ && $5 !~ /^[0-9]+$/ && substr($5, 1, 1) != "-") print $4, "\""$5"\""; else print $4, $5}')"
-#   echo "$run_sel" ; echo "$run_flg"
-
-#?
-RUN() { case "$(eval "hyprctl dispatch $run_sel")" in *"Not enough arguments"*) exec $0 ;; esac }
-
-#? If flag is repeat then repeat rofi if not then just execute once
-if [ -n "$run_sel" ] && [ "$(echo "$run_sel" | wc -l)" -eq 1 ]; then
-  eval "$run_flg"
-  if [ "$repeat" = true ]; then
-
-    while true; do
-      repeat_command=$(echo -e "Repeat" | rofi -dmenu -no-custom -p "[Enter] repeat; [ESC] exit") #? Needed a separate Rasi ? Dunno how to make; Maybe Something like confirmation rasi for buttons Yes and No then the -p will be the Question like Proceed? Repeat?
-
-      if [ "$repeat_command" = "Repeat" ]; then
-        # Repeat the command here
-        RUN
-      else
-        exit 0
-      fi
-    done
-  else
-    RUN
-  fi
-else
-  exec $0
-fi
+#? Display using Rofi as a cheat sheet
+echo "$output" | rofi -dmenu -i -markup-rows -p "🔎 Search" -theme-str "${fnt_override}" -theme-str "${r_override}" -theme-str "${icon_override}" -config "${roconf}" >/dev/null
+exit 0
