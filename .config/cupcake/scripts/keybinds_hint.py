@@ -139,9 +139,9 @@ def get_binds():
         print("Failed to get binds:", e)
         return []
 
-class keybinds hintWindow(Gtk.Window):
+class KeybindsWindow(Gtk.Window):
     def __init__(self):
-        super().__init__(title="keybinds hint")
+        super().__init__(title="Keybinds")
         self.set_default_size(900, 650)
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_decorated(False)
@@ -321,8 +321,8 @@ class keybinds hintWindow(Gtk.Window):
 
 def main():
     apply_css()
-    GLib.set_prgname('com.cupcake.keybinds hint')
-    app = keybinds hintWindow()
+    GLib.set_prgname('com.cupcake.Keybinds')
+    app = KeybindsWindow()
     app.connect("destroy", Gtk.main_quit)
     app.show_all()
     Gtk.main()
