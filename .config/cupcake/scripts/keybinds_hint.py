@@ -18,86 +18,104 @@ CSS = """
 window {
     background-color: #1e1e2e;
     color: #cdd6f4;
+    font-family: 'JetBrains Mono', sans-serif;
 }
 headerbar {
     background-color: #11111b;
-    color: #cdd6f4;
     border: none;
     box-shadow: none;
-    padding: 10px;
-}
-notebook {
-    background-color: #1e1e2e;
 }
 notebook header {
     background-color: #181825;
-    border: none;
-    padding: 4px;
 }
 notebook tab {
     background-color: transparent;
-    border: none;
     color: #a6adc8;
     padding: 8px 16px;
-    border-radius: 8px;
+    border: none;
     font-weight: bold;
 }
 notebook tab:checked {
-    background-color: #313244;
-    color: #cba6f7;
-}
-notebook tab:hover {
-    background-color: #45475a;
-}
-treeview {
-    background-color: #1e1e2e;
-    padding: 10px;
-}
-treeview.view:hover {
-    background-color: #313244;
-}
-treeview.view:selected {
-    background-color: #45475a;
     color: #cdd6f4;
+    border-bottom: 2px solid #cba6f7;
 }
-entry {
-    background-color: #313244;
+.search-bar {
+    background-color: #181825;
     color: #cdd6f4;
-    border: 1px solid #45475a;
+    border: 1px solid #313244;
     border-radius: 8px;
-    padding: 8px 16px;
-    box-shadow: none;
+    padding: 8px 12px;
 }
-entry:focus {
+.search-bar:focus {
     border-color: #cba6f7;
 }
-scrollbar slider {
-    background-color: #45475a;
-    border-radius: 10px;
+flowbox {
+    padding: 10px;
+    background-color: #1e1e2e;
 }
-scrollbar slider:hover {
-    background-color: #585b70;
+flowboxchild {
+    background-color: #181825;
+    border: 1px solid #313244;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 5px;
+}
+flowboxchild:selected {
+    background-color: #181825;
+    border: 1px solid #cba6f7;
+}
+.keycap {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border-bottom: 3px solid #11111b;
+    border-left: 1px solid #313244;
+    border-top: 1px solid #313244;
+    border-right: 1px solid #313244;
+}
+.keycap-super {
+    background-color: #cba6f7;
+    color: #1e1e2e;
+    border-bottom: 3px solid #b4befe;
+    border-left: 1px solid #cba6f7;
+    border-top: 1px solid #cba6f7;
+    border-right: 1px solid #cba6f7;
+}
+.plus {
+    color: #a6adc8;
+    font-weight: bold;
+    margin: 0 4px;
+}
+.command {
+    color: #a6adc8;
+    font-size: 13px;
+    margin-top: 8px;
+}
+.description {
+    color: #cdd6f4;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 8px;
 }
 """
 
 def apply_css():
-    css_provider = Gtk.CssProvider()
-    css_provider.load_from_data(CSS.encode('utf-8'))
-    screen = Gdk.Screen.get_default()
-    context = Gtk.StyleContext()
-    context.add_provider_for_screen(
-        screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    provider = Gtk.CssProvider()
+    provider.load_from_data(CSS.encode('utf-8'))
+    Gtk.StyleContext.add_provider_for_screen(
+        Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
     )
 
-def decode_modmask(modmask):
-    if not modmask:
-        return ""
+def get_mods(modmask):
+    if not modmask: return []
     keys = []
     for mask in sorted(MODMASKS.keys(), reverse=True):
         if modmask >= mask:
             keys.append(MODMASKS[mask])
             modmask -= mask
-    return " + ".join(keys)
+    return keys
 
 def get_binds():
     try:
@@ -110,9 +128,12 @@ def get_binds():
 class keybinds hintWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="keybinds hint")
-        self.set_default_size(800, 600)
+        self.set_default_size(900, 650)
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.get_style_context().add_class("main-window")
+
+        settings = Gtk.Settings.get_default()
+        if settings:
+            settings.set_property("gtk-application-prefer-dark-theme", True)
 
         self.binds = get_binds()
         self.categories = {}
@@ -126,18 +147,17 @@ class keybinds hintWindow(Gtk.Window):
             if not desc.strip():
                 continue
 
-            mod = decode_modmask(bind.get('modmask', 0))
+            mods = get_mods(bind.get('modmask', 0))
             key = bind.get('key', '')
-            
             if key == "mouse:272": key = "LMB"
             if key == "mouse:273": key = "RMB"
             
-            shortcut = f"{mod} + {key}" if mod else key
+            command = f"{bind.get('dispatcher', '')} {bind.get('arg', '')}".strip()
             category = bind.get('dispatcher', 'Other')
             
             if category not in self.categories:
                 self.categories[category] = []
-            self.categories[category].append((shortcut, desc))
+            self.categories[category].append((mods, key, desc, command))
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(vbox)
@@ -154,8 +174,9 @@ class keybinds hintWindow(Gtk.Window):
         search_box.set_margin_end(20)
         
         self.search_entry = Gtk.SearchEntry()
+        self.search_entry.get_style_context().add_class("search-bar")
         self.search_entry.set_hexpand(True)
-        self.search_entry.set_placeholder_text("Search shortcuts...")
+        self.search_entry.set_placeholder_text("Search keybinds, commands, descriptions...")
         self.search_entry.connect("search-changed", self.on_search_changed)
         search_box.pack_start(self.search_entry, True, True, 0)
         vbox.pack_start(search_box, False, False, 0)
@@ -164,54 +185,96 @@ class keybinds hintWindow(Gtk.Window):
         self.notebook.set_scrollable(True)
         vbox.pack_start(self.notebook, True, True, 0)
 
-        self.liststores = []
+        self.flowboxes = []
 
         for category, items in sorted(self.categories.items()):
-            liststore = Gtk.ListStore(str, str)
+            flowbox = Gtk.FlowBox()
+            flowbox.set_valign(Gtk.Align.START)
+            flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+            flowbox.set_max_children_per_line(10)
+            flowbox.set_min_children_per_line(1)
+            flowbox.set_row_spacing(10)
+            flowbox.set_column_spacing(10)
+
             for item in items:
-                liststore.append(list(item))
+                mods, key, desc, command = item
+                
+                card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+                card.set_margin_top(5)
+                card.set_margin_bottom(5)
+                card.set_margin_start(5)
+                card.set_margin_end(5)
 
-            filter_model = liststore.filter_new()
-            filter_model.set_visible_func(self.filter_func)
-            self.liststores.append((filter_model, liststore))
+                keys_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+                keys_box.set_valign(Gtk.Align.CENTER)
+                
+                for i, m in enumerate(mods):
+                    if i > 0:
+                        plus = Gtk.Label(label="+")
+                        plus.get_style_context().add_class("plus")
+                        keys_box.pack_start(plus, False, False, 0)
+                    
+                    key_lbl = Gtk.Label(label=m)
+                    key_lbl.get_style_context().add_class("keycap")
+                    if m == "Super":
+                        key_lbl.get_style_context().add_class("keycap-super")
+                    keys_box.pack_start(key_lbl, False, False, 0)
+                
+                if mods and key:
+                    plus = Gtk.Label(label="+")
+                    plus.get_style_context().add_class("plus")
+                    keys_box.pack_start(plus, False, False, 0)
 
-            treeview = Gtk.TreeView(model=filter_model)
-            treeview.set_headers_visible(False)
-            treeview.set_margin_top(10)
-            treeview.set_margin_bottom(10)
-            treeview.set_margin_start(10)
-            treeview.set_margin_end(10)
-            
-            renderer_shortcut = Gtk.CellRendererText()
-            renderer_shortcut.set_property("weight", Pango.Weight.BOLD)
-            renderer_shortcut.set_property("foreground", "#89b4fa") 
-            column_shortcut = Gtk.TreeViewColumn("Shortcut", renderer_shortcut, text=0)
-            column_shortcut.set_min_width(250)
-            treeview.append_column(column_shortcut)
+                if key:
+                    key_lbl = Gtk.Label(label=key.upper() if len(key) == 1 else key)
+                    key_lbl.get_style_context().add_class("keycap")
+                    keys_box.pack_start(key_lbl, False, False, 0)
 
-            renderer_desc = Gtk.CellRendererText()
-            renderer_desc.set_property("foreground", "#cdd6f4")
-            column_desc = Gtk.TreeViewColumn("Description", renderer_desc, text=1)
-            treeview.append_column(column_desc)
+                card.pack_start(keys_box, False, False, 0)
+
+                desc_lbl = Gtk.Label(label=desc)
+                desc_lbl.set_line_wrap(True)
+                desc_lbl.set_max_width_chars(30)
+                desc_lbl.set_xalign(0.0)
+                desc_lbl.get_style_context().add_class("description")
+                card.pack_start(desc_lbl, False, False, 0)
+
+                cmd_lbl = Gtk.Label(label=command)
+                cmd_lbl.set_line_wrap(True)
+                cmd_lbl.set_max_width_chars(30)
+                cmd_lbl.set_xalign(0.0)
+                cmd_lbl.set_selectable(True)
+                cmd_lbl.get_style_context().add_class("command")
+                card.pack_start(cmd_lbl, False, False, 0)
+
+                child = Gtk.FlowBoxChild()
+                child.add(card)
+                
+                # Store search string directly on child
+                search_str = f"{' '.join(mods)} {key} {desc} {command}".lower()
+                child.search_str = search_str
+                
+                flowbox.insert(child, -1)
+
+            flowbox.set_filter_func(self.filter_func)
+            self.flowboxes.append(flowbox)
 
             scrolled = Gtk.ScrolledWindow()
             scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-            scrolled.add(treeview)
+            scrolled.add(flowbox)
 
             cat_name = category.replace("to", " to ").replace("workspace", "Workspace").title()
             self.notebook.append_page(scrolled, Gtk.Label(label=cat_name))
 
     def on_search_changed(self, entry):
         self.search_query = entry.get_text().lower()
-        for filter_model, _ in self.liststores:
-            filter_model.refilter()
+        for flowbox in self.flowboxes:
+            flowbox.invalidate_filter()
 
-    def filter_func(self, model, iter, data):
+    def filter_func(self, child):
         if not hasattr(self, 'search_query') or not self.search_query:
             return True
-        shortcut = model[iter][0].lower()
-        desc = model[iter][1].lower()
-        return self.search_query in shortcut or self.search_query in desc
+        return self.search_query in getattr(child, 'search_str', '')
 
 def main():
     apply_css()
