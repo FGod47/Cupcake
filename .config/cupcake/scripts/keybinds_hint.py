@@ -87,7 +87,6 @@ flowboxchild:selected {{
     font-size: 12px;
     font-weight: bold;
     margin-bottom: 4px;
-    text-transform: uppercase;
 }}
 """
 
@@ -189,7 +188,7 @@ class keybinds hintWindow(Gtk.Window):
             if key == "mouse:273": key = "RMB"
             
             command = f"{bind.get('dispatcher', '')} {bind.get('arg', '')}".strip()
-            category = bind.get('dispatcher', 'Other').replace("to", " to ").replace("workspace", "Workspace").title()
+            category = bind.get('dispatcher', 'Other').replace("to", " to ").replace("workspace", "Workspace").title().upper()
 
             card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
             card.set_margin_top(5)
