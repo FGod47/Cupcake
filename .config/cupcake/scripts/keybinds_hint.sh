@@ -7,7 +7,7 @@
 
 pkill -x rofi && exit
 scrDir=$(dirname "$(realpath "$0")")
-source "$scrDir/globalcontrol.sh"
+hydeConfDir="${XDG_CONFIG_HOME:-$HOME/.config}/cupcake"
 
 confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 keyconfDir="$confDir/hypr"
@@ -21,7 +21,7 @@ categoryFile="${hydeConfDir}/category.kb"
 dispatcherFile="${hydeConfDir}/dispatcher.kb"
 
 roDir="$confDir/rofi"
-roconf="$roDir/clipboard.rasi"
+roconf="$roDir/clipboard/clipboard.rasi"
 
 HELP() {
   cat <<HELP
