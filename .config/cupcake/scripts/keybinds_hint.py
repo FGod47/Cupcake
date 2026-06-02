@@ -20,6 +20,7 @@ CSS_TEMPLATE = """
 window {{
     background-color: {main_bg};
     color: {main_fg};
+    font-family: 'JetBrainsMono Nerd Font', 'FiraCode Nerd Font', 'Hack Nerd Font', 'Nerd Font', sans-serif;
 }}
 .search-bar {{
     background-color: {main_bg};
