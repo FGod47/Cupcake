@@ -110,7 +110,7 @@ def get_theme_colors():
             content = f.read()
             for match in re.finditer(r"([a-z-]+):\s*(#[a-fA-F0-9]+)", content):
                 key = match.group(1).replace("-", "_")
-                val = match.group(2)
+                val = match.group(2)[:7]  # GTK3 only supports #RRGGBB, not #RRGGBBAA
                 colors[key] = val
     return colors
 
