@@ -130,6 +130,8 @@ class keybinds hintWindow(Gtk.Window):
         super().__init__(title="keybinds hint")
         self.set_default_size(900, 650)
         self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_decorated(False)
+        self.connect("key-press-event", self.on_key_press)
 
         settings = Gtk.Settings.get_default()
         if settings:
@@ -161,11 +163,6 @@ class keybinds hintWindow(Gtk.Window):
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(vbox)
-
-        header = Gtk.HeaderBar()
-        header.set_show_close_button(True)
-        header.props.title = "keybinds hint"
-        self.set_titlebar(header)
 
         search_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         search_box.set_margin_top(15)
@@ -275,6 +272,12 @@ class keybinds hintWindow(Gtk.Window):
         if not hasattr(self, 'search_query') or not self.search_query:
             return True
         return self.search_query in getattr(child, 'search_str', '')
+
+    def on_key_press(self, widget, event):
+        if event.keyval == Gdk.KEY_Escape:
+            self.destroy()
+            return True
+        return False
 
 def main():
     apply_css()
