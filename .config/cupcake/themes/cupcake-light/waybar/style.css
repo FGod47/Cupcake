@@ -38,7 +38,6 @@
   background-size: 600% 600%;
   animation: gradientShift 4s ease-in-out infinite;
   color: #1a1b26;
-  box-shadow: 0 0 8px rgba(203, 166, 247, 0.3);
 }
 
 /* Logo */
@@ -129,7 +128,6 @@ window#waybar.empty #window {
   background-size: 600% 100%;
   animation: gradientShift 6s ease-in-out infinite;
   color: #1a1b26;
-  box-shadow: 0 0 8px rgba(203, 166, 247, 0.3);
 }
 
 #custom-power {
@@ -149,7 +147,6 @@ window#waybar.empty #window {
   background-size: 1000% 100%;
   animation: gradientShift 3s linear infinite;
   color: #000;
-  box-shadow: 0 0 8px rgba(255, 134, 170, 0.4);
 }
 
 tooltip {

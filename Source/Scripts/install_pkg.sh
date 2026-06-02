@@ -104,7 +104,7 @@ packages=(
 
 # ──────────────── AUR Package List ────────────────
 aur_packages=(
-    atuin fzf swww starship zip unzip
+    atuin fzf awww starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting
     wlogout ttf-firacode-nerd ttf-jetbrains-mono-nerd

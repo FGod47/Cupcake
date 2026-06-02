@@ -34,7 +34,7 @@ wall_selection=$(find "$wall_dir" -maxdepth 1 -type f \( -iname "*.jpg" -o -inam
 
 # Apply wallpaper using swww with transition
 if [ -n "$wall_selection" ]; then
-    swww img "${wall_dir}/${wall_selection}" \
+    awww img "${wall_dir}/${wall_selection}" \
         --transition-type grow \
         --transition-pos "$(hyprctl cursorpos)" \
         --transition-fps 160 \

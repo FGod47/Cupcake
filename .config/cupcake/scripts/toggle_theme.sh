@@ -34,7 +34,7 @@ DEFAULT_WALL=$(find "$THEME_DIR/walls" -type f | head -n 1)
 [[ -n "$DEFAULT_WALL" ]] && cp "$DEFAULT_WALL" "$WALLPAPER_DEST"
 
 # Reload wallpaper and waybar
-swww img "$WALLPAPER_DEST" --transition-type grow --transition-fps 60 --transition-duration 1
+awww img "$WALLPAPER_DEST" --transition-type grow --transition-fps 60 --transition-duration 1
 pkill waybar && waybar &
 
 notify-send "Switched to $NEW"
