@@ -310,7 +310,7 @@ PanelWindow {
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: controlsRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                clip: true
                 
                 property bool actionsExpanded: false
                 
@@ -356,7 +356,7 @@ PanelWindow {
                                     radius: 7
                                 }
                             }
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.OutCubic; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
                             onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
@@ -367,7 +367,7 @@ PanelWindow {
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             visible: width > 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.OutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -410,7 +410,7 @@ PanelWindow {
                                 property int targetValue: 100
                                 onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
                             }
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.OutCubic; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
                             onMoved: { 
@@ -430,7 +430,7 @@ PanelWindow {
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             visible: width > 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.OutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -502,7 +502,7 @@ PanelWindow {
                 color: powerHover.hovered ? "#f33958" : "#eebac3"
                 Behavior on color { ColorAnimation { duration: 300 } }
                 implicitWidth: powerRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                clip: true
                 
                 property bool actionsExpanded: false
                 
@@ -523,7 +523,7 @@ PanelWindow {
                         height: 34
                         width: (powerHover.hovered || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: (powerHover.hovered || powerPill.actionsExpanded) ? Easing.OutBack : Easing.OutCubic; easing.overshoot: 1.5 } }
                         
                         Row {
                             id: innerContent
