@@ -326,10 +326,26 @@ PanelWindow {
                             visible: width > 0
                             clip: true
                             handle: Item {} // Hide the thumb
+                            background: Rectangle {
+                                x: audioSlider.leftPadding
+                                y: audioSlider.topPadding + audioSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 100
+                                implicitHeight: 14
+                                width: audioSlider.availableWidth
+                                height: implicitHeight
+                                radius: 7
+                                color: "#1a1b26" // track color
+                                Rectangle {
+                                    width: audioSlider.visualPosition * parent.width
+                                    height: parent.height
+                                    color: "#b4befe" // fill color
+                                    radius: 7
+                                }
+                            }
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
-                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`) }
+                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(["bash", "-c", `pamixer --set-volume ${Math.round(value)}`]) }
                         }
                         Text {
                             text: Math.round(audioSlider.value) + "%"
@@ -352,11 +368,26 @@ PanelWindow {
                             visible: width > 0
                             clip: true
                             handle: Item {} // Hide the thumb
+                            background: Rectangle {
+                                x: lightSlider.leftPadding
+                                y: lightSlider.topPadding + lightSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 100
+                                implicitHeight: 14
+                                width: lightSlider.availableWidth
+                                height: implicitHeight
+                                radius: 7
+                                color: "#1a1b26" // track color
+                                Rectangle {
+                                    width: lightSlider.visualPosition * parent.width
+                                    height: parent.height
+                                    color: "#f9e2af" // fill color
+                                    radius: 7
+                                }
+                            }
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
-                            // Simple placeholder, real backlight commands vary by user setup
-                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(`brightnessctl s ${Math.round(value)}%`) }
+                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(["bash", "-c", `brightnessctl s ${Math.round(value)}%`]) }
                         }
                         Text {
                             text: Math.round(lightSlider.value) + "%"
