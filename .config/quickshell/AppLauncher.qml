@@ -110,8 +110,11 @@ PanelWindow {
         height: card.height
         
         transformOrigin: Item.Bottom
-        scale: 1.0 - (root.offsetScale * 0.15) // Only scale down by 15% instead of 100% so it's less aggressive
-        opacity: 1.0 - root.offsetScale
+        scale: 1.0 - (root.offsetScale * 0.05) // Gentle 5% scale down
+
+        transform: Translate {
+            y: launcherWrapper.height * root.offsetScale
+        }
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
