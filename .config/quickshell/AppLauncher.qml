@@ -118,6 +118,15 @@ PanelWindow {
             id: card
             anchors.centerIn: parent
 
+            readonly property int cardWidth: 630
+            readonly property int maxListItems: 8
+            readonly property int itemH: 64
+            readonly property int searchH: 68
+            readonly property int cardPad: 24
+
+            width: cardWidth
+            height: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
+
         Behavior on height {
             NumberAnimation {
                 duration: 320
