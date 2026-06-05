@@ -397,7 +397,11 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
-                            onMoved: { Quickshell.execDetached(["brightnessctl", "s", Math.round(value) + "%"]) }
+                            onPressedChanged: { 
+                                if (!pressed) {
+                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
+                                }
+                            }
                         }
                         Text {
                             text: Math.round(lightSlider.value) + "%"
