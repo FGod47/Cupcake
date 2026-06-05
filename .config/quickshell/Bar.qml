@@ -327,12 +327,12 @@ PanelWindow {
                     
                     // Audio
                     Row {
-                        spacing: 8
+                        spacing: 0
                         Text { text: ""; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: audioSlider
-                            width: controlsPill.actionsExpanded ? 100 : 0
-                            visible: width > 0
+                            leftPadding: 8
+                            width: controlsPill.actionsExpanded ? 108 : 0
                             clip: true
                             handle: Rectangle {
                                 x: audioSlider.leftPadding + audioSlider.visualPosition * (audioSlider.availableWidth - width)
@@ -362,10 +362,10 @@ PanelWindow {
                             onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
                         }
                         Text {
+                            leftPadding: 8
                             text: Math.round(audioSlider.value) + "%"
                             color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
-                            visible: width > 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
@@ -374,12 +374,12 @@ PanelWindow {
                     
                     // Backlight
                     Row {
-                        spacing: 8
+                        spacing: 0
                         Text { text: "☀"; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
-                            width: controlsPill.actionsExpanded ? 100 : 0
-                            visible: width > 0
+                            leftPadding: 8
+                            width: controlsPill.actionsExpanded ? 108 : 0
                             clip: true
                             handle: Rectangle {
                                 x: lightSlider.leftPadding + lightSlider.visualPosition * (lightSlider.availableWidth - width)
@@ -425,10 +425,10 @@ PanelWindow {
                             }
                         }
                         Text {
+                            leftPadding: 8
                             text: Math.round(lightSlider.value) + "%"
                             color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
-                            visible: width > 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
