@@ -120,11 +120,9 @@ PanelWindow {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0 // Flush with screen
 
-        // Y offset for animation
-        transform: Translate {
-            id: slideTransform
-            y: card.height * root.offsetScale
-        }
+        // Scale warp animation from the bottom center edge
+        transformOrigin: Item.Bottom
+        scale: 1.0 - root.offsetScale
 
         Behavior on height {
             NumberAnimation {
