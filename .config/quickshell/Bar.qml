@@ -325,7 +325,12 @@ PanelWindow {
                             width: controlsHover.hovered ? 100 : 0
                             visible: width > 0
                             clip: true
-                            handle: Item {} // Hide the thumb
+                            handle: Rectangle {
+                                x: audioSlider.leftPadding + audioSlider.visualPosition * (audioSlider.availableWidth - width)
+                                y: audioSlider.topPadding + audioSlider.availableHeight / 2 - height / 2
+                                width: 14; height: 14
+                                color: "transparent"
+                            }
                             background: Rectangle {
                                 x: audioSlider.leftPadding
                                 y: audioSlider.topPadding + audioSlider.availableHeight / 2 - height / 2
@@ -345,7 +350,7 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
-                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(["bash", "-c", `pamixer --set-volume ${Math.round(value)}`]) }
+                            onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
                         }
                         Text {
                             text: Math.round(audioSlider.value) + "%"
@@ -367,7 +372,12 @@ PanelWindow {
                             width: controlsHover.hovered ? 100 : 0
                             visible: width > 0
                             clip: true
-                            handle: Item {} // Hide the thumb
+                            handle: Rectangle {
+                                x: lightSlider.leftPadding + lightSlider.visualPosition * (lightSlider.availableWidth - width)
+                                y: lightSlider.topPadding + lightSlider.availableHeight / 2 - height / 2
+                                width: 14; height: 14
+                                color: "transparent"
+                            }
                             background: Rectangle {
                                 x: lightSlider.leftPadding
                                 y: lightSlider.topPadding + lightSlider.availableHeight / 2 - height / 2
@@ -387,7 +397,7 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
-                            onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(["bash", "-c", `brightnessctl s ${Math.round(value)}%`]) }
+                            onMoved: { Quickshell.execDetached(["brightnessctl", "s", Math.round(value) + "%"]) }
                         }
                         Text {
                             text: Math.round(lightSlider.value) + "%"
