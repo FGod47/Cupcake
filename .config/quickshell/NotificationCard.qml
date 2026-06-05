@@ -9,6 +9,11 @@ Item {
 
     width: parent ? parent.width : 320
     height: toastCard.height
+    
+    Behavior on y {
+        enabled: !wrapper.inPanel
+        NumberAnimation { duration: 400; easing.type: Easing.OutQuart }
+    }
 
     Rectangle {
         id: toastCard
@@ -25,11 +30,20 @@ Item {
         border.color: "#33ffffff"
         border.width: 1
 
-        x: wrapper.inPanel ? 0 : 320
-        Component.onCompleted: { if (!wrapper.inPanel) x = 0; }
+        x: 0
+        y: wrapper.inPanel ? 0 : -150
+        Component.onCompleted: {
+            if (!wrapper.inPanel) {
+                y = 0;
+            }
+        }
+        Behavior on y {
+            enabled: !swipeArea.pressed
+            NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
+        }
         Behavior on x {
             enabled: !swipeArea.pressed
-            NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
+            NumberAnimation { duration: 300; easing.type: Easing.OutQuart }
         }
 
         MouseArea {
@@ -102,6 +116,7 @@ Item {
                         : ""
                     sourceSize: Qt.size(40, 40)
                     fillMode: Image.PreserveAspectFit
+                    asynchronous: true
                     visible: status === Image.Ready
                 }
                 Text {

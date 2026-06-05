@@ -15,7 +15,10 @@ PanelWindow {
     }
     WlrLayershell.namespace: "waybar"
     exclusiveZone: 46
-    implicitHeight: 46
+    // Grow downward when stacked notifications need a dropdown
+    implicitHeight: (globalState.popups && globalState.popups.length > 0)
+                    ? 46 + notifDropdown.implicitHeight + 4 : 46
+    Behavior on implicitHeight { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
     color: "transparent"
     
     property var modelData
@@ -38,10 +41,19 @@ PanelWindow {
     // margin: 8px 4px 0 4px is handled by Layout properties or anchors
 
     Item {
-        anchors.fill: parent
-        anchors.topMargin: 8
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
+        // Fixed 46px top strip — never resizes when bar grows
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        // Make this item exactly 46px tall, but account for margins inside or don't set topMargin on the item itself
+        height: 46
+
+        // Inner wrapper to keep the original padding logic identical
+        Item {
+            anchors.fill: parent
+            anchors.topMargin: 8
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
 
         // =======================
         // LEFT MODULES
@@ -448,54 +460,79 @@ PanelWindow {
 
             // Clock/Notif Pill (#clock-notif-pill)
             Rectangle {
+                id: clockPill
                 radius: 18
                 implicitHeight: 34
                 color: "#27293F"
-                implicitWidth: clockRow.implicitWidth + 32
+                // Smoothly animate width as contents change. If dropping down, become wide for the cards.
+                implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
+                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
                 Layout.alignment: Qt.AlignVCenter
+                clip: true
+                
+                property var activeNotif: globalState.popups.length > 0 ? globalState.popups[0] : null
+
+                // To seamlessly merge the dropdown into the pill visually:
+                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
+                
+                Rectangle {
+                    anchors.fill: parent
+                    color: "#27293F"
+                    radius: 18
+                }
+
                 Row {
                     id: clockRow
                     anchors.centerIn: parent
                     spacing: 5
                     
-                    Text { 
-                        id: notifText
-                        text: "󰂚"
-                        color: fg; font.family: fontName; font.pixelSize: fontSize 
-                        MouseArea { 
-                            anchors.fill: parent; 
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible 
+                    // --- Standard Clock State ---
+                    Row {
+                        spacing: 5
+                        opacity: !clockPill.hasDropdown ? 1 : 0
+                        visible: opacity > 0
+                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
+
+                        Text {
+                            id: notifText
+                            text: "󰂚"
+                            color: fg; font.family: fontName; font.pixelSize: fontSize
+                            MouseArea {
+                                anchors.fill: parent;
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
+                            }
                         }
-                    }
-                    
-                    Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
-                    
-                    Text { 
-                        id: customClockText
-                        text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
-                        color: fg 
-                        font.family: fontName
-                        font.pixelSize: fontSize
-                        font.weight: 500
+
+                        Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
+
+                        Text {
+                            id: customClockText
+                            text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
+                            color: fg
+                            font.family: fontName
+                            font.pixelSize: fontSize
+                            font.weight: 500
+
+                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
+                        }
                         
-                        MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
-                    }
-                }
-                
-                Process {
-                    id: clockProc
-                    command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                    stdout: StdioCollector {
-                        onStreamFinished: (data) => {
-                            try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data }
+                        Process {
+                            id: clockProc
+                            command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
+                            stdout: StdioCollector {
+                                onStreamFinished: (data) => {
+                                    try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data }
+                                }
+                            }
+                        }
+                        Timer {
+                            interval: 1000; running: true; repeat: true
+                            onTriggered: clockProc.running = true
                         }
                     }
-                }
-                Timer {
-                    interval: 1000; running: true; repeat: true
-                    onTriggered: clockProc.running = true
-                }
+                    
+                    }
             }
 
             // Power Pill (#custom-power)
@@ -577,6 +614,62 @@ PanelWindow {
                             powerPill.actionsExpanded = false;
                         }
                     }
+                }
+            }
+        }
+        }
+    }
+
+    // ── Notification Dropdown Overlay ──────
+    Item {
+        id: notifDropdown
+        z: 10
+        clip: true
+        
+        // Stay fully solid and visible during the entire collapse
+        visible: clockPill.hasDropdown || globalState.closingIsland
+        opacity: 1
+
+        implicitWidth: clockPill.width
+        
+        // Shrink vertically down to the clock pill's height (34)
+        implicitHeight: clockPill.hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
+        Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+
+        // Position perfectly to overlay the horizontal clock pill
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: powerPill.width + 16
+
+        // Solid rounded background covers the clock pill
+        Rectangle {
+            anchors.fill: parent
+            color: "#27293F"
+            radius: 18
+        }
+
+        Column {
+            id: dropdownCol
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.topMargin: 8
+            
+            transformOrigin: Item.TopRight
+            scale: clockPill.hasDropdown ? 1.0 : 0.0
+            
+            Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+
+            spacing: 6
+            Repeater {
+                model: globalState.popups && globalState.popups.length > 0 ? globalState.popups : []
+                delegate: NotificationCard {
+                    width: dropdownCol.width
+                    notificationData: modelData
+                    inPanel: false
                 }
             }
         }

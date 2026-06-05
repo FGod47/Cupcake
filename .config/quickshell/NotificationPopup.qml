@@ -11,8 +11,8 @@ PanelWindow {
     }
     
     margins {
-        top: 24
-        right: 24
+        top: 45 // perfectly closes the vertical gap
+        right: 80 // perfectly aligned left of the power pill
     }
     
     // We want the window to be just wide enough and tall enough to fit our list
@@ -26,7 +26,9 @@ PanelWindow {
     // To support multiple monitors or just the active one, pick a screen, or rely on Wayland defaults
     
     color: "transparent"
-    visible: globalState.popups && globalState.popups.length > 0
+    
+    // Only show the popup list if there are 2 or more notifications, OR if we want to show all
+    visible: globalState.popups && globalState.popups.length > 1
     
     ListView {
         id: popupList
@@ -36,7 +38,7 @@ PanelWindow {
         spacing: 8
         interactive: false
         
-        model: globalState.popups
+        model: globalState.popups ? globalState.popups.slice(1) : []
         
         delegate: Item {
             width: popupList.width
