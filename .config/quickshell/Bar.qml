@@ -394,11 +394,23 @@ PanelWindow {
                                     radius: 7
                                 }
                             }
+                            Timer {
+                                id: ddcTimer
+                                interval: 150
+                                repeat: false
+                                property int targetValue: 100
+                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                            }
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
-                            onPressedChanged: { 
+                            onMoved: { 
+                                ddcTimer.targetValue = value;
+                                ddcTimer.restart();
+                            }
+                            onPressedChanged: {
                                 if (!pressed) {
+                                    ddcTimer.stop();
                                     Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
                                 }
                             }
