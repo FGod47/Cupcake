@@ -54,9 +54,8 @@ PanelWindow {
 
     Behavior on offsetScale {
         NumberAnimation {
-            duration: 420
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+            duration: 600
+            easing.type: Easing.InOutQuad
         }
     }
 
@@ -102,27 +101,22 @@ PanelWindow {
         }
     }
 
-    // ── Launcher card — animated from bottom ──────────────────────────
-    Rectangle {
-        id: card
-
-        readonly property int cardWidth: 630
-        readonly property int maxListItems: 8
-        readonly property int itemH: 64
-        readonly property int searchH: 68
-        readonly property int cardPad: 24
-
-        width: cardWidth
-        height: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
-
-        // Slide up from bottom flush with the screen edge
+    // ── Unified Scaling Wrapper ───────────────────────────────────────
+    Item {
+        id: launcherWrapper
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0 // Flush with screen
-
-        // Scale warp animation from the bottom center edge
+        width: card.width
+        height: card.height
+        
         transformOrigin: Item.Bottom
-        scale: 1.0 - root.offsetScale
+        scale: 1.0 - (root.offsetScale * 0.15) // Only scale down by 15% instead of 100% so it's less aggressive
+        opacity: 1.0 - root.offsetScale
+
+        // ── Launcher card ─────────────────────────────────────────────
+        Rectangle {
+            id: card
+            anchors.centerIn: parent
 
         Behavior on height {
             NumberAnimation {
@@ -444,7 +438,6 @@ PanelWindow {
         width: 28; height: 28
         anchors.bottom: card.bottom
         anchors.right: card.left
-        transform: Translate { y: card.height * root.offsetScale }
 
         ShapePath {
             fillColor: root.colSurfaceContainer
@@ -466,7 +459,6 @@ PanelWindow {
         width: 28; height: 28
         anchors.bottom: card.bottom
         anchors.left: card.right
-        transform: Translate { y: card.height * root.offsetScale }
 
         ShapePath {
             fillColor: root.colSurfaceContainer
@@ -482,4 +474,5 @@ PanelWindow {
             }
         }
     }
+    } // End launcherWrapper
 } // PanelWindow
