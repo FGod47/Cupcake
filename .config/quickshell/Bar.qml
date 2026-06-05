@@ -305,11 +305,20 @@ PanelWindow {
 
             // Controls Pill (#control)
             Rectangle {
+                id: controlsPill
                 color: "#27293F"
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: controlsRow.implicitWidth + 32
                 Behavior on implicitWidth { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                
+                property bool actionsExpanded: false
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: controlsPill.actionsExpanded = !controlsPill.actionsExpanded
+                    cursorShape: Qt.PointingHandCursor
+                }
                 
                 Row {
                     id: controlsRow
@@ -322,7 +331,7 @@ PanelWindow {
                         Text { text: ""; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: audioSlider
-                            width: controlsHover.hovered ? 100 : 0
+                            width: controlsPill.actionsExpanded ? 100 : 0
                             visible: width > 0
                             clip: true
                             handle: Rectangle {
@@ -355,7 +364,7 @@ PanelWindow {
                         Text {
                             text: Math.round(audioSlider.value) + "%"
                             color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
-                            width: controlsHover.hovered ? implicitWidth : 0
+                            width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             visible: width > 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
@@ -369,7 +378,7 @@ PanelWindow {
                         Text { text: "☀"; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
-                            width: controlsHover.hovered ? 100 : 0
+                            width: controlsPill.actionsExpanded ? 100 : 0
                             visible: width > 0
                             clip: true
                             handle: Rectangle {
@@ -418,7 +427,7 @@ PanelWindow {
                         Text {
                             text: Math.round(lightSlider.value) + "%"
                             color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
-                            width: controlsHover.hovered ? implicitWidth : 0
+                            width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             visible: width > 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
@@ -427,7 +436,14 @@ PanelWindow {
                     }
                 }
 
-                HoverHandler { id: controlsHover }
+                HoverHandler { 
+                    id: controlsHover 
+                    onHoveredChanged: {
+                        if (!hovered && controlsPill.actionsExpanded) {
+                            controlsPill.actionsExpanded = false;
+                        }
+                    }
+                }
             }
 
             // Clock/Notif Pill (#clock-notif-pill)
