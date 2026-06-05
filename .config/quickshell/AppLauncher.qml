@@ -99,7 +99,7 @@ PanelWindow {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
-        height: card.height
+        height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
         clip: true
 
         // ── Launcher card ─────────────────────────────────────────────
@@ -450,6 +450,7 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
+            anchors.rightMargin: -1 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
                 fillColor: root.colSurfaceContainer
@@ -471,6 +472,7 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
+            anchors.leftMargin: -1 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
                 fillColor: root.colSurfaceContainer
