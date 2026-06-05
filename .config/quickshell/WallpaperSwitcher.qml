@@ -1,0 +1,442 @@
+import QtQuick
+import QtQuick.Shapes
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
+import Qt.labs.folderlistmodel
+
+PanelWindow {
+    id: root
+
+    anchors { bottom: true; left: true; right: true }
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.namespace: "cupcake-wallpaper"
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    color: "transparent"
+    implicitHeight: 1080
+
+    // ── Caelestia exact token values ─────────────────────────────────────
+    readonly property int    wallW:       280          // wallpaperWidth
+    readonly property int    wallH:       Math.round(wallW / 16 * 9)  // 157
+    readonly property int    itemW:       180          // Spacing distance for stacking effect
+    readonly property int    cornerR:     17           // rounding.normal
+    readonly property int    padH:        50           // padding
+    readonly property int    padV:        15
+    readonly property int    labelGap:    7            // spacing.small
+    readonly property int    maxVisible:  Math.min(5, wallModel.count)
+    readonly property int    numVisible:  maxVisible > 1 && maxVisible % 2 === 0 ? maxVisible - 1 : (maxVisible || 1)
+
+    // ── Palette ──────────────────────────────────────────────────────────
+    readonly property color colBg:      "#000000"
+    readonly property color colSub:     "#111111"
+    readonly property color colFgDim:   "#cad3f5"
+    readonly property color colPrimary: "#F08CAE"
+
+    readonly property string wallDir: "/home/one/.config/cupcake/walls"
+
+    // ── Current wallpaper ────────────────────────────────────────────────
+    property string currentWall: ""
+    property bool   isInitialized: false
+    property int    moveDuration: 0
+
+    Process {
+        command: ["swww", "query"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                const m = data.match(/currently displaying: image: (.+)/)
+                if (m) root.currentWall = m[1].trim()
+            }
+        }
+    }
+
+    // ── Slide-up animation ────────────────────────────────────────────────
+    property real offsetScale: 1.0
+
+    Behavior on offsetScale {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+        }
+    }
+
+    Component.onCompleted: Qt.callLater(() => { offsetScale = 0.0 })
+
+    function dismiss() {
+        offsetScale = 1.0
+        killTimer.restart()
+    }
+
+    Timer {
+        id: killTimer
+        interval: 520
+        onTriggered: root.visible = false
+    }
+
+    IpcHandler {
+        target: "wallpaperswitcher"
+        function toggle(): void {
+            if (root.visible && root.offsetScale < 0.5) {
+                root.dismiss()
+            } else {
+                root.moveDuration = 0
+                root.offsetScale = 1.0
+                root.visible = true
+                
+                Qt.callLater(() => {
+                    root.offsetScale = 0.0
+                    // Fetch latest desktop wallpaper on reappear
+                    queryProc.running = true
+                })
+            }
+        }
+    }
+
+    // ── Find Current Wallpaper ───────────────────────────────────────────
+    Process {
+        id: queryProc
+        command: ["/home/one/.local/bin/swww", "query"]
+        running: true
+        stdout: StdioCollector {
+            id: queryStdout
+        }
+        onExited: {
+            const out = queryStdout.text
+            const match = out.match(/image:\s*(.*)/)
+            if (match && match[1]) {
+                const fullPath = match[1].trim()
+                root.currentWall = fullPath
+                const fileName = fullPath.split('/').pop()
+                console.log("queryProc found current wallpaper:", fileName)
+                
+                // If model is already ready, find index
+                if (wallModel.status === FolderListModel.Ready) {
+                    for (let i = 0; i < wallModel.count; i++) {
+                        if (wallModel.get(i, "fileName") === fileName) {
+                            pv.currentIndex = i
+                            break
+                        }
+                    }
+                    initTimer.start()
+                }
+            }
+        }
+    }
+
+    // ── Wallpaper model ───────────────────────────────────────────────────
+    FolderListModel {
+        id:           wallModel
+        folder:       "file://" + root.wallDir
+        nameFilters:  ["*.png", "*.jpg", "*.jpeg", "*.webp"]
+        showDirs:     false
+        sortField:    FolderListModel.Name
+
+        onStatusChanged: {
+            if (status === FolderListModel.Ready) {
+                if (root.currentWall !== "") {
+                    const fileName = root.currentWall.split('/').pop()
+                    for (let i = 0; i < count; i++) {
+                        if (get(i, "fileName") === fileName) {
+                            pv.currentIndex = i
+                            break
+                        }
+                    }
+                }
+                initTimer.start()
+            }
+        }
+    }
+
+    Timer {
+        id: initTimer
+        interval: 50
+        onTriggered: {
+            root.isInitialized = true
+            root.moveDuration = 300
+        }
+    }
+
+    // ── Pill ─────────────────────────────────────────────────────────────
+    Item {
+        id: pill
+
+        anchors.bottom:           parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin:     0
+
+        opacity: root.isInitialized ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: 150 } }
+
+        transform: Translate { y: pill.height * root.offsetScale }
+
+        // Width accounts for the overlapping path plus the width of the active item
+        width:  pv.width + root.padH * 2
+        height: root.wallH + root.labelGap + labelMetrics.height + root.padV * 2
+        
+        clip: true
+
+        FontMetrics {
+            id: labelMetrics
+            font.pixelSize: 12
+            font.family: "Inter, Roboto, sans-serif"
+        }
+
+        // Background
+        Rectangle {
+            anchors.fill: parent
+            radius:       36
+            color:        root.colBg
+            
+            // Square off the bottom corners
+            Rectangle {
+                anchors.bottom: parent.bottom
+                anchors.left:   parent.left
+                anchors.right:  parent.right
+                height:         parent.radius
+                color:          root.colBg
+            }
+        }
+
+        // PathView carousel
+        PathView {
+            id: pv
+
+            anchors.centerIn: parent
+            width:  Math.min(root.numVisible * root.itemW, root.width - 40 - root.padH * 2)
+            height: parent.height
+            
+            highlightMoveDuration: root.moveDuration
+
+            focus: true
+            
+            Keys.onLeftPressed: decrementCurrentIndex()
+            Keys.onRightPressed: incrementCurrentIndex()
+            Keys.onEscapePressed: root.dismiss()
+            Keys.onReturnPressed: {
+                if (pv.currentItem) {
+                    const path = root.wallDir + "/" + pv.currentItem.fileName
+                    root.currentWall = path
+                    wallProc.command = [
+                        "/home/one/.local/bin/swww", "img", path,
+                        "--transition-type", "grow",
+                        "--transition-fps", "60",
+                        "--transition-duration", "1"
+                    ]
+                    wallProc.running = true
+                    root.dismiss()
+                }
+            }
+
+            model:          wallModel
+            pathItemCount:  root.numVisible
+            cacheItemCount: 4
+
+            snapMode:                PathView.SnapOneItem
+            preferredHighlightBegin: 0.5
+            preferredHighlightEnd:   0.5
+            highlightRangeMode:      PathView.StrictlyEnforceRange
+
+            onCountChanged: {
+                if (count === 0) return
+                for (let i = 0; i < count; i++) {
+                    const entry = model.get(i)
+                    if (entry && root.wallDir + "/" + entry.fileName === root.currentWall) {
+                        currentIndex = i
+                        return
+                    }
+                }
+            }
+
+            path: Path {
+                startX: 0
+                startY: pv.height / 2
+                PathAttribute { name: "z"; value: 0 }
+                PathLine { x: pv.width / 2; relativeY: 0 }
+                PathAttribute { name: "z"; value: 10 }
+                PathLine { x: pv.width; relativeY: 0 }
+                PathAttribute { name: "z"; value: 0 }
+            }
+
+            delegate: Item {
+                id: del
+
+                required property string fileName
+                required property url    fileUrl
+                required property int    index
+
+                readonly property bool  isCurrent: PathView.isCurrentItem
+                readonly property bool  onPath:    PathView.onPath ?? true
+
+                width:   root.itemW
+                height:  pv.height
+                z:       PathView.z ?? 0
+
+                scale:   isCurrent ? 1.0 : (onPath ? 0.8 : 0.0)
+                opacity: onPath ? 1.0 : 0.0
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 350
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+                    }
+                }
+                Behavior on opacity {
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                }
+
+                // ── Drop shadow ──────────────────────────
+                Rectangle {
+                    anchors.centerIn: imgClip
+                    anchors.verticalCenterOffset: 2
+                    width:  imgClip.width + 6
+                    height: imgClip.height + 6
+                    radius: root.cornerR + 3
+                    color:  Qt.rgba(0, 0, 0, 0.35)
+                    z:      -2
+                }
+                Rectangle {
+                    anchors.centerIn: imgClip
+                    anchors.verticalCenterOffset: 4
+                    width:  imgClip.width + 12
+                    height: imgClip.height + 12
+                    radius: root.cornerR + 6
+                    color:  Qt.rgba(0, 0, 0, 0.15)
+                    z:      -3
+                }
+
+                // ── Thumbnail ──────────────────────────────────────────────
+                ClippingRectangle {
+                    id: imgClip
+
+                    anchors.top:              parent.top
+                    anchors.topMargin:        root.padV
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    width:  root.wallW
+                    height: root.wallH
+                    radius: root.cornerR
+                    color:  root.colSub
+
+                    Image {
+                        anchors.fill:  parent
+                        source:        del.fileUrl
+                        fillMode:      Image.PreserveAspectCrop
+                        asynchronous:  true
+                        smooth:        !pv.moving
+                        cache:         true
+                        sourceSize:    Qt.size(root.wallW * 2, root.wallH * 2)
+                        opacity:       status === Image.Ready ? 1.0 : 0.0
+                        Behavior on opacity {
+                            NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
+                        }
+                    }
+                }
+
+                // ── Active border removed ──────────────────────────────────
+
+                // ── Filename label ─────────────────────────────────────────
+                Text {
+                    anchors.top:              imgClip.bottom
+                    anchors.topMargin:        root.labelGap
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width:                    root.wallW - 16
+
+                    text:                del.fileName.replace(/\.[^.]+$/, "")
+                    color:               del.isCurrent ? root.colPrimary : root.colFgDim
+                    opacity:             del.isCurrent ? 1.0 : 0.0
+                    font.pixelSize:      12
+                    font.family:         "Inter, Roboto, sans-serif"
+                    font.weight:         del.isCurrent ? 600 : 400
+                    elide:               Text.ElideMiddle
+                    horizontalAlignment: Text.AlignHCenter
+                    Behavior on color { ColorAnimation { duration: 200 } }
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                }
+
+                // ── Click handler ──────────────────────────────────────────
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape:  Qt.PointingHandCursor
+                    onClicked: {
+                        if (del.isCurrent) {
+                            const path = root.wallDir + "/" + del.fileName
+                            root.currentWall = path
+                            wallProc.command = [
+                                "/home/one/.local/bin/swww", "img", path,
+                                "--transition-type", "grow",
+                                "--transition-fps", "60",
+                                "--transition-duration", "1"
+                            ]
+                            wallProc.running = true
+                            root.dismiss()
+                        } else {
+                            pv.currentIndex = del.index
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ── Wallpaper Process ────────────────────────────────────────────────
+    Process {
+        id: wallProc
+    }
+
+    // ── Click outside → dismiss ───────────────────────────────────────────
+    MouseArea {
+        anchors.fill: parent
+        z: -99
+        onClicked: root.dismiss()
+    }
+
+    // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
+    Shape {
+        width: 36; height: 36
+        anchors.bottom: parent.bottom
+        anchors.right: pill.left
+        transform: Translate { y: pill.height * root.offsetScale }
+        layer.enabled: true
+        layer.samples: 4
+        ShapePath {
+            fillColor: root.colBg
+            strokeColor: "transparent"
+            startX: 36; startY: 0
+            PathLine { x: 36; y: 36 }
+            PathLine { x: 0; y: 36 }
+            PathArc {
+                x: 36; y: 0
+                radiusX: 36; radiusY: 36
+                useLargeArc: false
+                direction: PathArc.Counterclockwise
+            }
+        }
+    }
+
+    // ── Right Fillet (Inverse bottom-right corner) ────────────────────
+    Shape {
+        width: 36; height: 36
+        anchors.bottom: parent.bottom
+        anchors.left: pill.right
+        transform: Translate { y: pill.height * root.offsetScale }
+        layer.enabled: true
+        layer.samples: 4
+        ShapePath {
+            fillColor: root.colBg
+            strokeColor: "transparent"
+            startX: 0; startY: 0
+            PathLine { x: 0; y: 36 }
+            PathLine { x: 36; y: 36 }
+            PathArc {
+                x: 0; y: 0
+                radiusX: 36; radiusY: 36
+                useLargeArc: false
+                direction: PathArc.Clockwise
+            }
+        }
+    }
+}
