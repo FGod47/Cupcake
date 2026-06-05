@@ -325,6 +325,7 @@ PanelWindow {
                             width: controlsHover.hovered ? 100 : 0
                             visible: width > 0
                             clip: true
+                            handle: Item {} // Hide the thumb
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
@@ -350,6 +351,7 @@ PanelWindow {
                             width: controlsHover.hovered ? 100 : 0
                             visible: width > 0
                             clip: true
+                            handle: Item {} // Hide the thumb
                             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
