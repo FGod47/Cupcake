@@ -94,7 +94,15 @@ PanelWindow {
         }
     }
 
-    // ── Launcher card ─────────────────────────────────────────────
+    // ── Master Vertical Clipping Wrapper ──────────────────────────
+    Item {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: root.width
+        height: card.height
+        clip: true
+
+        // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
             id: card
             anchors.horizontalCenter: parent.horizontalCenter
@@ -479,6 +487,7 @@ PanelWindow {
             }
         }
     } // Rectangle card
+    } // Item masterWrapper
 
 
 } // PanelWindow
