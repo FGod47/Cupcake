@@ -50,18 +50,11 @@ PanelWindow {
     }
 
     // 1.0 = hidden below screen, 0.0 = fully visible
-    property real offsetScale: 1.0
-
-    Behavior on offsetScale {
-        NumberAnimation {
-            duration: 600
-            easing.type: Easing.InOutQuad
-        }
-    }
+    property bool isOpen: false
 
     Component.onCompleted: {
         Qt.callLater(function() {
-            offsetScale = 0.0;
+            isOpen = true;
             searchField.forceActiveFocus();
         });
     }
@@ -85,7 +78,7 @@ PanelWindow {
     function dismiss() {
         if (userDismissed) return;
         userDismissed = true;
-        offsetScale = 1.0;
+        isOpen = false;
         Quickshell.execDetached(["bash", "-c",
             "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.qml'"]);
     }
@@ -101,25 +94,12 @@ PanelWindow {
         }
     }
 
-    // ── Unified Scaling Wrapper ───────────────────────────────────────
-    Item {
-        id: launcherWrapper
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        width: card.width
-        height: card.height
-        
-        transformOrigin: Item.Bottom
-        scale: 1.0 - (root.offsetScale * 0.05) // Gentle 5% scale down
-
-        transform: Translate {
-            y: launcherWrapper.height * root.offsetScale
-        }
-
-        // ── Launcher card ─────────────────────────────────────────────
+    // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
             id: card
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
 
             readonly property int cardWidth: 630
             readonly property int maxListItems: 8
@@ -127,30 +107,33 @@ PanelWindow {
             readonly property int searchH: 68
             readonly property int cardPad: 24
 
-            width: cardWidth
-            height: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
+            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-        Behavior on height {
-            NumberAnimation {
-                duration: 320
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
-            }
-        }
+            width: root.isOpen ? cardWidth : 160
+            height: root.isOpen ? fullHeight : 0
 
-        // The card stays fully opaque; it only slides up
-        opacity: 1.0
+            Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+            Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
-        color: root.colSurfaceContainer
-        // Round top corners, keep bottom square so it sits flat on the edge
-        topLeftRadius: 28
-        topRightRadius: 28
-        bottomLeftRadius: 0
-        bottomRightRadius: 0
-        clip: true
+            color: root.colSurfaceContainer
+            topLeftRadius: 28
+            topRightRadius: 28
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
+            clip: true
 
-        // Stop click propagation to scrim
-        MouseArea { anchors.fill: parent; onClicked: {} }
+            MouseArea { anchors.fill: parent; onClicked: {} }
+
+            Item {
+                id: contentWrapper
+                width: card.cardWidth
+                height: card.fullHeight
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                
+                opacity: root.isOpen ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
+
 
         // ── App List Area ─────────────────────────────────────────────
         Item {
@@ -443,6 +426,7 @@ PanelWindow {
                 }
             } // Text clearBtn
         } // Rectangle searchBar
+            } // Item contentWrapper
     } // Rectangle card
 
     // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
@@ -486,5 +470,4 @@ PanelWindow {
             }
         }
     }
-    } // End launcherWrapper
 } // PanelWindow
