@@ -53,20 +53,12 @@ PanelWindow {
     }
 
     // ── Slide-up animation ────────────────────────────────────────────────
-    property real offsetScale: 1.0
+    property bool isOpen: false
 
-    Behavior on offsetScale {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
-        }
-    }
-
-    Component.onCompleted: Qt.callLater(() => { offsetScale = 0.0 })
+    Component.onCompleted: Qt.callLater(() => { isOpen = true })
 
     function dismiss() {
-        offsetScale = 1.0
+        isOpen = false
         killTimer.restart()
     }
 
@@ -79,15 +71,15 @@ PanelWindow {
     IpcHandler {
         target: "wallpaperswitcher"
         function toggle(): void {
-            if (root.visible && root.offsetScale < 0.5) {
+            if (root.visible && root.isOpen) {
                 root.dismiss()
             } else {
                 root.moveDuration = 0
-                root.offsetScale = 1.0
+                root.isOpen = false
                 root.visible = true
                 
                 Qt.callLater(() => {
-                    root.offsetScale = 0.0
+                    root.isOpen = true
                     // Fetch latest desktop wallpaper on reappear
                     queryProc.running = true
                 })
@@ -159,24 +151,50 @@ PanelWindow {
         }
     }
 
-    // ── Pill ─────────────────────────────────────────────────────────────
+    // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: root.width
+        height: pill.height + 1
+        clip: true
+
+    // ── Pill ─────────────────────────────────────────────────────────────
+    Rectangle {
         id: pill
 
         anchors.bottom:           parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin:     0
 
-        opacity: root.isInitialized ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: 150 } }
+        readonly property int fullWidth: pv.width + root.padH * 2
+        readonly property int fullHeight: root.wallH + 12 + 15 + root.padV * 2 // approximation for label metrics height
 
-        transform: Translate { y: pill.height * root.offsetScale }
+        width: root.isOpen ? fullWidth : 160
+        height: root.isOpen ? fullHeight : 0
 
-        // Width accounts for the overlapping path plus the width of the active item
-        width:  pv.width + root.padH * 2
-        height: root.wallH + root.labelGap + labelMetrics.height + root.padV * 2
-        
-        clip: true
+        Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+        Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+
+        color: "transparent"
+
+        Item {
+            id: contentWrapper
+            width: pill.width
+            height: pill.height
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            clip: true
+            
+            Item {
+                id: innerContent
+                width: pill.fullWidth
+                height: pill.fullHeight
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                
+                opacity: root.isOpen && root.isInitialized ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
 
         FontMetrics {
             id: labelMetrics
@@ -394,11 +412,15 @@ PanelWindow {
         onClicked: root.dismiss()
     }
 
+            } // Item innerContent
+        } // Item contentWrapper
+
     // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
     Shape {
         width: 36; height: 36
         anchors.bottom: parent.bottom
-        anchors.right: pill.left
+        anchors.right: parent.left
+        anchors.rightMargin: -1
         transform: Translate { y: pill.height * root.offsetScale }
         layer.enabled: true
         layer.samples: 4
@@ -421,7 +443,8 @@ PanelWindow {
     Shape {
         width: 36; height: 36
         anchors.bottom: parent.bottom
-        anchors.left: pill.right
+        anchors.left: parent.right
+        anchors.leftMargin: -1
         transform: Translate { y: pill.height * root.offsetScale }
         layer.enabled: true
         layer.samples: 4
@@ -439,4 +462,6 @@ PanelWindow {
             }
         }
     }
+    } // Rectangle pill
+    } // Item masterWrapper
 }
