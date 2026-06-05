@@ -330,6 +330,15 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`) }
                         }
+                        Text {
+                            text: Math.round(audioSlider.value) + "%"
+                            color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                            width: controlsHover.hovered ? implicitWidth : 0
+                            visible: width > 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
                     
                     // Backlight
@@ -346,6 +355,15 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             // Simple placeholder, real backlight commands vary by user setup
                             onValueChanged: { if(controlsHover.hovered) Quickshell.execDetached(`brightnessctl s ${Math.round(value)}%`) }
+                        }
+                        Text {
+                            text: Math.round(lightSlider.value) + "%"
+                            color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                            width: controlsHover.hovered ? implicitWidth : 0
+                            visible: width > 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                     }
                 }
