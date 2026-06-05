@@ -126,14 +126,21 @@ PanelWindow {
 
             Item {
                 id: contentWrapper
-                width: card.cardWidth
-                height: card.fullHeight
-                anchors.horizontalCenter: parent.horizontalCenter
+                width: card.width
+                height: card.height
                 anchors.bottom: parent.bottom
-                clip: true // Moved clipping here to protect the inner content without clipping the fillets
+                anchors.horizontalCenter: parent.horizontalCenter
+                clip: true // Dynamically clips exactly to the card's current animating size
                 
-                opacity: root.isOpen ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
+                Item {
+                    id: innerContent
+                    width: card.cardWidth
+                    height: card.fullHeight
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    
+                    opacity: root.isOpen ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
 
 
         // ── App List Area ─────────────────────────────────────────────
@@ -427,6 +434,7 @@ PanelWindow {
                 }
             } // Text clearBtn
         } // Rectangle searchBar
+                } // Item innerContent
             } // Item contentWrapper
 
         // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
