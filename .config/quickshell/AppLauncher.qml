@@ -120,7 +120,7 @@ PanelWindow {
             topRightRadius: 28
             bottomLeftRadius: 0
             bottomRightRadius: 0
-            clip: true
+            // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -130,6 +130,7 @@ PanelWindow {
                 height: card.fullHeight
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
+                clip: true // Moved clipping here to protect the inner content without clipping the fillets
                 
                 opacity: root.isOpen ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
@@ -427,6 +428,48 @@ PanelWindow {
             } // Text clearBtn
         } // Rectangle searchBar
             } // Item contentWrapper
+
+        // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
+        Shape {
+            width: 28; height: 28
+            anchors.bottom: parent.bottom
+            anchors.right: parent.left
+
+            ShapePath {
+                fillColor: root.colSurfaceContainer
+                strokeColor: "transparent"
+                startX: 28; startY: 0
+                PathLine { x: 28; y: 28 }
+                PathLine { x: 0; y: 28 }
+                PathArc {
+                    x: 28; y: 0
+                    radiusX: 28; radiusY: 28
+                    useLargeArc: false
+                    direction: PathArc.Counterclockwise
+                }
+            }
+        }
+
+        // ── Right Fillet (Inverse bottom-right corner) ────────────────────
+        Shape {
+            width: 28; height: 28
+            anchors.bottom: parent.bottom
+            anchors.left: parent.right
+
+            ShapePath {
+                fillColor: root.colSurfaceContainer
+                strokeColor: "transparent"
+                startX: 0; startY: 0
+                PathLine { x: 0; y: 28 }
+                PathLine { x: 28; y: 28 }
+                PathArc {
+                    x: 0; y: 0
+                    radiusX: 28; radiusY: 28
+                    useLargeArc: false
+                    direction: PathArc.Clockwise
+                }
+            }
+        }
     } // Rectangle card
 
 
