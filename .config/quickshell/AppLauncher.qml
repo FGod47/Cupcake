@@ -429,45 +429,5 @@ PanelWindow {
             } // Item contentWrapper
     } // Rectangle card
 
-    // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
-    Shape {
-        width: 28; height: 28
-        anchors.bottom: card.bottom
-        anchors.right: card.left
 
-        ShapePath {
-            fillColor: root.colSurfaceContainer
-            strokeColor: "transparent"
-            startX: 28; startY: 0
-            PathLine { x: 28; y: 28 }
-            PathLine { x: 0; y: 28 }
-            PathArc {
-                x: 28; y: 0
-                radiusX: 28; radiusY: 28
-                useLargeArc: false
-                direction: PathArc.Counterclockwise
-            }
-        }
-    }
-
-    // ── Right Fillet (Inverse bottom-right corner) ────────────────────
-    Shape {
-        width: 28; height: 28
-        anchors.bottom: card.bottom
-        anchors.left: card.right
-
-        ShapePath {
-            fillColor: root.colSurfaceContainer
-            strokeColor: "transparent"
-            startX: 0; startY: 0
-            PathLine { x: 0; y: 28 }
-            PathLine { x: 28; y: 28 }
-            PathArc {
-                x: 0; y: 0
-                radiusX: 28; radiusY: 28
-                useLargeArc: false
-                direction: PathArc.Clockwise
-            }
-        }
-    }
 } // PanelWindow
