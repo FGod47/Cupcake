@@ -462,7 +462,11 @@ PanelWindow {
                         id: notifText
                         text: "󰂚"
                         color: fg; font.family: fontName; font.pixelSize: fontSize 
-                        MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_bar.sh") }
+                        MouseArea { 
+                            anchors.fill: parent; 
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible 
+                        }
                     }
                     
                     Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
