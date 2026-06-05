@@ -115,6 +115,12 @@ if [[ "$user_input" =~ ^[Yy]$ ]]; then
     echo -e "\n[*] Step 5: Configuring GRUB Theme..."
     bash "$SCRIPT_DIR/Source/Scripts/setup_grub.sh"
     
+    echo -e "\n[*] Step 6: Configuring Systemd Boot Splash..."
+    bash "$SCRIPT_DIR/Source/Scripts/setup_bootsplash.sh"
+    
+    echo -e "\n[*] Step 7: Configuring ddcutil (Monitor Brightness)..."
+    bash "$SCRIPT_DIR/../../.config/cupcake/scripts/setup_ddcutil.sh"
+    
     echo -e "\n[SUCCESS] Cupcake installation is complete! Please reboot your system."
 else
     echo

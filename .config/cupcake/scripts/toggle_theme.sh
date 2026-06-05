@@ -33,8 +33,11 @@ cp "$THEME_DIR/rofi/theme.rasi" "$ROFI_CONFIG"
 DEFAULT_WALL=$(find "$THEME_DIR/walls" -type f | head -n 1)
 [[ -n "$DEFAULT_WALL" ]] && cp "$DEFAULT_WALL" "$WALLPAPER_DEST"
 
-# Reload wallpaper and waybar
+# Reload wallpaper and bar
 awww img "$WALLPAPER_DEST" --transition-type grow --transition-fps 60 --transition-duration 1
-pkill waybar && waybar &
+
+# Restart the shell
+pkill -x quickshell
+quickshell -p ~/.config/quickshell/shell.qml &
 
 notify-send "Switched to $NEW"

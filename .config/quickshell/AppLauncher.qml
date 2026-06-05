@@ -30,8 +30,8 @@ PanelWindow {
 
     // ── M3 Dark Palette (Modified to match Bar.qml) ────────────────────
     readonly property color colSurface:               "#1c1b1f"
-    readonly property color colSurfaceContainer:      "#27293F" // match bar bg
-    readonly property color colSurfaceContainerHigh:  "#333650" // lighter bar bg for search
+    readonly property color colSurfaceContainer:      "#000000" // pure black
+    readonly property color colSurfaceContainerHigh:  "#1a1a1a" // very dark grey for search
     readonly property color colOnSurface:             "#eeffff" // match bar fg
     readonly property color colOnSurfaceVariant:      "#cad3f5"
     readonly property color colOutline:               "#a5adcb"
@@ -110,12 +110,10 @@ PanelWindow {
         readonly property int maxListItems: 8
         readonly property int itemH: 64
         readonly property int searchH: 68
-        readonly property int cardPad: 12
+        readonly property int cardPad: 24
 
         width: cardWidth
-        height: Math.max(searchH + cardPad * 2,
-                         Math.min(filteredApps.length, maxListItems) * itemH
-                         + searchH + cardPad * 3)
+        height: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
         // Slide up from bottom flush with the screen edge
         anchors.horizontalCenter: parent.horizontalCenter
@@ -192,8 +190,10 @@ PanelWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "🔍"
+                    text: "" // \uf002
+                    font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 42
+                    color: root.colOnSurfaceVariant
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -201,14 +201,14 @@ PanelWindow {
                     color: root.colOnSurfaceVariant
                     font.pixelSize: 17
                     font.weight: Font.Medium
-                    font.family: "Inter, Roboto, sans-serif"
+                    font.family: "JetBrainsMono Nerd Font Propo"
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Try searching for something else"
                     color: root.colOutline
                     font.pixelSize: 13
-                    font.family: "Inter, Roboto, sans-serif"
+                    font.family: "JetBrainsMono Nerd Font Propo"
                 }
             }
 
@@ -310,7 +310,7 @@ PanelWindow {
                                 color: root.colOnSurface
                                 font.pixelSize: 14
                                 font.weight: Font.Medium
-                                font.family: "Inter, Roboto, sans-serif"
+                                font.family: "JetBrainsMono Nerd Font Propo"
                                 elide: Text.ElideRight
                                 width: parent.width
                             }
@@ -321,7 +321,7 @@ PanelWindow {
                                       || ""
                                 color: root.colOutline
                                 font.pixelSize: 12
-                                font.family: "Inter, Roboto, sans-serif"
+                                font.family: "JetBrainsMono Nerd Font Propo"
                                 elide: Text.ElideRight
                                 width: parent.width
                                 visible: text.length > 0
@@ -360,7 +360,8 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                text: "🔍"
+                text: "" // \uf002
+                font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 17
                 color: root.colOnSurfaceVariant
             }
@@ -372,7 +373,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOutline
                 font.pixelSize: 15
-                font.family: "Inter, Roboto, sans-serif"
+                font.family: "JetBrainsMono Nerd Font Propo"
                 text: "Search applications…"
                 visible: searchField.text.length === 0
             }
@@ -386,7 +387,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOnSurface
                 font.pixelSize: 15
-                font.family: "Inter, Roboto, sans-serif"
+                font.family: "JetBrainsMono Nerd Font Propo"
                 clip: true
                 focus: true
 

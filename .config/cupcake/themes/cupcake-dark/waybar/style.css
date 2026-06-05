@@ -14,6 +14,7 @@
   font-weight: 500;
   min-height: 0;
   border-color: @bg;
+  text-shadow: none;
 }
 
 /* Uniform spacing */
@@ -69,6 +70,12 @@ window#waybar {
   color: @fg;
 }
 
+window#power-menu-popup,
+window#control-center-popup,
+window#app-launcher-popup {
+  background-color: transparent;
+}
+
 /* Workspace Module */
 #workspaces {
   background-color: @bg;
@@ -80,8 +87,8 @@ window#waybar {
   background-color: transparent;
   border: none;
   color: @fg;
-  padding: 2.5px 10px;          
-  margin: 4px 2px;          
+  padding: 2.5px 4px;
+  margin: 4px 0px;
   border-radius: 12px;
   transition: all 0.25s ease-in-out;
 }
@@ -111,13 +118,18 @@ window#waybar.empty #window {
 }
 
 /* Consistent module style */
-#tray, #network, #custom-clock, #control, #custom-notification {
+#tray, #network, #clock-notif-pill, #control {
   background-color: @bg;
   border-radius: 18px;
   padding: 0 16px;
   margin: 8px 4px 0 4px;
   color: @fg;
   transition: background 0.3s ease-in-out;
+}
+
+#custom-clock, #custom-notification {
+  background-color: transparent;
+  padding: 0;
 }
 
 #custom-hw {
@@ -187,4 +199,330 @@ tooltip {
   font-weight: 500;
   border: 1px solid #cba6f7;
   transition: all 150ms ease-in-out;
+}
+
+/* GTK Button Normalization for Shell */
+button {
+  background-image: none;
+  box-shadow: none;
+}
+
+/* Scale (Slider) Styling for Cupcake-like look */
+scale trough {
+  min-height: 6px;
+  background-color: #24273a;
+  border-radius: 8px;
+}
+scale highlight {
+  background-color: #cba6f7;
+  border-radius: 8px;
+}
+scale slider {
+  min-width: 12px;
+  min-height: 12px;
+  background-color: #f5e0dc;
+  border-radius: 100%;
+  margin: -3px 0;
+}
+
+#popup-container { background-color: #1e1e2e; border: 2px solid #cba6f7; border-radius: 18px; padding: 16px; min-width: 200px; }
+
+
+/* Cupcake-style slider components */
+#cc-mute-btn {
+  background: transparent;
+  border-radius: 0px;
+  min-width: 36px;
+  min-height: 28px;
+  margin: 0px;
+}
+#cc-icon-label {
+  color: #cdd6f4;
+  font-size: 18px;
+  min-width: 26px;
+}
+#cc-scale {
+  min-width: 220px;
+}
+#cc-percent-label {
+  min-width: 46px;
+  color: #cdd6f4;
+  font-size: 14px;
+}
+
+/* ──────────────── Power Menu Widget ──────────────── */
+#power-container {
+  background-color: #1e1e2e;
+  border: 2px solid #cba6f7;
+  border-radius: 18px;
+  padding: 16px;
+  min-width: 300px;
+}
+#power-container button {
+  background: #24273a;
+  border-radius: 12px;
+  min-width: 50px;
+  min-height: 50px;
+  color: #cba6f7;
+  font-size: 24px;
+  margin: 0px 5px;
+  transition: all 0.3s ease-in-out;
+}
+#power-container button:hover {
+  background: #cba6f7;
+  color: #1e1e2e;
+}
+
+/* ────────────────── Volume OSD ────────────────── */
+@keyframes osdFadeIn {
+  0%   { opacity: 0; margin-bottom: -10px; }
+  100% { opacity: 1; margin-bottom: 0px; }
+}
+
+window#volume-osd {
+  background-color: transparent;
+}
+
+#osd-container {
+  background-color: #1e1e2e;
+  border: 1.5px solid #cba6f7;
+  border-radius: 999px;
+  padding: 14px 24px;
+  animation: osdFadeIn 0.25s ease;
+}
+
+#osd-icon {
+  font-size: 22px;
+  color: #cba6f7;
+  min-width: 28px;
+}
+
+#osd-scale {
+  min-width: 200px;
+}
+
+#osd-scale trough {
+  background-color: #313244;
+  border-radius: 8px;
+  min-height: 8px;
+}
+
+#osd-scale highlight {
+  background-color: #cba6f7;
+  border-radius: 8px;
+}
+
+#osd-scale slider,
+#bar-scale slider {
+  min-width: 0px;
+  min-height: 0px;
+  background: transparent;
+  box-shadow: none;
+}
+
+#osd-percent {
+  color: #cdd6f4;
+  font-size: 15px;
+  font-weight: bold;
+  min-width: 42px;
+}
+
+/* ────────────────── App Launcher ────────────────── */
+#app-launcher-container {
+  background-color: #27293F;
+  border-radius: 10px;
+  padding: 30px;
+}
+
+#app-launcher-inputbar {
+  background-color: rgba(36, 36, 70, 0.94);
+  border-radius: 20px;
+}
+
+#app-launcher-prompt {
+  padding: 12px 12px 12px 16px;
+  color: #D9E0EE;
+  font-weight: bold;
+}
+
+#app-launcher-search {
+  background-color: transparent;
+  color: #D9E0EE;
+  padding: 12px;
+  border: none;
+  box-shadow: none;
+}
+
+#app-btn {
+  background: transparent;
+  border-radius: 10px;
+  padding: 8px 10px;
+  border: none;
+  color: #D9E0EE;
+}
+
+#app-btn:hover {
+  background-color: #eecefa;
+  color: #27293F;
+}
+
+#app-name {
+  color: inherit;
+  font-family: "JetBrains Mono Nerd Font";
+  font-size: 14px;
+  font-weight: normal;
+  text-shadow: none;
+}
+
+#app-launcher-scroll scrollbar {
+  background-color: rgba(36, 36, 70, 0.94);
+  border-radius: 10px;
+}
+
+#app-launcher-scroll scrollbar slider {
+  background-color: #eecefa;
+  border-radius: 10px;
+  min-width: 2px;
+}
+
+/* ────────────────── Notification Daemon ────────────────── */
+
+/* The popup window container - transparent */
+#notification-panel-popup {
+  background-color: transparent;
+}
+
+/* The panel itself - solid dark background */
+#notification-panel {
+  background-color: #1a1b26;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Header bar inside the panel */
+#notification-panel label {
+  color: #cdd6f4;
+}
+
+/* Clear All button */
+#notification-clear-btn {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #a9b1d6;
+  border-radius: 8px;
+  padding: 4px 12px;
+  border: none;
+  font-size: 12px;
+}
+#notification-clear-btn:hover {
+  background-color: rgba(255, 100, 100, 0.3);
+  color: #f38ba8;
+}
+
+/* Individual notification cards inside the panel - slightly lighter than panel */
+#notification-panel #notification-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Toast notifications (floating) - solid so they're readable over the wallpaper */
+#notification-card {
+  background-color: #1a1b26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 4px;
+  min-width: 380px;
+}
+
+#notification-card label {
+  color: #cdd6f4;
+  text-shadow: none;
+}
+
+#notification-header {
+  font-weight: bold;
+}
+
+#notification-close-btn {
+  background-color: transparent;
+  color: #a9b1d6;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 11px;
+}
+#notification-close-btn:hover {
+  background-color: rgba(255, 50, 50, 0.4);
+  color: #f38ba8;
+}
+
+/* Scrollbar in notification panel */
+#notification-panel-scroll scrollbar {
+  background-color: transparent;
+  border-radius: 8px;
+  min-width: 4px;
+}
+#notification-panel-scroll scrollbar slider {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  min-width: 4px;
+  min-height: 20px;
+}
+#notification-panel-scroll scrollbar slider:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Toast overlay container */
+#notification-toasts-overlay {
+  background-color: transparent;
+}
+
+/* Calendar styling */
+calendar, calendar view, calendar header {
+  background: transparent;
+  border: none;
+  color: #a9b1d6;
+}
+calendar:selected {
+  background: #7aa2f7;
+  color: #1a1b26;
+  border-radius: 6px;
+}
+calendar button {
+  background: transparent;
+  color: #7aa2f7;
+  box-shadow: none;
+}
+calendar button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* DND Switch styling */
+switch {
+  background: #24273a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+switch slider {
+  background: #a9b1d6;
+  border-radius: 10px;
+}
+switch:checked {
+  background: #7aa2f7;
+}
+switch:checked slider {
+  background: #1a1b26;
+}
+
+/* Panel separator */
+#notification-panel separator {
+  background: rgba(255, 255, 255, 0.08);
+  min-width: 1px;
+}
+
+#clock-notif-sep {
+  color: @fg;
+  opacity: 0.3;
 }
