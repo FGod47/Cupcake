@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Io
+import Quickshell.Services.SystemTray
 import QtQuick.Controls
 
 PanelWindow {
@@ -310,8 +311,31 @@ PanelWindow {
                     id: trayRow
                     anchors.centerIn: parent
                     spacing: 8
-                    Text { text: ""; color: fg; font.family: fontName; font.pixelSize: fontSize }
-                    Text { text: ""; color: fg; font.family: fontName; font.pixelSize: fontSize }
+                    
+                    Repeater {
+                        model: SystemTray.items
+                        delegate: Image {
+                            source: modelData.icon
+                            width: 18
+                            height: 18
+                            fillMode: Image.PreserveAspectFit
+                            
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onClicked: (mouse) => {
+                                    if (mouse.button === Qt.LeftButton) {
+                                        modelData.activate()
+                                    } else if (mouse.button === Qt.RightButton) {
+                                        if (modelData.hasMenu) {
+                                            modelData.display(trayRow, mouse.x, mouse.y)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
