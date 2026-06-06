@@ -330,7 +330,7 @@ PanelWindow {
                                         modelData.activate()
                                     } else if (mouse.button === Qt.RightButton) {
                                         if (modelData.hasMenu) {
-                                            var pos = mapToItem(bar, mouse.x, mouse.y)
+                                            var pos = mapToItem(bar.contentItem, mouse.x, mouse.y)
                                             modelData.display(bar, pos.x, pos.y)
                                         }
                                     }
