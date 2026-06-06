@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
-import QtQuick.Layouts
 
 PanelWindow {
     id: popupWindow
@@ -9,48 +8,56 @@ PanelWindow {
         top: true
         right: true
     }
-    
+
     margins {
-        top: 45 // perfectly closes the vertical gap
-        right: 80 // perfectly aligned left of the power pill
+        top: 45      // flush against the bottom of the 34px pill + 6px bar margin + 5px gap = ~45
+        right: 80    // aligned left of power pill
     }
-    
-    // We want the window to be just wide enough and tall enough to fit our list
-    width: 320 + 32 // 320 for toast, 32 for margin padding
-    height: popupList.contentHeight + 32 // Extra space for animations
-    
-    // Nudge it over to the right or center depending on preference. Let's center top.
+
+    // Mirror the clock pill's dynamic width exactly
+    implicitWidth: globalState.activeNotifWidth > 0 ? globalState.activeNotifWidth : 380
+    implicitHeight: popupColumn.implicitHeight + 16  // 16px bottom padding so radius shows
+
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
-    
-    // To support multiple monitors or just the active one, pick a screen, or rely on Wayland defaults
-    
     color: "transparent"
-    
-    // Only show the popup list if there are 2 or more notifications, OR if we want to show all
+
+    // Only show when 2+ notifications are queued
     visible: globalState.popups && globalState.popups.length > 1
-    
-    ListView {
-        id: popupList
-        anchors.fill: parent
-        anchors.margins: 16
-        
-        spacing: 8
-        interactive: false
-        
-        model: globalState.popups ? globalState.popups.slice(1) : []
-        
-        delegate: Item {
-            width: popupList.width
-            height: cardContainer.implicitHeight
-            
-            Item {
-                id: cardContainer
-                width: popupList.width
-                implicitHeight: card.height
-                
-                NotificationCard {
-                    id: card
+
+    // Background box — rounded bottom, straight top (merges with pill)
+    Rectangle {
+        width: parent.width
+        height: parent.height
+        color: "#27293F"
+        radius: 18
+
+        // Cover the top rounded corners so it looks flush with the pill
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 18
+            color: "#27293F"
+        }
+
+        Column {
+            id: popupColumn
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: 8
+            }
+            spacing: 6
+
+            Repeater {
+                // Show everything except the first (shown in pill)
+                model: globalState.popups && globalState.popups.length > 1
+                       ? globalState.popups.slice(1) : []
+
+                delegate: NotificationCard {
+                    width: popupColumn.width
                     notificationData: modelData
                     inPanel: false
                 }

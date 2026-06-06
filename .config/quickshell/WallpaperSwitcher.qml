@@ -13,9 +13,9 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     color: "transparent"
-    implicitHeight: 1080
+    implicitHeight: 9000
 
     // ── Caelestia exact token values ─────────────────────────────────────
     readonly property int    wallW:       280          // wallpaperWidth
@@ -60,6 +60,13 @@ PanelWindow {
     function dismiss() {
         isOpen = false
         killTimer.restart()
+    }
+
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: console.log("Debug info:", root.width, root.isOpen, pill.width, pill.height, root.isInitialized, innerContent.opacity)
     }
 
     Timer {
@@ -143,6 +150,13 @@ PanelWindow {
     }
 
     Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: console.log("Debug info:", root.width, root.isOpen, pill.width, pill.height, root.isInitialized, innerContent.opacity)
+    }
+
+    Timer {
         id: initTimer
         interval: 50
         onTriggered: {
@@ -176,7 +190,11 @@ PanelWindow {
         Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
         Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
-        color: "transparent"
+        color: root.colBg
+        topLeftRadius: 36
+        topRightRadius: 36
+        bottomLeftRadius: 0
+        bottomRightRadius: 0
 
         Item {
             id: contentWrapper
@@ -200,22 +218,6 @@ PanelWindow {
             id: labelMetrics
             font.pixelSize: 12
             font.family: "Inter, Roboto, sans-serif"
-        }
-
-        // Background
-        Rectangle {
-            anchors.fill: parent
-            radius:       36
-            color:        root.colBg
-            
-            // Square off the bottom corners
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.left:   parent.left
-                anchors.right:  parent.right
-                height:         parent.radius
-                color:          root.colBg
-            }
         }
 
         // PathView carousel
@@ -398,7 +400,53 @@ PanelWindow {
                 }
             }
         }
-    }
+            } // Item innerContent
+        } // Item contentWrapper
+
+        // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
+        Shape {
+            width: 36; height: 36
+            anchors.bottom: parent.bottom
+            anchors.right: parent.left
+            anchors.rightMargin: -1
+            ShapePath {
+                fillColor: root.colBg
+                strokeColor: "transparent"
+                startX: 36; startY: 0
+                PathLine { x: 36; y: 36 }
+                PathLine { x: 0; y: 36 }
+                PathArc {
+                    x: 36; y: 0
+                    radiusX: 36; radiusY: 36
+                    useLargeArc: false
+                    direction: PathArc.Counterclockwise
+                }
+            }
+        }
+
+        // ── Right Fillet (Inverse bottom-right corner) ────────────────────
+        Shape {
+            width: 36; height: 36
+            anchors.bottom: parent.bottom
+            anchors.left: parent.right
+            anchors.leftMargin: -1
+            ShapePath {
+                fillColor: root.colBg
+                strokeColor: "transparent"
+                startX: 0; startY: 0
+                PathLine { x: 0; y: 36 }
+                PathLine { x: 36; y: 36 }
+                PathArc {
+                    x: 0; y: 0
+                    radiusX: 36; radiusY: 36
+                    useLargeArc: false
+                    direction: PathArc.Clockwise
+                }
+            }
+        }
+
+    } // Rectangle pill
+    } // Item masterWrapper
 
     // ── Wallpaper Process ────────────────────────────────────────────────
     Process {
@@ -412,56 +460,5 @@ PanelWindow {
         onClicked: root.dismiss()
     }
 
-            } // Item innerContent
-        } // Item contentWrapper
 
-    // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
-    Shape {
-        width: 36; height: 36
-        anchors.bottom: parent.bottom
-        anchors.right: parent.left
-        anchors.rightMargin: -1
-        transform: Translate { y: pill.height * root.offsetScale }
-        layer.enabled: true
-        layer.samples: 4
-        ShapePath {
-            fillColor: root.colBg
-            strokeColor: "transparent"
-            startX: 36; startY: 0
-            PathLine { x: 36; y: 36 }
-            PathLine { x: 0; y: 36 }
-            PathArc {
-                x: 36; y: 0
-                radiusX: 36; radiusY: 36
-                useLargeArc: false
-                direction: PathArc.Counterclockwise
-            }
-        }
-    }
-
-    // ── Right Fillet (Inverse bottom-right corner) ────────────────────
-    Shape {
-        width: 36; height: 36
-        anchors.bottom: parent.bottom
-        anchors.left: parent.right
-        anchors.leftMargin: -1
-        transform: Translate { y: pill.height * root.offsetScale }
-        layer.enabled: true
-        layer.samples: 4
-        ShapePath {
-            fillColor: root.colBg
-            strokeColor: "transparent"
-            startX: 0; startY: 0
-            PathLine { x: 0; y: 36 }
-            PathLine { x: 36; y: 36 }
-            PathArc {
-                x: 0; y: 0
-                radiusX: 36; radiusY: 36
-                useLargeArc: false
-                direction: PathArc.Clockwise
-            }
-        }
-    }
-    } // Rectangle pill
-    } // Item masterWrapper
 }
