@@ -315,7 +315,8 @@ PanelWindow {
                     Repeater {
                         model: SystemTray.items
                         delegate: Image {
-                            source: modelData.icon
+                            source: modelData.icon || ""
+                            sourceSize: Qt.size(18, 18)
                             width: 18
                             height: 18
                             fillMode: Image.PreserveAspectFit
@@ -326,10 +327,10 @@ PanelWindow {
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: (mouse) => {
                                     if (mouse.button === Qt.LeftButton) {
-                                        modelData.activate()
+                                        activate()
                                     } else if (mouse.button === Qt.RightButton) {
-                                        if (modelData.hasMenu) {
-                                            modelData.display(trayRow, mouse.x, mouse.y)
+                                        if (hasMenu) {
+                                            display(bar, mouse.x, mouse.y)
                                         }
                                     }
                                 }
