@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 import Quickshell
 import Quickshell.Services.Notifications
 import QtQuick
