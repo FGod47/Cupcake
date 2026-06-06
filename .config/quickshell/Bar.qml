@@ -327,10 +327,10 @@ PanelWindow {
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: (mouse) => {
                                     if (mouse.button === Qt.LeftButton) {
-                                        activate()
+                                        modelData.activate()
                                     } else if (mouse.button === Qt.RightButton) {
-                                        if (hasMenu) {
-                                            display(bar, mouse.x, mouse.y)
+                                        if (modelData.hasMenu) {
+                                            modelData.display(bar, mouse.x, mouse.y)
                                         }
                                     }
                                 }
