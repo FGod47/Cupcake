@@ -280,8 +280,8 @@ PanelWindow {
                     TapHandler {
                         onTapped: {
                             appList.currentIndex = delegateItem.index;
-                            let cmd = delegateItem.modelData.execString
-                                      || delegateItem.modelData.command.join(" ");
+                            let cmd = (delegateItem.modelData.execString
+                                      || delegateItem.modelData.command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
                             Quickshell.execDetached(["bash", "-c", cmd]);
                             root.dismiss();
                         }
@@ -403,7 +403,7 @@ PanelWindow {
                     if (apps.length > 0) {
                         let idx = (appList.currentIndex >= 0 && appList.currentIndex < apps.length)
                                   ? appList.currentIndex : 0;
-                        let cmd = apps[idx].execString || apps[idx].command.join(" ");
+                        let cmd = (apps[idx].execString || apps[idx].command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
                         Quickshell.execDetached(["bash", "-c", cmd]);
                         root.dismiss();
                     }
