@@ -526,7 +526,7 @@ PanelWindow {
                             MouseArea {
                                 anchors.fill: parent;
                                 cursorShape: Qt.PointingHandCursor
-                                // onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
+                                onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
                             }
                         }
 

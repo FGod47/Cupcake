@@ -23,6 +23,8 @@ ShellRoot {
         property bool closingIsland: false
     }
 
+    // Popups & Panels
+    NotificationPanel {}
     // NotificationPopup is now completely embedded inside Bar.qml for pixel-perfect pill alignment
 
     Timer {
