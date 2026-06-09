@@ -496,7 +496,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
-                property var activeNotif: globalState.popups.length > 0 ? globalState.popups[0] : null
+                property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
 
                 // To seamlessly merge the dropdown into the pill visually:
                 property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
@@ -506,7 +506,7 @@ PanelWindow {
                     color: "#27293F"
                     radius: 18
                 }
-
+                
                 Row {
                     id: clockRow
                     anchors.centerIn: parent
@@ -519,14 +519,13 @@ PanelWindow {
                         visible: opacity > 0
                         Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
-                        Text {
                             id: notifText
                             text: "󰂚"
                             color: fg; font.family: fontName; font.pixelSize: fontSize
                             MouseArea {
                                 anchors.fill: parent;
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
+                                // onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
                             }
                         }
 
