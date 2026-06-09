@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/colors.sh"
 # ──────────────── Color & Config Setup ────────────────
 COLORS=(15)
 CONFIGS=(
-  cupcake cava fastfetch hypr kitty nvim quickshell
+  cupcake cava fastfetch hypr kitty nvim quickshell qylock
 )
 SOURCE_DIR="$(cd "$SCRIPT_DIR/../../.config" && pwd)"
 BACKUP_DIR="$HOME/.config_backup"
@@ -102,4 +102,29 @@ if [ -f "$DESKTOP_ENTRY_SRC" ]; then
   update-desktop-database "$HOME/.local/share/applications" &>/dev/null || true
 else
   echo -e "${YELLOW}[SKIP]${RESET} cupcake-keybinds.desktop not found"
+fi
+
+# ──────────────── Install Quickshell Lockscreen & SDDM Theme ────────────────
+QYLOCK_SRC="$SCRIPT_DIR/../../.local/share/qylock-themes"
+QS_LOCK_SRC="$SCRIPT_DIR/../../.local/share/quickshell-lockscreen"
+
+if [ -d "$QYLOCK_SRC" ]; then
+  echo -e "${GREEN}[INSTALL]${RESET} qylock themes → ~/.local/share/qylock-themes"
+  mkdir -p "$HOME/.local/share/qylock-themes"
+  cp -r "$QYLOCK_SRC/"* "$HOME/.local/share/qylock-themes/"
+fi
+
+if [ -d "$QS_LOCK_SRC" ]; then
+  echo -e "${GREEN}[INSTALL]${RESET} quickshell-lockscreen → ~/.local/share/quickshell-lockscreen"
+  mkdir -p "$HOME/.local/share/quickshell-lockscreen"
+  cp -r "$QS_LOCK_SRC/"* "$HOME/.local/share/quickshell-lockscreen/"
+  chmod +x "$HOME/.local/share/quickshell-lockscreen/lock.sh"
+fi
+
+if command -v sddm &> /dev/null; then
+  echo -e "${GREEN}[INSTALL]${RESET} SDDM Theme (winter) → /usr/share/sddm/themes/winter"
+  sudo mkdir -p /usr/share/sddm/themes/winter
+  sudo cp -r "$HOME/.local/share/qylock-themes/winter/"* /usr/share/sddm/themes/winter/
+  sudo mkdir -p /etc/sddm.conf.d
+  echo -e "[Theme]\nCurrent=winter" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
 fi
