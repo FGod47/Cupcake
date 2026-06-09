@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -25,6 +26,13 @@ PanelWindow {
     
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
+    
+    IpcHandler {
+        target: "notifpanel"
+        function toggle(): void {
+            globalState.notifPanelVisible = !globalState.notifPanelVisible;
+        }
+    }
 
     Item {
         anchors.fill: parent
