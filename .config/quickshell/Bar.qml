@@ -519,6 +519,7 @@ PanelWindow {
                         visible: opacity > 0
                         Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
+                        Text {
                             id: notifText
                             text: "󰂚"
                             color: fg; font.family: fontName; font.pixelSize: fontSize
@@ -642,7 +643,6 @@ PanelWindow {
                 }
             }
         }
-        }
     }
 
     // ── Notification Dropdown Overlay ──────
@@ -699,4 +699,5 @@ PanelWindow {
             }
         }
     }
+}
 }
