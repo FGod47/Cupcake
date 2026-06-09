@@ -95,8 +95,8 @@ handle_aur_package() {
 packages=(
     git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
-    slurp grim android-tools imagemagick bc code cava waybar
-    rofi wget swaync pamixer pavucontrol telegram-desktop bat dunst nwg-look
+    slurp grim android-tools imagemagick bc code cava
+    wget pamixer pavucontrol telegram-desktop bat nwg-look
     nwg-displays libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc jmtpfs mtpfs libmtp repo os-prober cpio 7zip
     python-pipx ccache erofs-utils jq brightnessctl ddcutil i2c-tools
@@ -106,8 +106,8 @@ packages=(
 aur_packages=(
     atuin fzf awww starship zip unzip
     zsh-history-substring-search zsh-completions
-    zsh-autosuggestions zsh-syntax-highlighting
-    wlogout ttf-firacode-nerd ttf-jetbrains-mono-nerd
+    zsh-autosuggestions zsh-syntax-highlighting quickshell
+    ttf-firacode-nerd ttf-jetbrains-mono-nerd
     catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe
 )
 

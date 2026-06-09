@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/colors.sh"
 # ──────────────── Color & Config Setup ────────────────
 COLORS=(15)
 CONFIGS=(
-  cupcake cava dunst fastfetch hypr kitty nvim rofi swaync waybar wlogout
+  cupcake cava fastfetch hypr kitty nvim quickshell
 )
 SOURCE_DIR="$(cd "$SCRIPT_DIR/../../.config" && pwd)"
 BACKUP_DIR="$HOME/.config_backup"
@@ -68,18 +68,7 @@ for dir in "${CONFIGS[@]}"; do
     echo -e "${YELLOW}[SKIP]${RESET} $dir not found in source"
   fi
 
-  # ──────────────── wlogout icons ────────────────
-  if [ "$dir" = "wlogout" ]; then
-    ICON_SRC="$SRC_DIR/icons"
-    ICON_DEST="/usr/share/wlogout/icons"
-    if [ -d "$ICON_SRC" ]; then
-      echo -e "${GREEN}[INSTALL]${RESET} wlogout icons → /usr/share/wlogout/icons"
-      sudo mkdir -p "$ICON_DEST"
-      sudo cp -r "$ICON_SRC/"* "$ICON_DEST/"
-    else
-      echo -e "${YELLOW}[SKIP]${RESET} icons folder not found in wlogout"
-    fi
-  fi
+  # ──────────────── (Deprecated components removed) ────────────────
 done
 
 # ──────────────── Install starship.toml ────────────────
