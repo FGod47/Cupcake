@@ -39,7 +39,7 @@ PanelWindow {
                 spacing: 12
                 
                 Text {
-                    text: " "
+                    text: volumeSlider.value === 0 ? " " : (volumeSlider.value < 50 ? " " : " ")
                     color: "white"
                     font.pixelSize: 16
                     MouseArea {
@@ -77,7 +77,7 @@ PanelWindow {
                 spacing: 12
                 
                 Text {
-                    text: "☀ "
+                    text: backlightSlider.value < 33 ? "󰃞 " : (backlightSlider.value < 66 ? "󰃝 " : "󰃠 ")
                     color: "white"
                     font.pixelSize: 16
                 }
@@ -88,9 +88,25 @@ PanelWindow {
                     from: 0
                     to: 100
                     value: 0
+                    
+                    Timer {
+                        id: controlCenterDdcTimer
+                        interval: 150
+                        repeat: false
+                        property int targetValue: 100
+                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                    }
+                    
                     onMoved: {
-                        Quickshell.execDetached(`brightnessctl s ${Math.round(value)}%`)
+                        controlCenterDdcTimer.targetValue = value;
+                        controlCenterDdcTimer.restart();
                         backlightLabel.text = Math.round(value) + "%"
+                    }
+                    onPressedChanged: {
+                        if (!pressed) {
+                            controlCenterDdcTimer.stop();
+                            Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
+                        }
                     }
                 }
 
@@ -105,7 +121,13 @@ PanelWindow {
         }
     }
 
+    Component.onCompleted: {
+        updateVolume.running = true
+        updateBrightness.running = true
+    }
+
     Timer {
+        id: updateTimer
         interval: 1000
         running: controlCenter.visible
         repeat: true
@@ -118,14 +140,13 @@ PanelWindow {
     Process {
         id: updateVolume
         command: ["pamixer", "--get-volume"]
-        stdout: StdioCollector {
-            onStreamFinished: (data) => {
-                if (!volumeSlider.pressed) {
-                    var vol = parseInt(data)
-                    if (!isNaN(vol)) {
-                        volumeSlider.value = vol
-                        volumeLabel.text = vol + "%"
-                    }
+        stdout: StdioCollector { id: updateVolumeStdout }
+        onExited: {
+            if (!volumeSlider.pressed) {
+                var vol = parseInt((updateVolumeStdout.text || "").trim())
+                if (!isNaN(vol)) {
+                    volumeSlider.value = vol
+                    volumeLabel.text = vol + "%"
                 }
             }
         }
@@ -133,11 +154,13 @@ PanelWindow {
 
     Process {
         id: updateBrightness
-        command: ["sh", "-c", "brightnessctl -m | awk -F, '{print substr($4, 1, length($4)-1)}'"]
-        stdout: StdioCollector {
-            onStreamFinished: (data) => {
-                if (!backlightSlider.pressed) {
-                    var bright = parseInt(data)
+        command: ["ddcutil", "getvcp", "10", "--terse"]
+        stdout: StdioCollector { id: updateBrightnessStdout }
+        onExited: {
+            if (!backlightSlider.pressed) {
+                let parts = (updateBrightnessStdout.text || "").trim().split(" ");
+                if (parts.length >= 4) {
+                    let bright = parseInt(parts[3]);
                     if (!isNaN(bright)) {
                         backlightSlider.value = bright
                         backlightLabel.text = bright + "%"

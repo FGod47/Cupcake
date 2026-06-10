@@ -366,7 +366,7 @@ PanelWindow {
                     // Audio
                     Row {
                         spacing: 0
-                        Text { text: ""; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: audioSlider
                             leftPadding: 8
@@ -398,6 +398,21 @@ PanelWindow {
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
                             onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
+                            
+                            Process {
+                                id: audioProc
+                                command: ["pamixer", "--get-volume"]
+                                running: true
+                                stdout: StdioCollector { id: audioStdout }
+                                onExited: {
+                                    let val = parseInt((audioStdout.text || "").trim());
+                                    if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
+                                }
+                            }
+                            Timer {
+                                interval: 3000; running: true; repeat: true
+                                onTriggered: audioProc.running = true
+                            }
                         }
                         Text {
                             leftPadding: 8
@@ -413,7 +428,7 @@ PanelWindow {
                     // Backlight
                     Row {
                         spacing: 0
-                        Text { text: "☀"; color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: lightSlider.value < 33 ? "󰃞" : (lightSlider.value < 66 ? "󰃝" : "󰃠"); color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
                             leftPadding: 8
@@ -459,6 +474,20 @@ PanelWindow {
                                 if (!pressed) {
                                     ddcTimer.stop();
                                     Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
+                                }
+                            }
+                            
+                            Process {
+                                id: lightProc
+                                command: ["ddcutil", "getvcp", "10", "--terse"]
+                                running: true
+                                stdout: StdioCollector { id: lightStdout }
+                                onExited: {
+                                    let parts = (lightStdout.text || "").trim().split(" ");
+                                    if (parts.length >= 4) {
+                                        let val = parseInt(parts[3]);
+                                        if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
+                                    }
                                 }
                             }
                         }
