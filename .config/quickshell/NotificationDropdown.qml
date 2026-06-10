@@ -21,14 +21,14 @@ PanelWindow {
     WlrLayershell.namespace: "waybar-dropdown"
     WlrLayershell.layer: WlrLayer.Overlay
 
-    width: 380
+    implicitWidth: 380
     
     property bool closingIsland: globalState.closingIsland
     property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland
     
     // Shrink vertically down to the clock pill's height (34)
-    height: hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
-    Behavior on height { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+    implicitHeight: hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
+    Behavior on implicitHeight { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
 
     Rectangle {
         anchors.fill: parent
