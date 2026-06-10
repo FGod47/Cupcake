@@ -26,7 +26,7 @@ ShellRoot {
     // Popups & Panels
     NotificationPanel {}
     Osd {}
-    NotificationDropdown {}
+    // NotificationPopup is now completely embedded inside Bar.qml for pixel-perfect pill alignment
 
     Timer {
         id: islandTimer

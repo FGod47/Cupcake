@@ -16,8 +16,10 @@ PanelWindow {
     }
     WlrLayershell.namespace: "waybar"
     exclusiveZone: 46
-    // Fixed height: 46px. Notification dropdown is handled via an independent Wayland subsurface Popup.
-    implicitHeight: 46
+    // Grow downward when stacked notifications need a dropdown
+    implicitHeight: (globalState.popups && globalState.popups.length > 0)
+                    ? 46 + notifDropdown.implicitHeight + 4 : 46
+    Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
     color: "transparent"
     
     property var modelData
@@ -517,13 +519,16 @@ PanelWindow {
                 radius: 18
                 implicitHeight: 34
                 color: "#27293F"
-                // Smoothly animate width as contents change.
-                implicitWidth: clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+                // Smoothly animate width as contents change. If dropping down, become wide for the cards.
+                implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
+                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
                 property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
+
+                // To seamlessly merge the dropdown into the pill visually:
+                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
                 
                 Rectangle {
                     anchors.fill: parent
@@ -539,6 +544,9 @@ PanelWindow {
                     // --- Standard Clock State ---
                     Row {
                         spacing: 5
+                        opacity: !clockPill.hasDropdown ? 1 : 0
+                        visible: opacity > 0
+                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
                         Text {
                             id: notifText
@@ -666,6 +674,59 @@ PanelWindow {
         }
     }
 
-    // Notification dropdown has been extracted to NotificationDropdown.qml
+    // ── Notification Dropdown Overlay ──────
+    Item {
+        id: notifDropdown
+        z: 10
+        clip: true
+        
+        // Stay fully solid and visible during the entire collapse
+        visible: clockPill.hasDropdown || globalState.closingIsland
+        opacity: 1
+
+        implicitWidth: clockPill.width
+        
+        // Shrink vertically down to the clock pill's height (34)
+        implicitHeight: clockPill.hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
+        Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+
+        // Position perfectly to overlay the horizontal clock pill
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: powerPill.width + 16
+
+        // Solid rounded background covers the clock pill
+        Rectangle {
+            anchors.fill: parent
+            color: "#27293F"
+            radius: 18
+        }
+
+        Column {
+            id: dropdownCol
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.topMargin: 8
+            
+            transformOrigin: Item.TopRight
+            scale: clockPill.hasDropdown ? 1.0 : 0.0
+            
+            Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+
+            spacing: 6
+            Repeater {
+                model: globalState.popups && globalState.popups.length > 0 ? globalState.popups : []
+                delegate: NotificationCard {
+                    width: dropdownCol.width
+                    notificationData: modelData
+                    inPanel: false
+                }
+            }
+        }
+    }
 }
 }
