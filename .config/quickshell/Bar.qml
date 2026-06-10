@@ -19,6 +19,7 @@ PanelWindow {
     // Grow downward when stacked notifications need a dropdown
     implicitHeight: (globalState.popups && globalState.popups.length > 0)
                     ? 46 + notifDropdown.implicitHeight + 4 : 46
+    Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
     color: "transparent"
     
     property var modelData
@@ -687,6 +688,7 @@ PanelWindow {
         
         // Shrink vertically down to the clock pill's height (34)
         implicitHeight: clockPill.hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
+        Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
 
         // Position perfectly to overlay the horizontal clock pill
         anchors.top: parent.top
@@ -696,9 +698,7 @@ PanelWindow {
 
         // Solid rounded background covers the clock pill
         Rectangle {
-            width: parent.width
-            height: clockPill.hasDropdown ? parent.height : 34
-            Behavior on height { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+            anchors.fill: parent
             color: "#27293F"
             radius: 18
         }
