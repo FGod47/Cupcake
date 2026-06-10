@@ -20,8 +20,12 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
 
     // Expand width to 380 matching the pill's expansion
-    implicitWidth: hasDropdown ? 380 : 150 // Match normal clock pill width when closed
+    implicitWidth: hasDropdown ? 380 : globalState.clockPillWidth // Match exact normal clock pill width when closed
     Behavior on implicitWidth { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+    
+    // Fade out the entire overlay window during the closing phase so the text beneath fades in smoothly
+    opacity: closingIsland ? 0.0 : 1.0
+    Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.InOutQuad } }
     
     property bool closingIsland: globalState.closingIsland
     property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland

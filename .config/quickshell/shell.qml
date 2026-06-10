@@ -20,6 +20,7 @@ ShellRoot {
         property var popups: []
         property var activePopup: null
         property real activeNotifWidth: 352
+        property real clockPillWidth: 150
         property bool closingIsland: false
     }
 
@@ -42,7 +43,7 @@ ShellRoot {
 
     Timer {
         id: islandCloseTimer
-        interval: 900
+        interval: 600
         repeat: false
         onTriggered: {
             globalState.popups = [];

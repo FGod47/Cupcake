@@ -528,6 +528,13 @@ PanelWindow {
                 // To seamlessly merge the dropdown into the pill visually:
                 property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
                 
+                // Keep globalState informed of our true width so the overlay window can morph back perfectly
+                onWidthChanged: {
+                    if (!hasDropdown && !globalState.closingIsland) {
+                        globalState.clockPillWidth = clockRow.implicitWidth + 32;
+                    }
+                }
+                
                 Rectangle {
                     anchors.fill: parent
                     color: "#27293F"
@@ -544,7 +551,7 @@ PanelWindow {
                         spacing: 5
                         opacity: !clockPill.hasDropdown ? 1 : 0
                         visible: opacity > 0
-                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
+                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
                         Text {
                             id: notifText
