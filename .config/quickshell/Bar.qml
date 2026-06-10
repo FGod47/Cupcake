@@ -672,60 +672,6 @@ PanelWindow {
         }
     }
 
-    // ── Notification Dropdown Overlay (Native Subsurface) ──────
-    Popup {
-        id: notifDropdown
-        
-        // Match the bar's coordinate system
-        y: 6 // Vertically centered against the 46px bar
-        x: bar.width - width - powerPill.width - 16
-        
-        // Track the pill's width dynamically
-        width: clockPill.width
-        
-        // Animate height strictly internally without touching Wayland bounds
-        height: clockPill.hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
-        Behavior on height { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
-
-        visible: clockPill.hasDropdown || globalState.closingIsland
-        closePolicy: Popup.NoAutoClose
-        padding: 0
-        
-        background: Rectangle {
-            color: "#27293F"
-            radius: 18
-        }
-
-        // Inner Content
-        Item {
-            anchors.fill: parent
-            clip: true
-
-            Column {
-                id: dropdownCol
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 8
-                anchors.rightMargin: 8
-                anchors.topMargin: 8
-                
-                transformOrigin: Item.TopRight
-                scale: clockPill.hasDropdown ? 1.0 : 0.0
-                
-                Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
-
-                spacing: 6
-                Repeater {
-                    model: globalState.popups && globalState.popups.length > 0 ? globalState.popups : []
-                    delegate: NotificationCard {
-                        width: dropdownCol.width
-                        notificationData: modelData
-                        inPanel: false
-                    }
-                }
-            }
-        }
-    }
+    // Notification dropdown has been extracted to NotificationDropdown.qml
 }
 }
