@@ -19,7 +19,6 @@ PanelWindow {
     // Grow downward when stacked notifications need a dropdown
     implicitHeight: (globalState.popups && globalState.popups.length > 0)
                     ? 46 + notifDropdown.implicitHeight + 4 : 46
-    Behavior on implicitHeight { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
     color: "transparent"
     
     property var modelData
@@ -521,7 +520,7 @@ PanelWindow {
                 color: "#27293F"
                 // Smoothly animate width as contents change. If dropping down, become wide for the cards.
                 implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
@@ -688,7 +687,6 @@ PanelWindow {
         
         // Shrink vertically down to the clock pill's height (34)
         implicitHeight: clockPill.hasDropdown ? Math.max(34, dropdownCol.height + 16) : 34
-        Behavior on implicitHeight { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
 
         // Position perfectly to overlay the horizontal clock pill
         anchors.top: parent.top
@@ -698,7 +696,9 @@ PanelWindow {
 
         // Solid rounded background covers the clock pill
         Rectangle {
-            anchors.fill: parent
+            width: parent.width
+            height: clockPill.hasDropdown ? parent.height : 34
+            Behavior on height { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
             color: "#27293F"
             radius: 18
         }
@@ -715,7 +715,7 @@ PanelWindow {
             transformOrigin: Item.TopRight
             scale: clockPill.hasDropdown ? 1.0 : 0.0
             
-            Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+            Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
 
             spacing: 6
             Repeater {
