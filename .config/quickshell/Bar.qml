@@ -517,16 +517,13 @@ PanelWindow {
                 radius: 18
                 implicitHeight: 34
                 color: "#27293F"
-                // Smoothly animate width as contents change. If dropping down, become wide for the cards.
-                implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+                // Smoothly animate width as contents change.
+                implicitWidth: clockRow.implicitWidth + 32
+                Behavior on implicitWidth { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
                 property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
-
-                // To seamlessly merge the dropdown into the pill visually:
-                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
                 
                 Rectangle {
                     anchors.fill: parent
@@ -542,9 +539,6 @@ PanelWindow {
                     // --- Standard Clock State ---
                     Row {
                         spacing: 5
-                        opacity: !clockPill.hasDropdown ? 1 : 0
-                        visible: opacity > 0
-                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
                         Text {
                             id: notifText
