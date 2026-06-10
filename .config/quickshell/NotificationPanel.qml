@@ -21,9 +21,14 @@ PanelWindow {
     implicitWidth: 340
     color: "transparent"
     
-    // We keep the window itself visible so the animation can play out before hiding it completely
-    visible: true 
-    
+    // Only keep the window visible while open or while animating closed.
+    // The panelBg width animation takes 550ms. We use a Timer or state check.
+    // However, an easy way to prevent blocking clicks is to just disable interaction when not visible.
+    // Or just bind visibility to globalState.notifPanelVisible! If we want it to animate out, we need a small delay.
+    // Actually, Quickshell ignores clicks if WlrLayershell.keyboardFocus is none and we set pass-through...
+    // Let's just make it visible: globalState.notifPanelVisible (animation out will clip instantly, but it fixes the massive mouse block bug!)
+    // To allow animation: 
+    visible: globalState.notifPanelVisible || panelBg.width > 0
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     
