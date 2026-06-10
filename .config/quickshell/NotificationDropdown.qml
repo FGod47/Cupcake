@@ -23,10 +23,6 @@ PanelWindow {
     implicitWidth: hasDropdown ? 380 : globalState.clockPillWidth // Match exact normal clock pill width when closed
     Behavior on implicitWidth { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
     
-    // Fade out the entire overlay window during the closing phase so the text beneath fades in smoothly
-    opacity: closingIsland ? 0.0 : 1.0
-    Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.InOutQuad } }
-    
     property bool closingIsland: globalState.closingIsland
     property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland
     
@@ -39,6 +35,10 @@ PanelWindow {
         color: "#27293F"
         radius: 18
         clip: true
+        
+        // Fade out the entire overlay during the closing phase so the text beneath fades in smoothly
+        opacity: dropdownWindow.closingIsland ? 0.0 : 1.0
+        Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.InOutQuad } }
         
         Column {
             id: dropdownCol
