@@ -1,71 +1,64 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
-import QtQuick.Layouts
 
 PanelWindow {
     id: dropdownWindow
-    visible: globalState.popups && globalState.popups.length > 0
+    visible: globalState.popups && globalState.popups.length > 0 || globalState.closingIsland
     
     anchors.top: true
     anchors.right: true
     
-    // Perfectly align right edge with the main bar's content padding (8px)
-    // Place it exactly below the 46px bar with a clean 8px gap
-    margins.top: 54
-    margins.right: 8
+    // Position exactly over the Bar's clockPill to create a perfect Dynamic Island morph!
+    // clockPill Absolute Y = 10, Absolute Right Margin = 62
+    margins.top: 10
+    margins.right: 62
 
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "waybar-dropdown"
-    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.layer: WlrLayer.Overlay
 
-    implicitWidth: 380
+    // Expand width to 380 matching the pill's expansion
+    implicitWidth: hasDropdown ? 380 : 150 // Match normal clock pill width when closed
+    Behavior on implicitWidth { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
     
     property bool closingIsland: globalState.closingIsland
     property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland
     
-    // Smoothly track the height of the content, but clamp it to a reasonable maximum (e.g., 400px) so it doesn't overflow the screen
-    implicitHeight: hasDropdown ? Math.min(800, contentItem.implicitHeight) : 0
-    Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.OutExpo } }
+    // Smoothly track height, starting from 34 (pill height)
+    implicitHeight: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
+    Behavior on implicitHeight { NumberAnimation { duration: closingIsland ? 600 : 400; easing.type: closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
 
-    Item {
-        id: contentItem
+    Rectangle {
         anchors.fill: parent
-        implicitHeight: dropdownCol.implicitHeight + 16
+        color: "#27293F"
+        radius: 18
+        clip: true
         
-        // Inner scale and opacity for a beautiful opening effect
-        scale: dropdownWindow.hasDropdown ? 1.0 : 0.95
-        opacity: dropdownWindow.hasDropdown ? 1.0 : 0.0
-        transformOrigin: Item.Top
-        
-        Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutExpo } }
-        Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+        Column {
+            id: dropdownCol
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.topMargin: 8
+            
+            transformOrigin: Item.TopRight
+            scale: dropdownWindow.hasDropdown ? 1.0 : 0.0
+            opacity: dropdownWindow.hasDropdown ? 1.0 : 0.0
+            
+            Behavior on scale { NumberAnimation { duration: dropdownWindow.closingIsland ? 600 : 400; easing.type: dropdownWindow.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+            Behavior on opacity { NumberAnimation { duration: dropdownWindow.closingIsland ? 600 : 400; easing.type: dropdownWindow.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
 
-        Rectangle {
-            anchors.fill: parent
-            color: "#1e1e2e" // Deep premium background
-            radius: 16
-            border.color: "#33ffffff"
-            border.width: 1
-            clip: true
-
-            Column {
-                id: dropdownCol
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.margins: 8
-                spacing: 6
-                
-                // Only show up to the 5 most recent notifications to prevent massive overflow
-                Repeater {
-                    model: globalState.popups ? globalState.popups.slice(0, 5) : []
-                    delegate: NotificationCard {
-                        width: dropdownCol.width
-                        notificationData: modelData
-                        inPanel: false
-                    }
+            spacing: 6
+            Repeater {
+                model: globalState.popups && globalState.popups.length > 0 ? globalState.popups.slice(0, 5) : []
+                delegate: NotificationCard {
+                    width: dropdownCol.width
+                    notificationData: modelData
+                    inPanel: false
                 }
             }
         }
