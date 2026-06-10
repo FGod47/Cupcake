@@ -21,17 +21,21 @@ ShellRoot {
         property var activePopup: null
         property real activeNotifWidth: 352
         property real clockPillWidth: 150
+        property real islandWidth: 150
+        property string clockString: ""
         property bool closingIsland: false
     }
 
     // Popups & Panels
     NotificationPanel {}
     Osd {}
-    NotificationDropdown {}
+    NotificationDropdown {
+        width: globalState.islandWidth
+    }
 
     Timer {
         id: islandTimer
-        interval: 5000
+        interval: 5000 // Island stays open for 5 seconds
         repeat: false
         onTriggered: {
             if (globalState.popups.length > 0) {
@@ -43,7 +47,7 @@ ShellRoot {
 
     Timer {
         id: islandCloseTimer
-        interval: 600
+        interval: 800 // Wait for the visual closing animations to finish before clearing popups
         repeat: false
         onTriggered: {
             globalState.popups = [];

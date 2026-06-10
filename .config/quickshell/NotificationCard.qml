@@ -22,7 +22,6 @@ Item {
         width: wrapper.width
         // Use mainRow.height (explicitly set) NOT implicitHeight (0 for Item)
         height: mainRow.height + 20
-        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
         color: "#1e1e2e"
         clip: true

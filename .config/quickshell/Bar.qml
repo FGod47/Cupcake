@@ -517,24 +517,22 @@ PanelWindow {
                 radius: 18
                 implicitHeight: 34
                 color: "#27293F"
-                // Smoothly animate width as contents change. If dropping down, become wide for the cards.
                 implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutQuint } }
+                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 800 : 600; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutExpo } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
                 property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
 
-                // To seamlessly merge the dropdown into the pill visually:
                 property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
                 
-                // Keep globalState informed of our true width so the overlay window can morph back perfectly
                 onWidthChanged: {
-                    if (!hasDropdown && !globalState.closingIsland) {
-                        globalState.clockPillWidth = clockRow.implicitWidth + 32;
-                    }
+                    globalState.islandWidth = width;
                 }
-                
+                Component.onCompleted: {
+                    globalState.islandWidth = width;
+                }
+
                 Rectangle {
                     anchors.fill: parent
                     color: "#27293F"
@@ -550,8 +548,8 @@ PanelWindow {
                     Row {
                         spacing: 5
                         opacity: !clockPill.hasDropdown ? 1 : 0
-                        visible: opacity > 0
-                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 600 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
+                        visible: true
+                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 800 : 600; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutExpo } }
 
                         Text {
                             id: notifText
@@ -573,6 +571,8 @@ PanelWindow {
                             font.family: fontName
                             font.pixelSize: fontSize
                             font.weight: 500
+                            onTextChanged: globalState.clockString = text
+                            Component.onCompleted: globalState.clockString = text
 
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
                         }
