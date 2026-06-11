@@ -314,6 +314,51 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 anchors.margins: 16
                                 Text {
+                                    text: "Color Mode (Light / Dark)"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                
+                                Switch {
+                                    id: colorModeSwitch
+                                    
+                                    property bool initialized: false
+                                    
+                                    Process {
+                                        command: ["cat", "/home/one/.config/cupcake/.color_mode"]
+                                        running: true
+                                        stdout: StdioCollector {
+                                            onStreamFinished: {
+                                                if (text.trim() === "light") {
+                                                    colorModeSwitch.checked = true;
+                                                } else {
+                                                    colorModeSwitch.checked = false;
+                                                }
+                                                colorModeSwitch.initialized = true;
+                                            }
+                                        }
+                                    }
+                                    
+                                    onCheckedChanged: {
+                                        if (!initialized) return;
+                                        let newMode = checked ? "light" : "dark";
+                                        Quickshell.execDetached(["bash", "-c", "echo '" + newMode + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
                                     text: "Reload Hyprland Config"
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
