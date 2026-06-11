@@ -39,6 +39,7 @@ ApplicationWindow {
                 Text {
                     text: "🧁 Cupcake"
                     color: Theme.colOnSurface
+                    font.family: root.font.family
                     font.pixelSize: 28
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
@@ -55,6 +56,7 @@ ApplicationWindow {
                         anchors.centerIn: parent
                         text: "  Wallpapers"
                         color: Theme.colOnPrimary
+                        font.family: root.font.family
                         font.pixelSize: 16
                         font.bold: true
                     }
@@ -65,6 +67,7 @@ ApplicationWindow {
                 Text {
                     text: "Powered by Quickshell"
                     color: Theme.colOnSurfaceVariant
+                    font.family: root.font.family
                     font.pixelSize: 12
                     Layout.alignment: Qt.AlignHCenter
                     Layout.bottomMargin: 8
@@ -88,6 +91,7 @@ ApplicationWindow {
                 Text {
                     text: "Select Wallpaper"
                     color: Theme.colOnSurface
+                    font.family: root.font.family
                     font.pixelSize: 32
                     font.bold: true
                 }
@@ -95,6 +99,7 @@ ApplicationWindow {
                 Text {
                     text: "Clicking a wallpaper will instantly apply it and regenerate your dynamic material colors."
                     color: Theme.colOnSurfaceVariant
+                    font.family: root.font.family
                     font.pixelSize: 14
                     Layout.bottomMargin: 16
                 }
