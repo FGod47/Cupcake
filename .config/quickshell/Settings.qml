@@ -26,8 +26,8 @@ ApplicationWindow {
 
     RowLayout {
         anchors.fill: parent
-        anchors.margins: 8 // end-4 uses tighter outer margins
-        spacing: 8 // end-4 uses tight spacing between rail and content
+        anchors.margins: 8 // tighter outer margins
+        spacing: 8 // tight spacing between rail and content
 
         // Navigation Rail (No background, floats on window)
         Item {
@@ -61,7 +61,7 @@ ApplicationWindow {
 
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
-                    radius: 24 // Fully rounded pill shape like end-4
+                    radius: 24 // Fully rounded pill shape
                     color: root.currentIndex === pageIndex ? Theme.colPrimary : "transparent"
                     
                     RowLayout {
@@ -111,12 +111,12 @@ ApplicationWindow {
             }
         }
 
-        // Content Area (end-4 uses a rounded rectangle container for the active page)
+        // Content Area (uses a rounded rectangle container for the active page)
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: Theme.colSurfaceContainerHigh
-            radius: 24 // Large rounded corners like end-4
+            radius: 24 // Large rounded corners
             clip: true
 
             // We use Loader to get page transition animations, or just StackLayout.
