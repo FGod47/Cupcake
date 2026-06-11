@@ -21,7 +21,7 @@ PanelWindow {
     implicitHeight: 48 + 24
     
     color: "transparent"
-    exclusiveZone: implicitHeight // Reserve screen space
+    exclusiveZone: 0 // 0 means do not reserve space, float over maximized apps
 
     Item {
         anchors.fill: parent
