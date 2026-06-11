@@ -17,17 +17,32 @@ PanelWindow {
     screen: modelData
     
     // Make the window exact size of the dock + 12px bottom padding
-    width: dockLayout.implicitWidth + 32
+    implicitWidth: dockLayout.implicitWidth + 32
     implicitHeight: 48 + 24
     
     color: "transparent"
     exclusiveZone: 0 // 0 means do not reserve space, float over maximized apps
 
+    // Use Region mask to restrict Wayland input exclusively to the visual dock!
+    // This allows clicks to pass through to the desktop when the dock is hidden.
+    mask: Region {
+        item: visualDock
+    }
+
     Item {
         anchors.fill: parent
 
         Rectangle {
-            anchors.top: parent.top
+            id: visualDock
+            
+            HoverHandler {
+                id: hoverHandler
+            }
+
+            // Auto-hide: slide down when not hovered, leaving just 6px visible at the edge to catch the mouse
+            y: hoverHandler.hovered ? 0 : 66
+            Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
             height: 64
