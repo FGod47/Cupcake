@@ -7,19 +7,21 @@ import "theme"
 
 PanelWindow {
     id: dockWindow
-    anchors.bottom: true
-    anchors.bottomMargin: 10
+    anchors {
+        bottom: true
+        left: true
+        right: true
+    }
     
-    // Center it
-    anchors.left: true
-    anchors.right: true
+    // Instead of bottomMargin on the window, we'll pad the height
+    height: 74
     
     // For PanelWindow, horizontalCenter anchors aren't perfectly supported in all versions.
     // Instead we can anchor left/right and put an Item in the center.
 
-    height: 64
+    height: 74
     color: "transparent"
-    exclusiveZone: height + anchors.bottomMargin // Reserve screen space
+    exclusiveZone: height // Reserve screen space
 
     Item {
         anchors.fill: parent
