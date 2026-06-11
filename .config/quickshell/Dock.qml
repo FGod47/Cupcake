@@ -26,30 +26,38 @@ PanelWindow {
     // Use Region mask to restrict Wayland input exclusively to the visual dock!
     // This allows clicks to pass through to the desktop when the dock is hidden.
     mask: Region {
-        item: visualDock
+        item: hoverRegion
     }
 
     Item {
         anchors.fill: parent
 
-        Rectangle {
-            id: visualDock
+        Item {
+            id: hoverRegion
+            width: parent.width
             
+            // Slide up when hovered, down when hidden
+            y: hoverHandler.hovered ? 0 : 66
+            Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
+            // Crucial: The height expands to reach the bottom of the screen as it slides up,
+            // ensuring the mouse (which is at the bottom of the screen) stays inside the hover area!
+            height: parent.height - y
+
             HoverHandler {
                 id: hoverHandler
             }
 
-            // Auto-hide: slide down when not hovered, leaving just 6px visible at the edge to catch the mouse
-            y: hoverHandler.hovered ? 0 : 66
-            Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            height: 64
-            color: Theme.colSurfaceContainer
-            radius: 20
-            border.color: Theme.colPrimary
-            border.width: 1
+            Rectangle {
+                id: visualDock
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width
+                height: 64
+                color: Theme.colSurfaceContainer
+                radius: 20
+                border.color: Theme.colPrimary
+                border.width: 1
 
             RowLayout {
                 id: dockLayout
@@ -145,6 +153,7 @@ PanelWindow {
                         }
                     }
                 }
+            }
             }
         }
     }
