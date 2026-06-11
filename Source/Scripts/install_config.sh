@@ -139,3 +139,31 @@ if command -v sddm &> /dev/null; then
   sudo mkdir -p /etc/sddm.conf.d
   echo -e "[Theme]\nCurrent=winter" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
 fi
+
+# ──────────────── Install Cursor Configuration ────────────────
+echo -e "${GREEN}[INSTALL]${RESET} Configuring Bibata-Modern-Ice cursor globally"
+mkdir -p "$HOME/.icons/default"
+echo -e "[Icon Theme]\nName=Default\nComment=Default Cursor Theme\nInherits=Bibata-Modern-Ice" > "$HOME/.icons/default/index.theme"
+
+mkdir -p "$HOME/.config/gtk-3.0"
+cat <<EOF > "$HOME/.config/gtk-3.0/settings.ini"
+[Settings]
+gtk-theme-name=catppuccin-frappe-blue-standard+default
+gtk-icon-theme-name=Colloid-Pastel-Dark
+gtk-font-name=Adwaita Sans 11
+gtk-cursor-theme-name=Bibata-Modern-Ice
+gtk-cursor-theme-size=24
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=0
+gtk-menu-images=0
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=0
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintslight
+gtk-xft-rgba=rgb
+gtk-application-prefer-dark-theme=0
+EOF
+
+gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice' 2>/dev/null || true

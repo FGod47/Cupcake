@@ -109,7 +109,7 @@ aur_packages=(
     zsh-autosuggestions zsh-syntax-highlighting quickshell
     ttf-firacode-nerd ttf-jetbrains-mono-nerd
     catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe
-    matugen-bin
+    matugen-bin bibata-cursor-theme-bin
 )
 
 # ──────────────── Install All Pacman Packages ────────────────
