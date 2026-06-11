@@ -13,15 +13,12 @@ PanelWindow {
         right: true
     }
     
-    // Instead of bottomMargin on the window, we'll pad the height
-    height: 74
+    required property var modelData
+    screen: modelData
     
-    // For PanelWindow, horizontalCenter anchors aren't perfectly supported in all versions.
-    // Instead we can anchor left/right and put an Item in the center.
-
-    height: 74
+    implicitHeight: 74
     color: "transparent"
-    exclusiveZone: height // Reserve screen space
+    exclusiveZone: implicitHeight // Reserve screen space
 
     Item {
         anchors.fill: parent
