@@ -24,6 +24,7 @@ ShellRoot {
         property real islandWidth: 150
         property string clockString: ""
         property bool closingIsland: false
+        property bool hideIsland: false
     }
 
     // Popups & Panels
@@ -37,18 +38,29 @@ ShellRoot {
         onTriggered: {
             if (globalState.popups.length > 0) {
                 globalState.closingIsland = true;
+                islandHideTimer.start();
                 islandCloseTimer.start();
             }
         }
     }
 
     Timer {
+        id: islandHideTimer
+        interval: 50
+        repeat: false
+        onTriggered: {
+            globalState.hideIsland = true;
+        }
+    }
+
+    Timer {
         id: islandCloseTimer
-        interval: 800 // Wait for the visual closing animations to finish before clearing popups
+        interval: 2050 // Wait for the visual closing animations to finish before clearing popups
         repeat: false
         onTriggered: {
             globalState.popups = [];
             globalState.closingIsland = false;
+            globalState.hideIsland = false;
         }
     }
     
@@ -60,6 +72,8 @@ ShellRoot {
 
             // Reset closing state if a new notification arrives
             globalState.closingIsland = false;
+            globalState.hideIsland = false;
+            islandHideTimer.stop();
             islandCloseTimer.stop();
 
             // Add to popup array using concat to create a new array reference so the UI actually updates

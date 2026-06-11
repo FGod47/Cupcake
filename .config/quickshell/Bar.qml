@@ -518,13 +518,13 @@ PanelWindow {
                 implicitHeight: 34
                 color: "#27293F"
                 implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+                Behavior on implicitWidth { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
                 property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
 
-                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.closingIsland
+                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
                 
                 onWidthChanged: {
                     globalState.islandWidth = width;
@@ -546,10 +546,47 @@ PanelWindow {
                     
                     // --- Standard Clock State ---
                     Row {
+                        id: mainClockRow
                         spacing: 5
-                        opacity: !clockPill.hasDropdown ? 1 : 0
-                        visible: opacity > 0
-                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
+                        opacity: 1.0
+                        
+                        NumberAnimation {
+                            id: mainClockFadeIn
+                            target: mainClockRow
+                            property: "opacity"
+                            to: 1.0
+                            duration: 400
+                            easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
+                        }
+                        
+                        NumberAnimation {
+                            id: mainClockFadeOut
+                            target: mainClockRow
+                            property: "opacity"
+                            to: 0.0
+                            duration: 400
+                            easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
+                        }
+                        
+                        Timer {
+                            id: mainClockDelayTimer
+                            interval: 400
+                            onTriggered: mainClockFadeIn.start()
+                        }
+                        
+                        Connections {
+                            target: clockPill
+                            function onHasDropdownChanged() {
+                                if (clockPill.hasDropdown) {
+                                    mainClockFadeIn.stop();
+                                    mainClockDelayTimer.stop();
+                                    mainClockFadeOut.start();
+                                } else {
+                                    mainClockFadeOut.stop();
+                                    mainClockDelayTimer.start();
+                                }
+                            }
+                        }
 
                         Text {
                             id: notifText
@@ -701,7 +738,7 @@ PanelWindow {
         implicitHeight: 600
         
         property bool closingIsland: globalState.closingIsland
-        property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland
+        property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
 
         Rectangle {
             anchors.top: parent.top
@@ -710,7 +747,7 @@ PanelWindow {
             width: globalState.islandWidth
 
             height: dropdownWindow.hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
-            Behavior on height { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+            Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
 
             color: "#27293F"
             radius: 18
@@ -725,10 +762,53 @@ PanelWindow {
                 height: 34
                 
                 Row {
+                    id: overlayClock
                     anchors.centerIn: parent
                     spacing: 5
-                    opacity: globalState.closingIsland ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: 900; easing.type: Easing.InOutQuad } }
+                    opacity: 1.0
+                    
+                    NumberAnimation {
+                        id: explicitFadeOut
+                        target: overlayClock
+                        property: "opacity"
+                        to: 0.0
+                        duration: 400
+                        easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
+                    }
+                    
+                    NumberAnimation {
+                        id: explicitFadeIn
+                        target: overlayClock
+                        property: "opacity"
+                        to: 1.0
+                        duration: 400
+                        easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
+                    }
+                    
+                    Timer {
+                        id: overlayFadeInDelay
+                        interval: 400
+                        onTriggered: explicitFadeIn.start()
+                    }
+                    
+                    Connections {
+                        target: dropdownWindow
+                        function onHasDropdownChanged() {
+                            if (!dropdownWindow.hasDropdown) {
+                                explicitFadeOut.stop();
+                                overlayFadeInDelay.start();
+                            }
+                        }
+                        function onVisibleChanged() {
+                            if (dropdownWindow.visible && dropdownWindow.hasDropdown) {
+                                // Force initial opacity before starting animation
+                                overlayClock.opacity = 1.0;
+                                explicitFadeIn.stop();
+                                overlayFadeInDelay.stop();
+                                explicitFadeOut.start();
+                            }
+                        }
+                    }
                     
                     Text { text: "󰂚"; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
                     Text { text: " | "; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
@@ -749,8 +829,10 @@ PanelWindow {
                 
                 transformOrigin: Item.TopRight
                 scale: dropdownWindow.hasDropdown ? 1.0 : 0.0
+                opacity: dropdownWindow.hasDropdown ? 1.0 : 0.0
                 
-                Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+                Behavior on scale { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
 
                 spacing: 6
                 Repeater {
