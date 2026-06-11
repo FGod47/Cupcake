@@ -62,7 +62,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
                     radius: 24 // Fully rounded pill shape like end-4
-                    color: root.currentIndex === pageIndex ? Theme.colPrimaryContainer : "transparent"
+                    color: root.currentIndex === pageIndex ? Theme.colPrimary : "transparent"
                     
                     RowLayout {
                         anchors.fill: parent
@@ -75,7 +75,7 @@ ApplicationWindow {
                             Text {
                                 anchors.centerIn: parent
                                 text: iconText
-                                color: root.currentIndex === pageIndex ? Theme.colOnPrimaryContainer : Theme.colOnSurfaceVariant
+                                color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
                                 font.family: root.font.family
                                 font.pixelSize: 20
                             }
@@ -84,7 +84,7 @@ ApplicationWindow {
                         Text {
                             visible: navExpanded
                             text: labelText
-                            color: root.currentIndex === pageIndex ? Theme.colOnPrimaryContainer : Theme.colOnSurfaceVariant
+                            color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
                             font.family: root.font.family
                             font.pixelSize: 15
                             font.bold: root.currentIndex === pageIndex
@@ -97,7 +97,7 @@ ApplicationWindow {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.currentIndex = pageIndex
-                        onEntered: if (root.currentIndex !== pageIndex) parent.color = Theme.colSurfaceContainerHighest
+                        onEntered: if (root.currentIndex !== pageIndex) parent.color = Theme.colSurfaceContainerHigh
                         onExited: if (root.currentIndex !== pageIndex) parent.color = "transparent"
                     }
                 }
