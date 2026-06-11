@@ -94,6 +94,7 @@ ApplicationWindow {
                 NavButton { iconText: ""; labelText: "Wallpapers"; pageIndex: 0 }
                 NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 1 }
                 NavButton { iconText: ""; labelText: "System"; pageIndex: 2 }
+                NavButton { iconText: ""; labelText: "Network"; pageIndex: 3 }
 
                 Item { Layout.fillHeight: true } // Spacer
                 
@@ -320,6 +321,84 @@ ApplicationWindow {
                                     text: "Reboot"
                                     font.family: root.font.family
                                     onClicked: Quickshell.execDetached(["systemctl", "reboot"])
+                                }
+                            }
+                        }
+
+                        Item { Layout.fillHeight: true }
+                    }
+                }
+
+                // PAGE 3: NETWORK
+                Item {
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
+
+                        Text {
+                            text: "Network Settings"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                        }
+                        
+                        Text {
+                            text: "Manage Wi-Fi and connections"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: root.font.family
+                            font.pixelSize: 14
+                            Layout.bottomMargin: 16
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Advanced Network Configuration"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Open GUI"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["nm-connection-editor"])
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Wi-Fi Power State"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Turn On"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["nmcli", "radio", "wifi", "on"])
+                                }
+                                Button {
+                                    text: "Turn Off"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["nmcli", "radio", "wifi", "off"])
                                 }
                             }
                         }
