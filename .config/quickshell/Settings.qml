@@ -19,6 +19,8 @@ ApplicationWindow {
     color: Theme.colSurface
     font.family: "JetBrainsMono Nerd Font Propo"
 
+    property int currentIndex: 0
+
     RowLayout {
         anchors.fill: parent
         anchors.margins: 16
@@ -47,20 +49,51 @@ ApplicationWindow {
                     Layout.bottomMargin: 24
                 }
 
-                Rectangle {
+                // Nav Buttons
+                component NavButton: Rectangle {
+                    property string iconText
+                    property string labelText
+                    property int pageIndex
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
                     radius: 8
-                    color: Theme.colPrimary
-                    Text {
-                        anchors.centerIn: parent
-                        text: "  Wallpapers"
-                        color: Theme.colOnPrimary
-                        font.family: root.font.family
-                        font.pixelSize: 16
-                        font.bold: true
+                    color: root.currentIndex === pageIndex ? Theme.colPrimary : "transparent"
+                    
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 16
+                        spacing: 12
+                        Text {
+                            text: iconText
+                            color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 16
+                            font.bold: true
+                        }
+                        Text {
+                            text: labelText
+                            color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 16
+                            font.bold: true
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.currentIndex = pageIndex
+                        onEntered: if (root.currentIndex !== pageIndex) parent.color = Theme.colSurfaceContainerHigh
+                        onExited: if (root.currentIndex !== pageIndex) parent.color = "transparent"
                     }
                 }
+
+                NavButton { iconText: ""; labelText: "Wallpapers"; pageIndex: 0 }
+                NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 1 }
+                NavButton { iconText: ""; labelText: "System"; pageIndex: 2 }
 
                 Item { Layout.fillHeight: true } // Spacer
                 
@@ -83,82 +116,215 @@ ApplicationWindow {
             radius: 16
             clip: true
 
-            ColumnLayout {
+            StackLayout {
                 anchors.fill: parent
-                anchors.margins: 24
-                spacing: 16
+                currentIndex: root.currentIndex
 
-                Text {
-                    text: "Select Wallpaper"
-                    color: Theme.colOnSurface
-                    font.family: root.font.family
-                    font.pixelSize: 32
-                    font.bold: true
-                }
+                // PAGE 0: WALLPAPERS
+                Item {
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
 
-                Text {
-                    text: "Clicking a wallpaper will instantly apply it and regenerate your dynamic material colors."
-                    color: Theme.colOnSurfaceVariant
-                    font.family: root.font.family
-                    font.pixelSize: 14
-                    Layout.bottomMargin: 16
-                }
+                        Text {
+                            text: "Select Wallpaper"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                        }
 
-                GridView {
-                    id: grid
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    cellWidth: 250
-                    cellHeight: 180
-                    clip: true
+                        Text {
+                            text: "Clicking a wallpaper will instantly apply it and regenerate your dynamic material colors."
+                            color: Theme.colOnSurfaceVariant
+                            font.family: root.font.family
+                            font.pixelSize: 14
+                            Layout.bottomMargin: 16
+                        }
 
-                    model: FolderListModel {
-                        folder: "file:///home/one/.config/cupcake/themes/cupcake-dark/walls"
-                        nameFilters: ["*.png", "*.jpg", "*.jpeg"]
-                    }
+                        GridView {
+                            id: grid
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            cellWidth: 250
+                            cellHeight: 180
+                            clip: true
 
-                    delegate: Item {
-                        width: grid.cellWidth
-                        height: grid.cellHeight
+                            model: FolderListModel {
+                                folder: "file:///home/one/.config/cupcake/themes/cupcake-dark/walls"
+                                nameFilters: ["*.png", "*.jpg", "*.jpeg"]
+                            }
 
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            radius: 12
-                            color: "transparent"
-                            border.color: mouseArea.containsMouse ? Theme.colPrimary : "transparent"
-                            border.width: 3
+                            delegate: Item {
+                                width: grid.cellWidth
+                                height: grid.cellHeight
 
-                            Image {
-                                id: img
-                                anchors.fill: parent
-                                anchors.margins: 3
-                                source: fileUrl
-                                fillMode: Image.PreserveAspectCrop
-                                Behavior on scale { NumberAnimation { duration: 150 } }
-                                scale: mouseArea.containsMouse ? 1.05 : 1.0
+                                Rectangle {
+                                    anchors.fill: parent
+                                    anchors.margins: 10
+                                    radius: 12
+                                    color: "transparent"
+                                    border.color: mouseArea.containsMouse ? Theme.colPrimary : "transparent"
+                                    border.width: 3
 
-                                layer.enabled: true
-                                layer.effect: OpacityMask {
-                                    maskSource: Rectangle {
-                                        width: img.width
-                                        height: img.height
-                                        radius: 9
+                                    Image {
+                                        id: img
+                                        anchors.fill: parent
+                                        anchors.margins: 3
+                                        source: fileUrl
+                                        fillMode: Image.PreserveAspectCrop
+                                        Behavior on scale { NumberAnimation { duration: 150 } }
+                                        scale: mouseArea.containsMouse ? 1.05 : 1.0
+
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask {
+                                            maskSource: Rectangle {
+                                                width: img.width
+                                                height: img.height
+                                                radius: 9
+                                            }
+                                        }
+                                    }
+                                    
+                                    MouseArea {
+                                        id: mouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Quickshell.execDetached(["/home/one/.local/bin/set-theme", filePath])
+                                        }
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+
+                // PAGE 1: TOP BAR
+                Item {
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
+
+                        Text {
+                            text: "Top Bar Settings"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                        }
+                        
+                        Text {
+                            text: "Manage your Quickshell status bar"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: root.font.family
+                            font.pixelSize: 14
+                            Layout.bottomMargin: 16
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
                             
-                            MouseArea {
-                                id: mouseArea
+                            RowLayout {
                                 anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    // Run set-theme and restart quickshell
-                                    Quickshell.execDetached(["/home/one/.local/bin/set-theme", filePath])
+                                anchors.margins: 16
+                                Text {
+                                    text: "Restart Top Bar"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Restart"
+                                    font.family: root.font.family
+                                    onClicked: {
+                                        Quickshell.execDetached(["/home/one/.config/cupcake/scripts/toggle_bar.sh"])
+                                    }
                                 }
                             }
                         }
+
+                        Item { Layout.fillHeight: true }
+                    }
+                }
+
+                // PAGE 2: SYSTEM
+                Item {
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
+
+                        Text {
+                            text: "System Controls"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                        }
+                        
+                        Text {
+                            text: "Power and Session management"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: root.font.family
+                            font.pixelSize: 14
+                            Layout.bottomMargin: 16
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Reload Hyprland Config"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Reload"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["hyprctl", "reload"])
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Reboot System"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Reboot"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["systemctl", "reboot"])
+                                }
+                            }
+                        }
+
+                        Item { Layout.fillHeight: true }
                     }
                 }
             }
