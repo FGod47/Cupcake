@@ -1,0 +1,8 @@
+{
+  "primary": "{{colors.primary.default.hex}}",
+  "bg": "{{colors.background.default.hex}}",
+  "surface": "{{colors.surface_container.default.hex}}",
+  "surfaceHigh": "{{colors.surface_container_high.default.hex}}",
+  "fg": "{{colors.on_background.default.hex}}",
+  "accent": "{{colors.tertiary.default.hex}}"
+}

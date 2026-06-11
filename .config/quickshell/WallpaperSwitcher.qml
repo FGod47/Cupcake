@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
 import Qt.labs.folderlistmodel
+import "theme"
 
 PanelWindow {
     id: root
@@ -29,10 +30,10 @@ PanelWindow {
     readonly property int    numVisible:  maxVisible > 1 && maxVisible % 2 === 0 ? maxVisible - 1 : (maxVisible || 1)
 
     // ── Palette ──────────────────────────────────────────────────────────
-    readonly property color colBg:      "#000000"
-    readonly property color colSub:     "#111111"
-    readonly property color colFgDim:   "#cad3f5"
-    readonly property color colPrimary: "#F08CAE"
+    readonly property color colBg:      Theme.colSurfaceContainerHigh
+    readonly property color colSub:     Theme.colSurface
+    readonly property color colFgDim:   Theme.colOnSurfaceVariant
+    readonly property color colPrimary: Theme.colPrimary
 
     readonly property string wallDir: "/home/one/.config/cupcake/walls"
 
@@ -240,10 +241,7 @@ PanelWindow {
                     const path = root.wallDir + "/" + pv.currentItem.fileName
                     root.currentWall = path
                     wallProc.command = [
-                        "/home/one/.local/bin/swww", "img", path,
-                        "--transition-type", "grow",
-                        "--transition-fps", "60",
-                        "--transition-duration", "1"
+                        "/home/one/.local/bin/set-theme", path
                     ]
                     wallProc.running = true
                     root.dismiss()
@@ -382,20 +380,13 @@ PanelWindow {
                     anchors.fill: parent
                     cursorShape:  Qt.PointingHandCursor
                     onClicked: {
-                        if (del.isCurrent) {
-                            const path = root.wallDir + "/" + del.fileName
-                            root.currentWall = path
-                            wallProc.command = [
-                                "/home/one/.local/bin/swww", "img", path,
-                                "--transition-type", "grow",
-                                "--transition-fps", "60",
-                                "--transition-duration", "1"
-                            ]
-                            wallProc.running = true
-                            root.dismiss()
-                        } else {
-                            pv.currentIndex = del.index
-                        }
+                        const path = root.wallDir + "/" + del.fileName
+                        root.currentWall = path
+                        wallProc.command = [
+                            "/home/one/.local/bin/set-theme", path
+                        ]
+                        wallProc.running = true
+                        root.dismiss()
                     }
                 }
             }

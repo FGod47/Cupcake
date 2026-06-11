@@ -4,6 +4,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import "theme"
 
 PanelWindow {
     id: notifPanel
@@ -57,9 +58,9 @@ PanelWindow {
             Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
             Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
             
-            color: "#181825"
+            color: Theme.colSurface
             radius: 24
-            border.color: "#33ffffff"
+            border.color: Theme.colOutline
             border.width: 1
             clip: true
             
@@ -80,7 +81,7 @@ PanelWindow {
                     Layout.fillWidth: true
                     Text {
                         text: "Notifications"
-                        color: "#cdd6f4"
+                        color: Theme.colOnSurface
                         font.family: "Inter"
                         font.pixelSize: 20
                         font.weight: 600
@@ -89,10 +90,10 @@ PanelWindow {
                     
                     Rectangle {
                         width: 32; height: 32; radius: 16
-                        color: closeHover.hovered ? "#313244" : "transparent"
+                        color: closeHover.hovered ? Theme.colOutline : "transparent"
                         Text {
                             text: ""
-                            color: "#cdd6f4"
+                            color: Theme.colOnSurface
                             font.family: "JetBrainsMono Nerd Font Propo"
                             font.pixelSize: 20
                             anchors.centerIn: parent
@@ -110,7 +111,7 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     height: 2
-                    color: "#22ffffff"
+                    color: Theme.colSurfaceContainerHigh
                     radius: 1
                 }
                 
@@ -137,14 +138,14 @@ PanelWindow {
                             spacing: 16
                             Text {
                                 text: "󰂚"
-                                color: "#45475a"
+                                color: Theme.colOnSurfaceVariant
                                 font.family: "JetBrainsMono Nerd Font Propo"
                                 font.pixelSize: 64
                                 Layout.alignment: Qt.AlignHCenter
                             }
                             Text {
                                 text: "No Notifications"
-                                color: "#45475a"
+                                color: Theme.colOnSurfaceVariant
                                 font.family: "JetBrainsMono Nerd Font Propo"
                                 font.pixelSize: 20
                                 font.weight: 600
@@ -177,14 +178,14 @@ PanelWindow {
         Rectangle {
             visible: notifList.count > 0
             width: 48; height: 48; radius: 16
-            color: clearHover.hovered ? "#f38ba8" : "#313244"
+            color: clearHover.hovered ? "#f38ba8" : Theme.colOutline
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 24
             
             Text {
                 text: "󰎟" // Trash / Clear All icon
-                color: clearHover.hovered ? "#11111b" : "#cdd6f4"
+                color: clearHover.hovered ? "#11111b" : Theme.colOnSurface
                 font.family: "JetBrainsMono Nerd Font Propo"
                 font.pixelSize: 24
                 anchors.centerIn: parent

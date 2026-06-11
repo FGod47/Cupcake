@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import "theme"
 
 Item {
     id: wrapper
@@ -23,10 +24,10 @@ Item {
         // Use mainRow.height (explicitly set) NOT implicitHeight (0 for Item)
         height: mainRow.height + 20
 
-        color: "#1e1e2e"
+        color: Theme.colSurface
         clip: true
         radius: 16
-        border.color: "#33ffffff"
+        border.color: Theme.colOutline
         border.width: 1
 
         x: 0
@@ -101,7 +102,7 @@ Item {
                 id: iconRect
                 width: 40; height: 40
                 radius: 20
-                color: "#313244"
+                color: Theme.colOutline
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 Image {
@@ -120,7 +121,7 @@ Item {
                 }
                 Text {
                     text: "\uf0f3"
-                    color: "#cdd6f4"
+                    color: Theme.colOnSurface
                     font.family: "JetBrainsMono Nerd Font Propo"
                     font.pixelSize: 18
                     anchors.centerIn: parent
@@ -152,7 +153,7 @@ Item {
                         Text {
                             id: appNameText
                             text: notificationData ? notificationData.appName : ""
-                            color: "#a6adc8"
+                            color: Theme.colOnSurfaceVariant
                             font.family: "JetBrainsMono Nerd Font Propo"
                             font.pixelSize: 11
                             elide: Text.ElideRight
@@ -160,7 +161,7 @@ Item {
                         }
                         Text {
                             text: " • "
-                            color: "#6c7086"
+                            color: Theme.colOnSurfaceVariant
                             font.family: "JetBrainsMono Nerd Font Propo"
                             font.pixelSize: 11
                             visible: appNameText.text !== ""
@@ -168,7 +169,7 @@ Item {
                         Text {
                             id: summaryText
                             text: notificationData ? notificationData.summary : ""
-                            color: "#cdd6f4"
+                            color: Theme.colOnSurface
                             font.family: "JetBrainsMono Nerd Font Propo"
                             font.pixelSize: 12
                             font.bold: true
@@ -188,7 +189,7 @@ Item {
                     Text {
                         id: timeText
                         text: notificationData ? Qt.formatTime(new Date(notificationData.time / 1000), "hh:mm") : ""
-                        color: "#6c7086"
+                        color: Theme.colOnSurfaceVariant
                         font.family: "JetBrainsMono Nerd Font Propo"
                         font.pixelSize: 10
                         anchors.right: parent.right
@@ -200,7 +201,7 @@ Item {
                 Text {
                     width: parent.width
                     text: notificationData ? notificationData.body : ""
-                    color: "#a6adc8"
+                    color: Theme.colOnSurfaceVariant
                     font.family: "JetBrainsMono Nerd Font Propo"
                     font.pixelSize: 11
                     elide: Text.ElideRight
@@ -217,7 +218,7 @@ Item {
                 Text {
                     width: parent.width
                     text: notificationData ? notificationData.body : ""
-                    color: "#a6adc8"
+                    color: Theme.colOnSurfaceVariant
                     font.family: "JetBrainsMono Nerd Font Propo"
                     font.pixelSize: 11
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -244,10 +245,10 @@ Item {
                     Repeater {
                         model: notificationData ? notificationData.actions : null
                         delegate: Rectangle {
-                            color: ah.hovered ? "#45475a" : "#313244"
+                            color: ah.hovered ? Theme.colOnSurfaceVariant : Theme.colOutline
                             radius: 6
                             width: al.implicitWidth + 16; height: 26
-                            Text { id: al; text: modelData.text; color: "#cdd6f4"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 11; anchors.centerIn: parent }
+                            Text { id: al; text: modelData.text; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 11; anchors.centerIn: parent }
                             HoverHandler { id: ah }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.invoke() }
                         }

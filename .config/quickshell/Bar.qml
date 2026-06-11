@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Services.SystemTray
 import QtQuick.Controls
+import "theme"
 
 PanelWindow {
     id: bar
@@ -31,8 +32,8 @@ PanelWindow {
     }
 
     // Shared style definitions based on user's style.css
-    readonly property color bg: "#27293F"
-    readonly property color fg: "#eeffff"
+    readonly property color bg: Theme.colSurface
+    readonly property color fg: Theme.colOnSurface
     readonly property string fontName: "JetBrainsMono Nerd Font Propo"
     readonly property int fontSize: 14
 
@@ -85,7 +86,7 @@ PanelWindow {
                             Text {
                                 anchors.centerIn: parent
                                 text: isFocused ? "⬤" : "◯"
-                                color: isFocused ? "#F08CAE" : fg
+                                color: isFocused ? Theme.colPrimary : fg
                                 font.family: fontName
                                 font.pixelSize: fontSize
                             }
@@ -104,7 +105,7 @@ PanelWindow {
                 id: windowPill
                 radius: 18
                 implicitHeight: 34
-                color: "#B1DAAA"
+                color: Theme.colPrimary
                 implicitWidth: windowText.implicitWidth > 0 ? Math.min(windowText.implicitWidth, 400) + 32 : 0
                 Layout.alignment: Qt.AlignVCenter
                 visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
@@ -115,7 +116,7 @@ PanelWindow {
                     id: windowText
                     anchors.centerIn: parent
                     text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
-                    color: "#1a1b26"
+                    color: Theme.colSurfaceContainerHigh
                     font.family: fontName
                     font.pixelSize: fontSize
                     font.weight: 500
@@ -137,8 +138,8 @@ PanelWindow {
                 implicitHeight: 34
                 implicitWidth: archText.implicitWidth + 32
                 
-                property color c1: "#f5e0dc"
-                property color c2: "#f2cdcd"
+                property color c1: Theme.colPrimary
+                property color c2: Theme.colSecondary
                 
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
@@ -148,45 +149,21 @@ PanelWindow {
 
                 SequentialAnimation on c1 {
                     loops: Animation.Infinite
-                    ColorAnimation { to: "#f2cdcd"; duration: 714 }
-                    ColorAnimation { to: "#f5c2e7"; duration: 714 }
-                    ColorAnimation { to: "#cba6f7"; duration: 714 }
-                    ColorAnimation { to: "#f38ba8"; duration: 714 }
-                    ColorAnimation { to: "#eba0ac"; duration: 714 }
-                    ColorAnimation { to: "#fab387"; duration: 714 }
-                    ColorAnimation { to: "#f9e2af"; duration: 714 }
-                    ColorAnimation { to: "#a6e3a1"; duration: 714 }
-                    ColorAnimation { to: "#94e2d5"; duration: 714 }
-                    ColorAnimation { to: "#89dceb"; duration: 714 }
-                    ColorAnimation { to: "#74c7ec"; duration: 714 }
-                    ColorAnimation { to: "#89b4fa"; duration: 714 }
-                    ColorAnimation { to: "#b4befe"; duration: 714 }
-                    ColorAnimation { to: "#f5e0dc"; duration: 714 }
+                    ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+                    ColorAnimation { to: Theme.colPrimary; duration: 2000 }
                 }
 
                 SequentialAnimation on c2 {
                     loops: Animation.Infinite
-                    ColorAnimation { to: "#f5c2e7"; duration: 714 }
-                    ColorAnimation { to: "#cba6f7"; duration: 714 }
-                    ColorAnimation { to: "#f38ba8"; duration: 714 }
-                    ColorAnimation { to: "#eba0ac"; duration: 714 }
-                    ColorAnimation { to: "#fab387"; duration: 714 }
-                    ColorAnimation { to: "#f9e2af"; duration: 714 }
-                    ColorAnimation { to: "#a6e3a1"; duration: 714 }
-                    ColorAnimation { to: "#94e2d5"; duration: 714 }
-                    ColorAnimation { to: "#89dceb"; duration: 714 }
-                    ColorAnimation { to: "#74c7ec"; duration: 714 }
-                    ColorAnimation { to: "#89b4fa"; duration: 714 }
-                    ColorAnimation { to: "#b4befe"; duration: 714 }
-                    ColorAnimation { to: "#f5e0dc"; duration: 714 }
-                    ColorAnimation { to: "#f2cdcd"; duration: 714 }
+                    ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+                    ColorAnimation { to: Theme.colSecondary; duration: 2000 }
                 }
                 
                 Text {
                     id: archText
                     anchors.centerIn: parent
                     text: " Arch"
-                    color: "#1a1b26"
+                    color: Theme.colSurfaceContainerHigh
                     font.family: fontName
                     font.pixelSize: fontSize
                     font.weight: 500
@@ -203,7 +180,7 @@ PanelWindow {
 
             // Network Pill
             Rectangle {
-                color: "#27293F"
+                color: Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: networkText.implicitWidth + 32
@@ -240,12 +217,12 @@ PanelWindow {
                 id: hwPill
                 implicitWidth: hwText.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
-                color: "#24273a" // from custom-hw gradient
+                color: Theme.colSurface // from custom-hw gradient
                 Text {
                     id: hwText
                     anchors.centerIn: parent
                     text: "HW"
-                    color: "#cad3f5"
+                    color: Theme.colOnSurfaceVariant
                     font.family: fontName
                     font.pixelSize: fontSize
                 }
@@ -268,7 +245,7 @@ PanelWindow {
 
             // Recording Pill
             Rectangle {
-                color: "#27293F"
+                color: Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 id: recPill
@@ -300,7 +277,7 @@ PanelWindow {
 
             // Tray Pill
             Rectangle {
-                color: "#27293F"
+                color: Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: trayRow.implicitWidth + 32
@@ -342,7 +319,7 @@ PanelWindow {
             // Controls Pill (#control)
             Rectangle {
                 id: controlsPill
-                color: "#27293F"
+                color: Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: controlsRow.implicitWidth + 32
@@ -384,11 +361,11 @@ PanelWindow {
                                 width: audioSlider.availableWidth
                                 height: implicitHeight
                                 radius: 7
-                                color: "#1a1b26" // track color
+                                color: Theme.colSurfaceContainerHigh // track color
                                 Rectangle {
                                     width: audioSlider.visualPosition * parent.width
                                     height: parent.height
-                                    color: "#b4befe" // fill color
+                                    color: Theme.colPrimary // fill color
                                     radius: 7
                                 }
                             }
@@ -446,11 +423,11 @@ PanelWindow {
                                 width: lightSlider.availableWidth
                                 height: implicitHeight
                                 radius: 7
-                                color: "#1a1b26" // track color
+                                color: Theme.colSurfaceContainerHigh // track color
                                 Rectangle {
                                     width: lightSlider.visualPosition * parent.width
                                     height: parent.height
-                                    color: "#f9e2af" // fill color
+                                    color: Theme.colSecondary // fill color
                                     radius: 7
                                 }
                             }
@@ -516,7 +493,7 @@ PanelWindow {
                 id: clockPill
                 radius: 18
                 implicitHeight: 34
-                color: "#27293F"
+                color: Theme.colSurface
                 implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
                 Behavior on implicitWidth { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
                 Layout.alignment: Qt.AlignVCenter
@@ -535,7 +512,7 @@ PanelWindow {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "#27293F"
+                    color: Theme.colSurface
                     radius: 18
                 }
                 
@@ -637,7 +614,7 @@ PanelWindow {
                 id: powerPill
                 radius: 18
                 implicitHeight: 34
-                color: powerHover.hovered ? "#f33958" : "#eebac3"
+                color: powerHover.hovered ? Theme.colError : Theme.colPrimary
                 Behavior on color { ColorAnimation { duration: 500 } }
                 implicitWidth: powerRow.implicitWidth + 32
                 clip: true
@@ -749,7 +726,7 @@ PanelWindow {
             height: dropdownWindow.hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
             Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
 
-            color: "#27293F"
+            color: Theme.colSurface
             radius: 18
             clip: true
             
@@ -810,11 +787,11 @@ PanelWindow {
                         }
                     }
                     
-                    Text { text: "󰂚"; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
-                    Text { text: " | "; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                    Text { text: "󰂚"; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                    Text { text: " | "; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
                     Text { 
                         text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP")
-                        color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 
+                        color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 
                     }
                 }
             }

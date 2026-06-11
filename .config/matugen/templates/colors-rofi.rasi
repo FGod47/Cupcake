@@ -1,0 +1,10 @@
+* {
+    main-bg:            {{colors.surface.default.hex}}ff;
+    main-fg:            {{colors.on_surface.default.hex}}ff;
+    main-br:            {{colors.primary.default.hex}}ff;
+    main-ex:            {{colors.error.default.hex}}ff;
+    select-bg:          {{colors.primary.default.hex}}ff;
+    select-fg:          {{colors.on_primary.default.hex}}ff;
+    separatorcolor:     transparent;
+    border-color:       transparent;
+}

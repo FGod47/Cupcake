@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 <path-to-wallpaper>"
+    exit 1
+fi
+
+WALLPAPER="$1"
+
+if [ ! -f "$WALLPAPER" ]; then
+    echo "Error: File not found: $WALLPAPER"
+    exit 1
+fi
+
+export PATH=$PATH:/home/one/.local/bin:/home/one/.cargo/bin
+
+# Run matugen to generate themes
+echo "Generating color palettes with matugen..."
+/home/one/.local/bin/matugen image "$WALLPAPER" --source-color-index 0
+
+# Set the wallpaper with awww
+echo "Setting wallpaper..."
+if pgrep -x "awww-daemon" > /dev/null || pgrep -x "swww-daemon" > /dev/null; then
+    awww img "$WALLPAPER" --transition-type grow --transition-fps 60 --transition-duration 1
+else
+    awww-daemon &
+    sleep 1
+    awww img "$WALLPAPER" --transition-type grow --transition-fps 60 --transition-duration 1
+fi
+
+# Reload hyprland to pick up colors.conf (assuming you add 'source = ~/.config/hypr/colors.conf' to hyprland.conf)
+echo "Reloading Hyprland..."
+hyprctl reload
+
+# Send SIGUSR1 to kitty processes to reload config
+echo "Reloading Kitty..."
+touch ~/.config/kitty/kitty.conf
+killall -SIGUSR1 kitty 2>/dev/null || true
+
+# Restart Quickshell to pick up the new Theme.qml
+# We run this in the background detached so the script doesn't kill itself
+echo "Reloading Quickshell..."
+nohup bash -c 'sleep 0.5; killall quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; quickshell --daemonize -p ~/.config/quickshell/shell.qml' >/dev/null 2>&1 &
+disown
+
+echo "Theme applied successfully!"

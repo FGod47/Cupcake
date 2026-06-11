@@ -6,6 +6,7 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
+import "theme"
 
 // Use the same pattern as WallpaperSwitcher.qml (which works as standalone)
 // Center it on screen via a centered Item inside the window
@@ -28,14 +29,13 @@ PanelWindow {
     WlrLayershell.namespace: "cupcake-launcher"
     color: "transparent"
 
-    // ── M3 Dark Palette (Modified to match Bar.qml) ────────────────────
-    readonly property color colSurface:               "#1c1b1f"
-    readonly property color colSurfaceContainer:      "#000000" // pure black
-    readonly property color colSurfaceContainerHigh:  "#1a1a1a" // very dark grey for search
-    readonly property color colOnSurface:             "#eeffff" // match bar fg
-    readonly property color colOnSurfaceVariant:      "#cad3f5"
-    readonly property color colOutline:               "#a5adcb"
-    readonly property color colPrimary:               "#F08CAE" // match bar accent
+    readonly property color colSurface:               Theme.colSurface
+    readonly property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
+    readonly property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
+    readonly property color colOnSurface:             Theme.colOnSurface // match bar fg
+    readonly property color colOnSurfaceVariant:      Theme.colOnSurfaceVariant
+    readonly property color colOutline:               Theme.colOutline
+    readonly property color colPrimary:               Theme.colPrimary // match bar accent
 
     // ── State ─────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively

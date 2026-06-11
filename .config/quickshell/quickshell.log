@@ -1,12 +1,7 @@
-[33m  WARN[0m: [31mQuickshell was built against Qt 6.11.0 but the system has updated to Qt 6.11.1 without rebuilding the package. This is likely to cause crashes, so the quickshell package must be rebuilt.
-
 [32m  INFO[0m: Launching config: "/home/one/.config/quickshell/shell.qml"
 [32m  INFO[0m: Shell ID: "c27bfae9671097135e447b94e2be3558" Path ID "c27bfae9671097135e447b94e2be3558"
-[32m  INFO[0m: Saving logs to "/run/user/1000/quickshell/by-id/3z61g5kfgt/log.qslog"
-[33m  WARN[97m scene[0m: QML NotificationDropdown (parent or ancestor of WlrLayershell) at @shell.qml[32:5]: Setting `width` is deprecated. Set `implicitWidth` instead.
-[33m  WARN[97m qt.qml.context[0m: qs:@/qs/Bar.qml:577:29 Parameter "text" is not declared. Injection of parameters into signal handlers is deprecated. Use JavaScript functions with formal parameters instead.
-[33m  WARN[97m scene[0m: QML NotificationDropdown (parent or ancestor of WlrLayershell) at @shell.qml[32:5]: Setting `width` is deprecated. Set `implicitWidth` instead.
-[33m  WARN[97m scene[0m: QML NotificationDropdown (parent or ancestor of WlrLayershell) at @shell.qml[32:5]: Setting `width` is deprecated. Set `implicitWidth` instead.
+[32m  INFO[0m: Saving logs to "/run/user/1000/quickshell/by-id/yjiu813hgt/log.qslog"
+[33m  WARN[97m qt.qml.context[0m: qs:@/qs/Bar.qml:611:29 Parameter "text" is not declared. Injection of parameters into signal handlers is deprecated. Use JavaScript functions with formal parameters instead.
 [32m  INFO[0m: Configuration Loaded
 [33m  WARN[97m qt.qpa.theme.gnome[0m: dbus reply error: [ "org.freedesktop.DBus.Error.NameHasNoOwner" ] "Could not activate remote peer 'org.freedesktop.portal.Desktop': startup job failed"
 [33m  WARN[97m qt.qpa.theme.gnome[0m: dbus reply error: [ "org.freedesktop.DBus.Error.NameHasNoOwner" ] "Could not activate remote peer 'org.freedesktop.portal.Desktop': startup job failed"

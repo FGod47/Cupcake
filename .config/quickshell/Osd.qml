@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import "theme"
 
 PanelWindow {
     id: osdWindow
@@ -31,7 +32,7 @@ PanelWindow {
         id: bg
         anchors.fill: parent
         radius: 24
-        color: "#000000"
+        color: Theme.colSurfaceContainerHigh
         opacity: osdWindow.visible ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
         
@@ -42,7 +43,7 @@ PanelWindow {
             
             Text {
                 text: osdWindow.osdIcon
-                color: "#cdd6f4"
+                color: Theme.colOnSurface
                 font.pixelSize: 18
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -52,13 +53,13 @@ PanelWindow {
                 height: 6
                 anchors.verticalCenter: parent.verticalCenter
                 radius: 3
-                color: "#1a1b26"
+                color: Theme.colSurfaceContainerHigh
                 
                 Rectangle {
                     width: (osdWindow.osdValue / 100) * parent.width
                     height: parent.height
                     radius: 3
-                    color: "#89b4fa"
+                    color: Theme.colPrimary
                     Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
                 }
             }

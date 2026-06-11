@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/colors.sh"
 # ──────────────── Color & Config Setup ────────────────
 COLORS=(15)
 CONFIGS=(
-  cupcake cava fastfetch hypr kitty nvim quickshell qylock
+  cupcake cava fastfetch hypr kitty nvim quickshell qylock matugen
 )
 SOURCE_DIR="$(cd "$SCRIPT_DIR/../../.config" && pwd)"
 BACKUP_DIR="$HOME/.config_backup"
@@ -89,6 +89,17 @@ if [ -d "$SCRIPTS_DIR" ]; then
   echo -e "${GREEN}[DONE]${RESET} Made all .sh files in cupcake/scripts executable.\n"
 else
   echo -e "${YELLOW}[SKIP]${RESET} cupcake/scripts folder not found.\n"
+fi
+
+# ──────────────── Install set-theme script ────────────────
+SET_THEME_SRC="$SOURCE_DIR/../.local/bin/set-theme"
+if [ -f "$SET_THEME_SRC" ]; then
+  echo -e "${GREEN}[INSTALL]${RESET} set-theme → ~/.local/bin/set-theme"
+  mkdir -p "$HOME/.local/bin"
+  cp "$SET_THEME_SRC" "$HOME/.local/bin/set-theme"
+  chmod +x "$HOME/.local/bin/set-theme"
+else
+  echo -e "${YELLOW}[SKIP]${RESET} set-theme script not found"
 fi
 
 # ──────────────── Install Desktop Entry ────────────────

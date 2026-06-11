@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import "theme"
 
 PanelWindow {
     id: controlCenter
@@ -24,9 +25,9 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#1e1e2e"
+        color: Theme.colSurface
         radius: 10
-        border.color: "#313244"
+        border.color: Theme.colOutline
         border.width: 1
 
         ColumnLayout {

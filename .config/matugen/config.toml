@@ -1,0 +1,14 @@
+[config]
+version_check = false
+
+[templates.hyprland]
+input_path = "~/.config/matugen/templates/colors-hyprland.conf"
+output_path = "~/.config/hypr/colors.conf"
+
+[templates.kitty]
+input_path = "~/.config/matugen/templates/colors-kitty.conf"
+output_path = "~/.config/kitty/colors.conf"
+
+[templates.quickshell]
+input_path = "~/.config/matugen/templates/Theme.qml"
+output_path = "~/.config/quickshell/theme/Theme.qml"

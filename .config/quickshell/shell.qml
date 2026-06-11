@@ -2,6 +2,7 @@
 import Quickshell
 import Quickshell.Services.Notifications
 import QtQuick
+import "theme"
 
 ShellRoot {
     id: root
