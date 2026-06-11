@@ -13,6 +13,12 @@ ShellRoot {
         delegate: Bar {}
     }
 
+    // Bottom Dock for all screens
+    Variants {
+        model: Quickshell.screens
+        delegate: Dock {}
+    }
+
     // Global State
     Scope {
         id: globalState
