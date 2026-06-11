@@ -4,6 +4,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 import Qt.labs.folderlistmodel
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import "theme"
 
@@ -16,6 +17,7 @@ ApplicationWindow {
     width: 900
     height: 700
     color: Theme.colSurface
+    font.family: "JetBrainsMono Nerd Font Propo"
 
     RowLayout {
         anchors.fill: parent
@@ -118,17 +120,27 @@ ApplicationWindow {
                             anchors.fill: parent
                             anchors.margins: 10
                             radius: 12
-                            color: Theme.colSurfaceContainer
-                            clip: true
+                            color: "transparent"
                             border.color: mouseArea.containsMouse ? Theme.colPrimary : "transparent"
                             border.width: 3
 
                             Image {
+                                id: img
                                 anchors.fill: parent
+                                anchors.margins: 3
                                 source: fileUrl
                                 fillMode: Image.PreserveAspectCrop
                                 Behavior on scale { NumberAnimation { duration: 150 } }
                                 scale: mouseArea.containsMouse ? 1.05 : 1.0
+
+                                layer.enabled: true
+                                layer.effect: OpacityMask {
+                                    maskSource: Rectangle {
+                                        width: img.width
+                                        height: img.height
+                                        radius: 9
+                                    }
+                                }
                             }
                             
                             MouseArea {
