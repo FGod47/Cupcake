@@ -9,14 +9,17 @@ PanelWindow {
     id: dockWindow
     anchors {
         bottom: true
-        left: true
-        right: true
     }
+    
+    // In Wayland Layer Shell, if left and right are not anchored, it auto-centers horizontally!
     
     required property var modelData
     screen: modelData
     
-    implicitHeight: 74
+    // Make the window exact size of the dock + 12px bottom padding
+    width: dockLayout.implicitWidth + 32
+    implicitHeight: 48 + 24
+    
     color: "transparent"
     exclusiveZone: implicitHeight // Reserve screen space
 
@@ -24,9 +27,10 @@ PanelWindow {
         anchors.fill: parent
 
         Rectangle {
-            anchors.centerIn: parent
-            width: dockLayout.implicitWidth + 32
-            height: dockLayout.implicitHeight + 16
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            height: 64
             color: Theme.colSurfaceContainer
             radius: 20
             border.color: Theme.colPrimary
