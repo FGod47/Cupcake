@@ -1,11 +1,16 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <path-to-wallpaper>"
-    exit 1
+    if [ -f ~/.cache/current_wallpaper ]; then
+        WALLPAPER=$(cat ~/.cache/current_wallpaper)
+    else
+        echo "Usage: $0 <path-to-wallpaper>"
+        exit 1
+    fi
+else
+    WALLPAPER="$1"
+    echo "$WALLPAPER" > ~/.cache/current_wallpaper
 fi
-
-WALLPAPER="$1"
 
 if [ ! -f "$WALLPAPER" ]; then
     echo "Error: File not found: $WALLPAPER"
@@ -14,9 +19,21 @@ fi
 
 export PATH=$PATH:/home/one/.local/bin:/home/one/.cargo/bin
 
+MODE="dark"
+if [ -f ~/.config/cupcake/.color_mode ]; then
+    MODE=$(cat ~/.config/cupcake/.color_mode)
+fi
+
 # Run matugen to generate themes
-echo "Generating color palettes with matugen..."
-/home/one/.local/bin/matugen image "$WALLPAPER" --source-color-index 0
+echo "Generating color palettes with matugen in $MODE mode..."
+/home/one/.local/bin/matugen image "$WALLPAPER" -m "$MODE" --source-color-index 0
+
+# Set GNOME color-scheme so GTK applications natively follow the light/dark mode toggle
+if [ "$MODE" = "light" ]; then
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+else
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+fi
 
 # Set the wallpaper with awww
 echo "Setting wallpaper..."
