@@ -29,9 +29,6 @@ ShellRoot {
     // Popups & Panels
     NotificationPanel {}
     Osd {}
-    NotificationDropdown {
-        width: globalState.islandWidth
-    }
 
     Timer {
         id: islandTimer

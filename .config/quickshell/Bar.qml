@@ -518,7 +518,7 @@ PanelWindow {
                 implicitHeight: 34
                 color: "#27293F"
                 implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 800 : 600; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutExpo } }
+                Behavior on implicitWidth { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
                 Layout.alignment: Qt.AlignVCenter
                 clip: true
                 
@@ -548,8 +548,8 @@ PanelWindow {
                     Row {
                         spacing: 5
                         opacity: !clockPill.hasDropdown ? 1 : 0
-                        visible: true
-                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 800 : 600; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutExpo } }
+                        visible: opacity > 0
+                        Behavior on opacity { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack } }
 
                         Text {
                             id: notifText
@@ -679,6 +679,90 @@ PanelWindow {
         }
     }
 
-    // Notification dropdown is handled by a completely separate PanelWindow (NotificationDropdown.qml) to prevent layer jitter.
+    // ── Nested Notification Dropdown Window ──────
+    // Implemented as a separate Wayland layer to prevent main Bar flicker, but embedded to avoid separate files.
+    PanelWindow {
+        id: dropdownWindow
+        visible: globalState.popups && globalState.popups.length > 0 || globalState.closingIsland
+        
+        anchors.top: true
+        anchors.right: true
+        
+        // Match the clock pill's position (10px from top, 62px from right including power pill + margins)
+        margins.top: 10
+        margins.right: 62
+
+        color: "transparent"
+        exclusionMode: ExclusionMode.Ignore
+        WlrLayershell.namespace: "waybar-dropdown"
+        WlrLayershell.layer: WlrLayer.Overlay
+
+        implicitWidth: 380
+        implicitHeight: 600
+        
+        property bool closingIsland: globalState.closingIsland
+        property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !closingIsland
+
+        Rectangle {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            
+            width: globalState.islandWidth
+
+            height: dropdownWindow.hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
+            Behavior on height { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+
+            color: "#27293F"
+            radius: 18
+            clip: true
+            
+            opacity: 1.0
+            
+            Item {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 34
+                
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 5
+                    opacity: globalState.closingIsland ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 900; easing.type: Easing.InOutQuad } }
+                    
+                    Text { text: "󰂚"; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                    Text { text: " | "; color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                    Text { 
+                        text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP")
+                        color: "#eeffff"; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 
+                    }
+                }
+            }
+            
+            Column {
+                id: dropdownCol
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                anchors.topMargin: 8
+                width: 364
+                
+                transformOrigin: Item.TopRight
+                scale: dropdownWindow.hasDropdown ? 1.0 : 0.0
+                
+                Behavior on scale { NumberAnimation { duration: globalState.closingIsland ? 900 : 400; easing.type: globalState.closingIsland ? Easing.InOutQuad : Easing.OutBack; easing.overshoot: 0.5 } }
+
+                spacing: 6
+                Repeater {
+                    model: globalState.popups && globalState.popups.length > 0 ? globalState.popups.slice(0, 5) : []
+                    delegate: NotificationCard {
+                        width: dropdownCol.width
+                        notificationData: modelData
+                        inPanel: false
+                    }
+                }
+            }
+        }
+    }
 }
 }
