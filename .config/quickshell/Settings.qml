@@ -125,7 +125,7 @@ ApplicationWindow {
 
                             Image {
                                 anchors.fill: parent
-                                source: fileURL
+                                source: fileUrl
                                 fillMode: Image.PreserveAspectCrop
                                 Behavior on scale { NumberAnimation { duration: 150 } }
                                 scale: mouseArea.containsMouse ? 1.05 : 1.0
