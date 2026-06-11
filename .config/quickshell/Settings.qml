@@ -6,6 +6,7 @@ import QtQuick.Window
 import Qt.labs.folderlistmodel
 import Qt5Compat.GraphicalEffects
 import Quickshell
+import Quickshell.Io
 import "theme"
 
 ApplicationWindow {
@@ -380,7 +381,7 @@ ApplicationWindow {
                             command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
                             running: true
                             environment: ({ LANG: "C", LC_ALL: "C" })
-                            stdout: Quickshell.Io.StdioCollector {
+                            stdout: StdioCollector {
                                 onStreamFinished: {
                                     wifiModel.clear();
                                     const textStr = text.trim();
