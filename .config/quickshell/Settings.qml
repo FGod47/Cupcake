@@ -22,33 +22,36 @@ ApplicationWindow {
 
     property int currentIndex: 0
 
+    property bool navExpanded: root.width >= 900
+
     RowLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 16
+        anchors.margins: 8 // end-4 uses tighter outer margins
+        spacing: 8 // end-4 uses tight spacing between rail and content
 
-        // Navigation Rail
-        Rectangle {
+        // Navigation Rail (No background, floats on window)
+        Item {
             Layout.fillHeight: true
-            Layout.preferredWidth: 220
-            color: Theme.colSurfaceContainer
-            radius: 16
+            Layout.preferredWidth: navExpanded ? 200 : 72
+            Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 16
-                spacing: 12
+                anchors.margins: 8
+                spacing: 8
 
-                Text {
-                    text: "🧁 Cupcake"
-                    color: Theme.colOnSurface
-                    font.family: root.font.family
-                    font.pixelSize: 28
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 12
-                    Layout.bottomMargin: 24
+                // Header / Icon
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 64
+                    Text {
+                        anchors.centerIn: parent
+                        text: "🧁"
+                        font.pixelSize: 32
+                    }
                 }
+
+                Item { Layout.preferredHeight: 16 }
 
                 // Nav Buttons
                 component NavButton: Rectangle {
@@ -58,26 +61,33 @@ ApplicationWindow {
 
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
-                    radius: 8
-                    color: root.currentIndex === pageIndex ? Theme.colPrimary : "transparent"
+                    radius: 24 // Fully rounded pill shape like end-4
+                    color: root.currentIndex === pageIndex ? Theme.colPrimaryContainer : "transparent"
                     
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 16
+                        anchors.leftMargin: navExpanded ? 16 : 0
                         spacing: 12
-                        Text {
-                            text: iconText
-                            color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
-                            font.family: root.font.family
-                            font.pixelSize: 16
-                            font.bold: true
+                        
+                        Item {
+                            Layout.preferredWidth: navExpanded ? implicitWidth : parent.width
+                            Layout.fillHeight: true
+                            Text {
+                                anchors.centerIn: parent
+                                text: iconText
+                                color: root.currentIndex === pageIndex ? Theme.colOnPrimaryContainer : Theme.colOnSurfaceVariant
+                                font.family: root.font.family
+                                font.pixelSize: 20
+                            }
                         }
+                        
                         Text {
+                            visible: navExpanded
                             text: labelText
-                            color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
+                            color: root.currentIndex === pageIndex ? Theme.colOnPrimaryContainer : Theme.colOnSurfaceVariant
                             font.family: root.font.family
-                            font.pixelSize: 16
-                            font.bold: true
+                            font.pixelSize: 15
+                            font.bold: root.currentIndex === pageIndex
                             Layout.fillWidth: true
                         }
                     }
@@ -87,7 +97,7 @@ ApplicationWindow {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.currentIndex = pageIndex
-                        onEntered: if (root.currentIndex !== pageIndex) parent.color = Theme.colSurfaceContainerHigh
+                        onEntered: if (root.currentIndex !== pageIndex) parent.color = Theme.colSurfaceContainerHighest
                         onExited: if (root.currentIndex !== pageIndex) parent.color = "transparent"
                     }
                 }
@@ -98,32 +108,33 @@ ApplicationWindow {
                 NavButton { iconText: ""; labelText: "Network"; pageIndex: 3 }
 
                 Item { Layout.fillHeight: true } // Spacer
-                
-                Text {
-                    text: "Powered by Quickshell"
-                    color: Theme.colOnSurfaceVariant
-                    font.family: root.font.family
-                    font.pixelSize: 12
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.bottomMargin: 8
-                }
             }
         }
 
-        // Content Area
+        // Content Area (end-4 uses a rounded rectangle container for the active page)
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: Theme.colSurfaceContainerHigh
-            radius: 16
+            radius: 24 // Large rounded corners like end-4
             clip: true
 
-            StackLayout {
+            // We use Loader to get page transition animations, or just StackLayout.
+            // StackLayout doesn't animate easily without custom item delegates.
+            // I will implement a quick fade for the StackLayout children.
+
+            Item {
                 anchors.fill: parent
-                currentIndex: root.currentIndex
 
                 // PAGE 0: WALLPAPERS
                 Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 0 ? 0 : 20
+                    opacity: root.currentIndex === 0 ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 24
@@ -206,6 +217,13 @@ ApplicationWindow {
 
                 // PAGE 1: TOP BAR
                 Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 1 ? 0 : 20
+                    opacity: root.currentIndex === 1 ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 24
@@ -259,6 +277,13 @@ ApplicationWindow {
 
                 // PAGE 2: SYSTEM
                 Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 2 ? 0 : 20
+                    opacity: root.currentIndex === 2 ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 24
@@ -332,6 +357,13 @@ ApplicationWindow {
 
                 // PAGE 3: NETWORK
                 Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 3 ? 0 : 20
+                    opacity: root.currentIndex === 3 ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 24
