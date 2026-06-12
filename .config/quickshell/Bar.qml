@@ -539,6 +539,14 @@ PanelWindow {
                             }
 
                             Text {
+                                text: "✨"
+                                color: Theme.colPrimary; font.family: fontName; font.pixelSize: fontSize
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: globalState.aiPanelVisible = !globalState.aiPanelVisible }
+                            }
+
+                            Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
+
+                            Text {
                                 id: notifText
                                 text: "󰂚"
                                 color: Theme.colPrimary; font.family: fontName; font.pixelSize: fontSize

@@ -22,6 +22,7 @@ ShellRoot {
     // Global State
     Scope {
         id: globalState
+        property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
         property var popups: []
@@ -37,6 +38,7 @@ ShellRoot {
     // Popups & Panels
     NotificationPanel {}
     Osd {}
+    AiPanel {}
 
     Timer {
         id: islandTimer
