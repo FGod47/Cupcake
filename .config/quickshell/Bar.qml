@@ -18,7 +18,7 @@ PanelWindow {
     WlrLayershell.namespace: "waybar"
     exclusiveZone: 46
     // Strictly fixed to 46 to prevent Hyprland layer resize jitter when the dropdown closes
-    implicitHeight: 46
+    implicitHeight: Math.max(46, (clockPill.height + 20) || 46)
     color: "transparent"
     
     property var modelData
@@ -489,126 +489,135 @@ PanelWindow {
             }
 
             // Clock/Notif Pill (#clock-notif-pill)
-            Rectangle {
-                id: clockPill
-                radius: 18
+            Item {
+                implicitWidth: clockPill.width
                 implicitHeight: 34
-                color: Theme.colSurface
-                implicitWidth: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                Behavior on implicitWidth { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-                Layout.alignment: Qt.AlignVCenter
-                clip: true
                 
-                property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
-
-                property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
-                
-                onWidthChanged: {
-                    globalState.islandWidth = width;
-                }
-                Component.onCompleted: {
-                    globalState.islandWidth = width;
-                }
-
                 Rectangle {
-                    anchors.fill: parent
-                    color: Theme.colSurface
+                    id: clockPill
+                    y: 0
                     radius: 18
-                }
-                
-                Row {
-                    id: clockRow
-                    anchors.centerIn: parent
-                    spacing: 5
+                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 42)) : 34
+                    Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                    color: Theme.colSurface
+                    width: hasDropdown ? 380 : clockRow.implicitWidth + 32
+                    Behavior on width { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                    clip: true
                     
-                    // --- Standard Clock State ---
+                    property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
+                    property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
+                    
+                    onWidthChanged: globalState.islandWidth = width
+                    Component.onCompleted: globalState.islandWidth = width
+
                     Row {
-                        id: mainClockRow
+                        id: clockRow
+                        anchors.top: parent.top
+                        anchors.topMargin: (34 - height) / 2
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 5
-                        opacity: 1.0
                         
-                        NumberAnimation {
-                            id: mainClockFadeIn
-                            target: mainClockRow
-                            property: "opacity"
-                            to: 1.0
-                            duration: 400
-                            easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
+                        // --- Standard Clock State ---
+                        Row {
+                            id: mainClockRow
+                            spacing: 5
+                            opacity: 1.0
+                            
+                            NumberAnimation { id: mainClockFadeIn; target: mainClockRow; property: "opacity"; to: 1.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
+                            NumberAnimation { id: mainClockFadeOut; target: mainClockRow; property: "opacity"; to: 0.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
+                            Timer { id: mainClockDelayTimer; interval: 400; onTriggered: mainClockFadeIn.start() }
+                            
+                            Connections {
+                                target: clockPill
+                                function onHasDropdownChanged() {
+                                    if (clockPill.hasDropdown) {
+                                        mainClockFadeIn.stop(); mainClockDelayTimer.stop(); mainClockFadeOut.start();
+                                    } else {
+                                        mainClockFadeOut.stop(); mainClockDelayTimer.start();
+                                    }
+                                }
+                            }
+
+                            Text {
+                                id: notifText
+                                text: "󰂚"
+                                color: fg; font.family: fontName; font.pixelSize: fontSize
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible }
+                            }
+
+                            Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
+
+                            Text {
+                                id: customClockText
+                                text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
+                                color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                                onTextChanged: globalState.clockString = text
+                                Component.onCompleted: globalState.clockString = text
+                                MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
+                            }
+                            
+                            Process {
+                                id: clockProc
+                                command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
+                                stdout: StdioCollector { onStreamFinished: (data) => { try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
+                            }
+                            Timer { interval: 5000; running: true; repeat: true; onTriggered: clockProc.running = true }
                         }
+                    }
+
+                    // The overlay clock (when expanded)
+                    Row {
+                        id: overlayClock
+                        anchors.top: parent.top
+                        anchors.topMargin: (34 - height) / 2
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 5
+                        opacity: 0.0
                         
-                        NumberAnimation {
-                            id: mainClockFadeOut
-                            target: mainClockRow
-                            property: "opacity"
-                            to: 0.0
-                            duration: 400
-                            easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
-                        }
-                        
-                        Timer {
-                            id: mainClockDelayTimer
-                            interval: 400
-                            onTriggered: mainClockFadeIn.start()
-                        }
+                        NumberAnimation { id: explicitFadeOut; target: overlayClock; property: "opacity"; to: 0.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
+                        NumberAnimation { id: explicitFadeIn; target: overlayClock; property: "opacity"; to: 1.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
+                        Timer { id: overlayFadeInDelay; interval: 400; onTriggered: explicitFadeIn.start() }
                         
                         Connections {
                             target: clockPill
                             function onHasDropdownChanged() {
-                                if (clockPill.hasDropdown) {
-                                    mainClockFadeIn.stop();
-                                    mainClockDelayTimer.stop();
-                                    mainClockFadeOut.start();
-                                } else {
-                                    mainClockFadeOut.stop();
-                                    mainClockDelayTimer.start();
-                                }
+                                if (!clockPill.hasDropdown) { explicitFadeOut.stop(); overlayFadeInDelay.start(); }
+                                else { explicitFadeIn.stop(); overlayFadeInDelay.stop(); explicitFadeOut.start(); overlayClock.opacity = 1.0; }
                             }
                         }
+                        Text { text: "󰂚"; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                        Text { text: " | "; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 }
+                    }
 
-                        Text {
-                            id: notifText
-                            text: "󰂚"
-                            color: fg; font.family: fontName; font.pixelSize: fontSize
-                            MouseArea {
-                                anchors.fill: parent;
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
-                            }
-                        }
-
-                        Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
-
-                        Text {
-                            id: customClockText
-                            text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
-                            color: fg
-                            font.family: fontName
-                            font.pixelSize: fontSize
-                            font.weight: 500
-                            onTextChanged: globalState.clockString = text
-                            Component.onCompleted: globalState.clockString = text
-
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
-                        }
+                    // The dropdown column
+                    Column {
+                        id: dropdownCol
+                        anchors.top: parent.top
+                        anchors.topMargin: 38
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: 8
                         
-                        Process {
-                            id: clockProc
-                            command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                            stdout: StdioCollector {
-                                onStreamFinished: (data) => {
-                                    try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data }
-                                }
+                        transformOrigin: Item.TopRight
+                        scale: clockPill.hasDropdown ? 1.0 : 0.0
+                        opacity: clockPill.hasDropdown ? 1.0 : 0.0
+                        
+                        Behavior on scale { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                        Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
+
+                        spacing: 6
+                        Repeater {
+                            model: globalState.popups && globalState.popups.length > 0 ? globalState.popups.slice(0, 5) : []
+                            delegate: NotificationCard {
+                                width: dropdownCol.width
+                                notificationData: modelData
+                                inPanel: false
                             }
                         }
-                        Timer {
-                            interval: 1000; running: true; repeat: true
-                            onTriggered: clockProc.running = true
-                        }
                     }
-                    
-                    }
+                }
             }
-
             // Power Pill (#custom-power)
             Rectangle {
                 id: powerPill
@@ -693,135 +702,4 @@ PanelWindow {
         }
     }
 
-    // ── Nested Notification Dropdown Window ──────
-    // Implemented as a separate Wayland layer to prevent main Bar flicker, but embedded to avoid separate files.
-    PanelWindow {
-        id: dropdownWindow
-        visible: globalState.popups && globalState.popups.length > 0 || globalState.closingIsland
-        
-        anchors.top: true
-        anchors.right: true
-        
-        // Match the clock pill's position (10px from top, 62px from right including power pill + margins)
-        margins.top: 10
-        margins.right: 62
-
-        color: "transparent"
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.namespace: "waybar-dropdown"
-        WlrLayershell.layer: WlrLayer.Overlay
-
-        implicitWidth: 380
-        implicitHeight: 600
-        
-        property bool closingIsland: globalState.closingIsland
-        property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
-
-        Rectangle {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            
-            width: globalState.islandWidth
-
-            height: dropdownWindow.hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
-            Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-
-            color: Theme.colSurface
-            radius: 18
-            clip: true
-            
-            opacity: 1.0
-            
-            Item {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 34
-                
-                Row {
-                    id: overlayClock
-                    anchors.centerIn: parent
-                    spacing: 5
-                    opacity: 1.0
-                    
-                    NumberAnimation {
-                        id: explicitFadeOut
-                        target: overlayClock
-                        property: "opacity"
-                        to: 0.0
-                        duration: 400
-                        easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
-                    }
-                    
-                    NumberAnimation {
-                        id: explicitFadeIn
-                        target: overlayClock
-                        property: "opacity"
-                        to: 1.0
-                        duration: 400
-                        easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack
-                    }
-                    
-                    Timer {
-                        id: overlayFadeInDelay
-                        interval: 400
-                        onTriggered: explicitFadeIn.start()
-                    }
-                    
-                    Connections {
-                        target: dropdownWindow
-                        function onHasDropdownChanged() {
-                            if (!dropdownWindow.hasDropdown) {
-                                explicitFadeOut.stop();
-                                overlayFadeInDelay.start();
-                            }
-                        }
-                        function onVisibleChanged() {
-                            if (dropdownWindow.visible && dropdownWindow.hasDropdown) {
-                                // Force initial opacity before starting animation
-                                overlayClock.opacity = 1.0;
-                                explicitFadeIn.stop();
-                                overlayFadeInDelay.stop();
-                                explicitFadeOut.start();
-                            }
-                        }
-                    }
-                    
-                    Text { text: "󰂚"; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
-                    Text { text: " | "; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
-                    Text { 
-                        text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP")
-                        color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 
-                    }
-                }
-            }
-            
-            Column {
-                id: dropdownCol
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.rightMargin: 8
-                anchors.topMargin: 8
-                width: 364
-                
-                transformOrigin: Item.TopRight
-                scale: dropdownWindow.hasDropdown ? 1.0 : 0.0
-                opacity: dropdownWindow.hasDropdown ? 1.0 : 0.0
-                
-                Behavior on scale { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-                Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
-
-                spacing: 6
-                Repeater {
-                    model: globalState.popups && globalState.popups.length > 0 ? globalState.popups.slice(0, 5) : []
-                    delegate: NotificationCard {
-                        width: dropdownCol.width
-                        notificationData: modelData
-                        inPanel: false
-                    }
-                }
-            }
-        }
-    }
-}
 }
