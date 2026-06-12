@@ -147,6 +147,8 @@ echo -e "[Icon Theme]\nName=Default\nComment=Default Cursor Theme\nInherits=Biba
 
 if [ -d "$HOME/.icons/Bibata-Modern-Ice" ]; then
   sudo cp -r "$HOME/.icons/Bibata-Modern-Ice" /usr/share/icons/
+  sudo mkdir -p /usr/share/icons/default
+  echo -e "[Icon Theme]\nInherits=Bibata-Modern-Ice" | sudo tee /usr/share/icons/default/index.theme > /dev/null
 fi
 
 mkdir -p "$HOME/.config/gtk-3.0"
