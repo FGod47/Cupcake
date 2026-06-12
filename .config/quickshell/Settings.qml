@@ -698,9 +698,24 @@ ApplicationWindow {
                             running: false
                         }
 
+                        // Process to check if key exists
+                        property bool keyExists: false
+                        Process {
+                            id: settingsCheckKey
+                            command: ["bash", "-c", "cat ~/.config/quickshell/gemini_key.txt 2>/dev/null"]
+                            running: true
+                            stdout: SplitParser {
+                                onRead: data => {
+                                    if (data.length > 10) {
+                                        keyExists = true;
+                                    }
+                                }
+                            }
+                        }
+
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 100
+                            Layout.preferredHeight: 120
                             radius: 12
                             color: Theme.colSurfaceContainer
                             
@@ -709,18 +724,29 @@ ApplicationWindow {
                                 anchors.margins: 16
                                 spacing: 8
                                 
-                                Text {
-                                    text: "Google Gemini API Key"
-                                    color: Theme.colOnSurfaceVariant
-                                    font.family: root.font.family
-                                    font.pixelSize: 14
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Text {
+                                        text: "Google Gemini API Key"
+                                        color: Theme.colOnSurfaceVariant
+                                        font.family: root.font.family
+                                        font.pixelSize: 14
+                                    }
+                                    Item { Layout.fillWidth: true }
+                                    Text {
+                                        text: keyExists ? "✅ Key is Set" : "❌ No Key Found"
+                                        color: keyExists ? Theme.colPrimary : Theme.colError
+                                        font.family: root.font.family
+                                        font.pixelSize: 14
+                                        font.bold: true
+                                    }
                                 }
                                 
                                 TextField {
                                     id: apiKeyInput
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 40
-                                    placeholderText: "Paste your API key here..."
+                                    placeholderText: keyExists ? "Paste a new key to overwrite..." : "Paste your API key here..."
                                     color: Theme.colOnSurface
                                     background: Rectangle {
                                         color: Theme.colSurfaceContainerHigh
@@ -731,6 +757,7 @@ ApplicationWindow {
                                     onAccepted: {
                                         saveKeyProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/quickshell/gemini_key.txt"];
                                         saveKeyProcess.running = true;
+                                        keyExists = true;
                                         placeholderText = "Key saved successfully!";
                                         text = "";
                                     }
