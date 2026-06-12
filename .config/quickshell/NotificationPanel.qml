@@ -60,7 +60,7 @@ PanelWindow {
             
             color: Theme.colSurface
             radius: 24
-            border.color: Theme.colSecondary
+            border.color: "#80000000" // sleek dark border
             border.width: 1
             clip: true
             
