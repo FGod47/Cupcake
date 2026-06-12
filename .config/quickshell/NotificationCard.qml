@@ -24,7 +24,7 @@ Item {
         // Use mainRow.height (explicitly set) NOT implicitHeight (0 for Item)
         height: mainRow.height + 20
 
-        color: Theme.colSurface
+        color: Theme.colSurfaceContainerHigh
         clip: true
         radius: 16
         border.color: "#80000000" // sleek dark border
