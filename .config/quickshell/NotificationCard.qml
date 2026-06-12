@@ -102,7 +102,7 @@ Item {
                 id: iconRect
                 width: 40; height: 40
                 radius: 20
-                color: Theme.colOutline
+                color: Theme.colPrimary
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 Image {
@@ -121,7 +121,7 @@ Item {
                 }
                 Text {
                     text: "\uf0f3"
-                    color: Theme.colOnSurface
+                    color: Theme.colOnPrimary
                     font.family: "JetBrainsMono Nerd Font Propo"
                     font.pixelSize: 18
                     anchors.centerIn: parent
