@@ -128,7 +128,7 @@ PanelWindow {
                 id: chatModel
                 ListElement {
                     isUser: false
-                    message: "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**To get started, please paste your Gemini API key below:**"
+                    message: "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**Try asking me a question!**"
                 }
             }
 
@@ -142,16 +142,9 @@ PanelWindow {
                     onRead: data => {
                         if (data.length > 10) {
                             hasKey = true;
-                            chatModel.setProperty(0, "message", "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**Try asking me a question!**");
                         }
                     }
                 }
-            }
-
-            // Process to save key
-            Process {
-                id: saveKeyProcess
-                running: false
             }
 
             ListView {
@@ -182,7 +175,7 @@ PanelWindow {
                             Layout.alignment: Qt.AlignTop
                             width: 36; height: 36; radius: 18
                             color: Theme.colSurfaceContainerHigh
-                            border.color: Theme.colOutlineVariant
+                            border.color: Theme.colOutline
                             border.width: 1
                             Text {
                                 anchors.centerIn: parent
@@ -256,7 +249,7 @@ PanelWindow {
                 Layout.margins: 20
                 radius: 30
                 color: Theme.colSurfaceContainer
-                border.color: Theme.colOutlineVariant
+                border.color: Theme.colOutline
                 border.width: 1
 
                 RowLayout {
@@ -304,13 +297,8 @@ PanelWindow {
                                 var userText = promptInput.text.trim();
                                 
                                 if (!hasKey) {
-                                    // Save the key
-                                    saveKeyProcess.command = ["bash", "-c", "echo '" + userText + "' > ~/.config/quickshell/gemini_key.txt"];
-                                    saveKeyProcess.running = true;
-                                    hasKey = true;
-                                    
-                                    chatModel.append({ isUser: true, message: "🔑 [API Key Hidden]" });
-                                    chatModel.append({ isUser: false, message: "API Key saved successfully!\n\nYou can now ask me any question." });
+                                    chatModel.append({ isUser: true, message: userText });
+                                    chatModel.append({ isUser: false, message: "**Error:** You haven't added your API key yet!\n\nPlease open the Settings app (Super + P -> Settings), go to the AI tab, and save your key there." });
                                     promptInput.text = "";
                                     chatList.positionViewAtEnd();
                                     return;

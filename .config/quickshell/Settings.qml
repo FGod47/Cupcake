@@ -106,6 +106,7 @@ ApplicationWindow {
                 NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 1 }
                 NavButton { iconText: ""; labelText: "System"; pageIndex: 2 }
                 NavButton { iconText: ""; labelText: "Network"; pageIndex: 3 }
+                NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 4 }
 
                 Item { Layout.fillHeight: true } // Spacer
             }
@@ -666,8 +667,80 @@ ApplicationWindow {
                             }
                         }
                     }
+                    }
+                }
+
+                // PAGE 4: AI PANEL
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 4 ? 0 : 20
+                    opacity: root.currentIndex === 4 ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
+
+                        Text {
+                            text: "AI Panel Settings"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 24
+                            font.bold: true
+                        }
+
+                        // Save Key Process
+                        Process {
+                            id: saveKeyProcess
+                            running: false
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 100
+                            radius: 12
+                            color: Theme.colSurfaceContainer
+                            
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                spacing: 8
+                                
+                                Text {
+                                    text: "Google Gemini API Key"
+                                    color: Theme.colOnSurfaceVariant
+                                    font.family: root.font.family
+                                    font.pixelSize: 14
+                                }
+                                
+                                TextField {
+                                    id: apiKeyInput
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 40
+                                    placeholderText: "Paste your API key here..."
+                                    color: Theme.colOnSurface
+                                    background: Rectangle {
+                                        color: Theme.colSurfaceContainerHigh
+                                        radius: 6
+                                    }
+                                    leftPadding: 10
+                                    
+                                    onAccepted: {
+                                        saveKeyProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/quickshell/gemini_key.txt"];
+                                        saveKeyProcess.running = true;
+                                        placeholderText = "Key saved successfully!";
+                                        text = "";
+                                    }
+                                }
+                            }
+                        }
+
+                        Item { Layout.fillHeight: true }
+                    }
                 }
             }
         }
     }
-}
