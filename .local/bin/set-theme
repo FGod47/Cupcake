@@ -57,7 +57,7 @@ killall -SIGUSR1 kitty 2>/dev/null || true
 # Restart Quickshell to pick up the new Theme.qml
 # We run this in the background detached so the script doesn't kill itself
 echo "Reloading Quickshell..."
-nohup bash -c 'sleep 0.5; killall quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; quickshell --daemonize -p ~/.config/quickshell/shell.qml' >/dev/null 2>&1 &
+nohup bash -c 'sleep 0.5; killall -9 quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; QT_NO_SESSION_MANAGER=1 quickshell --daemonize -p ~/.config/quickshell/shell.qml' >/dev/null 2>&1 &
 disown
 
 echo "Theme applied successfully!"

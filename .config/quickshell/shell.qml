@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import QtQuick
 import "theme"
@@ -33,6 +34,13 @@ ShellRoot {
         property string clockString: ""
         property bool closingIsland: false
         property bool hideIsland: false
+    }
+
+    IpcHandler {
+        target: "aipanel"
+        function toggle() {
+            globalState.aiPanelVisible = !globalState.aiPanelVisible;
+        }
     }
 
     // Popups & Panels

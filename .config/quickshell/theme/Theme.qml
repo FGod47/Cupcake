@@ -2,16 +2,16 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    property color colBackground: "#fbfaed"
-    property color colOnBackground: "#1b1c15"
-    property color colSurface: "#fbfaed"
-    property color colSurfaceContainer: "#efeee2"
-    property color colSurfaceContainerHigh: "#e9e9dc"
-    property color colOnSurface: "#1b1c15"
-    property color colOnSurfaceVariant: "#46483c"
-    property color colOutline: "#76786b"
-    property color colPrimary: "#556423"
-    property color colOnPrimary: "#ffffff"
-    property color colSecondary: "#5b6146"
-    property color colError: "#ba1a1a"
+    property color colBackground: "#13140d"
+    property color colOnBackground: "#e4e3d7"
+    property color colSurface: "#13140d"
+    property color colSurfaceContainer: "#1f2019"
+    property color colSurfaceContainerHigh: "#292b23"
+    property color colOnSurface: "#e4e3d7"
+    property color colOnSurfaceVariant: "#c7c8b8"
+    property color colOutline: "#909283"
+    property color colPrimary: "#bcce81"
+    property color colOnPrimary: "#293500"
+    property color colSecondary: "#c4caa9"
+    property color colError: "#ffb4ab"
 }

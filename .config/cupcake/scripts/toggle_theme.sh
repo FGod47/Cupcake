@@ -37,7 +37,7 @@ DEFAULT_WALL=$(find "$THEME_DIR/walls" -type f | head -n 1)
 awww img "$WALLPAPER_DEST" --transition-type grow --transition-fps 60 --transition-duration 1
 
 # Restart the shell
-pkill -x quickshell
-quickshell -p ~/.config/quickshell/shell.qml &
+pkill -9 -x quickshell
+QT_NO_SESSION_MANAGER=1 quickshell -p ~/.config/quickshell/shell.qml &
 
 notify-send "Switched to $NEW"

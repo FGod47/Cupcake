@@ -15,9 +15,9 @@ PanelWindow {
     }
     
     margins {
-        top: 24
+        top: 50
         right: 24
-        bottom: 24
+        bottom: 15
     }
     implicitWidth: 340
     color: "transparent"
@@ -49,14 +49,29 @@ PanelWindow {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             
-            // Morph from 0 to 340 width
-            width: globalState.notifPanelVisible ? 340 : 0
+            states: [
+                State {
+                    name: "open"
+                    when: globalState.notifPanelVisible
+                    PropertyChanges { target: panelBg; width: 340; height: parent.height }
+                },
+                State {
+                    name: "closed"
+                    when: !globalState.notifPanelVisible
+                    PropertyChanges { target: panelBg; width: 0; height: parent.height * 0.8 }
+                }
+            ]
             
-            // Keep height static or slightly morph it
-            height: globalState.notifPanelVisible ? parent.height : parent.height * 0.8
-            
-            Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
-            Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+            transitions: [
+                Transition {
+                    from: "closed"; to: "open"
+                    NumberAnimation { properties: "width,height"; duration: 550; easing.type: Easing.InOutExpo }
+                },
+                Transition {
+                    from: "open"; to: "closed"
+                    NumberAnimation { properties: "width,height"; duration: 550; easing.type: Easing.InOutExpo }
+                }
+            ]
             
             color: Theme.colSurface
             radius: 24
