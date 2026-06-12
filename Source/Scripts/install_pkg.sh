@@ -93,7 +93,7 @@ handle_aur_package() {
 
 # ──────────────── Pacman Package List ────────────────
 packages=(
-    git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc
+    git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
     slurp grim android-tools imagemagick bc code cava
     wget pamixer pavucontrol telegram-desktop bat nwg-look
