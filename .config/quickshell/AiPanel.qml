@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -26,8 +27,8 @@ PanelWindow {
         width: 450
         height: parent.height
         radius: 30
-        color: Theme.colBase // Deep background
-        border.color: Theme.colOutlineVariant
+        color: Theme.colSurface // Deep background
+        border.color: Theme.colOutline
         border.width: 1
         clip: true
 
@@ -119,7 +120,7 @@ PanelWindow {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: Theme.colSurfaceContainerHighest
+                color: Theme.colSurfaceContainerHigh
             }
 
             // 2. CHAT HISTORY (End-4 bubble styling)
@@ -127,8 +128,30 @@ PanelWindow {
                 id: chatModel
                 ListElement {
                     isUser: false
-                    message: "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**Try asking me a question!**"
+                    message: "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**To get started, please paste your Gemini API key below:**"
                 }
+            }
+
+            // Process to check if key exists
+            property bool hasKey: false
+            Process {
+                id: checkKeyProcess
+                command: ["bash", "-c", "cat ~/.config/quickshell/gemini_key.txt 2>/dev/null"]
+                running: true
+                stdout: SplitParser {
+                    onRead: data => {
+                        if (data.length > 10) {
+                            hasKey = true;
+                            chatModel.setProperty(0, "message", "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**Try asking me a question!**");
+                        }
+                    }
+                }
+            }
+
+            // Process to save key
+            Process {
+                id: saveKeyProcess
+                running: false
             }
 
             ListView {
@@ -213,12 +236,12 @@ PanelWindow {
                             visible: model.isUser
                             Layout.alignment: Qt.AlignTop
                             width: 36; height: 36; radius: 18
-                            color: Theme.colSecondaryContainer
+                            color: Theme.colSurfaceContainer
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
                                 font.family: "JetBrainsMono Nerd Font Propo"
-                                color: Theme.colOnSecondaryContainer
+                                color: Theme.colOnSurface
                                 font.pixelSize: 18
                             }
                         }
@@ -278,20 +301,61 @@ PanelWindow {
                             onClicked: {
                                 if (promptInput.text.trim() === "") return;
                                 
-                                // Add user message
-                                chatModel.append({ isUser: true, message: promptInput.text });
+                                var userText = promptInput.text.trim();
                                 
-                                // Add fake AI response for now
-                                var userText = promptInput.text;
+                                if (!hasKey) {
+                                    // Save the key
+                                    saveKeyProcess.command = ["bash", "-c", "echo '" + userText + "' > ~/.config/quickshell/gemini_key.txt"];
+                                    saveKeyProcess.running = true;
+                                    hasKey = true;
+                                    
+                                    chatModel.append({ isUser: true, message: "🔑 [API Key Hidden]" });
+                                    chatModel.append({ isUser: false, message: "API Key saved successfully!\n\nYou can now ask me any question." });
+                                    promptInput.text = "";
+                                    chatList.positionViewAtEnd();
+                                    return;
+                                }
+
+                                chatModel.append({ isUser: true, message: userText });
                                 chatModel.append({ isUser: false, message: "Thinking..." });
                                 
                                 promptInput.text = "";
-                                
-                                // Scroll to bottom
                                 chatList.positionViewAtEnd();
+                                
+                                geminiProcess.command = ["python3", "/home/one/.config/quickshell/gemini.py", userText];
+                                geminiProcess.running = true;
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Backend AI Streaming Process
+        Process {
+            id: geminiProcess
+            command: ["python3", "/home/one/.config/quickshell/gemini.py", ""]
+            running: false
+            stdout: SplitParser {
+                onRead: data => {
+                    try {
+                        var obj = JSON.parse(data);
+                        var lastIdx = chatModel.count - 1;
+                        var lastMsg = chatModel.get(lastIdx);
+                        
+                        if (lastMsg && !lastMsg.isUser) {
+                            if (obj.text) {
+                                if (lastMsg.message === "Thinking...") {
+                                    chatModel.setProperty(lastIdx, "message", obj.text);
+                                } else {
+                                    chatModel.setProperty(lastIdx, "message", lastMsg.message + obj.text);
+                                }
+                            } else if (obj.error) {
+                                chatModel.setProperty(lastIdx, "message", "**Error:**\n\n" + obj.error);
+                            }
+                        }
+                    } catch(e) {}
+                    chatList.positionViewAtEnd();
                 }
             }
         }
