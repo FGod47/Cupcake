@@ -672,6 +672,9 @@ ApplicationWindow {
 
                 // PAGE 4: AI PANEL
                 Item {
+                    id: aiSettingsPage
+                    property bool keyExists: false
+
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 4 ? 0 : 20
                     opacity: root.currentIndex === 4 ? 1 : 0
@@ -699,7 +702,6 @@ ApplicationWindow {
                         }
 
                         // Process to check if key exists
-                        property bool keyExists: false
                         Process {
                             id: settingsCheckKey
                             command: ["bash", "-c", "cat ~/.config/quickshell/gemini_key.txt 2>/dev/null"]
@@ -707,7 +709,7 @@ ApplicationWindow {
                             stdout: SplitParser {
                                 onRead: data => {
                                     if (data.length > 10) {
-                                        keyExists = true;
+                                        aiSettingsPage.keyExists = true;
                                     }
                                 }
                             }
@@ -734,32 +736,59 @@ ApplicationWindow {
                                     }
                                     Item { Layout.fillWidth: true }
                                     Text {
-                                        text: keyExists ? "✅ Key is Set" : "❌ No Key Found"
-                                        color: keyExists ? Theme.colPrimary : Theme.colError
+                                        text: aiSettingsPage.keyExists ? "✅ Key is Set" : "❌ No Key Found"
+                                        color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
                                         font.family: root.font.family
                                         font.pixelSize: 14
                                         font.bold: true
                                     }
                                 }
                                 
-                                TextField {
-                                    id: apiKeyInput
+                                RowLayout {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
-                                    placeholderText: keyExists ? "Paste a new key to overwrite..." : "Paste your API key here..."
-                                    color: Theme.colOnSurface
-                                    background: Rectangle {
-                                        color: Theme.colSurfaceContainerHigh
-                                        radius: 6
+                                    spacing: 12
+
+                                    TextField {
+                                        id: apiKeyInput
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 40
+                                        placeholderText: aiSettingsPage.keyExists ? "Paste a new key to overwrite..." : "Paste your API key here..."
+                                        color: Theme.colOnSurface
+                                        background: Rectangle {
+                                            color: Theme.colSurfaceContainerHigh
+                                            radius: 6
+                                        }
+                                        leftPadding: 10
+                                        
+                                        onAccepted: {
+                                            saveKeyProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/quickshell/gemini_key.txt"];
+                                            saveKeyProcess.running = true;
+                                            aiSettingsPage.keyExists = true;
+                                            placeholderText = "Key saved successfully!";
+                                            text = "";
+                                        }
                                     }
-                                    leftPadding: 10
-                                    
-                                    onAccepted: {
-                                        saveKeyProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/quickshell/gemini_key.txt"];
-                                        saveKeyProcess.running = true;
-                                        keyExists = true;
-                                        placeholderText = "Key saved successfully!";
-                                        text = "";
+
+                                    Rectangle {
+                                        Layout.preferredWidth: 80
+                                        Layout.preferredHeight: 40
+                                        radius: 6
+                                        color: Theme.colPrimary
+                                        
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "Save"
+                                            color: Theme.colOnPrimary
+                                            font.family: root.font.family
+                                            font.bold: true
+                                            font.pixelSize: 14
+                                        }
+                                        
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: apiKeyInput.accepted()
+                                        }
                                     }
                                 }
                             }
