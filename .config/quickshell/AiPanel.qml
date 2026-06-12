@@ -6,19 +6,20 @@ import "theme"
 
 PanelWindow {
     id: aiWindow
+    exclusionMode: ExclusionMode.Ignore
     
     // Anchor to the right edge of the screen
     anchors {
         top: true
         bottom: true
-        right: true
+        left: true
     }
 
     width: 450
     color: "transparent"
     margins.top: 10
     margins.bottom: 10
-    margins.right: 10
+    margins.left: 10
 
     // Main sliding container
     Rectangle {
@@ -32,7 +33,7 @@ PanelWindow {
         clip: true
 
         // Slide animation based on globalState visibility
-        x: globalState.aiPanelVisible ? 0 : aiWindow.width + 20
+        x: globalState.aiPanelVisible ? 0 : -(aiWindow.width + 20)
         Behavior on x {
             NumberAnimation {
                 duration: 350
