@@ -137,13 +137,17 @@ if command -v sddm &> /dev/null; then
   sudo mkdir -p /usr/share/sddm/themes/winter
   sudo cp -r "$HOME/.local/share/qylock-themes/winter/"* /usr/share/sddm/themes/winter/
   sudo mkdir -p /etc/sddm.conf.d
-  echo -e "[Theme]\nCurrent=winter" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
+  echo -e "[Theme]\nCurrent=winter\nCursorTheme=Bibata-Modern-Ice" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
 fi
 
 # ──────────────── Install Cursor Configuration ────────────────
 echo -e "${GREEN}[INSTALL]${RESET} Configuring Bibata-Modern-Ice cursor globally"
 mkdir -p "$HOME/.icons/default"
 echo -e "[Icon Theme]\nName=Default\nComment=Default Cursor Theme\nInherits=Bibata-Modern-Ice" > "$HOME/.icons/default/index.theme"
+
+if [ -d "$HOME/.icons/Bibata-Modern-Ice" ]; then
+  sudo cp -r "$HOME/.icons/Bibata-Modern-Ice" /usr/share/icons/
+fi
 
 mkdir -p "$HOME/.config/gtk-3.0"
 cat <<EOF > "$HOME/.config/gtk-3.0/settings.ini"
