@@ -83,9 +83,15 @@ print_lines_centered() {
 
 prompt_centered() {
     local prompt="$1"
-    local visible_prompt=$(echo "$prompt" | sed 's/\\033\[[0-9;]*m//g')
+    # Safely get the visible length by interpreting colors and then stripping ANSI escape characters
+    local visible_prompt=$(echo -e "$prompt" | sed 's/\x1b\[[0-9;]*m//g')
     local padding=$(( (TERM_WIDTH - ${#visible_prompt}) / 2 ))
-    read -rp "$(printf "%*s" "$padding" "")$prompt" user_input
+    # Print the padding
+    printf "%*s" "$padding" ""
+    # Print the prompt with interpreted colors
+    echo -e -n "$prompt"
+    # Read the user input
+    read -r user_input
 }
 
 # ──────────────── Main Execution ────────────────
