@@ -540,6 +540,7 @@ PanelWindow {
 
 
 
+
                             Text {
                                 id: notifText
                                 text: "󰂚"

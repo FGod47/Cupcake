@@ -15,16 +15,16 @@ PanelWindow {
         left: true
     }
 
-    width: 450
+    implicitWidth: 470
     color: "transparent"
+    visible: globalState.aiPanelVisible || container.x > -460
     margins.top: 10
     margins.bottom: 10
-    margins.left: 10
 
     // Main sliding container
     Rectangle {
         id: container
-        width: parent.width
+        width: 450
         height: parent.height
         radius: 24
         color: Theme.colSurface
@@ -33,7 +33,7 @@ PanelWindow {
         clip: true
 
         // Slide animation based on globalState visibility
-        x: globalState.aiPanelVisible ? 0 : -(aiWindow.width + 20)
+        x: globalState.aiPanelVisible ? 10 : -470
         Behavior on x {
             NumberAnimation {
                 duration: 350
