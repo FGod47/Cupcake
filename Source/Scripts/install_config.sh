@@ -146,6 +146,9 @@ mkdir -p "$HOME/.icons/default"
 echo -e "[Icon Theme]\nName=Default\nComment=Default Cursor Theme\nInherits=Bibata-Modern-Ice" > "$HOME/.icons/default/index.theme"
 
 if [ -d "$HOME/.icons/Bibata-Modern-Ice" ]; then
+  mkdir -p "$HOME/.local/share/icons"
+  cp -r "$HOME/.icons/Bibata-Modern-Ice" "$HOME/.local/share/icons/"
+  cp -r "$HOME/.icons/default" "$HOME/.local/share/icons/"
   sudo cp -r "$HOME/.icons/Bibata-Modern-Ice" /usr/share/icons/
   sudo mkdir -p /usr/share/icons/default
   echo -e "[Icon Theme]\nInherits=Bibata-Modern-Ice" | sudo tee /usr/share/icons/default/index.theme > /dev/null
