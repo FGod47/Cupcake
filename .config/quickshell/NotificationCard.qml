@@ -27,7 +27,7 @@ Item {
         color: Theme.colSurface
         clip: true
         radius: 16
-        border.color: Theme.colPrimary
+        border.color: Theme.colSecondary
         border.width: 1
 
         x: 0

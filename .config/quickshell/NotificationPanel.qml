@@ -60,7 +60,7 @@ PanelWindow {
             
             color: Theme.colSurface
             radius: 24
-            border.color: Theme.colPrimary
+            border.color: Theme.colSecondary
             border.width: 1
             clip: true
             
