@@ -20,7 +20,18 @@ if len(sys.argv) < 2:
     sys.exit(0)
 
 prompt = sys.argv[1]
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:streamGenerateContent?alt=sse&key={API_KEY}"
+
+MODEL = "gemini-3.5-flash"
+model_path = os.path.expanduser("~/.config/quickshell/gemini_model.txt")
+try:
+    with open(model_path, "r") as f:
+        stored_model = f.read().strip()
+        if stored_model:
+            MODEL = stored_model
+except Exception:
+    pass
+
+url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={API_KEY}"
 
 data = {
     "contents": [{"parts": [{"text": prompt}]}]
@@ -42,5 +53,13 @@ try:
                         sys.stdout.flush()
                 except Exception:
                     pass
+except urllib.error.HTTPError as e:
+    body = e.read().decode('utf-8')
+    try:
+        err_json = json.loads(body)
+        err_msg = err_json.get("error", {}).get("message", str(e))
+        print(json.dumps({"error": err_msg}))
+    except Exception:
+        print(json.dumps({"error": f"HTTP Error {e.code}: {e.reason}"}))
 except Exception as e:
     print(json.dumps({"error": str(e)}))

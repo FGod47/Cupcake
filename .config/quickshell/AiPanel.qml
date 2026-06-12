@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -8,6 +9,7 @@ import "theme"
 PanelWindow {
     id: aiWindow
     exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     
     anchors {
         top: true
@@ -20,6 +22,31 @@ PanelWindow {
     visible: globalState.aiPanelVisible || container.x > -460
     margins.top: 15
     margins.bottom: 15
+
+    property bool hasKey: false
+
+    function sendMessage() {
+        if (promptInput.text.trim() === "") return;
+        
+        var userText = promptInput.text.trim();
+        
+        if (!hasKey) {
+            chatModel.append({ isUser: true, message: userText });
+            chatModel.append({ isUser: false, message: "**Error:** You haven't added your API key yet!\n\nPlease open the Settings app (Super + P -> Settings), go to the AI tab, and save your key there." });
+            promptInput.text = "";
+            chatList.positionViewAtEnd();
+            return;
+        }
+
+        chatModel.append({ isUser: true, message: userText });
+        chatModel.append({ isUser: false, message: "Thinking..." });
+        
+        promptInput.text = "";
+        chatList.positionViewAtEnd();
+        
+        geminiProcess.command = ["python3", "/home/one/.config/quickshell/gemini.py", userText];
+        geminiProcess.running = true;
+    }
 
     // Main sliding container (End-4 exact styling)
     Rectangle {
@@ -133,7 +160,6 @@ PanelWindow {
             }
 
             // Process to check if key exists
-            property bool hasKey: false
             Process {
                 id: checkKeyProcess
                 command: ["bash", "-c", "cat ~/.config/quickshell/gemini_key.txt 2>/dev/null"]
@@ -141,7 +167,7 @@ PanelWindow {
                 stdout: SplitParser {
                     onRead: data => {
                         if (data.length > 10) {
-                            hasKey = true;
+                            aiWindow.hasKey = true;
                         }
                     }
                 }
@@ -270,7 +296,7 @@ PanelWindow {
                         verticalAlignment: TextInput.AlignVCenter
                         leftPadding: 15
                         
-                        onAccepted: sendBtnMouse.onClicked()
+                        onAccepted: aiWindow.sendMessage()
                     }
 
                     // Send Button
@@ -291,28 +317,7 @@ PanelWindow {
                             id: sendBtnMouse
                             anchors.fill: parent
                             cursorShape: promptInput.text.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: {
-                                if (promptInput.text.trim() === "") return;
-                                
-                                var userText = promptInput.text.trim();
-                                
-                                if (!hasKey) {
-                                    chatModel.append({ isUser: true, message: userText });
-                                    chatModel.append({ isUser: false, message: "**Error:** You haven't added your API key yet!\n\nPlease open the Settings app (Super + P -> Settings), go to the AI tab, and save your key there." });
-                                    promptInput.text = "";
-                                    chatList.positionViewAtEnd();
-                                    return;
-                                }
-
-                                chatModel.append({ isUser: true, message: userText });
-                                chatModel.append({ isUser: false, message: "Thinking..." });
-                                
-                                promptInput.text = "";
-                                chatList.positionViewAtEnd();
-                                
-                                geminiProcess.command = ["python3", "/home/one/.config/quickshell/gemini.py", userText];
-                                geminiProcess.running = true;
-                            }
+                            onClicked: aiWindow.sendMessage()
                         }
                     }
                 }
