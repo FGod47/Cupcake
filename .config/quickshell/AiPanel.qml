@@ -204,7 +204,7 @@ PanelWindow {
                 id: chatModel
                 ListElement {
                     isUser: false
-                    message: "Hello! I am your native Cupcake AI Assistant.\n\nI look and feel exactly like the end-4 AGS panel, but I run entirely in Quickshell!\n\n**Try asking me a question!**"
+                    message: "Hello! How can I help you today?"
                 }
             }
 
@@ -228,89 +228,66 @@ PanelWindow {
                 Layout.fillHeight: true
                 clip: true
                 model: chatModel
-                spacing: 20
+                spacing: 24
                 topMargin: 20
                 bottomMargin: 20
                 boundsBehavior: Flickable.StopAtBounds
 
                 delegate: Item {
                     width: chatList.width
-                    height: bubble.height
+                    height: Math.max(bubbleItem.height, 36)
 
                     RowLayout {
                         anchors.left: model.isUser ? undefined : parent.left
                         anchors.right: model.isUser ? parent.right : undefined
                         anchors.leftMargin: 20
                         anchors.rightMargin: 20
-                        spacing: 15
+                        spacing: 16
                         
-                        // AI Avatar (only show on left)
+                        // AI Avatar (only show on left for AI)
                         Rectangle {
                             visible: !model.isUser
                             Layout.alignment: Qt.AlignTop
-                            width: 36; height: 36; radius: 18
-                            color: Theme.colSurfaceContainerHigh
-                            border.color: Theme.colOutline
-                            border.width: 1
+                            width: 32; height: 32; radius: 16
+                            color: "transparent"
+                            
                             Text {
                                 anchors.centerIn: parent
                                 text: "✨"
-                                font.pixelSize: 18
+                                font.pixelSize: 20
+                                // Gemini gradient colors
+                                color: "#8AB4F8"
                             }
                         }
 
-                        // Message Bubble
-                        Rectangle {
-                            id: bubble
+                        // Message Content
+                        Item {
+                            id: bubbleItem
                             Layout.maximumWidth: chatList.width - 100
-                            Layout.preferredHeight: msgText.implicitHeight + 24
-                            radius: 18
-                            // User bubbles are Primary colored, AI bubbles are Surface colored
-                            color: model.isUser ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                            Layout.preferredHeight: msgText.implicitHeight + (model.isUser ? 24 : 8)
                             
-                            // Make bottom-right/bottom-left sharp for the tail effect
+                            // User gets a pill background, AI gets transparent
                             Rectangle {
+                                anchors.fill: parent
                                 visible: model.isUser
-                                width: 18; height: 18
-                                color: Theme.colPrimary
-                                anchors.bottom: parent.bottom
-                                anchors.right: parent.right
-                            }
-                            Rectangle {
-                                visible: !model.isUser
-                                width: 18; height: 18
+                                radius: 18
                                 color: Theme.colSurfaceContainerHigh
-                                anchors.bottom: parent.bottom
-                                anchors.left: parent.left
                             }
 
                             Text {
                                 id: msgText
                                 anchors.fill: parent
-                                anchors.margins: 12
+                                anchors.margins: model.isUser ? 12 : 4
+                                anchors.topMargin: model.isUser ? 12 : 6
                                 text: model.message
                                 textFormat: Text.MarkdownText
                                 wrapMode: Text.WordWrap
-                                color: model.isUser ? Theme.colOnPrimary : Theme.colOnSurface
-                                font.pixelSize: 14
+                                color: Theme.colOnSurface
+                                font.pixelSize: 15
                                 font.family: "Inter"
+                                lineHeight: 1.4
                                 
                                 onLinkActivated: Qt.openUrlExternally(link)
-                            }
-                        }
-
-                        // User Avatar (only show on right)
-                        Rectangle {
-                            visible: model.isUser
-                            Layout.alignment: Qt.AlignTop
-                            width: 36; height: 36; radius: 18
-                            color: Theme.colSurfaceContainer
-                            Text {
-                                anchors.centerIn: parent
-                                text: ""
-                                font.family: "JetBrainsMono Nerd Font Propo"
-                                color: Theme.colOnSurface
-                                font.pixelSize: 18
                             }
                         }
                     }
