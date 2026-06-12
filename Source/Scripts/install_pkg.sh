@@ -99,7 +99,7 @@ packages=(
     wget pamixer pavucontrol telegram-desktop bat nwg-look
     nwg-displays libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc jmtpfs mtpfs libmtp repo os-prober cpio 7zip
-    python-pipx ccache erofs-utils jq ddcutil i2c-tools
+    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe
 )
 
 # ──────────────── AUR Package List ────────────────
