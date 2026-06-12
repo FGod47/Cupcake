@@ -497,7 +497,7 @@ PanelWindow {
                     id: clockPill
                     y: 0
                     radius: 18
-                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 42)) : 34
+                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
                     Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
                     color: Theme.colSurface
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
@@ -594,7 +594,7 @@ PanelWindow {
                     Column {
                         id: dropdownCol
                         anchors.top: parent.top
-                        anchors.topMargin: 38
+                        anchors.topMargin: 8
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.margins: 8
