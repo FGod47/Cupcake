@@ -541,7 +541,7 @@ PanelWindow {
                             Text {
                                 id: notifText
                                 text: "󰂚"
-                                color: fg; font.family: fontName; font.pixelSize: fontSize
+                                color: Theme.colPrimary; font.family: fontName; font.pixelSize: fontSize
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible }
                             }
 
@@ -585,7 +585,7 @@ PanelWindow {
                                 else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
-                        Text { text: "󰂚"; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
+                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
                         Text { text: " | "; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
                         Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 }
                     }
