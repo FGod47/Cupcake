@@ -794,6 +794,73 @@ ApplicationWindow {
                             }
                         }
 
+                        // Model Selection
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 100
+                            radius: 12
+                            color: Theme.colSurfaceContainer
+                            
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                spacing: 8
+                                
+                                Text {
+                                    text: "Default Model"
+                                    color: Theme.colOnSurfaceVariant
+                                    font.family: root.font.family
+                                    font.pixelSize: 14
+                                }
+                                
+                                ComboBox {
+                                    id: modelCombo
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 40
+                                    model: [
+                                        "gemini-3.5-flash",
+                                        "gemini-flash-latest",
+                                        "gemini-2.5-pro",
+                                        "gemini-2.5-flash",
+                                        "gemini-2.0-flash",
+                                        "gemini-pro-latest"
+                                    ]
+                                    
+                                    background: Rectangle {
+                                        color: Theme.colSurfaceContainerHigh
+                                        radius: 6
+                                    }
+                                    
+                                    Process {
+                                        command: ["bash", "-c", "cat ~/.config/quickshell/gemini_model.txt 2>/dev/null"]
+                                        running: true
+                                        stdout: SplitParser {
+                                            onRead: data => {
+                                                if (data.trim() !== "") {
+                                                    for (var i = 0; i < modelCombo.model.length; i++) {
+                                                        if (modelCombo.model[i] === data.trim()) {
+                                                            modelCombo.currentIndex = i;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    Process {
+                                        id: saveModelProcess
+                                        running: false
+                                    }
+                                    
+                                    onActivated: {
+                                        saveModelProcess.command = ["bash", "-c", "echo '" + currentText + "' > ~/.config/quickshell/gemini_model.txt"];
+                                        saveModelProcess.running = true;
+                                    }
+                                }
+                            }
+                        }
+
                         Item { Layout.fillHeight: true }
                     }
                 }
