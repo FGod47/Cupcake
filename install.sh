@@ -83,7 +83,8 @@ print_lines_centered() {
 
 prompt_centered() {
     local prompt="$1"
-    local padding=$(( (TERM_WIDTH - ${#prompt}) / 2 ))
+    local visible_prompt=$(echo "$prompt" | sed 's/\\033\[[0-9;]*m//g')
+    local padding=$(( (TERM_WIDTH - ${#visible_prompt}) / 2 ))
     read -rp "$(printf "%*s" "$padding" "")$prompt" user_input
 }
 
@@ -95,33 +96,33 @@ done
 print_lines_centered CREDIT_LINES
 
 echo
-prompt_centered "➤ Do you want to install/update packages? [Y/N]: "
+prompt_centered "\033[1;35m󰞷\033[0m \033[1mDo you want to begin the installation? [Y/N]: \033[0m"
 
 if [[ "$user_input" =~ ^[Yy]$ ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     
-    echo -e "\n[*] Step 1: Setting up AUR Helper..."
+    echo -e "\n\033[1;36m[ 󰏗 ]\033[0m \033[1mStep 1: Setting up AUR Helper...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/install_aur.sh"
     
-    echo -e "\n[*] Step 2: Installing Packages..."
+    echo -e "\n\033[1;34m[ 󰏖 ]\033[0m \033[1mStep 2: Installing Packages...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/install_pkg.sh"
     
-    echo -e "\n[*] Step 3: Installing Configurations..."
+    echo -e "\n\033[1;35m[ 󰒋 ]\033[0m \033[1mStep 3: Installing Configurations...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/install_config.sh"
     
-    echo -e "\n[*] Step 4: Configuring ZSH Shell..."
+    echo -e "\n\033[1;32m[ 󰞷 ]\033[0m \033[1mStep 4: Configuring ZSH Shell...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/setup_zsh.sh"
     
-    echo -e "\n[*] Step 5: Configuring GRUB Theme..."
+    echo -e "\n\033[1;33m[ 󰍹 ]\033[0m \033[1mStep 5: Configuring GRUB Theme...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/setup_grub.sh"
     
-    echo -e "\n[*] Step 6: Configuring Systemd Boot Splash..."
+    echo -e "\n\033[1;36m[ 󰜎 ]\033[0m \033[1mStep 6: Configuring Systemd Boot Splash...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/setup_bootsplash.sh"
     
-    echo -e "\n[*] Step 7: Configuring ddcutil (Monitor Brightness)..."
+    echo -e "\n\033[1;34m[ 󰃠 ]\033[0m \033[1mStep 7: Configuring ddcutil (Monitor Brightness)...\033[0m"
     bash "$SCRIPT_DIR/../../.config/cupcake/scripts/setup_ddcutil.sh"
     
-    echo -e "\n[SUCCESS] Cupcake installation is complete! Please reboot your system."
+    echo -e "\n\033[1;32m[ 󰄬 ]\033[0m \033[1;32mSUCCESS: Installation is complete! Please reboot your system.\033[0m"
 else
     echo
     print_lines_centered CANCEL_BANNER 1
