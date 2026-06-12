@@ -28,7 +28,7 @@ Item {
         clip: true
         radius: 16
         border.color: "#80000000" // sleek dark border
-        border.width: 1
+        border.width: 0
 
         x: 0
         y: wrapper.inPanel ? 0 : -150
