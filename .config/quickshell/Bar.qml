@@ -18,7 +18,7 @@ PanelWindow {
     WlrLayershell.namespace: "waybar"
     exclusiveZone: 46
     // Strictly fixed to 46 to prevent Hyprland layer resize jitter when the dropdown closes
-    implicitHeight: Math.max(46, (clockPill.height + 20) || 46)
+    implicitHeight: ((globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland) || globalState.closingIsland) ? 600 : 46
     color: "transparent"
     
     property var modelData
@@ -581,8 +581,8 @@ PanelWindow {
                         Connections {
                             target: clockPill
                             function onHasDropdownChanged() {
-                                if (!clockPill.hasDropdown) { explicitFadeOut.stop(); overlayFadeInDelay.start(); }
-                                else { explicitFadeIn.stop(); overlayFadeInDelay.stop(); explicitFadeOut.start(); overlayClock.opacity = 1.0; }
+                                if (!clockPill.hasDropdown) { explicitFadeIn.stop(); explicitFadeOut.start(); }
+                                else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
                         Text { text: "󰂚"; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
@@ -702,4 +702,5 @@ PanelWindow {
         }
     }
 
+}
 }
