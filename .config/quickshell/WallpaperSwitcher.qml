@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Shapes
 import Quickshell
-import Quickshell.Io
+import Quickshell.Hyprland
 import Quickshell.Wayland
+import Quickshell.Io
 import Quickshell.Widgets
 import Qt.labs.folderlistmodel
 import "theme"
@@ -35,7 +36,7 @@ PanelWindow {
     readonly property color colFgDim:   Theme.colOnSurfaceVariant
     readonly property color colPrimary: Theme.colPrimary
 
-    readonly property string wallDir: "/home/one/.config/cupcake/walls"
+    readonly property string wallDir: "/home/zero/.config/cupcake/walls"
 
     // ── Current wallpaper ────────────────────────────────────────────────
     property string currentWall: ""
@@ -43,12 +44,11 @@ PanelWindow {
     property int    moveDuration: 0
 
     Process {
-        command: ["swww", "query"]
+        command: ["cat", "/home/zero/.cache/current_wallpaper"]
         running: true
         stdout: SplitParser {
             onRead: data => {
-                const m = data.match(/currently displaying: image: (.+)/)
-                if (m) root.currentWall = m[1].trim()
+                if (data.trim() !== "") root.currentWall = data.trim()
             }
         }
     }
@@ -95,21 +95,38 @@ PanelWindow {
         }
     }
 
+    GlobalShortcut {
+        name: "wallpaperswitcher_toggle"
+        onPressed: {
+            if (root.visible && root.isOpen) {
+                root.dismiss()
+            } else {
+                root.moveDuration = 0
+                root.isOpen = false
+                root.visible = true
+                
+                Qt.callLater(() => {
+                    root.isOpen = true
+                    // Fetch latest desktop wallpaper on reappear
+                    queryProc.running = true
+                })
+            }
+        }
+    }
+
     // ── Find Current Wallpaper ───────────────────────────────────────────
     Process {
         id: queryProc
-        command: ["/home/one/.local/bin/swww", "query"]
+        command: ["cat", "/home/zero/.cache/current_wallpaper"]
         running: true
         stdout: StdioCollector {
             id: queryStdout
         }
         onExited: {
             const out = queryStdout.text
-            const match = out.match(/image:\s*(.*)/)
-            if (match && match[1]) {
-                const fullPath = match[1].trim()
-                root.currentWall = fullPath
-                const fileName = fullPath.split('/').pop()
+            if (out.trim() !== "") {
+                root.currentWall = out.trim()
+                const fileName = root.currentWall.split('/').pop()
                 console.log("queryProc found current wallpaper:", fileName)
                 
                 // If model is already ready, find index
@@ -241,7 +258,7 @@ PanelWindow {
                     const path = root.wallDir + "/" + pv.currentItem.fileName
                     root.currentWall = path
                     wallProc.command = [
-                        "/home/one/.local/bin/set-theme", path
+                        "/home/zero/.local/bin/set-theme", path
                     ]
                     wallProc.running = true
                     root.dismiss()
@@ -383,7 +400,7 @@ PanelWindow {
                         const path = root.wallDir + "/" + del.fileName
                         root.currentWall = path
                         wallProc.command = [
-                            "/home/one/.local/bin/set-theme", path
+                            "/home/zero/.local/bin/set-theme", path
                         ]
                         wallProc.running = true
                         root.dismiss()
