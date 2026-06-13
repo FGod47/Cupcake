@@ -41,7 +41,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached("systemctl poweroff")
+                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
@@ -59,7 +59,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached("systemctl reboot")
+                    Quickshell.execDetached(["bash", "-c", "systemctl reboot"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
@@ -77,7 +77,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached("systemctl suspend")
+                    Quickshell.execDetached(["bash", "-c", "systemctl suspend"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
@@ -95,7 +95,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached("hyprlock")
+                    Quickshell.execDetached(["bash", "-c", "hyprlock"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
@@ -113,7 +113,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached("hyprctl dispatch exit")
+                    Quickshell.execDetached(["bash", "-c", "loginctl terminate-user $USER || hyprctl dispatch exit"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {

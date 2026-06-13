@@ -1,6 +1,7 @@
 //@ pragma UseQApplication
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import QtQuick
 import "theme"
@@ -39,6 +40,27 @@ ShellRoot {
     IpcHandler {
         target: "aipanel"
         function toggle() {
+            globalState.aiPanelVisible = !globalState.aiPanelVisible;
+        }
+    }
+
+    IpcHandler {
+        target: "notifpanel"
+        function toggle(): void {
+            globalState.notifPanelVisible = !globalState.notifPanelVisible;
+        }
+    }
+
+    GlobalShortcut {
+        name: "notifpanel_toggle"
+        onPressed: {
+            globalState.notifPanelVisible = !globalState.notifPanelVisible;
+        }
+    }
+
+    GlobalShortcut {
+        name: "aipanel_toggle"
+        onPressed: {
             globalState.aiPanelVisible = !globalState.aiPanelVisible;
         }
     }

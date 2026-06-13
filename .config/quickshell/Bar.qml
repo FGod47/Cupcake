@@ -673,10 +673,10 @@ PanelWindow {
                                 spacing: 12
                                 visible: powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
-                                Text { text: "󰤄 Sleep "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["systemctl", "suspend"]); } } }
-                                Text { text: "󰗽 Logout "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["hyprctl", "dispatch", "exit"]); } } }
-                                Text { text: " Reboot "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["systemctl", "reboot"]); } } }
-                                Text { text: " Shutdown "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["systemctl", "poweroff"]); } } }
+                                Text { text: "󰤄 Sleep "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
+                                Text { text: "󰗽 Logout "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl terminate-user $USER || hyprctl dispatch exit"]); } } }
+                                Text { text: " Reboot "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } } }
+                                Text { text: " Shutdown "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
                             }
                         }
                     }
