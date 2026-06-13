@@ -83,7 +83,7 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         onEntered: parent.scale = 1.05
                         onExited: parent.scale = 1.0
-                        onClicked: Quickshell.execDetached(["/home/one/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                        onClicked: Quickshell.execDetached(["/home/zero/.config/cupcake/scripts/toggle_app_launcher.sh"])
                         Behavior on scale { NumberAnimation { duration: 150 } }
                     }
                 }

@@ -44,10 +44,10 @@ PanelWindow {
         
         if (aiWindow.isImageMode) {
             chatModel.append({ isUser: false, message: "Generating image...", imagePath: "" });
-            geminiProcess.command = ["python3", "/home/one/.config/quickshell/gemini.py", "--image", userText];
+            geminiProcess.command = ["python3", "/home/zero/.config/quickshell/gemini.py", "--image", userText];
         } else {
             chatModel.append({ isUser: false, message: "Thinking...", imagePath: "" });
-            geminiProcess.command = ["python3", "/home/one/.config/quickshell/gemini.py", userText];
+            geminiProcess.command = ["python3", "/home/zero/.config/quickshell/gemini.py", userText];
         }
         
         promptInput.text = "";
@@ -585,7 +585,7 @@ PanelWindow {
         // Backend AI Streaming Process
         Process {
             id: geminiProcess
-            command: ["python3", "/home/one/.config/quickshell/gemini.py", ""]
+            command: ["python3", "/home/zero/.config/quickshell/gemini.py", ""]
             running: false
             stdout: SplitParser {
                 onRead: data => {

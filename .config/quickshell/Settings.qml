@@ -166,7 +166,7 @@ ApplicationWindow {
                             clip: true
 
                             model: FolderListModel {
-                                folder: "file:///home/one/.config/cupcake/themes/cupcake-dark/walls"
+                                folder: "file:///home/zero/.config/cupcake/themes/cupcake-dark/walls"
                                 nameFilters: ["*.png", "*.jpg", "*.jpeg"]
                             }
 
@@ -207,7 +207,7 @@ ApplicationWindow {
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["/home/one/.local/bin/set-theme", filePath])
+                                            Quickshell.execDetached(["/home/zero/.local/bin/set-theme", filePath])
                                         }
                                     }
                                 }
@@ -266,7 +266,7 @@ ApplicationWindow {
                                     text: "Restart"
                                     font.family: root.font.family
                                     onClicked: {
-                                        Quickshell.execDetached(["/home/one/.config/cupcake/scripts/toggle_bar.sh"])
+                                        Quickshell.execDetached(["/home/zero/.config/cupcake/scripts/toggle_bar.sh"])
                                     }
                                 }
                             }
@@ -328,7 +328,7 @@ ApplicationWindow {
                                     property bool initialized: false
                                     
                                     Process {
-                                        command: ["cat", "/home/one/.config/cupcake/.color_mode"]
+                                        command: ["cat", "/home/zero/.config/cupcake/.color_mode"]
                                         running: true
                                         stdout: StdioCollector {
                                             onStreamFinished: {
