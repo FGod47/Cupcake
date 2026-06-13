@@ -1,16 +1,13 @@
+local palette = require("palette")
+
 hl.config({
     general = {
         col = {
-            active_border   = "rgba(46483c77)",
-            inactive_border = "rgba(1b1c1533)",
+            active_border = { colors = { palette.primary, palette.secondary }, angle = 45 },
+            inactive_border = "rgba(00000000)",
         },
     },
     misc = {
-        background_color = "rgba(13140dFF)",
+        background_color = palette.background,
     },
-})
-
-hl.window_rule({
-    match        = { pin = 1 },
-    border_color = "rgba(bcce81AA) rgba(bcce8177)",
 })
