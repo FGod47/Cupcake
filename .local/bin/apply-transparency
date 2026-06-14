@@ -14,8 +14,8 @@ if (( $(echo "$INACTIVE_OPACITY < 0.1" | bc -l) )); then INACTIVE_OPACITY=0.1; f
 if [ "$TRANS" = "true" ]; then
     echo "hl.config({
     decoration = {
-        active_opacity = 1.0,
-        inactive_opacity = 1.0,
+        active_opacity = $OPACITY,
+        inactive_opacity = $INACTIVE_OPACITY,
         blur = {
             size = $BLUR_SIZE,
             passes = $BLUR_PASSES
@@ -26,7 +26,8 @@ hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true, ignore_alpha 
 hl.layer_rule({ match = { namespace = 'quickshell:.*' }, blur = true, ignore_alpha = 0.2 })
 hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, blur = true, ignore_alpha = 0.2 })
 hl.layer_rule({ match = { namespace = 'waybar' }, blur = true, ignore_alpha = 0.2 })
-hl.window_rule({ match = { class = '.*' }, opacity = '1.0 1.0', no_blur = false })
+hl.window_rule({ match = { class = 'kitty' }, opacity = '1.0 1.0', no_blur = false })
+hl.window_rule({ match = { class = 'quickshell' }, opacity = '1.0 1.0', no_blur = false })
 " > ~/.config/hypr/transparency.lua
     sed -i "s/^background_opacity.*/background_opacity $OPACITY/g" ~/.config/kitty/kitty.conf
 else
