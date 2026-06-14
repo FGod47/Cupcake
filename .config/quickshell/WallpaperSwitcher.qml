@@ -257,10 +257,9 @@ PanelWindow {
                 if (pv.currentItem) {
                     const path = root.wallDir + "/" + pv.currentItem.fileName
                     root.currentWall = path
-                    wallProc.command = [
+                    Quickshell.execDetached([
                         "/home/zero/.local/bin/set-theme", path
-                    ]
-                    wallProc.running = true
+                    ])
                     root.dismiss()
                 }
             }
@@ -399,10 +398,9 @@ PanelWindow {
                     onClicked: {
                         const path = root.wallDir + "/" + del.fileName
                         root.currentWall = path
-                        wallProc.command = [
+                        Quickshell.execDetached([
                             "/home/zero/.local/bin/set-theme", path
-                        ]
-                        wallProc.running = true
+                        ])
                         root.dismiss()
                     }
                 }

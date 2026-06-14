@@ -12,3 +12,15 @@ output_path = "~/.config/kitty/colors.conf"
 [templates.quickshell]
 input_path = "~/.config/matugen/templates/Theme.qml"
 output_path = "~/.config/quickshell/theme/Theme.qml"
+
+[templates.gtk3]
+input_path = "~/.config/matugen/templates/gtk-3.0/gtk.css"
+output_path = "~/.config/gtk-3.0/gtk.css"
+
+[templates.gtk4]
+input_path = "~/.config/matugen/templates/gtk-4.0/gtk.css"
+output_path = "~/.config/gtk-4.0/gtk.css"
+
+[templates.kde_colors]
+input_path = "~/.config/matugen/templates/kde/color.txt"
+output_path = "~/.local/state/quickshell/user/generated/color.txt"

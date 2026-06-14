@@ -26,38 +26,49 @@ fi
 
 # Run matugen to generate themes
 echo "Generating color palettes with matugen in $MODE mode..."
-/home/zero/.local/bin/matugen image "$WALLPAPER" -m "$MODE" --source-color-index 0
+matugen image "$WALLPAPER" -m "$MODE" --source-color-index 0
+
+# Apply KDE colors dynamically
+~/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant scheme-tonal-spot || true
 
 # Set GNOME color-scheme so GTK applications natively follow the light/dark mode toggle
 if [ "$MODE" = "light" ]; then
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+    gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Light'
+    gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3'
+    sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus-Light/g' ~/.config/gtk-3.0/settings.ini
+    sed -i 's/gtk-theme-name=.*/gtk-theme-name=adw-gtk3/g' ~/.config/gtk-3.0/settings.ini
 else
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+    gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
+    sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus-Dark/g' ~/.config/gtk-3.0/settings.ini
+    sed -i 's/gtk-theme-name=.*/gtk-theme-name=adw-gtk3-dark/g' ~/.config/gtk-3.0/settings.ini
 fi
 
 # Set the wallpaper with awww
 echo "Setting wallpaper..."
-if pgrep -x "awww-daemon" > /dev/null || pgrep -x "swww-daemon" > /dev/null; then
-    awww img "$WALLPAPER" --transition-type grow --transition-fps 60 --transition-duration 1
-else
-    awww-daemon &
-    sleep 1
-    awww img "$WALLPAPER" --transition-type grow --transition-fps 60 --transition-duration 1
-fi
-
-# Reload hyprland to pick up colors.conf (assuming you add 'source = ~/.config/hypr/colors.conf' to hyprland.conf)
-echo "Reloading Hyprland..."
-hyprctl reload
+# Wait for Quickshell WallpaperSwitcher to finish its closing animation (520ms) 
+# so the Wayland compositor doesn't pause background rendering.
+sleep 0.6
+awww img "$WALLPAPER" --transition-type wipe --transition-fps 60 --transition-duration 1.5 || true
 
 # Send SIGUSR1 to kitty processes to reload config
 echo "Reloading Kitty..."
 touch ~/.config/kitty/kitty.conf
 killall -SIGUSR1 kitty 2>/dev/null || true
 
-# Restart Quickshell to pick up the new Theme.qml
+# Reload Hyprland and Restart Quickshell after the wallpaper transition finishes
 # We run this in the background detached so the script doesn't kill itself
-echo "Reloading Quickshell..."
-nohup bash -c 'sleep 0.5; killall -9 quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; QT_NO_SESSION_MANAGER=1 quickshell -p ~/.config/quickshell/shell.qml & quickshell --daemonize -p ~/.config/quickshell/WallpaperSwitcher.qml' >/dev/null 2>&1 &
+echo "Scheduling Hyprland reload and Quickshell restart..."
+nohup bash -c 'sleep 1.6; hyprctl reload; sleep 0.5; killall -9 quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; QT_NO_SESSION_MANAGER=1 quickshell -p ~/.config/quickshell/shell.qml & quickshell --daemonize -p ~/.config/quickshell/WallpaperSwitcher.qml' >/dev/null 2>&1 &
 disown
+
+# Update Papirus folders color based on the new Matugen palette
+echo "Updating dynamic icon colors..."
+/home/zero/.local/bin/dynamic-icons || true
+
+# Force Nautilus to restart so it picks up the new cached icons
+killall -q nautilus || true
 
 echo "Theme applied successfully!"

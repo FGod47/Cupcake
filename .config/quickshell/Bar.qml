@@ -75,24 +75,42 @@ PanelWindow {
                     id: workspaceRow
                     anchors.centerIn: parent
                     spacing: 0
+                    
                     Repeater {
                         model: 5
-                        delegate: Rectangle {
-                            color: "transparent"
+                        delegate: Item {
                             width: 32
-                            height: 24
+                            height: 34
                             property int wsId: index + 1
                             property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-                            Text {
+                            property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
+
+                            // Active Workspace Background Bubble (Large Circle)
+                            Rectangle {
                                 anchors.centerIn: parent
-                                text: isFocused ? "⬤" : "◯"
-                                color: isFocused ? Theme.colPrimary : fg
-                                font.family: fontName
-                                font.pixelSize: fontSize
+                                width: isFocused ? 26 : 0
+                                height: width
+                                radius: width / 2
+                                color: Theme.colPrimary
+                                opacity: isFocused ? 1 : 0
+                                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
+
+                            // Inner Dot (For focused, occupied, or empty)
+                            Rectangle {
+                                anchors.centerIn: parent
+                                width: isFocused ? 6 : (isOccupied ? 8 : 6)
+                                height: width
+                                radius: width / 2
+                                color: isFocused ? Theme.colOnPrimary : (isOccupied ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.4))
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Behavior on width { NumberAnimation { duration: 150 } }
+                            }
+
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: Hyprland.dispatch("workspace " + wsId)
+                                onClicked: Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})")
                                 cursorShape: Qt.PointingHandCursor
                             }
                         }

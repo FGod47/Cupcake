@@ -49,7 +49,8 @@ local modules = {
     "animation",
     "input",
     "layouts",
-    "keybinding"
+    "keybinding",
+    "transparency"
 }
 
 for _, mod in ipairs(modules) do

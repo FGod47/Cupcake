@@ -100,6 +100,7 @@ packages=(
     nwg-displays libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc jmtpfs mtpfs libmtp repo os-prober cpio 7zip
     python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-open
+    papirus-icon-theme adw-gtk-theme
 )
 
 # ──────────────── AUR Package List ────────────────
@@ -109,7 +110,7 @@ aur_packages=(
     zsh-autosuggestions zsh-syntax-highlighting quickshell
     ttf-firacode-nerd ttf-jetbrains-mono-nerd
     catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe
-    matugen-bin bibata-cursor-theme-bin
+    matugen-bin bibata-cursor-theme-bin papirus-folders
 )
 
 # ──────────────── Install All Pacman Packages ────────────────

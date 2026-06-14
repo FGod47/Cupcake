@@ -5,11 +5,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    match = { class = "^(.*)$", title = "^(.*)$" },
-    opacity = "0.90 0.90"
-})
-
-hl.window_rule({
     match = { class = "^(firefox)$" },
     opacity = "1.0 1.0"
 })

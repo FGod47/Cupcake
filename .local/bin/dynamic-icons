@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+import sys
+import re
+import math
+import subprocess
+import os
+
+# Predefined Papirus Folder colors and their rough hex equivalents
+PAPIRUS_COLORS = {
+    "black": (0, 0, 0),
+    "blue": (30, 136, 229),
+    "bluegrey": (84, 110, 122),
+    "breeze": (61, 174, 233),
+    "brown": (141, 110, 99),
+    "carmine": (229, 57, 53),
+    "cyan": (0, 172, 193),
+    "darkcyan": (0, 137, 123),
+    "deeporange": (244, 81, 30),
+    "green": (67, 160, 71),
+    "grey": (117, 117, 117),
+    "indigo": (57, 73, 171),
+    "magenta": (216, 27, 96),
+    "nordic": (94, 129, 172),
+    "orange": (251, 140, 0),
+    "palebrown": (161, 136, 127),
+    "paleorange": (255, 183, 77),
+    "pink": (216, 27, 96),
+    "purple": (142, 36, 170),
+    "red": (229, 57, 53),
+    "teal": (0, 137, 123),
+    "violet": (94, 53, 177),
+    "white": (255, 255, 255),
+    "yellow": (251, 192, 45)
+}
+
+def hex_to_rgb(hex_str):
+    hex_str = hex_str.lstrip('#')
+    return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+
+def color_distance(c1, c2):
+    # Simple Euclidean distance in RGB space
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(c1, c2)))
+
+def get_closest_papirus_color(target_rgb):
+    closest_color = "blue"
+    min_dist = float("inf")
+    for name, rgb in PAPIRUS_COLORS.items():
+        dist = color_distance(target_rgb, rgb)
+        if dist < min_dist:
+            min_dist = dist
+            closest_color = name
+    return closest_color
+
+def main():
+    colors_file = os.path.expanduser("~/.config/hypr/colors.conf")
+    if not os.path.exists(colors_file):
+        print("Colors file not found.")
+        sys.exit(1)
+
+    primary_hex = None
+    with open(colors_file, 'r') as f:
+        for line in f:
+            if line.startswith("$primary"):
+                # Extract hex from rgba(rrggbbaa)
+                match = re.search(r'rgba\(([a-fA-F0-9]{6})', line)
+                if match:
+                    primary_hex = match.group(1)
+                break
+
+    if not primary_hex:
+        print("Primary color not found in hyprland colors config.")
+        sys.exit(1)
+
+    target_rgb = hex_to_rgb(primary_hex)
+    closest_color = get_closest_papirus_color(target_rgb)
+    print(f"Closest Papirus color to #{primary_hex} is {closest_color}")
+
+    # Set the folder color
+    try:
+        subprocess.run(["papirus-folders", "-C", closest_color, "--theme", "Papirus-Dark"], check=True)
+        subprocess.run(["papirus-folders", "-C", closest_color, "--theme", "Papirus"], check=True)
+        subprocess.run(["gtk-update-icon-cache", "-f", "-t", os.path.expanduser("~/.local/share/icons/Papirus-Dark")], check=False)
+        subprocess.run(["gtk-update-icon-cache", "-f", "-t", os.path.expanduser("~/.local/share/icons/Papirus")], check=False)
+    except FileNotFoundError:
+        print("papirus-folders is not installed. Please install it first.")
+
+if __name__ == "__main__":
+    main()
