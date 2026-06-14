@@ -64,6 +64,37 @@ ApplicationWindow {
         }
     }
 
+    property int gapsIn: 3
+    property int gapsOut: 8
+
+    Process {
+        id: initGapsIn
+        command: ["cat", "/home/zero/.config/cupcake/.gaps_in"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") {
+                    let sz = parseInt(text.trim());
+                    if (!isNaN(sz)) root.gapsIn = sz;
+                }
+            }
+        }
+    }
+
+    Process {
+        id: initGapsOut
+        command: ["cat", "/home/zero/.config/cupcake/.gaps_out"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") {
+                    let sz = parseInt(text.trim());
+                    if (!isNaN(sz)) root.gapsOut = sz;
+                }
+            }
+        }
+    }
+
     Process {
         id: initTransparency
         command: ["cat", "/home/zero/.config/cupcake/.transparency"]
@@ -671,6 +702,53 @@ ApplicationWindow {
                                                 if (root.borderSize !== value) {
                                                     root.borderSize = value;
                                                     Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Window Gaps Adjustments
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
+                                    Text { text: "Window Gaps"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                }
+                                
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: 32
+                                    spacing: 12
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        Text { text: "Inner (" + Math.round(root.gapsIn) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                        StyledSlider {
+                                            Layout.fillWidth: true
+                                            from: 0; to: 30; stepSize: 1
+                                            value: root.gapsIn
+                                            onValueChanged: {
+                                                if (root.gapsIn !== value) {
+                                                    root.gapsIn = value;
+                                                    Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.gaps_in && ~/.local/bin/apply-gaps"]);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        Text { text: "Outer (" + Math.round(root.gapsOut) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                        StyledSlider {
+                                            Layout.fillWidth: true
+                                            from: 0; to: 60; stepSize: 1
+                                            value: root.gapsOut
+                                            onValueChanged: {
+                                                if (root.gapsOut !== value) {
+                                                    root.gapsOut = value;
+                                                    Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.gaps_out && ~/.local/bin/apply-gaps"]);
                                                 }
                                             }
                                         }

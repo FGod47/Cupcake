@@ -1,0 +1,13 @@
+#!/bin/bash
+IN=$(cat ~/.config/cupcake/.gaps_in 2>/dev/null || echo "3")
+OUT=$(cat ~/.config/cupcake/.gaps_out 2>/dev/null || echo "8")
+
+sed -i "s/gaps_in = .*,/gaps_in = $IN,/g" ~/.config/hypr/decoration.lua
+sed -i "s/gaps_out = .*,/gaps_out = $OUT,/g" ~/.config/hypr/decoration.lua
+
+if [ -f ~/.config/hypr/custom-prefs.conf ]; then
+    sed -i "s/gaps_in = .*/gaps_in = $IN/g" ~/.config/hypr/custom-prefs.conf
+    sed -i "s/gaps_out = .*/gaps_out = $OUT/g" ~/.config/hypr/custom-prefs.conf
+fi
+
+hyprctl reload
