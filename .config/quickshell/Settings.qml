@@ -348,45 +348,7 @@ ApplicationWindow {
                             }
                         }
 
-                        // Config file FAB
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 56
-                            radius: 16
-                            color: fabMouseArea.containsMouse ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                            Behavior on color { ColorAnimation { duration: 150 } }
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 16 : 0
-                                spacing: 10
-                                Item {
-                                    Layout.preferredWidth: navExpanded ? implicitWidth : parent.width
-                                    Layout.fillHeight: true
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: ""
-                                        color: Theme.colPrimary
-                                        font.family: root.font.family
-                                        font.pixelSize: 20
-                                    }
-                                }
-                                Text {
-                                    visible: navExpanded
-                                    text: "Config file"
-                                    color: Theme.colPrimary
-                                    font.family: root.font.family
-                                    font.pixelSize: 14
-                                    Layout.fillWidth: true
-                                }
-                            }
-                            MouseArea {
-                                id: fabMouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: Quickshell.execDetached(["xdg-open", "/home/zero/.config/cupcake"])
-                            }
-                        }
+
 
                         Item { Layout.preferredHeight: 8 } // Spacer
 
@@ -971,7 +933,7 @@ ApplicationWindow {
                                         Layout.fillWidth: true
                                         Layout.alignment: Qt.AlignTop
                                         wrapMode: Text.WordWrap
-                                        text: "Not all options are available in this app. You should also check the config file by hitting the \"Config file\" button on the topleft corner or opening /home/don/.config/illogical-impulse/config.json manually."
+                                        text: "Not all options are available in this app. You should also check the config file by hitting the \"Open Configuration\" button in the System tab or navigating to ~/.config/cupcake manually."
                                         color: Theme.colOnSurface
                                         font.family: root.font.family
                                         font.pixelSize: 14
@@ -1222,6 +1184,29 @@ ApplicationWindow {
                                     text: "Reboot"
                                     font.family: root.font.family
                                     onClicked: Quickshell.execDetached(["systemctl", "reboot"])
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Open Configuration Folder"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Open"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["xdg-open", "/home/zero/.config/cupcake"])
                                 }
                             }
                         }
