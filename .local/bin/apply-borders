@@ -1,7 +1,7 @@
 #!/bin/bash
 
 STATE=$(cat ~/.config/cupcake/.borders 2>/dev/null || echo "true")
-SIZE=3
+SIZE=$(cat ~/.config/cupcake/.border_size 2>/dev/null || echo "3")
 if [ "$STATE" = "false" ]; then
     SIZE=0
 fi

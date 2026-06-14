@@ -48,6 +48,22 @@ ApplicationWindow {
         }
     }
 
+    property int borderSize: 3
+
+    Process {
+        id: initBorderSize
+        command: ["cat", "/home/zero/.config/cupcake/.border_size"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") {
+                    let sz = parseInt(text.trim());
+                    if (!isNaN(sz)) root.borderSize = sz;
+                }
+            }
+        }
+    }
+
     Process {
         id: initTransparency
         command: ["cat", "/home/zero/.config/cupcake/.transparency"]
@@ -632,6 +648,31 @@ ApplicationWindow {
                                             root.windowBorders = !root.windowBorders;
                                             let isBorders = root.windowBorders ? "true" : "false";
                                             Quickshell.execDetached(["bash", "-c", "echo " + isBorders + " > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
+                                        }
+                                    }
+                                }
+
+                                // Advanced Border Controls (Visible when borders are on)
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: 32
+                                    Layout.topMargin: 8
+                                    visible: root.windowBorders
+                                    spacing: 12
+                                    
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        Text { text: "Thickness (" + Math.round(root.borderSize) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                        StyledSlider {
+                                            Layout.fillWidth: true
+                                            from: 1; to: 10; stepSize: 1
+                                            value: root.borderSize
+                                            onValueChanged: {
+                                                if (root.borderSize !== value) {
+                                                    root.borderSize = value;
+                                                    Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
+                                                }
+                                            }
                                         }
                                     }
                                 }
