@@ -65,6 +65,19 @@ ApplicationWindow {
         }
     }
 
+    Process {
+        id: initColorMode
+        command: ["cat", "/home/zero/.config/cupcake/.color_mode"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "light") {
+                    if (appearancePage) appearancePage.darkTheme = false;
+                }
+            }
+        }
+    }
+
 
     property bool navExpanded: root.width > 900
 
@@ -516,7 +529,13 @@ ApplicationWindow {
                                                     Text { text: "☀"; Layout.alignment: Qt.AlignHCenter; color: !appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.pixelSize: 28 }
                                                     Text { text: "Light"; Layout.alignment: Qt.AlignHCenter; color: !appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14 }
                                                 }
-                                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.darkTheme = false }
+                                                MouseArea {
+                                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                                    onClicked: {
+                                                        appearancePage.darkTheme = false;
+                                                        Quickshell.execDetached(["bash", "-c", "echo 'light' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                                                    }
+                                                }
                                             }
                                             // Dark Mode
                                             Rectangle {
@@ -530,7 +549,13 @@ ApplicationWindow {
                                                     Text { text: "☾"; Layout.alignment: Qt.AlignHCenter; color: appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.pixelSize: 28 }
                                                     Text { text: "Dark"; Layout.alignment: Qt.AlignHCenter; color: appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14 }
                                                 }
-                                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.darkTheme = true }
+                                                MouseArea {
+                                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                                    onClicked: {
+                                                        appearancePage.darkTheme = true;
+                                                        Quickshell.execDetached(["bash", "-c", "echo 'dark' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
