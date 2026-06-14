@@ -33,6 +33,21 @@ ApplicationWindow {
         Quickshell.execDetached(["bash", "-c", "echo " + isTrans + " > /home/zero/.config/cupcake/.transparency && echo -e 'OPACITY=" + root.globalOpacity.toFixed(2) + "\\nBLUR_SIZE=" + root.globalBlurSize + "\\nBLUR_PASSES=" + root.globalBlurPasses + "' > /home/zero/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
     }
     
+    property bool windowBorders: true
+
+    Process {
+        id: initBorders
+        command: ["cat", "/home/zero/.config/cupcake/.borders"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "false") {
+                    root.windowBorders = false;
+                }
+            }
+        }
+    }
+
     Process {
         id: initTransparency
         command: ["cat", "/home/zero/.config/cupcake/.transparency"]
@@ -599,6 +614,24 @@ ApplicationWindow {
                                         onClicked: {
                                             root.globalTransparency = !root.globalTransparency;
                                             root.applyGlobalSettings();
+                                        }
+                                    }
+                                }
+
+                                // Window Borders Switch
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
+                                    Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                    
+                                    StyledSwitch {
+                                        checked: root.windowBorders
+                                        onClicked: {
+                                            root.windowBorders = !root.windowBorders;
+                                            let isBorders = root.windowBorders ? "true" : "false";
+                                            Quickshell.execDetached(["bash", "-c", "echo " + isBorders + " > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
                                         }
                                     }
                                 }

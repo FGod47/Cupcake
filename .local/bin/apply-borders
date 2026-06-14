@@ -1,0 +1,17 @@
+#!/bin/bash
+
+STATE=$(cat ~/.config/cupcake/.borders 2>/dev/null || echo "true")
+SIZE=3
+if [ "$STATE" = "false" ]; then
+    SIZE=0
+fi
+
+# Modify decoration.conf
+sed -i "s/border_size = .*/border_size = $SIZE/g" ~/.config/hypr/decoration.conf
+
+# Modify custom-prefs.conf if it exists
+if [ -f ~/.config/hypr/custom-prefs.conf ]; then
+    sed -i "s/border_size = .*/border_size = $SIZE/g" ~/.config/hypr/custom-prefs.conf
+fi
+
+hyprctl keyword general:border_size $SIZE
