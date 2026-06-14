@@ -332,24 +332,6 @@ ApplicationWindow {
                         anchors.fill: parent
                         spacing: 5
 
-                        // Hamburger Icon
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 40
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: navExpanded ? parent.left : undefined
-                                anchors.horizontalCenter: navExpanded ? undefined : parent.horizontalCenter
-                                anchors.leftMargin: navExpanded ? 16 : 0
-                                text: ""
-                                color: Theme.colOnSurfaceVariant
-                                font.family: root.font.family
-                                font.pixelSize: 20
-                            }
-                        }
-
-
-
                         Item { Layout.preferredHeight: 8 } // Spacer
 
                         // Nav Buttons
