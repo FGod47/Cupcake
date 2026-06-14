@@ -18,7 +18,7 @@ ApplicationWindow {
     minimumHeight: 500
     width: 1100
     height: 750
-    color: Theme.colSurface
+    color: root.globalTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) : Theme.colSurface
     font.family: "JetBrainsMono Nerd Font Propo"
 
     property int currentIndex: 0
@@ -354,7 +354,7 @@ ApplicationWindow {
                 Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            color: Theme.colSurfaceContainer
+            color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
             radius: 10 // Appearance.rounding.windowRounding (18) - contentPadding (8)
             clip: true
 
