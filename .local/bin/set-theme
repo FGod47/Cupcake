@@ -12,6 +12,8 @@ else
     echo "$WALLPAPER" > ~/.cache/current_wallpaper
 fi
 
+echo "run: $WALLPAPER at $(date)" >> /tmp/wallpaper.log
+
 if [ ! -f "$WALLPAPER" ]; then
     echo "Error: File not found: $WALLPAPER"
     exit 1
@@ -24,12 +26,23 @@ if [ -f ~/.config/cupcake/.color_mode ]; then
     MODE=$(cat ~/.config/cupcake/.color_mode)
 fi
 
+# Read Color Scheme Preset
+SCHEME="tonal-spot"
+if [ -f ~/.config/cupcake/.color_scheme ]; then
+    SCHEME_RAW=$(cat ~/.config/cupcake/.color_scheme)
+    SCHEME=$(echo "$SCHEME_RAW" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+fi
+
+if [ "$SCHEME" = "auto" ]; then
+    SCHEME="tonal-spot"
+fi
+
 # Run matugen to generate themes
-echo "Generating color palettes with matugen in $MODE mode..."
-matugen image "$WALLPAPER" -m "$MODE" --source-color-index 0
+echo "Generating color palettes with matugen in $MODE mode using scheme-$SCHEME..."
+matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
 
 # Apply KDE colors dynamically
-~/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant scheme-tonal-spot || true
+~/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant "scheme-$SCHEME" || true
 
 # Set GNOME color-scheme so GTK applications natively follow the light/dark mode toggle
 if [ "$MODE" = "light" ]; then

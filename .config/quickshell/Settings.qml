@@ -484,6 +484,25 @@ ApplicationWindow {
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     property string selectedScheme: "Content"
+
+                    Process {
+                        id: initSchemeProcess
+                        command: ["cat", "/home/zero/.config/cupcake/.color_scheme"]
+                        running: true
+                        stdout: StdioCollector {
+                            onStreamFinished: {
+                                if (text.trim() !== "") {
+                                    appearancePage.selectedScheme = text.trim();
+                                } else {
+                                    appearancePage.selectedScheme = "Auto";
+                                }
+                            }
+                        }
+                    }
+
+                    Process {
+                        id: applySchemeProcess
+                    }
                     property int barPosition: 0 // 0=Top, 1=Left, 2=Bottom, 3=Right
                     property int barStyle: 0 // 0=Hug, 1=Float, 2=Rect
                     property int screenCorner: 2 // 0=No, 1=Yes, 2=When not fullscreen
@@ -675,7 +694,15 @@ ApplicationWindow {
                                                 font.family: root.font.family
                                                 font.pixelSize: 14
                                             }
-                                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.selectedScheme = modelData }
+                                            MouseArea { 
+                                                anchors.fill: parent; 
+                                                cursorShape: Qt.PointingHandCursor; 
+                                                onClicked: {
+                                                    appearancePage.selectedScheme = modelData
+                                                    applySchemeProcess.command = ["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]
+                                                    applySchemeProcess.running = true
+                                                }
+                                            }
                                         }
                                     }
                                 }
