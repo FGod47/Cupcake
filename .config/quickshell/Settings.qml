@@ -396,6 +396,8 @@ ApplicationWindow {
                         NavButton { iconText: ""; labelText: "System"; pageIndex: 3 }
                         NavButton { iconText: ""; labelText: "Network"; pageIndex: 4 }
                         NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 5 }
+                        NavButton { iconText: ""; labelText: "User"; pageIndex: 6 }
+                        NavButton { iconText: ""; labelText: "About"; pageIndex: 7 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
@@ -544,29 +546,7 @@ ApplicationWindow {
                                         Layout.fillHeight: true
                                         spacing: 16
 
-                                        // Choose file button
-                                        Rectangle {
-                                            Layout.alignment: Qt.AlignRight
-                                            Layout.preferredWidth: 200
-                                            Layout.preferredHeight: 48
-                                            radius: 24
-                                            color: "transparent"
-                                            RowLayout {
-                                                anchors.fill: parent
-                                                spacing: 8
-                                                Item { Layout.fillWidth: true }
-                                                Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 16 }
-                                                Text { text: "Choose file"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
-                                                
-                                                RowLayout {
-                                                    spacing: 4
-                                                    Rectangle { width: 36; height: 24; radius: 6; color: "transparent"; border.color: Theme.colOutline; border.width: 1; Text { anchors.centerIn: parent; text: "Ctrl"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12 } }
-                                                    Rectangle { width: 24; height: 24; radius: 6; color: "transparent"; border.color: Theme.colOutline; border.width: 1; Text { anchors.centerIn: parent; text: "❖"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12 } }
-                                                    Text { text: "+"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12 }
-                                                    Rectangle { width: 24; height: 24; radius: 6; color: "transparent"; border.color: Theme.colOutline; border.width: 1; Text { anchors.centerIn: parent; text: "T"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12 } }
-                                                }
-                                            }
-                                        }
+
 
                                         // Light/Dark toggles
                                         RowLayout {
@@ -1659,6 +1639,365 @@ ApplicationWindow {
 
                         Item { Layout.fillHeight: true }
                     }
+                }
+
+                // PAGE 6: USER
+                Item {
+                    id: userPage
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 6 ? 0 : 20
+                    opacity: root.currentIndex === 6 ? 1 : 0
+                    visible: root.currentIndex === 6 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                    property string userName: "Loading..."
+                    property string hostName: "Loading..."
+                    property string homeDir: "Loading..."
+                    property string userShell: "Loading..."
+                    property string userId: "Loading..."
+                    property string groupId: "Loading..."
+
+                    Process {
+                        command: ["bash", "-c", "echo \"$(whoami)|$(cat /etc/hostname 2>/dev/null)|$HOME|$SHELL|$(id -u)|$(id -g)\""]
+                        running: root.currentIndex === 6
+                        stdout: StdioCollector {
+                            onStreamFinished: {
+                                let lines = text.trim().split("|");
+                                if (lines.length >= 6) {
+                                    userPage.userName = lines[0] || "Unknown";
+                                    userPage.hostName = lines[1] || "Unknown";
+                                    userPage.homeDir = lines[2] || "Unknown";
+                                    userPage.userShell = lines[3] || "Unknown";
+                                    userPage.userId = lines[4] || "Unknown";
+                                    userPage.groupId = lines[5] || "Unknown";
+                                }
+                            }
+                        }
+                    }
+
+                    Flickable {
+                        anchors.fill: parent
+                        contentHeight: userContentCol.implicitHeight + 48
+                        clip: true
+
+                        ColumnLayout {
+                            id: userContentCol
+                            width: parent.width - 48
+                            x: 24
+                            y: 24
+                            spacing: 24
+
+                            component UserInfoItem: Item {
+                                property string titleText
+                                property string valueText
+                                property bool isFirst: false
+                                property bool isLast: false
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 72
+
+                                Item {
+                                    anchors.fill: parent
+                                    clip: true
+
+                                    Rectangle {
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.top: parent.top
+                                        anchors.bottom: parent.bottom
+                                        
+                                        anchors.bottomMargin: (isFirst && !isLast) ? -24 : 0
+                                        anchors.topMargin: (isLast && !isFirst) ? -24 : 0
+
+                                        radius: (isFirst || isLast) ? 24 : 0
+                                        color: Theme.colSurfaceContainerHigh
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 24
+                                    anchors.rightMargin: 24
+                                    spacing: 2
+
+                                    Item { Layout.fillHeight: true }
+                                    Text {
+                                        text: titleText
+                                        color: Theme.colOnSurface
+                                        font.family: root.font.family
+                                        font.pixelSize: 16
+                                        font.weight: Font.Medium
+                                    }
+                                    Text {
+                                        text: valueText
+                                        color: Theme.colOnSurfaceVariant
+                                        font.family: root.font.family
+                                        font.pixelSize: 14
+                                    }
+                                    Item { Layout.fillHeight: true }
+                                }
+                            }
+
+                            Text {
+                                text: "User"
+                                color: Theme.colOnSurface
+                                font.family: root.font.family
+                                font.pixelSize: 32
+                                font.bold: true
+                                Layout.bottomMargin: 8
+                            }
+
+                            // Profile details
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+
+                                Text {
+                                    text: "Profile Information"
+                                    color: Theme.colPrimary
+                                    font.family: root.font.family
+                                    font.pixelSize: 14
+                                    font.weight: Font.Medium
+                                    Layout.leftMargin: 16
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 2
+                                    
+                                    UserInfoItem { titleText: "Username"; valueText: userPage.userName; isFirst: true }
+                                    UserInfoItem { titleText: "Device Hostname"; valueText: userPage.hostName }
+                                    UserInfoItem { titleText: "Home Directory"; valueText: userPage.homeDir; isLast: true }
+                                }
+                            }
+
+                            // Account details
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+
+                                Text {
+                                    text: "Account Details"
+                                    color: Theme.colPrimary
+                                    font.family: root.font.family
+                                    font.pixelSize: 14
+                                    font.weight: Font.Medium
+                                    Layout.leftMargin: 16
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 2
+                                    
+                                    UserInfoItem { titleText: "Default Shell"; valueText: userPage.userShell; isFirst: true }
+                                    UserInfoItem { titleText: "User ID (UID)"; valueText: userPage.userId }
+                                    UserInfoItem { titleText: "Group ID (GID)"; valueText: userPage.groupId; isLast: true }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // PAGE 7: ABOUT
+                Item {
+                    id: aboutPage
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 7 ? 0 : 20
+                    opacity: root.currentIndex === 7 ? 1 : 0
+                    visible: root.currentIndex === 7 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                    property string sysOs: "Loading..."
+                    property string sysKernel: "Loading..."
+                    property string sysUptime: "Loading..."
+                    property string hyprVersion: "Loading..."
+                    property string qsVersion: "Loading..."
+
+                    property string hwCpu: "Loading..."
+                    property string hwCpuCores: "Loading..."
+                    property string hwGpu: "Loading..."
+                    property string hwVram: "Loading..."
+                    property string hwRam: "Loading..."
+                    property string hwMobo: "Loading..."
+                    property string hwDisplay: "Loading..."
+                    property string hwSwap: "Loading..."
+
+                    Process {
+                        id: aboutInfoProcess
+                        command: ["bash", "/home/zero/.local/bin/get-hw-info"]
+                        running: true
+                        stdout: StdioCollector {
+                            onStreamFinished: {
+                                let lines = text.trim().split("\n");
+                                if (lines.length >= 12) {
+                                    aboutPage.sysOs = lines[0];
+                                    aboutPage.sysKernel = lines[1];
+                                    aboutPage.sysUptime = lines[2];
+                                    aboutPage.hyprVersion = lines[3];
+                                    aboutPage.qsVersion = lines[4];
+                                    aboutPage.hwCpu = lines[5];
+                                    aboutPage.hwGpu = lines[6];
+                                    aboutPage.hwRam = lines[7];
+                                    aboutPage.hwMobo = lines[8] || "Unknown";
+                                    aboutPage.hwVram = lines[9] || "Shared";
+                                    aboutPage.hwDisplay = lines[10] || "Unknown";
+                                    aboutPage.hwCpuCores = lines[11] || "?";
+                                    aboutPage.hwSwap = lines[12] || "Unknown";
+                                }
+                            }
+                        }
+                    }
+
+                    Flickable {
+                        anchors.fill: parent
+                        contentHeight: aboutContentCol.implicitHeight + 48
+                        clip: true
+
+                        ColumnLayout {
+                            id: aboutContentCol
+                            width: parent.width - 48
+                            x: 24
+                            y: 24
+                            spacing: 24
+
+                        component InfoItem: Item {
+                            property string titleText
+                            property string valueText
+                            property bool isFirst: false
+                            property bool isLast: false
+
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 72
+
+                            Item {
+                                anchors.fill: parent
+                                clip: true
+
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.bottom: parent.bottom
+                                    
+                                    anchors.bottomMargin: (isFirst && !isLast) ? -24 : 0
+                                    anchors.topMargin: (isLast && !isFirst) ? -24 : 0
+
+                                    radius: (isFirst || isLast) ? 24 : 0
+                                    color: Theme.colSurfaceContainerHigh
+                                }
+                            }
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 24
+                                anchors.rightMargin: 24
+                                spacing: 2
+
+                                Item { Layout.fillHeight: true }
+                                Text {
+                                    text: titleText
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    font.weight: Font.Medium
+                                }
+                                Text {
+                                    text: valueText
+                                    color: Theme.colOnSurfaceVariant
+                                    font.family: root.font.family
+                                    font.pixelSize: 14
+                                }
+                                Item { Layout.fillHeight: true }
+                            }
+                        }
+
+                        Text {
+                            text: "About"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                            Layout.bottomMargin: 8
+                        }
+
+                        // System details
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            Text {
+                                text: "System details"
+                                color: Theme.colPrimary
+                                font.family: root.font.family
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                Layout.leftMargin: 16
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+                                
+                                InfoItem { titleText: "Operating System"; valueText: aboutPage.sysOs; isFirst: true }
+                                InfoItem { titleText: "Kernel Version"; valueText: aboutPage.sysKernel }
+                                InfoItem { titleText: "System Uptime"; valueText: aboutPage.sysUptime; isLast: true }
+                            }
+                        }
+
+                        // Hardware details
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            Text {
+                                text: "Hardware details"
+                                color: Theme.colPrimary
+                                font.family: root.font.family
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                Layout.leftMargin: 16
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+                                
+                                InfoItem { titleText: "Processor (CPU)"; valueText: aboutPage.hwCpu + " (" + aboutPage.hwCpuCores + " Cores)"; isFirst: true }
+                                InfoItem { titleText: "Graphics (GPU)"; valueText: aboutPage.hwGpu + " (" + aboutPage.hwVram + ")" }
+                                InfoItem { titleText: "Motherboard"; valueText: aboutPage.hwMobo }
+                                InfoItem { titleText: "Memory (RAM)"; valueText: aboutPage.hwRam }
+                                InfoItem { titleText: "Swap Memory"; valueText: aboutPage.hwSwap }
+                                InfoItem { titleText: "Display Resolution"; valueText: aboutPage.hwDisplay; isLast: true }
+                            }
+                        }
+
+                        // Software details
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            Text {
+                                text: "Software details"
+                                color: Theme.colPrimary
+                                font.family: root.font.family
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                Layout.leftMargin: 16
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+                                
+                                InfoItem { titleText: "Window Manager"; valueText: "Hyprland " + aboutPage.hyprVersion; isFirst: true }
+                                InfoItem { titleText: "Desktop Shell"; valueText: "Quickshell " + aboutPage.qsVersion }
+                                InfoItem { titleText: "Theme Engine"; valueText: "Cupcake OS"; isLast: true }
+                            }
+                        }
+                    }
+                }
                 }
             }
         }

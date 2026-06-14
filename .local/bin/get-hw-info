@@ -1,0 +1,14 @@
+#!/bin/bash
+echo "$(cat /etc/os-release | grep PRETTY_NAME | cut -d\" -f2)"
+uname -r
+uptime -p | sed 's/up //'
+hyprctl version | awk '/Hyprland / {print $2}'
+quickshell --version | awk '{print $2}'
+grep 'model name' /proc/cpuinfo | head -n 1 | cut -d ':' -f 2 | sed 's/^ //'
+lspci | grep -i vga | sed -E 's/.*\[(.*)\].*/\1/'
+awk '/MemTotal/ {print sprintf("%.1f GB", $2/1024/1024)}' /proc/meminfo
+echo "$(cat /sys/devices/virtual/dmi/id/board_vendor 2>/dev/null) $(cat /sys/devices/virtual/dmi/id/board_name 2>/dev/null)"
+nvidia-smi --query-gpu=memory.total --format=csv,noheader 2>/dev/null || echo "Unknown / Shared"
+hyprctl monitors | grep 'at ' | head -n 1 | awk '{print $1}' | cut -d. -f1 | sed 's/$/ Hz/'
+grep -c ^processor /proc/cpuinfo
+awk '/SwapTotal/ {print sprintf("%.1f GB", $2/1024/1024)}' /proc/meminfo
