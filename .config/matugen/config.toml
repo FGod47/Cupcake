@@ -5,6 +5,10 @@ version_check = false
 input_path = "~/.config/matugen/templates/colors-hyprland.conf"
 output_path = "~/.config/hypr/colors.conf"
 
+[templates.hyprland_lua]
+input_path = "~/.config/matugen/templates/palette.lua"
+output_path = "~/.config/hypr/palette.lua"
+
 [templates.kitty]
 input_path = "~/.config/matugen/templates/colors-kitty.conf"
 output_path = "~/.config/kitty/colors.conf"
