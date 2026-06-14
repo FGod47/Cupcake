@@ -22,6 +22,24 @@ ShellRoot {
     }
 
     // Global State
+    property real globalOpacity: 1.0
+
+    Process {
+        id: initTransparencyValues
+        command: ["cat", "/home/zero/.config/cupcake/.transparency_values"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.length > 0) {
+                    let lines = text.trim().split('\n');
+                    for (let i = 0; i < lines.length; i++) {
+                        if (lines[i].startsWith('OPACITY=')) root.globalOpacity = parseFloat(lines[i].split('=')[1]);
+                    }
+                }
+            }
+        }
+    }
+
     Scope {
         id: globalState
         property bool aiPanelVisible: false

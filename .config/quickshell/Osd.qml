@@ -32,7 +32,7 @@ PanelWindow {
         id: bg
         anchors.fill: parent
         radius: 24
-        color: Theme.colSurfaceContainerHigh
+        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity)
         opacity: osdWindow.visible ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
         

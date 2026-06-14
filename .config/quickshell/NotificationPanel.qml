@@ -73,7 +73,7 @@ PanelWindow {
                 }
             ]
             
-            color: Theme.colSurface
+            color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
             radius: 24
             border.color: "#80000000" // sleek dark border
             border.width: 0

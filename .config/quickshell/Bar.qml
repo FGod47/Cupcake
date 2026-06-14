@@ -517,7 +517,7 @@ PanelWindow {
                     radius: 18
                     height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
                     Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-                    color: Theme.colSurface
+                    color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
                     Behavior on width { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
                     clip: true

@@ -133,12 +133,12 @@ ApplicationWindow {
             width: control.availableWidth
             height: implicitHeight
             radius: 3
-            color: Theme.textColor
+            color: Theme.colOnSurface
             opacity: 0.2
             Rectangle {
                 width: control.visualPosition * parent.width
                 height: parent.height
-                color: Theme.accentColor
+                color: Theme.colPrimary
                 radius: 3
             }
         }
@@ -148,8 +148,8 @@ ApplicationWindow {
             implicitWidth: 16
             implicitHeight: 16
             radius: 8
-            color: Theme.accentColor
-            border.color: Theme.backgroundColor
+            color: Theme.colPrimary
+            border.color: Theme.colSurfaceContainerHigh
             border.width: 2
         }
     }

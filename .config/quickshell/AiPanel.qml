@@ -62,7 +62,7 @@ PanelWindow {
         width: 450
         height: parent.height
         radius: 30
-        color: Theme.colSurface // Deep background
+        color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) // Deep background
         clip: true
 
         states: [
