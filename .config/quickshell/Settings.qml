@@ -478,22 +478,32 @@ ApplicationWindow {
                         contentHeight: contentCol.implicitHeight + 40
                         clip: true
 
-                        ColumnLayout {
+                        RowLayout {
                             id: contentCol
-                            width: Math.min(parent.width, 800)
+                            width: Math.min(appearancePage.width - 48, 1000)
                             anchors.horizontalCenter: parent.horizontalCenter
+                            Layout.alignment: Qt.AlignTop
                             spacing: 36
-
-                            // === Wallpaper & Colors Section ===
+                            
+                            ColumnLayout {
+                                Layout.preferredWidth: 1
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignTop
+                                spacing: 36
+                                
+SettingsCard {
+                                    surfaceColor: Theme.colSurfaceContainer
+                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                    primaryColor: Theme.colPrimary
+                                    onSurfaceColor: Theme.colOnSurface
+                                    title: "Theme & Palette"
+                                    icon: ""
+                                    // === Wallpaper & Colors Section ===
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: 16
 
-                                RowLayout {
-                                    spacing: 12
-                                    Text { text: ""; color: Theme.colOnSurface; font.pixelSize: 22 }
-                                    Text { text: "Wallpaper & Colors"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 20; font.bold: true }
-                                }
+                                
 
                                 RowLayout {
                                     Layout.fillWidth: true
@@ -648,85 +658,18 @@ ApplicationWindow {
                                     }
                                 }
 
-                                // Transparency Switch
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Layout.topMargin: 8
-                                    spacing: 12
-                                    Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20 }
-                                    Text { text: "Transparency"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
-                                    
-                                    StyledSwitch {
-                                        checked: root.globalTransparency
-                                        onClicked: {
-                                            root.globalTransparency = !root.globalTransparency;
-                                            root.applyGlobalSettings();
-                                        }
-                                    }
+                                
                                 }
 
-                                // Window Borders Switch
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Layout.topMargin: 8
-                                    spacing: 12
-                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
-                                    Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
-                                    
-                                    StyledSwitch {
-                                        checked: root.windowBorders
-                                        onClicked: {
-                                            root.windowBorders = !root.windowBorders;
-                                            let isBorders = root.windowBorders ? "true" : "false";
-                                            Quickshell.execDetached(["bash", "-c", "echo " + isBorders + " > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
-                                        }
-                                    }
-                                }
-
-                                // Window Shadows Switch
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Layout.topMargin: 8
-                                    spacing: 12
-                                    Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
-                                    Text { text: "Window Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
-                                    
-                                    StyledSwitch {
-                                        checked: root.windowShadows
-                                        onClicked: {
-                                            root.windowShadows = !root.windowShadows;
-                                            let isShadows = root.windowShadows ? "true" : "false";
-                                            Quickshell.execDetached(["bash", "-c", "echo " + isShadows + " > ~/.config/cupcake/.shadows && ~/.local/bin/apply-shadows"]);
-                                        }
-                                    }
-                                }
-
-                                // Advanced Border Controls (Visible when borders are on)
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Layout.leftMargin: 32
-                                    Layout.topMargin: 8
-                                    visible: root.windowBorders
-                                    spacing: 12
-                                    
-                                    RowLayout {
-                                        Layout.fillWidth: true
-                                        Text { text: "Thickness (" + Math.round(root.borderSize) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
-                                        StyledSlider {
-                                            Layout.fillWidth: true
-                                            from: 1; to: 10; stepSize: 1
-                                            value: root.borderSize
-                                            onValueChanged: {
-                                                if (root.borderSize !== value) {
-                                                    root.borderSize = value;
-                                                    Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // Window Gaps Adjustments
+                                                                }
+SettingsCard {
+                                    surfaceColor: Theme.colSurfaceContainer
+                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                    primaryColor: Theme.colPrimary
+                                    onSurfaceColor: Theme.colOnSurface
+                                    title: "Window Layout"
+                                    icon: ""
+                                    // Window Gaps Adjustments
                                 RowLayout {
                                     Layout.fillWidth: true
                                     Layout.topMargin: 8
@@ -773,7 +716,44 @@ ApplicationWindow {
                                     }
                                 }
 
-                                // Advanced Transparency Controls (Visible when transparency is on)
+                                
+                                }
+
+                                
+                            }
+                            
+                            ColumnLayout {
+                                Layout.preferredWidth: 1
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignTop
+                                spacing: 36
+                                
+SettingsCard {
+                                    surfaceColor: Theme.colSurfaceContainer
+                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                    primaryColor: Theme.colPrimary
+                                    onSurfaceColor: Theme.colOnSurface
+                                    title: "Window Effects"
+                                    icon: "󰽉"
+                                    // Transparency Switch
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20 }
+                                    Text { text: "Transparency"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                    
+                                    StyledSwitch {
+                                        checked: root.globalTransparency
+                                        onClicked: {
+                                            root.globalTransparency = !root.globalTransparency;
+                                            root.applyGlobalSettings();
+                                        }
+                                    }
+                                }
+
+                                
+                                    // Advanced Transparency Controls (Visible when transparency is on)
                                 ColumnLayout {
                                     Layout.fillWidth: true
                                     Layout.leftMargin: 32
@@ -842,7 +822,81 @@ ApplicationWindow {
                                     Text { text: "Bar & screen"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 20; font.bold: true }
                                 }
 
-                                // Row 1: Bar position and Bar style
+                                
+                                    // Window Borders Switch
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
+                                    Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                    
+                                    StyledSwitch {
+                                        checked: root.windowBorders
+                                        onClicked: {
+                                            root.windowBorders = !root.windowBorders;
+                                            let isBorders = root.windowBorders ? "true" : "false";
+                                            Quickshell.execDetached(["bash", "-c", "echo " + isBorders + " > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
+                                        }
+                                    }
+                                }
+
+                                
+                                    // Advanced Border Controls (Visible when borders are on)
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: 32
+                                    Layout.topMargin: 8
+                                    visible: root.windowBorders
+                                    spacing: 12
+                                    
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        Text { text: "Thickness (" + Math.round(root.borderSize) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                        StyledSlider {
+                                            Layout.fillWidth: true
+                                            from: 1; to: 10; stepSize: 1
+                                            value: root.borderSize
+                                            onValueChanged: {
+                                                if (root.borderSize !== value) {
+                                                    root.borderSize = value;
+                                                    Quickshell.execDetached(["bash", "-c", "echo " + Math.round(value) + " > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                
+                                    // Window Shadows Switch
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
+                                    Text { text: "Window Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                    
+                                    StyledSwitch {
+                                        checked: root.windowShadows
+                                        onClicked: {
+                                            root.windowShadows = !root.windowShadows;
+                                            let isShadows = root.windowShadows ? "true" : "false";
+                                            Quickshell.execDetached(["bash", "-c", "echo " + isShadows + " > ~/.config/cupcake/.shadows && ~/.local/bin/apply-shadows"]);
+                                        }
+                                    }
+                                }
+
+                                
+                                }
+
+                                SettingsCard {
+                                    surfaceColor: Theme.colSurfaceContainer
+                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                    primaryColor: Theme.colPrimary
+                                    onSurfaceColor: Theme.colOnSurface
+                                    title: "Quickshell Panels"
+                                    icon: ""
+                                    // Row 1: Bar position and Bar style
                                 RowLayout {
                                     Layout.fillWidth: true
                                     spacing: 24
@@ -913,8 +967,9 @@ ApplicationWindow {
                                 }
                             }
 
-                            // Notice Box
-                            Rectangle {
+                            
+                                                                // Notice Box
+                                Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 100
                                 Layout.topMargin: 16
@@ -953,12 +1008,13 @@ ApplicationWindow {
                                     }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
                                 }
+                                }
+
                             }
 
                         }
                     }
                 }
-
 
                 // PAGE 1: WALLPAPERS
                 Item {
