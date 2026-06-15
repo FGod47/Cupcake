@@ -299,9 +299,15 @@ ApplicationWindow {
             spacing: 8
 
             // Custom Titlebar
-            Item {
+            Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 32
+                Layout.preferredHeight: 48
+                Layout.leftMargin: 12
+                Layout.rightMargin: 12
+                Layout.topMargin: 4
+                color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
+                radius: 10
+                
                 Text {
                     anchors.centerIn: parent
                     text: "Settings"
@@ -312,6 +318,7 @@ ApplicationWindow {
                 }
                 Rectangle {
                     anchors.right: parent.right
+                    anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                     width: 32; height: 32
                     radius: 16
