@@ -71,10 +71,9 @@ echo "Reloading Kitty..."
 touch ~/.config/kitty/kitty.conf
 killall -SIGUSR1 kitty 2>/dev/null || true
 
-# Reload Hyprland and Restart Quickshell after the wallpaper transition finishes
-# We run this in the background detached so the script doesn't kill itself
-echo "Scheduling Hyprland reload and Quickshell restart..."
-nohup bash -c 'sleep 1.6; hyprctl reload; sleep 0.5; killall -9 quickshell; sleep 0.5; rm -rf ~/.cache/quickshell/*cache* ~/.cache/QtProject/"Qml Runtime"; QT_NO_SESSION_MANAGER=1 quickshell -p ~/.config/quickshell/shell.qml & quickshell --daemonize -p ~/.config/quickshell/WallpaperSwitcher.qml' >/dev/null 2>&1 &
+# Reload Hyprland and hot-reload Quickshell theme
+echo "Scheduling Hyprland reload and Quickshell reload..."
+nohup bash -c 'sleep 1.6; hyprctl reload; sleep 0.5; quickshell ipc call theme reload || true' >/dev/null 2>&1 &
 disown
 
 # Update Papirus folders color based on the new Matugen palette

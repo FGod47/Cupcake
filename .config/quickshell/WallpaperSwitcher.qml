@@ -56,7 +56,7 @@ PanelWindow {
     // ── Slide-up animation ────────────────────────────────────────────────
     property bool isOpen: false
 
-    Component.onCompleted: Qt.callLater(() => { isOpen = true })
+
 
     function dismiss() {
         isOpen = false

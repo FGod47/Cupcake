@@ -56,6 +56,13 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "theme"
+        function reload() {
+            Quickshell.reload(false);
+        }
+    }
+
+    IpcHandler {
         target: "aipanel"
         function toggle() {
             globalState.aiPanelVisible = !globalState.aiPanelVisible;
