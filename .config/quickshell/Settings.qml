@@ -388,23 +388,35 @@ ApplicationWindow {
                             property int pageIndex
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 36
+                            Layout.preferredHeight: 40
                             
-                            // Active indicator
+                            // Background Pill
                             Rectangle {
-                                width: 4
-                                height: 24
-                                radius: 2
-                                color: Theme.colPrimary
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                visible: root.currentIndex === pageIndex
-                                anchors.leftMargin: navExpanded ? -2 : 2
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
+                                radius: 8
+                                color: root.currentIndex === pageIndex 
+                                    ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) 
+                                    : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
+                                
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                
+                                // Active indicator on left edge
+                                Rectangle {
+                                    width: 4
+                                    height: 18
+                                    radius: 2
+                                    color: Theme.colPrimary
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    visible: root.currentIndex === pageIndex
+                                }
                             }
                             
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 20 : 18
+                                anchors.leftMargin: navExpanded ? 26 : 20
                                 spacing: 14
                                 
                                 Text {
@@ -420,7 +432,7 @@ ApplicationWindow {
                                 Text {
                                     visible: navExpanded
                                     text: labelText
-                                    color: root.currentIndex === pageIndex ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
                                     font.family: "Inter"
                                     font.pixelSize: 14
                                     font.bold: root.currentIndex === pageIndex
