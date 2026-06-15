@@ -357,7 +357,7 @@ ApplicationWindow {
                         component NavHeader: Text {
                             visible: navExpanded
                             Layout.fillWidth: true
-                            Layout.leftMargin: 16
+                            Layout.leftMargin: 18
                             Layout.topMargin: 12
                             Layout.bottomMargin: 4
                             color: Theme.colOnSurfaceVariant
@@ -366,6 +366,8 @@ ApplicationWindow {
                             font.bold: true
                             opacity: 0.7
                         }
+
+
 
                         component NavButton: Item {
                             property string iconText
@@ -378,13 +380,13 @@ ApplicationWindow {
                             // Active indicator
                             Rectangle {
                                 width: 4
-                                height: 20
+                                height: 24
                                 radius: 2
                                 color: Theme.colPrimary
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: root.currentIndex === pageIndex
-                                anchors.leftMargin: navExpanded ? 0 : 4
+                                anchors.leftMargin: navExpanded ? -2 : 2
                             }
                             
                             RowLayout {
@@ -392,17 +394,14 @@ ApplicationWindow {
                                 anchors.leftMargin: navExpanded ? 16 : 14
                                 spacing: 12
                                 
-                                Item {
-                                    Layout.preferredWidth: navExpanded ? 24 : parent.width
-                                    Layout.fillHeight: true
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: iconText
-                                        color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
-                                        font.family: root.font.family
-                                        font.pixelSize: 18
-                                        opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
-                                    }
+                                Text {
+                                    text: iconText
+                                    color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                                    font.family: root.font.family
+                                    font.pixelSize: 18
+                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
+                                    Layout.preferredWidth: 20
+                                    horizontalAlignment: Text.AlignHCenter
                                 }
                                 
                                 Text {
