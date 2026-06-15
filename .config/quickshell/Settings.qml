@@ -338,7 +338,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
-                spacing: 8
+                spacing: 16
 
                 // Navigation Rail
                 Rectangle {
