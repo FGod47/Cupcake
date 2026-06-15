@@ -336,6 +336,8 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: 12
+                Layout.rightMargin: 12
                 spacing: 8
 
                 // Navigation Rail
