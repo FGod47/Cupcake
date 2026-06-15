@@ -48,6 +48,23 @@ ApplicationWindow {
         }
     }
 
+    property bool windowShadows: false
+
+    Process {
+        id: initShadows
+        command: ["cat", "/home/zero/.config/cupcake/.shadows"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "true") {
+                    root.windowShadows = true;
+                } else if (text.trim() === "false") {
+                    root.windowShadows = false;
+                }
+            }
+        }
+    }
+
     property int borderSize: 3
 
     Process {
@@ -662,6 +679,24 @@ ApplicationWindow {
                                             root.windowBorders = !root.windowBorders;
                                             let isBorders = root.windowBorders ? "true" : "false";
                                             Quickshell.execDetached(["bash", "-c", "echo " + isBorders + " > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
+                                        }
+                                    }
+                                }
+
+                                // Window Shadows Switch
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 8
+                                    spacing: 12
+                                    Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20; font.family: "JetBrainsMono Nerd Font Propo" }
+                                    Text { text: "Window Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                    
+                                    StyledSwitch {
+                                        checked: root.windowShadows
+                                        onClicked: {
+                                            root.windowShadows = !root.windowShadows;
+                                            let isShadows = root.windowShadows ? "true" : "false";
+                                            Quickshell.execDetached(["bash", "-c", "echo " + isShadows + " > ~/.config/cupcake/.shadows && ~/.local/bin/apply-shadows"]);
                                         }
                                     }
                                 }

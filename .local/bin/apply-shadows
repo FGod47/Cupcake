@@ -1,0 +1,7 @@
+#!/bin/bash
+
+STATE=$(cat ~/.config/cupcake/.shadows 2>/dev/null || echo "false")
+
+sed -i "/shadow = {/,/}/ s/enabled = .*/enabled = $STATE/" ~/.config/hypr/decoration.lua
+
+hyprctl reload
