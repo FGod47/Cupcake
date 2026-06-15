@@ -339,10 +339,12 @@ ApplicationWindow {
                 spacing: 8
 
                 // Navigation Rail
-                Item {
+                Rectangle {
                     Layout.fillHeight: true
                     Layout.preferredWidth: navExpanded ? 180 : 56
                     Layout.margins: 5
+                    color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
+                    radius: 10
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     ColumnLayout {
