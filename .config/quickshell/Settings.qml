@@ -401,17 +401,6 @@ ApplicationWindow {
                                     : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
                                 
                                 Behavior on color { ColorAnimation { duration: 150 } }
-                                
-                                // Active indicator on left edge
-                                Rectangle {
-                                    width: 4
-                                    height: 18
-                                    radius: 2
-                                    color: Theme.colPrimary
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    visible: root.currentIndex === pageIndex
-                                }
                             }
                             
                             RowLayout {
