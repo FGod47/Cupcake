@@ -341,7 +341,7 @@ ApplicationWindow {
                 // Navigation Rail
                 Item {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 150 : 56
+                    Layout.preferredWidth: navExpanded ? 180 : 56
                     Layout.margins: 5
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -352,29 +352,43 @@ ApplicationWindow {
                         Item { Layout.preferredHeight: 8 } // Spacer
 
                         // Nav Buttons
-                        component NavButton: Rectangle {
+                        component NavHeader: Text {
+                            visible: navExpanded
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 16
+                            Layout.topMargin: 12
+                            Layout.bottomMargin: 4
+                            color: Theme.colOnSurfaceVariant
+                            font.family: "Inter"
+                            font.pixelSize: 11
+                            font.bold: true
+                            opacity: 0.7
+                        }
+
+                        component NavButton: Item {
                             property string iconText
                             property string labelText
                             property int pageIndex
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 32
-                            radius: 16
-                            color: {
-                                if (root.currentIndex === pageIndex) {
-                                    return Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2);
-                                } else if (navMouseArea.containsMouse) {
-                                    return Theme.colSurfaceContainer;
-                                } else {
-                                    return "transparent";
-                                }
+                            Layout.preferredHeight: 36
+                            
+                            // Active indicator
+                            Rectangle {
+                                width: 4
+                                height: 20
+                                radius: 2
+                                color: Theme.colPrimary
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                visible: root.currentIndex === pageIndex
+                                anchors.leftMargin: navExpanded ? 0 : 4
                             }
-                            Behavior on color { ColorAnimation { duration: 150 } }
                             
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 16 : 0
-                                spacing: 16
+                                anchors.leftMargin: navExpanded ? 16 : 14
+                                spacing: 12
                                 
                                 Item {
                                     Layout.preferredWidth: navExpanded ? 24 : parent.width
@@ -385,16 +399,19 @@ ApplicationWindow {
                                         color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
                                         font.family: root.font.family
                                         font.pixelSize: 18
+                                        opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
                                     }
                                 }
                                 
                                 Text {
                                     visible: navExpanded
                                     text: labelText
-                                    color: Theme.colOnSurface
-                                    font.family: root.font.family
+                                    color: root.currentIndex === pageIndex ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    font.family: "Inter"
                                     font.pixelSize: 14
+                                    font.bold: root.currentIndex === pageIndex
                                     Layout.fillWidth: true
+                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
                                 }
                             }
 
@@ -407,11 +424,14 @@ ApplicationWindow {
                             }
                         }
 
+                        NavHeader { text: "MENU" }
                         NavButton { iconText: ""; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: ""; labelText: "Wallpapers"; pageIndex: 1 }
                         NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 2 }
                         NavButton { iconText: ""; labelText: "System"; pageIndex: 3 }
                         NavButton { iconText: ""; labelText: "Network"; pageIndex: 4 }
+                        
+                        NavHeader { text: "GENERAL" }
                         NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 5 }
                         NavButton { iconText: ""; labelText: "User"; pageIndex: 6 }
                         NavButton { iconText: ""; labelText: "About"; pageIndex: 7 }
