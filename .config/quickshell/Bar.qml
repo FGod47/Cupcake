@@ -616,7 +616,7 @@ PanelWindow {
                     Column {
                         id: dropdownCol
                         anchors.top: parent.top
-                        anchors.topMargin: 38
+                        anchors.topMargin: 8
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.margins: 8
