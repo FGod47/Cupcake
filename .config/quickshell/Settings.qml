@@ -440,7 +440,7 @@ ApplicationWindow {
                         }
 
                         NavHeader { text: "MENU" }
-                        NavButton { iconText: ""; labelText: "Appearance"; pageIndex: 0 }
+                        NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: ""; labelText: "Wallpapers"; pageIndex: 1 }
                         NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 2 }
                         NavButton { iconText: ""; labelText: "System"; pageIndex: 3 }
