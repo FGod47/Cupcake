@@ -304,7 +304,7 @@ ApplicationWindow {
                 Layout.preferredHeight: 48
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
-                Layout.topMargin: 4
+                Layout.topMargin: 12
                 color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
                 radius: 10
                 
@@ -345,7 +345,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
-                Layout.topMargin: 12
+                Layout.topMargin: 8
                 Layout.bottomMargin: 12
                 spacing: 16
 
