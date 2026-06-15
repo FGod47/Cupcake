@@ -342,7 +342,7 @@ ApplicationWindow {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.preferredWidth: navExpanded ? 180 : 56
-                    Layout.margins: 5
+                    
                     color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
                     radius: 10
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -357,7 +357,7 @@ ApplicationWindow {
                         component NavHeader: Text {
                             visible: navExpanded
                             Layout.fillWidth: true
-                            Layout.leftMargin: 18
+                            Layout.leftMargin: 20
                             Layout.topMargin: 12
                             Layout.bottomMargin: 4
                             color: Theme.colOnSurfaceVariant
@@ -366,6 +366,8 @@ ApplicationWindow {
                             font.bold: true
                             opacity: 0.7
                         }
+
+
 
 
 
@@ -391,8 +393,8 @@ ApplicationWindow {
                             
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 16 : 14
-                                spacing: 12
+                                anchors.leftMargin: navExpanded ? 20 : 18
+                                spacing: 14
                                 
                                 Text {
                                     text: iconText
