@@ -338,6 +338,8 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
+                Layout.topMargin: 12
+                Layout.bottomMargin: 12
                 spacing: 16
 
                 // Navigation Rail
