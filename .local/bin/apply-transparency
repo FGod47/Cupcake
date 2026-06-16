@@ -7,9 +7,8 @@ OPACITY=${OPACITY:-0.90}
 BLUR_SIZE=${BLUR_SIZE:-6}
 BLUR_PASSES=${BLUR_PASSES:-3}
 
-# Calculate inactive opacity slightly lower than active
-INACTIVE_OPACITY=$(awk "BEGIN {print $OPACITY - 0.05}")
-if (( $(echo "$INACTIVE_OPACITY < 0.1" | bc -l) )); then INACTIVE_OPACITY=0.1; fi
+# Use same opacity for active and inactive
+INACTIVE_OPACITY=$OPACITY
 
 if [ "$TRANS" = "true" ]; then
     echo "hl.config({
