@@ -931,11 +931,6 @@ SettingsCard {
                                     onSurfaceColor: Theme.colOnSurface
                                     title: "Quickshell Panels"
                                     icon: ""
-                                    // Row 1: Bar position and Bar style
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 24
-
                                     // Bar position
                                     ColumnLayout {
                                         Layout.fillWidth: true
@@ -977,7 +972,6 @@ SettingsCard {
                                             }
                                         }
                                     }
-                                }
 
                                 // Row 2: Screen round corner
                                 ColumnLayout {
@@ -1584,10 +1578,17 @@ SettingsCard {
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
-                    ColumnLayout {
+                    Flickable {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 16
+                        contentHeight: aiContentCol.implicitHeight + 48
+                        clip: true
+                        
+                        ColumnLayout {
+                            id: aiContentCol
+                            width: parent.width - 48
+                            x: 24
+                            y: 24
+                            spacing: 16
 
                         Text {
                             text: "AI Panel Settings"
@@ -1604,166 +1605,138 @@ SettingsCard {
                         }
 
                         // Process to check if key exists
+                        // Process to check if key exists and load accounts
                         Process {
                             id: settingsCheckKey
-                            command: ["bash", "-c", "cat ~/.config/quickshell/gemini_key.txt 2>/dev/null"]
+                            command: ["bash", "-c", "cat ~/.config/quickshell/gemini_accounts.txt 2>/dev/null | cut -d':' -f1"]
                             running: true
                             stdout: SplitParser {
                                 onRead: data => {
-                                    if (data.length > 10) {
+                                    if (data.trim() !== "") {
                                         aiSettingsPage.keyExists = true;
+                                        let lines = data.trim().split("\n");
+                                        let cleanLines = [];
+                                        for (let i = 0; i < lines.length; i++) {
+                                            if (lines[i].trim() !== "") cleanLines.push(lines[i].trim());
+                                        }
+                                        if (cleanLines.length > 0) {
+                                            // Accounts loaded successfully
+                                        }
                                     }
                                 }
                             }
                         }
 
+                        // --- SECTION: CONFIGURATION ---
+                        Text {
+                            text: "API Configuration"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 18
+                            font.bold: true
+                            Layout.topMargin: 8
+                        }
+                        
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 120
+                            implicitHeight: configCol.implicitHeight + 32
                             radius: 12
                             color: Theme.colSurfaceContainer
                             
                             ColumnLayout {
+                                id: configCol
                                 anchors.fill: parent
                                 anchors.margins: 16
-                                spacing: 8
+                                spacing: 20
                                 
-                                RowLayout {
+                                // API Key Box
+                                // Add Account Box
+                                ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text {
-                                        text: "Google Gemini API Key"
-                                        color: Theme.colOnSurfaceVariant
-                                        font.family: root.font.family
-                                        font.pixelSize: 14
-                                    }
-                                    Item { Layout.fillWidth: true }
-                                    Text {
-                                        text: aiSettingsPage.keyExists ? "✅ Key is Set" : "❌ No Key Found"
-                                        color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
-                                        font.family: root.font.family
-                                        font.pixelSize: 14
-                                        font.bold: true
-                                    }
-                                }
-                                
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 12
-
-                                    TextField {
-                                        id: apiKeyInput
+                                    spacing: 8
+                                    RowLayout {
                                         Layout.fillWidth: true
-                                        Layout.preferredHeight: 40
-                                        placeholderText: aiSettingsPage.keyExists ? "Paste a new key to overwrite..." : "Paste your API key here..."
-                                        color: Theme.colOnSurface
-                                        background: Rectangle {
-                                            color: Theme.colSurfaceContainerHigh
-                                            radius: 6
-                                        }
-                                        leftPadding: 10
-                                        
-                                        onAccepted: {
-                                            saveKeyProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/quickshell/gemini_key.txt"];
-                                            saveKeyProcess.running = true;
-                                            aiSettingsPage.keyExists = true;
-                                            placeholderText = "Key saved successfully!";
-                                            text = "";
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.preferredWidth: 80
-                                        Layout.preferredHeight: 40
-                                        radius: 6
-                                        color: Theme.colPrimary
-                                        
                                         Text {
-                                            anchors.centerIn: parent
-                                            text: "Save"
-                                            color: Theme.colOnPrimary
+                                            text: "Add New Google Gemini Account"
+                                            color: Theme.colOnSurfaceVariant
                                             font.family: root.font.family
-                                            font.bold: true
                                             font.pixelSize: 14
                                         }
-                                        
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: apiKeyInput.accepted()
+                                        Item { Layout.fillWidth: true }
+                                        Text {
+                                            text: aiSettingsPage.keyExists ? "✅ Accounts Loaded" : "❌ No Accounts"
+                                            color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
+                                            font.family: root.font.family
+                                            font.pixelSize: 14
+                                            font.bold: true
                                         }
                                     }
-                                }
-                            }
-                        }
+                                    
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        spacing: 12
 
-                        // Model Selection
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 100
-                            radius: 12
-                            color: Theme.colSurfaceContainer
-                            
-                            ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                spacing: 8
-                                
-                                Text {
-                                    text: "Default Model"
-                                    color: Theme.colOnSurfaceVariant
-                                    font.family: root.font.family
-                                    font.pixelSize: 14
-                                }
-                                
-                                ComboBox {
-                                    id: modelCombo
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
-                                    model: [
-                                        "gemini-3.5-flash",
-                                        "gemini-flash-latest",
-                                        "gemini-2.5-pro",
-                                        "gemini-2.5-flash",
-                                        "gemini-2.0-flash",
-                                        "gemini-pro-latest"
-                                    ]
-                                    
-                                    background: Rectangle {
-                                        color: Theme.colSurfaceContainerHigh
-                                        radius: 6
-                                    }
-                                    
-                                    Process {
-                                        command: ["bash", "-c", "cat ~/.config/quickshell/gemini_model.txt 2>/dev/null"]
-                                        running: true
-                                        stdout: SplitParser {
-                                            onRead: data => {
-                                                if (data.trim() !== "") {
-                                                    for (var i = 0; i < modelCombo.model.length; i++) {
-                                                        if (modelCombo.model[i] === data.trim()) {
-                                                            modelCombo.currentIndex = i;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
+                                        TextField {
+                                            id: emailInput
+                                            Layout.preferredWidth: 200
+                                            Layout.preferredHeight: 40
+                                            placeholderText: "Email address..."
+                                            color: Theme.colOnSurface
+                                            background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 6 }
+                                            leftPadding: 10
+                                        }
+
+                                        TextField {
+                                            id: apiKeyInput
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: 40
+                                            placeholderText: "Paste your API key here..."
+                                            color: Theme.colOnSurface
+                                            background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 6 }
+                                            leftPadding: 10
+                                            
+                                            onAccepted: {
+                                                if (emailInput.text.trim() === "" || apiKeyInput.text.trim() === "") return;
+                                                saveKeyProcess.command = ["bash", "-c", "echo '" + emailInput.text + ":" + apiKeyInput.text + "' >> ~/.config/quickshell/gemini_accounts.txt"];
+                                                saveKeyProcess.running = true;
+                                                aiSettingsPage.keyExists = true;
+                                                placeholderText = "Account added!";
+                                                text = "";
+                                                emailInput.text = "";
+                                                settingsCheckKey.running = true;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.preferredWidth: 80
+                                            Layout.preferredHeight: 40
+                                            radius: 6
+                                            color: Theme.colPrimary
+                                            
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: "Save"
+                                                color: Theme.colOnPrimary
+                                                font.family: root.font.family
+                                                font.bold: true
+                                                font.pixelSize: 14
+                                            }
+                                            
+                                            MouseArea {
+                                                anchors.fill: parent
+                                                cursorShape: Qt.PointingHandCursor
+                                                onClicked: apiKeyInput.accepted()
                                             }
                                         }
                                     }
-                                    
-                                    Process {
-                                        id: saveModelProcess
-                                        running: false
-                                    }
-                                    
-                                    onActivated: {
-                                        saveModelProcess.command = ["bash", "-c", "echo '" + currentText + "' > ~/.config/quickshell/gemini_model.txt"];
-                                        saveModelProcess.running = true;
-                                    }
                                 }
+
                             }
                         }
 
+
                         Item { Layout.fillHeight: true }
+                        }
                     }
                 }
 
