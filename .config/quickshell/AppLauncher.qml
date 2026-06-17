@@ -450,7 +450,7 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
-            anchors.rightMargin: -1 // 1px overlap to prevent subpixel tearing gaps
+            anchors.rightMargin: 0 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
                 fillColor: root.colSurfaceContainer
@@ -472,7 +472,7 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
-            anchors.leftMargin: -1 // 1px overlap to prevent subpixel tearing gaps
+            anchors.leftMargin: 0 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
                 fillColor: root.colSurfaceContainer

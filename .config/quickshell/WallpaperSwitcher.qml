@@ -11,20 +11,21 @@ import "theme"
 PanelWindow {
     id: root
 
-    anchors { bottom: true; left: true; right: true }
+    anchors { left: true; top: true; bottom: true }
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     color: "transparent"
-    implicitHeight: 9000
+    implicitWidth: 9000
 
     // ── Caelestia exact token values ─────────────────────────────────────
     readonly property int    wallW:       280          // wallpaperWidth
     readonly property int    wallH:       Math.round(wallW / 16 * 9)  // 157
     readonly property int    itemW:       180          // Spacing distance for stacking effect
+    readonly property int    itemH:       170          // Vertical spacing distance
     readonly property int    cornerR:     17           // rounding.normal
-    readonly property int    padH:        50           // padding
+    readonly property int    padH:        20           // padding
     readonly property int    padV:        15
     readonly property int    labelGap:    7            // spacing.small
     readonly property int    maxVisible:  Math.min(5, wallModel.count)
@@ -185,49 +186,48 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: root.width
-        height: pill.height + 1
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        width: pill.width + 1
+        height: root.height
         clip: true
 
     // ── Pill ─────────────────────────────────────────────────────────────
     Rectangle {
         id: pill
 
-        anchors.bottom:           parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin:     0
+        anchors.left:             parent.left
+        anchors.verticalCenter:   parent.verticalCenter
+        anchors.leftMargin:       0
 
-        readonly property int fullWidth: pv.width + root.padH * 2
-        readonly property int fullHeight: root.wallH + 12 + 15 + root.padV * 2 // approximation for label metrics height
+        readonly property int fullWidth: root.wallW + root.padH * 2
+        readonly property int fullHeight: pv.height + root.padV * 2 // approximation for label metrics height
 
-        width: root.isOpen ? fullWidth : 160
-        height: root.isOpen ? fullHeight : 0
+        width: root.isOpen ? fullWidth : 0
+        height: root.isOpen ? fullHeight : 160
 
         Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
         Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
         color: root.colBg
-        topLeftRadius: 36
         topRightRadius: 36
+        bottomRightRadius: 36
+        topLeftRadius: 0
         bottomLeftRadius: 0
-        bottomRightRadius: 0
 
         Item {
             id: contentWrapper
             width: pill.width
             height: pill.height
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
             clip: true
             
             Item {
                 id: innerContent
                 width: pill.fullWidth
                 height: pill.fullHeight
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.centerIn: parent
                 
                 opacity: root.isOpen && root.isInitialized ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
@@ -243,15 +243,15 @@ PanelWindow {
             id: pv
 
             anchors.centerIn: parent
-            width:  Math.min(root.numVisible * root.itemW, root.width - 40 - root.padH * 2)
-            height: parent.height
+            width:  root.wallW + 40
+            height: Math.min(root.numVisible * root.itemH, root.height - 40 - root.padV * 2)
             
             highlightMoveDuration: root.moveDuration
 
             focus: true
             
-            Keys.onLeftPressed: decrementCurrentIndex()
-            Keys.onRightPressed: incrementCurrentIndex()
+            Keys.onUpPressed: decrementCurrentIndex()
+            Keys.onDownPressed: incrementCurrentIndex()
             Keys.onEscapePressed: root.dismiss()
             Keys.onReturnPressed: {
                 if (pv.currentItem) {
@@ -276,8 +276,8 @@ PanelWindow {
             onCountChanged: {
                 if (count === 0) return
                 for (let i = 0; i < count; i++) {
-                    const entry = model.get(i)
-                    if (entry && root.wallDir + "/" + entry.fileName === root.currentWall) {
+                    const entryFileName = model.get(i, "fileName")
+                    if (entryFileName && root.wallDir + "/" + entryFileName === root.currentWall) {
                         currentIndex = i
                         return
                     }
@@ -285,12 +285,12 @@ PanelWindow {
             }
 
             path: Path {
-                startX: 0
-                startY: pv.height / 2
+                startX: pv.width / 2
+                startY: 0
                 PathAttribute { name: "z"; value: 0 }
-                PathLine { x: pv.width / 2; relativeY: 0 }
+                PathLine { x: pv.width / 2; y: pv.height / 2 }
                 PathAttribute { name: "z"; value: 10 }
-                PathLine { x: pv.width; relativeY: 0 }
+                PathLine { x: pv.width / 2; y: pv.height }
                 PathAttribute { name: "z"; value: 0 }
             }
 
@@ -304,11 +304,11 @@ PanelWindow {
                 readonly property bool  isCurrent: PathView.isCurrentItem
                 readonly property bool  onPath:    PathView.onPath ?? true
 
-                width:   root.itemW
-                height:  pv.height
+                width:   pv.width
+                height:  root.itemH
                 z:       PathView.z ?? 0
 
-                scale:   isCurrent ? 1.0 : (onPath ? 0.8 : 0.0)
+                scale:   onPath ? 1.0 : 0.0
                 opacity: onPath ? 1.0 : 0.0
 
                 Behavior on scale {
@@ -323,31 +323,12 @@ PanelWindow {
                 }
 
                 // ── Drop shadow ──────────────────────────
-                Rectangle {
-                    anchors.centerIn: imgClip
-                    anchors.verticalCenterOffset: 2
-                    width:  imgClip.width + 6
-                    height: imgClip.height + 6
-                    radius: root.cornerR + 3
-                    color:  Qt.rgba(0, 0, 0, 0.35)
-                    z:      -2
-                }
-                Rectangle {
-                    anchors.centerIn: imgClip
-                    anchors.verticalCenterOffset: 4
-                    width:  imgClip.width + 12
-                    height: imgClip.height + 12
-                    radius: root.cornerR + 6
-                    color:  Qt.rgba(0, 0, 0, 0.15)
-                    z:      -3
-                }
 
                 // ── Thumbnail ──────────────────────────────────────────────
                 ClippingRectangle {
                     id: imgClip
 
-                    anchors.top:              parent.top
-                    anchors.topMargin:        root.padV
+                    anchors.verticalCenter:   parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     width:  root.wallW
@@ -370,26 +351,19 @@ PanelWindow {
                     }
                 }
 
-                // ── Active border removed ──────────────────────────────────
-
-                // ── Filename label ─────────────────────────────────────────
-                Text {
-                    anchors.top:              imgClip.bottom
-                    anchors.topMargin:        root.labelGap
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width:                    root.wallW - 16
-
-                    text:                del.fileName.replace(/\.[^.]+$/, "")
-                    color:               del.isCurrent ? root.colPrimary : root.colFgDim
-                    opacity:             del.isCurrent ? 1.0 : 0.0
-                    font.pixelSize:      12
-                    font.family:         "Inter, Roboto, sans-serif"
-                    font.weight:         del.isCurrent ? 600 : 400
-                    elide:               Text.ElideMiddle
-                    horizontalAlignment: Text.AlignHCenter
-                    Behavior on color { ColorAnimation { duration: 200 } }
+                // ── Active border ──────────────────────────────────────────
+                Rectangle {
+                    anchors.fill: imgClip
+                    anchors.margins: -4
+                    color: "transparent"
+                    border.color: root.colPrimary
+                    border.width: 3
+                    radius: root.cornerR + 4
+                    opacity: del.isCurrent ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                 }
+
+                // ── Filename label removed ─────────────────────────────────────────
 
                 // ── Click handler ──────────────────────────────────────────
                 MouseArea {
@@ -409,20 +383,20 @@ PanelWindow {
             } // Item innerContent
         } // Item contentWrapper
 
-        // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
+        // ── Top Fillet (Inverse top-left corner) ─────────────────────
         Shape {
             width: 36; height: 36
-            anchors.bottom: parent.bottom
-            anchors.right: parent.left
-            anchors.rightMargin: -1
+            anchors.bottom: parent.top
+            anchors.bottomMargin: 0
+            anchors.left: parent.left
             ShapePath {
                 fillColor: root.colBg
                 strokeColor: "transparent"
-                startX: 36; startY: 0
-                PathLine { x: 36; y: 36 }
+                startX: 36; startY: 36
                 PathLine { x: 0; y: 36 }
+                PathLine { x: 0; y: 0 }
                 PathArc {
-                    x: 36; y: 0
+                    x: 36; y: 36
                     radiusX: 36; radiusY: 36
                     useLargeArc: false
                     direction: PathArc.Counterclockwise
@@ -430,20 +404,20 @@ PanelWindow {
             }
         }
 
-        // ── Right Fillet (Inverse bottom-right corner) ────────────────────
+        // ── Bottom Fillet (Inverse bottom-left corner) ─────────────────────
         Shape {
             width: 36; height: 36
-            anchors.bottom: parent.bottom
-            anchors.left: parent.right
-            anchors.leftMargin: -1
+            anchors.top: parent.bottom
+            anchors.topMargin: 0
+            anchors.left: parent.left
             ShapePath {
                 fillColor: root.colBg
                 strokeColor: "transparent"
-                startX: 0; startY: 0
+                startX: 36; startY: 0
+                PathLine { x: 0; y: 0 }
                 PathLine { x: 0; y: 36 }
-                PathLine { x: 36; y: 36 }
                 PathArc {
-                    x: 0; y: 0
+                    x: 36; y: 0
                     radiusX: 36; radiusY: 36
                     useLargeArc: false
                     direction: PathArc.Clockwise
