@@ -2456,6 +2456,24 @@ SettingsCard {
                                                             radius: 8
                                                         }
                                                     }
+                                                    delegate: ItemDelegate {
+                                                        width: resCombo.popup.width - 8
+                                                        height: 36
+                                                        highlighted: resCombo.highlightedIndex === index
+                                                        background: Rectangle {
+                                                            color: highlighted ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2) : "transparent"
+                                                            radius: 6
+                                                        }
+                                                        contentItem: Text {
+                                                            text: modelData
+                                                            font.family: root.font.family
+                                                            font.pixelSize: 13
+                                                            font.weight: 500
+                                                            color: Theme.colOnSurface
+                                                            verticalAlignment: Text.AlignVCenter
+                                                            horizontalAlignment: Text.AlignHCenter
+                                                        }
+                                                    }
                                                 }
                                             }
 
@@ -2501,6 +2519,24 @@ SettingsCard {
                                                             radius: 8
                                                         }
                                                     }
+                                                    delegate: ItemDelegate {
+                                                        width: rateCombo.popup.width - 8
+                                                        height: 36
+                                                        highlighted: rateCombo.highlightedIndex === index
+                                                        background: Rectangle {
+                                                            color: highlighted ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2) : "transparent"
+                                                            radius: 6
+                                                        }
+                                                        contentItem: Text {
+                                                            text: modelData
+                                                            font.family: root.font.family
+                                                            font.pixelSize: 13
+                                                            font.weight: 500
+                                                            color: Theme.colOnSurface
+                                                            verticalAlignment: Text.AlignVCenter
+                                                            horizontalAlignment: Text.AlignHCenter
+                                                        }
+                                                    }
                                                 }
                                             }
 
@@ -2543,6 +2579,24 @@ SettingsCard {
                                                             border.color: Theme.colOutline
                                                             border.width: 1
                                                             radius: 8
+                                                        }
+                                                    }
+                                                    delegate: ItemDelegate {
+                                                        width: scaleCombo.popup.width - 8
+                                                        height: 36
+                                                        highlighted: scaleCombo.highlightedIndex === index
+                                                        background: Rectangle {
+                                                            color: highlighted ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2) : "transparent"
+                                                            radius: 6
+                                                        }
+                                                        contentItem: Text {
+                                                            text: modelData
+                                                            font.family: root.font.family
+                                                            font.pixelSize: 13
+                                                            font.weight: 500
+                                                            color: Theme.colOnSurface
+                                                            verticalAlignment: Text.AlignVCenter
+                                                            horizontalAlignment: Text.AlignHCenter
                                                         }
                                                     }
                                                 }
