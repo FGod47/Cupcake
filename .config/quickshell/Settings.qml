@@ -2418,23 +2418,43 @@ SettingsCard {
                                             ColumnLayout {
                                                 spacing: 8
                                                 Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
-                                                RowLayout {
-                                                    spacing: 12
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRes > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: "<"; color: monitorCard.selRes > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRes > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRes > 0) monitorCard.selRes-- }
-                                                    }
-                                                    Text {
-                                                        Layout.minimumWidth: 80
+                                                ComboBox {
+                                                    id: resCombo
+                                                    Layout.preferredWidth: 140
+                                                    Layout.preferredHeight: 36
+                                                    model: monitorCard.modesParsed.map(function(r) { return r.w + "x" + r.h; })
+                                                    currentIndex: monitorCard.selRes
+                                                    onActivated: monitorCard.selRes = index
+                                                    
+                                                    indicator: Item {}
+                                                    background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
+                                                    contentItem: Text {
+                                                        text: resCombo.currentText + " "
+                                                        font.family: root.font.family
+                                                        font.pixelSize: 13
+                                                        font.weight: 600
+                                                        color: Theme.colOnSurface
+                                                        verticalAlignment: Text.AlignVCenter
                                                         horizontalAlignment: Text.AlignHCenter
-                                                        text: monitorCard.modesParsed[monitorCard.selRes] ? (monitorCard.modesParsed[monitorCard.selRes].w + "x" + monitorCard.modesParsed[monitorCard.selRes].h) : ""
-                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
                                                     }
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: ">"; color: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRes < monitorCard.modesParsed.length - 1) monitorCard.selRes++ }
+                                                    popup: Popup {
+                                                        y: resCombo.height - 1
+                                                        width: resCombo.width
+                                                        implicitHeight: contentItem.implicitHeight
+                                                        padding: 4
+                                                        contentItem: ListView {
+                                                            clip: true
+                                                            implicitHeight: Math.min(contentHeight, 200)
+                                                            model: resCombo.popup.visible ? resCombo.delegateModel : null
+                                                            currentIndex: resCombo.highlightedIndex
+                                                            ScrollIndicator.vertical: ScrollIndicator { }
+                                                        }
+                                                        background: Rectangle {
+                                                            color: Theme.colSurfaceContainerHigh
+                                                            border.color: Theme.colOutline
+                                                            border.width: 1
+                                                            radius: 8
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2442,24 +2462,44 @@ SettingsCard {
                                             ColumnLayout {
                                                 spacing: 8
                                                 Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
-                                                RowLayout {
-                                                    spacing: 12
+                                                ComboBox {
+                                                    id: rateCombo
                                                     property var curRates: monitorCard.modesParsed[monitorCard.selRes] ? monitorCard.modesParsed[monitorCard.selRes].rates : []
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRate > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: "<"; color: monitorCard.selRate > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRate > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRate > 0) monitorCard.selRate-- }
-                                                    }
-                                                    Text {
-                                                        Layout.minimumWidth: 50
+                                                    Layout.preferredWidth: 110
+                                                    Layout.preferredHeight: 36
+                                                    model: rateCombo.curRates.map(function(hz) { return hz + "Hz"; })
+                                                    currentIndex: monitorCard.selRate
+                                                    onActivated: monitorCard.selRate = index
+                                                    
+                                                    indicator: Item {}
+                                                    background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
+                                                    contentItem: Text {
+                                                        text: rateCombo.currentText + " "
+                                                        font.family: root.font.family
+                                                        font.pixelSize: 13
+                                                        font.weight: 600
+                                                        color: Theme.colOnSurface
+                                                        verticalAlignment: Text.AlignVCenter
                                                         horizontalAlignment: Text.AlignHCenter
-                                                        text: parent.curRates[monitorCard.selRate] ? (parent.curRates[monitorCard.selRate] + "Hz") : ""
-                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
                                                     }
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRate < parent.curRates.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: ">"; color: monitorCard.selRate < parent.curRates.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRate < parent.curRates.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRate < parent.curRates.length - 1) monitorCard.selRate++ }
+                                                    popup: Popup {
+                                                        y: rateCombo.height - 1
+                                                        width: rateCombo.width
+                                                        implicitHeight: contentItem.implicitHeight
+                                                        padding: 4
+                                                        contentItem: ListView {
+                                                            clip: true
+                                                            implicitHeight: Math.min(contentHeight, 200)
+                                                            model: rateCombo.popup.visible ? rateCombo.delegateModel : null
+                                                            currentIndex: rateCombo.highlightedIndex
+                                                            ScrollIndicator.vertical: ScrollIndicator { }
+                                                        }
+                                                        background: Rectangle {
+                                                            color: Theme.colSurfaceContainerHigh
+                                                            border.color: Theme.colOutline
+                                                            border.width: 1
+                                                            radius: 8
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2467,24 +2507,43 @@ SettingsCard {
                                             ColumnLayout {
                                                 spacing: 8
                                                 Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
-                                                RowLayout {
-                                                    spacing: 12
-                                                    property int curScaleIdx: monitorCard.scaleOptions.indexOf(monitorCard.selScale)
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: parent.curScaleIdx > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: "<"; color: parent.curScaleIdx > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: parent.curScaleIdx > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(parent.curScaleIdx > 0) monitorCard.selScale = monitorCard.scaleOptions[parent.curScaleIdx - 1] }
-                                                    }
-                                                    Text {
-                                                        Layout.minimumWidth: 40
+                                                ComboBox {
+                                                    id: scaleCombo
+                                                    Layout.preferredWidth: 100
+                                                    Layout.preferredHeight: 36
+                                                    model: monitorCard.scaleOptions.map(function(s) { return (s * 100) + "%"; })
+                                                    currentIndex: monitorCard.scaleOptions.indexOf(monitorCard.selScale)
+                                                    onActivated: monitorCard.selScale = monitorCard.scaleOptions[index]
+                                                    
+                                                    indicator: Item {}
+                                                    background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
+                                                    contentItem: Text {
+                                                        text: scaleCombo.currentText + " "
+                                                        font.family: root.font.family
+                                                        font.pixelSize: 13
+                                                        font.weight: 600
+                                                        color: Theme.colOnSurface
+                                                        verticalAlignment: Text.AlignVCenter
                                                         horizontalAlignment: Text.AlignHCenter
-                                                        text: monitorCard.selScale * 100 + "%"
-                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
                                                     }
-                                                    Rectangle {
-                                                        width: 32; height: 32; radius: 8; color: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-                                                        Text { anchors.centerIn: parent; text: ">"; color: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
-                                                        MouseArea { anchors.fill: parent; cursorShape: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1) monitorCard.selScale = monitorCard.scaleOptions[parent.curScaleIdx + 1] }
+                                                    popup: Popup {
+                                                        y: scaleCombo.height - 1
+                                                        width: scaleCombo.width
+                                                        implicitHeight: contentItem.implicitHeight
+                                                        padding: 4
+                                                        contentItem: ListView {
+                                                            clip: true
+                                                            implicitHeight: Math.min(contentHeight, 200)
+                                                            model: scaleCombo.popup.visible ? scaleCombo.delegateModel : null
+                                                            currentIndex: scaleCombo.highlightedIndex
+                                                            ScrollIndicator.vertical: ScrollIndicator { }
+                                                        }
+                                                        background: Rectangle {
+                                                            color: Theme.colSurfaceContainerHigh
+                                                            border.color: Theme.colOutline
+                                                            border.width: 1
+                                                            radius: 8
+                                                        }
                                                     }
                                                 }
                                             }
