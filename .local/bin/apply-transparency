@@ -1,5 +1,6 @@
 #!/bin/bash
 TRANS=$(cat ~/.config/cupcake/.transparency 2>/dev/null)
+BAR_TRANS=$(cat ~/.config/cupcake/.bar_transparency 2>/dev/null)
 source ~/.config/cupcake/.transparency_values 2>/dev/null
 
 # Default values if missing
@@ -31,7 +32,23 @@ hl.window_rule({ match = { class = 'quickshell' }, opacity = '1.0 1.0', no_blur 
 " > ~/.config/hypr/transparency.lua
     sed -i "s/^background_opacity.*/background_opacity $OPACITY/g" ~/.config/kitty/kitty.conf
 else
-    echo "hl.config({
+    # Global transparency is OFF, but check if bar transparency is requested
+    if [ "$BAR_TRANS" = "true" ]; then
+        echo "hl.config({
+    decoration = {
+        active_opacity = 1.0,
+        inactive_opacity = 1.0
+    }
+})
+hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'quickshell:.*' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, blur = false })
+hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, blur = false })
+hl.layer_rule({ match = { namespace = 'waybar' }, blur = false })
+hl.window_rule({ match = { class = '.*' }, opacity = '1.0 1.0' })
+" > ~/.config/hypr/transparency.lua
+    else
+        echo "hl.config({
     decoration = {
         active_opacity = 1.0,
         inactive_opacity = 1.0
@@ -44,6 +61,7 @@ hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, blur = false })
 hl.layer_rule({ match = { namespace = 'waybar' }, blur = false })
 hl.window_rule({ match = { class = '.*' }, opacity = '1.0 1.0' })
 " > ~/.config/hypr/transparency.lua
+    fi
     sed -i 's/^background_opacity.*/background_opacity 1.0/g' ~/.config/kitty/kitty.conf
 fi
 

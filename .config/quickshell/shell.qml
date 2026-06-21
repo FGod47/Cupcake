@@ -27,6 +27,13 @@ ShellRoot {
 
     // Global State
     property real globalOpacity: 1.0
+    property real barOpacity: 0.50
+    property bool barTransparency: true
+
+    function withOpacity(col) {
+        if (!root.barTransparency) return col;
+        return Qt.rgba(col.r, col.g, col.b, root.barOpacity);
+    }
 
     Process {
         id: initTransparencyValues
@@ -60,6 +67,30 @@ ShellRoot {
         property bool closingIsland: false
         property bool hideIsland: false
     }
+
+    Process {
+        id: initBarTransparency
+        command: ["cat", "/home/zero/.config/cupcake/.bar_transparency"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { root.barTransparency = (text.trim() === "true"); }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initBarTransparency.running = true }
+
+    Process {
+        id: initBarOpacity
+        command: ["cat", "/home/zero/.config/cupcake/.bar_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initBarOpacity.running = true }
 
     Process {
         id: initMonitorTargets

@@ -72,7 +72,7 @@ PanelWindow {
 
             // Workspaces Pill (#workspaces)
             Rectangle {
-                color: bg
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: 168 // 5 * 32px + 8px padding
@@ -206,7 +206,7 @@ PanelWindow {
 
             // Network Pill
             Rectangle {
-                color: Theme.colSurface
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: networkText.implicitWidth + 32
@@ -243,7 +243,7 @@ PanelWindow {
                 id: hwPill
                 implicitWidth: hwText.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
-                color: Theme.colSurface // from custom-hw gradient
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface // from custom-hw gradient
                 Text {
                     id: hwText
                     anchors.centerIn: parent
@@ -271,7 +271,7 @@ PanelWindow {
 
             // Recording Pill
             Rectangle {
-                color: Theme.colSurface
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 id: recPill
@@ -303,7 +303,7 @@ PanelWindow {
 
             // Tray Pill
             Rectangle {
-                color: Theme.colSurface
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: trayRow.implicitWidth + 32
@@ -345,7 +345,7 @@ PanelWindow {
             // Controls Pill (#control)
             Rectangle {
                 id: controlsPill
-                color: Theme.colSurface
+                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: controlsRow.implicitWidth + 32
@@ -525,7 +525,7 @@ PanelWindow {
                     radius: 18
                     height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
                     Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-                    color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
+                    color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
                     Behavior on width { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
                     clip: true
