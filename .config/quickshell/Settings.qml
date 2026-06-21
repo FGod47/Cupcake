@@ -18,7 +18,7 @@ ApplicationWindow {
     minimumHeight: 500
     width: 1100
     height: 750
-    color: root.globalTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) : Theme.colSurface
+    color: "transparent"
     font.family: "JetBrainsMono Nerd Font Propo"
 
     property int currentIndex: 0
@@ -220,6 +220,7 @@ ApplicationWindow {
         property real scale: 0.8
         implicitHeight: 32 * scale
         implicitWidth: 52 * scale
+        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
         // Custom track styling
         background: Rectangle {
@@ -236,15 +237,21 @@ ApplicationWindow {
 
         // Custom thumb styling
         indicator: Rectangle {
-            width: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : customSwitch.checked ? (24 * customSwitch.scale) : (16 * customSwitch.scale)
-            height: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : customSwitch.checked ? (24 * customSwitch.scale) : (16 * customSwitch.scale)
+            width: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
+            height: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
             radius: 9999
             color: customSwitch.checked ? Theme.colOnPrimary : Theme.colOutline
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: customSwitch.checked ? ((customSwitch.pressed || customSwitch.down) ? (22 * customSwitch.scale) : 24 * customSwitch.scale) : ((customSwitch.pressed || customSwitch.down) ? (2 * customSwitch.scale) : 8 * customSwitch.scale)
+            
+            // Vertically center it
+            y: (customSwitch.implicitHeight - height) / 2
+            
+            // Calculate X based on state
+            // Gap of 4 * scale from the edge
+            x: customSwitch.checked 
+                ? (customSwitch.implicitWidth - width - (4 * customSwitch.scale))
+                : (4 * customSwitch.scale)
 
-            Behavior on anchors.leftMargin {
+            Behavior on x {
                 NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
             }
             Behavior on width {
@@ -324,23 +331,64 @@ ApplicationWindow {
 
 
     Item {
-        anchors.fill: parent
+        id: mainWrapper
+        width: 150
+        height: 34
+        x: (parent.width - width) / 2
+        y: -100
         focus: true
 
-        Keys.onPressed: (event) => {
-            if (event.modifiers === Qt.ControlModifier) {
-                if (event.key === Qt.Key_PageDown) {
-                    root.currentIndex = Math.min(root.currentIndex + 1, 5)
-                    event.accepted = true;
-                } 
-                else if (event.key === Qt.Key_PageUp) {
-                    root.currentIndex = Math.max(root.currentIndex - 1, 0)
-                    event.accepted = true;
-                }
-                else if (event.key === Qt.Key_Tab) {
-                    root.currentIndex = (root.currentIndex + 1) % 6;
-                    event.accepted = true;
-                }
+        Component.onCompleted: morphAnim.start()
+
+        ParallelAnimation {
+            id: morphAnim
+            NumberAnimation {
+                target: mainWrapper; property: "width"; to: 1100; duration: 550; easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: mainWrapper; property: "height"; to: 750; duration: 550; easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: mainWrapper; property: "y"; to: (root.height - 750) / 2; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2
+            }
+            NumberAnimation {
+                target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 600; easing.type: Easing.OutCubic
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 18
+            color: root.globalTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) : Theme.colSurface
+            border.width: 1
+            border.color: Theme.colSurfaceContainerHigh
+        }
+
+        Item {
+            id: contentOpacity
+            anchors.fill: parent
+            clip: true
+            opacity: 0
+
+            Item {
+                width: 1100
+                height: 750
+                anchors.centerIn: parent
+
+                Keys.onPressed: (event) => {
+                    if (event.modifiers === Qt.ControlModifier) {
+                        if (event.key === Qt.Key_PageDown) {
+                            root.currentIndex = Math.min(root.currentIndex + 1, 5)
+                            event.accepted = true;
+                        } 
+                        else if (event.key === Qt.Key_PageUp) {
+                            root.currentIndex = Math.max(root.currentIndex - 1, 0)
+                            event.accepted = true;
+                        }
+                        else if (event.key === Qt.Key_Tab) {
+                            root.currentIndex = (root.currentIndex + 1) % 6;
+                            event.accepted = true;
+                        }
                 else if (event.key === Qt.Key_Backtab) {
                     root.currentIndex = (root.currentIndex - 1 + 6) % 6;
                     event.accepted = true;
@@ -570,7 +618,7 @@ ApplicationWindow {
                         clip: true
                         ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded; active: true }
 
-                        RowLayout {
+                        ColumnLayout {
                             id: contentCol
                             width: Math.min(appearancePage.width - 48, 1000)
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -581,7 +629,7 @@ ApplicationWindow {
                             // LEFT COLUMN
                             // ==========================================
                             ColumnLayout {
-                                Layout.preferredWidth: 1
+                                
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignTop
                                 spacing: 24
@@ -659,7 +707,7 @@ ApplicationWindow {
                                             // Glassmorphic Light/Dark Switch Floating inside banner
                                             Rectangle {
                                                 anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                anchors.right: parent.right
                                                 anchors.margins: 16
                                                 width: 240
                                                 height: 48
@@ -782,6 +830,7 @@ ApplicationWindow {
                                                 Text { text: "Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
                                                 Text { text: "Enable transparency and blur for windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
                                             }
+                                            Item { Layout.fillWidth: true }
                                             StyledSwitch {
                                                 checked: root.globalTransparency
                                                 onClicked: {
@@ -853,7 +902,7 @@ ApplicationWindow {
                             // RIGHT COLUMN
                             // ==========================================
                             ColumnLayout {
-                                Layout.preferredWidth: 1
+                                
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignTop
                                 spacing: 24
@@ -880,6 +929,7 @@ ApplicationWindow {
                                                 Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
                                                 Text { text: "Draw colored borders around windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
                                             }
+                                            Item { Layout.fillWidth: true }
                                             StyledSwitch {
                                                 checked: root.windowBorders
                                                 onClicked: {
@@ -920,6 +970,7 @@ ApplicationWindow {
                                                 Text { text: "Drop Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
                                                 Text { text: "Draw drop shadows behind windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
                                             }
+                                            Item { Layout.fillWidth: true }
                                             StyledSwitch {
                                                 checked: root.windowShadows
                                                 onClicked: {
@@ -1045,6 +1096,7 @@ ApplicationWindow {
                                                 Text { text: "Bar Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
                                                 Text { text: "Enable independent transparency for the bar"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
                                             }
+                                            Item { Layout.fillWidth: true }
                                             StyledSwitch {
                                                 checked: root.barTransparency
                                                 onClicked: {
@@ -1523,6 +1575,7 @@ ApplicationWindow {
                             }
                             
                             // Toggle Switch
+                            Item { Layout.fillWidth: true }
                             StyledSwitch {
                                 id: wifiSwitch
                                 checked: true
@@ -2715,5 +2768,8 @@ ApplicationWindow {
             }
             }
         }
+        }
+        }
     }
 }
+
