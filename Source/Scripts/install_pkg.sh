@@ -95,10 +95,10 @@ handle_aur_package() {
 packages=(
     git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
-    slurp grim android-tools imagemagick bc code cava
+    slurp grim android-tools imagemagick bc cava
     wget pamixer pavucontrol telegram-desktop bat nwg-look
     nwg-displays libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
-    gvfs-mtp gvfs-gphoto2 gvfs-afc jmtpfs mtpfs libmtp repo os-prober cpio 7zip
+    gvfs-mtp gvfs-gphoto2 gvfs-afc mtpfs libmtp repo os-prober cpio 7zip
     python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-open
     papirus-icon-theme adw-gtk-theme
 )
@@ -108,8 +108,7 @@ aur_packages=(
     atuin fzf awww starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting quickshell
-    ttf-firacode-nerd ttf-jetbrains-mono-nerd
-    catppuccin-gtk-theme-mocha catppuccin-gtk-theme-frappe
+    ttf-firacode-nerd ttf-jetbrains-mono-nerd 
     matugen-bin bibata-cursor-theme-bin papirus-folders
 )
 
