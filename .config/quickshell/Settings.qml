@@ -8,19 +8,26 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
 import "theme"
+import Quickshell.Wayland
 
-ApplicationWindow {
+PanelWindow {
     id: root
     visible: true
-    title: "Cupcake Settings"
-    flags: Qt.Window | Qt.FramelessWindowHint
-    minimumWidth: 750
-    minimumHeight: 500
-    width: 1100
-    height: 750
     color: "transparent"
-    font.family: "JetBrainsMono Nerd Font Propo"
-
+    
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    anchors {
+        top: true
+    }
+    margins {
+        top: 0
+    }
+    
+    implicitWidth: 1100
+    implicitHeight: 770 // Slightly larger to allow the bounce down
+    
+    property var font: {"family": "JetBrainsMono Nerd Font Propo"}
     property int currentIndex: 0
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
