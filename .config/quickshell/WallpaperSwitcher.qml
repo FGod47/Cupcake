@@ -11,13 +11,16 @@ import "theme"
 PanelWindow {
     id: root
 
-    anchors { left: true; top: true; bottom: true }
+    anchors { left: true; top: true; bottom: true; right: true }
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     color: "transparent"
-    implicitWidth: 9000
+    
+    mask: Region {
+        item: pill
+    }
 
     // ── Caelestia exact token values ─────────────────────────────────────
     readonly property int    wallW:       280          // wallpaperWidth
