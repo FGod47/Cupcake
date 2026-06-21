@@ -54,6 +54,8 @@ ApplicationWindow {
     property real globalOpacity: 0.90
     property int globalBlurSize: 6
     property int globalBlurPasses: 3
+    property real barOpacity: 0.50
+    property bool barTransparency: true
 
     function applyGlobalSettings() {
         let isTrans = root.globalTransparency ? "true" : "false";
@@ -134,6 +136,32 @@ ApplicationWindow {
                 if (text.trim() !== "") {
                     let sz = parseInt(text.trim());
                     if (!isNaN(sz)) root.gapsOut = sz;
+                }
+            }
+        }
+    }
+
+    Process {
+        id: initBarTransparencySettings
+        command: ["cat", "/home/zero/.config/cupcake/.bar_transparency"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "false") { root.barTransparency = false; }
+                else { root.barTransparency = true; }
+            }
+        }
+    }
+
+    Process {
+        id: initBarOpacitySettings
+        command: ["cat", "/home/zero/.config/cupcake/.bar_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") {
+                    let v = parseFloat(text.trim());
+                    if (!isNaN(v)) root.barOpacity = v;
                 }
             }
         }
@@ -1281,6 +1309,62 @@ SettingsCard {
                                                     Quickshell.execDetached(["bash", "-c", "echo '" + arr.join(",") + "' > ~/.config/cupcake/.dock_monitors"]);
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        SettingsCard {
+                            surfaceColor: Theme.colSurfaceContainer
+                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                            primaryColor: Theme.colPrimary
+                            onSurfaceColor: Theme.colOnSurface
+                            title: "Bar Appearance"
+                            icon: ""
+
+                            // Glassmorphic Bar switch
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Layout.topMargin: 8
+                                spacing: 12
+                                Text { text: "✦"; color: Theme.colOnSurfaceVariant; font.pixelSize: 20 }
+                                Text { text: "Glassmorphic Bar"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; Layout.fillWidth: true }
+                                StyledSwitch {
+                                    checked: root.barTransparency
+                                    onClicked: {
+                                        root.barTransparency = !root.barTransparency;
+                                        let v = root.barTransparency ? "true" : "false";
+                                        Quickshell.execDetached(["bash", "-c", "echo " + v + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                                    }
+                                }
+                            }
+
+                            // Divider (visible only when barTransparency is on)
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 1
+                                Layout.topMargin: 8
+                                Layout.bottomMargin: 4
+                                color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
+                                visible: root.barTransparency
+                            }
+
+                            // Bar Opacity row (visible only when barTransparency is on)
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 32
+                                spacing: 12
+                                visible: root.barTransparency
+                                Text { text: "Opacity (" + Math.round(root.barOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                StyledSlider {
+                                    Layout.fillWidth: true
+                                    from: 0.1; to: 1.0; stepSize: 0.05
+                                    value: root.barOpacity
+                                    onPressedChanged: {
+                                        if (!pressed) {
+                                            root.barOpacity = value;
+                                            Quickshell.execDetached(["bash", "-c", "echo " + value.toFixed(2) + " > ~/.config/cupcake/.bar_opacity"]);
                                         }
                                     }
                                 }
