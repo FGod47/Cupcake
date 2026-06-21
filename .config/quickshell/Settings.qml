@@ -2233,6 +2233,44 @@ SettingsCard {
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     property var monitorsData: []
+                    property string pendingOutput: ""
+                    property int countdown: 0
+                    property var pendingRestoreCommand: []
+
+                    Timer {
+                        id: revertTimer
+                        interval: 1000
+                        repeat: true
+                        onTriggered: {
+                            displayPage.countdown--
+                            if (displayPage.countdown <= 0) {
+                                displayPage.revertDisplay()
+                            }
+                        }
+                    }
+
+                    function applyDisplay(modelData, modeStr, scaleStr) {
+                        if (displayPage.pendingOutput !== "") return;
+                        let posStr = modelData.x + "x" + modelData.y;
+                        displayPage.pendingRestoreCommand = ["hyprctl", "eval", "hl.monitor({ output = \"" + modelData.name + "\", mode = \"" + modelData.width + "x" + modelData.height + "@" + modelData.refreshRate + "\", position = \"" + posStr + "\", scale = " + modelData.scale + " }) return \"ok\""];
+                        displayPage.pendingOutput = modelData.name;
+                        displayPage.countdown = 15;
+                        revertTimer.start();
+                        Quickshell.execDetached(["hyprctl", "eval", "hl.monitor({ output = \"" + modelData.name + "\", mode = \"" + modeStr + "\", position = \"" + posStr + "\", scale = " + scaleStr + " }) return \"ok\""]);
+                    }
+
+                    function keepDisplay() {
+                        if (displayPage.pendingOutput === "") return;
+                        revertTimer.stop();
+                        Quickshell.execDetached(["python3", "/home/zero/Cupcake/.local/bin/generate_monitor_lua.py"]);
+                        displayPage.pendingOutput = "";
+                    }
+
+                    function revertDisplay() {
+                        revertTimer.stop();
+                        Quickshell.execDetached(displayPage.pendingRestoreCommand);
+                        displayPage.pendingOutput = "";
+                    }
                     
                     Process {
                         id: monitorsProcess
@@ -2288,28 +2326,218 @@ SettingsCard {
                             Repeater {
                                 model: displayPage.monitorsData
                                 delegate: Rectangle {
+                                    id: monitorCard
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 80
+                                    implicitHeight: cardContent.implicitHeight + 32
                                     radius: 12
                                     color: Theme.colSurfaceContainer
                                     border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
                                     border.width: 1
-                                    
-                                    RowLayout {
-                                        anchors.fill: parent
+
+                                    property bool pending: displayPage.pendingOutput === modelData.name
+
+                                    property var modesParsed: {
+                                        let result = [];
+                                        let seen = {};
+                                        for (let i = 0; i < modelData.availableModes.length; i++) {
+                                            let m = modelData.availableModes[i].match(/^(\d+)x(\d+)@([\d.]+)Hz$/);
+                                            if (m) {
+                                                let w = parseInt(m[1], 10);
+                                                let h = parseInt(m[2], 10);
+                                                let hz = Math.round(parseFloat(m[3]));
+                                                let key = w + "x" + h;
+                                                if (!seen[key]) {
+                                                    seen[key] = { w: w, h: h, rates: [] };
+                                                    result.push(seen[key]);
+                                                }
+                                                if (seen[key].rates.indexOf(hz) === -1) seen[key].rates.push(hz);
+                                            }
+                                        }
+                                        result.sort(function(a,b) { return (b.w*b.h) - (a.w*a.h); });
+                                        for (let j = 0; j < result.length; j++) {
+                                            result[j].rates.sort(function(a,b) { return b - a; });
+                                        }
+                                        return result;
+                                    }
+
+                                    property int selRes: 0
+                                    property int selRate: 0
+                                    property real selScale: modelData.scale
+                                    readonly property var scaleOptions: [1.0, 1.25, 1.5, 2.0]
+
+                                    Component.onCompleted: {
+                                        for (let i = 0; i < modesParsed.length; i++) {
+                                            if (modesParsed[i].w === modelData.width && modesParsed[i].h === modelData.height) {
+                                                selRes = i;
+                                                break;
+                                            }
+                                        }
+                                        let bestDiff = 1e9;
+                                        let rates = modesParsed[selRes] ? modesParsed[selRes].rates : [];
+                                        for (let i = 0; i < rates.length; i++) {
+                                            let d = Math.abs(rates[i] - modelData.refreshRate);
+                                            if (d < bestDiff) { bestDiff = d; selRate = i; }
+                                        }
+                                    }
+
+                                    onSelResChanged: {
+                                        let rates = modesParsed[selRes] ? modesParsed[selRes].rates : [];
+                                        if (selRate >= rates.length) selRate = Math.max(0, rates.length - 1);
+                                    }
+
+                                    ColumnLayout {
+                                        id: cardContent
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.top: parent.top
                                         anchors.margins: 16
                                         spacing: 16
                                         
-                                        Text { text: "󰍹"; color: Theme.colPrimary; font.pixelSize: 32 }
-                                        ColumnLayout {
+                                        RowLayout {
                                             Layout.fillWidth: true
-                                            spacing: 4
-                                            Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                            Text { text: modelData.width + "x" + modelData.height + " @ " + Math.round(modelData.refreshRate) + "Hz | Scale: " + modelData.scale; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                            spacing: 16
+                                            Text { text: "󰍹"; color: Theme.colPrimary; font.pixelSize: 32 }
+                                            ColumnLayout {
+                                                Layout.fillWidth: true
+                                                spacing: 4
+                                                Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
+                                                Text { text: modelData.description; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 12 }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: 1
+                                            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                        }
+
+                                        RowLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 24
+
+                                            ColumnLayout {
+                                                spacing: 8
+                                                Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                RowLayout {
+                                                    spacing: 12
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRes > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: "<"; color: monitorCard.selRes > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRes > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRes > 0) monitorCard.selRes-- }
+                                                    }
+                                                    Text {
+                                                        Layout.minimumWidth: 80
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                        text: monitorCard.modesParsed[monitorCard.selRes] ? (monitorCard.modesParsed[monitorCard.selRes].w + "x" + monitorCard.modesParsed[monitorCard.selRes].h) : ""
+                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
+                                                    }
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: ">"; color: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRes < monitorCard.modesParsed.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRes < monitorCard.modesParsed.length - 1) monitorCard.selRes++ }
+                                                    }
+                                                }
+                                            }
+
+                                            ColumnLayout {
+                                                spacing: 8
+                                                Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                RowLayout {
+                                                    spacing: 12
+                                                    property var curRates: monitorCard.modesParsed[monitorCard.selRes] ? monitorCard.modesParsed[monitorCard.selRes].rates : []
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRate > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: "<"; color: monitorCard.selRate > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRate > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRate > 0) monitorCard.selRate-- }
+                                                    }
+                                                    Text {
+                                                        Layout.minimumWidth: 50
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                        text: parent.curRates[monitorCard.selRate] ? (parent.curRates[monitorCard.selRate] + "Hz") : ""
+                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
+                                                    }
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: monitorCard.selRate < parent.curRates.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: ">"; color: monitorCard.selRate < parent.curRates.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: monitorCard.selRate < parent.curRates.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(monitorCard.selRate < parent.curRates.length - 1) monitorCard.selRate++ }
+                                                    }
+                                                }
+                                            }
+
+                                            ColumnLayout {
+                                                spacing: 8
+                                                Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                RowLayout {
+                                                    spacing: 12
+                                                    property int curScaleIdx: monitorCard.scaleOptions.indexOf(monitorCard.selScale)
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: parent.curScaleIdx > 0 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: "<"; color: parent.curScaleIdx > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: parent.curScaleIdx > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(parent.curScaleIdx > 0) monitorCard.selScale = monitorCard.scaleOptions[parent.curScaleIdx - 1] }
+                                                    }
+                                                    Text {
+                                                        Layout.minimumWidth: 40
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                        text: monitorCard.selScale * 100 + "%"
+                                                        color: Theme.colOnSurface; font.pixelSize: 14; font.family: root.font.family; font.bold: true
+                                                    }
+                                                    Rectangle {
+                                                        width: 32; height: 32; radius: 8; color: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
+                                                        Text { anchors.centerIn: parent; text: ">"; color: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Theme.colOnSurface : Theme.colOnSurfaceVariant; font.bold: true }
+                                                        MouseArea { anchors.fill: parent; cursorShape: parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1 ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if(parent.curScaleIdx >= 0 && parent.curScaleIdx < monitorCard.scaleOptions.length - 1) monitorCard.selScale = monitorCard.scaleOptions[parent.curScaleIdx + 1] }
+                                                    }
+                                                }
+                                            }
+                                            Item { Layout.fillWidth: true }
+                                        }
+
+                                        RowLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 16
+                                            visible: !monitorCard.pending
+
+                                            Rectangle {
+                                                width: 120; height: 40; radius: 20
+                                                color: applyArea.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.8) : Theme.colPrimary
+                                                Text { anchors.centerIn: parent; text: "Apply"; color: Theme.colOnPrimary; font.bold: true; font.family: root.font.family; font.pixelSize: 14 }
+                                                MouseArea {
+                                                    id: applyArea
+                                                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                                    onClicked: {
+                                                        let res = monitorCard.modesParsed[monitorCard.selRes];
+                                                        let hz = res.rates[monitorCard.selRate];
+                                                        let modeStr = res.w + "x" + res.h + "@" + hz;
+                                                        displayPage.applyDisplay(modelData, modeStr, monitorCard.selScale);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        RowLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 16
+                                            visible: monitorCard.pending
+
+                                            Rectangle {
+                                                width: 160; height: 40; radius: 20
+                                                color: Theme.colError
+                                                Text { anchors.centerIn: parent; text: "Keep Changes (" + displayPage.countdown + "s)"; color: Theme.colOnError; font.bold: true; font.family: root.font.family; font.pixelSize: 14 }
+                                                MouseArea {
+                                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                                    onClicked: displayPage.keepDisplay()
+                                                }
+                                            }
+                                            Text {
+                                                text: "Reverts automatically if not confirmed"
+                                                color: Theme.colOnSurfaceVariant
+                                                font.pixelSize: 12
+                                                font.family: root.font.family
+                                            }
                                         }
                                     }
                                 }
                             }
+
                         }
                     }
                 }
