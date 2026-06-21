@@ -21,6 +21,12 @@ PanelWindow {
     implicitHeight: ((globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland) || globalState.closingIsland) ? 600 : 46
     color: "transparent"
     
+    mask: Region {
+        Region { item: leftModules }
+        Region { item: archPill }
+        Region { item: rightModules }
+    }
+
     property var modelData
     screen: modelData
     
@@ -59,6 +65,7 @@ PanelWindow {
         // LEFT MODULES
         // =======================
         Row {
+            id: leftModules
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
@@ -192,6 +199,7 @@ PanelWindow {
         // RIGHT MODULES
         // =======================
         Row {
+            id: rightModules
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
