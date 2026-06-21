@@ -12,13 +12,17 @@ ShellRoot {
     // Top Bar Components for all screens
     Variants {
         model: Quickshell.screens
-        delegate: Bar {}
+        delegate: Bar {
+            visible: globalState.barMonitors.includes("all") || globalState.barMonitors.includes(modelData.name)
+        }
     }
 
     // Bottom Dock for all screens
     Variants {
         model: Quickshell.screens
-        delegate: Dock {}
+        delegate: Dock {
+            visible: globalState.dockMonitors.includes("all") || globalState.dockMonitors.includes(modelData.name)
+        }
     }
 
     // Global State
@@ -42,6 +46,8 @@ ShellRoot {
 
     Scope {
         id: globalState
+        property var barMonitors: ["all"]
+        property var dockMonitors: ["all"]
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -53,6 +59,23 @@ ShellRoot {
         property string clockString: ""
         property bool closingIsland: false
         property bool hideIsland: false
+    }
+
+    Process {
+        id: initMonitorTargets
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_monitors 2>/dev/null"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.length > 0) {
+                    let parts = text.trim().split('---');
+                    let barStr = parts[0] ? parts[0].trim() : "";
+                    let dockStr = parts[1] ? parts[1].trim() : "";
+                    if (barStr !== "") globalState.barMonitors = barStr.split(',');
+                    if (dockStr !== "") globalState.dockMonitors = dockStr.split(',');
+                }
+            }
+        }
     }
 
     IpcHandler {

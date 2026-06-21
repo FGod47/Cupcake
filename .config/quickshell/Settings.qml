@@ -22,6 +22,33 @@ ApplicationWindow {
     font.family: "JetBrainsMono Nerd Font Propo"
 
     property int currentIndex: 0
+    property var barMonitors: ["all"]
+    property var dockMonitors: ["all"]
+    
+    Process {
+        id: settingsMonitorPoll
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_monitors 2>/dev/null"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.length > 0) {
+                    let parts = text.trim().split('---');
+                    let barStr = parts[0] ? parts[0].trim() : "";
+                    let dockStr = parts[1] ? parts[1].trim() : "";
+                    if (barStr !== "") root.barMonitors = barStr.split(',');
+                    if (dockStr !== "") root.dockMonitors = dockStr.split(',');
+                }
+            }
+        }
+    }
+    
+    Timer {
+        interval: 2000
+        running: root.visible
+        repeat: true
+        onTriggered: settingsMonitorPoll.running = true
+    }
+
     property bool globalTransparency: true
 
     property real globalOpacity: 0.90
@@ -445,6 +472,7 @@ ApplicationWindow {
                         NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 2 }
                         NavButton { iconText: ""; labelText: "System"; pageIndex: 3 }
                         NavButton { iconText: ""; labelText: "Network"; pageIndex: 4 }
+                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 8 }
                         
                         NavHeader { text: "GENERAL" }
                         NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 5 }
@@ -1162,6 +1190,101 @@ SettingsCard {
                             font.family: root.font.family
                             font.pixelSize: 14
                             Layout.bottomMargin: 16
+                        }
+
+                        SettingsCard {
+                            surfaceColor: Theme.colSurfaceContainer
+                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                            primaryColor: Theme.colPrimary
+                            onSurfaceColor: Theme.colOnSurface
+                            title: "Target Monitors"
+                            icon: "󰍹"
+                            
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 12
+                                Text { text: "Choose which monitors the Top Bar and Dock appear on. By default, they appear on all monitors."; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                                
+                                // Top Bar Monitors
+                                Text { text: "Top Bar Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: true; Layout.topMargin: 8 }
+                                Flow {
+                                    Layout.fillWidth: true
+                                    spacing: 8
+                                    
+                                    Rectangle {
+                                        width: allText.implicitWidth + 32
+                                        height: 36
+                                        radius: 18
+                                        color: root.barMonitors.includes("all") ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                                        Text { id: allText; anchors.centerIn: parent; text: "All Monitors"; color: root.barMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                        MouseArea { 
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
+                                            onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'all' > ~/.config/cupcake/.bar_monitors"]); }
+                                        }
+                                    }
+                                    
+                                    Repeater {
+                                        model: Quickshell.screens
+                                        Rectangle {
+                                            width: monitorText.implicitWidth + 32
+                                            height: 36
+                                            radius: 18
+                                            color: (!root.barMonitors.includes("all") && root.barMonitors.includes(modelData.name)) ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                                            Text { id: monitorText; anchors.centerIn: parent; text: modelData.name; color: (!root.barMonitors.includes("all") && root.barMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                            MouseArea {
+                                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                                onClicked: {
+                                                    let arr = root.barMonitors.slice();
+                                                    if (arr.includes("all")) arr = [];
+                                                    if (arr.includes(modelData.name)) { arr = arr.filter(n => n !== modelData.name); } else { arr.push(modelData.name); }
+                                                    if (arr.length === 0) arr = ["all"];
+                                                    Quickshell.execDetached(["bash", "-c", "echo '" + arr.join(",") + "' > ~/.config/cupcake/.bar_monitors"]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Dock Monitors
+                                Text { text: "Dock Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: true; Layout.topMargin: 8 }
+                                Flow {
+                                    Layout.fillWidth: true
+                                    spacing: 8
+                                    
+                                    Rectangle {
+                                        width: allDockText.implicitWidth + 32
+                                        height: 36
+                                        radius: 18
+                                        color: root.dockMonitors.includes("all") ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                                        Text { id: allDockText; anchors.centerIn: parent; text: "All Monitors"; color: root.dockMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                        MouseArea { 
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
+                                            onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'all' > ~/.config/cupcake/.dock_monitors"]); }
+                                        }
+                                    }
+                                    
+                                    Repeater {
+                                        model: Quickshell.screens
+                                        Rectangle {
+                                            width: dockText.implicitWidth + 32
+                                            height: 36
+                                            radius: 18
+                                            color: (!root.dockMonitors.includes("all") && root.dockMonitors.includes(modelData.name)) ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                                            Text { id: dockText; anchors.centerIn: parent; text: modelData.name; color: (!root.dockMonitors.includes("all") && root.dockMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                            MouseArea {
+                                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                                onClicked: {
+                                                    let arr = root.dockMonitors.slice();
+                                                    if (arr.includes("all")) arr = [];
+                                                    if (arr.includes(modelData.name)) { arr = arr.filter(n => n !== modelData.name); } else { arr.push(modelData.name); }
+                                                    if (arr.length === 0) arr = ["all"];
+                                                    Quickshell.execDetached(["bash", "-c", "echo '" + arr.join(",") + "' > ~/.config/cupcake/.dock_monitors"]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Rectangle {
@@ -2095,11 +2218,103 @@ SettingsCard {
                                 InfoItem { titleText: "Theme Engine"; valueText: "Cupcake OS"; isLast: true }
                             }
                         }
+                        }
+                    }
+                } // Closes PAGE 7 Item
+
+                // PAGE 8: DISPLAY
+                Item {
+                    id: displayPage
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 8 ? 0 : 20
+                    opacity: root.currentIndex === 8 ? 1 : 0
+                    visible: root.currentIndex === 8 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                    property var monitorsData: []
+                    
+                    Process {
+                        id: monitorsProcess
+                        command: ["hyprctl", "monitors", "-j"]
+                        running: displayPage.visible
+                        stdout: StdioCollector {
+                            onStreamFinished: {
+                                try {
+                                    displayPage.monitorsData = JSON.parse(text);
+                                } catch (e) {
+                                    console.log("Failed to parse monitors");
+                                }
+                            }
+                        }
+                    }
+                    
+                    Timer {
+                        interval: 5000
+                        running: displayPage.visible
+                        repeat: true
+                        onTriggered: monitorsProcess.running = true
+                    }
+
+                    Flickable {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        contentHeight: displayContentCol.implicitHeight + 40
+                        clip: true
+
+                        ColumnLayout {
+                            id: displayContentCol
+                            width: Math.min(displayPage.width - 48, 1000)
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Layout.alignment: Qt.AlignTop
+                            spacing: 24
+                            
+                            Text {
+                                text: "Display Settings"
+                                color: Theme.colOnSurface
+                                font.family: root.font.family
+                                font.pixelSize: 32
+                                font.bold: true
+                            }
+                            
+                            Text {
+                                text: "Manage your monitors, resolution, refresh rates, and scaling."
+                                color: Theme.colOnSurfaceVariant
+                                font.family: root.font.family
+                                font.pixelSize: 14
+                            }
+                            
+                            // Monitor List
+                            Repeater {
+                                model: displayPage.monitorsData
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 80
+                                    radius: 12
+                                    color: Theme.colSurfaceContainer
+                                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                                    border.width: 1
+                                    
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 16
+                                        spacing: 16
+                                        
+                                        Text { text: "󰍹"; color: Theme.colPrimary; font.pixelSize: 32 }
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 4
+                                            Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
+                                            Text { text: modelData.width + "x" + modelData.height + " @ " + Math.round(modelData.refreshRate) + "Hz | Scale: " + modelData.scale; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                }
+            }
             }
         }
     }
-}
 }
