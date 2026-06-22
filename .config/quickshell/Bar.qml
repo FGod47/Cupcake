@@ -159,10 +159,28 @@ PanelWindow {
         Rectangle {
             id: archPill
             anchors.centerIn: parent
-                radius: 18
-                implicitHeight: 34
-                implicitWidth: archText.implicitWidth + 32
-                
+            radius: 18
+            implicitHeight: 34
+            implicitWidth: archText.implicitWidth + 32
+            
+            opacity: settingsOpen ? 0.0 : 1.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
+            property bool settingsOpen: false
+            
+            Process {
+                id: settingsPoll
+                command: ["bash", "-c", "cat /tmp/cupcake_settings 2>/dev/null || echo 0"]
+                stdout: StdioCollector {
+                    onStreamFinished: (data) => {
+                        if (data) { archPill.settingsOpen = (data.trim() === "1") }
+                    }
+                }
+            }
+            Timer {
+                interval: 200; running: true; repeat: true
+                onTriggered: settingsPoll.running = true
+            }
+            
                 property color c1: Theme.colPrimary
                 property color c2: Theme.colSecondary
                 
