@@ -38,53 +38,7 @@ Item {
                     width: parent.width
                     spacing: 24
                     
-                    // PROFILE CARD
-                    SettingsCard {
-                        title: "Profile"
-                        description: "Edit your user details and avatar."
-                        surfaceColor: "transparent"
-                        outlineColor: "transparent"
-                        primaryColor: Theme.colPrimary
-                        onSurfaceColor: Theme.colOnSurface
-                        
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 16
-                            
-                            Rectangle {
-                                width: 64; height: 64
-                                radius: 32
-                                color: "transparent"
-                                border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.5)
-                                border.width: 1
-                                Text { anchors.centerIn: parent; text: ""; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 24; color: Theme.colOnSurfaceVariant }
-                            }
-                            
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 4
-                                Text { text: "lysec's Profile picture"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Your profile picture that appears throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 8
-                                    StyledTextField {
-                                        Layout.fillWidth: true
-                                        text: "/mnt/storage/.face"
-                                    }
-                                    Rectangle {
-                                        width: 36; height: 36
-                                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                        radius: 8
-                                        Text { anchors.centerIn: parent; text: ""; color: Theme.colOnSurfaceVariant; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 16 }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-                    
+
                     // FONTS CARD
                     SettingsCard {
                         title: "Fonts"
