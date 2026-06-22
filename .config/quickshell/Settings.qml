@@ -340,13 +340,13 @@ PanelWindow {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: Qt.quit()
+        onClicked: closeAnim.start()
         z: -1
     }
 
     Item {
         id: mainWrapper
-        width: 102
+        width: fakeArchText.implicitWidth + 32
         height: 34
         x: (parent.width - width) / 2
         y: 6
@@ -356,26 +356,69 @@ PanelWindow {
 
         ParallelAnimation {
             id: morphAnim
-            NumberAnimation {
-                target: mainWrapper; property: "width"; to: 1100; duration: 550; easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                target: mainWrapper; property: "height"; to: 750; duration: 550; easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                target: mainWrapper; property: "y"; to: 46; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2
-            }
-            NumberAnimation {
-                target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 600; easing.type: Easing.OutCubic
-            }
+            NumberAnimation { target: mainWrapper; property: "width"; to: 1100; duration: 550; easing.type: Easing.OutCubic }
+            NumberAnimation { target: mainWrapper; property: "height"; to: 750; duration: 550; easing.type: Easing.OutCubic }
+            NumberAnimation { target: mainWrapper; property: "y"; to: 46; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+            NumberAnimation { target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 600; easing.type: Easing.OutCubic }
+            NumberAnimation { target: fakeArchPill; property: "opacity"; from: 1.0; to: 0.0; duration: 300; easing.type: Easing.OutCubic }
         }
 
+        ParallelAnimation {
+            id: closeAnim
+            NumberAnimation { target: mainWrapper; property: "width"; to: fakeArchText.implicitWidth + 32; duration: 400; easing.type: Easing.InCubic }
+            NumberAnimation { target: mainWrapper; property: "height"; to: 34; duration: 400; easing.type: Easing.InCubic }
+            NumberAnimation { target: mainWrapper; property: "y"; to: 6; duration: 400; easing.type: Easing.InBack; easing.overshoot: 1.0 }
+            NumberAnimation { target: contentOpacity; property: "opacity"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
+            NumberAnimation { target: fakeArchPill; property: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InCubic }
+            onFinished: Qt.quit()
+        }
+
+        // Settings Background
         Rectangle {
             anchors.fill: parent
             radius: 18
             color: root.globalTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) : Theme.colSurface
             border.width: 1
             border.color: Theme.colSurfaceContainerHigh
+            opacity: contentOpacity.opacity
+        }
+
+        // Fake Arch Pill (Matches Bar.qml exactly)
+        Rectangle {
+            id: fakeArchPill
+            anchors.fill: parent
+            radius: 18
+            
+            property color c1: Theme.colPrimary
+            property color c2: Theme.colSecondary
+            
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: fakeArchPill.c1 }
+                GradientStop { position: 1.0; color: fakeArchPill.c2 }
+            }
+
+            SequentialAnimation on c1 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+            }
+
+            SequentialAnimation on c2 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+            }
+            
+            Text {
+                id: fakeArchText
+                anchors.centerIn: parent
+                text: " Arch"
+                color: Theme.colSurfaceContainerHigh
+                font.family: root.font.family
+                font.pixelSize: 14
+                font.weight: 500
+            }
         }
 
         Item {
@@ -452,7 +495,7 @@ PanelWindow {
                         id: closeMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onClicked: Qt.quit()
+                        onClicked: closeAnim.start()
                     }
                 }
             }
