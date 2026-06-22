@@ -16,9 +16,24 @@ PanelWindow {
         right: true
     }
     WlrLayershell.namespace: "quickshell"
+    property bool settingsOpen: false
     exclusiveZone: 46
+    
+    Process {
+        id: settingsIpcPoll
+        command: ["bash", "-c", "while true; do cat /tmp/cupcake_settings 2>/dev/null || echo 0; sleep 0.1; done"]
+        running: true
+        stdout: SplitParser {
+            onRead: (data) => {
+                if (data.trim() === "1") {
+                    bar.settingsOpen = true;
+                    Quickshell.execDetached(["bash", "-c", "echo 0 > /tmp/cupcake_settings"]);
+                }
+            }
+        }
+    }
     // Strictly fixed to 46 to prevent Hyprland layer resize jitter when the dropdown closes
-    implicitHeight: ((globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland) || globalState.closingIsland) ? 600 : 46
+    implicitHeight: settingsOpen ? 760 : (((globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland) || globalState.closingIsland) ? 600 : 46)
     color: "transparent"
     
     mask: Region {
@@ -69,6 +84,10 @@ PanelWindow {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
+            
+            opacity: bar.settingsOpen ? 0.0 : 1.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Workspaces Pill (#workspaces)
             Rectangle {
@@ -155,60 +174,73 @@ PanelWindow {
         // =======================
         // CENTER MODULES
         // =======================
-        // Arch Pill (#custom-logo)
         Rectangle {
             id: archPill
-            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.topMargin: (parent.height - 34) / 2
+            anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
-            implicitHeight: 34
-            implicitWidth: archText.implicitWidth + 32
+            implicitHeight: bar.settingsOpen ? 750 : 34
+            implicitWidth: bar.settingsOpen ? 1100 : archText.implicitWidth + 32
             
-            opacity: settingsOpen ? 0.0 : 1.0
-            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
-            property bool settingsOpen: false
+            Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+            Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
             
-            Process {
-                id: settingsPoll
-                command: ["bash", "-c", "while true; do cat /tmp/cupcake_settings 2>/dev/null || echo 0; sleep 0.1; done"]
-                running: true
-                stdout: SplitParser {
-                    onRead: (data) => {
-                        archPill.settingsOpen = (data.trim() === "1")
+            property color c1: Theme.colPrimary
+            property color c2: Theme.colSecondary
+            
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: archPill.c1 }
+                GradientStop { position: 1.0; color: archPill.c2 }
+            }
+
+            SequentialAnimation on c1 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+            }
+
+            SequentialAnimation on c2 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+            }
+            
+            Text {
+                id: archText
+                anchors.centerIn: parent
+                text: " Arch"
+                color: Theme.colSurfaceContainerHigh
+                font.family: fontName
+                font.pixelSize: fontSize
+                font.weight: 500
+                opacity: bar.settingsOpen ? 0.0 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            }
+
+            Loader {
+                anchors.fill: parent
+                source: "SettingsUI.qml"
+                active: bar.settingsOpen || opacity > 0
+                opacity: bar.settingsOpen ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 400; easing.type: bar.settingsOpen ? Easing.OutCubic : Easing.InCubic } }
+                
+                Connections {
+                    target: item
+                    function onRequestClose() {
+                        bar.settingsOpen = false;
                     }
                 }
             }
             
-                property color c1: Theme.colPrimary
-                property color c2: Theme.colSecondary
-                
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: archPill.c1 }
-                    GradientStop { position: 1.0; color: archPill.c2 }
-                }
-
-                SequentialAnimation on c1 {
-                    loops: Animation.Infinite
-                    ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-                    ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-                }
-
-                SequentialAnimation on c2 {
-                    loops: Animation.Infinite
-                    ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-                    ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-                }
-                
-                Text {
-                    id: archText
-                    anchors.centerIn: parent
-                    text: " Arch"
-                    color: Theme.colSurfaceContainerHigh
-                    font.family: fontName
-                    font.pixelSize: fontSize
-                    font.weight: 500
-                }
+            MouseArea {
+                anchors.fill: parent
+                enabled: !bar.settingsOpen
+                cursorShape: Qt.PointingHandCursor
+                onClicked: bar.settingsOpen = true
             }
+        }
 
         // =======================
         // RIGHT MODULES
@@ -218,6 +250,10 @@ PanelWindow {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
+            
+            opacity: bar.settingsOpen ? 0.0 : 1.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Network Pill
             Rectangle {

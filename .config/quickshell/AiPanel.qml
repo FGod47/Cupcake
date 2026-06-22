@@ -154,6 +154,10 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                Quickshell.execDetached(["bash", "-c", "echo 1 > /tmp/cupcake_settings"]);
+                                Qt.quit();
+                            }
                         }
                     }
                 }
