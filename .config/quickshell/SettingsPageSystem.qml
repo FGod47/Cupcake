@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import Quickshell
+import Quickshell.Io
 import "theme"
 
 Item {
@@ -52,12 +54,12 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
+                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                             }
                             StyledComboBox {
                                 Layout.preferredWidth: 200
-                                model: ["Fira Sans", "Inter", "Roboto"]
+                                model: ["Fira Sans", Theme.defaultFontFamily, "Roboto"]
                             }
                         }
                         
@@ -65,30 +67,33 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
+                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                             }
-                            StyledComboBox {
+                                                        StyledComboBox {
+                                id: monoFontCombo
                                 Layout.preferredWidth: 240
-                                model: ["CaskaydiaCove Nerd Font Mono", "JetBrains Mono"]
-                            }
-                        }
-                        
-                        RowLayout {
-                            Layout.fillWidth: true
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 16
-                                    StyledSlider {
-                                        Layout.fillWidth: true
-                                        from: 50; to: 200; value: 100
+                                model: ["JetBrainsMono Nerd Font Propo"]
+                                currentIndex: model.indexOf(Theme.monoFontFamily) !== -1 ? model.indexOf(Theme.monoFontFamily) : 0
+                                onActivated: (index) => {
+                                    let font = model[index];
+                                    Theme.monoFontFamily = font;
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.font_mono"]);
+                                }
+                                
+                                Process {
+                                    command: ["bash", "-c", "fc-list : spacing=100:family | cut -d, -f1 | sort | uniq"]
+                                    running: true
+                                    stdout: StdioCollector {
+                                        onStreamFinished: {
+                                            if (text.trim() !== "") {
+                                                let fonts = text.trim().split("
+");
+                                                monoFontCombo.model = fonts;
+                                                monoFontCombo.currentIndex = monoFontCombo.model.indexOf(Theme.monoFontFamily) !== -1 ? monoFontCombo.model.indexOf(Theme.monoFontFamily) : 0;
+                                            }
+                                        }
                                     }
-                                    Text { text: "100%"; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
-                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 16 }
                                 }
                             }
                         }
@@ -97,17 +102,48 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
+                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                                 RowLayout {
                                     Layout.fillWidth: true
                                     spacing: 16
-                                    StyledSlider {
+                                                                        StyledSlider {
                                         Layout.fillWidth: true
-                                        from: 50; to: 200; value: 100
+                                        from: 50; to: 200; stepSize: 5
+                                        value: Theme.defaultFontScale * 100
+                                        onValueChanged: { Theme.defaultFontScale = value / 100.0; }
+                                        onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Theme.defaultFontScale + "' > ~/.config/cupcake/.font_default_scale"]); }
                                     }
-                                    Text { text: "100%"; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
-                                    Text { text: ""; color: Theme.colOnSurfaceVariant; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 16 }
+                                    Text { text: Math.round(Theme.defaultFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
+                                    Text {
+                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16
+                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_default_scale"]); } }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        RowLayout {
+                            Layout.fillWidth: true
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 16
+                                                                        StyledSlider {
+                                        Layout.fillWidth: true
+                                        from: 50; to: 200; stepSize: 5
+                                        value: Theme.monoFontScale * 100
+                                        onValueChanged: { Theme.monoFontScale = value / 100.0; }
+                                        onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Theme.monoFontScale + "' > ~/.config/cupcake/.font_mono_scale"]); }
+                                    }
+                                    Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
+                                    Text {
+                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16
+                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]); } }
+                                    }
                                 }
                             }
                         }
@@ -128,8 +164,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Application Language"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Select the language used in the application's interface."; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12 }
+                                Text { text: "Application Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Select the language used in the application's interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                             }
                             StyledComboBox {
                                 Layout.preferredWidth: 200
@@ -149,7 +185,7 @@ Item {
                             anchors.centerIn: parent
                             text: "Launch the setup wizard"
                             color: Theme.colOnPrimary
-                            font.family: "Inter"
+                            font.family: Theme.defaultFontFamily
                             font.pixelSize: 14
                             font.bold: true
                         }
@@ -180,8 +216,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Battery Warning Threshold"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Battery Warning Threshold"; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                Text { text: "Battery Warning Threshold"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Battery Warning Threshold"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                             }
                             StyledSlider {
                                 Layout.preferredWidth: 150
@@ -215,8 +251,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Screen Time Enabled"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Screen Time Enabled"; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                Text { text: "Screen Time Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Screen Time Enabled"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                             }
                             StyledSwitch {
                                 checked: false
@@ -250,8 +286,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Brightness"; color: Theme.colOnSurface; font.family: "Inter"; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Brightness"; color: Theme.colOnSurfaceVariant; font.family: "Inter"; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                Text { text: "Brightness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
+                                Text { text: "Brightness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                             }
                             StyledSlider {
                                 Layout.preferredWidth: 150
