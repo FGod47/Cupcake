@@ -12,7 +12,7 @@ import Quickshell.Wayland
 
 Item {
     id: root
-    
+    anchors.fill: parent
     signal requestClose()
     
     property var font: {"family": "JetBrainsMono Nerd Font Propo"}
@@ -276,7 +276,7 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 200 : 64
+                    Layout.preferredWidth: navExpanded ? 220 : 72
                     
                     color: Theme.colSurfaceContainerHigh
                     radius: 12
@@ -297,7 +297,7 @@ Item {
                             component NavHeader: Text {
                                 visible: navExpanded
                                 Layout.fillWidth: true
-                                Layout.leftMargin: 20
+                                Layout.leftMargin: 24
                                 Layout.topMargin: 16
                                 Layout.bottomMargin: 8
                                 color: Theme.colPrimary
@@ -312,15 +312,15 @@ Item {
                                 property string labelText
                                 property int pageIndex
 
-                                implicitWidth: parent ? parent.width : 200
-                                width: parent ? parent.width : 200
+                                implicitWidth: parent ? parent.width : 220
+                                width: parent ? parent.width : 220
                                 implicitHeight: 38
                                 
                                 // Background Pill
                                 Rectangle {
                                     anchors.fill: parent
-                                    anchors.leftMargin: 8
-                                    anchors.rightMargin: 8
+                                    anchors.leftMargin: 12
+                                    anchors.rightMargin: 12
                                     radius: 9
                                 color: root.currentIndex === pageIndex 
                                     ? Theme.colPrimary
@@ -331,8 +331,8 @@ Item {
                             
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 12 : 8
-                                spacing: 8
+                                anchors.leftMargin: navExpanded ? 16 : 12
+                                spacing: 12
                                 
                                 Text {
                                     text: iconText
