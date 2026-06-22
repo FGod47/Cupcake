@@ -20,19 +20,32 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     anchors {
         top: true
+        bottom: true
+        left: true
+        right: true
     }
     margins {
         top: 0
     }
-    
-    implicitWidth: 1100
-    implicitHeight: 770 // Slightly larger to allow the bounce down
     
     property var font: {"family": "JetBrainsMono Nerd Font Propo"}
     property int currentIndex: 0
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
     
+    Process {
+        id: markOpenProc
+        command: ["bash", "-c", "echo 1 > /tmp/cupcake_settings"]
+        running: true
+    }
+
+    Process {
+        id: markCloseProc
+        command: ["bash", "-c", "echo 0 > /tmp/cupcake_settings"]
+        running: false
+        onExited: Qt.quit()
+    }
+
     Process {
         id: settingsMonitorPoll
         command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_monitors 2>/dev/null"]
@@ -370,7 +383,7 @@ PanelWindow {
             NumberAnimation { target: mainWrapper; property: "y"; to: 6; duration: 400; easing.type: Easing.InBack; easing.overshoot: 1.0 }
             NumberAnimation { target: contentOpacity; property: "opacity"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: fakeArchPill; property: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InCubic }
-            onFinished: Qt.quit()
+            onFinished: markCloseProc.running = true
         }
 
         // Settings Background

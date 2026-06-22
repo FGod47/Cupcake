@@ -169,16 +169,13 @@ PanelWindow {
             
             Process {
                 id: settingsPoll
-                command: ["bash", "-c", "cat /tmp/cupcake_settings 2>/dev/null || echo 0"]
-                stdout: StdioCollector {
-                    onStreamFinished: (data) => {
-                        if (data) { archPill.settingsOpen = (data.trim() === "1") }
+                command: ["bash", "-c", "while true; do cat /tmp/cupcake_settings 2>/dev/null || echo 0; sleep 0.1; done"]
+                running: true
+                stdout: SplitParser {
+                    onRead: (data) => {
+                        archPill.settingsOpen = (data.trim() === "1")
                     }
                 }
-            }
-            Timer {
-                interval: 200; running: true; repeat: true
-                onTriggered: settingsPoll.running = true
             }
             
                 property color c1: Theme.colPrimary
