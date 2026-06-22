@@ -14,13 +14,24 @@ ComboBox {
         radius: 4
     }
     
-    contentItem: Text {
-        text: customComboBox.displayText
+    editable: true
+    
+    contentItem: TextField {
+        text: customComboBox.editText
         color: Theme.colOnSurface
         font.family: Theme.defaultFontFamily
         font.pixelSize: 14
         verticalAlignment: Text.AlignVCenter
         leftPadding: 12
+        background: Item {} // Transparent background
+        
+        onTextEdited: {
+            customComboBox.editText = text
+            let match = customComboBox.find(text, Qt.MatchContains)
+            if (match !== -1) {
+                customComboBox.currentIndex = match
+            }
+        }
     }
     
     delegate: ItemDelegate {
