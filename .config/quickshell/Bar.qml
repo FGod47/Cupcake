@@ -68,7 +68,7 @@ PanelWindow {
     // Shared style definitions based on user's style.css
     readonly property color bg: Theme.colSurface
     readonly property color fg: Theme.colOnSurface
-    readonly property string fontName: "JetBrainsMono Nerd Font Propo"
+    readonly property string fontName: Theme.monoFontFamily
     readonly property int fontSize: 14
 
     // Full-screen click-away area when settings is open
@@ -617,9 +617,9 @@ PanelWindow {
                                 else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
-                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
-                        Text { text: " | "; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14 }
-                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 14; font.weight: 500 }
+                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: Theme.monoFontFamily; font.pixelSize: 14 }
+                        Text { text: " | "; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 14 }
+                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 14; font.weight: 500 }
                     }
 
                     // The dropdown column

@@ -82,14 +82,14 @@ Rectangle {
                         visible: modelData.icon !== undefined
                         text: modelData.icon !== undefined ? modelData.icon : ""
                         color: isSelected ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                        font.family: root.font ? root.font.family : "Inter"
+                        font.family: root.font ? root.font.family : Theme.defaultFontFamily
                         font.pixelSize: 14
                     }
                     
                     Text {
                         text: modelData.label
                         color: isSelected ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                        font.family: "Inter"
+                        font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.bold: isSelected
                     }

@@ -204,14 +204,14 @@ PanelWindow {
                     color: root.colOnSurfaceVariant
                     font.pixelSize: 17
                     font.weight: Font.Medium
-                    font.family: "JetBrainsMono Nerd Font Propo"
+                    font.family: Theme.monoFontFamily
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Try searching for something else"
                     color: root.colOutline
                     font.pixelSize: 13
-                    font.family: "JetBrainsMono Nerd Font Propo"
+                    font.family: Theme.monoFontFamily
                 }
             }
 
@@ -313,7 +313,7 @@ PanelWindow {
                                 color: root.colOnSurface
                                 font.pixelSize: 14
                                 font.weight: Font.Medium
-                                font.family: "JetBrainsMono Nerd Font Propo"
+                                font.family: Theme.monoFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
                             }
@@ -324,7 +324,7 @@ PanelWindow {
                                       || ""
                                 color: root.colOutline
                                 font.pixelSize: 12
-                                font.family: "JetBrainsMono Nerd Font Propo"
+                                font.family: Theme.monoFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
                                 visible: text.length > 0
@@ -376,7 +376,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOutline
                 font.pixelSize: 15
-                font.family: "JetBrainsMono Nerd Font Propo"
+                font.family: Theme.monoFontFamily
                 text: "Search applications…"
                 visible: searchField.text.length === 0
             }
@@ -390,7 +390,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOnSurface
                 font.pixelSize: 15
-                font.family: "JetBrainsMono Nerd Font Propo"
+                font.family: Theme.monoFontFamily
                 clip: true
                 focus: true
 

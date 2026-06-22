@@ -47,12 +47,12 @@ Rectangle {
                     text: cardRoot.icon
                     color: Theme.colOnSurfaceVariant
                     font.pixelSize: 18
-                    font.family: "JetBrainsMono Nerd Font Propo" 
+                    font.family: Theme.monoFontFamily 
                 }
                 Text { 
                     text: cardRoot.title
                     color: onSurfaceColor
-                    font.family: "Inter"
+                    font.family: Theme.defaultFontFamily
                     font.pixelSize: 18
                     font.bold: true
                     Layout.fillWidth: true 
@@ -63,7 +63,7 @@ Rectangle {
                 visible: cardRoot.description !== ""
                 text: cardRoot.description
                 color: Theme.colOnSurfaceVariant
-                font.family: "Inter"
+                font.family: Theme.defaultFontFamily
                 font.pixelSize: 12
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap

@@ -6,7 +6,7 @@ TextField {
     id: customTextField
     
     color: Theme.colOnSurface
-    font.family: "Inter"
+    font.family: Theme.defaultFontFamily
     font.pixelSize: 14
     
     background: Rectangle {

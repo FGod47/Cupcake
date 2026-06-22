@@ -12,10 +12,10 @@ import Quickshell.Wayland
 
 Item {
     id: root
-    anchors.fill: parent
+    
     signal requestClose()
     
-    property var font: {"family": Theme.monoFontFamily}
+    property var font: {"family": "JetBrainsMono Nerd Font Propo"}
     property int currentIndex: 0
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
@@ -208,7 +208,7 @@ Item {
     }
 
 
-    property bool navExpanded: true
+    property bool navExpanded: root.width > 900
 
     // Extracted StyledSwitch to StyledSwitch.qml
 
@@ -239,7 +239,9 @@ Item {
             opacity: 1.0
 
             Item {
-                anchors.fill: parent
+                width: 1100
+                height: 750
+                anchors.centerIn: parent
 
                 Keys.onPressed: (event) => {
                     if (event.modifiers === Qt.ControlModifier) {
@@ -276,54 +278,60 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 220 : 72
+                    Layout.preferredWidth: navExpanded ? 240 : 64
                     
-                    color: Theme.colSurfaceContainerHigh
+                    color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.85)
                     radius: 12
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+                    Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                     ScrollView {
-                        id: navScrollView
                         anchors.fill: parent
-                        contentWidth: availableWidth
+                        anchors.topMargin: 8
+                        anchors.bottomMargin: 8
                         clip: true
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
                         ColumnLayout {
-                            width: navScrollView.availableWidth
-                            spacing: 4
+                            width: parent.width
+                            spacing: 5
 
                             // Nav Buttons
                             component NavHeader: Text {
-                                visible: navExpanded
-                                Layout.fillWidth: true
-                                Layout.leftMargin: 24
-                                Layout.topMargin: 16
-                                Layout.bottomMargin: 8
-                                color: Theme.colPrimary
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.bold: true
-                                opacity: 0.8
-                            }
+                            visible: navExpanded
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 20
+                            Layout.topMargin: 12
+                            Layout.bottomMargin: 4
+                            color: Theme.colOnSurfaceVariant
+                            font.family: "Inter"
+                            font.pixelSize: 11
+                            font.bold: true
+                            opacity: 0.7
+                        }
 
-                            component NavButton: Item {
-                                property string iconText
-                                property string labelText
-                                property int pageIndex
 
-                                implicitWidth: parent ? parent.width : 220
-                                width: parent ? parent.width : 220
-                                implicitHeight: 38
-                                
-                                // Background Pill
-                                Rectangle {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 12
-                                    anchors.rightMargin: 12
-                                    radius: 9
+
+
+
+                        component NavButton: Item {
+                            property string iconText
+                            property string labelText
+                            property int pageIndex
+
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 36
+                            
+                            // Background Pill
+                            Rectangle {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                radius: 8
                                 color: root.currentIndex === pageIndex 
-                                    ? Theme.colPrimary
+                                    ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.8) 
                                     : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
                                 
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -332,11 +340,11 @@ Item {
                             RowLayout {
                                 anchors.fill: parent
                                 anchors.leftMargin: navExpanded ? 16 : 12
-                                spacing: 12
+                                spacing: 14
                                 
                                 Text {
                                     text: iconText
-                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
+                                    color: root.currentIndex === pageIndex ? Theme.colSurfaceContainer : Theme.colOnSurfaceVariant
                                     font.family: root.font.family
                                     font.pixelSize: 16
                                     opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
@@ -347,8 +355,8 @@ Item {
                                 Text {
                                     visible: navExpanded
                                     text: labelText
-                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
-                                    font.family: Theme.defaultFontFamily
+                                    color: root.currentIndex === pageIndex ? Theme.colSurfaceContainer : Theme.colOnSurface
+                                    font.family: "Inter"
                                     font.pixelSize: 14
                                     font.bold: true
                                     Layout.fillWidth: true
@@ -387,15 +395,16 @@ Item {
                         
                         NavHeader { text: "ADVANCED" }
                         NavButton { iconText: "󰌷"; labelText: "Hooks"; pageIndex: 14 }
-                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 15 }
-                        NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 16 }
+                        NavButton { iconText: "󰢹"; labelText: "Niri"; pageIndex: 15 }
+                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 16 }
+                        NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 17 }
 
                         NavHeader { text: "CUPCAKE EXTRA" }
-                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 17 }
-                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 18 }
-                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 19 }
-                        NavButton { iconText: ""; labelText: "User"; pageIndex: 20 }
-                        NavButton { iconText: ""; labelText: "About"; pageIndex: 21 }
+                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 18 }
+                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 19 }
+                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 20 }
+                        NavButton { iconText: ""; labelText: "User"; pageIndex: 21 }
+                        NavButton { iconText: ""; labelText: "About"; pageIndex: 22 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
@@ -407,7 +416,10 @@ Item {
                     id: contentAreaContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "transparent"
+                    color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.85)
+                    radius: 12
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
                     clip: true
 
                                         function getPageData(index) {
@@ -427,13 +439,14 @@ Item {
                             case 12: return { icon: "󰍎", title: "Location" };
                             case 13: return { icon: "󰚥", title: "Power" };
                             case 14: return { icon: "󰌷", title: "Hooks" };
-                            case 15: return { icon: "", title: "Bar" };
-                            case 16: return { icon: "󰱖", title: "Plugins" };
-                            case 17: return { icon: "", title: "Network" };
-                            case 18: return { icon: "󰍹", title: "Display" };
-                            case 19: return { icon: "✨", title: "AI" };
-                            case 20: return { icon: "", title: "User" };
-                            case 21: return { icon: "", title: "About" };
+                            case 15: return { icon: "󰢹", title: "Niri" };
+                            case 16: return { icon: "", title: "Bar" };
+                            case 17: return { icon: "󰱖", title: "Plugins" };
+                            case 18: return { icon: "", title: "Network" };
+                            case 19: return { icon: "󰍹", title: "Display" };
+                            case 20: return { icon: "✨", title: "AI" };
+                            case 21: return { icon: "", title: "User" };
+                            case 22: return { icon: "", title: "About" };
                             default: return { icon: "", title: "Settings" };
                         }
                     }
@@ -448,7 +461,12 @@ Item {
                             Layout.preferredHeight: 64
                             color: "transparent"
                             
-
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 1
+                                color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                            }
                             
                             RowLayout {
                                 anchors.fill: parent
@@ -466,7 +484,7 @@ Item {
                                 Text {
                                     text: contentAreaContainer.getPageData(root.currentIndex).title
                                     color: Theme.colOnSurface
-                                    font.family: Theme.defaultFontFamily
+                                    font.family: "Inter"
                                     font.pixelSize: 20
                                     font.bold: true
                                     Layout.fillWidth: true
@@ -819,7 +837,7 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: Theme.monoFontFamily }
+                                            Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: "JetBrainsMono Nerd Font Propo" }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
@@ -855,12 +873,12 @@ Item {
                                             }
                                         }
                                         
-
+                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
 
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: Theme.monoFontFamily }
+                                            Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: "JetBrainsMono Nerd Font Propo" }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
@@ -878,7 +896,7 @@ Item {
                                             }
                                         }
                                         
-
+                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
 
                                         ColumnLayout {
                                             Layout.fillWidth: true
@@ -972,7 +990,7 @@ Item {
                                             }
                                         }
 
-
+                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
 
                                         RowLayout {
                                             Layout.fillWidth: true
@@ -1012,7 +1030,7 @@ Item {
                                             }
                                         }
                                         
-
+                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
 
                                         ColumnLayout {
                                             Layout.fillWidth: true
@@ -1299,18 +1317,30 @@ Item {
                         anchors.centerIn: parent
                         text: "Stub: HOOKS settings will go here."
                         color: Theme.colOnSurfaceVariant
-                        font.family: Theme.defaultFontFamily
+                        font.family: "Inter"
                         font.pixelSize: 16
                     }
                 }
 
-                // PAGE 16: PLUGINS
+                // PAGE 15: NIRI
                 Item {
-                    id: page16
+                    id: page15
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 16 ? 0 : 20
-                    opacity: root.currentIndex === 16 ? 1 : 0
-                    visible: root.currentIndex === 16 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 15 ? 0 : 20
+                    opacity: root.currentIndex === 15 ? 1 : 0
+                    visible: root.currentIndex === 15 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageNiri { anchors.fill: parent }
+                }
+
+                // PAGE 17: PLUGINS
+                Item {
+                    id: page17
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 17 ? 0 : 20
+                    opacity: root.currentIndex === 17 ? 1 : 0
+                    visible: root.currentIndex === 17 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
 
@@ -1318,17 +1348,17 @@ Item {
                         anchors.centerIn: parent
                         text: "Stub: PLUGINS settings will go here."
                         color: Theme.colOnSurfaceVariant
-                        font.family: Theme.defaultFontFamily
+                        font.family: "Inter"
                         font.pixelSize: 16
                     }
                 }
 
-                // PAGE 15: TOP BAR
+                // PAGE 16: TOP BAR
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 15 ? 0 : 20
-                    opacity: root.currentIndex === 15 ? 1 : 0
-                    visible: root.currentIndex === 15 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 16 ? 0 : 20
+                    opacity: root.currentIndex === 16 ? 1 : 0
+                    visible: root.currentIndex === 16 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1482,22 +1512,113 @@ Item {
 
                 // PAGE 10: SYSTEM
                 Item {
-                    id: page10
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 10 ? 0 : 20
                     opacity: root.currentIndex === 10 ? 1 : 0
                     visible: root.currentIndex === 10 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageSystem { anchors.fill: parent }
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 24
+                        spacing: 16
+
+                        Text {
+                            text: "System Controls"
+                            color: Theme.colOnSurface
+                            font.family: root.font.family
+                            font.pixelSize: 32
+                            font.bold: true
+                        }
+                        
+                        Text {
+                            text: "Power and Session management"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: root.font.family
+                            font.pixelSize: 14
+                            Layout.bottomMargin: 16
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Reload Hyprland Config"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Reload"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["hyprctl", "reload"])
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Reboot System"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Reboot"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["systemctl", "reboot"])
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: Theme.colSurfaceContainer
+                            radius: 12
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                Text {
+                                    text: "Open Configuration Folder"
+                                    color: Theme.colOnSurface
+                                    font.family: root.font.family
+                                    font.pixelSize: 16
+                                    Layout.fillWidth: true
+                                }
+                                Button {
+                                    text: "Open"
+                                    font.family: root.font.family
+                                    onClicked: Quickshell.execDetached(["xdg-open", "/home/zero/.config/cupcake"])
+                                }
+                            }
+                        }
+
+                        Item { Layout.fillHeight: true }
+                    }
                 }
 
-                // PAGE 17: NETWORK
+                // PAGE 18: NETWORK
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 17 ? 0 : 20
-                    opacity: root.currentIndex === 17 ? 1 : 0
-                    visible: root.currentIndex === 17 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 18 ? 0 : 20
+                    opacity: root.currentIndex === 18 ? 1 : 0
+                    visible: root.currentIndex === 18 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1762,15 +1883,15 @@ Item {
                     }
                 }
 
-                // PAGE 19: AI PANEL
+                // PAGE 20: AI PANEL
                 Item {
                     id: aiSettingsPage
                     property bool keyExists: false
 
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 159 ? 0 : 20
-                    opacity: root.currentIndex === 159 ? 1 : 0
-                    visible: root.currentIndex === 159 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 160 ? 0 : 20
+                    opacity: root.currentIndex === 160 ? 1 : 0
+                    visible: root.currentIndex === 160 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1936,13 +2057,13 @@ Item {
                     }
                 }
 
-                // PAGE 20: USER
+                // PAGE 21: USER
                 Item {
                     id: userPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 160 ? 0 : 20
-                    opacity: root.currentIndex === 160 ? 1 : 0
-                    visible: root.currentIndex === 160 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 161 ? 0 : 20
+                    opacity: root.currentIndex === 161 ? 1 : 0
+                    visible: root.currentIndex === 161 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1955,7 +2076,7 @@ Item {
 
                     Process {
                         command: ["bash", "-c", "echo \"$(whoami)|$(cat /etc/hostname 2>/dev/null)|$HOME|$SHELL|$(id -u)|$(id -g)\""]
-                        running: root.currentIndex === 160
+                        running: root.currentIndex === 161
                         stdout: StdioCollector {
                             onStreamFinished: {
                                 let lines = text.trim().split("|");
@@ -2094,13 +2215,13 @@ Item {
                     }
                 }
 
-                // PAGE 21: ABOUT
+                // PAGE 22: ABOUT
                 Item {
                     id: aboutPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 161 ? 0 : 20
-                    opacity: root.currentIndex === 161 ? 1 : 0
-                    visible: root.currentIndex === 161 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 162 ? 0 : 20
+                    opacity: root.currentIndex === 162 ? 1 : 0
+                    visible: root.currentIndex === 162 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2295,13 +2416,13 @@ Item {
                     }
                 } // Closes PAGE 7 Item
 
-                // PAGE 18: DISPLAY
+                // PAGE 19: DISPLAY
                 Item {
                     id: displayPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 18 ? 0 : 20
-                    opacity: root.currentIndex === 18 ? 1 : 0
-                    visible: root.currentIndex === 18 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 19 ? 0 : 20
+                    opacity: root.currentIndex === 19 ? 1 : 0
+                    visible: root.currentIndex === 19 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 

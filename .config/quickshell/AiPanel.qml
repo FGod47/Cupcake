@@ -123,7 +123,7 @@ PanelWindow {
                         Text {
                             anchors.centerIn: parent
                             text: "󰃢" // Broom icon
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
@@ -145,7 +145,7 @@ PanelWindow {
                         Text {
                             anchors.centerIn: parent
                             text: "" // Gear icon
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
@@ -271,7 +271,7 @@ PanelWindow {
                                 wrapMode: Text.WordWrap
                                 color: Theme.colOnSurface
                                 font.pixelSize: 15
-                                font.family: "Inter"
+                                font.family: Theme.defaultFontFamily
                                 lineHeight: 1.4
                                 
                                 onLinkActivated: Qt.openUrlExternally(link)
@@ -302,7 +302,7 @@ PanelWindow {
             Text {
                 id: helloText
                 text: "Hello"
-                font.family: "Inter"
+                font.family: Theme.defaultFontFamily
                 font.pixelSize: 48
                 font.weight: 800
                 visible: false
@@ -325,7 +325,7 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: "How can I help you today?"
-                font.family: "Inter"
+                font.family: Theme.defaultFontFamily
                 font.pixelSize: 22
                 font.weight: 600
                 color: Theme.colOnSurfaceVariant
@@ -380,7 +380,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "" // Plus icon
                         color: Theme.colOnSurfaceVariant
-                        font.family: "JetBrainsMono Nerd Font Propo"
+                        font.family: Theme.monoFontFamily
                         font.pixelSize: 18
                     }
                     
@@ -399,7 +399,7 @@ PanelWindow {
                     placeholderTextColor: Theme.colOnSurfaceVariant
                     color: Theme.colOnSurface
                     font.pixelSize: 16
-                    font.family: "Inter"
+                    font.family: Theme.defaultFontFamily
                     background: Item {}
                     verticalAlignment: TextInput.AlignVCenter
                     leftPadding: 5
@@ -431,7 +431,7 @@ PanelWindow {
                     
                     contentItem: Text {
                         text: modelCombo.currentText.replace("gemini-", "").replace("-flash", " Flash").replace("-pro", " Pro") + " "
-                        font.family: "Inter"
+                        font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.weight: 600
                         color: Theme.colOnSurface
@@ -479,7 +479,7 @@ PanelWindow {
 
                             Text {
                                 text: modelCombo.currentIndex === index ? "" : ""
-                                font.family: "JetBrainsMono Nerd Font Propo"
+                                font.family: Theme.monoFontFamily
                                 font.pixelSize: 14
                                 color: Theme.colOnSurfaceVariant
                                 Layout.preferredWidth: 20
@@ -491,7 +491,7 @@ PanelWindow {
                                 
                                 Text {
                                     text: modelData.replace("gemini-", "").replace("-flash", " Flash").replace("-pro", " Pro")
-                                    font.family: "Inter"
+                                    font.family: Theme.defaultFontFamily
                                     font.pixelSize: 15
                                     font.weight: 600
                                     color: Theme.colOnSurface
@@ -507,7 +507,7 @@ PanelWindow {
                                         if (modelData.includes("pro-latest")) return "Latest pro model";
                                         return "Standard";
                                     }
-                                    font.family: "Inter"
+                                    font.family: Theme.defaultFontFamily
                                     font.pixelSize: 12
                                     color: Theme.colOnSurfaceVariant
                                 }
@@ -525,7 +525,7 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     text: "New"
-                                    font.family: "Inter"
+                                    font.family: Theme.defaultFontFamily
                                     font.pixelSize: 10
                                     font.weight: 600
                                     color: Theme.colOnSurfaceVariant
@@ -571,7 +571,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: promptInput.text.length > 0 ? "" : "" // Up arrow if typing, else Mic
                         color: promptInput.text.length > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                        font.family: "JetBrainsMono Nerd Font Propo"
+                        font.family: Theme.monoFontFamily
                         font.pixelSize: 18
                         font.weight: 800
                     }

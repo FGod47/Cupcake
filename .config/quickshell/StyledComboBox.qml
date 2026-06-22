@@ -17,7 +17,7 @@ ComboBox {
     contentItem: Text {
         text: customComboBox.displayText
         color: Theme.colOnSurface
-        font.family: "Inter"
+        font.family: Theme.defaultFontFamily
         font.pixelSize: 14
         verticalAlignment: Text.AlignVCenter
         leftPadding: 12

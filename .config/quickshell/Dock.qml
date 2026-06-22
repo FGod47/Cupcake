@@ -72,7 +72,7 @@ PanelWindow {
                     Text {
                         anchors.centerIn: parent
                         text: "" // App grid icon
-                        font.family: "JetBrainsMono Nerd Font Propo"
+                        font.family: Theme.monoFontFamily
                         font.pixelSize: 24
                         color: Theme.colOnPrimary
                     }

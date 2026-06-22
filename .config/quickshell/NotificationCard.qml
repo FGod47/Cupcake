@@ -122,7 +122,7 @@ Item {
                 Text {
                     text: "\uf0f3"
                     color: Theme.colOnPrimary
-                    font.family: "JetBrainsMono Nerd Font Propo"
+                    font.family: Theme.monoFontFamily
                     font.pixelSize: 18
                     anchors.centerIn: parent
                     visible: !iconImg.visible
@@ -154,7 +154,7 @@ Item {
                             id: appNameText
                             text: notificationData ? notificationData.appName : ""
                             color: Theme.colOnSurfaceVariant
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 11
                             elide: Text.ElideRight
                             maximumLineCount: 1
@@ -162,7 +162,7 @@ Item {
                         Text {
                             text: " • "
                             color: Theme.colOnSurfaceVariant
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 11
                             visible: appNameText.text !== ""
                         }
@@ -170,7 +170,7 @@ Item {
                             id: summaryText
                             text: notificationData ? notificationData.summary : ""
                             color: Theme.colOnSurface
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 12
                             font.bold: true
                             elide: Text.ElideRight
@@ -181,7 +181,7 @@ Item {
                             id: separatorDot
                             visible: false  // just used for width measurement
                             text: " • "
-                            font.family: "JetBrainsMono Nerd Font Propo"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 11
                         }
                     }
@@ -190,7 +190,7 @@ Item {
                         id: timeText
                         text: notificationData ? Qt.formatTime(new Date(notificationData.time / 1000), "hh:mm") : ""
                         color: Theme.colOnSurfaceVariant
-                        font.family: "JetBrainsMono Nerd Font Propo"
+                        font.family: Theme.monoFontFamily
                         font.pixelSize: 10
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -202,7 +202,7 @@ Item {
                     width: parent.width
                     text: notificationData ? notificationData.body : ""
                     color: Theme.colOnSurfaceVariant
-                    font.family: "JetBrainsMono Nerd Font Propo"
+                    font.family: Theme.monoFontFamily
                     font.pixelSize: 11
                     elide: Text.ElideRight
                     maximumLineCount: 1
@@ -219,7 +219,7 @@ Item {
                     width: parent.width
                     text: notificationData ? notificationData.body : ""
                     color: Theme.colOnSurfaceVariant
-                    font.family: "JetBrainsMono Nerd Font Propo"
+                    font.family: Theme.monoFontFamily
                     font.pixelSize: 11
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     textFormat: Text.StyledText
@@ -248,7 +248,7 @@ Item {
                             color: ah.hovered ? Theme.colOnSurfaceVariant : Theme.colOutline
                             radius: 6
                             width: al.implicitWidth + 16; height: 26
-                            Text { id: al; text: modelData.text; color: Theme.colOnSurface; font.family: "JetBrainsMono Nerd Font Propo"; font.pixelSize: 11; anchors.centerIn: parent }
+                            Text { id: al; text: modelData.text; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 11; anchors.centerIn: parent }
                             HoverHandler { id: ah }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.invoke() }
                         }
