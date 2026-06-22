@@ -337,6 +337,12 @@ PanelWindow {
 
 
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: Qt.quit()
+        z: -1
+    }
+
     Item {
         id: mainWrapper
         width: 150
@@ -445,7 +451,7 @@ PanelWindow {
                         id: closeMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onClicked: root.close()
+                        onClicked: Qt.quit()
                     }
                 }
             }
