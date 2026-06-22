@@ -8,9 +8,8 @@ Rectangle {
     property string title: ""
     property string icon: ""
     
-    property color surfaceColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.4) : Theme.colSurfaceContainer
-    property color surfaceHoverColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.5) : Theme.colSurfaceContainerHigh
-    property color surfacePressColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainerHighest.r, Theme.colSurfaceContainerHighest.g, Theme.colSurfaceContainerHighest.b, 0.6) : Theme.colSurfaceContainerHighest
+    // Colors
+    property color surfaceColor
     property color outlineColor
     property color primaryColor
     property color onSurfaceColor
@@ -19,16 +18,18 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: mainLayout.implicitHeight + 40
-    color: surfaceColor
-    radius: 16
-    border.color: outlineColor
-    border.width: 1
+    color: "transparent"
+    radius: 0
+    border.width: 0
 
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        anchors.margins: 20
-        spacing: 20
+        anchors.leftMargin: 14
+        anchors.rightMargin: 14
+        anchors.topMargin: 14
+        anchors.bottomMargin: 14
+        spacing: 16
 
         RowLayout {
             Layout.fillWidth: true
@@ -36,9 +37,10 @@ Rectangle {
             spacing: 12
             
             Text { 
+                visible: cardRoot.icon !== ""
                 text: cardRoot.icon
-                color: primaryColor
-                font.pixelSize: 22
+                color: Theme.colOnSurfaceVariant
+                font.pixelSize: 18
                 font.family: "JetBrainsMono Nerd Font Propo" 
             }
             Text { 
@@ -56,5 +58,8 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 16
         }
+
+        Item { Layout.fillHeight: true; Layout.minimumHeight: 1 }
+
     }
 }

@@ -17,6 +17,7 @@ PanelWindow {
     }
     WlrLayershell.namespace: "quickshell"
     property bool settingsOpen: false
+    onSettingsOpenChanged: globalState.settingsOpen = settingsOpen;
     exclusiveZone: 46
     
     Process {
@@ -191,124 +192,7 @@ PanelWindow {
             }
         }
 
-        // =======================
-        // CENTER MODULES
-        // =======================
-        
-        
-        Rectangle {
-            id: archPill
-            y: bar.settingsOpen ? ((modelData.height - 750) / 2) - 8 : (parent.height - 34) / 2
-            anchors.horizontalCenter: parent.horizontalCenter
-            radius: 18
-            width: bar.settingsOpen ? 1100 : archText.implicitWidth + 32
-            height: bar.settingsOpen ? 750 : 34
-            
-            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            
-            property color c1: Theme.colPrimary
-            property color c2: Theme.colSecondary
-            
-            // The background opacity must remain high enough that its resulting alpha
-            // (root.globalOpacity * bgOpacity) stays above Hyprland's ignore_alpha=0.2 threshold!
-            property real bgOpacity: bar.settingsOpen ? (Theme.globalTransparency ? 0.4 : 1.0) : 1.0
-            Behavior on bgOpacity { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            
-            property real morphProgress: bar.settingsOpen ? 1.0 : 0.0
-            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            
-            // The solid glass color that covers the entire pill (won't be ignored now because gradient is removed from the parent)
-            color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity * archPill.bgOpacity)
-            border.width: 1
-            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3 * archPill.bgOpacity)
-            
-            // The gradient is in a child Rectangle. We DO NOT use the opacity property because
-            // animating opacity forces QML to use an FBO, which flattens and destroys the Wayland alpha channel.
-            // Instead, we directly animate the alpha channels of the GradientStops.
-            Rectangle {
-                anchors.fill: parent
-                radius: 18
-                
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
-                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
-                }
-            }
 
-            SequentialAnimation on c1 {
-                loops: Animation.Infinite
-                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-            }
-
-            SequentialAnimation on c2 {
-                loops: Animation.Infinite
-                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-            }
-            
-            Text {
-                id: archText
-                anchors.centerIn: parent
-                text: " Arch"
-                color: Theme.colSurfaceContainerHigh
-                font.family: fontName
-                font.pixelSize: fontSize
-                font.weight: 500
-                opacity: bar.settingsOpen ? 0.0 : 1.0
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-            }
-
-            // Inner clipping container for the content
-            // Keeps the square clip box away from the natively rounded background edges!
-            Item {
-                anchors.fill: parent
-                anchors.margins: 16
-                
-                // Catch stray clicks inside the padding so they don't fall through to the background
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -16 // Cover the full archPill area
-                    enabled: bar.settingsOpen
-                    onPressed: mouse.accepted = true
-                    onReleased: mouse.accepted = true
-                    onClicked: mouse.accepted = true
-                }
-                clip: true
-                
-                Loader {
-                    id: settingsLoader
-                    anchors.fill: parent
-                    source: "SettingsUI.qml"
-                    active: true
-                    
-                    // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
-                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
-                    visible: opacity > 0
-                    
-                    onLoaded: {
-                        item.anchors.centerIn = settingsLoader;
-                    }
-                    
-                    Connections {
-                        target: settingsLoader.item
-                        function onRequestClose() {
-                            bar.settingsOpen = false;
-                        }
-                    }
-                }
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                enabled: !bar.settingsOpen
-                cursorShape: Qt.PointingHandCursor
-                onClicked: bar.settingsOpen = true
-            }
-        }
 
         // =======================
         // RIGHT MODULES
@@ -851,4 +735,123 @@ PanelWindow {
     }
 
 }
+    // Moved archPill out of 46px restricted Item
+        // =======================
+        // CENTER MODULES
+        // =======================
+        
+        
+        Rectangle {
+            id: archPill
+            y: bar.settingsOpen ? (modelData.height - 800) / 2 : 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            radius: 18
+            width: bar.settingsOpen ? 900 : archText.implicitWidth + 32
+            height: bar.settingsOpen ? 800 : 34
+            
+            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property color c1: Theme.colPrimary
+            property color c2: Theme.colSecondary
+            
+            // The background opacity must remain high enough that its resulting alpha
+            // (root.globalOpacity * bgOpacity) stays above Hyprland's ignore_alpha=0.2 threshold!
+            property real bgOpacity: 1.0
+            Behavior on bgOpacity { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property real morphProgress: bar.settingsOpen ? 1.0 : 0.0
+            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property real currentAlpha: root.barOpacity + (Theme.bgAlpha - root.barOpacity) * archPill.morphProgress
+            // The solid glass color that covers the entire pill
+            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha * archPill.bgOpacity) : Theme.colSurface
+            border.width: 1
+            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3 * archPill.bgOpacity)
+            
+            // The gradient is in a child Rectangle. We DO NOT use the opacity property because
+            // animating opacity forces QML to use an FBO, which flattens and destroys the Wayland alpha channel.
+            // Instead, we directly animate the alpha channels of the GradientStops.
+            Rectangle {
+                anchors.fill: parent
+                radius: 18
+                
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
+                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
+                }
+            }
+
+            SequentialAnimation on c1 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+            }
+
+            SequentialAnimation on c2 {
+                loops: Animation.Infinite
+                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
+            }
+            
+            Text {
+                id: archText
+                anchors.centerIn: parent
+                text: " Arch"
+                color: Theme.colSurfaceContainerHigh
+                font.family: fontName
+                font.pixelSize: fontSize
+                font.weight: 500
+                opacity: bar.settingsOpen ? 0.0 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            }
+
+            // Catch stray clicks inside the padding so they don't fall through to the background
+            MouseArea {
+                anchors.fill: parent
+                enabled: bar.settingsOpen
+                onPressed: mouse.accepted = true
+                onReleased: mouse.accepted = true
+                onClicked: mouse.accepted = true
+            }
+
+            // Inner clipping container for the content
+            // Keeps the square clip box away from the natively rounded background edges!
+            Item {
+                anchors.fill: parent
+                anchors.margins: 16
+                clip: true
+                
+                Loader {
+                    id: settingsLoader
+                    anchors.fill: parent
+                    source: "SettingsUI.qml"
+                    active: true
+                    
+                    // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
+                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
+                    visible: opacity > 0
+                    
+                    onLoaded: {
+                        item.anchors.fill = settingsLoader;
+                    }
+                    
+                    Connections {
+                        target: settingsLoader.item
+                        function onRequestClose() {
+                            bar.settingsOpen = false;
+                        }
+                    }
+                }
+            }
+            
+            MouseArea {
+                anchors.fill: parent
+                enabled: !bar.settingsOpen
+                cursorShape: Qt.PointingHandCursor
+                onClicked: bar.settingsOpen = true
+            }
+        }
 }

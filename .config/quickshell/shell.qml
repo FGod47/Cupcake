@@ -66,6 +66,7 @@ ShellRoot {
         property string clockString: ""
         property bool closingIsland: false
         property bool hideIsland: false
+        property bool settingsOpen: false
     }
 
     Process {
@@ -112,6 +113,9 @@ ShellRoot {
     IpcHandler {
         target: "theme"
         function reload() {
+            if (globalState.settingsOpen) {
+                Quickshell.execDetached(["bash", "-c", "echo 1 > /tmp/cupcake_settings"]);
+            }
             Quickshell.reload(false);
         }
     }

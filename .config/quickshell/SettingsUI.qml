@@ -208,119 +208,11 @@ Item {
     }
 
 
-    property bool navExpanded: root.width > 900
+    property bool navExpanded: true
 
-    component StyledSwitch: Switch {
-        id: customSwitch
-        property real scale: 0.8
-        implicitHeight: 32 * scale
-        implicitWidth: 52 * scale
-        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    // Extracted StyledSwitch to StyledSwitch.qml
 
-        // Custom track styling
-        background: Rectangle {
-            width: parent.width
-            height: parent.height
-            radius: 9999
-            color: customSwitch.checked ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-            border.width: 2 * customSwitch.scale
-            border.color: customSwitch.checked ? Theme.colPrimary : Theme.colOutline
-
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Behavior on border.color { ColorAnimation { duration: 150 } }
-        }
-
-        // Custom thumb styling
-        indicator: Rectangle {
-            width: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
-            height: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
-            radius: 9999
-            color: customSwitch.checked ? Theme.colOnPrimary : Theme.colOutline
-            
-            // Vertically center it
-            y: (customSwitch.implicitHeight - height) / 2
-            
-            // Calculate X based on state
-            // Gap of 4 * scale from the edge
-            x: customSwitch.checked 
-                ? (customSwitch.implicitWidth - width - (4 * customSwitch.scale))
-                : (4 * customSwitch.scale)
-
-            Behavior on x {
-                NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-            }
-            Behavior on width {
-                NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-            }
-            Behavior on height {
-                NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-            }
-            Behavior on color { ColorAnimation { duration: 150 } }
-        }
-    }
-
-    component StyledSlider: Slider {
-        id: control
-        background: Item {
-            x: control.leftPadding
-            y: control.topPadding + control.availableHeight / 2 - height / 2
-            implicitWidth: 200
-            implicitHeight: 16
-            width: control.availableWidth
-            height: implicitHeight
-            
-            // Full Inactive Track (Continuous Pill)
-            Rectangle {
-                anchors.fill: parent
-                color: Theme.colOnSurface
-                opacity: 0.15
-                radius: height / 2
-            }
-            
-            // Active Track (clipped straight at the thumb boundary)
-            Item {
-                width: control.visualPosition * parent.width
-                height: parent.height
-                clip: true
-                
-                Rectangle {
-                    width: control.availableWidth
-                    height: parent.height
-                    color: Theme.colPrimary
-                    radius: parent.height / 2
-                }
-            }
-        }
-        handle: Item {
-            // Perfectly center the thumb on the boundary
-            x: control.leftPadding + control.visualPosition * control.availableWidth - width / 2
-            y: control.topPadding + control.availableHeight / 2 - height / 2
-            implicitWidth: 16
-            implicitHeight: 16
-
-
-
-            // Solid Blue Circle (creates the rounded edge around the thumb)
-            Rectangle {
-                anchors.centerIn: parent
-                width: 16
-                height: 16
-                radius: 8
-                color: Theme.colPrimary
-            }
-
-            // Inner Thumb Dot
-            Rectangle {
-                anchors.centerIn: parent
-                width: (control.pressed || control.hovered) ? 10 : 6
-                height: (control.pressed || control.hovered) ? 10 : 6
-                radius: width / 2
-                color: "#ffffff"
-                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-            }
-        }
-    }
+    // Extracted StyledSlider to StyledSlider.qml
 
 
 
@@ -347,9 +239,7 @@ Item {
             opacity: 1.0
 
             Item {
-                width: 1100
-                height: 750
-                anchors.centerIn: parent
+                anchors.fill: parent
 
                 Keys.onPressed: (event) => {
                     if (event.modifiers === Qt.ControlModifier) {
@@ -377,106 +267,63 @@ Item {
             anchors.margins: 8
             spacing: 8
 
-            // Custom Titlebar
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 48
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
-                Layout.topMargin: 12
-                color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
-                radius: 10
-                
-                Text {
-                    anchors.centerIn: parent
-                    text: "Settings"
-                    color: Theme.colOnSurface
-                    font.family: root.font.family
-                    font.pixelSize: 16
-                    font.bold: true
-                }
-                Rectangle {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32; height: 32
-                    radius: 16
-                    color: closeMouseArea.containsMouse ? Theme.colSurfaceContainerHigh : "transparent"
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                    Text {
-                        anchors.centerIn: parent
-                        text: "✖"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: root.font.family
-                        font.pixelSize: 14
-                    }
-                    MouseArea {
-                        id: closeMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: root.requestClose()
-                    }
-                }
-            }
-
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
-                Layout.topMargin: 8
-                Layout.bottomMargin: 12
+                Layout.margins: 12
                 spacing: 16
 
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 180 : 56
+                    Layout.preferredWidth: navExpanded ? 200 : 64
                     
-                    color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.4) : Theme.colSurfaceContainer
-                    radius: 10
-                    Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    color: Theme.colSurfaceContainerHigh
+                    radius: 12
 
-                    ColumnLayout {
+                    ScrollView {
+                        id: navScrollView
                         anchors.fill: parent
-                        spacing: 5
+                        contentWidth: availableWidth
+                        clip: true
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                        Item { Layout.preferredHeight: 8 } // Spacer
+                        ColumnLayout {
+                            width: navScrollView.availableWidth
+                            spacing: 4
 
-                        // Nav Buttons
-                        component NavHeader: Text {
-                            visible: navExpanded
-                            Layout.fillWidth: true
-                            Layout.leftMargin: 20
-                            Layout.topMargin: 12
-                            Layout.bottomMargin: 4
-                            color: Theme.colOnSurfaceVariant
-                            font.family: "Inter"
-                            font.pixelSize: 11
-                            font.bold: true
-                            opacity: 0.7
-                        }
+                            // Nav Buttons
+                            component NavHeader: Text {
+                                visible: navExpanded
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 20
+                                Layout.topMargin: 16
+                                Layout.bottomMargin: 8
+                                color: Theme.colPrimary
+                                font.family: "Inter"
+                                font.pixelSize: 12
+                                font.bold: true
+                                opacity: 0.8
+                            }
 
+                            component NavButton: Item {
+                                property string iconText
+                                property string labelText
+                                property int pageIndex
 
-
-
-
-                        component NavButton: Item {
-                            property string iconText
-                            property string labelText
-                            property int pageIndex
-
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 40
-                            
-                            // Background Pill
-                            Rectangle {
-                                anchors.fill: parent
-                                anchors.leftMargin: 12
-                                anchors.rightMargin: 12
-                                radius: 8
+                                implicitWidth: parent ? parent.width : 200
+                                width: parent ? parent.width : 200
+                                implicitHeight: 38
+                                
+                                // Background Pill
+                                Rectangle {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 8
+                                    anchors.rightMargin: 8
+                                    radius: 9
                                 color: root.currentIndex === pageIndex 
-                                    ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) 
+                                    ? Theme.colPrimary
                                     : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
                                 
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -484,28 +331,28 @@ Item {
                             
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 26 : 20
-                                spacing: 14
+                                anchors.leftMargin: navExpanded ? 12 : 8
+                                spacing: 8
                                 
                                 Text {
                                     text: iconText
-                                    color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
                                     font.family: root.font.family
-                                    font.pixelSize: 18
-                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
-                                    Layout.preferredWidth: 20
+                                    font.pixelSize: 16
+                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
+                                    Layout.preferredWidth: 24
                                     horizontalAlignment: Text.AlignHCenter
                                 }
                                 
                                 Text {
                                     visible: navExpanded
                                     text: labelText
-                                    color: root.currentIndex === pageIndex ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
                                     font.family: "Inter"
                                     font.pixelSize: 14
-                                    font.bold: root.currentIndex === pageIndex
+                                    font.bold: true
                                     Layout.fillWidth: true
-                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
+                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
                                 }
                             }
 
@@ -518,30 +365,142 @@ Item {
                             }
                         }
 
-                        NavHeader { text: "MENU" }
+                                                NavHeader { text: "APPEARANCE" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
-                        NavButton { iconText: ""; labelText: "Wallpapers"; pageIndex: 1 }
-                        NavButton { iconText: ""; labelText: "Top Bar"; pageIndex: 2 }
-                        NavButton { iconText: ""; labelText: "System"; pageIndex: 3 }
-                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 4 }
-                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 8 }
+                        NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
+                        NavButton { iconText: "󰏖"; labelText: "Templates"; pageIndex: 2 }
                         
-                        NavHeader { text: "GENERAL" }
-                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 5 }
-                        NavButton { iconText: ""; labelText: "User"; pageIndex: 6 }
-                        NavButton { iconText: ""; labelText: "About"; pageIndex: 7 }
+                        NavHeader { text: "SHELL" }
+                        NavButton { iconText: "󰧨"; labelText: "Desktop"; pageIndex: 3 }
+                        NavButton { iconText: "󰗚"; labelText: "Dock"; pageIndex: 4 }
+                        NavButton { iconText: "󰋋"; labelText: "Panels"; pageIndex: 5 }
+                        NavButton { iconText: "󰂚"; labelText: "Notifications"; pageIndex: 6 }
+                        NavButton { iconText: "󰍡"; labelText: "OSD"; pageIndex: 7 }
+                        NavButton { iconText: "󰖲"; labelText: "Shell"; pageIndex: 8 }
+                        
+                        NavHeader { text: "SYSTEM" }
+                        NavButton { iconText: "󰕡"; labelText: "Security"; pageIndex: 9 }
+                        NavButton { iconText: ""; labelText: "System"; pageIndex: 10 }
+                        NavButton { iconText: "󰒓"; labelText: "Services"; pageIndex: 11 }
+                        NavButton { iconText: "󰍎"; labelText: "Location"; pageIndex: 12 }
+                        NavButton { iconText: "󰚥"; labelText: "Power"; pageIndex: 13 }
+                        
+                        NavHeader { text: "ADVANCED" }
+                        NavButton { iconText: "󰌷"; labelText: "Hooks"; pageIndex: 14 }
+                        NavButton { iconText: "󰢹"; labelText: "Niri"; pageIndex: 15 }
+                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 16 }
+                        NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 17 }
+
+                        NavHeader { text: "CUPCAKE EXTRA" }
+                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 18 }
+                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 19 }
+                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 20 }
+                        NavButton { iconText: ""; labelText: "User"; pageIndex: 21 }
+                        NavButton { iconText: ""; labelText: "About"; pageIndex: 22 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
                 }
+            }
 
-                // Content Area (uses a rounded rectangle container for the active page)
+                // Content Area
                 Rectangle {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
-            radius: 10 // Appearance.rounding.windowRounding (18) - contentPadding (8)
-            clip: true
+                    id: contentAreaContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "transparent"
+                    clip: true
+
+                                        function getPageData(index) {
+                        switch(index) {
+                            case 0: return { icon: "󰏘", title: "Appearance" };
+                            case 1: return { icon: "", title: "Wallpaper" };
+                            case 2: return { icon: "󰏖", title: "Templates" };
+                            case 3: return { icon: "󰧨", title: "Desktop" };
+                            case 4: return { icon: "󰗚", title: "Dock" };
+                            case 5: return { icon: "󰋋", title: "Panels" };
+                            case 6: return { icon: "󰂚", title: "Notifications" };
+                            case 7: return { icon: "󰍡", title: "OSD" };
+                            case 8: return { icon: "󰖲", title: "Shell" };
+                            case 9: return { icon: "󰕡", title: "Security" };
+                            case 10: return { icon: "", title: "System" };
+                            case 11: return { icon: "󰒓", title: "Services" };
+                            case 12: return { icon: "󰍎", title: "Location" };
+                            case 13: return { icon: "󰚥", title: "Power" };
+                            case 14: return { icon: "󰌷", title: "Hooks" };
+                            case 15: return { icon: "󰢹", title: "Niri" };
+                            case 16: return { icon: "", title: "Bar" };
+                            case 17: return { icon: "󰱖", title: "Plugins" };
+                            case 18: return { icon: "", title: "Network" };
+                            case 19: return { icon: "󰍹", title: "Display" };
+                            case 20: return { icon: "✨", title: "AI" };
+                            case 21: return { icon: "", title: "User" };
+                            case 22: return { icon: "", title: "About" };
+                            default: return { icon: "", title: "Settings" };
+                        }
+                    }
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
+
+                        // Dynamic Content Header
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: "transparent"
+                            
+
+                            
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 24
+                                anchors.rightMargin: 16
+                                spacing: 16
+                                
+                                Text {
+                                    text: contentAreaContainer.getPageData(root.currentIndex).icon
+                                    color: Theme.colOnSurfaceVariant
+                                    font.family: root.font.family
+                                    font.pixelSize: 20
+                                }
+                                
+                                Text {
+                                    text: contentAreaContainer.getPageData(root.currentIndex).title
+                                    color: Theme.colOnSurface
+                                    font.family: "Inter"
+                                    font.pixelSize: 20
+                                    font.bold: true
+                                    Layout.fillWidth: true
+                                }
+                                
+                                Rectangle {
+                                    width: 32; height: 32
+                                    radius: 16
+                                    color: closeMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "✖"
+                                        color: Theme.colOnSurfaceVariant
+                                        font.family: root.font.family
+                                        font.pixelSize: 14
+                                    }
+                                    MouseArea {
+                                        id: closeMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onClicked: root.requestClose()
+                                    }
+                                }
+                            }
+                        }
+
+                        // Content Stack
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            clip: true
 
             // We use Loader to get page transition animations, or just StackLayout.
             // StackLayout doesn't animate easily without custom item delegates.
@@ -679,64 +638,29 @@ Item {
                                                 onTriggered: wpPollProcess.running = true
                                             }
 
-                                            // Glassmorphic Light/Dark Switch Floating inside banner
-                                            Rectangle {
-                                                anchors.bottom: parent.bottom
-                                                anchors.right: parent.right
-                                                anchors.margins: 16
-                                                width: 240
-                                                height: 48
-                                                radius: 24
-                                                color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.75)
-                                                border.color: Qt.rgba(1, 1, 1, 0.1)
-                                                
-                                                RowLayout {
-                                                    anchors.fill: parent
-                                                    anchors.margins: 4
-                                                    spacing: 4
-                                                    
-                                                    // Light Mode
-                                                    Rectangle {
-                                                        Layout.fillWidth: true
-                                                        Layout.fillHeight: true
-                                                        radius: 20
-                                                        color: !appearancePage.darkTheme ? Theme.colPrimary : "transparent"
-                                                        Behavior on color { ColorAnimation { duration: 200 } }
-                                                        RowLayout {
-                                                            anchors.centerIn: parent
-                                                            spacing: 6
-                                                            Text { text: "☀"; color: !appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.pixelSize: 16 }
-                                                            Text { text: "Light"; color: !appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: !appearancePage.darkTheme }
-                                                        }
-                                                        MouseArea {
-                                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
-                                                            onClicked: {
-                                                                appearancePage.darkTheme = false;
-                                                                Quickshell.execDetached(["bash", "-c", "echo 'light' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
-                                                            }
-                                                        }
+                                        }
+
+                                        // Theme Mode Segmented Tabs
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 12
+                                            Text { text: "Theme Mode"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            
+                                            SettingsSegmentedControl {
+                                                Layout.fillWidth: true
+                                                model: [
+                                                    { label: "Light", value: "light", icon: "☀" },
+                                                    { label: "Dark", value: "dark", icon: "☾" },
+                                                    { label: "Auto", value: "auto", icon: "󰔐" }
+                                                ]
+                                                currentValue: appearancePage.darkTheme ? "dark" : "light"
+                                                onValueChanged: (value, index) => {
+                                                    if (value === "light") {
+                                                        appearancePage.darkTheme = false;
+                                                    } else if (value === "dark") {
+                                                        appearancePage.darkTheme = true;
                                                     }
-                                                    // Dark Mode
-                                                    Rectangle {
-                                                        Layout.fillWidth: true
-                                                        Layout.fillHeight: true
-                                                        radius: 20
-                                                        color: appearancePage.darkTheme ? Theme.colPrimary : "transparent"
-                                                        Behavior on color { ColorAnimation { duration: 200 } }
-                                                        RowLayout {
-                                                            anchors.centerIn: parent
-                                                            spacing: 6
-                                                            Text { text: "☾"; color: appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.pixelSize: 16 }
-                                                            Text { text: "Dark"; color: appearancePage.darkTheme ? Theme.colOnPrimary : Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: appearancePage.darkTheme }
-                                                        }
-                                                        MouseArea {
-                                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
-                                                            onClicked: {
-                                                                appearancePage.darkTheme = true;
-                                                                Quickshell.execDetached(["bash", "-c", "echo 'dark' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
-                                                            }
-                                                        }
-                                                    }
+                                                    Quickshell.execDetached(["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
                                                 }
                                             }
                                         }
@@ -933,7 +857,7 @@ Item {
                                             }
                                         }
                                         
-                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
+
 
                                         RowLayout {
                                             Layout.fillWidth: true
@@ -956,7 +880,7 @@ Item {
                                             }
                                         }
                                         
-                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
+
 
                                         ColumnLayout {
                                             Layout.fillWidth: true
@@ -1021,20 +945,16 @@ Item {
                                             Layout.fillWidth: true
                                             spacing: 12
                                             Text { text: "Position on screen"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
-                                            RowLayout {
-                                                spacing: 4
-                                                Repeater {
-                                                    model: [ {t: "↑ Top", v: 0}, {t: "← Left", v: 1}, {t: "↓ Bottom", v: 2}, {t: "→ Right", v: 3} ]
-                                                    Rectangle {
-                                                        Layout.fillWidth: true
-                                                        Layout.preferredHeight: 36
-                                                        radius: 18
-                                                        color: appearancePage.barPosition === modelData.v ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                                        Text { anchors.centerIn: parent; text: modelData.t; color: appearancePage.barPosition === modelData.v ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
-                                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.barPosition = modelData.v }
-                                                    }
-                                                }
+                                            SettingsSegmentedControl {
+                                                Layout.fillWidth: true
+                                                model: [
+                                                    { label: "Top", value: 0, icon: "↑" },
+                                                    { label: "Left", value: 1, icon: "←" },
+                                                    { label: "Bottom", value: 2, icon: "↓" },
+                                                    { label: "Right", value: 3, icon: "→" }
+                                                ]
+                                                currentValue: appearancePage.barPosition
+                                                onValueChanged: (val, idx) => { appearancePage.barPosition = val; }
                                             }
                                         }
 
@@ -1042,24 +962,19 @@ Item {
                                             Layout.fillWidth: true
                                             spacing: 12
                                             Text { text: "Bar geometry"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
-                                            RowLayout {
-                                                spacing: 4
-                                                Repeater {
-                                                    model: [ {t: "◝ Hug", v: 0}, {t: "□ Float", v: 1}, {t: "▤ Rect", v: 2} ]
-                                                    Rectangle {
-                                                        Layout.fillWidth: true
-                                                        Layout.preferredHeight: 36
-                                                        radius: 18
-                                                        color: appearancePage.barStyle === modelData.v ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                                        Text { anchors.centerIn: parent; text: modelData.t; color: appearancePage.barStyle === modelData.v ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
-                                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.barStyle = modelData.v }
-                                                    }
-                                                }
+                                            SettingsSegmentedControl {
+                                                Layout.fillWidth: true
+                                                model: [
+                                                    { label: "Hug", value: 0, icon: "◝" },
+                                                    { label: "Float", value: 1, icon: "□" },
+                                                    { label: "Rect", value: 2, icon: "▤" }
+                                                ]
+                                                currentValue: appearancePage.barStyle
+                                                onValueChanged: (val, idx) => { appearancePage.barStyle = val; }
                                             }
                                         }
 
-                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
+
 
                                         RowLayout {
                                             Layout.fillWidth: true
@@ -1099,27 +1014,21 @@ Item {
                                             }
                                         }
                                         
-                                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) }
+
 
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
                                             Text { text: "Screen rounded corners"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
-                                            RowLayout {
-                                                spacing: 4
-                                                Repeater {
-                                                    model: [ {t: "× No", v: 0}, {t: "✓ Yes", v: 1}, {t: "⛶ When not fullscreen", v: 2} ]
-                                                    Rectangle {
-                                                        width: labelText3.implicitWidth + 32
-                                                        height: 36
-                                                        radius: 18
-                                                        color: appearancePage.screenCorner === modelData.v ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                                        Text { id: labelText3; anchors.centerIn: parent; text: modelData.t; color: appearancePage.screenCorner === modelData.v ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
-                                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: appearancePage.screenCorner = modelData.v }
-                                                    }
-                                                }
-                                                Item { Layout.fillWidth: true }
+                                            SettingsSegmentedControl {
+                                                Layout.fillWidth: true
+                                                model: [
+                                                    { label: "No", value: 0, icon: "×" },
+                                                    { label: "Yes", value: 1, icon: "✓" },
+                                                    { label: "When not fullscreen", value: 2, icon: "⛶" }
+                                                ]
+                                                currentValue: appearancePage.screenCorner
+                                                onValueChanged: (val, idx) => { appearancePage.screenCorner = val; }
                                             }
                                         }
                                     }
@@ -1245,12 +1154,195 @@ Item {
                     }
                 }
 
-                // PAGE 2: TOP BAR
+                
+                // PAGE 2: TEMPLATES
                 Item {
+                    id: page2
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 2 ? 0 : 20
                     opacity: root.currentIndex === 2 ? 1 : 0
                     visible: root.currentIndex === 2 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageTemplates { anchors.fill: parent }
+                }
+
+                // PAGE 3: DESKTOP
+                Item {
+                    id: page3
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 3 ? 0 : 20
+                    opacity: root.currentIndex === 3 ? 1 : 0
+                    visible: root.currentIndex === 3 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageDesktop { anchors.fill: parent }
+                }
+
+                // PAGE 4: DOCK
+                Item {
+                    id: page4
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 4 ? 0 : 20
+                    opacity: root.currentIndex === 4 ? 1 : 0
+                    visible: root.currentIndex === 4 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageDock { anchors.fill: parent }
+                }
+
+                // PAGE 5: PANELS
+                Item {
+                    id: page5
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 5 ? 0 : 20
+                    opacity: root.currentIndex === 5 ? 1 : 0
+                    visible: root.currentIndex === 5 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPagePanels { anchors.fill: parent }
+                }
+
+                // PAGE 6: NOTIFICATIONS
+                Item {
+                    id: page6
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 6 ? 0 : 20
+                    opacity: root.currentIndex === 6 ? 1 : 0
+                    visible: root.currentIndex === 6 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageNotifications { anchors.fill: parent }
+                }
+
+                // PAGE 7: OSD
+                Item {
+                    id: page7
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 7 ? 0 : 20
+                    opacity: root.currentIndex === 7 ? 1 : 0
+                    visible: root.currentIndex === 7 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageOsd { anchors.fill: parent }
+                }
+
+                // PAGE 8: SHELL
+                Item {
+                    id: page8
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 8 ? 0 : 20
+                    opacity: root.currentIndex === 8 ? 1 : 0
+                    visible: root.currentIndex === 8 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageShell { anchors.fill: parent }
+                }
+
+                // PAGE 9: SECURITY
+                Item {
+                    id: page9
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 9 ? 0 : 20
+                    opacity: root.currentIndex === 9 ? 1 : 0
+                    visible: root.currentIndex === 9 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageSecurity { anchors.fill: parent }
+                }
+
+                // PAGE 11: SERVICES
+                Item {
+                    id: page11
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 11 ? 0 : 20
+                    opacity: root.currentIndex === 11 ? 1 : 0
+                    visible: root.currentIndex === 11 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageServices { anchors.fill: parent }
+                }
+
+                // PAGE 12: LOCATION
+                Item {
+                    id: page12
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 12 ? 0 : 20
+                    opacity: root.currentIndex === 12 ? 1 : 0
+                    visible: root.currentIndex === 12 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageLocation { anchors.fill: parent }
+                }
+
+                // PAGE 13: POWER
+                Item {
+                    id: page13
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 13 ? 0 : 20
+                    opacity: root.currentIndex === 13 ? 1 : 0
+                    visible: root.currentIndex === 13 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPagePower { anchors.fill: parent }
+                }
+
+                // PAGE 14: HOOKS
+                Item {
+                    id: page14
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 14 ? 0 : 20
+                    opacity: root.currentIndex === 14 ? 1 : 0
+                    visible: root.currentIndex === 14 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Stub: HOOKS settings will go here."
+                        color: Theme.colOnSurfaceVariant
+                        font.family: "Inter"
+                        font.pixelSize: 16
+                    }
+                }
+
+                // PAGE 15: NIRI
+                Item {
+                    id: page15
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 15 ? 0 : 20
+                    opacity: root.currentIndex === 15 ? 1 : 0
+                    visible: root.currentIndex === 15 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageNiri { anchors.fill: parent }
+                }
+
+                // PAGE 17: PLUGINS
+                Item {
+                    id: page17
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 17 ? 0 : 20
+                    opacity: root.currentIndex === 17 ? 1 : 0
+                    visible: root.currentIndex === 17 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Stub: PLUGINS settings will go here."
+                        color: Theme.colOnSurfaceVariant
+                        font.family: "Inter"
+                        font.pixelSize: 16
+                    }
+                }
+
+                // PAGE 16: TOP BAR
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 16 ? 0 : 20
+                    opacity: root.currentIndex === 16 ? 1 : 0
+                    visible: root.currentIndex === 16 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1402,12 +1494,12 @@ Item {
                     }
                 }
 
-                // PAGE 3: SYSTEM
+                // PAGE 10: SYSTEM
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 3 ? 0 : 20
-                    opacity: root.currentIndex === 3 ? 1 : 0
-                    visible: root.currentIndex === 3 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 10 ? 0 : 20
+                    opacity: root.currentIndex === 10 ? 1 : 0
+                    visible: root.currentIndex === 10 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1505,12 +1597,12 @@ Item {
                     }
                 }
 
-                // PAGE 4: NETWORK
+                // PAGE 18: NETWORK
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 4 ? 0 : 20
-                    opacity: root.currentIndex === 4 ? 1 : 0
-                    visible: root.currentIndex === 4 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 18 ? 0 : 20
+                    opacity: root.currentIndex === 18 ? 1 : 0
+                    visible: root.currentIndex === 18 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1775,15 +1867,15 @@ Item {
                     }
                 }
 
-                // PAGE 5: AI PANEL
+                // PAGE 20: AI PANEL
                 Item {
                     id: aiSettingsPage
                     property bool keyExists: false
 
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 5 ? 0 : 20
-                    opacity: root.currentIndex === 5 ? 1 : 0
-                    visible: root.currentIndex === 5 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 160 ? 0 : 20
+                    opacity: root.currentIndex === 160 ? 1 : 0
+                    visible: root.currentIndex === 160 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1949,13 +2041,13 @@ Item {
                     }
                 }
 
-                // PAGE 6: USER
+                // PAGE 21: USER
                 Item {
                     id: userPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 6 ? 0 : 20
-                    opacity: root.currentIndex === 6 ? 1 : 0
-                    visible: root.currentIndex === 6 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 161 ? 0 : 20
+                    opacity: root.currentIndex === 161 ? 1 : 0
+                    visible: root.currentIndex === 161 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1968,7 +2060,7 @@ Item {
 
                     Process {
                         command: ["bash", "-c", "echo \"$(whoami)|$(cat /etc/hostname 2>/dev/null)|$HOME|$SHELL|$(id -u)|$(id -g)\""]
-                        running: root.currentIndex === 6
+                        running: root.currentIndex === 161
                         stdout: StdioCollector {
                             onStreamFinished: {
                                 let lines = text.trim().split("|");
@@ -2107,13 +2199,13 @@ Item {
                     }
                 }
 
-                // PAGE 7: ABOUT
+                // PAGE 22: ABOUT
                 Item {
                     id: aboutPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 7 ? 0 : 20
-                    opacity: root.currentIndex === 7 ? 1 : 0
-                    visible: root.currentIndex === 7 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 162 ? 0 : 20
+                    opacity: root.currentIndex === 162 ? 1 : 0
+                    visible: root.currentIndex === 162 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2308,13 +2400,13 @@ Item {
                     }
                 } // Closes PAGE 7 Item
 
-                // PAGE 8: DISPLAY
+                // PAGE 19: DISPLAY
                 Item {
                     id: displayPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 8 ? 0 : 20
-                    opacity: root.currentIndex === 8 ? 1 : 0
-                    visible: root.currentIndex === 8 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 19 ? 0 : 20
+                    opacity: root.currentIndex === 19 ? 1 : 0
+                    visible: root.currentIndex === 19 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2746,5 +2838,7 @@ Item {
         }
         }
     }
+}
+}
 }
 
