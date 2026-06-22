@@ -330,12 +330,9 @@ Item {
         anchors.fill: parent
         focus: true
 
-        Rectangle {
+        MouseArea {
             anchors.fill: parent
-            radius: 18
-            color: root.globalTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity) : Theme.colSurface
-            border.width: 1
-            border.color: Theme.colSurfaceContainerHigh
+            // Blocks clicks from falling through to the Bar's click-away area
         }
 
         Item {

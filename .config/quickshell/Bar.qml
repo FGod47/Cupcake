@@ -32,14 +32,26 @@ PanelWindow {
             }
         }
     }
-    // Strictly fixed to 46 to prevent Hyprland layer resize jitter when the dropdown closes
-    implicitHeight: settingsOpen ? 760 : (((globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland) || globalState.closingIsland) ? 600 : 46)
+    // Strictly fixed to screen height to prevent Hyprland layer resize jitter breaking animations
+    // and to allow the Settings menu to animate to the center of the screen
+    implicitHeight: modelData.height
     color: "transparent"
     
-    mask: Region {
+    mask: bar.settingsOpen ? settingsMask : normalMask
+    
+    Region {
+        id: normalMask
         Region { item: leftModules }
         Region { item: archPill }
         Region { item: rightModules }
+    }
+    
+    Region {
+        id: settingsMask
+        Region { item: leftModules }
+        Region { item: archPill }
+        Region { item: rightModules }
+        Region { item: fullScreenClickAway }
     }
 
     property var modelData
@@ -57,6 +69,15 @@ PanelWindow {
     readonly property color fg: Theme.colOnSurface
     readonly property string fontName: "JetBrainsMono Nerd Font Propo"
     readonly property int fontSize: 14
+
+    // Full-screen click-away area when settings is open
+    MouseArea {
+        id: fullScreenClickAway
+        anchors.fill: parent
+        enabled: bar.settingsOpen
+        onClicked: bar.settingsOpen = false
+        z: -1
+    }
 
     // padding 0 16px translates to implicitWidth = contentItem.width + 32
     // margin: 8px 4px 0 4px is handled by Layout properties or anchors
@@ -174,20 +195,28 @@ PanelWindow {
         // =======================
         // CENTER MODULES
         // =======================
+        
+        
         Rectangle {
             id: archPill
-            anchors.top: parent.top
-            anchors.topMargin: (parent.height - 34) / 2
+            clip: true
+            y: bar.settingsOpen ? ((modelData.height - 750) / 2) - 8 : (parent.height - 34) / 2
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
-            implicitHeight: bar.settingsOpen ? 750 : 34
-            implicitWidth: bar.settingsOpen ? 1100 : archText.implicitWidth + 32
+            width: bar.settingsOpen ? 1100 : archText.implicitWidth + 32
+            height: bar.settingsOpen ? 750 : 34
             
-            Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
-            Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
             property color c1: Theme.colPrimary
             property color c2: Theme.colSecondary
+            property real bgOpacity: bar.settingsOpen ? 1.0 : 0.0
+            Behavior on bgOpacity { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property real morphProgress: bar.settingsOpen ? 1.0 : 0.0
+            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
             gradient: Gradient {
                 orientation: Gradient.Horizontal
@@ -199,6 +228,16 @@ PanelWindow {
                 loops: Animation.Infinite
                 ColorAnimation { to: Theme.colSecondary; duration: 2000 }
                 ColorAnimation { to: Theme.colPrimary; duration: 2000 }
+            }
+            
+            // Crossfade background that natively preserves rounded corners
+            Rectangle {
+                anchors.fill: parent
+                radius: 18
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
+                border.width: 1
+                border.color: Theme.colSurfaceContainerHigh
+                opacity: archPill.bgOpacity
             }
 
             SequentialAnimation on c2 {
@@ -219,17 +258,32 @@ PanelWindow {
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             }
 
-            Loader {
+            // Inner clipping container for the content
+            // Keeps the square clip box away from the natively rounded background edges!
+            Item {
                 anchors.fill: parent
-                source: "SettingsUI.qml"
-                active: bar.settingsOpen || opacity > 0
-                opacity: bar.settingsOpen ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 400; easing.type: bar.settingsOpen ? Easing.OutCubic : Easing.InCubic } }
+                anchors.margins: 16
+                clip: true
                 
-                Connections {
-                    target: item
-                    function onRequestClose() {
-                        bar.settingsOpen = false;
+                Loader {
+                    id: settingsLoader
+                    anchors.fill: parent
+                    source: "SettingsUI.qml"
+                    active: true
+                    
+                    // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
+                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
+                    visible: opacity > 0
+                    
+                    onLoaded: {
+                        item.anchors.centerIn = settingsLoader;
+                    }
+                    
+                    Connections {
+                        target: settingsLoader.item
+                        function onRequestClose() {
+                            bar.settingsOpen = false;
+                        }
                     }
                 }
             }
