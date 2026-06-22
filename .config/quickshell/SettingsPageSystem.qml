@@ -43,8 +43,29 @@ Item {
                                 Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                             }
                             StyledComboBox {
+                                id: defaultFontCombo
                                 Layout.preferredWidth: 200
-                                model: ["Fira Sans", Theme.defaultFontFamily, "Roboto"]
+                                model: ["Inter"]
+                                currentIndex: model.indexOf(Theme.defaultFontFamily) !== -1 ? model.indexOf(Theme.defaultFontFamily) : 0
+                                onActivated: (index) => {
+                                    let font = model[index];
+                                    Theme.defaultFontFamily = font;
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.font_default"]);
+                                }
+                                
+                                Process {
+                                    command: ["bash", "-c", "fc-list : family | cut -d, -f1 | sort | uniq"]
+                                    running: true
+                                    stdout: StdioCollector {
+                                        onStreamFinished: {
+                                            if (text.trim() !== "") {
+                                                let fonts = text.trim().split("\n");
+                                                defaultFontCombo.model = fonts;
+                                                defaultFontCombo.currentIndex = defaultFontCombo.model.indexOf(Theme.defaultFontFamily) !== -1 ? defaultFontCombo.model.indexOf(Theme.defaultFontFamily) : 0;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         
