@@ -1482,105 +1482,14 @@ Item {
 
                 // PAGE 10: SYSTEM
                 Item {
+                    id: page10
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 10 ? 0 : 20
                     opacity: root.currentIndex === 10 ? 1 : 0
                     visible: root.currentIndex === 10 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 16
-
-                        Text {
-                            text: "System Controls"
-                            color: Theme.colOnSurface
-                            font.family: root.font.family
-                            font.pixelSize: 32
-                            font.bold: true
-                        }
-                        
-                        Text {
-                            text: "Power and Session management"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: root.font.family
-                            font.pixelSize: 14
-                            Layout.bottomMargin: 16
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 64
-                            color: Theme.colSurfaceContainer
-                            radius: 12
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                Text {
-                                    text: "Reload Hyprland Config"
-                                    color: Theme.colOnSurface
-                                    font.family: root.font.family
-                                    font.pixelSize: 16
-                                    Layout.fillWidth: true
-                                }
-                                Button {
-                                    text: "Reload"
-                                    font.family: root.font.family
-                                    onClicked: Quickshell.execDetached(["hyprctl", "reload"])
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 64
-                            color: Theme.colSurfaceContainer
-                            radius: 12
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                Text {
-                                    text: "Reboot System"
-                                    color: Theme.colOnSurface
-                                    font.family: root.font.family
-                                    font.pixelSize: 16
-                                    Layout.fillWidth: true
-                                }
-                                Button {
-                                    text: "Reboot"
-                                    font.family: root.font.family
-                                    onClicked: Quickshell.execDetached(["systemctl", "reboot"])
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 64
-                            color: Theme.colSurfaceContainer
-                            radius: 12
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                Text {
-                                    text: "Open Configuration Folder"
-                                    color: Theme.colOnSurface
-                                    font.family: root.font.family
-                                    font.pixelSize: 16
-                                    Layout.fillWidth: true
-                                }
-                                Button {
-                                    text: "Open"
-                                    font.family: root.font.family
-                                    onClicked: Quickshell.execDetached(["xdg-open", "/home/zero/.config/cupcake"])
-                                }
-                            }
-                        }
-
-                        Item { Layout.fillHeight: true }
-                    }
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    SettingsPageSystem { anchors.fill: parent }
                 }
 
                 // PAGE 17: NETWORK
