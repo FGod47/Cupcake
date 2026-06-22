@@ -43,7 +43,6 @@ PanelWindow {
         id: markCloseProc
         command: ["bash", "-c", "echo 0 > /tmp/cupcake_settings"]
         running: false
-        onExited: Qt.quit()
     }
 
     Process {
@@ -353,7 +352,10 @@ PanelWindow {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: closeAnim.start()
+        onClicked: {
+            markCloseProc.running = true;
+            closeAnim.start();
+        }
         z: -1
     }
 
@@ -365,15 +367,20 @@ PanelWindow {
         y: 6
         focus: true
 
-        Component.onCompleted: morphAnim.start()
+        Timer {
+            id: startupDelay
+            interval: 120
+            running: true
+            onTriggered: morphAnim.start()
+        }
 
         ParallelAnimation {
             id: morphAnim
-            NumberAnimation { target: mainWrapper; property: "width"; to: 1100; duration: 550; easing.type: Easing.OutCubic }
-            NumberAnimation { target: mainWrapper; property: "height"; to: 750; duration: 550; easing.type: Easing.OutCubic }
-            NumberAnimation { target: mainWrapper; property: "y"; to: 46; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
-            NumberAnimation { target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 600; easing.type: Easing.OutCubic }
-            NumberAnimation { target: fakeArchPill; property: "opacity"; from: 1.0; to: 0.0; duration: 300; easing.type: Easing.OutCubic }
+            NumberAnimation { target: mainWrapper; property: "width"; to: 1100; duration: 500; easing.type: Easing.OutCubic }
+            NumberAnimation { target: mainWrapper; property: "height"; to: 750; duration: 500; easing.type: Easing.OutCubic }
+            NumberAnimation { target: mainWrapper; property: "y"; to: 46; duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+            NumberAnimation { target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 500; easing.type: Easing.OutCubic }
+            NumberAnimation { target: fakeArchPill; property: "opacity"; from: 1.0; to: 0.0; duration: 250; easing.type: Easing.OutCubic }
         }
 
         ParallelAnimation {
@@ -381,9 +388,9 @@ PanelWindow {
             NumberAnimation { target: mainWrapper; property: "width"; to: fakeArchText.implicitWidth + 32; duration: 400; easing.type: Easing.InCubic }
             NumberAnimation { target: mainWrapper; property: "height"; to: 34; duration: 400; easing.type: Easing.InCubic }
             NumberAnimation { target: mainWrapper; property: "y"; to: 6; duration: 400; easing.type: Easing.InBack; easing.overshoot: 1.0 }
-            NumberAnimation { target: contentOpacity; property: "opacity"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
+            NumberAnimation { target: contentOpacity; property: "opacity"; to: 0.0; duration: 200; easing.type: Easing.InCubic }
             NumberAnimation { target: fakeArchPill; property: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InCubic }
-            onFinished: markCloseProc.running = true
+            onFinished: Qt.quit()
         }
 
         // Settings Background
@@ -508,7 +515,10 @@ PanelWindow {
                         id: closeMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onClicked: closeAnim.start()
+                        onClicked: {
+            markCloseProc.running = true;
+            closeAnim.start();
+        }
                     }
                 }
             }
