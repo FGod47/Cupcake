@@ -332,7 +332,12 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            // Blocks clicks from falling through to the Bar's click-away area
+            hoverEnabled: true
+            preventStealing: true
+            onPressed: mouse.accepted = true
+            onReleased: mouse.accepted = true
+            onClicked: mouse.accepted = true
+            onWheel: wheel.accepted = true
         }
 
         Item {
@@ -428,7 +433,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: navExpanded ? 180 : 56
                     
-                    color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5) : Theme.colSurfaceContainer
+                    color: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.4) : Theme.colSurfaceContainer
                     radius: 10
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -587,7 +592,6 @@ Item {
                         anchors.margins: 24
                         contentHeight: contentCol.implicitHeight + 40
                         clip: true
-                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded; active: true }
 
                         ColumnLayout {
                             id: contentCol

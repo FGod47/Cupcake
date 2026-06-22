@@ -8,7 +8,9 @@ Rectangle {
     property string title: ""
     property string icon: ""
     
-    property color surfaceColor
+    property color surfaceColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.4) : Theme.colSurfaceContainer
+    property color surfaceHoverColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.5) : Theme.colSurfaceContainerHigh
+    property color surfacePressColor: root.globalTransparency ? Qt.rgba(Theme.colSurfaceContainerHighest.r, Theme.colSurfaceContainerHighest.g, Theme.colSurfaceContainerHighest.b, 0.6) : Theme.colSurfaceContainerHighest
     property color outlineColor
     property color primaryColor
     property color onSurfaceColor

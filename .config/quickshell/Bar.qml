@@ -106,8 +106,7 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
             
-            opacity: bar.settingsOpen ? 0.0 : 1.0
-            visible: opacity > 0
+            visible: true
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Workspaces Pill (#workspaces)
@@ -199,7 +198,6 @@ PanelWindow {
         
         Rectangle {
             id: archPill
-            clip: true
             y: bar.settingsOpen ? ((modelData.height - 750) / 2) - 8 : (parent.height - 34) / 2
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
@@ -212,32 +210,38 @@ PanelWindow {
             
             property color c1: Theme.colPrimary
             property color c2: Theme.colSecondary
-            property real bgOpacity: bar.settingsOpen ? 1.0 : 0.0
+            
+            // The background opacity must remain high enough that its resulting alpha
+            // (root.globalOpacity * bgOpacity) stays above Hyprland's ignore_alpha=0.2 threshold!
+            property real bgOpacity: bar.settingsOpen ? (Theme.globalTransparency ? 0.4 : 1.0) : 1.0
             Behavior on bgOpacity { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
             property real morphProgress: bar.settingsOpen ? 1.0 : 0.0
             Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: archPill.c1 }
-                GradientStop { position: 1.0; color: archPill.c2 }
+            // The solid glass color that covers the entire pill (won't be ignored now because gradient is removed from the parent)
+            color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity * archPill.bgOpacity)
+            border.width: 1
+            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3 * archPill.bgOpacity)
+            
+            // The gradient is in a child Rectangle. We DO NOT use the opacity property because
+            // animating opacity forces QML to use an FBO, which flattens and destroys the Wayland alpha channel.
+            // Instead, we directly animate the alpha channels of the GradientStops.
+            Rectangle {
+                anchors.fill: parent
+                radius: 18
+                
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
+                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
+                }
             }
 
             SequentialAnimation on c1 {
                 loops: Animation.Infinite
                 ColorAnimation { to: Theme.colSecondary; duration: 2000 }
                 ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-            }
-            
-            // Crossfade background that natively preserves rounded corners
-            Rectangle {
-                anchors.fill: parent
-                radius: 18
-                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
-                border.width: 1
-                border.color: Theme.colSurfaceContainerHigh
-                opacity: archPill.bgOpacity
             }
 
             SequentialAnimation on c2 {
@@ -263,6 +267,16 @@ PanelWindow {
             Item {
                 anchors.fill: parent
                 anchors.margins: 16
+                
+                // Catch stray clicks inside the padding so they don't fall through to the background
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.margins: -16 // Cover the full archPill area
+                    enabled: bar.settingsOpen
+                    onPressed: mouse.accepted = true
+                    onReleased: mouse.accepted = true
+                    onClicked: mouse.accepted = true
+                }
                 clip: true
                 
                 Loader {
@@ -305,8 +319,7 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
             
-            opacity: bar.settingsOpen ? 0.0 : 1.0
-            visible: opacity > 0
+            visible: true
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Network Pill
