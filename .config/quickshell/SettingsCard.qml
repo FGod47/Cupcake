@@ -6,6 +6,7 @@ import "theme"
 Rectangle {
     id: cardRoot
     property string title: ""
+    property string description: ""
     property string icon: ""
     
     // Colors
@@ -31,25 +32,41 @@ Rectangle {
         anchors.bottomMargin: 14
         spacing: 16
 
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            visible: cardRoot.title !== ""
-            spacing: 12
-            
-            Text { 
-                visible: cardRoot.icon !== ""
-                text: cardRoot.icon
-                color: Theme.colOnSurfaceVariant
-                font.pixelSize: 18
-                font.family: "JetBrainsMono Nerd Font Propo" 
+            visible: cardRoot.title !== "" || cardRoot.description !== ""
+            spacing: 4
+
+            RowLayout {
+                Layout.fillWidth: true
+                visible: cardRoot.title !== ""
+                spacing: 12
+                
+                Text { 
+                    visible: cardRoot.icon !== ""
+                    text: cardRoot.icon
+                    color: Theme.colOnSurfaceVariant
+                    font.pixelSize: 18
+                    font.family: "JetBrainsMono Nerd Font Propo" 
+                }
+                Text { 
+                    text: cardRoot.title
+                    color: onSurfaceColor
+                    font.family: "Inter"
+                    font.pixelSize: 18
+                    font.bold: true
+                    Layout.fillWidth: true 
+                }
             }
-            Text { 
-                text: cardRoot.title
-                color: onSurfaceColor
+            
+            Text {
+                visible: cardRoot.description !== ""
+                text: cardRoot.description
+                color: Theme.colOnSurfaceVariant
                 font.family: "Inter"
-                font.pixelSize: 18
-                font.bold: true
-                Layout.fillWidth: true 
+                font.pixelSize: 12
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
             }
         }
 
