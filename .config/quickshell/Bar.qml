@@ -16,6 +16,7 @@ PanelWindow {
         right: true
     }
     WlrLayershell.namespace: "quickshell"
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     property bool settingsOpen: false
     onSettingsOpenChanged: globalState.settingsOpen = settingsOpen;
     exclusiveZone: 46
