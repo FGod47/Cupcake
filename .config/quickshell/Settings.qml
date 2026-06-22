@@ -346,10 +346,10 @@ PanelWindow {
 
     Item {
         id: mainWrapper
-        width: 150
+        width: 102
         height: 34
         x: (parent.width - width) / 2
-        y: -100
+        y: 6
         focus: true
 
         Component.onCompleted: morphAnim.start()
@@ -363,7 +363,7 @@ PanelWindow {
                 target: mainWrapper; property: "height"; to: 750; duration: 550; easing.type: Easing.OutCubic
             }
             NumberAnimation {
-                target: mainWrapper; property: "y"; to: (root.height - 750) / 2; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2
+                target: mainWrapper; property: "y"; to: 46; duration: 550; easing.type: Easing.OutBack; easing.overshoot: 1.2
             }
             NumberAnimation {
                 target: contentOpacity; property: "opacity"; from: 0.0; to: 1.0; duration: 600; easing.type: Easing.OutCubic
