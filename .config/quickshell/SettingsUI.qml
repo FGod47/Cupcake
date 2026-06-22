@@ -387,16 +387,15 @@ Item {
                         
                         NavHeader { text: "ADVANCED" }
                         NavButton { iconText: "󰌷"; labelText: "Hooks"; pageIndex: 14 }
-                        NavButton { iconText: "󰢹"; labelText: "Niri"; pageIndex: 15 }
-                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 16 }
-                        NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 17 }
+                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 15 }
+                        NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 16 }
 
                         NavHeader { text: "CUPCAKE EXTRA" }
-                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 18 }
-                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 19 }
-                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 20 }
-                        NavButton { iconText: ""; labelText: "User"; pageIndex: 21 }
-                        NavButton { iconText: ""; labelText: "About"; pageIndex: 22 }
+                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 17 }
+                        NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 18 }
+                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 19 }
+                        NavButton { iconText: ""; labelText: "User"; pageIndex: 20 }
+                        NavButton { iconText: ""; labelText: "About"; pageIndex: 21 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
@@ -428,14 +427,13 @@ Item {
                             case 12: return { icon: "󰍎", title: "Location" };
                             case 13: return { icon: "󰚥", title: "Power" };
                             case 14: return { icon: "󰌷", title: "Hooks" };
-                            case 15: return { icon: "󰢹", title: "Niri" };
-                            case 16: return { icon: "", title: "Bar" };
-                            case 17: return { icon: "󰱖", title: "Plugins" };
-                            case 18: return { icon: "", title: "Network" };
-                            case 19: return { icon: "󰍹", title: "Display" };
-                            case 20: return { icon: "✨", title: "AI" };
-                            case 21: return { icon: "", title: "User" };
-                            case 22: return { icon: "", title: "About" };
+                            case 15: return { icon: "", title: "Bar" };
+                            case 16: return { icon: "󰱖", title: "Plugins" };
+                            case 17: return { icon: "", title: "Network" };
+                            case 18: return { icon: "󰍹", title: "Display" };
+                            case 19: return { icon: "✨", title: "AI" };
+                            case 20: return { icon: "", title: "User" };
+                            case 21: return { icon: "", title: "About" };
                             default: return { icon: "", title: "Settings" };
                         }
                     }
@@ -1306,25 +1304,13 @@ Item {
                     }
                 }
 
-                // PAGE 15: NIRI
+                // PAGE 16: PLUGINS
                 Item {
-                    id: page15
+                    id: page16
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 15 ? 0 : 20
-                    opacity: root.currentIndex === 15 ? 1 : 0
-                    visible: root.currentIndex === 15 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageNiri { anchors.fill: parent }
-                }
-
-                // PAGE 17: PLUGINS
-                Item {
-                    id: page17
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 17 ? 0 : 20
-                    opacity: root.currentIndex === 17 ? 1 : 0
-                    visible: root.currentIndex === 17 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 16 ? 0 : 20
+                    opacity: root.currentIndex === 16 ? 1 : 0
+                    visible: root.currentIndex === 16 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
 
@@ -1337,12 +1323,12 @@ Item {
                     }
                 }
 
-                // PAGE 16: TOP BAR
+                // PAGE 15: TOP BAR
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 16 ? 0 : 20
-                    opacity: root.currentIndex === 16 ? 1 : 0
-                    visible: root.currentIndex === 16 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 15 ? 0 : 20
+                    opacity: root.currentIndex === 15 ? 1 : 0
+                    visible: root.currentIndex === 15 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1597,12 +1583,12 @@ Item {
                     }
                 }
 
-                // PAGE 18: NETWORK
+                // PAGE 17: NETWORK
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 18 ? 0 : 20
-                    opacity: root.currentIndex === 18 ? 1 : 0
-                    visible: root.currentIndex === 18 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 17 ? 0 : 20
+                    opacity: root.currentIndex === 17 ? 1 : 0
+                    visible: root.currentIndex === 17 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1867,15 +1853,15 @@ Item {
                     }
                 }
 
-                // PAGE 20: AI PANEL
+                // PAGE 19: AI PANEL
                 Item {
                     id: aiSettingsPage
                     property bool keyExists: false
 
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 160 ? 0 : 20
-                    opacity: root.currentIndex === 160 ? 1 : 0
-                    visible: root.currentIndex === 160 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 159 ? 0 : 20
+                    opacity: root.currentIndex === 159 ? 1 : 0
+                    visible: root.currentIndex === 159 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2041,13 +2027,13 @@ Item {
                     }
                 }
 
-                // PAGE 21: USER
+                // PAGE 20: USER
                 Item {
                     id: userPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 161 ? 0 : 20
-                    opacity: root.currentIndex === 161 ? 1 : 0
-                    visible: root.currentIndex === 161 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 160 ? 0 : 20
+                    opacity: root.currentIndex === 160 ? 1 : 0
+                    visible: root.currentIndex === 160 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2060,7 +2046,7 @@ Item {
 
                     Process {
                         command: ["bash", "-c", "echo \"$(whoami)|$(cat /etc/hostname 2>/dev/null)|$HOME|$SHELL|$(id -u)|$(id -g)\""]
-                        running: root.currentIndex === 161
+                        running: root.currentIndex === 160
                         stdout: StdioCollector {
                             onStreamFinished: {
                                 let lines = text.trim().split("|");
@@ -2199,13 +2185,13 @@ Item {
                     }
                 }
 
-                // PAGE 22: ABOUT
+                // PAGE 21: ABOUT
                 Item {
                     id: aboutPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 162 ? 0 : 20
-                    opacity: root.currentIndex === 162 ? 1 : 0
-                    visible: root.currentIndex === 162 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 161 ? 0 : 20
+                    opacity: root.currentIndex === 161 ? 1 : 0
+                    visible: root.currentIndex === 161 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -2400,13 +2386,13 @@ Item {
                     }
                 } // Closes PAGE 7 Item
 
-                // PAGE 19: DISPLAY
+                // PAGE 18: DISPLAY
                 Item {
                     id: displayPage
                     anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 19 ? 0 : 20
-                    opacity: root.currentIndex === 19 ? 1 : 0
-                    visible: root.currentIndex === 19 || opacity > 0
+                    anchors.topMargin: root.currentIndex === 18 ? 0 : 20
+                    opacity: root.currentIndex === 18 ? 1 : 0
+                    visible: root.currentIndex === 18 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
