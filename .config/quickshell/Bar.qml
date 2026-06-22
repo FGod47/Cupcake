@@ -183,9 +183,8 @@ PanelWindow {
                     anchors.centerIn: parent
                     text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
                     color: Theme.colSurfaceContainerHigh
-                    font.family: fontName
-                    font.pixelSize: fontSize
-                    font.weight: 500
+                    font.family: Theme.defaultFontFamily
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                     elide: Text.ElideRight
                     maximumLineCount: 1
                     width: Math.min(implicitWidth, 400)
@@ -220,7 +219,7 @@ PanelWindow {
                     text: ""
                     color: fg
                     font.family: fontName
-                    font.pixelSize: fontSize
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                 }
                 
                 Process {
@@ -253,7 +252,7 @@ PanelWindow {
                     text: "HW"
                     color: Theme.colOnSurfaceVariant
                     font.family: fontName
-                    font.pixelSize: fontSize
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                 }
                 Process {
                     id: hwProc
@@ -286,7 +285,7 @@ PanelWindow {
                     text: ""
                     color: fg
                     font.family: fontName
-                    font.pixelSize: fontSize
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                 }
                 Process {
                     id: recProc
@@ -370,7 +369,7 @@ PanelWindow {
                     // Audio
                     Row {
                         spacing: 0
-                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: audioSlider
                             leftPadding: 8
@@ -421,7 +420,7 @@ PanelWindow {
                         Text {
                             leftPadding: 8
                             text: Math.round(audioSlider.value) + "%"
-                            color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                            color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
@@ -432,7 +431,7 @@ PanelWindow {
                     // Backlight
                     Row {
                         spacing: 0
-                        Text { text: lightSlider.value < 33 ? "󰃞" : (lightSlider.value < 66 ? "󰃝" : "󰃠"); color: fg; font.family: fontName; font.pixelSize: fontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: lightSlider.value < 33 ? "󰃞" : (lightSlider.value < 66 ? "󰃝" : "󰃠"); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
                             leftPadding: 8
@@ -498,7 +497,7 @@ PanelWindow {
                         Text {
                             leftPadding: 8
                             text: Math.round(lightSlider.value) + "%"
-                            color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                            color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
@@ -573,16 +572,16 @@ PanelWindow {
                             Text {
                                 id: notifText
                                 text: "󰂚"
-                                color: Theme.colPrimary; font.family: fontName; font.pixelSize: fontSize
+                                color: Theme.colPrimary; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible }
                             }
 
-                            Text { text: " | "; color: fg; font.family: fontName; font.pixelSize: fontSize }
+                            Text { text: " | "; color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
 
                             Text {
                                 id: customClockText
                                 text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
-                                color: fg; font.family: fontName; font.pixelSize: fontSize; font.weight: 500
+                                color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                                 onTextChanged: globalState.clockString = text
                                 Component.onCompleted: globalState.clockString = text
                                 MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
@@ -618,9 +617,9 @@ PanelWindow {
                                 else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
-                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: Theme.monoFontFamily; font.pixelSize: 14 }
-                        Text { text: " | "; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 14 }
-                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 14; font.weight: 500 }
+                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
+                        Text { text: " | "; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
+                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
                     }
 
                     // The dropdown column
@@ -691,9 +690,8 @@ PanelWindow {
                             Text {
                                 text: "Power "
                                 color: bg
-                                font.family: fontName
-                                font.pixelSize: fontSize
-                                font.weight: 500
+                                font.family: Theme.defaultFontFamily
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 visible: !powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
                             }
@@ -703,10 +701,10 @@ PanelWindow {
                                 spacing: 12
                                 visible: powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
-                                Text { text: "󰤄 Sleep "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
-                                Text { text: "󰗽 Logout "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl terminate-user $USER || hyprctl dispatch exit"]); } } }
-                                Text { text: " Reboot "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } } }
-                                Text { text: " Shutdown "; color: bg; font.family: fontName; font.pixelSize: fontSize; font.weight: 600; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
+                                Item { implicitWidth: sleepRow.implicitWidth; implicitHeight: sleepRow.implicitHeight; Row { id: sleepRow; spacing: 4; Text { text: "󰤄"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Sleep "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
+                                Item { implicitWidth: logoutRow.implicitWidth; implicitHeight: logoutRow.implicitHeight; Row { id: logoutRow; spacing: 4; Text { text: "󰗽"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Logout "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl terminate-user $USER || hyprctl dispatch exit"]); } } }
+                                Item { implicitWidth: rebootRow.implicitWidth; implicitHeight: rebootRow.implicitHeight; Row { id: rebootRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Reboot "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } } }
+                                Item { implicitWidth: shutdownRow.implicitWidth; implicitHeight: shutdownRow.implicitHeight; Row { id: shutdownRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Shutdown "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
                             }
                         }
                     }
@@ -716,8 +714,7 @@ PanelWindow {
                         text: ""
                         color: bg
                         font.family: fontName
-                        font.pixelSize: fontSize
-                        font.weight: 500
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !powerPill.actionsExpanded
                     }
@@ -797,16 +794,24 @@ PanelWindow {
                 ColorAnimation { to: Theme.colSecondary; duration: 2000 }
             }
             
-            Text {
+            Row {
                 id: archText
                 anchors.centerIn: parent
-                text: " Arch"
-                color: Theme.colSurfaceContainerHigh
-                font.family: fontName
-                font.pixelSize: fontSize
-                font.weight: 500
+                spacing: 6
                 opacity: bar.settingsOpen ? 0.0 : 1.0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Text {
+                    text: ""
+                    color: Theme.colSurfaceContainerHigh
+                    font.family: fontName
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                }
+                Text {
+                    text: "Arch"
+                    color: Theme.colSurfaceContainerHigh
+                    font.family: Theme.defaultFontFamily
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                }
             }
 
             // Catch stray clicks inside the padding so they don't fall through to the background

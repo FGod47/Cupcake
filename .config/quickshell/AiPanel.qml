@@ -109,7 +109,7 @@ PanelWindow {
                     // Gemini Icon
                     Text {
                         text: "✨"
-                        font.pixelSize: 24
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: 24
                         color: Theme.colPrimary
                     }
 
@@ -124,7 +124,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "󰃢" // Broom icon
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 18
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
                         MouseArea {
@@ -146,7 +146,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "" // Gear icon
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 18
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
                         MouseArea {
@@ -223,7 +223,7 @@ PanelWindow {
                             Text {
                                 anchors.centerIn: parent
                                 text: "✨"
-                                font.pixelSize: 20
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 color: "#8AB4F8"
                             }
                         }
@@ -270,7 +270,7 @@ PanelWindow {
                                 textFormat: Text.MarkdownText
                                 wrapMode: Text.WordWrap
                                 color: Theme.colOnSurface
-                                font.pixelSize: 15
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
                                 font.family: Theme.defaultFontFamily
                                 lineHeight: 1.4
                                 
@@ -398,7 +398,7 @@ PanelWindow {
                     placeholderText: aiWindow.isImageMode ? "Describe an image..." : "Ask Gemini"
                     placeholderTextColor: Theme.colOnSurfaceVariant
                     color: Theme.colOnSurface
-                    font.pixelSize: 16
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                     font.family: Theme.defaultFontFamily
                     background: Item {}
                     verticalAlignment: TextInput.AlignVCenter
@@ -480,7 +480,7 @@ PanelWindow {
                             Text {
                                 text: modelCombo.currentIndex === index ? "" : ""
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 14
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 color: Theme.colOnSurfaceVariant
                                 Layout.preferredWidth: 20
                             }
@@ -508,7 +508,7 @@ PanelWindow {
                                         return "Standard";
                                     }
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 12
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                                     color: Theme.colOnSurfaceVariant
                                 }
                             }

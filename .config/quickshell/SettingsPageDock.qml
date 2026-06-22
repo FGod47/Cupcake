@@ -55,8 +55,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Enabled"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Enabled"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -68,8 +68,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Active Monitor Only"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Active Monitor Only"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Active Monitor Only"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Active Monitor Only"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -81,8 +81,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Monitors"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Monitors"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Monitors"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Monitors"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -116,8 +116,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Auto Hide"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Auto Hide"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Auto Hide"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Auto Hide"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -129,8 +129,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Reserve Space"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Reserve Space"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Reserve Space"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Reserve Space"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -142,8 +142,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Show Running"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Show Running"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Show Running"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Show Running"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -155,8 +155,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Show Dots"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Show Dots"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Show Dots"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Show Dots"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -168,8 +168,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Show Instance Count"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Show Instance Count"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Show Instance Count"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Show Instance Count"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -181,8 +181,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -194,8 +194,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Icon"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Icon"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Icon"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Icon"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -207,8 +207,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Magnification"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Magnification"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Magnification"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Magnification"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -242,8 +242,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -255,8 +255,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Icon Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Icon Size"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Icon Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Icon Size"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -268,8 +268,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Main Axis Padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Main Axis Padding"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Main Axis Padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Main Axis Padding"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -281,8 +281,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Cross Axis Padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Cross Axis Padding"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Cross Axis Padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Cross Axis Padding"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -294,8 +294,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Item Spacing"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Item Spacing"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Item Spacing"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Item Spacing"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -307,8 +307,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Ends Margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Ends Margin"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Ends Margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Ends Margin"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -320,8 +320,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Edge Margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Edge Margin"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Edge Margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Edge Margin"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -355,8 +355,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Corner Radius"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Corner Radius"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Corner Radius"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Corner Radius"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -368,8 +368,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Corner Top Left"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Corner Top Left"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Corner Top Left"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Corner Top Left"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -381,8 +381,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Corner Top Right"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Corner Top Right"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Corner Top Right"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Corner Top Right"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -394,8 +394,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Corner Bottom Left"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Corner Bottom Left"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Corner Bottom Left"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Corner Bottom Left"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -407,8 +407,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Corner Bottom Right"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Corner Bottom Right"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Corner Bottom Right"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Corner Bottom Right"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -442,8 +442,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Background Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Background Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Background Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Background Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -455,8 +455,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Shadow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Shadow"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Shadow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Shadow"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -490,8 +490,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Active Icon Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Active Icon Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Active Icon Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Active Icon Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -503,8 +503,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Inactive Icon Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Inactive Icon Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Inactive Icon Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Inactive Icon Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -516,8 +516,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Magnification Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Magnification Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Magnification Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Magnification Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -529,8 +529,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Active Icon Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Active Icon Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Active Icon Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Active Icon Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -542,8 +542,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Inactive Icon Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Inactive Icon Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Inactive Icon Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Inactive Icon Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -577,8 +577,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Pinned Apps"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Pinned Apps"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Pinned Apps"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Pinned Apps"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false

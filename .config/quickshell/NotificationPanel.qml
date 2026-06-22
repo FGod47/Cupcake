@@ -110,7 +110,7 @@ PanelWindow {
                             text: ""
                             color: Theme.colOnSurface
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 20
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                             anchors.centerIn: parent
                         }
                         HoverHandler { id: closeHover }
@@ -155,13 +155,13 @@ PanelWindow {
                                 text: "󰂚"
                                 color: Theme.colOnSurfaceVariant
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 64
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: 64
                                 Layout.alignment: Qt.AlignHCenter
                             }
                             Text {
                                 text: "No Notifications"
                                 color: Theme.colOnSurfaceVariant
-                                font.family: Theme.monoFontFamily
+                                font.family: Theme.defaultFontFamily
                                 font.pixelSize: 20
                                 font.weight: 600
                                 Layout.alignment: Qt.AlignHCenter
@@ -202,7 +202,7 @@ PanelWindow {
                 text: "󰎟" // Trash / Clear All icon
                 color: clearHover.hovered ? "#11111b" : Theme.colOnSurface
                 font.family: Theme.monoFontFamily
-                font.pixelSize: 24
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 24
                 anchors.centerIn: parent
             }
             HoverHandler { id: clearHover }

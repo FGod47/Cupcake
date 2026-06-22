@@ -52,8 +52,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Enabled"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Enabled"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -65,8 +65,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Fill Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Fill Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Fill Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Fill Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -78,8 +78,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Fill Color"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Fill Color"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Fill Color"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Fill Color"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 Rectangle {
                                     width: 24; height: 24; radius: 12
@@ -115,8 +115,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Directory"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Directory"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Directory"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Directory"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -128,8 +128,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Directory Light"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Directory Light"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Directory Light"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Directory Light"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -141,8 +141,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Directory Dark"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Directory Dark"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Directory Dark"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Directory Dark"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -154,8 +154,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Per Monitor Directories"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Per Monitor Directories"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Per Monitor Directories"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Per Monitor Directories"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -189,8 +189,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Transitions"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Transitions"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Transitions"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Transitions"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -202,8 +202,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Transition Duration"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Transition Duration"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Transition Duration"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Transition Duration"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -215,8 +215,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Edge Smoothness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Edge Smoothness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Edge Smoothness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Edge Smoothness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -228,8 +228,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Transition On Startup"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Transition On Startup"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Transition On Startup"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Transition On Startup"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -263,8 +263,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Automation"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Automation"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Automation"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Automation"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -276,8 +276,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Automation Interval"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Automation Interval"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Automation Interval"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Automation Interval"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -289,8 +289,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Automation Order"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Automation Order"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Automation Order"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Automation Order"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -302,8 +302,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Automation Recursive"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Automation Recursive"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Automation Recursive"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Automation Recursive"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false

@@ -46,7 +46,7 @@ Rectangle {
                     visible: cardRoot.icon !== ""
                     text: cardRoot.icon
                     color: Theme.colOnSurfaceVariant
-                    font.pixelSize: 18
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                     font.family: Theme.monoFontFamily 
                 }
                 Text { 
@@ -54,7 +54,7 @@ Rectangle {
                     color: onSurfaceColor
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 18
-                    font.bold: true
+                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                     Layout.fillWidth: true 
                 }
             }
@@ -64,7 +64,7 @@ Rectangle {
                 text: cardRoot.description
                 color: Theme.colOnSurfaceVariant
                 font.family: Theme.defaultFontFamily
-                font.pixelSize: 12
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
             }

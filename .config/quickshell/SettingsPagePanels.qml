@@ -54,8 +54,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Transparency Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Transparency Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Transparency Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Transparency Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -67,8 +67,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Borders"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Borders"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Borders"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Borders"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -80,8 +80,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Shadow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Shadow"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Shadow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Shadow"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -93,8 +93,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Floating Offset"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Floating Offset"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Floating Offset"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Floating Offset"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -128,8 +128,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Placement Control Center"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Placement Control Center"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Placement Control Center"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Placement Control Center"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -141,8 +141,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Open Near Click Control Center"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Open Near Click Control Center"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Open Near Click Control Center"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Open Near Click Control Center"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -154,8 +154,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Control Center Width"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Control Center Width"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Control Center Width"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Control Center Width"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -167,8 +167,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Control Center Sidebar"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Control Center Sidebar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Control Center Sidebar"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Control Center Sidebar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -180,8 +180,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Control Center Sidebar Section"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Control Center Sidebar Section"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Control Center Sidebar Section"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Control Center Sidebar Section"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -193,8 +193,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Home Shortcuts"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Home Shortcuts"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Home Shortcuts"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Home Shortcuts"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -228,8 +228,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Placement Launcher"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Placement Launcher"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Placement Launcher"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Placement Launcher"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -241,8 +241,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Open Near Click Launcher"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Open Near Click Launcher"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Open Near Click Launcher"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Open Near Click Launcher"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -254,8 +254,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Categories"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Categories"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Categories"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Categories"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -267,8 +267,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Show Icons"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Show Icons"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Show Icons"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Show Icons"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -280,8 +280,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Compact"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Compact"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Compact"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Compact"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -293,8 +293,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Sort By Usage"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Sort By Usage"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Sort By Usage"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Sort By Usage"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -306,8 +306,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Launcher Session Search"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Launcher Session Search"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Launcher Session Search"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Launcher Session Search"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -341,8 +341,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Placement Clipboard"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Placement Clipboard"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Placement Clipboard"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Placement Clipboard"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -354,8 +354,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Open Near Click Clipboard"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Open Near Click Clipboard"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Open Near Click Clipboard"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Open Near Click Clipboard"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -389,8 +389,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Placement Wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Placement Wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Placement Wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Placement Wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -402,8 +402,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Open Near Click Wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Open Near Click Wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Open Near Click Wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Open Near Click Wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -437,8 +437,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Placement Session"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Placement Session"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Placement Session"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Placement Session"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -450,8 +450,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Open Near Click Session"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Open Near Click Session"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Open Near Click Session"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Open Near Click Session"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false

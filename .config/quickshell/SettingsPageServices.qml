@@ -52,8 +52,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Calendar"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Calendar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Calendar"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Calendar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -65,8 +65,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Calendar Refresh Interval"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Calendar Refresh Interval"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Calendar Refresh Interval"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Calendar Refresh Interval"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -100,8 +100,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Audio Overdrive"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Audio Overdrive"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Audio Overdrive"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Audio Overdrive"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -113,8 +113,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Shell Sounds"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Shell Sounds"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Shell Sounds"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Shell Sounds"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -126,8 +126,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Sound Volume"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Sound Volume"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Sound Volume"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Sound Volume"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -139,8 +139,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Volume Change Sound"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Volume Change Sound"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Volume Change Sound"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Volume Change Sound"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -152,8 +152,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Notification Sound"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Notification Sound"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Notification Sound"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Notification Sound"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledTextField {
                                     Layout.preferredWidth: 150
@@ -187,8 +187,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Minimum Brightness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Minimum Brightness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Minimum Brightness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Minimum Brightness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -222,8 +222,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Mpris Blacklist"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Mpris Blacklist"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Mpris Blacklist"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Mpris Blacklist"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false

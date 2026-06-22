@@ -39,8 +39,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                             }
                             StyledComboBox {
                                 id: defaultFontCombo
@@ -73,8 +73,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                             }
                                                         StyledComboBox {
                                 id: monoFontCombo
@@ -108,22 +108,55 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                Text { text: "Font Weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                            }
+                            StyledComboBox {
+                                id: fontWeightCombo
+                                Layout.preferredWidth: 200
+                                model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
+                                Component.onCompleted: {
+                                    if (Theme.defaultFontWeight <= 300) currentIndex = 0;
+                                    else if (Theme.defaultFontWeight <= 400) currentIndex = 1;
+                                    else if (Theme.defaultFontWeight <= 500) currentIndex = 2;
+                                    else if (Theme.defaultFontWeight <= 600) currentIndex = 3;
+                                    else if (Theme.defaultFontWeight <= 700) currentIndex = 4;
+                                    else currentIndex = 5;
+                                }
+                                onActivated: (index) => {
+                                    let w = 500;
+                                    if (index === 0) w = 300;
+                                    else if (index === 1) w = 400;
+                                    else if (index === 2) w = 500;
+                                    else if (index === 3) w = 600;
+                                    else if (index === 4) w = 700;
+                                    else if (index === 5) w = 800;
+                                    Theme.defaultFontWeight = w;
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + w + "' > ~/.config/cupcake/.font_weight"]);
+                                }
+                            }
+                        }
+                        
+                        RowLayout {
+                            Layout.fillWidth: true
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                                 RowLayout {
                                     Layout.fillWidth: true
                                     spacing: 16
-                                                                        StyledSlider {
+                                    StyledSlider {
                                         Layout.fillWidth: true
-                                        from: 50; to: 200; stepSize: 5
-                                        value: Theme.defaultFontScale * 100
-                                        onValueChanged: { Theme.defaultFontScale = value / 100.0; }
-                                        onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Theme.defaultFontScale + "' > ~/.config/cupcake/.font_default_scale"]); }
+                                        from: 8; to: 32; stepSize: 1
+                                        value: Theme.defaultFontSize
+                                        onValueChanged: { Theme.defaultFontSize = value; }
+                                        onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Theme.defaultFontSize + "' > ~/.config/cupcake/.font_size"]); }
                                     }
-                                    Text { text: Math.round(Theme.defaultFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
+                                    Text { text: Theme.defaultFontSize + "px"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 40 }
                                     Text {
-                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16
-                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_default_scale"]); } }
+                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16
+                                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; Quickshell.execDetached(["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]); } }
                                     }
                                 }
                             }
@@ -133,8 +166,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                                 RowLayout {
                                     Layout.fillWidth: true
                                     spacing: 16
@@ -145,9 +178,9 @@ Item {
                                         onValueChanged: { Theme.monoFontScale = value / 100.0; }
                                         onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Theme.monoFontScale + "' > ~/.config/cupcake/.font_mono_scale"]); }
                                     }
-                                    Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.bold: true; Layout.preferredWidth: 40 }
+                                    Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 40 }
                                     Text {
-                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16
+                                        text: ""; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]); } }
                                     }
                                 }
@@ -170,8 +203,8 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Application Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                Text { text: "Select the language used in the application's interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
+                                Text { text: "Application Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                Text { text: "Select the language used in the application's interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                             }
                             StyledComboBox {
                                 Layout.preferredWidth: 200
@@ -192,8 +225,8 @@ Item {
                             text: "Launch the setup wizard"
                             color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 14
-                            font.bold: true
+                            font.pixelSize: Theme.defaultFontSize
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                         }
                     }
                 }

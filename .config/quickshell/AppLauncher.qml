@@ -195,23 +195,22 @@ PanelWindow {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "" // \uf002
                     font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: 42
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 42
                     color: root.colOnSurfaceVariant
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "No results"
                     color: root.colOnSurfaceVariant
-                    font.pixelSize: 17
-                    font.weight: Font.Medium
-                    font.family: Theme.monoFontFamily
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 17
+                    font.family: Theme.defaultFontFamily
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Try searching for something else"
                     color: root.colOutline
-                    font.pixelSize: 13
-                    font.family: Theme.monoFontFamily
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 13
+                    font.family: Theme.defaultFontFamily
                 }
             }
 
@@ -311,9 +310,8 @@ PanelWindow {
                             Text {
                                 text: delegateItem.modelData?.name ?? ""
                                 color: root.colOnSurface
-                                font.pixelSize: 14
-                                font.weight: Font.Medium
-                                font.family: Theme.monoFontFamily
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                                font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
                             }
@@ -323,8 +321,8 @@ PanelWindow {
                                       || delegateItem.modelData?.genericName
                                       || ""
                                 color: root.colOutline
-                                font.pixelSize: 12
-                                font.family: Theme.monoFontFamily
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
+                                font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
                                 visible: text.length > 0
@@ -365,7 +363,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "" // \uf002
                 font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 17
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 17
                 color: root.colOnSurfaceVariant
             }
 
@@ -376,7 +374,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOutline
                 font.pixelSize: 15
-                font.family: Theme.monoFontFamily
+                font.family: Theme.defaultFontFamily
                 text: "Search applications…"
                 visible: searchField.text.length === 0
             }
@@ -389,8 +387,8 @@ PanelWindow {
                 anchors.rightMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOnSurface
-                font.pixelSize: 15
-                font.family: Theme.monoFontFamily
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                font.family: Theme.defaultFontFamily
                 clip: true
                 focus: true
 
@@ -426,7 +424,7 @@ PanelWindow {
                 anchors.rightMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
                 text: "✕"
-                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
                 color: root.colOnSurfaceVariant
                 opacity: searchField.text.length > 0 ? 1 : 0
                 visible: opacity > 0

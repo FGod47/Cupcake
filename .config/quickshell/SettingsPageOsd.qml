@@ -50,8 +50,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Orientation"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Orientation"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Orientation"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Orientation"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 SettingsSegmentedControl {
                                     Layout.preferredWidth: 200
@@ -63,8 +63,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Position"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledComboBox {
                                     Layout.preferredWidth: 150
@@ -76,8 +76,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Position Vertical"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Position Vertical"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Position Vertical"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Position Vertical"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledComboBox {
                                     Layout.preferredWidth: 150
@@ -89,8 +89,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -102,8 +102,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Offset X"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Offset X"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Offset X"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Offset X"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -115,8 +115,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Offset Y"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Offset Y"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Offset Y"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Offset Y"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -128,8 +128,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Background Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Background Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Background Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Background Opacity"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSlider {
                                     Layout.preferredWidth: 150
@@ -141,8 +141,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Monitors"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Monitors"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Monitors"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Monitors"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -176,8 +176,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Volume"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Volume"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Volume"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Volume"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -189,8 +189,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Volume Output"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Volume Output"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Volume Output"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Volume Output"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -202,8 +202,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Volume Input"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Volume Input"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Volume Input"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Volume Input"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -215,8 +215,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Brightness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Brightness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Brightness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Brightness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -228,8 +228,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Wifi"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Wifi"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Wifi"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Wifi"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -241,8 +241,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Bluetooth"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Bluetooth"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Bluetooth"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Bluetooth"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -254,8 +254,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Power Profile"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Power Profile"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Power Profile"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Power Profile"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -267,8 +267,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Caffeine"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Caffeine"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Caffeine"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Caffeine"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -280,8 +280,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Nightlight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Nightlight"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Nightlight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Nightlight"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -293,8 +293,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Dnd"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Dnd"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Dnd"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Dnd"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -306,8 +306,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Lock Keys"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Lock Keys"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Lock Keys"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Lock Keys"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -319,8 +319,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Keyboard Layout"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Keyboard Layout"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Keyboard Layout"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Keyboard Layout"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -332,8 +332,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Media"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Media"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Media"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Media"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false
@@ -345,8 +345,8 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
-                                    Text { text: "Osd Kinds Privacy"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.bold: true }
-                                    Text { text: "Osd Kinds Privacy"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                    Text { text: "Osd Kinds Privacy"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Osd Kinds Privacy"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
                                 StyledSwitch {
                                     checked: false

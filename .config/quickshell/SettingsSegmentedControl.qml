@@ -83,14 +83,14 @@ Rectangle {
                         text: modelData.icon !== undefined ? modelData.icon : ""
                         color: isSelected ? Theme.colOnSurface : Theme.colOnSurfaceVariant
                         font.family: root.font ? root.font.family : Theme.defaultFontFamily
-                        font.pixelSize: 14
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                     }
                     
                     Text {
                         text: modelData.label
                         color: isSelected ? Theme.colOnSurface : Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 13
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                         font.bold: isSelected
                     }
                 }

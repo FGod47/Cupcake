@@ -49,6 +49,20 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.monoFontScale = v; } }
     }
 
+    property int defaultFontSize: 14
+    property int defaultFontWeight: 500
+
+    Process {
+        command: ["cat", "/home/zero/.config/cupcake/.font_size"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontSize = v; } }
+    }
+    Process {
+        command: ["cat", "/home/zero/.config/cupcake/.font_weight"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontWeight = v; } }
+    }
+
     // helper function to parse hex string into color with alpha
     function transparentize(hexStr, alpha) {
         var c = Qt.color(hexStr);

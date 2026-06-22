@@ -303,7 +303,7 @@ Item {
                                 color: Theme.colPrimary
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
-                                font.bold: true
+                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 opacity: 0.8
                             }
 
@@ -338,7 +338,7 @@ Item {
                                     text: iconText
                                     color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
                                     font.family: root.font.family
-                                    font.pixelSize: 16
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                     opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
                                     Layout.preferredWidth: 24
                                     horizontalAlignment: Text.AlignHCenter
@@ -349,8 +349,8 @@ Item {
                                     text: labelText
                                     color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 14
-                                    font.bold: true
+                                    font.pixelSize: Theme.defaultFontSize
+                                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                     Layout.fillWidth: true
                                     opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
                                 }
@@ -460,7 +460,7 @@ Item {
                                     text: contentAreaContainer.getPageData(root.currentIndex).icon
                                     color: Theme.colOnSurfaceVariant
                                     font.family: root.font.family
-                                    font.pixelSize: 20
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 }
                                 
                                 Text {
@@ -468,7 +468,7 @@ Item {
                                     color: Theme.colOnSurface
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 20
-                                    font.bold: true
+                                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                     Layout.fillWidth: true
                                 }
                                 
@@ -482,7 +482,7 @@ Item {
                                         text: "✖"
                                         color: Theme.colOnSurfaceVariant
                                         font.family: root.font.family
-                                        font.pixelSize: 14
+                                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     }
                                     MouseArea {
                                         id: closeMouseArea
@@ -611,7 +611,7 @@ Item {
                                                 anchors.centerIn: parent
                                                 text: ""
                                                 color: Theme.colPrimary
-                                                font.pixelSize: 80
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: 80
                                                 visible: !wpPreviewImg.visible
                                             }
                                             
@@ -642,7 +642,7 @@ Item {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "Theme Mode"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            Text { text: "Theme Mode"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             
                                             SettingsSegmentedControl {
                                                 Layout.fillWidth: true
@@ -667,7 +667,7 @@ Item {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "Color Extraction Scheme"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            Text { text: "Color Extraction Scheme"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             
                                             Flow {
                                                 Layout.fillWidth: true
@@ -687,7 +687,7 @@ Item {
                                                             text: modelData
                                                             color: appearancePage.selectedScheme === modelData ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
                                                             font.family: root.font.family
-                                                            font.pixelSize: 14
+                                                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                                         }
                                                         MouseArea { 
                                                             anchors.fill: parent; 
@@ -720,12 +720,12 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22 }
+                                            Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 22 }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
-                                                Text { text: "Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                                Text { text: "Enable transparency and blur for windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
+                                                Text { text: "Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: "Enable transparency and blur for windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 13 }
                                             }
                                             Item { Layout.fillWidth: true }
                                             StyledSwitch {
@@ -745,7 +745,7 @@ Item {
                                             
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Text { text: "Opacity (" + Math.round(root.globalOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                                Text { text: "Opacity (" + Math.round(root.globalOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                                 StyledSlider {
                                                     Layout.fillWidth: true
                                                     from: 0.4; to: 1.0; stepSize: 0.05
@@ -761,7 +761,7 @@ Item {
 
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Text { text: "Blur Size (" + root.globalBlurSize + ")"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                                Text { text: "Blur Size (" + root.globalBlurSize + ")"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                                 StyledSlider {
                                                     Layout.fillWidth: true
                                                     from: 1; to: 12; stepSize: 1
@@ -777,7 +777,7 @@ Item {
 
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Text { text: "Blur Passes (" + root.globalBlurPasses + ")"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                                Text { text: "Blur Passes (" + root.globalBlurPasses + ")"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                                 StyledSlider {
                                                     Layout.fillWidth: true
                                                     from: 1; to: 4; stepSize: 1
@@ -819,12 +819,12 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: ""; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: Theme.monoFontFamily }
+                                            Text { text: ""; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 22; font.family: Theme.monoFontFamily }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
-                                                Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                                Text { text: "Draw colored borders around windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
+                                                Text { text: "Window Borders"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: "Draw colored borders around windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 13 }
                                             }
                                             Item { Layout.fillWidth: true }
                                             StyledSwitch {
@@ -841,7 +841,7 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.leftMargin: 34
                                             visible: root.windowBorders
-                                            Text { text: "Thickness (" + Math.round(root.borderSize) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                            Text { text: "Thickness (" + Math.round(root.borderSize) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                             StyledSlider {
                                                 Layout.fillWidth: true
                                                 from: 1; to: 10; stepSize: 1
@@ -860,12 +860,12 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22; font.family: Theme.monoFontFamily }
+                                            Text { text: "󰽉"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 22; font.family: Theme.monoFontFamily }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
-                                                Text { text: "Drop Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                                Text { text: "Draw drop shadows behind windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
+                                                Text { text: "Drop Shadows"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: "Draw drop shadows behind windows"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 13 }
                                             }
                                             Item { Layout.fillWidth: true }
                                             StyledSwitch {
@@ -885,8 +885,8 @@ Item {
                                             spacing: 16
                                             RowLayout {
                                                 spacing: 12
-                                                Text { text: "◫"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22 }
-                                                Text { text: "Window Gaps"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
+                                                Text { text: "◫"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 22 }
+                                                Text { text: "Window Gaps"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
@@ -894,7 +894,7 @@ Item {
                                                 spacing: 16
                                                 RowLayout {
                                                     Layout.fillWidth: true
-                                                    Text { text: "Inner (" + Math.round(root.gapsIn) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                                    Text { text: "Inner (" + Math.round(root.gapsIn) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                                     StyledSlider {
                                                         Layout.fillWidth: true
                                                         from: 0; to: 30; stepSize: 1
@@ -909,7 +909,7 @@ Item {
                                                 }
                                                 RowLayout {
                                                     Layout.fillWidth: true
-                                                    Text { text: "Outer (" + Math.round(root.gapsOut) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                                    Text { text: "Outer (" + Math.round(root.gapsOut) + "px)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                                     StyledSlider {
                                                         Layout.fillWidth: true
                                                         from: 0; to: 60; stepSize: 1
@@ -942,7 +942,7 @@ Item {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "Position on screen"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            Text { text: "Position on screen"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             SettingsSegmentedControl {
                                                 Layout.fillWidth: true
                                                 model: [
@@ -959,7 +959,7 @@ Item {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "Bar geometry"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            Text { text: "Bar geometry"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             SettingsSegmentedControl {
                                                 Layout.fillWidth: true
                                                 model: [
@@ -977,12 +977,12 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.pixelSize: 22 }
+                                            Text { text: "⚆"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 22 }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 2
-                                                Text { text: "Bar Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                                Text { text: "Enable independent transparency for the bar"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 13 }
+                                                Text { text: "Bar Glassmorphism"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: "Enable independent transparency for the bar"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 13 }
                                             }
                                             Item { Layout.fillWidth: true }
                                             StyledSwitch {
@@ -998,7 +998,7 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.leftMargin: 34
                                             visible: root.barTransparency
-                                            Text { text: "Opacity (" + Math.round(root.barOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                                            Text { text: "Opacity (" + Math.round(root.barOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; Layout.preferredWidth: 120 }
                                             StyledSlider {
                                                 Layout.fillWidth: true
                                                 from: 0.1; to: 1.0; stepSize: 0.05
@@ -1017,7 +1017,7 @@ Item {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             spacing: 12
-                                            Text { text: "Screen rounded corners"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; font.bold: true }
+                                            Text { text: "Screen rounded corners"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                             SettingsSegmentedControl {
                                                 Layout.fillWidth: true
                                                 model: [
@@ -1045,7 +1045,7 @@ Item {
                                         anchors.fill: parent
                                         anchors.margins: 20
                                         spacing: 16
-                                        Text { Layout.alignment: Qt.AlignTop; text: "ⓘ"; color: Theme.colPrimary; font.pixelSize: 24 }
+                                        Text { Layout.alignment: Qt.AlignTop; text: "ⓘ"; color: Theme.colPrimary; font.weight: Theme.defaultFontWeight; font.pixelSize: 24 }
                                         Text {
                                             Layout.fillWidth: true
                                             Layout.alignment: Qt.AlignTop
@@ -1053,7 +1053,7 @@ Item {
                                             text: "Not all options are available in this app. You should also check the config file by hitting the \"Open Configuration\" button in the System tab or navigating to ~/.config/cupcake manually."
                                             color: Theme.colOnSurface
                                             font.family: root.font.family
-                                            font.pixelSize: 14
+                                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                         }
                                     }
                                 }
@@ -1082,14 +1082,14 @@ Item {
                             color: Theme.colOnSurface
                             font.family: root.font.family
                             font.pixelSize: 32
-                            font.bold: true
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                         }
 
                         Text {
                             text: "Clicking a wallpaper will instantly apply it and regenerate your dynamic material colors."
                             color: Theme.colOnSurfaceVariant
                             font.family: root.font.family
-                            font.pixelSize: 14
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             Layout.bottomMargin: 16
                         }
 
@@ -1300,7 +1300,7 @@ Item {
                         text: "Stub: HOOKS settings will go here."
                         color: Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 16
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                     }
                 }
 
@@ -1319,7 +1319,7 @@ Item {
                         text: "Stub: PLUGINS settings will go here."
                         color: Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 16
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                     }
                 }
 
@@ -1342,14 +1342,14 @@ Item {
                             color: Theme.colOnSurface
                             font.family: root.font.family
                             font.pixelSize: 32
-                            font.bold: true
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                         }
                         
                         Text {
                             text: "Manage your Quickshell status bar"
                             color: Theme.colOnSurfaceVariant
                             font.family: root.font.family
-                            font.pixelSize: 14
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             Layout.bottomMargin: 16
                         }
 
@@ -1364,10 +1364,10 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: 12
-                                Text { text: "Choose which monitors the Top Bar and Dock appear on. By default, they appear on all monitors."; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                                Text { text: "Choose which monitors the Top Bar and Dock appear on. By default, they appear on all monitors."; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; wrapMode: Text.WordWrap; Layout.fillWidth: true }
                                 
                                 // Top Bar Monitors
-                                Text { text: "Top Bar Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: true; Layout.topMargin: 8 }
+                                Text { text: "Top Bar Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.topMargin: 8 }
                                 Flow {
                                     Layout.fillWidth: true
                                     spacing: 8
@@ -1377,7 +1377,7 @@ Item {
                                         height: 36
                                         radius: 18
                                         color: root.barMonitors.includes("all") ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                        Text { id: allText; anchors.centerIn: parent; text: "All Monitors"; color: root.barMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                        Text { id: allText; anchors.centerIn: parent; text: "All Monitors"; color: root.barMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
                                         MouseArea { 
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
                                             onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'all' > ~/.config/cupcake/.bar_monitors"]); }
@@ -1391,7 +1391,7 @@ Item {
                                             height: 36
                                             radius: 18
                                             color: (!root.barMonitors.includes("all") && root.barMonitors.includes(modelData.name)) ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                            Text { id: monitorText; anchors.centerIn: parent; text: modelData.name; color: (!root.barMonitors.includes("all") && root.barMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                            Text { id: monitorText; anchors.centerIn: parent; text: modelData.name; color: (!root.barMonitors.includes("all") && root.barMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
                                             MouseArea {
                                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
                                                 onClicked: {
@@ -1407,7 +1407,7 @@ Item {
                                 }
 
                                 // Dock Monitors
-                                Text { text: "Dock Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 14; font.bold: true; Layout.topMargin: 8 }
+                                Text { text: "Dock Displays:"; color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.topMargin: 8 }
                                 Flow {
                                     Layout.fillWidth: true
                                     spacing: 8
@@ -1417,7 +1417,7 @@ Item {
                                         height: 36
                                         radius: 18
                                         color: root.dockMonitors.includes("all") ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                        Text { id: allDockText; anchors.centerIn: parent; text: "All Monitors"; color: root.dockMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                        Text { id: allDockText; anchors.centerIn: parent; text: "All Monitors"; color: root.dockMonitors.includes("all") ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
                                         MouseArea { 
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
                                             onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'all' > ~/.config/cupcake/.dock_monitors"]); }
@@ -1431,7 +1431,7 @@ Item {
                                             height: 36
                                             radius: 18
                                             color: (!root.dockMonitors.includes("all") && root.dockMonitors.includes(modelData.name)) ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-                                            Text { id: dockText; anchors.centerIn: parent; text: modelData.name; color: (!root.dockMonitors.includes("all") && root.dockMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 14 }
+                                            Text { id: dockText; anchors.centerIn: parent; text: modelData.name; color: (!root.dockMonitors.includes("all") && root.dockMonitors.includes(modelData.name)) ? Theme.colOnPrimary : Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
                                             MouseArea {
                                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
                                                 onClicked: {
@@ -1463,7 +1463,7 @@ Item {
                                     text: "Restart Top Bar"
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
-                                    font.pixelSize: 16
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                     Layout.fillWidth: true
                                 }
                                 Button {
@@ -1513,7 +1513,7 @@ Item {
                                 color: Theme.colOnSurface
                                 font.family: root.font.family
                                 font.pixelSize: 32
-                                font.bold: true
+                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 Layout.fillWidth: true
                             }
 
@@ -1527,7 +1527,7 @@ Item {
                                     text: ""
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
-                                    font.pixelSize: 20
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 }
                                 MouseArea {
                                     anchors.fill: parent
@@ -1621,7 +1621,7 @@ Item {
                                             text: model.inUse ? "" : (model.signal > 60 ? "" : "")
                                             color: model.inUse ? Theme.colPrimary : Theme.colOnSurface
                                             font.family: root.font.family
-                                            font.pixelSize: 20
+                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                         }
                                         
                                         // Name
@@ -1632,14 +1632,14 @@ Item {
                                                 text: model.ssid
                                                 color: Theme.colOnSurface
                                                 font.family: root.font.family
-                                                font.pixelSize: 16
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                                 font.bold: model.inUse
                                             }
                                             Text {
                                                 text: model.inUse ? "Connected" : (model.isSecure ? "Secured" : "Not secured")
                                                 color: Theme.colOnSurfaceVariant
                                                 font.family: root.font.family
-                                                font.pixelSize: 12
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                                             }
                                         }
 
@@ -1673,7 +1673,7 @@ Item {
                                                 verticalAlignment: TextInput.AlignVCenter
                                                 color: Theme.colOnSurface
                                                 font.family: root.font.family
-                                                font.pixelSize: 14
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                                 echoMode: TextInput.Password
                                                 clip: true
                                                 onTextChanged: model.password = text
@@ -1686,7 +1686,7 @@ Item {
                                                 text: "Password..."
                                                 color: Theme.colOnSurfaceVariant
                                                 font.family: root.font.family
-                                                font.pixelSize: 14
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                                 visible: passInput.text === ""
                                             }
                                         }
@@ -1742,14 +1742,14 @@ Item {
                                     text: ""
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
-                                    font.pixelSize: 16
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                 }
                                 Text {
                                     text: "Advanced Network Configuration"
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
-                                    font.pixelSize: 14
-                                    font.bold: true
+                                    font.pixelSize: Theme.defaultFontSize
+                                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 }
                             }
                             MouseArea {
@@ -1791,7 +1791,7 @@ Item {
                             color: Theme.colOnSurface
                             font.family: root.font.family
                             font.pixelSize: 24
-                            font.bold: true
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                         }
 
                         // Save Key Process
@@ -1829,7 +1829,7 @@ Item {
                             color: Theme.colOnSurface
                             font.family: root.font.family
                             font.pixelSize: 18
-                            font.bold: true
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             Layout.topMargin: 8
                         }
                         
@@ -1856,15 +1856,15 @@ Item {
                                             text: "Add New Google Gemini Account"
                                             color: Theme.colOnSurfaceVariant
                                             font.family: root.font.family
-                                            font.pixelSize: 14
+                                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                         }
                                         Item { Layout.fillWidth: true }
                                         Text {
                                             text: aiSettingsPage.keyExists ? "✅ Accounts Loaded" : "❌ No Accounts"
                                             color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
                                             font.family: root.font.family
-                                            font.pixelSize: 14
-                                            font.bold: true
+                                            font.pixelSize: Theme.defaultFontSize
+                                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                         }
                                     }
                                     
@@ -1914,8 +1914,8 @@ Item {
                                                 text: "Save"
                                                 color: Theme.colOnPrimary
                                                 font.family: root.font.family
-                                                font.bold: true
-                                                font.pixelSize: 14
+                                                
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                             }
                                             
                                             MouseArea {
@@ -2021,14 +2021,13 @@ Item {
                                         text: titleText
                                         color: Theme.colOnSurface
                                         font.family: root.font.family
-                                        font.pixelSize: 16
-                                        font.weight: Font.Medium
+                                        font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                     }
                                     Text {
                                         text: valueText
                                         color: Theme.colOnSurfaceVariant
                                         font.family: root.font.family
-                                        font.pixelSize: 14
+                                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     }
                                     Item { Layout.fillHeight: true }
                                 }
@@ -2039,7 +2038,7 @@ Item {
                                 color: Theme.colOnSurface
                                 font.family: root.font.family
                                 font.pixelSize: 32
-                                font.bold: true
+                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 Layout.bottomMargin: 8
                             }
 
@@ -2052,8 +2051,7 @@ Item {
                                     text: "Profile Information"
                                     color: Theme.colPrimary
                                     font.family: root.font.family
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     Layout.leftMargin: 16
                                 }
 
@@ -2076,8 +2074,7 @@ Item {
                                     text: "Account Details"
                                     color: Theme.colPrimary
                                     font.family: root.font.family
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     Layout.leftMargin: 16
                                 }
 
@@ -2195,14 +2192,13 @@ Item {
                                     text: titleText
                                     color: Theme.colOnSurface
                                     font.family: root.font.family
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                 }
                                 Text {
                                     text: valueText
                                     color: Theme.colOnSurfaceVariant
                                     font.family: root.font.family
-                                    font.pixelSize: 14
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 }
                                 Item { Layout.fillHeight: true }
                             }
@@ -2213,7 +2209,7 @@ Item {
                             color: Theme.colOnSurface
                             font.family: root.font.family
                             font.pixelSize: 32
-                            font.bold: true
+                            font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             Layout.bottomMargin: 8
                         }
 
@@ -2226,8 +2222,7 @@ Item {
                                 text: "System details"
                                 color: Theme.colPrimary
                                 font.family: root.font.family
-                                font.pixelSize: 14
-                                font.weight: Font.Medium
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
 
@@ -2250,8 +2245,7 @@ Item {
                                 text: "Hardware details"
                                 color: Theme.colPrimary
                                 font.family: root.font.family
-                                font.pixelSize: 14
-                                font.weight: Font.Medium
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
 
@@ -2277,8 +2271,7 @@ Item {
                                 text: "Software details"
                                 color: Theme.colPrimary
                                 font.family: root.font.family
-                                font.pixelSize: 14
-                                font.weight: Font.Medium
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
 
@@ -2385,14 +2378,14 @@ Item {
                                 color: Theme.colOnSurface
                                 font.family: root.font.family
                                 font.pixelSize: 32
-                                font.bold: true
+                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             }
                             
                             Text {
                                 text: "Manage your monitors, resolution, refresh rates, and scaling."
                                 color: Theme.colOnSurfaceVariant
                                 font.family: root.font.family
-                                font.pixelSize: 14
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             }
                             
                             // Monitor List
@@ -2469,12 +2462,12 @@ Item {
                                         RowLayout {
                                             Layout.fillWidth: true
                                             spacing: 16
-                                            Text { text: "󰍹"; color: Theme.colPrimary; font.pixelSize: 32 }
+                                            Text { text: "󰍹"; color: Theme.colPrimary; font.weight: Theme.defaultFontWeight; font.pixelSize: 32 }
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 4
-                                                Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.bold: true }
-                                                Text { text: modelData.description; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 12 }
+                                                Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: modelData.description; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                                             }
                                         }
 
@@ -2490,7 +2483,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: resCombo
                                                     Layout.preferredWidth: 140
@@ -2540,8 +2533,7 @@ Item {
                                                         contentItem: Text {
                                                             text: modelData
                                                             font.family: root.font.family
-                                                            font.pixelSize: 13
-                                                            font.weight: 500
+                                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
                                                             horizontalAlignment: Text.AlignHCenter
@@ -2552,7 +2544,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: rateCombo
                                                     property var curRates: monitorCard.modesParsed[monitorCard.selRes] ? monitorCard.modesParsed[monitorCard.selRes].rates : []
@@ -2603,8 +2595,7 @@ Item {
                                                         contentItem: Text {
                                                             text: modelData
                                                             font.family: root.font.family
-                                                            font.pixelSize: 13
-                                                            font.weight: 500
+                                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
                                                             horizontalAlignment: Text.AlignHCenter
@@ -2615,7 +2606,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: root.font.family }
+                                                Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: scaleCombo
                                                     Layout.preferredWidth: 100
@@ -2665,8 +2656,7 @@ Item {
                                                         contentItem: Text {
                                                             text: modelData
                                                             font.family: root.font.family
-                                                            font.pixelSize: 13
-                                                            font.weight: 500
+                                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
                                                             horizontalAlignment: Text.AlignHCenter
@@ -2685,7 +2675,7 @@ Item {
                                             Rectangle {
                                                 width: 120; height: 40; radius: 20
                                                 color: applyArea.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.8) : Theme.colPrimary
-                                                Text { anchors.centerIn: parent; text: "Apply"; color: Theme.colOnPrimary; font.bold: true; font.family: root.font.family; font.pixelSize: 14 }
+                                                Text { anchors.centerIn: parent; text: "Apply"; color: Theme.colOnPrimary; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: root.font.family; font.pixelSize: Theme.defaultFontSize }
                                                 MouseArea {
                                                     id: applyArea
                                                     anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -2707,7 +2697,7 @@ Item {
                                             Rectangle {
                                                 width: 160; height: 40; radius: 20
                                                 color: Theme.colError
-                                                Text { anchors.centerIn: parent; text: "Keep Changes (" + displayPage.countdown + "s)"; color: Theme.colOnError; font.bold: true; font.family: root.font.family; font.pixelSize: 14 }
+                                                Text { anchors.centerIn: parent; text: "Keep Changes (" + displayPage.countdown + "s)"; color: Theme.colOnError; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: root.font.family; font.pixelSize: Theme.defaultFontSize }
                                                 MouseArea {
                                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                                     onClicked: displayPage.keepDisplay()
@@ -2716,7 +2706,7 @@ Item {
                                             Text {
                                                 text: "Reverts automatically if not confirmed"
                                                 color: Theme.colOnSurfaceVariant
-                                                font.pixelSize: 12
+                                                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                                                 font.family: root.font.family
                                             }
                                         }
