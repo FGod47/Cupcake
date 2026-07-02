@@ -113,7 +113,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached(["bash", "-c", "loginctl terminate-user $USER || hyprctl dispatch exit"])
+                    Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
