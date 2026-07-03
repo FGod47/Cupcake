@@ -39,8 +39,8 @@ Item {
                         }
                         SettingsSegmentedControl {
                             Layout.preferredWidth: 240
-                            model: [ { label: "Glass", value: 1 }, { label: "Liquid", value: 2 }, { label: "Classic", value: 3 } ]
-                            currentValue: 2
+                            model: [ { label: "Glass", value: "1" }, { label: "Liquid", value: "2" }, { label: "Classic", value: "3" } ]
+                            currentValue: "2"
                         }
                     }
                 }
@@ -57,16 +57,16 @@ Item {
                         SettingsSegmentedControl {
                             Layout.fillWidth: true
                             model: [ 
-                                { label: "Tonal Spot", value: 1 }, 
-                                { label: "Content", value: 2 }, 
-                                { label: "Expressive", value: 3 },
-                                { label: "Fidelity", value: 4 },
-                                { label: "Fruit Salad", value: 5 },
-                                { label: "Monochrome", value: 6 },
-                                { label: "Neutral", value: 7 },
-                                { label: "Rainbow", value: 8 }
+                                { label: "Tonal Spot", value: "1" }, 
+                                { label: "Content", value: "2" }, 
+                                { label: "Expressive", value: "3" },
+                                { label: "Fidelity", value: "4" },
+                                { label: "Fruit Salad", value: "5" },
+                                { label: "Monochrome", value: "6" },
+                                { label: "Neutral", value: "7" },
+                                { label: "Rainbow", value: "8" }
                             ]
-                            currentValue: 1
+                            currentValue: "1"
                         }
                     }
                     
