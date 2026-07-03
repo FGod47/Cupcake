@@ -832,9 +832,14 @@ PanelWindow {
                 
                 Loader {
                     id: settingsLoader
-                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    width: 868
+                    height: 768
                     source: "SettingsUI.qml"
                     active: true
+                    
+                    // Render the complex UI to a flat texture so opacity animation doesn't cause massive GPU overdraw
+                    layer.enabled: true
                     
                     // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
                     opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
