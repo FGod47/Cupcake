@@ -123,8 +123,8 @@
   },
 
   "custom/clock": {
-  "exec": "/home/fgod/.config/cupcake/scripts/display_clock.sh",
-  "on-click": "/home/fgod/.config/cupcake/scripts/toggle_clock.sh",
+  "exec": "~/.config/cupcake/scripts/display_clock.sh",
+  "on-click": "~/.config/cupcake/scripts/toggle_clock.sh",
   "return-type": "json",
   "interval": 1,
   "signal": 10,
