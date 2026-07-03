@@ -274,6 +274,31 @@ Item {
                 Layout.fillWidth: true
                 implicitHeight: 40
                 
+                MouseArea {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 32; height: 32
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: root.navExpanded = !root.navExpanded
+                    
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 8
+                        color: parent.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                    }
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: ""
+                        color: Theme.colOnSurfaceVariant
+                        font.family: root.font.family
+                        font.pixelSize: 16
+                    }
+                }
+                
                 Text {
                     anchors.centerIn: parent
                     text: "Settings"
@@ -326,7 +351,11 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 64
+                    Layout.preferredWidth: navExpanded ? 64 : 0
+                    opacity: navExpanded ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
                     
                     color: "transparent"
 
@@ -430,6 +459,9 @@ Item {
                     Layout.bottomMargin: 12
                     implicitWidth: 1
                     color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    visible: navExpanded
+                    opacity: navExpanded ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
                 }
 
                 // Content Area
