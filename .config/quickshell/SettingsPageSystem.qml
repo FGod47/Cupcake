@@ -204,7 +204,7 @@ Item {
                                 Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
                             }
                             StyledComboBox {
-                                id: defaultFontCombo
+                                id: appDefaultFontCombo
                                 Layout.preferredWidth: 200
                                 model: ["Inter"]
                                 currentIndex: model.indexOf(Theme.appFontFamily) !== -1 ? model.indexOf(Theme.appFontFamily) : 0
@@ -221,8 +221,8 @@ Item {
                                         onStreamFinished: {
                                             if (text.trim() !== "") {
                                                 let fonts = text.trim().split("\n");
-                                                defaultFontCombo.model = fonts;
-                                                defaultFontCombo.currentIndex = defaultFontCombo.model.indexOf(Theme.appFontFamily) !== -1 ? defaultFontCombo.model.indexOf(Theme.appFontFamily) : 0;
+                                                appDefaultFontCombo.model = fonts;
+                                                appDefaultFontCombo.currentIndex = appDefaultFontCombo.model.indexOf(Theme.appFontFamily) !== -1 ? appDefaultFontCombo.model.indexOf(Theme.appFontFamily) : 0;
                                             }
                                         }
                                     }
@@ -237,8 +237,8 @@ Item {
                                 Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
                                 Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
                             }
-                                                        StyledComboBox {
-                                id: monoFontCombo
+                            StyledComboBox {
+                                id: appMonoFontCombo
                                 Layout.preferredWidth: 240
                                 model: ["JetBrainsMono Nerd Font Propo"]
                                 currentIndex: model.indexOf(Theme.appMonoFamily) !== -1 ? model.indexOf(Theme.appMonoFamily) : 0
@@ -254,10 +254,9 @@ Item {
                                     stdout: StdioCollector {
                                         onStreamFinished: {
                                             if (text.trim() !== "") {
-                                                let fonts = text.trim().split("
-");
-                                                monoFontCombo.model = fonts;
-                                                monoFontCombo.currentIndex = monoFontCombo.model.indexOf(Theme.appMonoFamily) !== -1 ? monoFontCombo.model.indexOf(Theme.appMonoFamily) : 0;
+                                                let fonts = text.trim().split("\n");
+                                                appMonoFontCombo.model = fonts;
+                                                appMonoFontCombo.currentIndex = appMonoFontCombo.model.indexOf(Theme.appMonoFamily) !== -1 ? appMonoFontCombo.model.indexOf(Theme.appMonoFamily) : 0;
                                             }
                                         }
                                     }
@@ -273,7 +272,7 @@ Item {
                                 Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
-                                id: fontWeightCombo
+                                id: appFontWeightCombo
                                 Layout.preferredWidth: 200
                                 model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                                 Component.onCompleted: {
