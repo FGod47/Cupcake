@@ -31,6 +31,10 @@ Item {
                     SettingsCard {
                         title: "Shell Fonts"
                         description: "Choose the fonts used throughout the interface."
+                        surfaceColor: "transparent"
+                        outlineColor: "transparent"
+                        primaryColor: Theme.colPrimary
+                        onSurfaceColor: Theme.colOnSurface
                         
                         RowLayout {
                             Layout.fillWidth: true
@@ -194,6 +198,10 @@ Item {
                     SettingsCard {
                         title: "Application Fonts"
                         description: "Choose the fonts used throughout the interface."
+                        surfaceColor: "transparent"
+                        outlineColor: "transparent"
+                        primaryColor: Theme.colPrimary
+                        onSurfaceColor: Theme.colOnSurface
                         
                         RowLayout {
                             Layout.fillWidth: true
@@ -360,6 +368,10 @@ Item {
                                         SettingsCard {
                         title: "Terminal Fonts"
                         description: "Choose the fonts used for the Kitty terminal emulator."
+                        surfaceColor: "transparent"
+                        outlineColor: "transparent"
+                        primaryColor: Theme.colPrimary
+                        onSurfaceColor: Theme.colOnSurface
                         
                         RowLayout {
                             Layout.fillWidth: true
@@ -428,6 +440,10 @@ Item {
 SettingsCard {
                         title: "Language"
                         description: "Choose your preferred language for the application."
+                        surfaceColor: "transparent"
+                        outlineColor: "transparent"
+                        primaryColor: Theme.colPrimary
+                        onSurfaceColor: Theme.colOnSurface
                         
                         RowLayout {
                             Layout.fillWidth: true

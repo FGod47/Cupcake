@@ -10,27 +10,26 @@ Rectangle {
     property string icon: ""
     
     // Colors
-    property color surfaceColor: Theme.colSurfaceContainer
-    property color outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-    property color primaryColor: Theme.colPrimary
-    property color onSurfaceColor: Theme.colOnSurface
+    property color surfaceColor
+    property color outlineColor
+    property color primaryColor
+    property color onSurfaceColor
     
     default property alias content: innerLayout.data
 
     Layout.fillWidth: true
-    implicitHeight: mainLayout.implicitHeight + 48
-    color: surfaceColor
-    radius: 16
-    border.width: 1
-    border.color: outlineColor
+    implicitHeight: mainLayout.implicitHeight + 40
+    color: "transparent"
+    radius: 0
+    border.width: 0
 
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        anchors.leftMargin: 24
-        anchors.rightMargin: 24
-        anchors.topMargin: 24
-        anchors.bottomMargin: 24
+        anchors.leftMargin: 14
+        anchors.rightMargin: 14
+        anchors.topMargin: 14
+        anchors.bottomMargin: 14
         spacing: 16
 
         ColumnLayout {
