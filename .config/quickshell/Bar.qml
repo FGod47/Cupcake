@@ -841,7 +841,7 @@ PanelWindow {
                     visible: opacity > 0
                     
                     onLoaded: {
-                        item.anchors.fill = settingsLoader;
+                        item.anchors.centerIn = settingsLoader;
                     }
                     
                     Connections {

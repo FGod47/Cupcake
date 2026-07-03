@@ -13,7 +13,8 @@ import Quickshell.Wayland
 Item {
     id: root
     readonly property string homeDir: Quickshell.env("HOME")
-    anchors.fill: parent
+    width: 868
+    height: 768
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
