@@ -47,24 +47,7 @@ for qt_conf in ~/.config/qt5ct/qt5ct.conf ~/.config/qt6ct/qt6ct.conf; do
     fi
 done
 
-# Kitty Fonts
-KITTY_FONT_MONO="JetBrainsMono Nerd Font Propo"
-KITTY_FONT_SIZE=11
 
-if [ -f ~/.config/cupcake/.kitty_font_mono ]; then
-    KITTY_FONT_MONO=$(cat ~/.config/cupcake/.kitty_font_mono)
-fi
-
-if [ -f ~/.config/cupcake/.kitty_font_size ]; then
-    KITTY_FONT_SIZE=$(cat ~/.config/cupcake/.kitty_font_size)
-fi
-
-# Update Kitty font
-if [ -f ~/.config/kitty/kitty.conf ]; then
-    sed -i "s/^font_family.*/font_family      $KITTY_FONT_MONO/g" ~/.config/kitty/kitty.conf
-    sed -i "s/^font_size.*/font_size $KITTY_FONT_SIZE.0/g" ~/.config/kitty/kitty.conf
-    killall -SIGUSR1 kitty 2>/dev/null || true
-fi
 
 # Update xsettingsd
 if [ -f ~/.config/xsettingsd/xsettingsd.conf ]; then

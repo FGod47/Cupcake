@@ -98,20 +98,7 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.appFontWeight = v; } }
     }
 
-    // Kitty Fonts
-    property string kittyMonoFamily: "JetBrainsMono Nerd Font Propo"
-    property int kittyFontSize: 11
 
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.kitty_font_mono"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.kittyMonoFamily = text.trim(); } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.kitty_font_size"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.kittyFontSize = v; } }
-    }
 
 
     // helper function to parse hex string into color with alpha
