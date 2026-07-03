@@ -838,7 +838,8 @@ PanelWindow {
                     
                     // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
                     opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
-                    visible: opacity > 0
+                    visible: true
+                    enabled: bar.settingsOpen
                     
                     onLoaded: {
                         item.anchors.centerIn = settingsLoader;
