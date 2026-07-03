@@ -67,10 +67,10 @@ PanelWindow {
     }
 
     // Shared style definitions based on user's style.css
-    readonly property color bg: Theme.colSurface
-    readonly property color fg: Theme.colOnSurface
-    readonly property string fontName: Theme.monoFontFamily
-    readonly property int fontSize: 14
+    property color bg: Theme.colSurface
+    property color fg: Theme.colOnSurface
+    property string fontName: Theme.monoFontFamily
+    property int fontSize: Theme.defaultFontSize
 
     // Full-screen click-away area when settings is open
     MouseArea {

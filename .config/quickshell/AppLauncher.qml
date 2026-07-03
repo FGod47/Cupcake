@@ -29,13 +29,18 @@ PanelWindow {
     WlrLayershell.namespace: "cupcake-launcher"
     color: "transparent"
 
-    readonly property color colSurface:               Theme.colSurface
-    readonly property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
-    readonly property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
-    readonly property color colOnSurface:             Theme.colOnSurface // match bar fg
-    readonly property color colOnSurfaceVariant:      Theme.colOnSurfaceVariant
-    readonly property color colOutline:               Theme.colOutline
-    readonly property color colPrimary:               Theme.colPrimary // match bar accent
+    property color colSurface:               Theme.colSurface
+    property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
+    property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
+    property color colOnSurface:             Theme.colOnSurface // match bar fg
+    property color colOnSurfaceVariant:      Theme.colOnSurfaceVariant
+    property color colOutline:               Theme.colOutline
+    property color colPrimary:               Theme.colPrimary // match bar accent
+    
+    // Derived colors for UI
+    property color inputBg:                  root.colSurfaceContainerHigh
+    property color inputBorder:              Qt.rgba(root.colOutline.r, root.colOutline.g, root.colOutline.b, 0.5)
+    property color hoverBg:                  Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08)
 
     // ── State ─────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively

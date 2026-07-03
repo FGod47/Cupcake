@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Default values if files don't exist
+FONT_DEFAULT="Inter"
+FONT_SIZE=14
+FONT_MONO="JetBrainsMono Nerd Font Propo"
+FONT_MONO_SCALE=1.0
+
+if [ -f ~/.config/cupcake/.app_font_default ]; then
+    FONT_DEFAULT=$(cat ~/.config/cupcake/.app_font_default)
+fi
+
+if [ -f ~/.config/cupcake/.app_font_size ]; then
+    FONT_SIZE=$(cat ~/.config/cupcake/.app_font_size)
+fi
+
+if [ -f ~/.config/cupcake/.app_font_mono ]; then
+    FONT_MONO=$(cat ~/.config/cupcake/.app_font_mono)
+fi
+
+if [ -f ~/.config/cupcake/.app_font_mono_scale ]; then
+    FONT_MONO_SCALE=$(cat ~/.config/cupcake/.app_font_mono_scale)
+fi
+
+# Calculate mono size
+MONO_SIZE=$(awk "BEGIN {printf \"%d\", $FONT_SIZE * $FONT_MONO_SCALE + 0.5}")
+
+# Update gsettings
+gsettings set org.gnome.desktop.interface font-name "$FONT_DEFAULT $FONT_SIZE"
+gsettings set org.gnome.desktop.interface document-font-name "$FONT_DEFAULT $FONT_SIZE"
+gsettings set org.gnome.desktop.interface monospace-font-name "$FONT_MONO $MONO_SIZE"
+
+# Update GTK settings
+if [ -f ~/.config/gtk-3.0/settings.ini ]; then
+    sed -i "s/gtk-font-name=.*/gtk-font-name=$FONT_DEFAULT $FONT_SIZE/g" ~/.config/gtk-3.0/settings.ini
+fi
+
+if [ -f ~/.config/gtk-4.0/settings.ini ]; then
+    sed -i "s/gtk-font-name=.*/gtk-font-name=$FONT_DEFAULT $FONT_SIZE/g" ~/.config/gtk-4.0/settings.ini
+fi
+
+# Update Kitty font
+if [ -f ~/.config/kitty/kitty.conf ]; then
+    sed -i "s/^font_family.*/font_family      $FONT_MONO/g" ~/.config/kitty/kitty.conf
+    sed -i "s/^font_size.*/font_size $MONO_SIZE.0/g" ~/.config/kitty/kitty.conf
+    killall -SIGUSR1 kitty 2>/dev/null || true
+fi
+
+# Update xsettingsd
+if [ -f ~/.config/xsettingsd/xsettingsd.conf ]; then
+    if grep -q "Gtk/FontName" ~/.config/xsettingsd/xsettingsd.conf; then
+        sed -i "s|Gtk/FontName.*|Gtk/FontName \"$FONT_DEFAULT $FONT_SIZE\"|g" ~/.config/xsettingsd/xsettingsd.conf
+    else
+        echo "Gtk/FontName \"$FONT_DEFAULT $FONT_SIZE\"" >> ~/.config/xsettingsd/xsettingsd.conf
+    fi
+    killall -HUP xsettingsd 2>/dev/null || true
+fi
+
+# We do not reload quickshell here because QML bindings update instantly, and reloading causes the Settings UI to close.
