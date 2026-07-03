@@ -569,10 +569,6 @@ Item {
                                 spacing: 24
                                 
                                 SettingsCard {
-                                    surfaceColor: Theme.colSurfaceContainer
-                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                                    primaryColor: Theme.colPrimary
-                                    onSurfaceColor: Theme.colOnSurface
                                     title: "Theme & Palette"
                                     icon: ""
                                     
@@ -708,10 +704,6 @@ Item {
                                 }
                                 
                                 SettingsCard {
-                                    surfaceColor: Theme.colSurfaceContainer
-                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                                    primaryColor: Theme.colPrimary
-                                    onSurfaceColor: Theme.colOnSurface
                                     title: "Window Effects"
                                     icon: "󰽉"
                                     
@@ -807,10 +799,6 @@ Item {
                                 spacing: 24
                                 
                                 SettingsCard {
-                                    surfaceColor: Theme.colSurfaceContainer
-                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                                    primaryColor: Theme.colPrimary
-                                    onSurfaceColor: Theme.colOnSurface
                                     title: "Window Layout"
                                     icon: ""
 
@@ -930,10 +918,6 @@ Item {
                                 }
 
                                 SettingsCard {
-                                    surfaceColor: Theme.colSurfaceContainer
-                                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                                    primaryColor: Theme.colPrimary
-                                    onSurfaceColor: Theme.colOnSurface
                                     title: "Bar Layout & Styling"
                                     icon: ""
                                     
@@ -1360,10 +1344,6 @@ Item {
                         }
 
                         SettingsCard {
-                            surfaceColor: Theme.colSurfaceContainer
-                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
-                            primaryColor: Theme.colPrimary
-                            onSurfaceColor: Theme.colOnSurface
                             title: "Target Monitors"
                             icon: "󰍹"
                             
