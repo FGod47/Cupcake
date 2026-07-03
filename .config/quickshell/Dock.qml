@@ -7,6 +7,7 @@ import "theme"
 
 PanelWindow {
     id: dockWindow
+    readonly property string homeDir: Quickshell.env("HOME")
     anchors {
         bottom: true
     }
@@ -83,7 +84,7 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         onEntered: parent.scale = 1.05
                         onExited: parent.scale = 1.0
-                        onClicked: Quickshell.execDetached(["/home/zero/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                        onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
                         Behavior on scale { NumberAnimation { duration: 150 } }
                     }
                 }

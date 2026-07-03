@@ -19,7 +19,7 @@ if [ ! -f "$WALLPAPER" ]; then
     exit 1
 fi
 
-export PATH=$PATH:/home/zero/.local/bin:/home/zero/.cargo/bin
+export PATH=$PATH:$HOME/.local/bin:$HOME/.cargo/bin
 
 MODE="dark"
 if [ -f ~/.config/cupcake/.color_mode ]; then
@@ -83,7 +83,7 @@ quickshell ipc call theme reload || true
     # Update Papirus folders color based on the new Matugen palette
     echo "Updating dynamic icon colors..."
     # Run with /dev/null to prevent sudo from hanging if it prompts for password
-    /home/zero/.local/bin/dynamic-icons < /dev/null > /dev/null 2>&1 || true
+    "$HOME/.local/bin/dynamic-icons" < /dev/null > /dev/null 2>&1 || true
 
     # Force Nautilus to restart so it picks up the new cached icons
     killall -q nautilus || true

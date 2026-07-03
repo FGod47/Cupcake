@@ -9,6 +9,8 @@ import "theme"
 ShellRoot {
     id: root
 
+    readonly property string homeDir: Quickshell.env("HOME")
+
     // Top Bar Components for all screens
     Variants {
         model: Quickshell.screens
@@ -37,7 +39,7 @@ ShellRoot {
 
     Process {
         id: initTransparencyValues
-        command: ["cat", "/home/zero/.config/cupcake/.transparency_values"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.transparency_values"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -71,7 +73,7 @@ ShellRoot {
 
     Process {
         id: initBarTransparency
-        command: ["cat", "/home/zero/.config/cupcake/.bar_transparency"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -83,7 +85,7 @@ ShellRoot {
 
     Process {
         id: initBarOpacity
-        command: ["cat", "/home/zero/.config/cupcake/.bar_opacity"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_opacity"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {

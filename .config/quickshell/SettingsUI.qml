@@ -12,6 +12,7 @@ import Quickshell.Wayland
 
 Item {
     id: root
+    readonly property string homeDir: Quickshell.env("HOME")
     anchors.fill: parent
     signal requestClose()
     
@@ -54,14 +55,14 @@ Item {
 
     function applyGlobalSettings() {
         let isTrans = root.globalTransparency ? "true" : "false";
-        Quickshell.execDetached(["bash", "-c", "echo " + isTrans + " > /home/zero/.config/cupcake/.transparency && echo -e 'OPACITY=" + root.globalOpacity.toFixed(2) + "\\nBLUR_SIZE=" + root.globalBlurSize + "\\nBLUR_PASSES=" + root.globalBlurPasses + "' > /home/zero/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
+        Quickshell.execDetached(["bash", "-c", "echo " + isTrans + " > ~/.config/cupcake/.transparency && echo -e 'OPACITY=" + root.globalOpacity.toFixed(2) + "\\nBLUR_SIZE=" + root.globalBlurSize + "\\nBLUR_PASSES=" + root.globalBlurPasses + "' > ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
     }
     
     property bool windowBorders: true
 
     Process {
         id: initBorders
-        command: ["cat", "/home/zero/.config/cupcake/.borders"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.borders"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -76,7 +77,7 @@ Item {
 
     Process {
         id: initShadows
-        command: ["cat", "/home/zero/.config/cupcake/.shadows"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.shadows"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -93,7 +94,7 @@ Item {
 
     Process {
         id: initBorderSize
-        command: ["cat", "/home/zero/.config/cupcake/.border_size"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.border_size"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -110,7 +111,7 @@ Item {
 
     Process {
         id: initGapsIn
-        command: ["cat", "/home/zero/.config/cupcake/.gaps_in"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.gaps_in"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -124,7 +125,7 @@ Item {
 
     Process {
         id: initGapsOut
-        command: ["cat", "/home/zero/.config/cupcake/.gaps_out"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.gaps_out"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -138,7 +139,7 @@ Item {
 
     Process {
         id: initBarTransparencySettings
-        command: ["cat", "/home/zero/.config/cupcake/.bar_transparency"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -150,7 +151,7 @@ Item {
 
     Process {
         id: initBarOpacitySettings
-        command: ["cat", "/home/zero/.config/cupcake/.bar_opacity"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_opacity"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -164,7 +165,7 @@ Item {
 
     Process {
         id: initTransparency
-        command: ["cat", "/home/zero/.config/cupcake/.transparency"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -178,7 +179,7 @@ Item {
 
     Process {
         id: initTransparencyValues
-        command: ["cat", "/home/zero/.config/cupcake/.transparency_values"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.transparency_values"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -196,7 +197,7 @@ Item {
 
     Process {
         id: initColorMode
-        command: ["cat", "/home/zero/.config/cupcake/.color_mode"]
+        command: ["cat", root.homeDir + "/.config/cupcake/.color_mode"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -522,7 +523,7 @@ Item {
 
                     Process {
                         id: initSchemeProcess
-                        command: ["cat", "/home/zero/.config/cupcake/.color_scheme"]
+                        command: ["cat", root.homeDir + "/.config/cupcake/.color_scheme"]
                         running: true
                         stdout: StdioCollector {
                             onStreamFinished: {
@@ -617,7 +618,7 @@ Item {
                                             
                                             Process {
                                                 id: wpPollProcess
-                                                command: ["cat", "/home/zero/.cache/current_wallpaper"]
+                                                command: ["cat", root.homeDir + "/.cache/current_wallpaper"]
                                                 running: true
                                                 stdout: StdioCollector {
                                                     onStreamFinished: {
@@ -1102,7 +1103,7 @@ Item {
                             clip: true
 
                             model: FolderListModel {
-                                folder: "file:///home/zero/.config/cupcake/themes/cupcake-dark/walls"
+                                folder: "file://" + root.homeDir + "/.config/cupcake/themes/cupcake-dark/walls"
                                 nameFilters: ["*.png", "*.jpg", "*.jpeg"]
                             }
 
@@ -1143,7 +1144,7 @@ Item {
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["/home/zero/.local/bin/set-theme", filePath])
+                                            Quickshell.execDetached([root.homeDir + "/.local/bin/set-theme", filePath])
                                         }
                                     }
                                 }
@@ -1470,7 +1471,7 @@ Item {
                                     text: "Restart"
                                     font.family: root.font.family
                                     onClicked: {
-                                        Quickshell.execDetached(["/home/zero/.config/cupcake/scripts/toggle_bar.sh"])
+                                        Quickshell.execDetached([root.homeDir + "/.config/cupcake/scripts/toggle_bar.sh"])
                                     }
                                 }
                             }
@@ -2118,7 +2119,7 @@ Item {
 
                     Process {
                         id: aboutInfoProcess
-                        command: ["bash", "/home/zero/.local/bin/get-hw-info"]
+                        command: ["bash", root.homeDir + "/.local/bin/get-hw-info"]
                         running: true
                         stdout: StdioCollector {
                             onStreamFinished: {
@@ -2328,7 +2329,7 @@ Item {
                     function keepDisplay() {
                         if (displayPage.pendingOutput === "") return;
                         revertTimer.stop();
-                        Quickshell.execDetached(["python3", "/home/zero/Cupcake/.local/bin/generate_monitor_lua.py"]);
+                        Quickshell.execDetached(["python3", root.homeDir + "/Cupcake/.local/bin/generate_monitor_lua.py"]);
                         displayPage.pendingOutput = "";
                     }
 

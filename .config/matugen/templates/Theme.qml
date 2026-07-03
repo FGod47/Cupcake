@@ -6,10 +6,12 @@ import Quickshell.Io
 Item {
     id: themeSingleton
 
+    readonly property string homeDir: Quickshell.env("HOME")
+
     property bool globalTransparency: true
     
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.transparency"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {

@@ -17,7 +17,7 @@ hl.bind(aMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + W", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 hl.bind(mainMod .. " + G", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("obsidian /home/zero/Obsidian/\\ \\Vault\\ Notes.canvas"))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("obsidian " .. (os.getenv("HOME") or "/home/code") .. "/Obsidian/\\ \\Vault\\ Notes.canvas"))
 hl.bind(sMod .. " + O", hl.dsp.exec_cmd("obsidian"))
 hl.bind(sMod .. " + T", hl.dsp.exec_cmd(apps.terminal, { float = true, size = "1000 500" }))
 

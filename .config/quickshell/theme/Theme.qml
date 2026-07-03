@@ -6,10 +6,12 @@ import Quickshell.Io
 Item {
     id: themeSingleton
 
+    readonly property string homeDir: Quickshell.env("HOME")
+
     property bool globalTransparency: true
     
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.transparency"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -29,22 +31,22 @@ Item {
     property real monoFontScale: 1.0
 
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_default"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_default"]
         running: true
         stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.defaultFontFamily = text.trim(); } }
     }
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_mono"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_mono"]
         running: true
         stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.monoFontFamily = text.trim(); } }
     }
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_default_scale"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_default_scale"]
         running: true
         stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontScale = v; } }
     }
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_mono_scale"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_mono_scale"]
         running: true
         stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.monoFontScale = v; } }
     }
@@ -53,12 +55,12 @@ Item {
     property int defaultFontWeight: 500
 
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_size"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_size"]
         running: true
         stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontSize = v; } }
     }
     Process {
-        command: ["cat", "/home/zero/.config/cupcake/.font_weight"]
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_weight"]
         running: true
         stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontWeight = v; } }
     }

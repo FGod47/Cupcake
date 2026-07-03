@@ -11,6 +11,8 @@ import "theme"
 PanelWindow {
     id: root
 
+    readonly property string homeDir: Quickshell.env("HOME")
+
     anchors { left: true; top: true; bottom: true; right: true }
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
@@ -40,7 +42,7 @@ PanelWindow {
     readonly property color colFgDim:   Theme.colOnSurfaceVariant
     readonly property color colPrimary: Theme.colPrimary
 
-    readonly property string wallDir: "/home/zero/.config/cupcake/walls"
+    readonly property string wallDir: root.homeDir + "/.config/cupcake/walls"
 
     // ── Current wallpaper ────────────────────────────────────────────────
     property string currentWall: ""
@@ -48,7 +50,7 @@ PanelWindow {
     property int    moveDuration: 0
 
     Process {
-        command: ["cat", "/home/zero/.cache/current_wallpaper"]
+        command: ["cat", root.homeDir + "/.cache/current_wallpaper"]
         running: true
         stdout: SplitParser {
             onRead: data => {
@@ -121,7 +123,7 @@ PanelWindow {
     // ── Find Current Wallpaper ───────────────────────────────────────────
     Process {
         id: queryProc
-        command: ["cat", "/home/zero/.cache/current_wallpaper"]
+        command: ["cat", root.homeDir + "/.cache/current_wallpaper"]
         running: true
         stdout: StdioCollector {
             id: queryStdout
@@ -261,7 +263,7 @@ PanelWindow {
                     const path = root.wallDir + "/" + pv.currentItem.fileName
                     root.currentWall = path
                     Quickshell.execDetached([
-                        "/home/zero/.local/bin/set-theme", path
+                        root.homeDir + "/.local/bin/set-theme", path
                     ])
                     root.dismiss()
                 }
@@ -376,7 +378,7 @@ PanelWindow {
                         const path = root.wallDir + "/" + del.fileName
                         root.currentWall = path
                         Quickshell.execDetached([
-                            "/home/zero/.local/bin/set-theme", path
+                            root.homeDir + "/.local/bin/set-theme", path
                         ])
                         root.dismiss()
                     }
