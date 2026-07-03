@@ -269,6 +269,54 @@ Item {
             anchors.margins: 8
             spacing: 8
 
+            // Custom Title Bar
+            Item {
+                Layout.fillWidth: true
+                implicitHeight: 40
+                
+                Text {
+                    anchors.centerIn: parent
+                    text: "Settings"
+                    color: Theme.colOnSurface
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 16
+                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                }
+                
+                MouseArea {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 32; height: 32
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: root.requestClose()
+                    
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 8
+                        color: parent.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                    }
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: ""
+                        color: Theme.colOnSurfaceVariant
+                        font.family: root.font.family
+                        font.pixelSize: 16
+                    }
+                }
+                
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                }
+            }
+
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -278,10 +326,9 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 220 : 72
+                    Layout.preferredWidth: 64
                     
-                    color: Theme.colSurfaceContainerHigh
-                    radius: 12
+                    color: "transparent"
 
                     ScrollView {
                         id: navScrollView
@@ -293,79 +340,52 @@ Item {
 
                         ColumnLayout {
                             width: navScrollView.availableWidth
-                            spacing: 4
+                            spacing: 8
+                            anchors.topMargin: 20
 
                             // Nav Buttons
-                            component NavHeader: Text {
-                                visible: navExpanded
-                                Layout.fillWidth: true
-                                Layout.leftMargin: 24
-                                Layout.topMargin: 16
-                                Layout.bottomMargin: 8
-                                color: Theme.colPrimary
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
-                                opacity: 0.8
-                            }
+                            component NavHeader: Item { property string text; visible: false; height: 0 }
 
                             component NavButton: Item {
                                 property string iconText
                                 property string labelText
                                 property int pageIndex
 
-                                implicitWidth: parent ? parent.width : 220
-                                width: parent ? parent.width : 220
-                                implicitHeight: 38
+                                implicitWidth: 64
+                                width: 64
+                                implicitHeight: 48
                                 
                                 // Background Pill
                                 Rectangle {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 12
-                                    anchors.rightMargin: 12
-                                    radius: 9
-                                color: root.currentIndex === pageIndex 
-                                    ? Theme.colPrimary
-                                    : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
-                                
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                            }
-                            
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: navExpanded ? 16 : 12
-                                spacing: 12
+                                    anchors.centerIn: parent
+                                    width: 44
+                                    height: 44
+                                    radius: 12
+                                    color: root.currentIndex === pageIndex 
+                                        ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+                                        : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
+                                    
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                }
                                 
                                 Text {
+                                    anchors.centerIn: parent
                                     text: iconText
-                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
+                                    color: Theme.colOnSurfaceVariant
                                     font.family: root.font.family
-                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 16
-                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
-                                    Layout.preferredWidth: 24
+                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 20
+                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
                                     horizontalAlignment: Text.AlignHCenter
                                 }
-                                
-                                Text {
-                                    visible: navExpanded
-                                    text: labelText
-                                    color: root.currentIndex === pageIndex ? Theme.colOnPrimary : Theme.colOnSurface
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: Theme.defaultFontSize
-                                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
-                                    Layout.fillWidth: true
-                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.8
+
+                                MouseArea {
+                                    id: navMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.currentIndex = pageIndex
                                 }
                             }
-
-                            MouseArea {
-                                id: navMouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.currentIndex = pageIndex
-                            }
-                        }
 
                                                 NavHeader { text: "APPEARANCE" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
@@ -402,7 +422,15 @@ Item {
                         Item { Layout.fillHeight: true } // Spacer
                     }
                 }
-            }
+                
+                // Vertical Separator
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.topMargin: 12
+                    Layout.bottomMargin: 12
+                    implicitWidth: 1
+                    color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                }
 
                 // Content Area
                 Rectangle {

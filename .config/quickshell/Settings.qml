@@ -10,9 +10,14 @@ Window {
     height: 800
     title: "Cupcake Settings"
     color: "transparent"
+    flags: Qt.Window | Qt.FramelessWindowHint
     
     Rectangle {
         anchors.fill: parent
+        radius: 16
+        border.width: 1
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
+        clip: true
         
         // Glassy semi-transparent gradient
         gradient: Gradient {
