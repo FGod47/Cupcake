@@ -17,18 +17,43 @@ PanelWindow {
     }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-
+    property bool settingsOpen: false
+    onSettingsOpenChanged: globalState.settingsOpen = settingsOpen;
+    exclusiveZone: 46
+    
+    Process {
+        id: settingsIpcPoll
+        command: ["bash", "-c", "while true; do cat /tmp/cupcake_settings 2>/dev/null || echo 0; sleep 0.1; done"]
+        running: true
+        stdout: SplitParser {
+            onRead: (data) => {
+                if (data.trim() === "1") {
+                    bar.settingsOpen = true;
+                    Quickshell.execDetached(["bash", "-c", "echo 0 > /tmp/cupcake_settings"]);
+                }
+            }
+        }
+    }
+    // Strictly fixed to screen height to prevent Hyprland layer resize jitter breaking animations
     // and to allow the Settings menu to animate to the center of the screen
     implicitHeight: modelData.height
     color: "transparent"
     
-    mask: normalMask
+    mask: bar.settingsOpen ? settingsMask : normalMask
     
     Region {
         id: normalMask
         Region { item: leftModules }
         Region { item: archPill }
         Region { item: rightModules }
+    }
+    
+    Region {
+        id: settingsMask
+        Region { item: leftModules }
+        Region { item: archPill }
+        Region { item: rightModules }
+        Region { item: fullScreenClickAway }
     }
 
     property var modelData
@@ -716,27 +741,44 @@ PanelWindow {
         
         Rectangle {
             id: archPill
-            y: 10
+            y: bar.settingsOpen ? (modelData.height - 800) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
-            width: archText.implicitWidth + 32
-            height: 34
+            width: bar.settingsOpen ? 900 : archText.implicitWidth + 32
+            height: bar.settingsOpen ? 800 : 34
+            
+            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
             property color c1: Theme.colPrimary
             property color c2: Theme.colSecondary
             
-            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
-            border.width: 1
-            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
+            // The background opacity must remain high enough that its resulting alpha
+            // (root.globalOpacity * bgOpacity) stays above Hyprland's ignore_alpha=0.2 threshold!
+            property real bgOpacity: 1.0
+            Behavior on bgOpacity { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
+            property real morphProgress: bar.settingsOpen ? 1.0 : 0.0
+            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property real currentAlpha: root.barOpacity + (Theme.bgAlpha - root.barOpacity) * archPill.morphProgress
+            // The solid glass color that covers the entire pill
+            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha * archPill.bgOpacity) : Theme.colSurface
+            border.width: 1
+            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3 * archPill.bgOpacity)
+            
+            // The gradient is in a child Rectangle. We DO NOT use the opacity property because
+            // animating opacity forces QML to use an FBO, which flattens and destroys the Wayland alpha channel.
+            // Instead, we directly animate the alpha channels of the GradientStops.
             Rectangle {
                 anchors.fill: parent
                 radius: 18
                 
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: archPill.c1 }
-                    GradientStop { position: 1.0; color: archPill.c2 }
+                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
+                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
                 }
             }
 
@@ -756,6 +798,8 @@ PanelWindow {
                 id: archText
                 anchors.centerIn: parent
                 spacing: 6
+                opacity: bar.settingsOpen ? 0.0 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 Text {
                     text: ""
                     color: Theme.colSurfaceContainerHigh
@@ -769,13 +813,57 @@ PanelWindow {
                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                 }
             }
+
+            // Catch stray clicks inside the padding so they don't fall through to the background
+            MouseArea {
+                anchors.fill: parent
+                enabled: bar.settingsOpen
+                onPressed: mouse.accepted = true
+                onReleased: mouse.accepted = true
+                onClicked: mouse.accepted = true
+            }
+
+            // Inner clipping container for the content
+            // Keeps the square clip box away from the natively rounded background edges!
+            Item {
+                anchors.fill: parent
+                anchors.margins: 16
+                clip: true
+                
+                Loader {
+                    id: settingsLoader
+                    anchors.centerIn: parent
+                    width: 868
+                    height: 768
+                    source: "SettingsUI.qml"
+                    active: true
+                    
+                    // Render the complex UI to a flat texture so opacity animation doesn't cause massive GPU overdraw
+                    layer.enabled: true
+                    
+                    // Natively bound to morph progress: stays strictly 0.0 until morph is half complete!
+                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
+                    visible: true
+                    enabled: bar.settingsOpen
+                    
+                    onLoaded: {
+                        item.anchors.centerIn = settingsLoader;
+                    }
+                    
+                    Connections {
+                        target: settingsLoader.item
+                        function onRequestClose() {
+                            bar.settingsOpen = false;
+                        }
+                    }
+                }
+            }
             
             MouseArea {
                 anchors.fill: parent
+                enabled: !bar.settingsOpen
                 cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    // Placeholder for future use
-                }
+                onClicked: bar.settingsOpen = true
             }
         }
 }
