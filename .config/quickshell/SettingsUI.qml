@@ -351,14 +351,18 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 220 : 64
+                    Layout.preferredWidth: navExpanded ? 220 : 72
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
                     
-                    color: "transparent"
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                    radius: 16
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
 
                     ScrollView {
                         id: navScrollView
                         anchors.fill: parent
+                        anchors.margins: 4
                         contentWidth: availableWidth
                         clip: true
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
