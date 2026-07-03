@@ -34,7 +34,8 @@ Item {
                     visible: root.activeTab === "built-in"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -82,7 +83,8 @@ Item {
                     visible: root.activeTab === "community"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {

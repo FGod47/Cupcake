@@ -34,7 +34,8 @@ Item {
                     visible: root.activeTab === "privacy-security"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -108,7 +109,8 @@ Item {
                     visible: root.activeTab === "lock-screen"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {

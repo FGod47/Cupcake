@@ -36,7 +36,8 @@ Item {
                     visible: root.activeTab === "general"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -99,7 +100,8 @@ Item {
                     visible: root.activeTab === "directories"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -173,7 +175,8 @@ Item {
                     visible: root.activeTab === "transition"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -247,7 +250,8 @@ Item {
                     visible: root.activeTab === "automation"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {

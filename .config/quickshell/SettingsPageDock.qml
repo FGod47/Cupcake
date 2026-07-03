@@ -39,7 +39,8 @@ Item {
                     visible: root.activeTab === "general"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -100,7 +101,8 @@ Item {
                     visible: root.activeTab === "behavior"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -226,7 +228,8 @@ Item {
                     visible: root.activeTab === "layout"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -339,7 +342,8 @@ Item {
                     visible: root.activeTab === "shape"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -426,7 +430,8 @@ Item {
                     visible: root.activeTab === "effects"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -474,7 +479,8 @@ Item {
                     visible: root.activeTab === "focus-styling"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -561,7 +567,8 @@ Item {
                     visible: root.activeTab === "pinned-apps"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {

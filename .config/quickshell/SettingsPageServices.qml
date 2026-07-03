@@ -36,7 +36,8 @@ Item {
                     visible: root.activeTab === "calendar"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -84,7 +85,8 @@ Item {
                     visible: root.activeTab === "audio"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -171,7 +173,8 @@ Item {
                     visible: root.activeTab === "brightness"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {
@@ -206,7 +209,8 @@ Item {
                     visible: root.activeTab === "media"
                     
                     ColumnLayout {
-                        width: parent.width
+                        width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 24
                         
                         SettingsCard {

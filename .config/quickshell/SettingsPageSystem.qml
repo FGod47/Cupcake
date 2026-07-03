@@ -22,7 +22,8 @@ Item {
                 clip: true
                 
                 ColumnLayout {
-                    width: parent.width
+                    width: Math.min(parent.width, 1000)
+                        anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 24
                     
 
