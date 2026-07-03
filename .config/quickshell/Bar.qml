@@ -17,6 +17,7 @@ PanelWindow {
     }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    exclusiveZone: 46
 
     // and to allow the Settings menu to animate to the center of the screen
     implicitHeight: modelData.height
