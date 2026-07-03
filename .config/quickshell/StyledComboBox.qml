@@ -22,6 +22,8 @@ ComboBox {
         font.pixelSize: 14
         verticalAlignment: Text.AlignVCenter
         leftPadding: 12
+        rightPadding: 32
+        elide: Text.ElideRight
     }
     
     property string searchText: ""
