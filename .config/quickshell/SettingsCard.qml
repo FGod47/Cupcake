@@ -46,14 +46,14 @@ Rectangle {
                     visible: cardRoot.icon !== ""
                     text: cardRoot.icon
                     color: Theme.colOnSurfaceVariant
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 18
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.monoFontFamily 
                 }
                 Text { 
                     text: cardRoot.title
                     color: onSurfaceColor
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 18
+                    font.pixelSize: 14
                     font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                     Layout.fillWidth: true 
                 }
@@ -77,6 +77,16 @@ Rectangle {
         }
 
         Item { Layout.fillHeight: true; Layout.minimumHeight: 1 }
-
+    }
+    
+    Component.onCompleted: {
+        for (let i = 0; i < innerLayout.children.length; i++) {
+            let child = innerLayout.children[i];
+            let comp = Qt.createQmlObject('import QtQuick; Rectangle { color: Qt.rgba(Theme.colSurfaceVariant.r, Theme.colSurfaceVariant.g, Theme.colSurfaceVariant.b, 0.4); radius: height/2; z: -1 }', child, "dynamicBg" + i);
+            comp.anchors.fill = child;
+            comp.anchors.margins = -12;
+            comp.anchors.leftMargin = -20;
+            comp.anchors.rightMargin = -20;
+        }
     }
 }

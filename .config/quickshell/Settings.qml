@@ -9,16 +9,27 @@ Window {
     width: 900
     height: 800
     title: "Cupcake Settings"
-    color: Theme.colBackground
+    color: "transparent"
     
-    SettingsUI {
-        id: settingsUI
+    Rectangle {
         anchors.fill: parent
         
-        Connections {
-            target: settingsUI
-            function onRequestClose() {
-                settingsWindow.close();
+        // Glassy semi-transparent gradient
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, 0.7) }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.8) }
+        }
+        
+        SettingsUI {
+            id: settingsUI
+            anchors.fill: parent
+            
+            Connections {
+                target: settingsUI
+                function onRequestClose() {
+                    settingsWindow.close();
+                }
             }
         }
     }
