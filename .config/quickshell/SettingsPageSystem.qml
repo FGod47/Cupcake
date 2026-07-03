@@ -41,11 +41,13 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
+                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
                                 id: defaultFontCombo
-                                Layout.preferredWidth: 200
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["Inter"]
                                 currentIndex: model.indexOf(Theme.defaultFontFamily) !== -1 ? model.indexOf(Theme.defaultFontFamily) : 0
                                 onActivated: (index) => {
@@ -75,11 +77,13 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
+                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
-                                                        StyledComboBox {
+                            StyledComboBox {
                                 id: monoFontCombo
-                                Layout.preferredWidth: 240
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["JetBrainsMono Nerd Font Propo"]
                                 currentIndex: model.indexOf(Theme.monoFontFamily) !== -1 ? model.indexOf(Theme.monoFontFamily) : 0
                                 onActivated: (index) => {
@@ -94,8 +98,7 @@ Item {
                                     stdout: StdioCollector {
                                         onStreamFinished: {
                                             if (text.trim() !== "") {
-                                                let fonts = text.trim().split("
-");
+                                                let fonts = text.trim().split("\n");
                                                 monoFontCombo.model = fonts;
                                                 monoFontCombo.currentIndex = monoFontCombo.model.indexOf(Theme.monoFontFamily) !== -1 ? monoFontCombo.model.indexOf(Theme.monoFontFamily) : 0;
                                             }
@@ -110,11 +113,13 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Text { text: "Font Weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
-                                id: fontWeightCombo
-                                Layout.preferredWidth: 200
+                                id: weightCombo
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                                 Component.onCompleted: {
                                     if (Theme.defaultFontWeight <= 300) currentIndex = 0;
@@ -143,9 +148,9 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
+                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            }
+                            RowLayout { Layout.fillWidth: true
                                     spacing: 16
                                     StyledSlider {
                                         Layout.fillWidth: true
@@ -160,7 +165,6 @@ Item {
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; Quickshell.execDetached(["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]); } }
                                     }
                                 }
-                            }
                         }
                         
                         RowLayout {
@@ -168,11 +172,11 @@ Item {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
+                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            }
+                            RowLayout { Layout.fillWidth: true
                                     spacing: 16
-                                                                        StyledSlider {
+                                    StyledSlider {
                                         Layout.fillWidth: true
                                         from: 50; to: 200; stepSize: 5
                                         value: Theme.monoFontScale * 100
@@ -185,7 +189,6 @@ Item {
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]); } }
                                     }
                                 }
-                            }
                         }
                     }
                     
@@ -201,12 +204,14 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
+                                Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Main font used throughout the interface."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
                                 id: appDefaultFontCombo
-                                Layout.preferredWidth: 200
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["Inter"]
                                 currentIndex: model.indexOf(Theme.appFontFamily) !== -1 ? model.indexOf(Theme.appFontFamily) : 0
                                 onActivated: (index) => {
@@ -235,12 +240,14 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
+                                Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Monospaced font used for numbers and stats display."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
                                 id: appMonoFontCombo
-                                Layout.preferredWidth: 240
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["JetBrainsMono Nerd Font Propo"]
                                 currentIndex: model.indexOf(Theme.appMonoFamily) !== -1 ? model.indexOf(Theme.appMonoFamily) : 0
                                 onActivated: (index) => {
@@ -269,12 +276,14 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Font Weight"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                Text { text: "Font Weight"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Change the boldness of the user interface text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
-                                id: appFontWeightCombo
-                                Layout.preferredWidth: 200
+                                id: appWeightCombo
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                                 Component.onCompleted: {
                                     if (Theme.appFontWeight <= 300) currentIndex = 0;
@@ -302,10 +311,10 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
+                                Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Increase or decrease the size of the standard text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            }
+                            RowLayout { Layout.fillWidth: true
                                     spacing: 16
                                     StyledSlider {
                                         Layout.fillWidth: true
@@ -320,19 +329,18 @@ Item {
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; Quickshell.execDetached(["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]); } }
                                     }
                                 }
-                            }
                         }
                         
                         RowLayout {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
+                                Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Increase or decrease the size of the monospaced text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            }
+                            RowLayout { Layout.fillWidth: true
                                     spacing: 16
-                                                                        StyledSlider {
+                                    StyledSlider {
                                         Layout.fillWidth: true
                                         from: 50; to: 200; stepSize: 5
                                         value: Theme.appMonoScale * 100
@@ -345,7 +353,6 @@ Item {
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appMonoScale = 1.0; Quickshell.execDetached(["bash", "-c", "echo '1.0' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]); } }
                                     }
                                 }
-                            }
                         }
                     }
                     
@@ -365,12 +372,14 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Terminal Font Family"; color: Theme.colOnSurface; font.family: Theme.kittyMonoFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Monospaced font used for the Kitty terminal."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
+                                Text { text: "Terminal Font Family"; color: Theme.colOnSurface; font.family: Theme.kittyMonoFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Monospaced font used for the Kitty terminal."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                             }
                             StyledComboBox {
                                 id: kittyMonoFontCombo
-                                Layout.preferredWidth: 240
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 200
+                                Layout.maximumWidth: 350
                                 model: ["JetBrainsMono Nerd Font Propo"]
                                 currentIndex: model.indexOf(Theme.kittyMonoFamily) !== -1 ? model.indexOf(Theme.kittyMonoFamily) : 0
                                 onActivated: (index) => {
@@ -399,10 +408,10 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                Text { text: "Terminal Font Size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.appFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
-                                Text { text: "Increase or decrease the size of terminal text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12 }
-                                RowLayout {
-                                    Layout.fillWidth: true
+                                Text { text: "Terminal Font Size"; color: Theme.colOnSurface; font.family: Theme.appFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.appFontWeight + 200) }
+                                Text { text: "Increase or decrease the size of terminal text."; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.weight: Theme.appFontWeight; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+                            }
+                            RowLayout { Layout.fillWidth: true
                                     spacing: 16
                                     StyledSlider {
                                         Layout.fillWidth: true

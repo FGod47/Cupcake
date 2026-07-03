@@ -1084,6 +1084,8 @@ Item {
                             font.family: root.font.family
                             font.pixelSize: 32
                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                            Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
                         }
 
                         Text {
@@ -1092,6 +1094,8 @@ Item {
                             font.family: root.font.family
                             font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             Layout.bottomMargin: 16
+                            Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
                         }
 
                         GridView {
