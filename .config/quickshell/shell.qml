@@ -152,6 +152,7 @@ ShellRoot {
 
     // Popups & Panels
     NotificationPanel {}
+    SettingsWindow {}
     Osd {}
     AiPanel {}
 
