@@ -12,326 +12,171 @@ Item {
         anchors.margins: 24
         spacing: 16
         
-        SettingsSegmentedControl {
-            Layout.fillWidth: true
-            model: [
-                { label: "Theme", value: "theme" },
-                        { label: "Interface", value: "interface" },
-                        { label: "Motion", value: "motion" },
-                        { label: "Effects", value: "effects" }
-            ]
-            currentValue: root.activeTab
-            onValueChanged: (val, idx) => { root.activeTab = val; }
-        }
-        
-        Item {
+        ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            contentWidth: availableWidth
+            clip: true
             
-
-                ScrollView {
-                    anchors.fill: parent
-                    contentWidth: availableWidth
-                    clip: true
-                    visible: root.activeTab === "theme"
+            ColumnLayout {
+                width: Math.min(parent.width, 1000)
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 24
+                
+                SettingsCard {
+                    title: "Mode"
+                    surfaceColor: Theme.colSurfaceContainer
+                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    primaryColor: Theme.colPrimary
+                    onSurfaceColor: Theme.colOnSurface
                     
-                    ColumnLayout {
-                        width: Math.min(parent.width, 1000)
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 24
-                        
-                        SettingsCard {
-                            title: "Theme Settings"
-                            icon: ""
-                            surfaceColor: Theme.colSurfaceContainer
-                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                            primaryColor: Theme.colPrimary
-                            onSurfaceColor: Theme.colOnSurface
-                            
-                            
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Theme Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Theme Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                SettingsSegmentedControl {
-                                    Layout.preferredWidth: 200
-                                    model: [ { label: "Option 1", value: 1 }, { label: "Option 2", value: 2 } ]
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Palette Source"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Palette Source"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                SettingsSegmentedControl {
-                                    Layout.preferredWidth: 200
-                                    model: [ { label: "Option 1", value: 1 }, { label: "Option 2", value: 2 } ]
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Builtin Palette"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Builtin Palette"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledComboBox {
-                                    Layout.preferredWidth: 150
-                                    model: ["Option 1", "Option 2"]
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Wallpaper Generation Scheme"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Wallpaper Generation Scheme"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledComboBox {
-                                    Layout.preferredWidth: 150
-                                    model: ["Option 1", "Option 2"]
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Community Palette"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Community Palette"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSwitch {
-                                    checked: false
-                                    onCheckedChanged: {}
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Custom Palette"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Custom Palette"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSwitch {
-                                    checked: false
-                                    onCheckedChanged: {}
-                                }
-                            }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰖔"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // moon icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Text { text: "UI Style"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                        }
+                        SettingsSegmentedControl {
+                            Layout.preferredWidth: 240
+                            model: [ { label: "Glass", value: 1 }, { label: "Liquid", value: 2 }, { label: "Classic", value: 3 } ]
+                            currentValue: 2
                         }
                     }
                 }
 
-                ScrollView {
-                    anchors.fill: parent
-                    contentWidth: availableWidth
-                    clip: true
-                    visible: root.activeTab === "interface"
+                SettingsCard {
+                    title: "Accent"
+                    surfaceColor: Theme.colSurfaceContainer
+                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    primaryColor: Theme.colPrimary
+                    onSurfaceColor: Theme.colOnSurface
                     
-                    ColumnLayout {
-                        width: Math.min(parent.width, 1000)
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 24
-                        
-                        SettingsCard {
-                            title: "Interface Settings"
-                            icon: ""
-                            surfaceColor: Theme.colSurfaceContainer
-                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                            primaryColor: Theme.colPrimary
-                            onSurfaceColor: Theme.colOnSurface
-                            
-                            
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Ui Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Ui Scale"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSlider {
-                                    Layout.preferredWidth: 150
-                                    from: 0; to: 100; value: 50
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Corner Roundness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Corner Roundness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSlider {
-                                    Layout.preferredWidth: 150
-                                    from: 0; to: 100; value: 50
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "App Icon Colorize"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "App Icon Colorize"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                Rectangle {
-                                    width: 24; height: 24; radius: 12
-                                    color: Theme.colPrimary
-                                    border.color: Theme.colOutline
-                                    border.width: 1
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "App Icon Color"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "App Icon Color"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                Rectangle {
-                                    width: 24; height: 24; radius: 12
-                                    color: Theme.colPrimary
-                                    border.color: Theme.colOutline
-                                    border.width: 1
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Font Family"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Font Family"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSwitch {
-                                    checked: false
-                                    onCheckedChanged: {}
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Language"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledComboBox {
-                                    Layout.preferredWidth: 150
-                                    model: ["Option 1", "Option 2"]
-                                }
-                            }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        SettingsSegmentedControl {
+                            Layout.fillWidth: true
+                            model: [ 
+                                { label: "Tonal Spot", value: 1 }, 
+                                { label: "Content", value: 2 }, 
+                                { label: "Expressive", value: 3 },
+                                { label: "Fidelity", value: 4 },
+                                { label: "Fruit Salad", value: 5 },
+                                { label: "Monochrome", value: 6 },
+                                { label: "Neutral", value: 7 },
+                                { label: "Rainbow", value: 8 }
+                            ]
+                            currentValue: 1
+                        }
+                    }
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰒓"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // accent icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Text { text: "Dynamic Accent"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                            Text { text: "Manual"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; opacity: 0.8 }
+                        }
+                        StyledSwitch {
+                            checked: true
                         }
                     }
                 }
 
-                ScrollView {
-                    anchors.fill: parent
-                    contentWidth: availableWidth
-                    clip: true
-                    visible: root.activeTab === "motion"
+                SettingsCard {
+                    title: "Quick Toggles"
+                    surfaceColor: Theme.colSurfaceContainer
+                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    primaryColor: Theme.colPrimary
+                    onSurfaceColor: Theme.colOnSurface
                     
-                    ColumnLayout {
-                        width: Math.min(parent.width, 1000)
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 24
-                        
-                        SettingsCard {
-                            title: "Motion Settings"
-                            icon: ""
-                            surfaceColor: Theme.colSurfaceContainer
-                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                            primaryColor: Theme.colPrimary
-                            onSurfaceColor: Theme.colOnSurface
-                            
-                            
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Animations"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Animations"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSwitch {
-                                    checked: false
-                                    onCheckedChanged: {}
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Animation Speed"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Animation Speed"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSlider {
-                                    Layout.preferredWidth: 150
-                                    from: 0; to: 100; value: 50
-                                }
-                            }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰢹"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // toggle icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Text { text: "Toggle Style"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                        }
+                        SettingsSegmentedControl {
+                            Layout.preferredWidth: 160
+                            model: [ { label: "Glass", value: 1 }, { label: "Android", value: 2 } ]
+                            currentValue: 2
+                        }
+                    }
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰎍"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // script icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Text { text: "Accent Script"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                        }
+                        Text { 
+                            text: "~/.config/quickshell-glass/extract-accent.sh"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            opacity: 0.8 
                         }
                     }
                 }
 
-                ScrollView {
-                    anchors.fill: parent
-                    contentWidth: availableWidth
-                    clip: true
-                    visible: root.activeTab === "effects"
+                SettingsCard {
+                    title: "Blur"
+                    surfaceColor: Theme.colSurfaceContainer
+                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    primaryColor: Theme.colPrimary
+                    onSurfaceColor: Theme.colOnSurface
                     
-                    ColumnLayout {
-                        width: Math.min(parent.width, 1000)
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 24
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // blur icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Text { text: "Background Blur"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                            Text { text: "Strength: 77%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; opacity: 0.8 }
+                        }
+                        StyledSwitch {
+                            checked: true
+                        }
+                    }
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "󰧼"; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.pixelSize: 18 } // strength icon
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                        }
                         
-                        SettingsCard {
-                            title: "Effects Settings"
-                            icon: ""
-                            surfaceColor: Theme.colSurfaceContainer
-                            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                            primaryColor: Theme.colPrimary
-                            onSurfaceColor: Theme.colOnSurface
-                            
-                            
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Shadow Direction"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Global Shadow Direction"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledComboBox {
-                                    Layout.preferredWidth: 150
-                                    model: ["Option 1", "Option 2"]
-                                }
-                            }
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "Shadow Alpha"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                    Text { text: "Global Shadow Alpha"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                                }
-                                StyledSlider {
-                                    Layout.preferredWidth: 150
-                                    from: 0; to: 100; value: 50
-                                }
-                            }
+                        StyledSlider {
+                            Layout.fillWidth: true
+                            Layout.maximumWidth: 300
+                            from: 0; to: 100; value: 77
+                        }
+                        
+                        Text {
+                            text: "77%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
                         }
                     }
                 }
+                
+                SettingsCard {
+                    title: "Fonts"
+                    surfaceColor: Theme.colSurfaceContainer
+                    outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    primaryColor: Theme.colPrimary
+                    onSurfaceColor: Theme.colOnSurface
+                }
+            }
         }
     }
 }

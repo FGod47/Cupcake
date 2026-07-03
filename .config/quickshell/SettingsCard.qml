@@ -84,10 +84,10 @@ Rectangle {
             let child = innerLayout.children[i];
             let comp = Qt.createQmlObject('import QtQuick; Rectangle { radius: height/2; z: -1 }', cardRoot, "dynamicBg" + i);
             comp.color = Qt.binding(function() { return Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); });
-            comp.anchors.fill = child;
-            comp.anchors.margins = -12;
-            comp.anchors.leftMargin = -20;
-            comp.anchors.rightMargin = -20;
+            comp.x = Qt.binding(function() { return mainLayout.x + innerLayout.x + child.x - 20; });
+            comp.y = Qt.binding(function() { return mainLayout.y + innerLayout.y + child.y - 12; });
+            comp.width = Qt.binding(function() { return child.width + 40; });
+            comp.height = Qt.binding(function() { return child.height + 24; });
         }
     }
 }
