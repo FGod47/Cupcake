@@ -83,7 +83,7 @@ Rectangle {
         for (let i = 0; i < innerLayout.children.length; i++) {
             let child = innerLayout.children[i];
             let comp = Qt.createQmlObject('import QtQuick; Rectangle { radius: height/2; z: -1 }', cardRoot, "dynamicBg" + i);
-            comp.color = Qt.binding(function() { return Qt.rgba(Theme.colSurfaceVariant.r, Theme.colSurfaceVariant.g, Theme.colSurfaceVariant.b, 0.4); });
+            comp.color = Qt.binding(function() { return Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); });
             comp.anchors.fill = child;
             comp.anchors.margins = -12;
             comp.anchors.leftMargin = -20;

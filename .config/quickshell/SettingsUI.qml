@@ -351,11 +351,8 @@ Item {
                 // Navigation Rail
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 64 : 0
-                    opacity: navExpanded ? 1 : 0
-                    visible: opacity > 0
+                    Layout.preferredWidth: navExpanded ? 220 : 64
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
                     
                     color: "transparent"
 
@@ -372,39 +369,68 @@ Item {
                             spacing: 8
                             anchors.topMargin: 20
 
-                            // Nav Buttons
-                            component NavHeader: Item { property string text; visible: false; height: 0 }
-
+                            component NavHeader: Text {
+                                visible: navExpanded
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 24
+                                Layout.topMargin: 16
+                                Layout.bottomMargin: 8
+                                color: Theme.colPrimary
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                                opacity: 0.8
+                            }
+                            
                             component NavButton: Item {
                                 property string iconText
                                 property string labelText
                                 property int pageIndex
 
-                                implicitWidth: 64
-                                width: 64
-                                implicitHeight: 48
+                                Layout.fillWidth: true
+                                implicitHeight: 44
                                 
-                                // Background Pill
                                 Rectangle {
-                                    anchors.centerIn: parent
-                                    width: 44
-                                    height: 44
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 12
+                                    anchors.rightMargin: 12
+                                    anchors.topMargin: 2
+                                    anchors.bottomMargin: 2
                                     radius: 12
                                     color: root.currentIndex === pageIndex 
                                         ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
                                         : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
-                                    
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                                 
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: iconText
-                                    color: Theme.colOnSurfaceVariant
-                                    font.family: root.font.family
-                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 20
-                                    opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
-                                    horizontalAlignment: Text.AlignHCenter
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: navExpanded ? 16 : 12
+                                    spacing: 12
+                                    
+                                    Item {
+                                        Layout.preferredWidth: 40
+                                        Layout.fillHeight: true
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: iconText
+                                            color: Theme.colOnSurfaceVariant
+                                            font.family: root.font.family
+                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 20
+                                            opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
+                                        }
+                                    }
+                                    
+                                    Text {
+                                        visible: navExpanded
+                                        text: labelText
+                                        color: Theme.colOnSurface
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: Theme.defaultFontSize
+                                        font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                                        Layout.fillWidth: true
+                                        opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
+                                    }
                                 }
 
                                 MouseArea {
@@ -416,7 +442,7 @@ Item {
                                 }
                             }
 
-                                                NavHeader { text: "APPEARANCE" }
+                        NavHeader { text: "APPEARANCE" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
                         NavButton { iconText: "󰏖"; labelText: "Templates"; pageIndex: 2 }
@@ -459,9 +485,6 @@ Item {
                     Layout.bottomMargin: 12
                     implicitWidth: 1
                     color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                    visible: navExpanded
-                    opacity: navExpanded ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
                 }
 
                 // Content Area
