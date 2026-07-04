@@ -432,7 +432,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Magnification"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Pop up"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Enlarge icons on hover"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -996,7 +996,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Magnification scale"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Pop up scale"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Maximum zoom on hover"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
