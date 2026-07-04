@@ -225,7 +225,10 @@ Item {
     ScrollView {
         id: scrollView
         anchors.fill: parent
-        anchors.margins: 30
+        anchors.topMargin: 0
+        anchors.bottomMargin: 30
+        anchors.leftMargin: 0
+        anchors.rightMargin: 24
         contentWidth: availableWidth
         clip: true
 
