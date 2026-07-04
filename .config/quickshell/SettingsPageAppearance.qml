@@ -239,10 +239,6 @@ Item {
 
 
             // --- Mode section ---
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.topMargin: 16
-                spacing: 8
 
                 SettingsCard {
                 SectionLabel { text: "Mode" }
@@ -482,10 +478,7 @@ Item {
                 }
             }
 
-            Item { Layout.fillHeight: true; implicitHeight: 40 }
-                            }
-
-                // --- Fonts section ---
+            // --- Fonts section ---
             Rectangle {
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
