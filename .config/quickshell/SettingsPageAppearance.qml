@@ -399,50 +399,30 @@ Item {
                         Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
 
-                    Item {
+                    RowLayout {
                         Layout.fillWidth: true
-                        Layout.leftMargin: 8
-                        implicitHeight: 20
-
-                        Rectangle {
-                            id: track
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - 34
-                            height: 4
-                            radius: 2
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-
-                            Rectangle {
-                                width: track.width * root.blurStrength
-                                height: parent.height
-                                radius: 2
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
-                            }
-
-                            Rectangle {
-                                x: track.width * root.blurStrength - 7
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 14; height: 14; radius: 7
-                                color: Theme.colOnSurface
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    drag.target: parent
-                                    drag.axis: Drag.XAxis
-                                    drag.minimumX: -7
-                                    drag.maximumX: track.width - 7
-                                    onPositionChanged: {
-                                        if (drag.active) {
-                                            root.blurStrength = (parent.x + 7) / track.width;
-                                        }
-                                    }
-                                    onReleased: {
-                                        let size = Math.max(1, Math.round(root.blurStrength * 20));
-                                        bashProcess.command = ["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
-                                    }
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.fillWidth: true
+                            from: 0; to: 1.0; stepSize: 0.01
+                            value: root.blurStrength
+                            onValueChanged: { root.blurStrength = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    let size = Math.max(1, Math.round(root.blurStrength * 20));
+                                    bashProcess.command = ["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
                                 }
                             }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.blurStrength * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
                         }
                     }
                 }
