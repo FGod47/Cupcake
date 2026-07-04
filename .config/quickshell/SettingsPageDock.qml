@@ -10,7 +10,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_icon 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -20,7 +20,7 @@ Item {
                     if (parts[1]) root.autoHide = (parts[1].trim() === "true");
                     if (parts[2]) root.reserveSpace = (parts[2].trim() === "true");
                     if (parts[3] && parts[3].trim() !== "") root.launcherPosition = parts[3].trim();
-                    if (parts[4] && parts[4].trim() !== "") root.launcherIcon = parts[4].trim();
+                    if (parts[4] && parts[4].trim() !== "") root.showDots = (parts[4].trim() === "true");
                 }
             }
         }
@@ -35,7 +35,6 @@ Item {
     
     property bool autoHide: false
     property bool reserveSpace: false
-    property bool showRunning: false
     property bool showDots: true
     property bool showInstanceCount: false
     property string launcherPosition: "Start"
@@ -345,26 +344,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ued46"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Show running"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Mark running applications"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch {
-                        checked: root.showRunning
-                        onToggled: (c) => root.showRunning = c
-                    }
-                }
+
 
                 SettingsRow {
                     RowLayout {
@@ -383,7 +363,11 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.showDots
-                        onToggled: (c) => root.showDots = c
+                        onToggled: (c) => {
+                            root.showDots = c;
+                            bashProcess.command = ["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dock_show_dots && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setShowDots " + c];
+                            bashProcess.running = true;
+                        }
                     }
                 }
 

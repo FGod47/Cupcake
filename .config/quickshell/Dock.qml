@@ -134,6 +134,7 @@ PanelWindow {
                             height: 3; radius: 2
                             color: Theme.colPrimary
                             Behavior on width { NumberAnimation { duration: 200 } }
+                            visible: globalState.dockShowDots
                         }
 
                         Image {
@@ -205,7 +206,7 @@ PanelWindow {
                             height: 3; radius: 2
                             color: Theme.colPrimary
                             Behavior on width { NumberAnimation { duration: 200 } }
-                            visible: !isPinned
+                            visible: !isPinned && globalState.dockShowDots
                         }
 
                         Image {
