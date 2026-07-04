@@ -8,6 +8,21 @@ Item {
     id: root
     Process { id: bashProcess }
 
+    Process {
+        id: initSettings
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) {
+                    let parts = text.trim().split('---');
+                    if (parts[0]) root.dockEnabled = (parts[0].trim() !== "none");
+                    if (parts[1]) root.autoHide = (parts[1].trim() === "true");
+                }
+            }
+        }
+    }
+
     // =====================================================================
     // Interactive Properties (for live mockup state)
     // =====================================================================
@@ -294,7 +309,11 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.autoHide
-                        onToggled: (c) => root.autoHide = c
+                        onToggled: (c) => {
+                            root.autoHide = c;
+                            bashProcess.command = ["bash", "-c", "echo " + (c ? "'true'" : "'false'") + " > ~/.config/cupcake/.dock_autohide && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setAutoHide " + (c ? "'true'" : "'false'")];
+                            bashProcess.running = true;
+                        }
                     }
                 }
 

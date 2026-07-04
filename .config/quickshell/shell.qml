@@ -57,6 +57,7 @@ ShellRoot {
         id: globalState
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
+        property bool dockAutoHide: false
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -112,6 +113,17 @@ ShellRoot {
         }
     }
 
+    Process {
+        id: initDockAutoHide
+        command: ["cat", root.homeDir + "/.config/cupcake/.dock_autohide"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { globalState.dockAutoHide = (text.trim() === "true"); }
+            }
+        }
+    }
+
     IpcHandler {
         target: "theme"
         function reload() {
@@ -126,6 +138,9 @@ ShellRoot {
         target: "dock"
         function setMonitors(monitorsStr: string) {
             globalState.dockMonitors = monitorsStr.split(',');
+        }
+        function setAutoHide(enabled: bool) {
+            globalState.dockAutoHide = enabled;
         }
     }
 

@@ -38,7 +38,7 @@ PanelWindow {
             width: parent.width
             
             // Slide up when hovered, down when hidden (leave 1px invisible trigger area)
-            y: hoverHandler.hovered ? 0 : parent.height - 1
+            y: (globalState.dockAutoHide && !hoverHandler.hovered) ? parent.height - 1 : 0
             Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
             // Crucial: The height expands to reach the bottom of the screen as it slides up,
@@ -51,7 +51,7 @@ PanelWindow {
 
             Rectangle {
                 id: visualDock
-                y: hoverHandler.hovered ? 0 : 1 // Push completely out of window bounds when hidden
+                y: (globalState.dockAutoHide && !hoverHandler.hovered) ? 1 : 0 // Push completely out of window bounds when hidden
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
                 height: 64
