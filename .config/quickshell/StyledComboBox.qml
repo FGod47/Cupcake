@@ -142,19 +142,6 @@ ComboBox {
         background: Rectangle {
             color: Qt.rgba(0.06, 0.06, 0.08, 0.98)
             radius: 10
-            border.color: Qt.rgba(1, 1, 1, 0.08)
-            border.width: 1
-
-            // Subtle drop shadow via layered rectangles
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: -1
-                radius: parent.radius + 1
-                color: "transparent"
-                border.color: Qt.rgba(0, 0, 0, 0.4)
-                border.width: 1
-                z: -1
-            }
         }
     }
 }
