@@ -7,13 +7,14 @@ import Quickshell
 
 Item {
     id: root
+    Process { id: bashProcess }
     
     // Properties simulating the backend state for this page
     property string uiStyle: "Liquid"
     property string accent: "Tonal Spot"
     
     Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.color_scheme"]
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.color_scheme"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -26,7 +27,7 @@ Item {
     property bool dynamicAccent: false
     
     Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.dynamic_accent"]
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.dynamic_accent"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -41,7 +42,7 @@ Item {
     property bool barTransparency: true
 
     Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.bar_transparency"]
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -52,7 +53,7 @@ Item {
     }
     
     Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.transparency"]
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.transparency"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -62,7 +63,7 @@ Item {
     }
 
     Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.transparency_values"]
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.transparency_values"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -292,7 +293,7 @@ Item {
                             active: root.accent === modelData
                             onClicked: {
                                 root.accent = modelData;
-                                Quickshell.execDetached(["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                                bashProcess.command = ["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]; bashProcess.running = true;
                             }
                         }
                     }
@@ -312,7 +313,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.dynamicAccent
-                        onToggled: (c) => { root.dynamicAccent = c; Quickshell.execDetached(["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dynamic_accent"]); }
+                        onToggled: (c) => { root.dynamicAccent = c; bashProcess.command = ["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dynamic_accent"]; bashProcess.running = true; }
                     }
                 }
             }
@@ -392,7 +393,7 @@ Item {
                         onToggled: (c) => {
                             root.backgroundBlur = c;
                             Theme.globalTransparency = c;
-                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.transparency && ~/.local/bin/apply-transparency"]);
+                            bashProcess.command = ["bash", "-c", "echo " + c + " > ~/.config/cupcake/.transparency && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
                         }
                     }
                 }
@@ -413,7 +414,7 @@ Item {
                         onToggled: (c) => {
                             root.barTransparency = c;
                             Theme.quickshellTransparency = c;
-                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                            bashProcess.command = ["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
                         }
                     }
                 }
@@ -465,7 +466,7 @@ Item {
                                     }
                                     onReleased: {
                                         let size = Math.max(1, Math.round(root.blurStrength * 20));
-                                        Quickshell.execDetached(["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
+                                        bashProcess.command = ["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
                                     }
                                 }
                             }
