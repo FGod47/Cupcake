@@ -241,8 +241,6 @@ Item {
             // --- Mode section ---
             ColumnLayout {
                 Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
                 Layout.topMargin: 16
                 spacing: 8
 
