@@ -63,38 +63,31 @@ PanelWindow {
                 anchors.centerIn: parent
                 spacing: 12
 
-                // Launcher Button
-                Rectangle {
-                    width: 48
-                    height: 48
-                    radius: 12
-                    color: Theme.colPrimary
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: "" // App grid icon
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 24
-                        color: Theme.colOnPrimary
+                // Start Launcher
+                RowLayout {
+                    visible: globalState.dockLauncherPosition !== "End"
+                    spacing: 12
+
+                    Rectangle {
+                        width: 48; height: 48; radius: 12
+                        color: Theme.colPrimary
+                        Text {
+                            anchors.centerIn: parent
+                            text: ""
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 24
+                            color: Theme.colOnPrimary
+                        }
+                        MouseArea {
+                            anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onEntered: parent.scale = 1.05
+                            onExited: parent.scale = 1.0
+                            onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            Behavior on scale { NumberAnimation { duration: 150 } }
+                        }
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onEntered: parent.scale = 1.05
-                        onExited: parent.scale = 1.0
-                        onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
-                        Behavior on scale { NumberAnimation { duration: 150 } }
-                    }
-                }
-
-                // Divider
-                Rectangle {
-                    width: 2
-                    height: 32
-                    color: Theme.colSurfaceVariant
-                    radius: 1
+                    Rectangle { width: 2; height: 32; color: Theme.colSurfaceVariant; radius: 1 }
                 }
 
                 // Pinned Apps
@@ -231,6 +224,34 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: modelData.activate()
                             visible: !isPinned
+                        }
+                    }
+                    }
+                }
+
+                // End Launcher
+                RowLayout {
+                    visible: globalState.dockLauncherPosition === "End"
+                    spacing: 12
+
+                    Rectangle { width: 2; height: 32; color: Theme.colSurfaceVariant; radius: 1 }
+
+                    Rectangle {
+                        width: 48; height: 48; radius: 12
+                        color: Theme.colPrimary
+                        Text {
+                            anchors.centerIn: parent
+                            text: ""
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 24
+                            color: Theme.colOnPrimary
+                        }
+                        MouseArea {
+                            anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onEntered: parent.scale = 1.05
+                            onExited: parent.scale = 1.0
+                            onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            Behavior on scale { NumberAnimation { duration: 150 } }
                         }
                     }
                 }

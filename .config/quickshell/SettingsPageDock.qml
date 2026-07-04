@@ -10,7 +10,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -19,6 +19,7 @@ Item {
                     if (parts[0]) root.dockEnabled = (parts[0].trim() !== "none");
                     if (parts[1]) root.autoHide = (parts[1].trim() === "true");
                     if (parts[2]) root.reserveSpace = (parts[2].trim() === "true");
+                    if (parts[3] && parts[3].trim() !== "") root.launcherPosition = parts[3].trim();
                 }
             }
         }
@@ -424,7 +425,11 @@ Item {
                     SegmentedControl {
                         options: ["Start", "End"]
                         current: root.launcherPosition
-                        onSelected: (v) => root.launcherPosition = v
+                        onSelected: (v) => {
+                            root.launcherPosition = v;
+                            bashProcess.command = ["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.dock_launcher_position && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setLauncherPosition " + v];
+                            bashProcess.running = true;
+                        }
                     }
                 }
 

@@ -59,6 +59,7 @@ ShellRoot {
         property var dockMonitors: ["all"]
         property bool dockAutoHide: false
         property bool dockReserveSpace: false
+        property string dockLauncherPosition: "Start"
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -116,7 +117,7 @@ ShellRoot {
 
     Process {
         id: initDockSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -124,6 +125,7 @@ ShellRoot {
                     let parts = text.trim().split('---');
                     if (parts[0]) globalState.dockAutoHide = (parts[0].trim() === "true");
                     if (parts[1]) globalState.dockReserveSpace = (parts[1].trim() === "true");
+                    if (parts[2] && parts[2].trim() !== "") globalState.dockLauncherPosition = parts[2].trim();
                 }
             }
         }
@@ -149,6 +151,9 @@ ShellRoot {
         }
         function setReserveSpace(enabled: bool) {
             globalState.dockReserveSpace = enabled;
+        }
+        function setLauncherPosition(position: string) {
+            globalState.dockLauncherPosition = position;
         }
     }
 
