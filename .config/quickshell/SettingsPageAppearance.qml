@@ -429,22 +429,30 @@ Item {
             }
 
             Item { Layout.fillHeight: true; implicitHeight: 40 }
-            // --- Shell Fonts section ---
-            ColumnLayout {
+            // --- Fonts section ---
+            Rectangle {
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
-                spacing: 8
+                implicitHeight: fontColumn.implicitHeight + 40
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                radius: 12
 
-                SectionLabel { text: "Shell Fonts" }
+                ColumnLayout {
+                    id: fontColumn
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 8
+
+                SectionLabel { text: "Shell fonts" }
 
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Default Font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Main font used throughout the interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -479,10 +487,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Monospaced Font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Font used for numbers and stats display"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -517,10 +525,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖶"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖶"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Font Weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Change the boldness of the interface text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -554,10 +562,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Default Font Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Change the size of standard text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -572,9 +580,7 @@ Item {
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; }
                         }
                         Text { text: Theme.defaultFontSize + "px"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
-                        Text {
-                            text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; } }
+                        Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; } }
                         }
                     }
                 }
@@ -582,10 +588,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Monospaced Font Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Change the size of monospaced text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -600,31 +606,22 @@ Item {
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; }
                         }
                         Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
-                        Text {
-                            text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; } }
+                        Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; } }
                         }
                     }
                 }
-            }
+            
+                Item { Layout.fillWidth: true; implicitHeight: 16 }
 
-            // --- Application Fonts section ---
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.topMargin: 16
-                spacing: 8
-
-                SectionLabel { text: "Application Fonts" }
+                SectionLabel { text: "Application fonts" }
 
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "App Default Font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "App default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Main font for GTK/Qt applications"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -659,10 +656,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰙄"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "App Monospaced Font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "App monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Monospaced font for GTK/Qt applications"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -697,10 +694,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖶"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖶"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "App Font Weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "App font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Boldness of GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -734,10 +731,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "App Default Font Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "App default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Size of standard GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -752,9 +749,7 @@ Item {
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; }
                         }
                         Text { text: Theme.appFontSize + "px"; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.appFontWeight + 200); Layout.preferredWidth: 32 }
-                        Text {
-                            text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.appMonoFamily; font.weight: Theme.appFontWeight; font.pixelSize: 16
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
+                        Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
                         }
                     }
                 }
@@ -762,10 +757,10 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle { width: 36; height: 36; radius: 18; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "App Monospaced Font Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "App monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "Size of monospaced GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -780,12 +775,11 @@ Item {
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; }
                         }
                         Text { text: Math.round(Theme.appMonoScale * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.appFontWeight + 200); Layout.preferredWidth: 32 }
-                        Text {
-                            text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.appMonoFamily; font.weight: Theme.appFontWeight; font.pixelSize: 16
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appMonoScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
+                        Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 16 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appMonoScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
                         }
                     }
                 }
+            }
             }
         }
     }
