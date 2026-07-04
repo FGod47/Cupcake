@@ -31,8 +31,8 @@ ComboBox {
         height: 12
         Text {
             anchors.centerIn: parent
-            text: "\uf078"
-            font.family: "FontAwesome"
+            text: "\uea5f"
+            font.family: "tabler-icons"
             font.pixelSize: 9
             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
         }
