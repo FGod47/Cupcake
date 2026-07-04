@@ -26,11 +26,11 @@ Rectangle {
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        anchors.leftMargin: 14
-        anchors.rightMargin: 14
-        anchors.topMargin: 14
-        anchors.bottomMargin: 14
-        spacing: 16
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.topMargin: 0
+        anchors.bottomMargin: 0
+        spacing: 8
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -51,10 +51,12 @@ Rectangle {
                 }
                 Text { 
                     text: cardRoot.title
-                    color: onSurfaceColor
+                    color: Theme.colOnSurface
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 14
-                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                    font.pixelSize: 11
+                    font.weight: 500
+                    font.letterSpacing: 0.4
+                    opacity: 0.45
                     Layout.fillWidth: true 
                 }
             }
@@ -79,15 +81,5 @@ Rectangle {
         Item { Layout.fillHeight: true; Layout.minimumHeight: 1 }
     }
     
-    Component.onCompleted: {
-        for (let i = 0; i < innerLayout.children.length; i++) {
-            let child = innerLayout.children[i];
-            let comp = Qt.createQmlObject('import QtQuick; Rectangle { radius: height/2; z: -1 }', cardRoot, "dynamicBg" + i);
-            comp.color = Qt.binding(function() { return Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); });
-            comp.x = Qt.binding(function() { return mainLayout.x + innerLayout.x + child.x - 20; });
-            comp.y = Qt.binding(function() { return mainLayout.y + innerLayout.y + child.y - 12; });
-            comp.width = Qt.binding(function() { return child.width + 40; });
-            comp.height = Qt.binding(function() { return child.height + 24; });
-        }
-    }
+    // Removed the dynamic bubble backgrounds to match the new flat liquid UI style
 }

@@ -210,7 +210,7 @@ Item {
     }
 
 
-    property bool navExpanded: true
+    property bool navExpanded: sidebarHover.hovered
 
     // Extracted StyledSwitch to StyledSwitch.qml
 
@@ -274,30 +274,7 @@ Item {
                 Layout.fillWidth: true
                 implicitHeight: 40
                 
-                MouseArea {
-                    anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32; height: 32
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.navExpanded = !root.navExpanded
-                    
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: 8
-                        color: parent.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
-                        Behavior on color { ColorAnimation { duration: 150 } }
-                    }
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: ""
-                        color: Theme.colOnSurfaceVariant
-                        font.family: root.font.family
-                        font.pixelSize: 16
-                    }
-                }
+
                 
                 Text {
                     anchors.centerIn: parent
@@ -333,13 +310,6 @@ Item {
                     }
                 }
                 
-                Rectangle {
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 1
-                    color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                }
             }
 
             RowLayout {
@@ -358,6 +328,10 @@ Item {
                     radius: 16
                     border.width: 1
                     border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+                    
+                    HoverHandler {
+                        id: sidebarHover
+                    }
 
                     ScrollView {
                         id: navScrollView
@@ -448,50 +422,43 @@ Item {
 
                         NavHeader { text: "APPEARANCE" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
-                        NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
-                        NavButton { iconText: "󰏖"; labelText: "Templates"; pageIndex: 2 }
+                        NavButton { iconText: "󰋩"; labelText: "Wallpaper"; pageIndex: 1 }
+                        NavButton { iconText: "󰏗"; labelText: "Templates"; pageIndex: 2 }
                         
                         NavHeader { text: "SHELL" }
-                        NavButton { iconText: "󰧨"; labelText: "Desktop"; pageIndex: 3 }
+                        NavButton { iconText: "󰍹"; labelText: "Desktop"; pageIndex: 3 }
                         NavButton { iconText: "󰗚"; labelText: "Dock"; pageIndex: 4 }
-                        NavButton { iconText: "󰋋"; labelText: "Panels"; pageIndex: 5 }
-                        NavButton { iconText: "󰂚"; labelText: "Notifications"; pageIndex: 6 }
-                        NavButton { iconText: "󰍡"; labelText: "OSD"; pageIndex: 7 }
-                        NavButton { iconText: "󰖲"; labelText: "Shell"; pageIndex: 8 }
+                        NavButton { iconText: "󰍡"; labelText: "Panels"; pageIndex: 5 }
+                        NavButton { iconText: "󰂜"; labelText: "Notifications"; pageIndex: 6 }
+                        NavButton { iconText: "󰕾"; labelText: "OSD"; pageIndex: 7 }
+                        NavButton { iconText: "󰆍"; labelText: "Shell"; pageIndex: 8 }
                         
                         NavHeader { text: "SYSTEM" }
-                        NavButton { iconText: "󰕡"; labelText: "Security"; pageIndex: 9 }
-                        NavButton { iconText: ""; labelText: "System"; pageIndex: 10 }
-                        NavButton { iconText: "󰒓"; labelText: "Services"; pageIndex: 11 }
-                        NavButton { iconText: "󰍎"; labelText: "Location"; pageIndex: 12 }
+                        NavButton { iconText: "󰕢"; labelText: "Security"; pageIndex: 9 }
+                        NavButton { iconText: "󰒓"; labelText: "System"; pageIndex: 10 }
+                        NavButton { iconText: "󰒔"; labelText: "Services"; pageIndex: 11 }
+                        NavButton { iconText: "󰍏"; labelText: "Location"; pageIndex: 12 }
                         NavButton { iconText: "󰚥"; labelText: "Power"; pageIndex: 13 }
                         
                         NavHeader { text: "ADVANCED" }
                         NavButton { iconText: "󰌷"; labelText: "Hooks"; pageIndex: 14 }
-                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 15 }
+                        NavButton { iconText: "󰆤"; labelText: "Bar"; pageIndex: 15 }
                         NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 16 }
 
                         NavHeader { text: "CUPCAKE EXTRA" }
-                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 17 }
+                        NavButton { iconText: "󰖩"; labelText: "Network"; pageIndex: 17 }
                         NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 18 }
-                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 19 }
-                        NavButton { iconText: ""; labelText: "User"; pageIndex: 20 }
-                        NavButton { iconText: ""; labelText: "About"; pageIndex: 21 }
+                        NavButton { iconText: "󰚩"; labelText: "AI"; pageIndex: 19 }
+                        NavButton { iconText: "󰄽"; labelText: "User"; pageIndex: 20 }
+                        NavButton { iconText: "󰋽"; labelText: "About"; pageIndex: 21 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
                 }
-                
-                // Vertical Separator
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.topMargin: 12
-                    Layout.bottomMargin: 12
-                    implicitWidth: 1
-                    color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                }
+            }
 
                 // Content Area
+
                 Rectangle {
                     id: contentAreaContainer
                     Layout.fillHeight: true
@@ -559,26 +526,6 @@ Item {
                                     font.pixelSize: 20
                                     font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                     Layout.fillWidth: true
-                                }
-                                
-                                Rectangle {
-                                    width: 32; height: 32
-                                    radius: 16
-                                    color: closeMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "✖"
-                                        color: Theme.colOnSurfaceVariant
-                                        font.family: root.font.family
-                                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                                    }
-                                    MouseArea {
-                                        id: closeMouseArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        onClicked: root.requestClose()
-                                    }
                                 }
                             }
                         }
@@ -2277,7 +2224,4 @@ Item {
         }
     }
 }
-}
-}
-
-}
+}}

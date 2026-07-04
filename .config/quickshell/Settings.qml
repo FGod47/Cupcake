@@ -19,12 +19,8 @@ Window {
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
         clip: true
         
-        // Glassy semi-transparent gradient
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, 0.7) }
-            GradientStop { position: 1.0; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.8) }
-        }
+        // Solid glassy background to prevent color banding (line blocks)
+        color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, 0.75)
         
         SettingsUI {
             id: settingsUI
