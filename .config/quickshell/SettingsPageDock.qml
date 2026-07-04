@@ -55,7 +55,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uec22"
+                        text: "\uebd3"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -77,7 +77,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uea7c"
+                        text: "\ufa59"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -108,7 +108,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uea99"
+                        text: "\uecf0"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -130,7 +130,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uec08"
+                        text: "\ueb2c"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -152,7 +152,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\ueb05"
+                        text: "\ued46"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -174,7 +174,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uea60"
+                        text: "\uefb1"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -218,7 +218,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\ueada"
+                        text: "\uedba"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -240,7 +240,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uecd8"
+                        text: "\uf1f6"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16
@@ -262,7 +262,7 @@ Item {
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                     Text {
                         anchors.centerIn: parent
-                        text: "\ueb5c"
+                        text: "\ueb56"
                         color: Theme.colOnSurfaceVariant
                         font.family: "tabler-icons"
                         font.pixelSize: 16

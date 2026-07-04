@@ -19,8 +19,8 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: mainLayout.implicitHeight + 40
-    color: "transparent"
-    radius: 0
+    color: surfaceColor
+    radius: 16
     border.width: 0
 
     ColumnLayout {
@@ -28,8 +28,8 @@ Rectangle {
         anchors.fill: parent
         anchors.leftMargin: 20
         anchors.rightMargin: 20
-        anchors.topMargin: 0
-        anchors.bottomMargin: 0
+        anchors.topMargin: 20
+        anchors.bottomMargin: 20
         spacing: 8
 
         ColumnLayout {
