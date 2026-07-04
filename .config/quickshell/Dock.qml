@@ -71,11 +71,12 @@ PanelWindow {
                     Rectangle {
                         width: 48; height: 48; radius: 12
                         color: Theme.colPrimary
-                        Image {
+                        Text {
                             anchors.centerIn: parent
-                            width: 24; height: 24
-                            source: "image://icon/" + (globalState.dockLauncherIcon !== "" ? globalState.dockLauncherIcon : "view-app-grid")
-                            fillMode: Image.PreserveAspectFit
+                            text: "\uebb6"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 24
+                            color: Theme.colOnPrimary
                         }
                         MouseArea {
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -237,11 +238,12 @@ PanelWindow {
                     Rectangle {
                         width: 48; height: 48; radius: 12
                         color: Theme.colPrimary
-                        Image {
+                        Text {
                             anchors.centerIn: parent
-                            width: 24; height: 24
-                            source: "image://icon/" + (globalState.dockLauncherIcon !== "" ? globalState.dockLauncherIcon : "view-app-grid")
-                            fillMode: Image.PreserveAspectFit
+                            text: "\uebb6"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 24
+                            color: Theme.colOnPrimary
                         }
                         MouseArea {
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor

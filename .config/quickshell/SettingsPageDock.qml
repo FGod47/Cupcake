@@ -434,44 +434,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uf1f6"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Launcher icon"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Icon for the app launcher button"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Rectangle {
-                        radius: 6
-                        color: Qt.rgba(0,0,0,0.25)
-                        implicitWidth: 120
-                        implicitHeight: 24
-                        TextField {
-                            anchors.fill: parent
-                            anchors.leftMargin: 8; anchors.rightMargin: 8
-                            verticalAlignment: TextInput.AlignVCenter
-                            font.family: "monospace"
-                            font.pixelSize: 11
-                            color: Theme.colOnSurface
-                            text: root.launcherIcon
-                            placeholderText: "view-app-grid"
-                            background: null
-                            onEditingFinished: {
-                                root.launcherIcon = text;
-                                bashProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/cupcake/.dock_launcher_icon && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setLauncherIcon '" + text + "'"];
-                                bashProcess.running = true;
-                            }
-                        }
-                    }
-                }
+
 
                 SettingsRow {
                     RowLayout {
