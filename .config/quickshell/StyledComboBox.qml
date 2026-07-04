@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 import "theme"
 
 ComboBox {
@@ -137,9 +138,38 @@ ComboBox {
             }
         }
 
-        background: Rectangle {
-            color: Theme.colSurfaceContainerHigh
-            radius: 8
+        background: Item {
+            // Capture whatever is behind the popup
+            ShaderEffectSource {
+                id: blurSource
+                anchors.fill: parent
+                sourceItem: null   // captures screen behind via live shader
+                live: true
+                hideSource: false
+                visible: false
+            }
+
+            // Blur layer
+            FastBlur {
+                anchors.fill: parent
+                source: blurSource
+                radius: 48
+                cached: false
+            }
+
+            // Frosted tint overlay
+            Rectangle {
+                anchors.fill: parent
+                color: Qt.rgba(
+                    Theme.colSurface.r,
+                    Theme.colSurface.g,
+                    Theme.colSurface.b,
+                    Theme.globalTransparency ? 0.55 : 0.92
+                )
+                radius: 8
+                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                border.width: 1
+            }
         }
     }
 }
