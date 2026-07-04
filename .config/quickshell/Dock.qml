@@ -71,12 +71,11 @@ PanelWindow {
                     Rectangle {
                         width: 48; height: 48; radius: 12
                         color: Theme.colPrimary
-                        Text {
+                        Image {
                             anchors.centerIn: parent
-                            text: ""
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 24
-                            color: Theme.colOnPrimary
+                            width: 24; height: 24
+                            source: "image://icon/" + (globalState.dockLauncherIcon !== "" ? globalState.dockLauncherIcon : "view-app-grid")
+                            fillMode: Image.PreserveAspectFit
                         }
                         MouseArea {
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -238,12 +237,11 @@ PanelWindow {
                     Rectangle {
                         width: 48; height: 48; radius: 12
                         color: Theme.colPrimary
-                        Text {
+                        Image {
                             anchors.centerIn: parent
-                            text: ""
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 24
-                            color: Theme.colOnPrimary
+                            width: 24; height: 24
+                            source: "image://icon/" + (globalState.dockLauncherIcon !== "" ? globalState.dockLauncherIcon : "view-app-grid")
+                            fillMode: Image.PreserveAspectFit
                         }
                         MouseArea {
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor

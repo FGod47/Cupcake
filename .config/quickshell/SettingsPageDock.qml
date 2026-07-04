@@ -10,7 +10,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_icon 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -20,6 +20,7 @@ Item {
                     if (parts[1]) root.autoHide = (parts[1].trim() === "true");
                     if (parts[2]) root.reserveSpace = (parts[2].trim() === "true");
                     if (parts[3] && parts[3].trim() !== "") root.launcherPosition = parts[3].trim();
+                    if (parts[4] && parts[4].trim() !== "") root.launcherIcon = parts[4].trim();
                 }
             }
         }
@@ -461,9 +462,13 @@ Item {
                             font.pixelSize: 11
                             color: Theme.colOnSurface
                             text: root.launcherIcon
-                            placeholderText: "Enter icon name..."
+                            placeholderText: "view-app-grid"
                             background: null
-                            onTextEdited: root.launcherIcon = text
+                            onEditingFinished: {
+                                root.launcherIcon = text;
+                                bashProcess.command = ["bash", "-c", "echo '" + text + "' > ~/.config/cupcake/.dock_launcher_icon && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setLauncherIcon '" + text + "'"];
+                                bashProcess.running = true;
+                            }
                         }
                     }
                 }
