@@ -13,8 +13,7 @@ Item {
         interval: 200
         repeat: false
         onTriggered: {
-            let str = root.cornerRadius + "," + root.topLeftRadius + "," + root.topRightRadius + "," + root.bottomLeftRadius + "," + root.bottomRightRadius;
-            bashProcess.command = ["bash", "-c", "echo '" + str + "' > ~/.config/cupcake/.dock_shape && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockShape " + root.cornerRadius + " " + root.topLeftRadius + " " + root.topRightRadius + " " + root.bottomLeftRadius + " " + root.bottomRightRadius];
+            bashProcess.command = ["bash", "-c", "echo '" + root.cornerRadius + "' > ~/.config/cupcake/.dock_shape && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockShape " + root.cornerRadius];
             bashProcess.running = true;
         }
     }
@@ -35,14 +34,7 @@ Item {
                     if (parts[5] && parts[5].trim() !== "") root.magnificationEnabled = (parts[5].trim() === "true");
                     if (parts[6] && parts[6].trim() !== "") root.magnificationScale = parseFloat(parts[6].trim());
                     if (parts[7] && parts[7].trim() !== "") {
-                        let s = parts[7].trim().split(',');
-                        if (s.length === 5) {
-                            root.cornerRadius = parseInt(s[0]);
-                            root.topLeftRadius = parseInt(s[1]);
-                            root.topRightRadius = parseInt(s[2]);
-                            root.bottomLeftRadius = parseInt(s[3]);
-                            root.bottomRightRadius = parseInt(s[4]);
-                        }
+                        root.cornerRadius = parseInt(parts[7].trim());
                     }
                 }
             }
@@ -73,10 +65,6 @@ Item {
     property int edgeMargin: 8
     
     property int cornerRadius: 20
-    property int topLeftRadius: 20
-    property int topRightRadius: 20
-    property int bottomLeftRadius: 20
-    property int bottomRightRadius: 20
     
     property int bgOpacity: 60
     property bool shadowEnabled: true
@@ -709,142 +697,6 @@ Item {
                         }
                         Text {
                             text: root.cornerRadius + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea82"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Top left"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Top-left corner override"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 64; stepSize: 1
-                            value: root.topLeftRadius
-                            onValueChanged: { root.topLeftRadius = value; shapeDebounce.restart(); }
-                        }
-                        Text {
-                            text: root.topLeftRadius + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea83"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Top right"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Top-right corner override"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 64; stepSize: 1
-                            value: root.topRightRadius
-                            onValueChanged: { root.topRightRadius = value; shapeDebounce.restart(); }
-                        }
-                        Text {
-                            text: root.topRightRadius + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea7c"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Bottom left"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Bottom-left corner override"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 64; stepSize: 1
-                            value: root.bottomLeftRadius
-                            onValueChanged: { root.bottomLeftRadius = value; shapeDebounce.restart(); }
-                        }
-                        Text {
-                            text: root.bottomLeftRadius + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea7d"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Bottom right"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Bottom-right corner override"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 64; stepSize: 1
-                            value: root.bottomRightRadius
-                            onValueChanged: { root.bottomRightRadius = value; shapeDebounce.restart(); }
-                        }
-                        Text {
-                            text: root.bottomRightRadius + "px"
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12

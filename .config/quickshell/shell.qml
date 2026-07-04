@@ -64,10 +64,6 @@ ShellRoot {
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
         property int dockCornerRadius: 20
-        property int dockTopLeftRadius: 20
-        property int dockTopRightRadius: 20
-        property int dockBottomLeftRadius: 20
-        property int dockBottomRightRadius: 20
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -138,14 +134,7 @@ ShellRoot {
                     if (parts[4] && parts[4].trim() !== "") globalState.dockMagnificationEnabled = (parts[4].trim() === "true");
                     if (parts[5] && parts[5].trim() !== "") globalState.dockMagnificationScale = parseFloat(parts[5].trim());
                     if (parts[6] && parts[6].trim() !== "") {
-                        let s = parts[6].trim().split(',');
-                        if (s.length === 5) {
-                            globalState.dockCornerRadius = parseInt(s[0]);
-                            globalState.dockTopLeftRadius = parseInt(s[1]);
-                            globalState.dockTopRightRadius = parseInt(s[2]);
-                            globalState.dockBottomLeftRadius = parseInt(s[3]);
-                            globalState.dockBottomRightRadius = parseInt(s[4]);
-                        }
+                        globalState.dockCornerRadius = parseInt(parts[6].trim());
                     }
                 }
             }
@@ -185,12 +174,8 @@ ShellRoot {
         function setMagnificationScale(scale: real) {
             globalState.dockMagnificationScale = scale;
         }
-        function setDockShape(c: string, tl: string, tr: string, bl: string, br: string) {
+        function setDockShape(c: string) {
             globalState.dockCornerRadius = parseInt(c);
-            globalState.dockTopLeftRadius = parseInt(tl);
-            globalState.dockTopRightRadius = parseInt(tr);
-            globalState.dockBottomLeftRadius = parseInt(bl);
-            globalState.dockBottomRightRadius = parseInt(br);
         }
     }
 
