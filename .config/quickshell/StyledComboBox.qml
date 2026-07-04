@@ -7,7 +7,7 @@ ComboBox {
     id: customComboBox
     
     background: Rectangle {
-        implicitWidth: 190
+        implicitWidth: 160
         implicitHeight: 34
         color: customComboBox.hovered ? Qt.rgba(0, 0, 0, 0.35) : Qt.rgba(0, 0, 0, 0.25)
         radius: 8

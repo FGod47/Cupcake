@@ -95,6 +95,7 @@ Item {
         implicitHeight: innerCol.implicitHeight + 40
         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
+        clip: true
         ColumnLayout {
             id: innerCol
             anchors.fill: parent
@@ -454,7 +455,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 160
                             from: 0; to: 1.0; stepSize: 0.01
                             value: root.blurStrength
                             onValueChanged: { root.blurStrength = value; }
@@ -508,7 +509,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: defaultFontCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["Inter"]
                         currentIndex: model.indexOf(Theme.defaultFontFamily) !== -1 ? model.indexOf(Theme.defaultFontFamily) : 0
                         onActivated: (index) => {
@@ -546,7 +547,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: monoFontCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["JetBrainsMono Nerd Font Propo"]
                         currentIndex: model.indexOf(Theme.monoFontFamily) !== -1 ? model.indexOf(Theme.monoFontFamily) : 0
                         onActivated: (index) => {
@@ -584,7 +585,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: fontWeightCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                         Component.onCompleted: {
                             if (Theme.defaultFontWeight <= 300) currentIndex = 0;
@@ -622,7 +623,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 160
                             from: 8; to: 32; stepSize: 1
                             value: Theme.defaultFontSize
                             onValueChanged: { Theme.defaultFontSize = value; }
@@ -648,7 +649,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 160
                             from: 50; to: 200; stepSize: 5
                             value: Theme.monoFontScale * 100
                             onValueChanged: { Theme.monoFontScale = value / 100.0; }
@@ -677,7 +678,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: appDefaultFontCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["Inter"]
                         currentIndex: model.indexOf(Theme.appFontFamily) !== -1 ? model.indexOf(Theme.appFontFamily) : 0
                         onActivated: (index) => {
@@ -715,7 +716,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: appMonoFontCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["JetBrainsMono Nerd Font Propo"]
                         currentIndex: model.indexOf(Theme.appMonoFamily) !== -1 ? model.indexOf(Theme.appMonoFamily) : 0
                         onActivated: (index) => {
@@ -753,7 +754,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         id: appFontWeightCombo
-                        Layout.preferredWidth: 200
+                        Layout.preferredWidth: 160
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                         Component.onCompleted: {
                             if (Theme.appFontWeight <= 300) currentIndex = 0;
@@ -791,7 +792,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 160
                             from: 8; to: 32; stepSize: 1
                             value: Theme.appFontSize
                             onValueChanged: { Theme.appFontSize = value; }
@@ -817,7 +818,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 200
+                            Layout.preferredWidth: 160
                             from: 50; to: 200; stepSize: 5
                             value: Theme.appMonoScale * 100
                             onValueChanged: { Theme.appMonoScale = value / 100.0; }
