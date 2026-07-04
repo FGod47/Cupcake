@@ -216,34 +216,7 @@ Item {
             width: parent.width
             spacing: 24
 
-            // --- Header ---
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
-                
-                Rectangle {
-                    width: 42
-                    height: 42
-                    radius: 12
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: "󰏘"
-                        color: Theme.colOnSurface
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 22
-                    }
-                }
 
-                Text {
-                    text: "Appearance"
-                    color: Theme.colOnSurface
-                    font.family: Theme.monoFontFamily
-                    font.pixelSize: 20
-                    font.weight: Font.DemiBold
-                }
-            }
 
             // --- Mode section ---
             ColumnLayout {
