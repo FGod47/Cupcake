@@ -56,7 +56,11 @@ PanelWindow {
                 width: parent.width
                 height: 64
                 color: Theme.colSurfaceContainer
-                radius: 20
+                radius: globalState.dockCornerRadius
+                topLeftRadius: globalState.dockTopLeftRadius >= 0 ? globalState.dockTopLeftRadius : globalState.dockCornerRadius
+                topRightRadius: globalState.dockTopRightRadius >= 0 ? globalState.dockTopRightRadius : globalState.dockCornerRadius
+                bottomLeftRadius: globalState.dockBottomLeftRadius >= 0 ? globalState.dockBottomLeftRadius : globalState.dockCornerRadius
+                bottomRightRadius: globalState.dockBottomRightRadius >= 0 ? globalState.dockBottomRightRadius : globalState.dockCornerRadius
 
             RowLayout {
                 id: dockLayout

@@ -8,9 +8,20 @@ Item {
     id: root
     Process { id: bashProcess }
 
+    Timer {
+        id: shapeDebounce
+        interval: 200
+        repeat: false
+        onTriggered: {
+            let str = root.cornerRadius + "," + root.topLeftRadius + "," + root.topRightRadius + "," + root.bottomLeftRadius + "," + root.bottomRightRadius;
+            bashProcess.command = ["bash", "-c", "echo '" + str + "' > ~/.config/cupcake/.dock_shape && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockShape " + root.cornerRadius + " " + root.topLeftRadius + " " + root.topRightRadius + " " + root.bottomLeftRadius + " " + root.bottomRightRadius];
+            bashProcess.running = true;
+        }
+    }
+
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -23,6 +34,16 @@ Item {
                     if (parts[4] && parts[4].trim() !== "") root.showDots = (parts[4].trim() === "true");
                     if (parts[5] && parts[5].trim() !== "") root.magnificationEnabled = (parts[5].trim() === "true");
                     if (parts[6] && parts[6].trim() !== "") root.magnificationScale = parseFloat(parts[6].trim());
+                    if (parts[7] && parts[7].trim() !== "") {
+                        let s = parts[7].trim().split(',');
+                        if (s.length === 5) {
+                            root.cornerRadius = parseInt(s[0]);
+                            root.topLeftRadius = parseInt(s[1]);
+                            root.topRightRadius = parseInt(s[2]);
+                            root.bottomLeftRadius = parseInt(s[3]);
+                            root.bottomRightRadius = parseInt(s[4]);
+                        }
+                    }
                 }
             }
         }
@@ -51,11 +72,11 @@ Item {
     property int endsMargin: 10
     property int edgeMargin: 8
     
-    property int cornerRadius: 16
-    property int topLeftRadius: 18
-    property int topRightRadius: 14
-    property int bottomLeftRadius: 12
-    property int bottomRightRadius: 15
+    property int cornerRadius: 20
+    property int topLeftRadius: 20
+    property int topRightRadius: 20
+    property int bottomLeftRadius: 20
+    property int bottomRightRadius: 20
     
     property int bgOpacity: 60
     property bool shadowEnabled: true
@@ -684,7 +705,7 @@ Item {
                             Layout.preferredWidth: 160
                             from: 0; to: 64; stepSize: 1
                             value: root.cornerRadius
-                            onValueChanged: root.cornerRadius = value
+                            onValueChanged: { root.cornerRadius = value; shapeDebounce.restart(); }
                         }
                         Text {
                             text: root.cornerRadius + "px"
@@ -718,7 +739,7 @@ Item {
                             Layout.preferredWidth: 160
                             from: 0; to: 64; stepSize: 1
                             value: root.topLeftRadius
-                            onValueChanged: root.topLeftRadius = value
+                            onValueChanged: { root.topLeftRadius = value; shapeDebounce.restart(); }
                         }
                         Text {
                             text: root.topLeftRadius + "px"
@@ -752,7 +773,7 @@ Item {
                             Layout.preferredWidth: 160
                             from: 0; to: 64; stepSize: 1
                             value: root.topRightRadius
-                            onValueChanged: root.topRightRadius = value
+                            onValueChanged: { root.topRightRadius = value; shapeDebounce.restart(); }
                         }
                         Text {
                             text: root.topRightRadius + "px"
@@ -786,7 +807,7 @@ Item {
                             Layout.preferredWidth: 160
                             from: 0; to: 64; stepSize: 1
                             value: root.bottomLeftRadius
-                            onValueChanged: root.bottomLeftRadius = value
+                            onValueChanged: { root.bottomLeftRadius = value; shapeDebounce.restart(); }
                         }
                         Text {
                             text: root.bottomLeftRadius + "px"
@@ -820,7 +841,7 @@ Item {
                             Layout.preferredWidth: 160
                             from: 0; to: 64; stepSize: 1
                             value: root.bottomRightRadius
-                            onValueChanged: root.bottomRightRadius = value
+                            onValueChanged: { root.bottomRightRadius = value; shapeDebounce.restart(); }
                         }
                         Text {
                             text: root.bottomRightRadius + "px"
