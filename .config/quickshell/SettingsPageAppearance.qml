@@ -93,6 +93,7 @@ Item {
         Layout.leftMargin: 20
         Layout.rightMargin: 20
         implicitHeight: innerCol.implicitHeight + 40
+        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
         clip: true
@@ -284,7 +285,6 @@ Item {
 
                 Flow {
                     Layout.fillWidth: true
-                    Layout.maximumWidth: scrollView.availableWidth - 40
                     spacing: 6
 
                     Repeater {
