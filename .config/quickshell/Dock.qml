@@ -78,7 +78,7 @@ PanelWindow {
                             font.pixelSize: 24
                             color: Theme.colOnPrimary
                         }
-                        scale: mouseAreaStartLauncher.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.05) : 1.0
+                        scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
                         Behavior on scale { NumberAnimation { duration: 150 } }
                         
                         MouseArea {
@@ -119,9 +119,6 @@ PanelWindow {
                         width: 48; height: 48; radius: 12
                         color: "transparent"
                         
-                        scale: mouseAreaPinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
-                        Behavior on scale { NumberAnimation { duration: 150 } }
-                        
                         Rectangle {
                             anchors.centerIn: parent
                             width: parent.width; height: parent.height; radius: 12
@@ -147,6 +144,8 @@ PanelWindow {
                             source: "image://icon/" + modelData.appId
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
+                            scale: mouseAreaPinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150 } }
                         }
 
                         MouseArea {
@@ -193,9 +192,6 @@ PanelWindow {
                         height: 48; radius: 12
                         color: "transparent"
                         
-                        scale: mouseAreaUnpinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
-                        Behavior on scale { NumberAnimation { duration: 150 } }
-                        
                         Rectangle {
                             anchors.centerIn: parent
                             width: 48; height: 48; radius: 12
@@ -223,6 +219,8 @@ PanelWindow {
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
                             visible: !isPinned
+                            scale: mouseAreaUnpinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150 } }
                         }
 
                         MouseArea {
@@ -253,7 +251,7 @@ PanelWindow {
                             font.pixelSize: 24
                             color: Theme.colOnPrimary
                         }
-                        scale: mouseAreaEndLauncher.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.05) : 1.0
+                        scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0
                         Behavior on scale { NumberAnimation { duration: 150 } }
                         
                         MouseArea {
