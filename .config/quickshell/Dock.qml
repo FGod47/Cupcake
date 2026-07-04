@@ -226,7 +226,6 @@ PanelWindow {
                             visible: !isPinned
                         }
                     }
-                    }
                 }
 
                 // End Launcher
