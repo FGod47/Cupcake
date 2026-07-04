@@ -224,7 +224,8 @@ Item {
                         checked: root.dockEnabled
                         onToggled: (c) => {
                             root.dockEnabled = c;
-                            bashProcess.command = ["bash", "-c", "echo " + (c ? "'all'" : "'none'") + " > ~/.config/cupcake/.dock_monitors"]; bashProcess.running = true;
+                            bashProcess.command = ["bash", "-c", "echo " + (c ? "'all'" : "'none'") + " > ~/.config/cupcake/.dock_monitors && pkill -f '[q]uickshell.*shell.qml'; quickshell -p ~/.config/quickshell/shell.qml &"];
+                            bashProcess.running = true;
                         }
                     }
                 }
