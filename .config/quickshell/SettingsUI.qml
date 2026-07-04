@@ -423,7 +423,6 @@ Item {
                         NavHeader { text: "PERSONALIZATION" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
-                        NavHeader { text: "SHELL" }
                         NavButton { iconText: "󰧨"; labelText: "Desktop"; pageIndex: 3 }
                         NavButton { iconText: "󰗚"; labelText: "Dock"; pageIndex: 4 }
                         NavButton { iconText: "󰋋"; labelText: "Panels"; pageIndex: 5 }
