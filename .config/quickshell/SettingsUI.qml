@@ -420,37 +420,37 @@ Item {
                                 }
                             }
 
-                        NavHeader { text: "APPEARANCE" }
+                        NavHeader { text: "PERSONALIZATION" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
-                        NavButton { iconText: "󰋩"; labelText: "Wallpaper"; pageIndex: 1 }
-                        NavButton { iconText: "󰏗"; labelText: "Templates"; pageIndex: 2 }
+                        NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
+                        NavButton { iconText: "󰏖"; labelText: "Templates"; pageIndex: 2 }
                         
                         NavHeader { text: "SHELL" }
-                        NavButton { iconText: "󰍹"; labelText: "Desktop"; pageIndex: 3 }
+                        NavButton { iconText: "󰧨"; labelText: "Desktop"; pageIndex: 3 }
                         NavButton { iconText: "󰗚"; labelText: "Dock"; pageIndex: 4 }
-                        NavButton { iconText: "󰍡"; labelText: "Panels"; pageIndex: 5 }
-                        NavButton { iconText: "󰂜"; labelText: "Notifications"; pageIndex: 6 }
-                        NavButton { iconText: "󰕾"; labelText: "OSD"; pageIndex: 7 }
-                        NavButton { iconText: "󰆍"; labelText: "Shell"; pageIndex: 8 }
+                        NavButton { iconText: "󰋋"; labelText: "Panels"; pageIndex: 5 }
+                        NavButton { iconText: "󰂚"; labelText: "Notifications"; pageIndex: 6 }
+                        NavButton { iconText: "󰍡"; labelText: "OSD"; pageIndex: 7 }
+                        NavButton { iconText: "󰖲"; labelText: "Shell"; pageIndex: 8 }
                         
                         NavHeader { text: "SYSTEM" }
-                        NavButton { iconText: "󰕢"; labelText: "Security"; pageIndex: 9 }
-                        NavButton { iconText: "󰒓"; labelText: "System"; pageIndex: 10 }
-                        NavButton { iconText: "󰒔"; labelText: "Services"; pageIndex: 11 }
-                        NavButton { iconText: "󰍏"; labelText: "Location"; pageIndex: 12 }
+                        NavButton { iconText: "󰕡"; labelText: "Security"; pageIndex: 9 }
+                        NavButton { iconText: ""; labelText: "System"; pageIndex: 10 }
+                        NavButton { iconText: "󰒓"; labelText: "Services"; pageIndex: 11 }
+                        NavButton { iconText: "󰍎"; labelText: "Location"; pageIndex: 12 }
                         NavButton { iconText: "󰚥"; labelText: "Power"; pageIndex: 13 }
                         
                         NavHeader { text: "ADVANCED" }
                         NavButton { iconText: "󰌷"; labelText: "Hooks"; pageIndex: 14 }
-                        NavButton { iconText: "󰆤"; labelText: "Bar"; pageIndex: 15 }
+                        NavButton { iconText: ""; labelText: "Bar"; pageIndex: 15 }
                         NavButton { iconText: "󰱖"; labelText: "Plugins"; pageIndex: 16 }
 
                         NavHeader { text: "CUPCAKE EXTRA" }
-                        NavButton { iconText: "󰖩"; labelText: "Network"; pageIndex: 17 }
+                        NavButton { iconText: ""; labelText: "Network"; pageIndex: 17 }
                         NavButton { iconText: "󰍹"; labelText: "Display"; pageIndex: 18 }
-                        NavButton { iconText: "󰚩"; labelText: "AI"; pageIndex: 19 }
-                        NavButton { iconText: "󰄽"; labelText: "User"; pageIndex: 20 }
-                        NavButton { iconText: "󰋽"; labelText: "About"; pageIndex: 21 }
+                        NavButton { iconText: "✨"; labelText: "AI"; pageIndex: 19 }
+                        NavButton { iconText: ""; labelText: "User"; pageIndex: 20 }
+                        NavButton { iconText: ""; labelText: "About"; pageIndex: 21 }
 
                         Item { Layout.fillHeight: true } // Spacer
                     }
