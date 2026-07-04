@@ -126,7 +126,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             width: parent.width; height: parent.height; radius: 12
                             color: Theme.colSurfaceContainerHigh
-                            opacity: isActive ? 1.0 : (mouseAreaPinned.containsMouse ? 0.5 : 0.0)
+                            opacity: isActive ? 1.0 : 0.0
                             Behavior on opacity { NumberAnimation { duration: 150 } }
                         }
 
@@ -200,7 +200,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             width: 48; height: 48; radius: 12
                             color: Theme.colSurfaceContainerHigh
-                            opacity: modelData.activated ? 1.0 : (mouseAreaUnpinned.containsMouse ? 0.5 : 0.0)
+                            opacity: modelData.activated ? 1.0 : 0.0
                             Behavior on opacity { NumberAnimation { duration: 150 } }
                             visible: !isPinned
                         }
