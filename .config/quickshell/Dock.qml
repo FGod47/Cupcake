@@ -22,7 +22,7 @@ PanelWindow {
     implicitHeight: 48 + 24
     
     color: "transparent"
-    exclusiveZone: 0 // 0 means do not reserve space, float over maximized apps
+    exclusiveZone: globalState.dockReserveSpace ? implicitHeight : 0 // 0 means do not reserve space, float over maximized apps
 
     // Use Region mask to restrict Wayland input exclusively to the visual dock!
     // This allows clicks to pass through to the desktop when the dock is hidden.

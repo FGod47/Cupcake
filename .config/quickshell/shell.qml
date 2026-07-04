@@ -58,6 +58,7 @@ ShellRoot {
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
         property bool dockAutoHide: false
+        property bool dockReserveSpace: false
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -114,12 +115,16 @@ ShellRoot {
     }
 
     Process {
-        id: initDockAutoHide
-        command: ["cat", root.homeDir + "/.config/cupcake/.dock_autohide"]
+        id: initDockSettings
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                if (text) { globalState.dockAutoHide = (text.trim() === "true"); }
+                if (text) {
+                    let parts = text.trim().split('---');
+                    if (parts[0]) globalState.dockAutoHide = (parts[0].trim() === "true");
+                    if (parts[1]) globalState.dockReserveSpace = (parts[1].trim() === "true");
+                }
             }
         }
     }
@@ -141,6 +146,9 @@ ShellRoot {
         }
         function setAutoHide(enabled: bool) {
             globalState.dockAutoHide = enabled;
+        }
+        function setReserveSpace(enabled: bool) {
+            globalState.dockReserveSpace = enabled;
         }
     }
 
