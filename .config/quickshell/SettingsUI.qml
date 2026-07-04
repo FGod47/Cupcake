@@ -319,15 +319,10 @@ Item {
                 spacing: 16
 
                 // Navigation Rail
-                Rectangle {
+                Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: navExpanded ? 220 : 72
                     Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
-                    
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                    radius: 16
-                    border.width: 1
-                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                     
                     HoverHandler {
                         id: sidebarHover
