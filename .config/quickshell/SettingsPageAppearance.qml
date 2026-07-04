@@ -294,24 +294,7 @@ Item {
                     }
                 } 
                 
-                SettingsRow {
-                    Layout.topMargin: 6
-                    RowLayout {
-                        spacing: 12
-                        Text { text: "󰓎"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
-                        ColumnLayout {
-                            spacing: 2
-                            Text { text: "Dynamic Accent"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch {
-                        checked: root.dynamicAccent
-                        onToggled: (c) => { root.dynamicAccent = c; bashProcess.command = ["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dynamic_accent"]; bashProcess.running = true; }
-                    }
                 }
-            }
 
             // --- Quick Toggles section ---
             ColumnLayout {
