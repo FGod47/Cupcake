@@ -398,13 +398,12 @@ Item {
                         Text { text: "󰖟"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
                         Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
-
+                    Item { Layout.fillWidth: true }
                     RowLayout {
-                        Layout.fillWidth: true
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: 200
                             from: 0; to: 1.0; stepSize: 0.01
                             value: root.blurStrength
                             onValueChanged: { root.blurStrength = value; }
