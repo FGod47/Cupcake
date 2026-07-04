@@ -6,6 +6,40 @@ import "theme"
 Item {
     id: root
     
+    component SettingsCard: Rectangle {
+        default property alias content: innerCol.data
+        Layout.fillWidth: true
+        Layout.leftMargin: 20
+        Layout.rightMargin: 20
+        implicitHeight: innerCol.implicitHeight + 40
+        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        radius: 12
+        clip: true
+        ColumnLayout {
+            id: innerCol
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 8
+        }
+    }
+
+    component SectionLabel: Text {
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.4
+        color: Theme.colOnSurface
+        opacity: 0.45
+    }
+
+    component SettingsRow: RowLayout {
+        Layout.fillWidth: true
+        Layout.topMargin: 4
+        Layout.bottomMargin: 4
+        spacing: 12
+    }
+
+
     ScrollView {
         anchors.fill: parent
         contentWidth: availableWidth
@@ -18,16 +52,10 @@ Item {
             
             Item { Layout.preferredHeight: 8 }
 
-        SettingsCard {
-            title: "General"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "General" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -47,9 +75,7 @@ Item {
                 }
                 StyledSwitch { checked: true; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -69,9 +95,7 @@ Item {
                 }
                 StyledSwitch { checked: false; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -93,16 +117,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Behavior"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Behavior" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -122,9 +140,7 @@ Item {
                 }
                 StyledSwitch { checked: false; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -144,9 +160,7 @@ Item {
                 }
                 StyledSwitch { checked: false; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -166,9 +180,7 @@ Item {
                 }
                 StyledSwitch { checked: false; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -188,9 +200,7 @@ Item {
                 }
                 StyledSwitch { checked: true; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -210,9 +220,7 @@ Item {
                 }
                 StyledSwitch { checked: false; onCheckedChanged: {} }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -232,9 +240,7 @@ Item {
                 }
                 SettingsSegmentedControl { Layout.preferredWidth: 120; model: [ { label: "Start", value: 1 }, { label: "End", value: 2 } ] }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -254,9 +260,7 @@ Item {
                 }
                 StyledTextField { Layout.preferredWidth: 160; placeholderText: "Enter icon name..." }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -278,16 +282,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Layout"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Layout" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -307,9 +305,7 @@ Item {
                 }
                 SettingsSegmentedControl { Layout.preferredWidth: 200; model: [ { label: "Option 1", value: 1 }, { label: "Option 2", value: 2 } ] }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -329,9 +325,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -351,9 +345,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -373,9 +365,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -395,9 +385,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -417,9 +405,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -441,16 +427,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Shape"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Shape" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -470,9 +450,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -492,9 +470,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -514,9 +490,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -536,9 +510,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -560,16 +532,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Effects"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Effects" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -589,9 +555,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -613,16 +577,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Focus Styling"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Focus Styling" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -642,9 +600,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -664,9 +620,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -686,9 +640,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -708,9 +660,7 @@ Item {
                 }
                 StyledSlider { Layout.preferredWidth: 150; from: 0; to: 100; value: 50 }
             }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -732,16 +682,10 @@ Item {
             }
         }
 
-        SettingsCard {
-            title: "Pinned Apps"
-            surfaceColor: Theme.colSurfaceContainer
-            outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            primaryColor: Theme.colPrimary
-            onSurfaceColor: Theme.colOnSurface
+                SettingsCard {
+            SectionLabel { text: "Pinned Apps" }
             
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 16
+            SettingsRow {
                 Rectangle {
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
