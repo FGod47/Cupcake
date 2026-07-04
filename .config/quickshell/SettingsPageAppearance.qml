@@ -86,6 +86,23 @@ Item {
     // Reusable inline components
     // =====================================================================
 
+
+    component SettingsCard: Rectangle {
+        default property alias content: innerCol.data
+        Layout.fillWidth: true
+        Layout.leftMargin: 20
+        Layout.rightMargin: 20
+        implicitHeight: innerCol.implicitHeight + 40
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        radius: 12
+        ColumnLayout {
+            id: innerCol
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 8
+        }
+    }
+
     component SectionLabel: Text {
         font.pixelSize: 11
         font.weight: Font.DemiBold
@@ -226,6 +243,7 @@ Item {
                 Layout.topMargin: 16
                 spacing: 8
 
+                SettingsCard {
                 SectionLabel { text: "Mode" }
 
                 SettingsRow {
@@ -251,6 +269,9 @@ Item {
                 Layout.topMargin: 16
                 spacing: 8
 
+                }
+
+                SettingsCard {
                 SectionLabel { text: "Accent" }
 
                 Flow {
@@ -299,6 +320,9 @@ Item {
                 Layout.topMargin: 16
                 spacing: 8
 
+                }
+
+                SettingsCard {
                 SectionLabel { text: "Quick Toggles" }
 
                 SettingsRow {
@@ -348,6 +372,9 @@ Item {
                 Layout.topMargin: 16
                 spacing: 8
 
+                }
+
+                SettingsCard {
                 SectionLabel { text: "Blur" }
 
                 SettingsRow {
@@ -428,7 +455,9 @@ Item {
             }
 
             Item { Layout.fillHeight: true; implicitHeight: 40 }
-            // --- Fonts section ---
+                            }
+
+                // --- Fonts section ---
             Rectangle {
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
