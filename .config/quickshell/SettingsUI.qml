@@ -432,13 +432,11 @@ Item {
                         NavButton { iconText: "󰖲"; labelText: "Shell"; pageIndex: 8 }
                         
                         NavHeader { text: "SYSTEM" }
-                        NavButton { iconText: "󰕡"; labelText: "Security"; pageIndex: 9 }
                         NavButton { iconText: ""; labelText: "System"; pageIndex: 10 }
                         NavButton { iconText: "󰒓"; labelText: "Services"; pageIndex: 11 }
                         NavButton { iconText: "󰍎"; labelText: "Location"; pageIndex: 12 }
                         NavButton { iconText: "󰚥"; labelText: "Power"; pageIndex: 13 }
                         
-                        NavHeader { text: "ADVANCED" }
 
                         NavHeader { text: "CUPCAKE EXTRA" }
                         NavButton { iconText: ""; labelText: "Network"; pageIndex: 17 }
@@ -471,7 +469,6 @@ Item {
                             case 6: return { icon: "󰂚", title: "Notifications" };
                             case 7: return { icon: "󰍡", title: "OSD" };
                             case 8: return { icon: "󰖲", title: "Shell" };
-                            case 9: return { icon: "󰕡", title: "Security" };
                             case 10: return { icon: "", title: "System" };
                             case 11: return { icon: "󰒓", title: "Services" };
                             case 12: return { icon: "󰍎", title: "Location" };
@@ -714,18 +711,6 @@ Item {
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
                     SettingsPageShell { anchors.fill: parent }
-                }
-
-                // PAGE 9: SECURITY
-                Item {
-                    id: page9
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 9 ? 0 : 20
-                    opacity: root.currentIndex === 9 ? 1 : 0
-                    visible: root.currentIndex === 9 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageSecurity { anchors.fill: parent }
                 }
 
                 // PAGE 11: SERVICES
