@@ -297,14 +297,6 @@ Item {
                 }
 
             // --- Quick Toggles section ---
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.topMargin: 16
-                spacing: 8
-
-                }
 
                 SettingsCard {
                 SectionLabel { text: "Quick Toggles" }
@@ -349,14 +341,6 @@ Item {
             }
 
             // --- Blur section ---
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.topMargin: 16
-                spacing: 8
-
-                }
 
                 SettingsCard {
                 SectionLabel { text: "Blur" }
