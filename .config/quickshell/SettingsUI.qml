@@ -422,14 +422,14 @@ Item {
                         NavButton { iconText: "\uead3"; labelText: "Dock"; pageIndex: 4 }
                         NavButton { iconText: "\uead7"; labelText: "Panels"; pageIndex: 5 }
                         NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
-                        NavButton { iconText: "\ueb51"; labelText: "OSD"; pageIndex: 7 }
+                        NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
                         NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
                         
                         NavHeader { text: "SYSTEM" }
                         NavButton { iconText: "\ueb20"; labelText: "System"; pageIndex: 10 }
                         NavButton { iconText: "\ueb1f"; labelText: "Services"; pageIndex: 11 }
                         NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
-                        NavButton { iconText: "\uea34"; labelText: "Power"; pageIndex: 13 }
+                        NavButton { iconText: "\ueb0d"; labelText: "Power"; pageIndex: 13 }
                         
 
                         NavHeader { text: "CUPCAKE EXTRA" }
@@ -461,12 +461,12 @@ Item {
                             case 4: return { icon: "\uead3", title: "Dock" };
                             case 5: return { icon: "\uead7", title: "Panels" };
                             case 6: return { icon: "\uea35", title: "Notifications" };
-                            case 7: return { icon: "\ueb51", title: "OSD" };
+                            case 7: return { icon: "\ueaed", title: "OSD" };
                             case 8: return { icon: "\uebdc", title: "Shell" };
                             case 10: return { icon: "\ueb20", title: "System" };
                             case 11: return { icon: "\ueb1f", title: "Services" };
                             case 12: return { icon: "\ueae8", title: "Location" };
-                            case 13: return { icon: "\uea34", title: "Power" };
+                            case 13: return { icon: "\ueb0d", title: "Power" };
                             case 17: return { icon: "\ueb52", title: "Network" };
                             case 18: return { icon: "\uea89", title: "Display" };
                             case 19: return { icon: "\uf6d7", title: "AI" };
