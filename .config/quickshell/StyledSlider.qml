@@ -8,11 +8,11 @@ Slider {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2
         implicitWidth: 200
-        implicitHeight: 16
+        implicitHeight: 4
         width: control.availableWidth
         height: implicitHeight
         
-        // Full Inactive Track (Continuous Pill)
+        // Full Inactive Track
         Rectangle {
             anchors.fill: parent
             color: Theme.colOnSurface
@@ -20,7 +20,7 @@ Slider {
             radius: height / 2
         }
         
-        // Active Track (clipped straight at the thumb boundary)
+        // Active Track
         Item {
             width: control.visualPosition * parent.width
             height: parent.height
@@ -29,7 +29,8 @@ Slider {
             Rectangle {
                 width: control.availableWidth
                 height: parent.height
-                color: Theme.colPrimary
+                color: Theme.colOnSurface
+                opacity: 0.7
                 radius: parent.height / 2
             }
         }
@@ -41,24 +42,16 @@ Slider {
         implicitWidth: 16
         implicitHeight: 16
 
-        // Solid Blue Circle (creates the rounded edge around the thumb)
+        // Solid Circle Thumb
         Rectangle {
             anchors.centerIn: parent
-            width: 16
-            height: 16
-            radius: 8
-            color: Theme.colPrimary
-        }
-
-        // Inner Thumb Dot
-        Rectangle {
-            anchors.centerIn: parent
-            width: (control.pressed || control.hovered) ? 10 : 6
-            height: (control.pressed || control.hovered) ? 10 : 6
+            width: (control.pressed || control.hovered) ? 18 : 14
+            height: (control.pressed || control.hovered) ? 18 : 14
             radius: width / 2
-            color: "#ffffff"
-            Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-            Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            color: Theme.colOnSurface
+            
+            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+            Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
         }
     }
 }
