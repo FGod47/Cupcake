@@ -45,7 +45,7 @@ PanelWindow {
     // Shared style definitions based on user's style.css
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
-    property string fontName: Theme.monoFontFamily
+    property string fontName: "tabler-icons"
     property int fontSize: Theme.defaultFontSize
 
     // Full-screen click-away area when settings is open
@@ -345,7 +345,7 @@ PanelWindow {
                     // Audio
                     Row {
                         spacing: 0
-                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: audioSlider
                             leftPadding: 8
@@ -407,7 +407,7 @@ PanelWindow {
                     // Backlight
                     Row {
                         spacing: 0
-                        Text { text: lightSlider.value < 33 ? "󰃞" : (lightSlider.value < 66 ? "󰃝" : "󰃠"); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: lightSlider.value < 33 ? "" : (lightSlider.value < 66 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
                             leftPadding: 8
@@ -606,8 +606,8 @@ PanelWindow {
                                 else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
-                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
-                        Text { text: " | "; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
+                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: "tabler-icons"; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
+                        Text { text: " | "; color: Theme.colOnSurface; font.family: "tabler-icons"; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
                         Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
                     }
 
@@ -690,17 +690,17 @@ PanelWindow {
                                 spacing: 12
                                 visible: powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
-                                Item { implicitWidth: sleepRow.implicitWidth; implicitHeight: sleepRow.implicitHeight; Row { id: sleepRow; spacing: 4; Text { text: "󰤄"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Sleep "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
-                                Item { implicitWidth: logoutRow.implicitWidth; implicitHeight: logoutRow.implicitHeight; Row { id: logoutRow; spacing: 4; Text { text: "󰗽"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Logout "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } } }
+                                Item { implicitWidth: sleepRow.implicitWidth; implicitHeight: sleepRow.implicitHeight; Row { id: sleepRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Sleep "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
+                                Item { implicitWidth: logoutRow.implicitWidth; implicitHeight: logoutRow.implicitHeight; Row { id: logoutRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Logout "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } } }
                                 Item { implicitWidth: rebootRow.implicitWidth; implicitHeight: rebootRow.implicitHeight; Row { id: rebootRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Reboot "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } } }
-                                Item { implicitWidth: shutdownRow.implicitWidth; implicitHeight: shutdownRow.implicitHeight; Row { id: shutdownRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Shutdown "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
+                                Item { implicitWidth: shutdownRow.implicitWidth; implicitHeight: shutdownRow.implicitHeight; Row { id: shutdownRow; spacing: 4; Text { text: ""; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Shutdown "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
                             }
                         }
                     }
                     
                     // Main Icon
                     Text {
-                        text: ""
+                        text: ""
                         color: bg
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
