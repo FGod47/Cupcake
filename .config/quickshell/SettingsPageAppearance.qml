@@ -250,7 +250,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖶"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰖶"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         Text { text: "UI Style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
@@ -304,7 +314,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰖰"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         Text { text: "Toggle style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
@@ -318,7 +338,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰑐"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰑐"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         Text { text: "Accent script"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
@@ -348,7 +378,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰊿"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰊿"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Background blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -369,7 +409,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰝰"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰝰"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -390,7 +440,17 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰖟"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "󰖟"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 16
+                            }
+                        }
                         Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
