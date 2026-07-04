@@ -174,8 +174,8 @@ ShellRoot {
         function setMagnificationScale(scale: real) {
             globalState.dockMagnificationScale = scale;
         }
-        function setDockShape(c: var) {
-            globalState.dockCornerRadius = parseInt(c);
+        function setDockShape(c: int) {
+            globalState.dockCornerRadius = c;
         }
     }
 
