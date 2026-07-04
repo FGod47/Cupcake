@@ -773,7 +773,7 @@ PanelWindow {
                 Text {
                     text: ""
                     color: Theme.colSurfaceContainerHigh
-                    font.family: fontName
+                    font.family: Theme.monoFontFamily
                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                 }
                 Text {
