@@ -123,6 +123,13 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "dock"
+        function setMonitors(monitorsStr: string) {
+            globalState.dockMonitors = monitorsStr.split(',');
+        }
+    }
+
+    IpcHandler {
         target: "aipanel"
         function toggle() {
             globalState.aiPanelVisible = !globalState.aiPanelVisible;
