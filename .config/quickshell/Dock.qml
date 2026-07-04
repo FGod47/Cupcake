@@ -57,6 +57,7 @@ PanelWindow {
                 height: 64
                 color: Theme.colSurfaceContainer
                 radius: globalState.dockCornerRadius
+            }
 
             RowLayout {
                 id: dockLayout
