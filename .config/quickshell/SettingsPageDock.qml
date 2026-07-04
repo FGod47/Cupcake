@@ -2,9 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import "theme"
+import Quickshell.Io
 
 Item {
     id: root
+    Process { id: bashProcess }
 
     // =====================================================================
     // Interactive Properties (for live mockup state)
@@ -220,7 +222,10 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.dockEnabled
-                        onToggled: (c) => root.dockEnabled = c
+                        onToggled: (c) => {
+                            root.dockEnabled = c;
+                            bashProcess.command = ["bash", "-c", "echo " + (c ? "'all'" : "'none'") + " > ~/.config/cupcake/.dock_monitors"]; bashProcess.running = true;
+                        }
                     }
                 }
 
