@@ -257,7 +257,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "UI Style"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "UI Style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
@@ -321,7 +321,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Toggle style"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Toggle style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
@@ -341,11 +341,11 @@ Item {
                                 anchors.centerIn: parent
                                 text: "󰑐"
                                 color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
+                                font.family: Theme.monoFontFamily
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Accent script"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Accent script"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     Rectangle {
@@ -387,7 +387,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Background blur"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: 500 }
+                            Text { text: "Background blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: 500 }
                             Text { text: "strength " + Math.round(root.blurStrength * 100) + "%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -418,7 +418,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "top bar & dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -447,7 +447,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Strength"; color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     RowLayout {
@@ -469,7 +469,7 @@ Item {
                         Text { 
                             text: Math.round(root.blurStrength * 100) + "%"
                             color: Theme.colOnSurfaceVariant
-                            font.family: "tabler-icons"
+                            font.family: Theme.monoFontFamily
                             font.pixelSize: 12
                             Layout.preferredWidth: 32
                             horizontalAlignment: Text.AlignRight
@@ -498,7 +498,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -536,7 +536,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -574,7 +574,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uf2b1"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uf2b1"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -611,7 +611,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -637,7 +637,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -667,7 +667,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "App default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -705,7 +705,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uebc5"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "App monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -743,7 +743,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uf2b1"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uf2b1"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "App font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -780,7 +780,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "App default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
@@ -806,7 +806,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 } }
+                        Rectangle { width: 30; height: 30; radius: 15; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\u2212"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 13 } }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "App monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }

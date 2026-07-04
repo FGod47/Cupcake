@@ -305,7 +305,7 @@ Item {
                         anchors.centerIn: parent
                         text: "\ueb55"
                         color: Theme.colOnSurfaceVariant
-                        font.family: "tabler-icons"
+                        font.family: root.font.family
                         font.pixelSize: 16
                     }
                 }
@@ -497,7 +497,7 @@ Item {
                                 Text {
                                     text: contentAreaContainer.getPageData(root.currentIndex).icon
                                     color: Theme.colOnSurfaceVariant
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 }
                                 
@@ -558,7 +558,7 @@ Item {
                         Text {
                             text: "Select Wallpaper"
                             color: Theme.colOnSurface
-                            font.family: "tabler-icons"
+                            font.family: root.font.family
                             font.pixelSize: 32
                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             Layout.fillWidth: true
@@ -568,7 +568,7 @@ Item {
                         Text {
                             text: "Clicking a wallpaper will instantly apply it and regenerate your dynamic material colors."
                             color: Theme.colOnSurfaceVariant
-                            font.family: "tabler-icons"
+                            font.family: root.font.family
                             font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             Layout.bottomMargin: 16
                             Layout.fillWidth: true
@@ -774,7 +774,7 @@ Item {
                             Text {
                                 text: "Wi-Fi Networks"
                                 color: Theme.colOnSurface
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.pixelSize: 32
                                 font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 Layout.fillWidth: true
@@ -789,7 +789,7 @@ Item {
                                     anchors.centerIn: parent
                                     text: ""
                                     color: Theme.colOnSurface
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 }
                                 MouseArea {
@@ -883,7 +883,7 @@ Item {
                                         Text {
                                             text: model.inUse ? "\ueb52" : (model.signal > 60 ? "\ueb52" : "")
                                             color: model.inUse ? Theme.colPrimary : Theme.colOnSurface
-                                            font.family: "tabler-icons"
+                                            font.family: root.font.family
                                             font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                         }
                                         
@@ -894,14 +894,14 @@ Item {
                                             Text {
                                                 text: model.ssid
                                                 color: Theme.colOnSurface
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                                 font.bold: model.inUse
                                             }
                                             Text {
                                                 text: model.inUse ? "Connected" : (model.isSecure ? "Secured" : "Not secured")
                                                 color: Theme.colOnSurfaceVariant
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                                             }
                                         }
@@ -911,7 +911,7 @@ Item {
                                             visible: model.isSecure && !model.inUse
                                             text: ""
                                             color: Theme.colOnSurfaceVariant
-                                            font.family: "tabler-icons"
+                                            font.family: root.font.family
                                             font.pixelSize: 16
                                         }
                                     }
@@ -935,7 +935,7 @@ Item {
                                                 anchors.margins: 10
                                                 verticalAlignment: TextInput.AlignVCenter
                                                 color: Theme.colOnSurface
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                                 echoMode: TextInput.Password
                                                 clip: true
@@ -948,7 +948,7 @@ Item {
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 text: "Password..."
                                                 color: Theme.colOnSurfaceVariant
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                                 visible: passInput.text === ""
                                             }
@@ -956,7 +956,7 @@ Item {
 
                                         Button {
                                             text: "Connect"
-                                            font.family: "tabler-icons"
+                                            font.family: root.font.family
                                             onClicked: {
                                                 if (model.isSecure) {
                                                     Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid, "password", model.password]);
@@ -1004,13 +1004,13 @@ Item {
                                 Text {
                                     text: "\ueb20"
                                     color: Theme.colOnSurface
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                 }
                                 Text {
                                     text: "Advanced Network Configuration"
                                     color: Theme.colOnSurface
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.pixelSize: Theme.defaultFontSize
                                     font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 }
@@ -1052,7 +1052,7 @@ Item {
                         Text {
                             text: "AI Panel Settings"
                             color: Theme.colOnSurface
-                            font.family: "tabler-icons"
+                            font.family: root.font.family
                             font.pixelSize: 24
                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                         }
@@ -1090,7 +1090,7 @@ Item {
                         Text {
                             text: "API Configuration"
                             color: Theme.colOnSurface
-                            font.family: "tabler-icons"
+                            font.family: root.font.family
                             font.pixelSize: 18
                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             Layout.topMargin: 8
@@ -1118,14 +1118,14 @@ Item {
                                         Text {
                                             text: "Add New Google Gemini Account"
                                             color: Theme.colOnSurfaceVariant
-                                            font.family: "tabler-icons"
+                                            font.family: root.font.family
                                             font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                         }
                                         Item { Layout.fillWidth: true }
                                         Text {
                                             text: aiSettingsPage.keyExists ? "✅ Accounts Loaded" : "❌ No Accounts"
                                             color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
-                                            font.family: "tabler-icons"
+                                            font.family: root.font.family
                                             font.pixelSize: Theme.defaultFontSize
                                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                         }
@@ -1176,7 +1176,7 @@ Item {
                                                 anchors.centerIn: parent
                                                 text: "Save"
                                                 color: Theme.colOnPrimary
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                                 
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                             }
@@ -1283,13 +1283,13 @@ Item {
                                     Text {
                                         text: titleText
                                         color: Theme.colOnSurface
-                                        font.family: "tabler-icons"
+                                        font.family: root.font.family
                                         font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                     }
                                     Text {
                                         text: valueText
                                         color: Theme.colOnSurfaceVariant
-                                        font.family: "tabler-icons"
+                                        font.family: root.font.family
                                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     }
                                     Item { Layout.fillHeight: true }
@@ -1299,7 +1299,7 @@ Item {
                             Text {
                                 text: "User"
                                 color: Theme.colOnSurface
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.pixelSize: 32
                                 font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                 Layout.bottomMargin: 8
@@ -1313,7 +1313,7 @@ Item {
                                 Text {
                                     text: "Profile Information"
                                     color: Theme.colPrimary
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     Layout.leftMargin: 16
                                 }
@@ -1336,7 +1336,7 @@ Item {
                                 Text {
                                     text: "Account Details"
                                     color: Theme.colPrimary
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                     Layout.leftMargin: 16
                                 }
@@ -1454,13 +1454,13 @@ Item {
                                 Text {
                                     text: titleText
                                     color: Theme.colOnSurface
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: 16
                                 }
                                 Text {
                                     text: valueText
                                     color: Theme.colOnSurfaceVariant
-                                    font.family: "tabler-icons"
+                                    font.family: root.font.family
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 }
                                 Item { Layout.fillHeight: true }
@@ -1470,7 +1470,7 @@ Item {
                         Text {
                             text: "About"
                             color: Theme.colOnSurface
-                            font.family: "tabler-icons"
+                            font.family: root.font.family
                             font.pixelSize: 32
                             font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             Layout.bottomMargin: 8
@@ -1484,7 +1484,7 @@ Item {
                             Text {
                                 text: "System details"
                                 color: Theme.colPrimary
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
@@ -1507,7 +1507,7 @@ Item {
                             Text {
                                 text: "Hardware details"
                                 color: Theme.colPrimary
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
@@ -1533,7 +1533,7 @@ Item {
                             Text {
                                 text: "Software details"
                                 color: Theme.colPrimary
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 Layout.leftMargin: 16
                             }
@@ -1639,7 +1639,7 @@ Item {
                             Text {
                                 text: "Display Settings"
                                 color: Theme.colOnSurface
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.pixelSize: 32
                                 font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                             }
@@ -1647,7 +1647,7 @@ Item {
                             Text {
                                 text: "Manage your monitors, resolution, refresh rates, and scaling."
                                 color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
+                                font.family: root.font.family
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                             }
                             
@@ -1729,8 +1729,8 @@ Item {
                                             ColumnLayout {
                                                 Layout.fillWidth: true
                                                 spacing: 4
-                                                Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: "tabler-icons"; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                                Text { text: modelData.description; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
+                                                Text { text: modelData.name + (modelData.focused ? " (Active)" : ""); color: Theme.colOnSurface; font.family: root.font.family; font.pixelSize: 16; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                                Text { text: modelData.description; color: Theme.colOnSurfaceVariant; font.family: root.font.family; font.weight: Theme.defaultFontWeight; font.pixelSize: 12 }
                                             }
                                         }
 
@@ -1746,7 +1746,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: "tabler-icons" }
+                                                Text { text: "Resolution"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: resCombo
                                                     Layout.preferredWidth: 140
@@ -1759,7 +1759,7 @@ Item {
                                                     background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
                                                     contentItem: Text {
                                                         text: resCombo.currentText + " "
-                                                        font.family: "tabler-icons"
+                                                        font.family: root.font.family
                                                         font.pixelSize: 13
                                                         font.weight: 600
                                                         color: Theme.colOnSurface
@@ -1795,7 +1795,7 @@ Item {
                                                         }
                                                         contentItem: Text {
                                                             text: modelData
-                                                            font.family: "tabler-icons"
+                                                            font.family: root.font.family
                                                             font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
@@ -1807,7 +1807,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: "tabler-icons" }
+                                                Text { text: "Refresh Rate"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: rateCombo
                                                     property var curRates: monitorCard.modesParsed[monitorCard.selRes] ? monitorCard.modesParsed[monitorCard.selRes].rates : []
@@ -1821,7 +1821,7 @@ Item {
                                                     background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
                                                     contentItem: Text {
                                                         text: rateCombo.currentText + " "
-                                                        font.family: "tabler-icons"
+                                                        font.family: root.font.family
                                                         font.pixelSize: 13
                                                         font.weight: 600
                                                         color: Theme.colOnSurface
@@ -1857,7 +1857,7 @@ Item {
                                                         }
                                                         contentItem: Text {
                                                             text: modelData
-                                                            font.family: "tabler-icons"
+                                                            font.family: root.font.family
                                                             font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
@@ -1869,7 +1869,7 @@ Item {
 
                                             ColumnLayout {
                                                 spacing: 8
-                                                Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: "tabler-icons" }
+                                                Text { text: "Scale"; color: Theme.colOnSurfaceVariant; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; font.family: root.font.family }
                                                 ComboBox {
                                                     id: scaleCombo
                                                     Layout.preferredWidth: 100
@@ -1882,7 +1882,7 @@ Item {
                                                     background: Rectangle { color: Theme.colSurfaceContainerHigh; radius: 8 }
                                                     contentItem: Text {
                                                         text: scaleCombo.currentText + " "
-                                                        font.family: "tabler-icons"
+                                                        font.family: root.font.family
                                                         font.pixelSize: 13
                                                         font.weight: 600
                                                         color: Theme.colOnSurface
@@ -1918,7 +1918,7 @@ Item {
                                                         }
                                                         contentItem: Text {
                                                             text: modelData
-                                                            font.family: "tabler-icons"
+                                                            font.family: root.font.family
                                                             font.weight: Theme.defaultFontWeight; font.pixelSize: 13
                                                             color: Theme.colOnSurface
                                                             verticalAlignment: Text.AlignVCenter
@@ -1938,7 +1938,7 @@ Item {
                                             Rectangle {
                                                 width: 120; height: 40; radius: 20
                                                 color: applyArea.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.8) : Theme.colPrimary
-                                                Text { anchors.centerIn: parent; text: "Apply"; color: Theme.colOnPrimary; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize }
+                                                Text { anchors.centerIn: parent; text: "Apply"; color: Theme.colOnPrimary; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: root.font.family; font.pixelSize: Theme.defaultFontSize }
                                                 MouseArea {
                                                     id: applyArea
                                                     anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -1960,7 +1960,7 @@ Item {
                                             Rectangle {
                                                 width: 160; height: 40; radius: 20
                                                 color: Theme.colError
-                                                Text { anchors.centerIn: parent; text: "Keep Changes (" + displayPage.countdown + "s)"; color: Theme.colOnError; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize }
+                                                Text { anchors.centerIn: parent; text: "Keep Changes (" + displayPage.countdown + "s)"; color: Theme.colOnError; font.weight: Math.min(900, Theme.defaultFontWeight + 200); font.family: root.font.family; font.pixelSize: Theme.defaultFontSize }
                                                 MouseArea {
                                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                                     onClicked: displayPage.keepDisplay()
@@ -1970,7 +1970,7 @@ Item {
                                                 text: "Reverts automatically if not confirmed"
                                                 color: Theme.colOnSurfaceVariant
                                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 12
-                                                font.family: "tabler-icons"
+                                                font.family: root.font.family
                                             }
                                         }
                                     }
