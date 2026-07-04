@@ -316,7 +316,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.margins: 12
-                spacing: 16
+                spacing: 4
 
                 // Navigation Rail
                 Item {
