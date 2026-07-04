@@ -423,8 +423,6 @@ Item {
                         NavHeader { text: "PERSONALIZATION" }
                         NavButton { iconText: "󰏘"; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: ""; labelText: "Wallpaper"; pageIndex: 1 }
-                        NavButton { iconText: "󰏖"; labelText: "Templates"; pageIndex: 2 }
-                        
                         NavHeader { text: "SHELL" }
                         NavButton { iconText: "󰧨"; labelText: "Desktop"; pageIndex: 3 }
                         NavButton { iconText: "󰗚"; labelText: "Dock"; pageIndex: 4 }
@@ -470,7 +468,6 @@ Item {
                         switch(index) {
                             case 0: return { icon: "󰏘", title: "Appearance" };
                             case 1: return { icon: "", title: "Wallpaper" };
-                            case 2: return { icon: "󰏖", title: "Templates" };
                             case 3: return { icon: "󰧨", title: "Desktop" };
                             case 4: return { icon: "󰗚", title: "Dock" };
                             case 5: return { icon: "󰋋", title: "Panels" };
@@ -653,18 +650,6 @@ Item {
                 }
 
                 
-                // PAGE 2: TEMPLATES
-                Item {
-                    id: page2
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 2 ? 0 : 20
-                    opacity: root.currentIndex === 2 ? 1 : 0
-                    visible: root.currentIndex === 2 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageTemplates { anchors.fill: parent }
-                }
-
                 // PAGE 3: DESKTOP
                 Item {
                     id: page3
