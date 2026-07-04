@@ -139,42 +139,21 @@ ComboBox {
             }
         }
 
-        background: Item {
-            clip: true
+        background: Rectangle {
+            color: Qt.rgba(0.06, 0.06, 0.08, 0.98)
+            radius: 10
+            border.color: Qt.rgba(1, 1, 1, 0.08)
+            border.width: 1
 
-            // Grab a snapshot of what's behind the popup (inside QML layer)
-            ShaderEffectSource {
-                id: behindSnapshot
-                anchors.fill: parent
-                sourceItem: customComboBox.blurSource
-                // Map the combo's popup position within the source item
-                sourceRect: customComboBox.blurSource ? Qt.rect(
-                    customComboBox.mapToItem(customComboBox.blurSource, 0, customComboBox.height).x,
-                    customComboBox.mapToItem(customComboBox.blurSource, 0, customComboBox.height).y,
-                    width, height
-                ) : Qt.rect(0,0,0,0)
-                live: true
-                visible: false
-            }
-
-            FastBlur {
-                anchors.fill: parent
-                source: behindSnapshot
-                radius: customComboBox.blurSource ? 48 : 0
-            }
-
-            // Tint overlay
+            // Subtle drop shadow via layered rectangles
             Rectangle {
                 anchors.fill: parent
-                color: Qt.rgba(
-                    Theme.colSurface.r,
-                    Theme.colSurface.g,
-                    Theme.colSurface.b,
-                    customComboBox.blurSource ? 0.55 : 0.95
-                )
-                radius: 10
-                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.10)
+                anchors.margins: -1
+                radius: parent.radius + 1
+                color: "transparent"
+                border.color: Qt.rgba(0, 0, 0, 0.4)
                 border.width: 1
+                z: -1
             }
         }
     }
