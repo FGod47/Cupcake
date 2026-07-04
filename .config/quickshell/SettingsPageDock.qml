@@ -983,14 +983,22 @@ Item {
                     Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 16
+                        Timer {
+                            id: scaleDebounce
+                            interval: 200
+                            repeat: false
+                            onTriggered: {
+                                bashProcess.command = ["bash", "-c", "echo '" + root.magnificationScale.toFixed(1) + "' > ~/.config/cupcake/.dock_magnification_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setMagnificationScale " + root.magnificationScale.toFixed(1)];
+                                bashProcess.running = true;
+                            }
+                        }
                         StyledSlider {
                             Layout.preferredWidth: 160
                             from: 1.0; to: 3.0; stepSize: 0.1
                             value: root.magnificationScale
                             onValueChanged: {
                                 root.magnificationScale = value;
-                                bashProcess.command = ["bash", "-c", "echo '" + value.toFixed(1) + "' > ~/.config/cupcake/.dock_magnification_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setMagnificationScale " + value.toFixed(1)];
-                                bashProcess.running = true;
+                                scaleDebounce.restart();
                             }
                         }
                         Text {
