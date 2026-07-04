@@ -4,54 +4,35 @@ import "theme"
 
 Slider {
     id: control
-    background: Item {
+    background: Rectangle {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2
         implicitWidth: 200
-        implicitHeight: 4
+        implicitHeight: 6
         width: control.availableWidth
         height: implicitHeight
-        
-        // Full Inactive Track
+        radius: 3
+        color: Theme.colOnSurface
+        opacity: 0.15
+
         Rectangle {
-            anchors.fill: parent
-            color: Theme.colOnSurface
-            opacity: 0.15
-            radius: height / 2
-        }
-        
-        // Active Track
-        Item {
             width: control.visualPosition * parent.width
             height: parent.height
-            clip: true
-            
-            Rectangle {
-                width: control.availableWidth
-                height: parent.height
-                color: Theme.colOnSurface
-                opacity: 0.7
-                radius: parent.height / 2
-            }
+            color: Theme.colOnSurface
+            opacity: 0.85
+            radius: 3
         }
     }
-    handle: Item {
-        // Perfectly center the thumb on the boundary
-        x: control.leftPadding + control.visualPosition * control.availableWidth - width / 2
+    
+    handle: Rectangle {
+        x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
         y: control.topPadding + control.availableHeight / 2 - height / 2
         implicitWidth: 16
         implicitHeight: 16
-
-        // Solid Circle Thumb
-        Rectangle {
-            anchors.centerIn: parent
-            width: (control.pressed || control.hovered) ? 18 : 14
-            height: (control.pressed || control.hovered) ? 18 : 14
-            radius: width / 2
-            color: Theme.colOnSurface
-            
-            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-            Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        }
+        radius: 8
+        color: Theme.colOnSurface
+        
+        Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+        Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
     }
 }
