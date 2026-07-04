@@ -78,12 +78,13 @@ PanelWindow {
                             font.pixelSize: 24
                             color: Theme.colOnPrimary
                         }
+                        scale: mouseAreaStartLauncher.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.05) : 1.0
+                        Behavior on scale { NumberAnimation { duration: 150 } }
+                        
                         MouseArea {
+                            id: mouseAreaStartLauncher
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                            onEntered: parent.scale = 1.05
-                            onExited: parent.scale = 1.0
                             onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
-                            Behavior on scale { NumberAnimation { duration: 150 } }
                         }
                     }
 
@@ -117,6 +118,9 @@ PanelWindow {
                         
                         width: 48; height: 48; radius: 12
                         color: "transparent"
+                        
+                        scale: mouseAreaPinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
+                        Behavior on scale { NumberAnimation { duration: 150 } }
                         
                         Rectangle {
                             anchors.centerIn: parent
@@ -189,6 +193,9 @@ PanelWindow {
                         height: 48; radius: 12
                         color: "transparent"
                         
+                        scale: mouseAreaUnpinned.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.0) : 1.0
+                        Behavior on scale { NumberAnimation { duration: 150 } }
+                        
                         Rectangle {
                             anchors.centerIn: parent
                             width: 48; height: 48; radius: 12
@@ -246,12 +253,13 @@ PanelWindow {
                             font.pixelSize: 24
                             color: Theme.colOnPrimary
                         }
+                        scale: mouseAreaEndLauncher.containsMouse ? (globalState.dockMagnificationEnabled ? globalState.dockMagnificationScale : 1.05) : 1.0
+                        Behavior on scale { NumberAnimation { duration: 150 } }
+                        
                         MouseArea {
+                            id: mouseAreaEndLauncher
                             anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                            onEntered: parent.scale = 1.05
-                            onExited: parent.scale = 1.0
                             onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
-                            Behavior on scale { NumberAnimation { duration: 150 } }
                         }
                     }
                 }

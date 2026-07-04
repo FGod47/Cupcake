@@ -61,6 +61,8 @@ ShellRoot {
         property bool dockReserveSpace: false
         property string dockLauncherPosition: "Start"
         property bool dockShowDots: true
+        property bool dockMagnificationEnabled: false
+        property real dockMagnificationScale: 1.5
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -118,7 +120,7 @@ ShellRoot {
 
     Process {
         id: initDockSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -128,6 +130,8 @@ ShellRoot {
                     if (parts[1]) globalState.dockReserveSpace = (parts[1].trim() === "true");
                     if (parts[2] && parts[2].trim() !== "") globalState.dockLauncherPosition = parts[2].trim();
                     if (parts[3] && parts[3].trim() !== "") globalState.dockShowDots = (parts[3].trim() === "true");
+                    if (parts[4] && parts[4].trim() !== "") globalState.dockMagnificationEnabled = (parts[4].trim() === "true");
+                    if (parts[5] && parts[5].trim() !== "") globalState.dockMagnificationScale = parseFloat(parts[5].trim());
                 }
             }
         }
@@ -159,6 +163,12 @@ ShellRoot {
         }
         function setShowDots(show: bool) {
             globalState.dockShowDots = show;
+        }
+        function setMagnificationEnabled(enabled: bool) {
+            globalState.dockMagnificationEnabled = enabled;
+        }
+        function setMagnificationScale(scale: real) {
+            globalState.dockMagnificationScale = scale;
         }
     }
 

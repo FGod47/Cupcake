@@ -10,7 +10,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -21,6 +21,8 @@ Item {
                     if (parts[2]) root.reserveSpace = (parts[2].trim() === "true");
                     if (parts[3] && parts[3].trim() !== "") root.launcherPosition = parts[3].trim();
                     if (parts[4] && parts[4].trim() !== "") root.showDots = (parts[4].trim() === "true");
+                    if (parts[5] && parts[5].trim() !== "") root.magnificationEnabled = (parts[5].trim() === "true");
+                    if (parts[6] && parts[6].trim() !== "") root.magnificationScale = parseFloat(parts[6].trim());
                 }
             }
         }
@@ -437,7 +439,11 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.magnificationEnabled
-                        onToggled: (c) => root.magnificationEnabled = c
+                        onToggled: (c) => {
+                            root.magnificationEnabled = c;
+                            bashProcess.command = ["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dock_magnification_enabled && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setMagnificationEnabled " + c];
+                            bashProcess.running = true;
+                        }
                     }
                 }
             }
@@ -1001,7 +1007,11 @@ Item {
                             Layout.preferredWidth: 160
                             from: 1.0; to: 3.0; stepSize: 0.1
                             value: root.magnificationScale
-                            onValueChanged: root.magnificationScale = value
+                            onValueChanged: {
+                                root.magnificationScale = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value.toFixed(1) + "' > ~/.config/cupcake/.dock_magnification_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setMagnificationScale " + value.toFixed(1)];
+                                bashProcess.running = true;
+                            }
                         }
                         Text {
                             text: root.magnificationScale.toFixed(1) + "x"
