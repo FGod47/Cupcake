@@ -312,17 +312,20 @@ Item {
                 
             }
 
-            RowLayout {
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.margins: 12
-                spacing: 4
 
-                // Navigation Rail
+                // Navigation Rail (overlay - expands over content, never pushes it)
                 Item {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 220 : 72
-                    Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+                    id: navRail
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: navExpanded ? 220 : 72
+                    Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+                    z: 10
                     
                     HoverHandler {
                         id: sidebarHover
@@ -444,12 +447,14 @@ Item {
                 }
             }
 
-                // Content Area
-
+                // Content Area (pinned - never moves when sidebar expands)
                 Rectangle {
                     id: contentAreaContainer
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    anchors.left: parent.left
+                    anchors.leftMargin: 76
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
                     color: "transparent"
                     clip: true
 
