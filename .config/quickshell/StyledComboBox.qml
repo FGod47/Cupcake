@@ -6,7 +6,8 @@ import "theme"
 
 ComboBox {
     id: customComboBox
-    
+    property Item blurSource: null   // Pass the item to blur (e.g. the settings scroll area)
+
     background: Rectangle {
         implicitWidth: 160
         implicitHeight: 34
@@ -139,35 +140,40 @@ ComboBox {
         }
 
         background: Item {
-            // Capture whatever is behind the popup
+            clip: true
+
+            // Grab a snapshot of what's behind the popup (inside QML layer)
             ShaderEffectSource {
-                id: blurSource
+                id: behindSnapshot
                 anchors.fill: parent
-                sourceItem: null   // captures screen behind via live shader
+                sourceItem: customComboBox.blurSource
+                // Map the combo's popup position within the source item
+                sourceRect: customComboBox.blurSource ? Qt.rect(
+                    customComboBox.mapToItem(customComboBox.blurSource, 0, customComboBox.height).x,
+                    customComboBox.mapToItem(customComboBox.blurSource, 0, customComboBox.height).y,
+                    width, height
+                ) : Qt.rect(0,0,0,0)
                 live: true
-                hideSource: false
                 visible: false
             }
 
-            // Blur layer
             FastBlur {
                 anchors.fill: parent
-                source: blurSource
-                radius: 48
-                cached: false
+                source: behindSnapshot
+                radius: customComboBox.blurSource ? 48 : 0
             }
 
-            // Frosted tint overlay
+            // Tint overlay
             Rectangle {
                 anchors.fill: parent
                 color: Qt.rgba(
                     Theme.colSurface.r,
                     Theme.colSurface.g,
                     Theme.colSurface.b,
-                    Theme.globalTransparency ? 0.55 : 0.92
+                    customComboBox.blurSource ? 0.55 : 0.95
                 )
-                radius: 8
-                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                radius: 10
+                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.10)
                 border.width: 1
             }
         }

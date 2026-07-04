@@ -507,7 +507,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: defaultFontCombo
                         Layout.preferredWidth: 160
                         model: ["Inter"]
@@ -545,7 +545,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: monoFontCombo
                         Layout.preferredWidth: 160
                         model: ["JetBrainsMono Nerd Font Propo"]
@@ -583,7 +583,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: fontWeightCombo
                         Layout.preferredWidth: 160
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
@@ -676,7 +676,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: appDefaultFontCombo
                         Layout.preferredWidth: 160
                         model: ["Inter"]
@@ -714,7 +714,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: appMonoFontCombo
                         Layout.preferredWidth: 160
                         model: ["JetBrainsMono Nerd Font Propo"]
@@ -752,7 +752,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox {
+                    StyledComboBox { blurSource: scrollView
                         id: appFontWeightCombo
                         Layout.preferredWidth: 160
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
