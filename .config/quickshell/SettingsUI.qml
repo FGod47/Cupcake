@@ -305,8 +305,8 @@ Item {
                         anchors.centerIn: parent
                         text: "\ueb55"
                         color: Theme.colOnSurfaceVariant
-                        font.family: root.font.family
-                        font.pixelSize: 16
+                        font.family: "tabler-icons"
+                        font.pixelSize: 18
                     }
                 }
                 
