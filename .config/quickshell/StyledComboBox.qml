@@ -7,23 +7,37 @@ ComboBox {
     id: customComboBox
     
     background: Rectangle {
-        implicitWidth: 120
-        implicitHeight: 32
-        color: customComboBox.hovered ? Theme.colSurfaceContainerHigh : Theme.colSurfaceContainer
-        border.color: Theme.colOutline
+        implicitWidth: 190
+        implicitHeight: 34
+        color: customComboBox.hovered ? Qt.rgba(0, 0, 0, 0.35) : Qt.rgba(0, 0, 0, 0.25)
+        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
         border.width: 1
-        radius: 4
+        radius: 8
     }
     
     contentItem: Text {
         text: customComboBox.displayText
-        color: Theme.colOnSurface
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
         font.family: Theme.defaultFontFamily
-        font.pixelSize: 14
+        font.pixelSize: 12
         verticalAlignment: Text.AlignVCenter
         leftPadding: 12
-        rightPadding: 32
+        rightPadding: 30
         elide: Text.ElideRight
+    }
+    
+    indicator: Item {
+        x: customComboBox.width - width - 10
+        y: (customComboBox.height - height) / 2
+        width: 12
+        height: 12
+        Text {
+            anchors.centerIn: parent
+            text: "\uf078"
+            font.family: "FontAwesome"
+            font.pixelSize: 9
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+        }
     }
     
     property string searchText: ""
@@ -51,10 +65,10 @@ ComboBox {
                 placeholderText: "Search..."
                 color: Theme.colOnSurface
                 font.family: Theme.defaultFontFamily
-                font.pixelSize: 14
+                font.pixelSize: 12
                 background: Rectangle {
-                    color: Theme.colSurfaceContainer
-                    border.color: Theme.colOutline
+                    color: Qt.rgba(0, 0, 0, 0.25)
+                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
                     border.width: 1
                     radius: 4
                 }
@@ -96,14 +110,14 @@ ComboBox {
                     
                     contentItem: Text {
                         text: itemText
-                        color: customComboBox.currentText === itemText ? Theme.colOnPrimary : Theme.colOnSurface
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 14
+                        font.pixelSize: 12
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
                     }
                     background: Rectangle {
-                        color: customComboBox.currentText === itemText ? Theme.colPrimary : (hovered ? Theme.colSurfaceContainerHigh : "transparent")
+                        color: customComboBox.currentText === itemText ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12) : (hovered ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : "transparent")
                         radius: 4
                     }
                     onClicked: {
@@ -128,10 +142,10 @@ ComboBox {
         }
 
         background: Rectangle {
-            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.5)
+            border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
             border.width: 1
             color: Theme.colSurfaceContainerHigh
-            radius: 6
+            radius: 8
         }
     }
 }
