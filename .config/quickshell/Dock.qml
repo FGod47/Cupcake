@@ -116,14 +116,6 @@ PanelWindow {
                         color: "transparent"
                         
                         Rectangle {
-                            anchors.centerIn: parent
-                            width: parent.width; height: parent.height; radius: 12
-                            color: Theme.colSurfaceContainerHigh
-                            opacity: isActive ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 150 } }
-                        }
-
-                        Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottomMargin: 2
@@ -199,14 +191,6 @@ PanelWindow {
                         height: 48; radius: 12
                         color: "transparent"
                         
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 48; height: 48; radius: 12
-                            color: Theme.colSurfaceContainerHigh
-                            opacity: modelData.activated ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 150 } }
-                            visible: !isPinned
-                        }
 
                         Rectangle {
                             anchors.bottom: parent.bottom

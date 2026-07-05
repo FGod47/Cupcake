@@ -921,74 +921,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea9a"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Active icon opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Opacity of the focused icon"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 100; stepSize: 1
-                            value: root.activeIconOpacity
-                            onValueChanged: root.activeIconOpacity = value
-                        }
-                        Text {
-                            text: root.activeIconOpacity + "%"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uecf0"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Inactive icon opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Opacity of unfocused icons"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0; to: 100; stepSize: 1
-                            value: root.inactiveIconOpacity
-                            onValueChanged: root.inactiveIconOpacity = value
-                        }
-                        Text {
-                            text: root.inactiveIconOpacity + "%"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-            }
 
             // 7. PINNED APPS CARD
             SettingsCard {
