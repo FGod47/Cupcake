@@ -80,7 +80,7 @@ PanelWindow {
         
         function brightness(bright: int): void {
             osdWindow.osdValue = bright
-            osdWindow.osdIcon = ["󰃜", "󰃛", "󰃚", "󰃝", "󰃞", "󰃟", "󰃠"][Math.min(6, Math.floor(bright / 15))]
+            osdWindow.osdIcon = ["󰃞", "󰃞", "󰃟", "󰃟", "󰃠", "󰃠", "󰃠"][Math.min(6, Math.floor(bright / 15))]
             
             if (!osdWindow.visible) {
                 osdWindow.visible = true

@@ -78,7 +78,7 @@ PanelWindow {
                 spacing: 12
                 
                 Text {
-                    text: backlightSlider.value < 33 ? "󰃞 " : (backlightSlider.value < 66 ? "󰃝 " : "󰃠 ")
+                    text: backlightSlider.value < 33 ? "󰃞 " : (backlightSlider.value < 66 ? "󰃟 " : "󰃠 ")
                     color: "white"
                     font.pixelSize: 16
                 }
