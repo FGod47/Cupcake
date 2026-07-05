@@ -923,6 +923,8 @@ Item {
 
 
 
+            }
+
             // 7. PINNED APPS CARD
             SettingsCard {
                 SectionLabel { text: "Pinned apps" }
