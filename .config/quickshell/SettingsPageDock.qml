@@ -93,8 +93,7 @@ Item {
     function savePinnedApps() {
         let jsonStr = JSON.stringify(root.pinnedApps);
         let encoded = encodeURIComponent(jsonStr);
-        bashProcess.command = ["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedAppsEncoded '\"" + encoded + "\"'"];
-        bashProcess.running = true;
+        Quickshell.execDetached(["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedAppsEncoded '\"" + encoded + "\"'"]);
     }
     // =====================================================================
     // Reusable inline components (1:1 identical to Appearance page)
@@ -1020,6 +1019,7 @@ Item {
                                             arr.push(root.pinnedApps[i]);
                                         }
                                     }
+                                    root.pinnedApps = []; // force redraw
                                     root.pinnedApps = arr;
                                     root.savePinnedApps();
                                 }
@@ -1121,6 +1121,7 @@ Item {
                             }
 
                             arr.push({ name: modelData.name, appId: dId, exec: exec });
+                            root.pinnedApps = []; // force redraw
                             root.pinnedApps = arr;
                             root.savePinnedApps();
                             appPickerModal.visible = false;

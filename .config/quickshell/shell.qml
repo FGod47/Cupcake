@@ -132,7 +132,7 @@ ShellRoot {
 
     Process {
         id: initDockSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -146,6 +146,12 @@ ShellRoot {
                     if (parts[5] && parts[5].trim() !== "") globalState.dockMagnificationScale = parseFloat(parts[5].trim());
                     if (parts[6] && parts[6].trim() !== "") {
                         globalState.dockRadius = parseInt(parts[6].trim());
+                    }
+                    if (parts[7] && parts[7].trim() !== "") globalState.dockPinnedAppsEnabled = (parts[7].trim() === "true");
+                    if (parts[8] && parts[8].trim() !== "") {
+                        try {
+                            globalState.dockPinnedApps = JSON.parse(parts[8].trim());
+                        } catch(e) {}
                     }
                 }
             }
