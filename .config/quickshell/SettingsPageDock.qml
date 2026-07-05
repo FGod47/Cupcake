@@ -1010,6 +1010,7 @@ Item {
                             model: root.pinnedApps
                             delegate: Pill {
                                 required property var modelData
+                                required property int index
                                 label: modelData.name + "  \u00d7"
                                 active: false
                                 onClicked: {
