@@ -200,8 +200,11 @@ ShellRoot {
         function setPinnedAppsEncoded(encoded: string) {
             try {
                 let jsonStr = decodeURIComponent(encoded);
-                globalState.dockPinnedApps = []; // force redraw
-                globalState.dockPinnedApps = JSON.parse(jsonStr);
+                let newArr = JSON.parse(jsonStr);
+                globalState.dockPinnedApps = []; // force visual flush
+                Qt.callLater(function() {
+                    globalState.dockPinnedApps = newArr;
+                });
             } catch(e) {
                 console.log("Failed to parse pinned apps JSON:", e);
             }
