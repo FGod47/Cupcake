@@ -84,7 +84,11 @@ PanelWindow {
 
     IpcHandler {
         target: "wallpaperswitcher"
+        property real lastToggleTime: 0
         function toggle(): void {
+            if (Date.now() - lastToggleTime < 300) return;
+            lastToggleTime = Date.now();
+            
             if (root.visible && root.isOpen) {
                 root.dismiss()
             } else {
@@ -103,7 +107,11 @@ PanelWindow {
 
     GlobalShortcut {
         name: "wallpaperswitcher_toggle"
+        property real lastToggleTime: 0
         onPressed: {
+            if (Date.now() - lastToggleTime < 300) return;
+            lastToggleTime = Date.now();
+            
             if (root.visible && root.isOpen) {
                 root.dismiss()
             } else {
