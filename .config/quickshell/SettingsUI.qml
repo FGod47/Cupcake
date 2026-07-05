@@ -18,7 +18,7 @@ Item {
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
-    property int currentIndex: 4
+    property int currentIndex: 0
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
