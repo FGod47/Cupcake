@@ -1019,7 +1019,6 @@ Item {
                                             arr.push(root.pinnedApps[i]);
                                         }
                                     }
-                                    root.pinnedApps = []; // force redraw
                                     root.pinnedApps = arr;
                                     root.savePinnedApps();
                                 }
@@ -1121,7 +1120,6 @@ Item {
                             }
 
                             arr.push({ name: modelData.name, appId: dId, exec: exec });
-                            root.pinnedApps = []; // force redraw
                             root.pinnedApps = arr;
                             root.savePinnedApps();
                             appPickerModal.visible = false;
