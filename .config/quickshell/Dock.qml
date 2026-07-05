@@ -155,7 +155,7 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 if (isRunning) toplevel.activate();
-                                else Quickshell.execDetached([modelData.exec]);
+                                else Quickshell.execDetached(["bash", "-c", modelData.exec]);
                             }
                         }
                     }
