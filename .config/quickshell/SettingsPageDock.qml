@@ -1122,7 +1122,19 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             let arr = [...root.pinnedApps];
-                            let dId = (modelData.desktopId || modelData.id || modelData.name || "").replace(".desktop", "").toLowerCase();
+                            
+                            // Prefer explicitly defined icon, fallback to desktopId without extension, fallback to name
+                            let finalAppId = "";
+                            if (modelData.icon) {
+                                finalAppId = modelData.icon;
+                            } else if (modelData.desktopId) {
+                                finalAppId = modelData.desktopId.replace(".desktop", "");
+                            } else if (modelData.id) {
+                                finalAppId = modelData.id.replace(".desktop", "");
+                            } else {
+                                finalAppId = (modelData.name || "").toLowerCase();
+                            }
+
                             let exec = modelData.execString || "";
                             if (!exec && modelData.command) {
                                 exec = modelData.command.join(" ");
@@ -1130,10 +1142,10 @@ Item {
                             if (exec) {
                                 exec = exec.replace(/%[a-zA-Z]/g, "").trim();
                             } else {
-                                exec = dId;
+                                exec = finalAppId;
                             }
 
-                            arr.push({ name: modelData.name, appId: dId, exec: exec });
+                            arr.push({ name: modelData.name, appId: finalAppId, exec: exec });
                             root.pinnedApps = arr;
                             root.savePinnedApps();
                             appPickerModal.visible = false;
