@@ -165,6 +165,12 @@ Item {
                         width: 180; height: 120; radius: 10
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
                         clip: true
+                        Rectangle {
+                            id: previewMask
+                            anchors.fill: parent
+                            radius: 10
+                            visible: false
+                        }
                         Image {
                             anchors.fill: parent
                             source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
@@ -172,7 +178,7 @@ Item {
                             visible: root.currentWall !== ""
                             layer.enabled: true
                             layer.effect: OpacityMask {
-                                maskSource: Rectangle { width: 180; height: 120; radius: 10 }
+                                maskSource: previewMask
                             }
                         }
                         Text {
@@ -261,6 +267,12 @@ Item {
                             border.width: 2
                             Behavior on border.color { ColorAnimation { duration: 150 } }
 
+                            Rectangle {
+                                id: tileMask
+                                anchors.fill: parent
+                                radius: 9
+                                visible: false
+                            }
                             Image {
                                 anchors.fill: parent
                                 source: fileUrl
@@ -268,7 +280,7 @@ Item {
                                 asynchronous: true
                                 layer.enabled: true
                                 layer.effect: OpacityMask {
-                                    maskSource: Rectangle { width: parent.width; height: parent.height; radius: 9 }
+                                    maskSource: tileMask
                                 }
                             }
 
