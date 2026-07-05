@@ -174,6 +174,7 @@ Item {
                         Image {
                             anchors.fill: parent
                             source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
+                            sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
                             visible: root.currentWall !== ""
                             layer.enabled: true
@@ -276,6 +277,7 @@ Item {
                             Image {
                                 anchors.fill: parent
                                 source: fileUrl
+                                sourceSize: Qt.size(250, 150)
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
                                 layer.enabled: true
