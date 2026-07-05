@@ -186,7 +186,13 @@ PanelWindow {
                     delegate: Rectangle {
                         required property var modelData
                         
-                        property bool isPinned: ["firefox", "kitty", "org.gnome.Nautilus", "code"].includes(modelData.appId)
+                        property bool isPinned: {
+                            if (!globalState.dockPinnedAppsEnabled) return false;
+                            for (var j = 0; j < globalState.dockPinnedApps.length; j++) {
+                                if (globalState.dockPinnedApps[j].appId === modelData.appId) return true;
+                            }
+                            return false;
+                        }
                         
                         visible: !isPinned
                         width: visible ? 48 : 0

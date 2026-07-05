@@ -191,8 +191,9 @@ ShellRoot {
         function setPinnedAppsEnabled(enabled: bool) {
             globalState.dockPinnedAppsEnabled = enabled;
         }
-        function setPinnedApps(jsonStr: string) {
+        function setPinnedAppsEncoded(encoded: string) {
             try {
+                let jsonStr = decodeURIComponent(encoded);
                 globalState.dockPinnedApps = JSON.parse(jsonStr);
             } catch(e) {
                 console.log("Failed to parse pinned apps JSON:", e);

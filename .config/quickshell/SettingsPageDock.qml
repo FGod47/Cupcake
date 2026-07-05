@@ -91,7 +91,8 @@ Item {
 
     function savePinnedApps() {
         let jsonStr = JSON.stringify(root.pinnedApps);
-        bashProcess.command = ["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedApps '" + jsonStr + "'"];
+        let encoded = encodeURIComponent(jsonStr);
+        bashProcess.command = ["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedAppsEncoded '\"" + encoded + "\"'"];
         bashProcess.running = true;
     }
     // =====================================================================
