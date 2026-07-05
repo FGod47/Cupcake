@@ -515,14 +515,14 @@ Item {
                         Rectangle {
                             width: 100; height: 34; radius: 8
                             color: root.pendingOutput !== ""
-                                ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                                : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)
+                                ? Qt.rgba(0, 0, 0, 0.12)
+                                : "black"
                             Text {
                                 anchors.centerIn: parent
                                 text: root.pendingOutput !== "" ? "Pending…" : "Apply"
                                 color: root.pendingOutput !== ""
-                                    ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
-                                    : Theme.colSurface
+                                    ? Qt.rgba(0, 0, 0, 0.35)
+                                    : "white"
                                 font.weight: Font.Medium
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 13
