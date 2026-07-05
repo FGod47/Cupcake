@@ -19,11 +19,29 @@ Item {
     property bool blurLockScreen: true
     property string changeInterval: "30 minutes"
 
-    // Read current wallpaper
+    // Read current wallpaper from the cache file set-theme writes to
+    function reloadCurrentWall() {
+        wallProcess.running = true;
+    }
+
     Process {
-        command: ["bash", "-c", "cat ~/.config/cupcake/.wallpaper 2>/dev/null || echo ''"]
+        id: wallProcess
+        command: ["bash", "-c", "cat ~/.cache/current_wallpaper 2>/dev/null || echo ''"]
         running: true
-        stdout: StdioCollector { onStreamFinished: root.currentWall = text.trim() }
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let p = text.trim();
+                if (p !== "") root.currentWall = p;
+            }
+        }
+    }
+
+    // Poll for wallpaper changes every 2 seconds
+    Timer {
+        interval: 2000
+        repeat: true
+        running: true
+        onTriggered: root.reloadCurrentWall()
     }
 
     // =====================================================================
