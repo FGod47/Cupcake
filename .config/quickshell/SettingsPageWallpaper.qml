@@ -19,11 +19,7 @@ Item {
     property bool blurLockScreen: true
     property string changeInterval: "30 minutes"
 
-    // Read current wallpaper from the cache file set-theme writes to
-    function reloadCurrentWall() {
-        wallProcess.running = true;
-    }
-
+    // Read current wallpaper from the cache file (set-theme writes here)
     Process {
         id: wallProcess
         command: ["bash", "-c", "cat ~/.cache/current_wallpaper 2>/dev/null || echo ''"]
@@ -36,12 +32,14 @@ Item {
         }
     }
 
-    // Poll for wallpaper changes every 2 seconds
+    // Refresh wallpaper path every 10s (only if process isn't already running)
     Timer {
-        interval: 2000
+        interval: 10000
         repeat: true
         running: true
-        onTriggered: root.reloadCurrentWall()
+        onTriggered: {
+            if (!wallProcess.running) wallProcess.running = true;
+        }
     }
 
     // =====================================================================
