@@ -95,6 +95,25 @@ Item {
         let encoded = encodeURIComponent(jsonStr);
         Quickshell.execDetached(["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedAppsEncoded '\"" + encoded + "\"'"]);
     }
+
+    Timer {
+        id: applyRemoveTimer
+        interval: 1
+        repeat: false
+        property int indexToRemove: -1
+        onTriggered: {
+            if (indexToRemove < 0) return;
+            let arr = [];
+            for (let i = 0; i < root.pinnedApps.length; i++) {
+                if (i !== indexToRemove) {
+                    arr.push(root.pinnedApps[i]);
+                }
+            }
+            root.pinnedApps = arr;
+            root.savePinnedApps();
+            indexToRemove = -1;
+        }
+    }
     // =====================================================================
     // Reusable inline components (1:1 identical to Appearance page)
     // =====================================================================
@@ -1014,17 +1033,8 @@ Item {
                                 label: modelData.name + "  \u00d7"
                                 active: false
                                 onClicked: {
-                                    let arr = [];
-                                    let clickedIdx = index;
-                                    for (let i = 0; i < root.pinnedApps.length; i++) {
-                                        if (i !== clickedIdx) {
-                                            arr.push(root.pinnedApps[i]);
-                                        }
-                                    }
-                                    Qt.callLater(function() {
-                                        root.pinnedApps = arr;
-                                        root.savePinnedApps();
-                                    });
+                                    applyRemoveTimer.indexToRemove = index;
+                                    applyRemoveTimer.start();
                                 }
                             }
                         }
