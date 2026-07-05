@@ -65,6 +65,13 @@ ShellRoot {
         property bool dockReserveSpace: false
         property string dockLauncherPosition: "Start"
         property bool dockShowDots: true
+        property bool dockPinnedAppsEnabled: true
+        property var dockPinnedApps: [
+            { appId: "firefox", exec: "firefox", name: "Firefox" },
+            { appId: "kitty", exec: "kitty", name: "Terminal" },
+            { appId: "org.gnome.Nautilus", exec: "nautilus", name: "Files" },
+            { appId: "code", exec: "code", name: "Code" }
+        ]
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
         property var dockRadius: 20
@@ -180,6 +187,16 @@ ShellRoot {
         }
         function setDockShape(c: int) {
             root.setGlobalDockRadius(c);
+        }
+        function setPinnedAppsEnabled(enabled: bool) {
+            globalState.dockPinnedAppsEnabled = enabled;
+        }
+        function setPinnedApps(jsonStr: string) {
+            try {
+                globalState.dockPinnedApps = JSON.parse(jsonStr);
+            } catch(e) {
+                console.log("Failed to parse pinned apps JSON:", e);
+            }
         }
     }
 

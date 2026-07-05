@@ -20,7 +20,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -35,6 +35,12 @@ Item {
                     if (parts[6] && parts[6].trim() !== "") root.magnificationScale = parseFloat(parts[6].trim());
                     if (parts[7] && parts[7].trim() !== "") {
                         root.cornerRadius = parseInt(parts[7].trim());
+                    }
+                    if (parts[8] && parts[8].trim() !== "") root.pinnedAppsEnabled = (parts[8].trim() === "true");
+                    if (parts[9] && parts[9].trim() !== "") {
+                        try {
+                            root.pinnedApps = JSON.parse(parts[9].trim());
+                        } catch(e) {}
                     }
                 }
             }
@@ -76,8 +82,18 @@ Item {
     property int inactiveIconOpacity: 70
     
     property bool pinnedAppsEnabled: true
-    property var pinnedApps: ["Firefox", "Files", "Terminal", "Code"]
+    property var pinnedApps: [
+        { appId: "firefox", exec: "firefox", name: "Firefox" },
+        { appId: "kitty", exec: "kitty", name: "Terminal" },
+        { appId: "org.gnome.Nautilus", exec: "nautilus", name: "Files" },
+        { appId: "code", exec: "code", name: "Code" }
+    ]
 
+    function savePinnedApps() {
+        let jsonStr = JSON.stringify(root.pinnedApps);
+        bashProcess.command = ["bash", "-c", "echo '" + jsonStr + "' > ~/.config/cupcake/.dock_pinned_apps && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedApps '" + jsonStr + "'"];
+        bashProcess.running = true;
+    }
     // =====================================================================
     // Reusable inline components (1:1 identical to Appearance page)
     // =====================================================================
@@ -975,7 +991,11 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.pinnedAppsEnabled
-                        onToggled: (c) => root.pinnedAppsEnabled = c
+                        onToggled: (c) => {
+                            root.pinnedAppsEnabled = c;
+                            bashProcess.command = ["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dock_pinned_apps_enabled && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setPinnedAppsEnabled '" + c + "'"];
+                            bashProcess.running = true;
+                        }
                     }
                 }
 
@@ -988,17 +1008,18 @@ Item {
                         Repeater {
                             model: root.pinnedApps
                             delegate: Pill {
-                                required property string modelData
-                                label: modelData + "  \u00d7"
+                                required property var modelData
+                                label: modelData.name + "  \u00d7"
                                 active: false
                                 onClicked: {
                                     let arr = [];
                                     for (let i = 0; i < root.pinnedApps.length; i++) {
-                                        if (root.pinnedApps[i] !== modelData) {
+                                        if (root.pinnedApps[i].appId !== modelData.appId) {
                                             arr.push(root.pinnedApps[i]);
                                         }
                                     }
                                     root.pinnedApps = arr;
+                                    root.savePinnedApps();
                                 }
                             }
                         }
@@ -1008,8 +1029,9 @@ Item {
                             active: false
                             onClicked: {
                                 let arr = [...root.pinnedApps];
-                                arr.push("App " + (arr.length + 1));
+                                arr.push({ name: "New App", appId: "unknown", exec: "unknown" });
                                 root.pinnedApps = arr;
+                                root.savePinnedApps();
                             }
                         }
                     }

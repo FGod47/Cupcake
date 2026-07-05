@@ -94,12 +94,7 @@ PanelWindow {
 
                 // Pinned Apps
                 Repeater {
-                    model: [
-                        { appId: "firefox", exec: "firefox" },
-                        { appId: "kitty", exec: "kitty" },
-                        { appId: "org.gnome.Nautilus", exec: "nautilus" },
-                        { appId: "code", exec: "code" }
-                    ]
+                    model: globalState.dockPinnedAppsEnabled ? globalState.dockPinnedApps : []
 
                     delegate: Rectangle {
                         required property var modelData
@@ -168,7 +163,12 @@ PanelWindow {
                     color: Theme.colSurfaceVariant
                     visible: {
                         var hasUnpinned = false;
-                        var pinnedIds = ["firefox", "kitty", "org.gnome.Nautilus", "code"];
+                        var pinnedIds = [];
+                        if (globalState.dockPinnedAppsEnabled) {
+                            for (var j = 0; j < globalState.dockPinnedApps.length; j++) {
+                                pinnedIds.push(globalState.dockPinnedApps[j].appId);
+                            }
+                        }
                         for (var i = 0; i < ToplevelManager.toplevels.length; i++) {
                             if (!pinnedIds.includes(ToplevelManager.toplevels[i].appId)) {
                                 hasUnpinned = true;
