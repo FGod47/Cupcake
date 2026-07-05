@@ -1014,13 +1014,16 @@ Item {
                                 active: false
                                 onClicked: {
                                     let arr = [];
+                                    let clickedIdx = index;
                                     for (let i = 0; i < root.pinnedApps.length; i++) {
-                                        if (root.pinnedApps[i].appId !== modelData.appId) {
+                                        if (i !== clickedIdx) {
                                             arr.push(root.pinnedApps[i]);
                                         }
                                     }
-                                    root.pinnedApps = arr;
-                                    root.savePinnedApps();
+                                    Qt.callLater(function() {
+                                        root.pinnedApps = arr;
+                                        root.savePinnedApps();
+                                    });
                                 }
                             }
                         }
