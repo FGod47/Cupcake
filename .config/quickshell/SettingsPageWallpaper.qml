@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.folderlistmodel
+import Qt5Compat.GraphicalEffects
 import "theme"
 import Quickshell
 import Quickshell.Io
@@ -169,6 +170,10 @@ Item {
                             source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
                             fillMode: Image.PreserveAspectCrop
                             visible: root.currentWall !== ""
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: Rectangle { width: 180; height: 120; radius: 10 }
+                            }
                         }
                         Text {
                             anchors.centerIn: parent
@@ -261,6 +266,10 @@ Item {
                                 source: fileUrl
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
+                                layer.enabled: true
+                                layer.effect: OpacityMask {
+                                    maskSource: Rectangle { width: parent.width; height: parent.height; radius: 9 }
+                                }
                             }
 
                             Rectangle {
