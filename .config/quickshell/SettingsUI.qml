@@ -553,6 +553,7 @@ Item {
                     Loader {
                         anchors.fill: parent
                         active: root.currentIndex === 1
+                        asynchronous: true
                         source: "SettingsPageWallpaper.qml"
                     }
                 }
