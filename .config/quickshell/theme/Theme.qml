@@ -125,6 +125,7 @@ Item {
     property color colSurface: Qt.rgba(Qt.color("#11140f").r, Qt.color("#11140f").g, Qt.color("#11140f").b, bgAlpha)
     property color colSurfaceContainer: Qt.rgba(Qt.color("#1d211a").r, Qt.color("#1d211a").g, Qt.color("#1d211a").b, bgAlpha)
     property color colSurfaceContainerHigh: Qt.rgba(Qt.color("#282b24").r, Qt.color("#282b24").g, Qt.color("#282b24").b, bgAlpha)
+    property color colSurfaceVariant: Qt.rgba(Qt.color("#43483e").r, Qt.color("#43483e").g, Qt.color("#43483e").b, bgAlpha)
     property color colOnSurface: "#e1e4d9"
     property color colOnSurfaceVariant: "#c3c8bb"
     property color colOutline: "#8d9286"
