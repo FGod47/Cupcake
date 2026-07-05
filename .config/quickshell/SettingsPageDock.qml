@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import "theme"
+import Quickshell
 import Quickshell.Io
+import Quickshell.Services
 
 Item {
     id: root
@@ -1029,10 +1031,8 @@ Item {
                             label: "+ Add app"
                             active: false
                             onClicked: {
-                                let arr = [...root.pinnedApps];
-                                arr.push({ name: "New App", appId: "unknown", exec: "unknown" });
-                                root.pinnedApps = arr;
-                                root.savePinnedApps();
+                                appPickerModal.visible = true;
+                                appPickerModal.searchField.forceActiveFocus();
                             }
                         }
                     }
@@ -1040,6 +1040,95 @@ Item {
             }
 
             Item { Layout.preferredHeight: 24 }
+        }
+    }
+
+    Rectangle {
+        id: appPickerModal
+        anchors.fill: parent
+        color: Theme.colSurfaceContainerHigh
+        visible: false
+        z: 999
+        radius: 12
+
+        property var allApps: typeof DesktopEntries !== "undefined" ? DesktopEntries.applications.values : []
+        property string query: ""
+        property var filteredApps: {
+            if (query === "") return allApps;
+            let q = query.toLowerCase();
+            return allApps.filter(a => a.name && a.name.toLowerCase().includes(q));
+        }
+        
+        property alias searchField: searchField
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 12
+            
+            RowLayout {
+                spacing: 12
+                TextField {
+                    id: searchField
+                    Layout.fillWidth: true
+                    placeholderText: "Search apps..."
+                    color: Theme.colOnSurface
+                    font.family: Theme.defaultFontFamily
+                    onTextChanged: appPickerModal.query = text
+                }
+                Button {
+                    text: "Cancel"
+                    onClicked: appPickerModal.visible = false
+                }
+            }
+            
+            ListView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                model: appPickerModal.filteredApps
+                clip: true
+                spacing: 4
+                delegate: Rectangle {
+                    width: ListView.view.width
+                    height: 48
+                    color: hoverHandler.hovered ? Theme.colSurfaceVariant : "transparent"
+                    radius: 8
+
+                    HoverHandler { id: hoverHandler }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        text: modelData.name
+                        color: Theme.colOnSurface
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 14
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            let arr = [...root.pinnedApps];
+                            let dId = (modelData.desktopId || modelData.id || modelData.name || "").replace(".desktop", "").toLowerCase();
+                            let exec = modelData.execString || "";
+                            if (!exec && modelData.command) {
+                                exec = modelData.command.join(" ");
+                            }
+                            if (exec) {
+                                exec = exec.replace(/%[a-zA-Z]/g, "").trim();
+                            } else {
+                                exec = dId;
+                            }
+
+                            arr.push({ name: modelData.name, appId: dId, exec: exec });
+                            root.pinnedApps = arr;
+                            root.savePinnedApps();
+                            appPickerModal.visible = false;
+                        }
+                    }
+                }
+            }
         }
     }
 }
