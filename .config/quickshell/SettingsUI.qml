@@ -526,7 +526,7 @@ Item {
                 anchors.fill: parent
 
 
-                                // PAGE 0: APPEARANCE
+                // PAGE 0: APPEARANCE
                 Item {
                     id: appearancePage
                     anchors.fill: parent
@@ -535,11 +535,12 @@ Item {
                     visible: root.currentIndex === 0 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageAppearance {
+                    Loader {
                         anchors.fill: parent
+                        active: root.currentIndex === 0
+                        source: "SettingsPageAppearance.qml"
                     }
                 }
-
 
                 // PAGE 1: WALLPAPERS
                 Item {
@@ -547,130 +548,123 @@ Item {
                     anchors.topMargin: root.currentIndex === 1 ? 0 : 20
                     opacity: root.currentIndex === 1 ? 1 : 0
                     visible: root.currentIndex === 1 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    SettingsPageWallpaper { anchors.fill: parent }
+                    Loader {
+                        anchors.fill: parent
+                        active: root.currentIndex === 1
+                        source: "SettingsPageWallpaper.qml"
+                    }
                 }
 
-                
                 // PAGE 3: DESKTOP
                 Item {
-                    id: page3
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 3 ? 0 : 20
                     opacity: root.currentIndex === 3 ? 1 : 0
                     visible: root.currentIndex === 3 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageDesktop { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 3; source: "SettingsPageDesktop.qml" }
                 }
 
                 // PAGE 4: DOCK
                 Item {
-                    id: page4
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 4 ? 0 : 20
                     opacity: root.currentIndex === 4 ? 1 : 0
                     visible: root.currentIndex === 4 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageDock { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 4; source: "SettingsPageDock.qml" }
                 }
 
                 // PAGE 5: PANELS
                 Item {
-                    id: page5
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 5 ? 0 : 20
                     opacity: root.currentIndex === 5 ? 1 : 0
                     visible: root.currentIndex === 5 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPagePanels { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 5; source: "SettingsPagePanels.qml" }
                 }
 
                 // PAGE 6: NOTIFICATIONS
                 Item {
-                    id: page6
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 6 ? 0 : 20
                     opacity: root.currentIndex === 6 ? 1 : 0
                     visible: root.currentIndex === 6 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageNotifications { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 6; source: "SettingsPageNotifications.qml" }
                 }
 
                 // PAGE 7: OSD
                 Item {
-                    id: page7
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 7 ? 0 : 20
                     opacity: root.currentIndex === 7 ? 1 : 0
                     visible: root.currentIndex === 7 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageOsd { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 7; source: "SettingsPageOsd.qml" }
                 }
 
                 // PAGE 8: SHELL
                 Item {
-                    id: page8
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 8 ? 0 : 20
                     opacity: root.currentIndex === 8 ? 1 : 0
                     visible: root.currentIndex === 8 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageShell { anchors.fill: parent }
-                }
-
-                // PAGE 11: SERVICES
-                Item {
-                    id: page11
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 11 ? 0 : 20
-                    opacity: root.currentIndex === 11 ? 1 : 0
-                    visible: root.currentIndex === 11 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageServices { anchors.fill: parent }
-                }
-
-                // PAGE 12: LOCATION
-                Item {
-                    id: page12
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 12 ? 0 : 20
-                    opacity: root.currentIndex === 12 ? 1 : 0
-                    visible: root.currentIndex === 12 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageLocation { anchors.fill: parent }
-                }
-
-                // PAGE 13: POWER
-                Item {
-                    id: page13
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 13 ? 0 : 20
-                    opacity: root.currentIndex === 13 ? 1 : 0
-                    visible: root.currentIndex === 13 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPagePower { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 8; source: "SettingsPageShell.qml" }
                 }
 
                 // PAGE 10: SYSTEM
                 Item {
-                    id: page10
                     anchors.fill: parent
                     anchors.topMargin: root.currentIndex === 10 ? 0 : 20
                     opacity: root.currentIndex === 10 ? 1 : 0
                     visible: root.currentIndex === 10 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageSystem { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 10; source: "SettingsPageSystem.qml" }
+                }
+
+                // PAGE 11: SERVICES
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 11 ? 0 : 20
+                    opacity: root.currentIndex === 11 ? 1 : 0
+                    visible: root.currentIndex === 11 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 11; source: "SettingsPageServices.qml" }
+                }
+
+                // PAGE 12: LOCATION
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 12 ? 0 : 20
+                    opacity: root.currentIndex === 12 ? 1 : 0
+                    visible: root.currentIndex === 12 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 12; source: "SettingsPageLocation.qml" }
+                }
+
+                // PAGE 13: POWER
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 13 ? 0 : 20
+                    opacity: root.currentIndex === 13 ? 1 : 0
+                    visible: root.currentIndex === 13 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 13; source: "SettingsPagePower.qml" }
                 }
 
                 // PAGE 17: NETWORK
@@ -681,9 +675,8 @@ Item {
                     visible: root.currentIndex === 17 || opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    SettingsPageNetwork { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 17; source: "SettingsPageNetwork.qml" }
                 }
-
 
                 // PAGE 19: AI PANEL
                 Item {
@@ -1218,10 +1211,9 @@ Item {
                     anchors.topMargin: root.currentIndex === 18 ? 0 : 20
                     opacity: root.currentIndex === 18 ? 1 : 0
                     visible: root.currentIndex === 18 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-                    SettingsPageDisplay { anchors.fill: parent }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 18; source: "SettingsPageDisplay.qml" }
                 }
             }
             }
