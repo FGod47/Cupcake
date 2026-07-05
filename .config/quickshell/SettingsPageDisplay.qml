@@ -14,6 +14,11 @@ Item {
     property var pendingRestoreCommand: []
     property int activeMonitorIndex: 0
     property var activeMonitor: monitorsData.length > 0 && activeMonitorIndex < monitorsData.length ? monitorsData[activeMonitorIndex] : null
+    property var activeTransforms: ({})
+    property int currentTransform: {
+        if (!activeMonitor) return 0;
+        return activeTransforms[activeMonitor.name] !== undefined ? activeTransforms[activeMonitor.name] : (activeMonitor.transform || 0);
+    }
     property string homeDir: Quickshell.env("HOME")
 
     Timer {
@@ -28,20 +33,22 @@ Item {
         }
     }
 
-    // Takes the exact hyprland monitor data object + a mode string like "1920x1080@165.00" + scale number
-    function applyDisplay(monData, modeStr, scaleVal) {
+    // Takes the exact hyprland monitor data object + a mode string like "1920x1080@165.00" + scale number + transform
+    function applyDisplay(monData, modeStr, scaleVal, transformVal) {
         if (pendingOutput !== "") return;
         let posStr = monData.x + "x" + monData.y;
         pendingRestoreCommand = ["hyprctl", "eval",
             "hl.monitor({ output = \"" + monData.name + "\", mode = \"" +
             monData.width + "x" + monData.height + "@" + monData.refreshRate +
-            "\", position = \"" + posStr + "\", scale = " + monData.scale + " }) return \"ok\""];
+            "\", position = \"" + posStr + "\", scale = " + monData.scale + 
+            ", transform = " + monData.transform + " }) return \"ok\""];
         pendingOutput = monData.name;
         countdown = 15;
         revertTimer.start();
         Quickshell.execDetached(["hyprctl", "eval",
             "hl.monitor({ output = \"" + monData.name + "\", mode = \"" +
-            modeStr + "\", position = \"" + posStr + "\", scale = " + scaleVal + " }) return \"ok\""]);
+            modeStr + "\", position = \"" + posStr + "\", scale = " + scaleVal + 
+            ", transform = " + transformVal + " }) return \"ok\""]);
     }
 
     function keepDisplay() {
@@ -532,7 +539,7 @@ Item {
                                     // Build exact mode string: "1920x1080@165.00"
                                     let modeStr = res.w + "x" + res.h + "@" + rawHz.toFixed(2);
                                     let scale = monCard.scaleOptions[monCard.selScaleIdx];
-                                    root.applyDisplay(monCard.modelData, modeStr, scale);
+                                    root.applyDisplay(monCard.modelData, modeStr, scale, root.currentTransform);
                                 }
                             }
                         }
@@ -558,7 +565,22 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    SegmentedControl { options: ["Landscape", "Portrait"] }
+                    SegmentedControl {
+                        options: ["Landscape", "Portrait"]
+                        current: (root.currentTransform % 2 === 0) ? "Landscape" : "Portrait"
+                        onSelected: function(value) {
+                            if (!root.activeMonitor) return;
+                            let t = (value === "Portrait" ? 1 : 0);
+                            let newMap = Object.assign({}, root.activeTransforms);
+                            newMap[root.activeMonitor.name] = t;
+                            root.activeTransforms = newMap;
+                            
+                            // Apply immediately
+                            let mon = root.activeMonitor;
+                            let modeStr = mon.width + "x" + mon.height + "@" + mon.refreshRate;
+                            root.applyDisplay(mon, modeStr, mon.scale, t);
+                        }
+                    }
                 }
             }
 
