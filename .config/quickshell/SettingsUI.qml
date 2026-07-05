@@ -419,7 +419,7 @@ Item {
                         NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 0 }
                         NavButton { iconText: "\ueb0a"; labelText: "Wallpaper"; pageIndex: 1 }
                         NavButton { iconText: "\uea89"; labelText: "Desktop"; pageIndex: 3 }
-                        NavButton { iconText: "\uebb6"; labelText: "Dock"; pageIndex: 4 }
+                        NavButton { iconText: "\uead3"; labelText: "Dock"; pageIndex: 4 }
                         NavButton { iconText: "\uead7"; labelText: "Panels"; pageIndex: 5 }
                         NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                         NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
@@ -458,7 +458,7 @@ Item {
                             case 0: return { icon: "\ueb01", title: "Appearance" };
                             case 1: return { icon: "\ueb0a", title: "Wallpaper" };
                             case 3: return { icon: "\uea89", title: "Desktop" };
-                            case 4: return { icon: "\uebb6", title: "Dock" };
+                            case 4: return { icon: "\uead3", title: "Dock" };
                             case 5: return { icon: "\uead7", title: "Panels" };
                             case 6: return { icon: "\uea35", title: "Notifications" };
                             case 7: return { icon: "\ueaed", title: "OSD" };
