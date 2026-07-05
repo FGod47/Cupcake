@@ -8,6 +8,9 @@ import Quickshell.Io
 Item {
     id: root
 
+    property bool wifiExpanded: true
+    property bool btExpanded: true
+
     // =====================================================================
     // Reusable inline components — identical to SettingsPageAppearance
     // =====================================================================
@@ -129,7 +132,7 @@ Item {
             SettingsCard {
                 SectionLabel { text: "Wi-Fi" }
 
-                // Wi-Fi toggle row
+                // Wi-Fi header row (clickable to collapse)
                 SettingsRow {
                     RowLayout {
                         spacing: 12
@@ -158,10 +161,30 @@ Item {
                         id: wifiSwitch; checked: true
                         onToggled: Quickshell.execDetached(["nmcli", "radio", "wifi", checked ? "on" : "off"])
                     }
+
+                    // Collapse chevron
+                    Text {
+                        id: wifiChevron
+                        text: "\uea5e"
+                        font.family: "tabler-icons"; font.pixelSize: 18
+                        color: Theme.colOnSurfaceVariant; opacity: 0.5
+                        rotation: root.wifiExpanded ? 0 : -90
+                        Behavior on rotation { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        MouseArea {
+                            anchors.fill: parent
+                            width: 200; height: 44
+                            anchors.horizontalCenter: undefined
+                            anchors.verticalCenter: undefined
+                            x: -180; y: -14
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.wifiExpanded = !root.wifiExpanded
+                        }
+                    }
                 }
 
                 // Connected network(s)
                 Repeater {
+                    visible: root.wifiExpanded
                     model: wifiModel
                     delegate: SettingsRow {
                         visible: model.inUse
@@ -191,6 +214,7 @@ Item {
 
                 // Other networks
                 Repeater {
+                    visible: root.wifiExpanded
                     model: wifiModel
                     delegate: ColumnLayout {
                         visible: !model.inUse
@@ -277,6 +301,7 @@ Item {
 
                 // Add network link
                 Text {
+                    visible: root.wifiExpanded
                     text: "+ Add network manually"
                     color: Theme.colPrimary
                     font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium
@@ -307,10 +332,26 @@ Item {
                         checked: true
                         onToggled: Quickshell.execDetached(["bash", "-c", "bluetoothctl power " + (checked ? "on" : "off")])
                     }
+                    // Collapse chevron
+                    Text {
+                        id: btChevron
+                        text: "\uea5e"
+                        font.family: "tabler-icons"; font.pixelSize: 18
+                        color: Theme.colOnSurfaceVariant; opacity: 0.5
+                        rotation: root.btExpanded ? 0 : -90
+                        Behavior on rotation { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        MouseArea {
+                            width: 200; height: 44
+                            x: -180; y: -14
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.btExpanded = !root.btExpanded
+                        }
+                    }
                 }
 
                 // Sony WH-1000XM5
                 SettingsRow {
+                    visible: root.btExpanded
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -335,6 +376,7 @@ Item {
 
                 // MX Keys
                 SettingsRow {
+                    visible: root.btExpanded
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -359,6 +401,7 @@ Item {
 
                 // MX Master 3S
                 SettingsRow {
+                    visible: root.btExpanded
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -379,6 +422,7 @@ Item {
 
                 // DualSense
                 SettingsRow {
+                    visible: root.btExpanded
                     RowLayout {
                         spacing: 12
                         Rectangle {
