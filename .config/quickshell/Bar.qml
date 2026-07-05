@@ -407,7 +407,7 @@ PanelWindow {
                     // Backlight
                     Row {
                         spacing: 0
-                        Text { text: lightSlider.value < 33 ? "" : (lightSlider.value < 66 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: lightSlider.value < 33 ? "\uf237" : (lightSlider.value < 66 ? "\ueb30" : "\uf236"); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
                         Slider {
                             id: lightSlider
                             leftPadding: 8
