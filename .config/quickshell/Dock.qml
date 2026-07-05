@@ -97,16 +97,28 @@ PanelWindow {
                     model: globalState.dockPinnedAppsEnabled ? globalState.dockPinnedApps : []
 
                     delegate: Rectangle {
+                        id: pinnedDelegate
                         required property var modelData
                         
                         // Find if this pinned app is currently running
-                        property var toplevel: {
-                            for (var i = 0; i < ToplevelManager.toplevels.length; i++) {
-                                if (ToplevelManager.toplevels[i].appId === modelData.appId) {
-                                    return ToplevelManager.toplevels[i];
+                        property var toplevel: null
+
+                        Instantiator {
+                            model: ToplevelManager.toplevels
+                            delegate: QtObject {
+                                required property var modelData
+                                property var tl: modelData
+                                Component.onCompleted: {
+                                    if (tl && tl.appId === pinnedDelegate.modelData.appId) {
+                                        pinnedDelegate.toplevel = tl;
+                                    }
+                                }
+                                Component.onDestruction: {
+                                    if (pinnedDelegate.toplevel === tl) {
+                                        pinnedDelegate.toplevel = null;
+                                    }
                                 }
                             }
-                            return null;
                         }
                         
                         property bool isRunning: toplevel !== null
