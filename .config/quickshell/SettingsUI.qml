@@ -497,7 +497,7 @@ Item {
                                 Text {
                                     text: contentAreaContainer.getPageData(root.currentIndex).icon
                                     color: Theme.colOnSurfaceVariant
-                                    font.family: root.font.family
+                                    font.family: "tabler-icons"
                                     font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 }
                                 
