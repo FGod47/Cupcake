@@ -12,6 +12,10 @@ ShellRoot {
     readonly property string homeDir: Quickshell.env("HOME")
 
     // Top Bar Components for all screens
+    function setGlobalDockRadius(c: int) {
+        globalState.dockRadius = c;
+    }
+
     Variants {
         model: Quickshell.screens
         delegate: Bar {
@@ -63,7 +67,7 @@ ShellRoot {
         property bool dockShowDots: true
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
-        property int dockCornerRadius: 20
+        property var dockRadius: 20
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property var notifications: notifServer.trackedNotifications
@@ -134,7 +138,7 @@ ShellRoot {
                     if (parts[4] && parts[4].trim() !== "") globalState.dockMagnificationEnabled = (parts[4].trim() === "true");
                     if (parts[5] && parts[5].trim() !== "") globalState.dockMagnificationScale = parseFloat(parts[5].trim());
                     if (parts[6] && parts[6].trim() !== "") {
-                        globalState.dockCornerRadius = parseInt(parts[6].trim());
+                        globalState.dockRadius = parseInt(parts[6].trim());
                     }
                 }
             }
@@ -175,7 +179,7 @@ ShellRoot {
             globalState.dockMagnificationScale = scale;
         }
         function setDockShape(c: int) {
-            globalState.dockCornerRadius = c;
+            root.setGlobalDockRadius(c);
         }
     }
 

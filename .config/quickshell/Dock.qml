@@ -56,12 +56,12 @@ PanelWindow {
                 width: parent.width
                 height: 64
                 color: Theme.colSurfaceContainer
-                radius: globalState.dockCornerRadius
+                radius: globalState.dockRadius
             }
 
             RowLayout {
                 id: dockLayout
-                anchors.centerIn: parent
+                anchors.centerIn: visualDock
                 spacing: 12
 
                 // Start Launcher
@@ -262,7 +262,6 @@ PanelWindow {
                         }
                     }
                 }
-            }
             }
         }
     }
