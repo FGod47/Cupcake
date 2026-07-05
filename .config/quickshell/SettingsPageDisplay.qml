@@ -507,17 +507,20 @@ Item {
                         Item { Layout.fillWidth: true }
                         Rectangle {
                             width: 100; height: 34; radius: 8
-                            color: root.pendingOutput !== "" 
-                                ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                : Theme.colPrimary
+                            color: root.pendingOutput !== ""
+                                ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                                : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)
                             Text {
                                 anchors.centerIn: parent
                                 text: root.pendingOutput !== "" ? "Pending…" : "Apply"
-                                color: Theme.colOnPrimary
+                                color: root.pendingOutput !== ""
+                                    ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+                                    : Theme.colSurface
                                 font.weight: Font.Medium
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 13
                             }
+
                             MouseArea {
                                 anchors.fill: parent
                                 enabled: root.pendingOutput === ""
