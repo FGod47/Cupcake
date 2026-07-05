@@ -29,7 +29,7 @@ Window {
             Connections {
                 target: settingsUI
                 function onRequestClose() {
-                    settingsWindow.close();
+                    Qt.quit();
                 }
             }
         }
