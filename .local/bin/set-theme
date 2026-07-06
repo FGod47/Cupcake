@@ -47,7 +47,9 @@ echo "Setting wallpaper..."
 
 # Run matugen to generate themes (this takes ~2 seconds)
 echo "Generating color palettes with matugen in $MODE mode using scheme-$SCHEME..."
-matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+# Use magick to create a guaranteed-valid PNG, bypassing format/extension mismatch crashes in matugen
+magick "$WALLPAPER" /tmp/matugen_input.png 2>/dev/null || cp "$WALLPAPER" /tmp/matugen_input.png
+matugen image "/tmp/matugen_input.png" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
 
 # Apply KDE colors dynamically
 ~/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant "scheme-$SCHEME" || true
