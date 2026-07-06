@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.folderlistmodel
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import "theme"
 import Quickshell
 import Quickshell.Io
@@ -177,8 +177,10 @@ Item {
                             sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
                             visible: root.currentWall !== ""
+                            asynchronous: true
                             layer.enabled: true
-                            layer.effect: OpacityMask {
+                            layer.effect: MultiEffect {
+                                maskEnabled: true
                                 maskSource: previewMask
                             }
                         }
@@ -297,7 +299,8 @@ Item {
                                         fillMode: Image.PreserveAspectCrop
                                         asynchronous: true
                                         layer.enabled: true
-                                        layer.effect: OpacityMask {
+                                        layer.effect: MultiEffect {
+                                            maskEnabled: true
                                             maskSource: tileMask
                                         }
                                         opacity: status === Image.Ready ? 1 : 0
