@@ -281,6 +281,7 @@ Item {
                                         anchors.fill: parent
                                         radius: 9
                                         visible: false
+                                        layer.enabled: true
                                     }
                                     Text {
                                         anchors.centerIn: parent
