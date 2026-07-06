@@ -1,0 +1,15 @@
+#!/bin/bash
+WALL_DIR="$HOME/.config/cupcake/walls"
+THUMB_DIR="$HOME/.cache/cupcake/wall_thumbs"
+
+mkdir -p "$THUMB_DIR"
+
+for img in "$WALL_DIR"/*.{png,jpg,jpeg,webp}; do
+    [ -e "$img" ] || continue
+    filename=$(basename "$img")
+    thumb="$THUMB_DIR/$filename"
+    if [ ! -f "$thumb" ]; then
+        echo "Generating thumbnail for $filename..."
+        convert "$img" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb"
+    fi
+done

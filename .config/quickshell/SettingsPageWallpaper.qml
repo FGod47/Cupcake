@@ -295,7 +295,7 @@ Item {
                                     Image {
                                         id: img
                                         anchors.fill: parent
-                                        source: fileUrl
+                                        source: "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName
                                         sourceSize: Qt.size(250, 150)
                                         fillMode: Image.PreserveAspectCrop
                                         asynchronous: true
@@ -304,6 +304,11 @@ Item {
                                         layer.effect: loadTimer.triggered ? maskComponent : null
                                         opacity: status === Image.Ready && loadTimer.triggered ? 1 : 0
                                         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                                        onStatusChanged: {
+                                            if (status === Image.Error && source.toString() !== fileUrl.toString()) {
+                                                source = fileUrl
+                                            }
+                                        }
                                     }
                                     
                                     Component {
@@ -380,7 +385,7 @@ Item {
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Images | *.png *.jpg *.jpeg' 2>/dev/null | xargs -I{} cp {} " + root.wallDir + "/"])
+                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Images | *.png *.jpg *.jpeg' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails'"])
                         }
                     }
                 }
