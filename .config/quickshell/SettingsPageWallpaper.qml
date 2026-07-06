@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.folderlistmodel
+import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
 import "theme"
 import Quickshell
@@ -177,15 +178,12 @@ Item {
                             source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
                             sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
-                            visible: false
-                            asynchronous: true
-                        }
-                        MultiEffect {
-                            anchors.fill: previewImg
-                            source: previewImg
-                            maskEnabled: true
-                            maskSource: previewMask
                             visible: root.currentWall !== ""
+                            asynchronous: true
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: previewMask
+                            }
                         }
                         Text {
                             anchors.centerIn: parent
@@ -301,14 +299,7 @@ Item {
                                         sourceSize: Qt.size(250, 150)
                                         fillMode: Image.PreserveAspectCrop
                                         asynchronous: true
-                                        visible: false
-                                    }
-                                    MultiEffect {
-                                        anchors.fill: img
-                                        source: img
-                                        maskEnabled: true
-                                        maskSource: tileMask
-                                        opacity: img.status === Image.Ready ? 1 : 0
+                                        opacity: status === Image.Ready ? 1 : 0
                                         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                     }
 
