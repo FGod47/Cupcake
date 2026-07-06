@@ -274,11 +274,23 @@ Item {
                                 radius: 9
                                 visible: false
                             }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb0a" // tabler-icons 'photo'
+                                font.family: "tabler-icons"
+                                font.pixelSize: 24
+                                color: Theme.colOnSurfaceVariant
+                                opacity: img.status === Image.Ready ? 0 : 0.2
+                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                            }
+
                             Image {
+                                id: img
                                 anchors.fill: parent
                                 source: fileUrl
                                 sourceSize: Qt.size(250, 150)
                                 fillMode: Image.PreserveAspectCrop
+                                asynchronous: true
                                 layer.enabled: true
                                 layer.effect: OpacityMask {
                                     maskSource: tileMask
