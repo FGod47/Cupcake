@@ -175,7 +175,12 @@ Item {
                         Image {
                             id: previewImg
                             anchors.fill: parent
-                            source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
+                            source: {
+                                if (root.currentWall === "") return "";
+                                var parts = root.currentWall.split("/");
+                                var filename = parts[parts.length - 1];
+                                return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename;
+                            }
                             sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
                             visible: root.currentWall !== ""
@@ -183,6 +188,11 @@ Item {
                             layer.enabled: true
                             layer.effect: OpacityMask {
                                 maskSource: previewMask
+                            }
+                            onStatusChanged: {
+                                if (status === Image.Error && root.currentWall !== "" && source.toString() !== ("file://" + root.currentWall)) {
+                                    source = "file://" + root.currentWall
+                                }
                             }
                         }
                         Text {
