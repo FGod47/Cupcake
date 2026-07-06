@@ -259,82 +259,89 @@ Item {
                             showDirs: false
                         }
 
-                        delegate: Rectangle {
+                        delegate: Loader {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 110
-                            radius: 10; clip: true
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
-                            border.color: (root.currentWall === filePath) ? Theme.colPrimary : "transparent"
-                            border.width: 2
-                            Behavior on border.color { ColorAnimation { duration: 150 } }
+                            asynchronous: true
+                            
+                            sourceComponent: Component {
+                                Rectangle {
+                                    anchors.fill: parent
+                                    radius: 10; clip: true
+                                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                                    border.color: (root.currentWall === filePath) ? Theme.colPrimary : "transparent"
+                                    border.width: 2
+                                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                            Rectangle {
-                                id: tileMask
-                                anchors.fill: parent
-                                radius: 9
-                                visible: false
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb0a" // tabler-icons 'photo'
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: Theme.colOnSurfaceVariant
-                                opacity: img.status === Image.Ready ? 0 : 0.2
-                                Behavior on opacity { NumberAnimation { duration: 250 } }
-                            }
+                                    Rectangle {
+                                        id: tileMask
+                                        anchors.fill: parent
+                                        radius: 9
+                                        visible: false
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\ueb0a" // tabler-icons 'photo'
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 24
+                                        color: Theme.colOnSurfaceVariant
+                                        opacity: img.status === Image.Ready ? 0 : 0.2
+                                        Behavior on opacity { NumberAnimation { duration: 250 } }
+                                    }
 
-                            Image {
-                                id: img
-                                anchors.fill: parent
-                                source: fileUrl
-                                sourceSize: Qt.size(250, 150)
-                                fillMode: Image.PreserveAspectCrop
-                                asynchronous: true
-                                layer.enabled: true
-                                layer.effect: OpacityMask {
-                                    maskSource: tileMask
-                                }
-                                opacity: status === Image.Ready ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                            }
+                                    Image {
+                                        id: img
+                                        anchors.fill: parent
+                                        source: fileUrl
+                                        sourceSize: Qt.size(250, 150)
+                                        fillMode: Image.PreserveAspectCrop
+                                        asynchronous: true
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask {
+                                            maskSource: tileMask
+                                        }
+                                        opacity: status === Image.Ready ? 1 : 0
+                                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                    }
 
-                            Rectangle {
-                                visible: root.currentWall === filePath
-                                width: 22; height: 22; radius: 11
-                                anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 7
-                                color: Theme.colPrimary
-                                Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colSurface; font.family: "tabler-icons"; font.pixelSize: 13 }
-                            }
+                                    Rectangle {
+                                        visible: root.currentWall === filePath
+                                        width: 22; height: 22; radius: 11
+                                        anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 7
+                                        color: Theme.colPrimary
+                                        Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colSurface; font.family: "tabler-icons"; font.pixelSize: 13 }
+                                    }
 
-                            Rectangle {
-                                anchors.bottom: parent.bottom
-                                anchors.left: parent.left; anchors.right: parent.right
-                                height: 36
-                                gradient: Gradient {
-                                    orientation: Gradient.Vertical
-                                    GradientStop { position: 0.0; color: "transparent" }
-                                    GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.6) }
-                                }
-                                Text {
-                                    anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8 }
-                                    text: fileName.replace(/\.[^.]+$/, "")
-                                    color: "white"; font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11; font.weight: Font.Medium; elide: Text.ElideRight
-                                }
-                            }
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        anchors.left: parent.left; anchors.right: parent.right
+                                        height: 36
+                                        gradient: Gradient {
+                                            orientation: Gradient.Vertical
+                                            GradientStop { position: 0.0; color: "transparent" }
+                                            GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.6) }
+                                        }
+                                        Text {
+                                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8 }
+                                            text: fileName.replace(/\.[^.]+$/, "")
+                                            color: "white"; font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 11; font.weight: Font.Medium; elide: Text.ElideRight
+                                        }
+                                    }
 
-                            property bool hovered: false
-                            scale: hovered ? 1.03 : 1.0
-                            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                    property bool hovered: false
+                                    scale: hovered ? 1.03 : 1.0
+                                    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 
-                            MouseArea {
-                                anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                onEntered: parent.hovered = true
-                                onExited: parent.hovered = false
-                                onClicked: {
-                                    root.currentWall = filePath
-                                    Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-theme", filePath])
+                                    MouseArea {
+                                        anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onEntered: parent.hovered = true
+                                        onExited: parent.hovered = false
+                                        onClicked: {
+                                            root.currentWall = filePath
+                                            Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-theme", filePath])
+                                        }
+                                    }
                                 }
                             }
                         }
