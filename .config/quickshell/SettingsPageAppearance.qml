@@ -132,7 +132,7 @@ Item {
         signal toggled(bool checked)
         width: 38; height: 22
         radius: height / 2
-        color: checked ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+        color: checked ? (root.colorMode === "Light" ? "black" : Theme.colPrimary) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
         border.width: checked ? 0 : 1
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
 
@@ -143,7 +143,7 @@ Item {
             radius: 9
             anchors.verticalCenter: parent.verticalCenter
             x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? "white" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+            color: sw.checked ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
             Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
         }
 
@@ -177,7 +177,7 @@ Item {
                     height: 26
                     width: label.implicitWidth + 24
                     radius: 6
-                    color: active ? "black" : "transparent"
+                    color: active ? (root.colorMode === "Light" ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)) : "transparent"
 
                     Text {
                         id: label
@@ -186,7 +186,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.Medium
-                        color: active ? "white" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                        color: active ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     }
 
                     MouseArea {
@@ -207,7 +207,7 @@ Item {
         radius: 8
         height: 26
         width: pillText.implicitWidth + 24
-        color: active ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+        color: active ? (root.colorMode === "Light" ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
 
         Text {
             id: pillText
@@ -216,7 +216,7 @@ Item {
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
             font.weight: Font.Medium
-            color: active ? "white" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
+            color: active ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
         }
 
         MouseArea {
