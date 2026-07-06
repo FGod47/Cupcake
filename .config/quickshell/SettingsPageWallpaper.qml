@@ -172,17 +172,20 @@ Item {
                             visible: false
                         }
                         Image {
+                            id: previewImg
                             anchors.fill: parent
                             source: root.currentWall !== "" ? ("file://" + root.currentWall) : ""
                             sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
-                            visible: root.currentWall !== ""
+                            visible: false
                             asynchronous: true
-                            layer.enabled: true
-                            layer.effect: MultiEffect {
-                                maskEnabled: true
-                                maskSource: previewMask
-                            }
+                        }
+                        MultiEffect {
+                            anchors.fill: previewImg
+                            source: previewImg
+                            maskEnabled: true
+                            maskSource: previewMask
+                            visible: root.currentWall !== ""
                         }
                         Text {
                             anchors.centerIn: parent
@@ -298,12 +301,14 @@ Item {
                                         sourceSize: Qt.size(250, 150)
                                         fillMode: Image.PreserveAspectCrop
                                         asynchronous: true
-                                        layer.enabled: true
-                                        layer.effect: MultiEffect {
-                                            maskEnabled: true
-                                            maskSource: tileMask
-                                        }
-                                        opacity: status === Image.Ready ? 1 : 0
+                                        visible: false
+                                    }
+                                    MultiEffect {
+                                        anchors.fill: img
+                                        source: img
+                                        maskEnabled: true
+                                        maskSource: tileMask
+                                        opacity: img.status === Image.Ready ? 1 : 0
                                         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                     }
 
