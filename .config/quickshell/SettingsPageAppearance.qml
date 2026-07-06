@@ -55,6 +55,17 @@ Item {
     property real globalOpacity: 0.90
     property int blurPasses: 3
     property bool barTransparency: true
+    property real barOpacity: 0.50
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
+            }
+        }
+    }
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_transparency"]
@@ -478,6 +489,49 @@ Item {
                             root.barTransparency = c;
                             Theme.quickshellTransparency = c;
                             Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Quickshell opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.barOpacity
+                            onValueChanged: { root.barOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.barOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
                         }
                     }
                 }
