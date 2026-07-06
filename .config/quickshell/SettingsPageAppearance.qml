@@ -12,6 +12,19 @@ Item {
     // Properties simulating the backend state for this page
     property string uiStyle: "Liquid"
     property string accent: "Tonal Spot"
+    property string colorMode: "Dark"
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.color_mode"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim().toLowerCase();
+                if (s === "light") root.colorMode = "Light";
+                else root.colorMode = "Dark";
+            }
+        }
+    }
     
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.color_scheme"]
@@ -244,6 +257,34 @@ Item {
 
                 SettingsCard {
                 SectionLabel { text: "Mode" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.colorMode === "Light" ? "\ueb30" : "\ueb2e" // sun vs moon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Color Mode"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Light", "Dark"]
+                        current: root.colorMode
+                        onSelected: (v) => {
+                            root.colorMode = v;
+                            bashProcess.command = ["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"];
+                            bashProcess.running = true;
+                        }
+                    }
+                }
 
                 SettingsRow {
                     RowLayout {
