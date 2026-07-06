@@ -280,8 +280,7 @@ Item {
                         current: root.colorMode
                         onSelected: (v) => {
                             root.colorMode = v;
-                            bashProcess.command = ["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"];
-                            bashProcess.running = true;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
                         }
                     }
                 }
@@ -336,7 +335,7 @@ Item {
                             active: root.accent === modelData
                             onClicked: {
                                 root.accent = modelData;
-                                bashProcess.command = ["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]; bashProcess.running = true;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
                             }
                         }
                     }
@@ -439,7 +438,7 @@ Item {
                         onToggled: (c) => {
                             root.backgroundBlur = c;
                             Theme.globalTransparency = c;
-                            bashProcess.command = ["bash", "-c", "echo " + c + " > ~/.config/cupcake/.transparency && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
+                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.transparency && ~/.local/bin/apply-transparency"]);
                         }
                     }
                 }
@@ -470,7 +469,7 @@ Item {
                         onToggled: (c) => {
                             root.barTransparency = c;
                             Theme.quickshellTransparency = c;
-                            bashProcess.command = ["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
+                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
                         }
                     }
                 }
@@ -503,7 +502,7 @@ Item {
                             onPressedChanged: {
                                 if (!pressed) {
                                     let size = Math.max(1, Math.round(root.blurStrength * 20));
-                                    bashProcess.command = ["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]; bashProcess.running = true;
+                                    Quickshell.execDetached(["bash", "-c", "sed -i 's/^BLUR_SIZE=.*/BLUR_SIZE=" + size + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }
@@ -837,7 +836,7 @@ Item {
                             from: 8; to: 32; stepSize: 1
                             value: Theme.appFontSize
                             onValueChanged: { Theme.appFontSize = value; }
-                            onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; }
+                            onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]); }
                         }
                         Text { text: Theme.appFontSize + "px"; color: Theme.colOnSurfaceVariant; font.family: Theme.appFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.appFontWeight + 200); Layout.preferredWidth: 32 }
                         Rectangle { width: 20; height: 20; radius: 10; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
