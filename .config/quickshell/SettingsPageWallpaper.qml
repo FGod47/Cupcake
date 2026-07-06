@@ -291,12 +291,7 @@ Item {
                                         opacity: 0.2
                                     }
 
-                                    Rectangle {
-                                        id: tileMask
-                                        anchors.fill: parent
-                                        radius: 9
-                                        visible: false
-                                    }
+
 
                                     Image {
                                         id: img
