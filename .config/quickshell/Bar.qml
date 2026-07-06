@@ -546,19 +546,6 @@ PanelWindow {
 
 
                             Text {
-                                id: settingsLaunchText
-                                text: "󰒓"
-                                color: Theme.colPrimary; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                                MouseArea { 
-                                    anchors.fill: parent; 
-                                    cursorShape: Qt.PointingHandCursor; 
-                                    onClicked: Quickshell.execDetached(["quickshell", "-p", root.homeDir + "/.config/quickshell/Settings.qml"]) 
-                                }
-                            }
-
-                            Text { text: " | "; color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
-
-                            Text {
                                 id: notifText
                                 text: "󰂚"
                                 color: Theme.colPrimary; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
