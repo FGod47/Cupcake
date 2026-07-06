@@ -288,8 +288,14 @@ Item {
                                         font.family: "tabler-icons"
                                         font.pixelSize: 24
                                         color: Theme.colOnSurfaceVariant
-                                        opacity: img.status === Image.Ready ? 0 : 0.2
-                                        Behavior on opacity { NumberAnimation { duration: 250 } }
+                                        opacity: 0.2
+                                    }
+
+                                    Rectangle {
+                                        id: tileMask
+                                        anchors.fill: parent
+                                        radius: 9
+                                        visible: false
                                     }
 
                                     Image {
@@ -300,33 +306,20 @@ Item {
                                         fillMode: Image.PreserveAspectCrop
                                         asynchronous: true
                                         visible: false
-                                        layer.enabled: loadTimer.triggered
-                                        layer.effect: loadTimer.triggered ? maskComponent : null
-                                        opacity: status === Image.Ready && loadTimer.triggered ? 1 : 0
-                                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                         onStatusChanged: {
                                             if (status === Image.Error && source.toString() !== fileUrl.toString()) {
                                                 source = fileUrl
                                             }
                                         }
                                     }
-                                    
-                                    Component {
-                                        id: maskComponent
-                                        OpacityMask {
-                                            maskSource: tileMask
-                                        }
-                                    }
 
-                                    Timer {
-                                        id: loadTimer
-                                        interval: index * 40
-                                        running: true
-                                        property bool triggered: false
-                                        onTriggered: {
-                                            triggered = true
-                                            img.visible = true
-                                        }
+                                    MultiEffect {
+                                        anchors.fill: img
+                                        source: img
+                                        maskEnabled: true
+                                        maskSource: tileMask
+                                        opacity: img.status === Image.Ready ? 1 : 0
+                                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                     }
 
                                     Rectangle {
