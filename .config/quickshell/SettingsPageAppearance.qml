@@ -52,6 +52,8 @@ Item {
     property string toggleStyle: "Android"
     property bool backgroundBlur: true
     property real blurStrength: 0.77
+    property real globalOpacity: 0.90
+    property int blurPasses: 3
     property bool barTransparency: true
 
     Process {
@@ -86,6 +88,12 @@ Item {
                         if (lines[i].startsWith('BLUR_SIZE=')) {
                             let size = parseInt(lines[i].split('=')[1]);
                             root.blurStrength = size / 20.0;
+                        }
+                        if (lines[i].startsWith('OPACITY=')) {
+                            root.globalOpacity = parseFloat(lines[i].split('=')[1]);
+                        }
+                        if (lines[i].startsWith('BLUR_PASSES=')) {
+                            root.blurPasses = parseInt(lines[i].split('=')[1]);
                         }
                     }
                 }
@@ -410,7 +418,7 @@ Item {
             // --- Blur section ---
 
                 SettingsCard {
-                SectionLabel { text: "Blur" }
+                SectionLabel { text: "Transparency & Blur" }
 
                 SettingsRow {
                     RowLayout {
@@ -509,6 +517,92 @@ Item {
                         
                         Text { 
                             text: Math.round(root.blurStrength * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.globalOpacity
+                            onValueChanged: { root.globalOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "sed -i 's/^OPACITY=.*/OPACITY=" + root.globalOpacity.toFixed(2) + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.globalOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb00" // passes icon (layers)
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Passes"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 1; to: 5; stepSize: 1
+                            value: root.blurPasses
+                            onValueChanged: { root.blurPasses = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "sed -i 's/^BLUR_PASSES=.*/BLUR_PASSES=" + Math.round(root.blurPasses) + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.blurPasses)
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12
