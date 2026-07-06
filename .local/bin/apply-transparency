@@ -9,42 +9,49 @@ BLUR_PASSES=${BLUR_PASSES:-3}
 INACTIVE_OPACITY=$OPACITY
 
 if [ "$TRANS" = "true" ]; then
-    echo "decoration {
-    active_opacity = $OPACITY
-    inactive_opacity = $INACTIVE_OPACITY
-    blur {
-        enabled = true
-        size = $BLUR_SIZE
-        passes = $BLUR_PASSES
+    cat <<EOF > ~/.config/hypr/transparency.lua
+hl.config({
+    decoration = {
+        active_opacity = $OPACITY,
+        inactive_opacity = $INACTIVE_OPACITY,
+        blur = {
+            enabled = true,
+            size = $BLUR_SIZE,
+            passes = $BLUR_PASSES
+        }
     }
-}" > ~/.config/hypr/transparency.conf
+})
+EOF
     sed -i "s/^background_opacity.*/background_opacity $OPACITY/g" ~/.config/kitty/kitty.conf
 else
-    echo "decoration {
-    active_opacity = 1.0
-    inactive_opacity = 1.0
-    blur {
-        enabled = false
+    cat <<EOF > ~/.config/hypr/transparency.lua
+hl.config({
+    decoration = {
+        active_opacity = 1.0,
+        inactive_opacity = 1.0,
+        blur = {
+            enabled = false
+        }
     }
-}" > ~/.config/hypr/transparency.conf
+})
+EOF
     sed -i 's/^background_opacity.*/background_opacity 1.0/g' ~/.config/kitty/kitty.conf
 fi
 
 if [ "$BAR_TRANS" = "true" ]; then
-    echo "layerrule = blur, quickshell
-layerrule = ignorealpha 0.2, quickshell
-layerrule = blur, quickshell:.*
-layerrule = ignorealpha 0.2, quickshell:.*
-layerrule = blur, cupcake-launcher
-layerrule = ignorealpha 0.2, cupcake-launcher
-layerrule = blur, cupcake-wallpaper
-layerrule = ignorealpha 0.2, cupcake-wallpaper
-layerrule = blur, waybar
-layerrule = ignorealpha 0.2, waybar
-windowrulev2 = opaque, class:^(quickshell)$" >> ~/.config/hypr/transparency.conf
+    cat <<EOF >> ~/.config/hypr/transparency.lua
+hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'quickshell:.*' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, blur = true, ignore_alpha = 0.2 })
+hl.layer_rule({ match = { namespace = 'waybar' }, blur = true, ignore_alpha = 0.2 })
+hl.window_rule({ match = { class = 'quickshell' }, opacity = '1.0 1.0', no_blur = false })
+EOF
 else
-    echo "windowrulev2 = noblur, class:^(quickshell)$
-windowrulev2 = noblur, title:^(Cupcake Settings)$" >> ~/.config/hypr/transparency.conf
+    cat <<EOF >> ~/.config/hypr/transparency.lua
+hl.window_rule({ match = { class = 'quickshell' }, no_blur = true })
+hl.window_rule({ match = { title = 'Cupcake Settings' }, no_blur = true })
+EOF
 fi
 
 killall -SIGUSR1 kitty 2>/dev/null || true
