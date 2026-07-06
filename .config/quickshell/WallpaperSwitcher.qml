@@ -17,7 +17,7 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     color: "transparent"
     
     mask: Region {
@@ -98,6 +98,7 @@ PanelWindow {
                 
                 Qt.callLater(() => {
                     root.isOpen = true
+                    pv.forceActiveFocus()
                     // Fetch latest desktop wallpaper on reappear
                     queryProc.running = true
                 })
@@ -121,6 +122,7 @@ PanelWindow {
                 
                 Qt.callLater(() => {
                     root.isOpen = true
+                    pv.forceActiveFocus()
                     // Fetch latest desktop wallpaper on reappear
                     queryProc.running = true
                 })
@@ -265,6 +267,8 @@ PanelWindow {
             
             Keys.onUpPressed: decrementCurrentIndex()
             Keys.onDownPressed: incrementCurrentIndex()
+            Keys.onLeftPressed: decrementCurrentIndex()
+            Keys.onRightPressed: incrementCurrentIndex()
             Keys.onEscapePressed: root.dismiss()
             Keys.onReturnPressed: {
                 if (pv.currentItem) {
