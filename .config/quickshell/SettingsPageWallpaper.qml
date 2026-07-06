@@ -279,11 +279,12 @@ Item {
                                 source: fileUrl
                                 sourceSize: Qt.size(250, 150)
                                 fillMode: Image.PreserveAspectCrop
-                                asynchronous: true
                                 layer.enabled: true
                                 layer.effect: OpacityMask {
                                     maskSource: tileMask
                                 }
+                                opacity: status === Image.Ready ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                             }
 
                             Rectangle {
