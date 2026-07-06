@@ -41,7 +41,6 @@ layerrule = blur, cupcake-wallpaper
 layerrule = ignorealpha 0.2, cupcake-wallpaper
 layerrule = blur, waybar
 layerrule = ignorealpha 0.2, waybar
-windowrulev2 = opaque, class:^(kitty)$
 windowrulev2 = opaque, class:^(quickshell)$" >> ~/.config/hypr/transparency.conf
 else
     echo "windowrulev2 = noblur, class:^(quickshell)$
