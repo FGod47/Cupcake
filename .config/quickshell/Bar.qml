@@ -435,39 +435,21 @@ PanelWindow {
                                     radius: 7
                                 }
                             }
-                            Timer {
-                                id: ddcTimer
-                                interval: 150
-                                repeat: false
-                                property int targetValue: 100
-                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                            onMoved: { 
+                                Quickshell.execDetached(["bash", "-c", "brightnessctl s " + Math.round(value) + "%"])
                             }
                             Behavior on width { NumberAnimation { duration: 500; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
-                            onMoved: { 
-                                ddcTimer.targetValue = value;
-                                ddcTimer.restart();
-                            }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    ddcTimer.stop();
-                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
-                                }
-                            }
                             
                             Process {
                                 id: lightProc
-                                command: ["ddcutil", "getvcp", "10", "--terse"]
+                                command: ["bash", "-c", "brightnessctl -m | head -n1 | cut -d, -f4 | tr -d %"]
                                 running: true
                                 stdout: StdioCollector { id: lightStdout }
                                 onExited: {
-                                    let text = (lightStdout.text || "");
-                                    let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                                    if (match && match[1]) {
-                                        let val = parseInt(match[1]);
-                                        if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
-                                    }
+                                    let val = parseInt((lightStdout.text || "").trim());
+                                    if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
                                 }
                             }
                         }
