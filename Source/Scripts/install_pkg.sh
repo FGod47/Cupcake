@@ -134,15 +134,20 @@ warp-cli --accept-tos connect >/dev/null 2>&1
 echo -e "\r\033[K${GREEN}[DONE]${RESET} WARP VPN configured and connected"
 
 # ──────────────── Completion Notice ────────────────
-# ──────────────── Configure i2c for ddcutil ────────────────
-echo -e "${BLUE}▶ Configuring i2c for external monitor brightness (ddcutil)...${RESET}"
+# ──────────────── Configure i2c & ddcci for external monitors ────────────────
+echo -e "${BLUE}▶ Configuring i2c and ddcci kernel modules for external monitor brightness...${RESET}"
 sudo modprobe i2c-dev || true
 echo "i2c-dev" | sudo tee /etc/modules-load.d/i2c-dev.conf > /dev/null
 sudo usermod -aG i2c $USER || echo -e "${YELLOW}⚠ Could not add user to i2c group. You may need to create it manually.${RESET}"
 
+# Install and load ddcci for brightnessctl support on external monitors
+yay -S --noconfirm --needed linux-headers ddcci-driver-linux-dkms
+sudo modprobe ddcci || true
+echo "ddcci" | sudo tee /etc/modules-load.d/ddcci.conf > /dev/null
+
 # NVIDIA-specific fix for DDC/CI (i2c over DisplayPort/HDMI)
 if lspci | grep -i "vga.*nvidia" > /dev/null; then
-    echo -e "${BLUE}▶ Applying NVIDIA-specific i2c fix for ddcutil...${RESET}"
+    echo -e "${BLUE}▶ Applying NVIDIA-specific i2c fix for ddcutil and ddcci...${RESET}"
     echo "options nvidia NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100" | sudo tee /etc/modprobe.d/nvidia-i2c.conf > /dev/null
 fi
 
