@@ -140,6 +140,12 @@ sudo modprobe i2c-dev || true
 echo "i2c-dev" | sudo tee /etc/modules-load.d/i2c-dev.conf > /dev/null
 sudo usermod -aG i2c $USER || echo -e "${YELLOW}⚠ Could not add user to i2c group. You may need to create it manually.${RESET}"
 
+# NVIDIA-specific fix for DDC/CI (i2c over DisplayPort/HDMI)
+if lspci | grep -i "vga.*nvidia" > /dev/null; then
+    echo -e "${BLUE}▶ Applying NVIDIA-specific i2c fix for ddcutil...${RESET}"
+    echo "options nvidia NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100" | sudo tee /etc/modprobe.d/nvidia-i2c.conf > /dev/null
+fi
+
 echo -e "${GREEN}✔ AUR packages installed successfully.${RESET}"
 
 echo -e "\n${GREEN}[DONE]${RESET} ${TEXT}All packages processed successfully!${RESET}\n"
