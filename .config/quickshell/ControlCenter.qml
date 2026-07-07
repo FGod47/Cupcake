@@ -95,7 +95,7 @@ PanelWindow {
                         interval: 150
                         repeat: false
                         property int targetValue: 100
-                        onTriggered: Quickshell.execDetached(["brightnessctl", "set", Math.round(targetValue).toString() + "%"])
+                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
                     }
                     
                     onMoved: {
@@ -106,7 +106,7 @@ PanelWindow {
                     onPressedChanged: {
                         if (!pressed) {
                             controlCenterDdcTimer.stop();
-                            Quickshell.execDetached(["brightnessctl", "set", Math.round(value).toString() + "%"]);
+                            Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
                         }
                     }
                 }
@@ -155,14 +155,17 @@ PanelWindow {
 
     Process {
         id: updateBrightness
-        command: ["bash", "-c", "brightnessctl -m | head -n1 | cut -d, -f4 | tr -d %"]
+        command: ["ddcutil", "getvcp", "10", "--terse"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
             if (!backlightSlider.pressed) {
-                let bright = parseInt((updateBrightnessStdout.text || "").trim());
-                if (!isNaN(bright)) {
-                    backlightSlider.value = bright
-                    backlightLabel.text = bright + "%"
+                let parts = (updateBrightnessStdout.text || "").trim().split(" ");
+                if (parts.length >= 4) {
+                    let bright = parseInt(parts[3]);
+                    if (!isNaN(bright)) {
+                        backlightSlider.value = bright
+                        backlightLabel.text = bright + "%"
+                    }
                 }
             }
         }
