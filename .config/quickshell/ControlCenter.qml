@@ -159,9 +159,10 @@ PanelWindow {
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
             if (!backlightSlider.pressed) {
-                let parts = (updateBrightnessStdout.text || "").trim().split(" ");
-                if (parts.length >= 4) {
-                    let bright = parseInt(parts[3]);
+                let text = (updateBrightnessStdout.text || "");
+                let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                if (match && match[1]) {
+                    let bright = parseInt(match[1]);
                     if (!isNaN(bright)) {
                         backlightSlider.value = bright
                         backlightLabel.text = bright + "%"
