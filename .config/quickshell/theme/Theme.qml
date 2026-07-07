@@ -112,6 +112,7 @@ Item {
     property color colSurface: transparentize("#11140f", bgAlpha)
     property color colSurfaceContainer: transparentize("#1d211a", bgAlpha)
     property color colSurfaceContainerHigh: transparentize("#282b24", bgAlpha)
+    property color colSurfaceVariant: transparentize("#43483e", bgAlpha)
     property color colOnSurface: "#e1e4d9"
     property color colOnSurfaceVariant: "#c3c8bb"
     property color colOutline: "#8d9286"
