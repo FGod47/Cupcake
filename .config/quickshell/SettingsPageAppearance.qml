@@ -56,6 +56,10 @@ Item {
     property int blurPasses: 3
     property bool barTransparency: true
     property real barOpacity: 0.50
+    property real dockOpacity: 0.50
+    property real launcherOpacity: 0.80
+    property real wallpaperOpacity: 0.80
+    property real settingsOpacity: 0.80
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
@@ -63,6 +67,46 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.dock_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.launcherOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.wallpaper_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.wallpaperOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.settings_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.settingsOpacity = v; }
             }
         }
     }
@@ -304,41 +348,10 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb3f"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        Text { text: "UI Style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    }
-                    Item { Layout.fillWidth: true }
-                    SegmentedControl {
-                        options: ["Glass", "Liquid", "Classic"]
-                        current: root.uiStyle
-                        onSelected: (v) => root.uiStyle = v
-                    }
-                }
+
             }
 
             // --- Accent section ---
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                Layout.topMargin: 16
-                spacing: 8
-
-                }
-
                 SettingsCard {
                 SectionLabel { text: "Accent" }
 
@@ -462,79 +475,6 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueaad"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "top bar & dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch {
-                        checked: root.barTransparency
-                        onToggled: (c) => {
-                            root.barTransparency = c;
-                            Theme.quickshellTransparency = c;
-                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueaaa" // opacity icon
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        Text { text: "Quickshell opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0.1; to: 1.0; stepSize: 0.05
-                            value: root.barOpacity
-                            onValueChanged: { root.barOpacity = value; }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
-                                }
-                            }
-                        }
-                        
-                        Text { 
-                            text: Math.round(root.barOpacity * 100) + "%"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
 
                 SettingsRow {
                     RowLayout {
@@ -657,6 +597,256 @@ Item {
                         
                         Text { 
                             text: Math.round(root.blurPasses)
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+            }
+
+            SettingsCard {
+                SectionLabel { text: "Quickshell Opacity" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaad"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "top bar & dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.barTransparency
+                        onToggled: (c) => {
+                            root.barTransparency = c;
+                            Theme.quickshellTransparency = c;
+                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Top Bar opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.barOpacity
+                            onValueChanged: { root.barOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.barOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Dock opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.dockOpacity
+                            onValueChanged: { root.dockOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.dockOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "App Launcher opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.launcherOpacity
+                            onValueChanged: { root.launcherOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.launcherOpacity.toFixed(2) + "' > ~/.config/cupcake/.launcher_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.launcherOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Wall Switcher opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.wallpaperOpacity
+                            onValueChanged: { root.wallpaperOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.wallpaperOpacity.toFixed(2) + "' > ~/.config/cupcake/.wallpaper_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.wallpaperOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaaa" // opacity icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Settings app opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.settingsOpacity
+                            onValueChanged: { root.settingsOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.settingsOpacity.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.settingsOpacity * 100) + "%"
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12
@@ -848,8 +1038,22 @@ Item {
                         }
                     }
                 }
-            
-                Item { Layout.fillWidth: true; implicitHeight: 16 }
+                }
+            } // end Shell fonts card
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                implicitHeight: appFontColumn.implicitHeight + 40
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                radius: 12
+
+                ColumnLayout {
+                    id: appFontColumn
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 8
 
                 SectionLabel { text: "Application fonts" }
 
@@ -1018,7 +1222,7 @@ Item {
                     }
                 }
             }
-            }
         }
     }
+}
 }

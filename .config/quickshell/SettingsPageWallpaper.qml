@@ -15,6 +15,7 @@ Item {
     property string currentWall: ""
     property string fitMode: "Fill"
     property bool perMonitor: false
+    property string selectedMonitor: "Global"
     property bool slideshow: true
     property bool shuffleOrder: true
     property real dimOverlay: 0.2
@@ -363,7 +364,11 @@ Item {
                                         onExited: parent.hovered = false
                                         onClicked: {
                                             root.currentWall = filePath
-                                            Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-theme", filePath])
+                                            if (root.perMonitor && root.selectedMonitor !== "Global") {
+                                                Quickshell.execDetached(["awww", "img", "-o", root.selectedMonitor, filePath])
+                                            } else {
+                                                Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-theme", filePath])
+                                            }
                                         }
                                     }
                                 }
@@ -394,27 +399,6 @@ Item {
             SettingsCard {
                 SectionLabel { text: "Fit & display" }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea42"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Fit mode"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "How the image scales to fill your screen"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    SegmentedControl {
-                        options: ["Fill", "Fit", "Stretch", "Center", "Tile"]
-                        current: root.fitMode
-                        onSelected: root.fitMode = value
-                    }
-                }
 
                 SettingsRow {
                     RowLayout {
@@ -432,6 +416,60 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch { checked: root.perMonitor; onToggled: root.perMonitor = checked }
+                }
+
+                SettingsRow {
+                    visible: root.perMonitor
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text { anchors.centerIn: parent; text: "\uea4e"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Select Display"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Choose which monitor to set the wallpaper for"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    
+                    Rectangle {
+                        color: Qt.rgba(0, 0, 0, 0.28)
+                        radius: 8
+                        implicitHeight: 30
+                        implicitWidth: rowContainer.implicitWidth + 4
+
+                        Row {
+                            id: rowContainer
+                            anchors.centerIn: parent
+                            spacing: 1
+                            
+                            Rectangle {
+                                width: labelGlobal.implicitWidth + 24; height: 26; radius: 6
+                                color: root.selectedMonitor === "Global" ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
+                                Text {
+                                    id: labelGlobal; anchors.centerIn: parent; text: "Global"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium
+                                    color: root.selectedMonitor === "Global" ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                                }
+                                MouseArea { anchors.fill: parent; onClicked: root.selectedMonitor = "Global" }
+                            }
+                            
+                            Repeater {
+                                model: Quickshell.screens
+                                delegate: Rectangle {
+                                    width: labelScreen.implicitWidth + 24; height: 26; radius: 6
+                                    color: root.selectedMonitor === modelData.name ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
+                                    Text {
+                                        id: labelScreen; anchors.centerIn: parent; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium
+                                        color: root.selectedMonitor === modelData.name ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                                    }
+                                    MouseArea { anchors.fill: parent; onClicked: root.selectedMonitor = modelData.name }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
