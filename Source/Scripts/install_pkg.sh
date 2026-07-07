@@ -95,7 +95,7 @@ handle_aur_package() {
 packages=(
     git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
-    slurp grim android-tools imagemagick bc cava
+    slurp grim android-tools imagemagick bc cava zenity
     wget pamixer pavucontrol telegram-desktop bat nwg-look
     libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc mtpfs libmtp repo os-prober cpio 7zip
