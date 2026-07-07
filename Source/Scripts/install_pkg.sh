@@ -99,7 +99,7 @@ packages=(
     wget pamixer pavucontrol telegram-desktop bat nwg-look
     libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc mtpfs libmtp repo os-prober cpio 7zip
-    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-dkms
+    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-dkms linux-headers
     papirus-icon-theme adw-gtk-theme
 )
 
@@ -140,16 +140,8 @@ sudo modprobe i2c-dev || true
 echo "i2c-dev" | sudo tee /etc/modules-load.d/i2c-dev.conf > /dev/null
 sudo usermod -aG i2c $USER || echo -e "${YELLOW}⚠ Could not add user to i2c group. You may need to create it manually.${RESET}"
 
-# Install and load ddcci for brightnessctl support on external monitors
-yay -S --noconfirm --needed linux-headers ddcci-driver-linux-dkms
-sudo modprobe ddcci || true
-echo "ddcci" | sudo tee /etc/modules-load.d/ddcci.conf > /dev/null
-
-# NVIDIA-specific fix for DDC/CI (i2c over DisplayPort/HDMI)
-if lspci | grep -i "vga.*nvidia" > /dev/null; then
-    echo -e "${BLUE}▶ Applying NVIDIA-specific i2c fix for ddcutil and ddcci...${RESET}"
-    echo "options nvidia NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100" | sudo tee /etc/modprobe.d/nvidia-i2c.conf > /dev/null
-fi
+# Ensure linux-headers is installed for DKMS (moved to main packages array but kept here just in case)
+yay -S --noconfirm --needed linux-headers
 
 echo -e "${GREEN}✔ AUR packages installed successfully.${RESET}"
 
