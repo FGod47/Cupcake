@@ -134,6 +134,12 @@ warp-cli --accept-tos connect >/dev/null 2>&1
 echo -e "\r\033[K${GREEN}[DONE]${RESET} WARP VPN configured and connected"
 
 # ──────────────── Completion Notice ────────────────
+# ──────────────── Configure i2c for ddcutil ────────────────
+echo -e "${BLUE}▶ Configuring i2c for external monitor brightness (ddcutil)...${RESET}"
+sudo modprobe i2c-dev || true
+echo "i2c-dev" | sudo tee /etc/modules-load.d/i2c-dev.conf > /dev/null
+sudo usermod -aG i2c $USER || echo -e "${YELLOW}⚠ Could not add user to i2c group. You may need to create it manually.${RESET}"
+
+echo -e "${GREEN}✔ AUR packages installed successfully.${RESET}"
+
 echo -e "\n${GREEN}[DONE]${RESET} ${TEXT}All packages processed successfully!${RESET}\n"
-
-
