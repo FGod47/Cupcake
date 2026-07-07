@@ -21,8 +21,21 @@ Item {
             }
         }
     }
+
+    property bool quickshellTransparency: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.bar_transparency"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "false") {
+                    themeSingleton.quickshellTransparency = false;
+                }
+            }
+        }
+    }
     
-    property real bgAlpha: globalTransparency ? 0.85 : 1.0
+    property real bgAlpha: quickshellTransparency ? 0.85 : 1.0
 
     // Fonts
     property string defaultFontFamily: "Inter"
@@ -112,6 +125,7 @@ Item {
     property color colSurface: transparentize("{{colors.surface.default.hex}}", bgAlpha)
     property color colSurfaceContainer: transparentize("{{colors.surface_container.default.hex}}", bgAlpha)
     property color colSurfaceContainerHigh: transparentize("{{colors.surface_container_high.default.hex}}", bgAlpha)
+    property color colSurfaceVariant: transparentize("{{colors.surface_variant.default.hex}}", bgAlpha)
     property color colOnSurface: "{{colors.on_surface.default.hex}}"
     property color colOnSurfaceVariant: "{{colors.on_surface_variant.default.hex}}"
     property color colOutline: "{{colors.outline.default.hex}}"
