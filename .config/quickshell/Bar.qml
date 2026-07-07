@@ -462,9 +462,10 @@ PanelWindow {
                                 running: true
                                 stdout: StdioCollector { id: lightStdout }
                                 onExited: {
-                                    let parts = (lightStdout.text || "").trim().split(" ");
-                                    if (parts.length >= 4) {
-                                        let val = parseInt(parts[3]);
+                                    let text = (lightStdout.text || "");
+                                    let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                                    if (match && match[1]) {
+                                        let val = parseInt(match[1]);
                                         if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
                                     }
                                 }
