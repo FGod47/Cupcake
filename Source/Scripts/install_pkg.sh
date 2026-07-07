@@ -110,6 +110,7 @@ aur_packages=(
     zsh-autosuggestions zsh-syntax-highlighting quickshell
     ttf-firacode-nerd ttf-jetbrains-mono-nerd 
     matugen-bin bibata-cursor-theme-bin papirus-folders
+    cloudflare-warp-bin
 )
 
 # ──────────────── Install All Pacman Packages ────────────────
@@ -121,6 +122,16 @@ done
 for aur_pkg in "${aur_packages[@]}"; do
     handle_aur_package "$aur_pkg"
 done
+
+# ──────────────── Setup WARP VPN ────────────────
+echo -e "\n[*] Setting up Cloudflare WARP VPN..."
+(sudo systemctl enable --now warp-svc >/dev/null 2>&1) &
+spinner "WARP daemon"
+wait $!
+sleep 2
+warp-cli --accept-tos registration new >/dev/null 2>&1
+warp-cli --accept-tos connect >/dev/null 2>&1
+echo -e "\r\033[K${GREEN}[DONE]${RESET} WARP VPN configured and connected"
 
 # ──────────────── Completion Notice ────────────────
 echo -e "\n${GREEN}[DONE]${RESET} ${TEXT}All packages processed successfully!${RESET}\n"

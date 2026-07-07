@@ -123,7 +123,12 @@ if [[ "$user_input" =~ ^[Yy]$ ]]; then
     bash "$SCRIPT_DIR/Source/Scripts/setup_grub.sh"
     
     echo -e "\n\033[1;36m[ 󰜎 ]\033[0m \033[1mStep 6: Configuring Systemd Boot Splash...\033[0m"
-    bash "$SCRIPT_DIR/Source/Scripts/setup_bootsplash.sh"
+    prompt_centered "\033[1;36m?\033[0m \033[1mDo you want to install the custom Arch boot splash? [Y/n]: \033[0m"
+    if [[ "$user_input" =~ ^[Yy]$ ]] || [[ -z "$user_input" ]]; then
+        bash "$SCRIPT_DIR/Source/Scripts/setup_bootsplash.sh"
+    else
+        echo -e "   \033[1;33m[SKIP]\033[0m Skipping custom boot splash installation."
+    fi
     
     echo -e "\n\033[1;34m[ 󰃠 ]\033[0m \033[1mStep 7: Configuring ddcutil (Monitor Brightness)...\033[0m"
     bash "$SCRIPT_DIR/../../.config/cupcake/scripts/setup_ddcutil.sh"
