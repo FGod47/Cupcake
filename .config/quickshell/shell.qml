@@ -113,6 +113,19 @@ ShellRoot {
     }
     Timer { interval: 500; running: true; repeat: true; onTriggered: initBarOpacity.running = true }
 
+    property real dockOpacity: 0.50
+    Process {
+        id: initDockOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initDockOpacity.running = true }
+
     Process {
         id: initMonitorTargets
         command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_monitors 2>/dev/null"]

@@ -17,7 +17,7 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
     
     mask: Region {
@@ -41,6 +41,18 @@ PanelWindow {
     readonly property color colSub:     Theme.colSurface
     readonly property color colFgDim:   Theme.colOnSurfaceVariant
     readonly property color colPrimary: Theme.colPrimary
+
+    property real bgOpacity: 0.80
+
+    Process {
+        command: ["cat", root.homeDir + "/.config/cupcake/.wallpaper_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.bgOpacity = v; }
+            }
+        }
+    }
 
     readonly property string wallDir: root.homeDir + "/.config/cupcake/walls"
 
@@ -98,6 +110,7 @@ PanelWindow {
                 
                 Qt.callLater(() => {
                     root.isOpen = true
+                    root.requestActivate()
                     pv.forceActiveFocus()
                     // Fetch latest desktop wallpaper on reappear
                     queryProc.running = true
@@ -122,6 +135,7 @@ PanelWindow {
                 
                 Qt.callLater(() => {
                     root.isOpen = true
+                    root.requestActivate()
                     pv.forceActiveFocus()
                     // Fetch latest desktop wallpaper on reappear
                     queryProc.running = true
@@ -224,7 +238,7 @@ PanelWindow {
         Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
         Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
-        color: root.colBg
+        color: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
         topRightRadius: 36
         bottomRightRadius: 36
         topLeftRadius: 0
@@ -407,7 +421,7 @@ PanelWindow {
             anchors.bottomMargin: 0
             anchors.left: parent.left
             ShapePath {
-                fillColor: root.colBg
+                fillColor: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
                 strokeColor: "transparent"
                 startX: 36; startY: 36
                 PathLine { x: 0; y: 36 }
@@ -428,7 +442,7 @@ PanelWindow {
             anchors.topMargin: 0
             anchors.left: parent.left
             ShapePath {
-                fillColor: root.colBg
+                fillColor: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
                 strokeColor: "transparent"
                 startX: 36; startY: 0
                 PathLine { x: 0; y: 0 }

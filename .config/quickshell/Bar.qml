@@ -545,14 +545,6 @@ PanelWindow {
 
 
 
-                            Text {
-                                id: notifText
-                                text: "󰂚"
-                                color: Theme.colPrimary; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible }
-                            }
-
-                            Text { text: " | "; color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
 
                             Text {
                                 id: customClockText
@@ -593,8 +585,7 @@ PanelWindow {
                                 else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
                             }
                         }
-                        Text { text: "󰂚"; color: Theme.colPrimary; font.family: "tabler-icons"; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
-                        Text { text: " | "; color: Theme.colOnSurface; font.family: "tabler-icons"; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize }
+
                         Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
                     }
 

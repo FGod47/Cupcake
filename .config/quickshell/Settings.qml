@@ -1,6 +1,7 @@
 //@ pragma UseQApplication
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import "theme"
 
 Window {
@@ -12,6 +13,17 @@ Window {
     color: "transparent"
     flags: Qt.Window | Qt.FramelessWindowHint
     
+    property real bgOpacity: 0.75
+    Process {
+        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.settings_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) settingsWindow.bgOpacity = v; }
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: 16
@@ -20,7 +32,7 @@ Window {
         clip: true
         
         // Solid glassy background to prevent color banding (line blocks)
-        color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, 0.75)
+        color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, settingsWindow.bgOpacity)
         
         SettingsUI {
             id: settingsUI

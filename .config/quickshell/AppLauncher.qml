@@ -5,6 +5,7 @@ import QtQuick.Controls
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Widgets
+import Quickshell.Io
 import Quickshell.Wayland
 import "theme"
 
@@ -41,6 +42,18 @@ PanelWindow {
     property color inputBg:                  root.colSurfaceContainerHigh
     property color inputBorder:              Qt.rgba(root.colOutline.r, root.colOutline.g, root.colOutline.b, 0.5)
     property color hoverBg:                  Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08)
+
+    property real bgOpacity: 0.80
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.bgOpacity = v; }
+            }
+        }
+    }
 
     // ── State ─────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively
@@ -128,7 +141,7 @@ PanelWindow {
             Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
             Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
-            color: root.colSurfaceContainer
+            color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
             topRightRadius: 28
             bottomLeftRadius: 0
@@ -456,7 +469,7 @@ PanelWindow {
             anchors.rightMargin: 0 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
-                fillColor: root.colSurfaceContainer
+                fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 strokeColor: "transparent"
                 startX: 28; startY: 0
                 PathLine { x: 28; y: 28 }
@@ -478,7 +491,7 @@ PanelWindow {
             anchors.leftMargin: 0 // 1px overlap to prevent subpixel tearing gaps
 
             ShapePath {
-                fillColor: root.colSurfaceContainer
+                fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 strokeColor: "transparent"
                 startX: 0; startY: 0
                 PathLine { x: 0; y: 28 }

@@ -55,7 +55,7 @@ PanelWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
                 height: 64
-                color: Theme.colSurfaceContainer
+                color: root.barTransparency ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.dockOpacity) : Theme.colSurfaceContainer
                 radius: globalState.dockRadius
             }
 
