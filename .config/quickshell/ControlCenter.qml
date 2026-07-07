@@ -90,9 +90,24 @@ PanelWindow {
                     to: 100
                     value: 0
                     
+                    Timer {
+                        id: controlCenterDdcTimer
+                        interval: 150
+                        repeat: false
+                        property int targetValue: 100
+                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                    }
+                    
                     onMoved: {
-                        Quickshell.execDetached(["bash", "-c", "brightnessctl s " + Math.round(value) + "%"])
+                        controlCenterDdcTimer.targetValue = value;
+                        controlCenterDdcTimer.restart();
                         backlightLabel.text = Math.round(value) + "%"
+                    }
+                    onPressedChanged: {
+                        if (!pressed) {
+                            controlCenterDdcTimer.stop();
+                            Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
+                        }
                     }
                 }
 
@@ -140,14 +155,18 @@ PanelWindow {
 
     Process {
         id: updateBrightness
-        command: ["bash", "-c", "brightnessctl -m | head -n1 | cut -d, -f4 | tr -d %"]
+        command: ["ddcutil", "getvcp", "10", "--terse"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
             if (!backlightSlider.pressed) {
-                let bright = parseInt((updateBrightnessStdout.text || "").trim());
-                if (!isNaN(bright)) {
-                    backlightSlider.value = bright
-                    backlightLabel.text = bright + "%"
+                let text = (updateBrightnessStdout.text || "");
+                let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                if (match && match[1]) {
+                    let bright = parseInt(match[1]);
+                    if (!isNaN(bright)) {
+                        backlightSlider.value = bright
+                        backlightLabel.text = bright + "%"
+                    }
                 }
             }
         }
