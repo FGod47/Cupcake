@@ -21,8 +21,21 @@ Item {
             }
         }
     }
+
+    property bool quickshellTransparency: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.bar_transparency"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "false") {
+                    themeSingleton.quickshellTransparency = false;
+                }
+            }
+        }
+    }
     
-    property real bgAlpha: globalTransparency ? 0.85 : 1.0
+    property real bgAlpha: quickshellTransparency ? 0.85 : 1.0
 
     // Fonts
     property string defaultFontFamily: "Inter"
