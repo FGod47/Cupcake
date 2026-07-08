@@ -3,9 +3,9 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
-import "../../theme"
-import "../common"
-import "../settings"
+import "theme"
+import "modules/common"
+import "modules/settings"
 
 PanelWindow {
     id: powerMenu

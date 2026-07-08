@@ -7,9 +7,9 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Io
 import Quickshell.Wayland
-import "../../theme"
-import "../common"
-import "../settings"
+import "theme"
+import "modules/common"
+import "modules/settings"
 
 // Use the same pattern as WallpaperSwitcher.qml (which works as standalone)
 // Center it on screen via a centered Item inside the window

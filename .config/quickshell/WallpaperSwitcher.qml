@@ -6,9 +6,9 @@ import Quickshell.Wayland
 import Quickshell.Io
 import Quickshell.Widgets
 import Qt.labs.folderlistmodel
-import "../../theme"
-import "../common"
-import "../settings"
+import "theme"
+import "modules/common"
+import "modules/settings"
 
 PanelWindow {
     id: root
