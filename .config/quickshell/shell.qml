@@ -5,6 +5,9 @@ import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import QtQuick
 import "theme"
+import "modules/panels"
+import "modules/settings"
+import "modules/common"
 
 ShellRoot {
     id: root
@@ -16,8 +19,12 @@ ShellRoot {
         globalState.dockRadius = c;
     }
 
-    // Bar has been removed
-
+    Variants {
+        model: Quickshell.screens
+        delegate: Bar {
+            visible: globalState.barMonitors.includes("all") || globalState.barMonitors.includes(modelData.name)
+        }
+    }
 
     // Bottom Dock for all screens
     Variants {

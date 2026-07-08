@@ -1,8 +1,0 @@
-[32m  INFO[0m: Launching config: "/home/one/.config/quickshell/shell.qml"
-[32m  INFO[0m: Shell ID: "c27bfae9671097135e447b94e2be3558" Path ID "c27bfae9671097135e447b94e2be3558"
-[32m  INFO[0m: Saving logs to "/run/user/1000/quickshell/by-id/yjiu813hgt/log.qslog"
-[33m  WARN[97m qt.qml.context[0m: qs:@/qs/Bar.qml:611:29 Parameter "text" is not declared. Injection of parameters into signal handlers is deprecated. Use JavaScript functions with formal parameters instead.
-[32m  INFO[0m: Configuration Loaded
-[33m  WARN[97m qt.qpa.theme.gnome[0m: dbus reply error: [ "org.freedesktop.DBus.Error.NameHasNoOwner" ] "Could not activate remote peer 'org.freedesktop.portal.Desktop': startup job failed"
-[33m  WARN[97m qt.qpa.theme.gnome[0m: dbus reply error: [ "org.freedesktop.DBus.Error.NameHasNoOwner" ] "Could not activate remote peer 'org.freedesktop.portal.Desktop': startup job failed"
-[33m  WARN[97m qt.qpa.services[0m: Failed to register with host portal QDBusError("org.freedesktop.DBus.Error.NameHasNoOwner", "Could not activate remote peer 'org.freedesktop.portal.Desktop': startup job failed")

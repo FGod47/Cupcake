@@ -24,7 +24,7 @@ hl.bind(sMod .. " + T", hl.dsp.exec_cmd(apps.terminal, { float = true, size = "1
 -- Nautilus File Manager
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(apps.fileManager))
 -- Quickshell Powermenu
-hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/PowerMenu.qml"))
+hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/modules/panels/PowerMenu.qml"))
 -- AI Panel Toggle
 hl.bind(mainMod .. " + a", hl.dsp.global("quickshell:aipanel_toggle"))
 -- Rofi Launcher

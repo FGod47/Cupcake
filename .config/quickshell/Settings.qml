@@ -3,6 +3,9 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "theme"
+import "modules/panels"
+import "modules/settings"
+import "modules/common"
 
 Window {
     id: settingsWindow
