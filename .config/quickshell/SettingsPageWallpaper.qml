@@ -305,28 +305,45 @@ Item {
 
 
 
-                                    Image {
-                                        id: img
+                                    Item {
                                         anchors.fill: parent
-                                        source: "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName
-                                        sourceSize: Qt.size(250, 150)
-                                        fillMode: Image.PreserveAspectCrop
-                                        asynchronous: true
-                                        visible: false
-                                        onStatusChanged: {
-                                            if (status === Image.Error && source.toString() !== fileUrl.toString()) {
-                                                source = fileUrl
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask {
+                                            maskSource: tileMask
+                                        }
+
+                                        Image {
+                                            id: img
+                                            anchors.fill: parent
+                                            source: "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName
+                                            sourceSize: Qt.size(250, 150)
+                                            fillMode: Image.PreserveAspectCrop
+                                            asynchronous: true
+                                            opacity: status === Image.Ready ? 1 : 0
+                                            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                            onStatusChanged: {
+                                                if (status === Image.Error && source.toString() !== fileUrl.toString()) {
+                                                    source = fileUrl
+                                                }
                                             }
                                         }
-                                    }
 
-                                    MultiEffect {
-                                        anchors.fill: img
-                                        source: img
-                                        maskEnabled: true
-                                        maskSource: tileMask
-                                        opacity: img.status === Image.Ready ? 1 : 0
-                                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                        Rectangle {
+                                            anchors.bottom: parent.bottom
+                                            anchors.left: parent.left; anchors.right: parent.right
+                                            height: 36
+                                            gradient: Gradient {
+                                                orientation: Gradient.Vertical
+                                                GradientStop { position: 0.0; color: "transparent" }
+                                                GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.6) }
+                                            }
+                                            Text {
+                                                anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8 }
+                                                text: fileName.replace(/\.[^.]+$/, "")
+                                                color: "white"; font.family: Theme.defaultFontFamily
+                                                font.pixelSize: 11; font.weight: Font.Medium; elide: Text.ElideRight
+                                            }
+                                        }
                                     }
 
                                     Rectangle {
@@ -335,23 +352,6 @@ Item {
                                         anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 7
                                         color: Theme.colPrimary
                                         Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colSurface; font.family: "tabler-icons"; font.pixelSize: 13 }
-                                    }
-
-                                    Rectangle {
-                                        anchors.bottom: parent.bottom
-                                        anchors.left: parent.left; anchors.right: parent.right
-                                        height: 36
-                                        gradient: Gradient {
-                                            orientation: Gradient.Vertical
-                                            GradientStop { position: 0.0; color: "transparent" }
-                                            GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.6) }
-                                        }
-                                        Text {
-                                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8 }
-                                            text: fileName.replace(/\.[^.]+$/, "")
-                                            color: "white"; font.family: Theme.defaultFontFamily
-                                            font.pixelSize: 11; font.weight: Font.Medium; elide: Text.ElideRight
-                                        }
                                     }
 
                                     property bool hovered: false

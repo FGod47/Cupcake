@@ -18,7 +18,7 @@ Item {
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
-    property int currentIndex: 0
+    property int currentIndex: 1
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
@@ -359,6 +359,7 @@ Item {
                                 property string iconText
                                 property string labelText
                                 property int pageIndex
+                                property bool isActive: root.currentIndex === pageIndex
 
                                 Layout.fillWidth: true
                                 implicitHeight: 44
@@ -370,7 +371,7 @@ Item {
                                     anchors.topMargin: 2
                                     anchors.bottomMargin: 2
                                     radius: 12
-                                    color: root.currentIndex === pageIndex 
+                                    color: isActive 
                                         ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
                                         : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
                                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -378,20 +379,15 @@ Item {
                                 
                                 RowLayout {
                                     anchors.fill: parent
-                                    anchors.leftMargin: navExpanded ? 16 : 12
+                                    anchors.leftMargin: 24
                                     spacing: 12
                                     
-                                    Item {
-                                        Layout.preferredWidth: 40
-                                        Layout.fillHeight: true
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: iconText
-                                            color: Theme.colOnSurfaceVariant
-                                            font.family: "tabler-icons"
-                                            font.weight: Theme.defaultFontWeight; font.pixelSize: 20
-                                            opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
-                                        }
+                                    Text {
+                                        text: iconText
+                                        color: isActive ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                                        font.family: "tabler-icons"
+                                        font.weight: Theme.defaultFontWeight; font.pixelSize: 18
+                                        opacity: isActive ? 1.0 : 0.6
                                     }
                                     
                                     Text {
@@ -402,7 +398,7 @@ Item {
                                         font.pixelSize: Theme.defaultFontSize
                                         font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                                         Layout.fillWidth: true
-                                        opacity: root.currentIndex === pageIndex ? 1.0 : 0.6
+                                        opacity: isActive ? 1.0 : 0.6
                                     }
                                 }
 
@@ -416,10 +412,8 @@ Item {
                             }
 
                         NavHeader { text: "PERSONALIZATION" }
-                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 0 }
-                        NavButton { iconText: "\ueb0a"; labelText: "Wallpaper"; pageIndex: 1 }
-                        NavButton { iconText: "\uea89"; labelText: "Desktop"; pageIndex: 3 }
-                        NavButton { iconText: "\uead3"; labelText: "Dock"; pageIndex: 4 }
+                        
+                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 103, 1, 4, 3].includes(root.currentIndex) }
                         NavButton { iconText: "\uead7"; labelText: "Panels"; pageIndex: 5 }
                         NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                         NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
@@ -512,6 +506,70 @@ Item {
                             }
                         }
 
+                        // Appearance Top Nav Bar
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: isAppearanceCategory ? 48 : 0
+                            Layout.leftMargin: 24
+                            Layout.rightMargin: 24
+                            Layout.topMargin: 0
+                            Layout.bottomMargin: 8
+                            visible: isAppearanceCategory
+                            opacity: isAppearanceCategory ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            radius: 12
+                            clip: true
+                            
+                            property bool isAppearanceCategory: [0, 103, 1, 4, 3].includes(root.currentIndex)
+                            
+                            Flickable {
+                                anchors.fill: parent
+                                anchors.margins: 4
+                                contentWidth: topBarRow.implicitWidth
+                                boundsBehavior: Flickable.StopAtBounds
+                                clip: true
+                                
+                                RowLayout {
+                                    id: topBarRow
+                                    height: parent.height
+                                    spacing: 4
+                                    
+                                    component TopNavBtn: Rectangle {
+                                        property string text
+                                        property int pageIndex
+                                        implicitWidth: txt.implicitWidth + 32
+                                        Layout.fillHeight: true
+                                        radius: 8
+                                        color: root.currentIndex === pageIndex ? Theme.colOnSurface : (ma.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                        
+                                        Text {
+                                            id: txt
+                                            anchors.centerIn: parent
+                                            text: parent.text
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 13
+                                            font.weight: root.currentIndex === pageIndex ? Font.Bold : Font.Medium
+                                            color: root.currentIndex === pageIndex ? Theme.colBackground : Theme.colOnSurfaceVariant
+                                            Behavior on color { ColorAnimation { duration: 150 } }
+                                        }
+                                        MouseArea {
+                                            id: ma
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: root.currentIndex = pageIndex
+                                        }
+                                    }
+                                    
+                                    TopNavBtn { text: "Wallpaper"; pageIndex: 1 }
+                                    TopNavBtn { text: "General"; pageIndex: 0 }
+                                    TopNavBtn { text: "Window Gaps"; pageIndex: 103 }
+                                    TopNavBtn { text: "Dock"; pageIndex: 4 }
+                                    TopNavBtn { text: "Desktop"; pageIndex: 3 }
+                                }
+                            }
+                        }
                         // Content Stack
                         Item {
                             Layout.fillWidth: true
@@ -540,6 +598,39 @@ Item {
                         active: root.currentIndex === 0
                         source: "SettingsPageAppearance.qml"
                     }
+                }
+
+                // PAGE 101: WIDGETS
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 101 ? 0 : 20
+                    opacity: root.currentIndex === 101 ? 1 : 0
+                    visible: root.currentIndex === 101 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 101; source: "SettingsPageWidgets.qml" }
+                }
+
+                // PAGE 102: SCREEN CORNERS
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 102 ? 0 : 20
+                    opacity: root.currentIndex === 102 ? 1 : 0
+                    visible: root.currentIndex === 102 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 102; source: "SettingsPageScreenCorners.qml" }
+                }
+
+                // PAGE 103: WINDOW GAPS
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 103 ? 0 : 20
+                    opacity: root.currentIndex === 103 ? 1 : 0
+                    visible: root.currentIndex === 103 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 103; source: "SettingsPageWindowGaps.qml" }
                 }
 
                 // PAGE 1: WALLPAPERS
