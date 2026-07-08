@@ -449,7 +449,7 @@ Item {
 
                                         function getPageData(index) {
                         switch(index) {
-                            case 0: return { icon: "\ueb01", title: "Appearance" };
+                            case 0: return { icon: "\ueb01", title: "General" };
                             case 1: return { icon: "\ueb0a", title: "Wallpaper" };
                             case 3: return { icon: "\uea89", title: "Desktop" };
                             case 4: return { icon: "\uead3", title: "Dock" };
@@ -477,11 +477,14 @@ Item {
                         // Dynamic Content Header
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 64
+                            Layout.preferredHeight: isAppearanceNav ? 0 : 64
+                            clip: true
                             color: "transparent"
-                            
+                            visible: !isAppearanceNav
+                            Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
-                            
+                            property bool isAppearanceNav: [0, 1, 3, 4].includes(root.currentIndex)
+
                             RowLayout {
                                 anchors.fill: parent
                                 anchors.leftMargin: 24
@@ -510,8 +513,8 @@ Item {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: isAppearanceCategory ? 48 : 0
-                            Layout.leftMargin: 24
-                            Layout.rightMargin: 24
+                            Layout.leftMargin: 20
+                            Layout.rightMargin: 20
                             Layout.topMargin: 0
                             Layout.bottomMargin: 8
                             visible: isAppearanceCategory
@@ -595,7 +598,7 @@ Item {
                     Loader {
                         anchors.fill: parent
                         active: root.currentIndex === 0
-                        source: "SettingsPageAppearance.qml"
+                        source: "SettingsPageGeneral.qml"
                     }
                 }
 

@@ -146,13 +146,15 @@ Item {
         anchors.topMargin: 0
         anchors.bottomMargin: 30
         anchors.leftMargin: 0
-        anchors.rightMargin: 24
+        anchors.rightMargin: 0
         contentWidth: availableWidth
         clip: true
 
         ColumnLayout {
             width: parent.width
             spacing: 24
+
+            Item { Layout.preferredHeight: 8 }
 
             // ── Current wallpaper card ─────────────────────────────────────
             SettingsCard {
