@@ -971,6 +971,30 @@ Item {
                         }
                     }
                 }
+
+                SettingsRow {
+                    Item { Layout.fillWidth: true }
+                    Pill {
+                        label: "Sync all opacities to Top Bar"
+                        active: true
+                        onClicked: {
+                            let v = root.barOpacity;
+                            root.dockOpacity = v;
+                            root.osdOpacity = v;
+                            root.launcherOpacity = v;
+                            root.wallpaperOpacity = v;
+                            root.settingsOpacity = v;
+                            
+                            let cmd = "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && " +
+                                      "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.launcher_opacity && " +
+                                      "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.wallpaper_opacity && " +
+                                      "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity && " +
+                                      "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.osd_opacity";
+                            
+                            Quickshell.execDetached(["bash", "-c", cmd]);
+                        }
+                    }
+                }
             }
 
             // --- Fonts section ---
