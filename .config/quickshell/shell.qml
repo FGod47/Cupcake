@@ -16,12 +16,8 @@ ShellRoot {
         globalState.dockRadius = c;
     }
 
-    Variants {
-        model: Quickshell.screens
-        delegate: Bar {
-            visible: globalState.barMonitors.includes("all") || globalState.barMonitors.includes(modelData.name)
-        }
-    }
+    // Bar has been removed
+
 
     // Bottom Dock for all screens
     Variants {
@@ -29,6 +25,12 @@ ShellRoot {
         delegate: Dock {
             visible: globalState.dockMonitors.includes("all") || globalState.dockMonitors.includes(modelData.name)
         }
+    }
+
+    // Wallpaper dim overlay for all screens
+    Variants {
+        model: Quickshell.screens
+        delegate: WallpaperOverlay {}
     }
 
     // Global State
@@ -87,7 +89,20 @@ ShellRoot {
         property bool closingIsland: false
         property bool hideIsland: false
         property bool settingsOpen: false
+        property real dimOverlay: 0.0
     }
+
+    Process {
+        id: initDimOverlay
+        command: ["cat", root.homeDir + "/.config/cupcake/.dim_overlay"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.dimOverlay = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initDimOverlay.running = true }
 
     Process {
         id: initBarTransparency
@@ -221,6 +236,13 @@ ShellRoot {
             } catch(e) {
                 console.log("Failed to parse pinned apps JSON:", e);
             }
+        }
+    }
+
+    IpcHandler {
+        target: "wallpaper"
+        function setDimOverlay(val: real) {
+            globalState.dimOverlay = val;
         }
     }
 

@@ -2,7 +2,7 @@ local palette = require("palette")
 
 hl.config({
     general = {
-        gaps_in = 6,
+        gaps_in = 7,
         gaps_out = 10,
         border_size = 0,
         col = {
@@ -15,7 +15,8 @@ hl.config({
 
     decoration = {
         shadow = {
-            enabled = false
+            enabled = false,
+            range = 4,
         },
         dim_special = 0.3,
         rounding = 10,

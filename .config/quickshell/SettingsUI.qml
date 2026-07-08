@@ -414,7 +414,6 @@ Item {
                         NavHeader { text: "PERSONALIZATION" }
                         
                         NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
-                        NavButton { iconText: "\uead7"; labelText: "Panels"; pageIndex: 5 }
                         NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                         NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
                         NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
@@ -453,7 +452,6 @@ Item {
                             case 1: return { icon: "\ueb0a", title: "Wallpaper" };
                             case 3: return { icon: "\uea89", title: "Desktop" };
                             case 4: return { icon: "\uead3", title: "Dock" };
-                            case 5: return { icon: "\uead7", title: "Panels" };
                             case 6: return { icon: "\uea35", title: "Notifications" };
                             case 7: return { icon: "\ueaed", title: "OSD" };
                             case 8: return { icon: "\uebdc", title: "Shell" };
@@ -553,7 +551,7 @@ Item {
                                             text: parent.text
                                             font.family: Theme.defaultFontFamily
                                             font.pixelSize: 13
-                                            font.weight: root.currentIndex === pageIndex ? Font.Bold : Font.Medium
+                                            font.weight: Font.Medium
                                             color: root.currentIndex === pageIndex ? Theme.colBackground : Theme.colOnSurfaceVariant
                                             Behavior on color { ColorAnimation { duration: 150 } }
                                         }
@@ -671,17 +669,6 @@ Item {
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
                     Loader { anchors.fill: parent; active: root.currentIndex === 4; source: "SettingsPageDock.qml" }
-                }
-
-                // PAGE 5: PANELS
-                Item {
-                    anchors.fill: parent
-                    anchors.topMargin: root.currentIndex === 5 ? 0 : 20
-                    opacity: root.currentIndex === 5 ? 1 : 0
-                    visible: root.currentIndex === 5 || opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
-                    Loader { anchors.fill: parent; active: root.currentIndex === 5; source: "SettingsPagePanels.qml" }
                 }
 
                 // PAGE 6: NOTIFICATIONS

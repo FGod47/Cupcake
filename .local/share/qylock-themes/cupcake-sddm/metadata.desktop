@@ -1,0 +1,15 @@
+[SddmGreeterTheme]
+Name=Cupcake
+Description=Cupcake custom SDDM theme
+Screenshot=screenshot.png
+Website=
+Author=Cupcake
+Copyright=(c) 2026, Cupcake
+License=MIT
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=translations
+Theme-Id=cupcake
+Theme-API=2.2
+QtVersion=6

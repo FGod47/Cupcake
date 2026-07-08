@@ -14,11 +14,11 @@ export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-$(loginctl show-session $(loginctl 
 # Get user theme
 CONFIG_FILE="$HOME/.config/qylock/theme"
 if [ -n "$1" ]; then
-    export QS_THEME="${1:-winter}"
+    export QS_THEME="$1"
 elif [ -f "$CONFIG_FILE" ]; then
-    export QS_THEME="${1:-winter}"
+    export QS_THEME="$(cat $CONFIG_FILE)"
 else
-    export QS_THEME="${1:-winter}"
+    export QS_THEME="winter"
 fi
 
 # Set theme path

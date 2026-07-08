@@ -13,6 +13,10 @@ Item {
     property bool widgetsEnabled: false
     property bool screenCornersEnabled: false
     property int screenCornerSize: 12
+    property bool bordersEnabled: true
+    property int borderSize: 3
+    property bool shadowsEnabled: false
+    property int shadowSize: 4
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.gaps_in"]
@@ -30,6 +34,66 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.gapsOut = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.borders"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { root.bordersEnabled = (text.trim() === "true"); }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.border_size"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.borderSize = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.shadows"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { root.shadowsEnabled = (text.trim() === "true"); }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.shadow_size"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.shadowSize = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.corners"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { root.screenCornersEnabled = (text.trim() === "true"); }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.corner_size"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.screenCornerSize = v; }
             }
         }
     }
@@ -166,7 +230,10 @@ Item {
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
                         checked: root.screenCornersEnabled
-                        onToggled: (v) => { root.screenCornersEnabled = v; }
+                        onToggled: (v) => { 
+                            root.screenCornersEnabled = v; 
+                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.corners && ~/.local/bin/apply-corners"]);
+                        }
                     }
                 }
 
@@ -193,6 +260,10 @@ Item {
                         from: 0; to: 100; stepSize: 1
                         value: root.screenCornerSize
                         onValueChanged: root.screenCornerSize = value
+                        onPressedChanged: {
+                            if (!pressed)
+                                Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.screenCornerSize) + "' > ~/.config/cupcake/.corner_size && ~/.local/bin/apply-corners"]);
+                        }
                     }
                     Text {
                         text: Math.round(root.screenCornerSize) + "px"
@@ -275,6 +346,141 @@ Item {
                     }
                     Text {
                         text: Math.round(root.gapsOut) + "px"
+                        color: Theme.colOnSurfaceVariant
+                        font.family: Theme.monoFontFamily
+                        font.pixelSize: 12
+                        Layout.preferredWidth: 32
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
+            }
+            // --- Window Borders section ---
+            SettingsCard {
+                SectionLabel { text: "Window Borders" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueac2" // tabler-icons 'border-all'
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Borders Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.bordersEnabled
+                        onToggled: (v) => { 
+                            root.bordersEnabled = v; 
+                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.borders && ~/.local/bin/apply-borders"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb24"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Border Size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSlider {
+                        Layout.preferredWidth: 150
+                        from: 0; to: 10; stepSize: 1
+                        value: root.borderSize
+                        onValueChanged: root.borderSize = value
+                        onPressedChanged: {
+                            if (!pressed)
+                                Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.borderSize) + "' > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
+                        }
+                    }
+                    Text {
+                        text: Math.round(root.borderSize) + "px"
+                        color: Theme.colOnSurfaceVariant
+                        font.family: Theme.monoFontFamily
+                        font.pixelSize: 12
+                        Layout.preferredWidth: 32
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
+            }
+
+            // --- Window Shadows section ---
+            SettingsCard {
+                SectionLabel { text: "Window Shadows" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea60" // tabler-icons 'shadow'
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Shadows Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.shadowsEnabled
+                        onToggled: (v) => { 
+                            root.shadowsEnabled = v; 
+                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.shadows && ~/.local/bin/apply-shadows"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb24"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        Text { text: "Shadow Thickness"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSlider {
+                        Layout.preferredWidth: 150
+                        from: 0; to: 30; stepSize: 1
+                        value: root.shadowSize
+                        onValueChanged: root.shadowSize = value
+                        onPressedChanged: {
+                            if (!pressed)
+                                Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.shadowSize) + "' > ~/.config/cupcake/.shadow_size && ~/.local/bin/apply-shadows"]);
+                        }
+                    }
+                    Text {
+                        text: Math.round(root.shadowSize) + "px"
                         color: Theme.colOnSurfaceVariant
                         font.family: Theme.monoFontFamily
                         font.pixelSize: 12

@@ -1,7 +1,9 @@
 #!/bin/bash
 
 STATE=$(cat ~/.config/cupcake/.shadows 2>/dev/null || echo "false")
+SIZE=$(cat ~/.config/cupcake/.shadow_size 2>/dev/null || echo "4")
 
-sed -i "/shadow = {/,/}/ s/enabled = .*/enabled = $STATE/" ~/.config/hypr/decoration.lua
+sed -i "/shadow = {/,/}/ s/enabled = .*/enabled = $STATE,/" ~/.config/hypr/decoration.lua
+sed -i "/shadow = {/,/}/ s/range = .*/range = $SIZE,/" ~/.config/hypr/decoration.lua
 
 hyprctl reload

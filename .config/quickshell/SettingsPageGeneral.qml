@@ -156,7 +156,7 @@ Item {
         }
     }
 
-    property string accentScriptPath: "#!/config/quickshell-glasscract-accent.sh"
+
 
     // =====================================================================
     // Reusable inline components
@@ -464,43 +464,6 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "󰑐"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Accent script"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Script path used to apply the accent color"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Rectangle {
-                        radius: 6
-                        color: Qt.rgba(0,0,0,0.25)
-                        implicitWidth: pathText.implicitWidth + 16
-                        implicitHeight: 22
-                        Text {
-                            id: pathText
-                            anchors.centerIn: parent
-                            text: root.accentScriptPath
-                            font.family: "monospace"
-                            font.pixelSize: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
-                            elide: Text.ElideMiddle
-                        }
-                    }
-                }
             }
 
             // --- Blur section ---

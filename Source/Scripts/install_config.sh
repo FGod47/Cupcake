@@ -133,11 +133,11 @@ if [ -d "$QS_LOCK_SRC" ]; then
 fi
 
 if command -v sddm &> /dev/null; then
-  echo -e "${GREEN}[INSTALL]${RESET} SDDM Theme (winter) → /usr/share/sddm/themes/winter"
-  sudo mkdir -p /usr/share/sddm/themes/winter
-  sudo cp -r "$HOME/.local/share/qylock-themes/winter/"* /usr/share/sddm/themes/winter/
+  echo -e "${GREEN}[INSTALL]${RESET} SDDM Theme (cupcake-sddm) → /usr/share/sddm/themes/cupcake-sddm"
+  sudo mkdir -p /usr/share/sddm/themes/cupcake-sddm
+  sudo cp -r "$HOME/.local/share/qylock-themes/cupcake-sddm/"* /usr/share/sddm/themes/cupcake-sddm/
   sudo mkdir -p /etc/sddm.conf.d
-  echo -e "[Theme]\nCurrent=winter\nCursorTheme=Bibata-Modern-Ice" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
+  echo -e "[Theme]\nCurrent=cupcake-sddm\nCursorTheme=Bibata-Modern-Ice" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
 fi
 
 # ──────────────── Install Cursor Configuration ────────────────

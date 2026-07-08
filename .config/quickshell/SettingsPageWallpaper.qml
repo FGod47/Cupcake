@@ -22,6 +22,26 @@ Item {
     property bool blurLockScreen: true
     property string changeInterval: "30 minutes"
 
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.dim_overlay"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dimOverlay = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.blur_lockscreen"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { root.blurLockScreen = (text.trim() === "true"); }
+            }
+        }
+    }
+
     // Read current wallpaper from the cache file (set-theme writes here)
     Process {
         id: wallProcess
@@ -356,6 +376,23 @@ Item {
                                         Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colSurface; font.family: "tabler-icons"; font.pixelSize: 13 }
                                     }
 
+                                    Rectangle {
+                                        z: 1
+                                        width: 28; height: 28; radius: 14
+                                        anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 7
+                                        color: Qt.rgba(0, 0, 0, 0.65)
+                                        opacity: parent.hovered ? 1 : 0
+                                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                                        Text { anchors.centerIn: parent; text: "\ueb41"; color: "white"; font.family: "tabler-icons"; font.pixelSize: 14 }
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                Quickshell.execDetached(["bash", "-c", "rm '" + filePath + "' && rm -f '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + "'"])
+                                            }
+                                        }
+                                    }
+
                                     property bool hovered: false
                                     scale: hovered ? 1.03 : 1.0
                                     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -392,6 +429,44 @@ Item {
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Images | *.png *.jpg *.jpeg' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails'"])
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea7c"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Wallpaper directory"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Location where your wallpaper images are stored"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Rectangle {
+                        radius: 6
+                        color: Qt.rgba(0,0,0,0.25)
+                        implicitWidth: pathText.implicitWidth + 16
+                        implicitHeight: 22
+                        Text {
+                            id: pathText
+                            anchors.centerIn: parent
+                            text: root.wallDir
+                            font.family: "monospace"
+                            font.pixelSize: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
+                            elide: Text.ElideMiddle
                         }
                     }
                 }
@@ -573,21 +648,31 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    Slider {
+                    StyledSlider {
                         id: dimSlider
                         from: 0; to: 1; value: root.dimOverlay
-                        implicitWidth: 110; implicitHeight: 22
-                        onValueChanged: root.dimOverlay = value
-                        background: Rectangle {
-                            x: dimSlider.leftPadding; y: dimSlider.topPadding + dimSlider.availableHeight / 2 - height / 2
-                            width: dimSlider.availableWidth; height: 4; radius: 2
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Rectangle { width: dimSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: Theme.colPrimary }
+                        implicitWidth: 110
+                        
+                        Timer {
+                            id: dimDebounce
+                            interval: 50
+                            property real pendingValue: 0
+                            onTriggered: {
+                                Quickshell.execDetached(["quickshell", "ipc", "call", "wallpaper", "setDimOverlay", pendingValue.toString()]);
+                            }
                         }
-                        handle: Rectangle {
-                            x: dimSlider.leftPadding + dimSlider.visualPosition * (dimSlider.availableWidth - width)
-                            y: dimSlider.topPadding + dimSlider.availableHeight / 2 - height / 2
-                            width: 16; height: 16; radius: 8; color: Theme.colPrimary
+
+                        onValueChanged: {
+                            root.dimOverlay = value;
+                            dimDebounce.pendingValue = value;
+                            dimDebounce.restart();
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                dimDebounce.stop();
+                                Quickshell.execDetached(["bash", "-c", "echo '" + value.toFixed(2) + "' > ~/.config/cupcake/.dim_overlay"]);
+                                Quickshell.execDetached(["quickshell", "ipc", "call", "wallpaper", "setDimOverlay", value.toString()]);
+                            }
                         }
                     }
                     Text {

@@ -1,0 +1,9 @@
+[General]
+background=background.webp
+blurRadius=45
+backgroundFillMode=aspect
+passwordCursorColor=#ffffff
+basicTextColor=#ffffff
+passwordFontSize=48
+showSessionsByDefault=true
+showUsersByDefault=true
