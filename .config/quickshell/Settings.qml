@@ -18,6 +18,7 @@ Window {
     
     property real bgOpacity: 0.75
     Process {
+        id: initSettingsOpacity
         command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.settings_opacity"]
         running: true
         stdout: StdioCollector {
@@ -26,6 +27,7 @@ Window {
             }
         }
     }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initSettingsOpacity.running = true }
 
     Rectangle {
         anchors.fill: parent

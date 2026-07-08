@@ -47,6 +47,7 @@ PanelWindow {
     property real bgOpacity: 0.80
 
     Process {
+        id: initWallpaperOpacity
         command: ["cat", root.homeDir + "/.config/cupcake/.wallpaper_opacity"]
         running: true
         stdout: StdioCollector {
@@ -55,6 +56,7 @@ PanelWindow {
             }
         }
     }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initWallpaperOpacity.running = true }
 
     readonly property string wallDir: root.homeDir + "/.config/cupcake/walls"
 

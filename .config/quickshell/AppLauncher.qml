@@ -48,6 +48,7 @@ PanelWindow {
     property real bgOpacity: 0.80
 
     Process {
+        id: initLauncherOpacity
         command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
         running: true
         stdout: StdioCollector {
@@ -56,6 +57,7 @@ PanelWindow {
             }
         }
     }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initLauncherOpacity.running = true }
 
     // ── State ─────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively
