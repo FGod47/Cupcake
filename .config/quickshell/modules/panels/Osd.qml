@@ -39,7 +39,7 @@ PanelWindow {
         Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: true
         radius: 24
-        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity)
+        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.osdOpacity)
         opacity: osdWindow.visible ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.InOutQuad } }
         

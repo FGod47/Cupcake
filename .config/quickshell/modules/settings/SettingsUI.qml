@@ -53,6 +53,8 @@ Item {
     property int globalBlurSize: 6
     property int globalBlurPasses: 3
     property real barOpacity: 0.50
+    property real dockOpacity: 0.50
+    property real osdOpacity: 0.95
     property bool barTransparency: true
 
     function applyGlobalSettings() {

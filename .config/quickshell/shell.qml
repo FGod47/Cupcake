@@ -136,6 +136,7 @@ ShellRoot {
     Timer { interval: 500; running: true; repeat: true; onTriggered: initBarOpacity.running = true }
 
     property real dockOpacity: 0.50
+    property real osdOpacity: 0.95
     Process {
         id: initDockOpacity
         command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
@@ -146,7 +147,18 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: initDockOpacity.running = true }
+
+    Process {
+        id: initOsdOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.osd_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.osdOpacity = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDockOpacity.running = true; initOsdOpacity.running = true; } }
 
     Process {
         id: initMonitorTargets

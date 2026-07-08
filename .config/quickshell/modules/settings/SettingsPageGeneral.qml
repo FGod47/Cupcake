@@ -61,6 +61,7 @@ Item {
     property real launcherOpacity: 0.80
     property real wallpaperOpacity: 0.80
     property real settingsOpacity: 0.80
+    property real osdOpacity: 0.95
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
@@ -78,6 +79,16 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.osd_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.osdOpacity = v; }
             }
         }
     }
@@ -764,6 +775,53 @@ Item {
                         
                         Text { 
                             text: Math.round(root.dockOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb00"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "OSD opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Background fill opacity of the on-screen display"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.osdOpacity
+                            onValueChanged: { root.osdOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.osdOpacity.toFixed(2) + "' > ~/.config/cupcake/.osd_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.osdOpacity * 100) + "%"
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12
