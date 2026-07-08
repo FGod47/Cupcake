@@ -85,4 +85,4 @@ hl.layer_rule({
 })
 
 -- Cupcake Settings App
-hl.window_rule({ match = { title = "^(Cupcake Settings)$" }, float = true })
+hl.window_rule({ match = { title = "^(Cupcake Settings)$" }, float = true, opacity = "1.0 override 1.0 override" })
