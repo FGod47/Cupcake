@@ -413,7 +413,7 @@ Item {
 
                         NavHeader { text: "PERSONALIZATION" }
                         
-                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 103, 1, 4, 3].includes(root.currentIndex) }
+                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
                         NavButton { iconText: "\uead7"; labelText: "Panels"; pageIndex: 5 }
                         NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                         NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
@@ -521,7 +521,7 @@ Item {
                             radius: 12
                             clip: true
                             
-                            property bool isAppearanceCategory: [0, 103, 1, 4, 3].includes(root.currentIndex)
+                            property bool isAppearanceCategory: [0, 1, 4, 3].includes(root.currentIndex)
                             
                             Flickable {
                                 anchors.fill: parent
@@ -564,7 +564,6 @@ Item {
                                     
                                     TopNavBtn { text: "Wallpaper"; pageIndex: 1 }
                                     TopNavBtn { text: "General"; pageIndex: 0 }
-                                    TopNavBtn { text: "Window Gaps"; pageIndex: 103 }
                                     TopNavBtn { text: "Dock"; pageIndex: 4 }
                                     TopNavBtn { text: "Desktop"; pageIndex: 3 }
                                 }
