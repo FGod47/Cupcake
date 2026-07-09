@@ -80,6 +80,8 @@ Item {
     property bool wifiRadioEnabled: true
     property string wifiDeviceName: "Wi-Fi"
     property string wifiDeviceState: "Checking..."
+    
+    property bool btRadioEnabled: false
 
     Process {
         id: wifiRadioProcess
@@ -159,6 +161,32 @@ Item {
         }
     }
 
+    ListModel { id: btModel }
+
+    Process {
+        id: btProcess
+        command: ["bash", "/home/code/.config/quickshell/modules/settings/bt_status.sh"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const data = JSON.parse(text);
+                    root.btRadioEnabled = data.powered;
+                    
+                    if (data.powered) {
+                        let newDevices = data.devices || [];
+                        btModel.clear();
+                        for (let i = 0; i < newDevices.length; i++) {
+                            btModel.append(newDevices[i]);
+                        }
+                    } else {
+                        btModel.clear();
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
     Timer {
         interval: 5000
         running: root.visible
@@ -166,6 +194,7 @@ Item {
         onTriggered: {
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
+            btProcess.running = true;
             if (root.wifiRadioEnabled) {
                 let anyExpanded = false;
                 for (let i = 0; i < wifiModel.count; i++) {
@@ -410,7 +439,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
-                        checked: true
+                        checked: root.btRadioEnabled
                         onToggled: Quickshell.execDetached(["bash", "-c", "bluetoothctl power " + (checked ? "on" : "off")])
                     }
                     // Collapse chevron
@@ -430,96 +459,60 @@ Item {
                     }
                 }
 
-                // Sony WH-1000XM5
-                SettingsRow {
+                Repeater {
                     visible: root.btExpanded
-                    RowLayout {
-                        spacing: 12
+                    model: btModel
+                    delegate: SettingsRow {
+                        RowLayout {
+                            spacing: 12
+                            Rectangle {
+                                width: 32; height: 32; radius: 16
+                                color: model.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                                Text { anchors.centerIn: parent; text: "\uea37"; color: model.connected ? Theme.colPrimary : Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            }
+                            ColumnLayout {
+                                spacing: 1
+                                Text { text: model.name; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: model.connected ? "Connected" : (model.paired ? "Paired" : "Available"); color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
+                        
+                        // Status Badge / Action Button
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uea64"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: model.connected ? 74 : (model.paired ? 52 : 44)
+                            height: 24; radius: 6
+                            color: model.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
+                            Text { 
+                                anchors.centerIn: parent
+                                text: model.connected ? "Connected" : (model.paired ? "Paired" : "Pair")
+                                color: model.connected ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium 
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (model.connected) {
+                                        Quickshell.execDetached(["bluetoothctl", "disconnect", model.mac]);
+                                    } else {
+                                        Quickshell.execDetached(["bluetoothctl", "connect", model.mac]);
+                                    }
+                                    btProcess.running = true;
+                                }
+                            }
                         }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Sony WH-1000XM5"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Connected · Battery 82%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Rectangle {
-                        width: 74; height: 24; radius: 6
-                        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                        Text { anchors.centerIn: parent; text: "Connected"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
-                    }
-                    Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
-                }
-
-                // MX Keys
-                SettingsRow {
-                    visible: root.btExpanded
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uead3"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "MX Keys"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Paired · Not connected"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        
+                        Text { 
+                            text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["bluetoothctl", "remove", model.mac]);
+                                    btProcess.running = true;
+                                }
+                            }
                         }
                     }
-                    Item { Layout.fillWidth: true }
-                    Rectangle {
-                        width: 52; height: 24; radius: 6
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
-                        Text { anchors.centerIn: parent; text: "Paired"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
-                    }
-                    Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
-                }
-
-                // MX Master 3S
-                SettingsRow {
-                    visible: root.btExpanded
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uead0"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "MX Master 3S"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Available"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "Pair"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
-                }
-
-                // DualSense
-                SettingsRow {
-                    visible: root.btExpanded
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uebce"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "DualSense Controller"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Available"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "Pair"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
                 }
             }
 
