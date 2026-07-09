@@ -37,18 +37,19 @@ if [ "$SCHEME" = "auto" ]; then
     SCHEME="tonal-spot"
 fi
 
-# Set the wallpaper with awww immediately in the background
+# Set the wallpaper with awww immediately (no delay needed)
 echo "Setting wallpaper..."
-(
-    # Wait for Quickshell WallpaperSwitcher to finish its closing animation (520ms)
-    sleep 0.6
-    awww img "$WALLPAPER" --transition-type wipe --transition-fps 60 --transition-duration 1.5 || true
-) &
+awww img "$WALLPAPER" --transition-type wipe --transition-fps 60 --transition-duration 1.5 &
 
-# Run matugen to generate themes (this takes ~2 seconds)
+# Run matugen to generate themes
+# Use ffmpeg to downscale to 400x400 for fast color extraction
 echo "Generating color palettes with matugen in $MODE mode using scheme-$SCHEME..."
-# Use magick to create a guaranteed-valid PNG, bypassing format/extension mismatch crashes in matugen
-magick "$WALLPAPER" /tmp/matugen_input.png 2>/dev/null || cp "$WALLPAPER" /tmp/matugen_input.png
+if command -v ffmpeg &>/dev/null; then
+    ffmpeg -y -i "$WALLPAPER" -vf scale=400:400 -update 1 -frames:v 1 /tmp/matugen_input.png 2>/dev/null \
+        || cp "$WALLPAPER" /tmp/matugen_input.png
+else
+    cp "$WALLPAPER" /tmp/matugen_input.png
+fi
 matugen image "/tmp/matugen_input.png" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
 
 # Apply KDE colors dynamically

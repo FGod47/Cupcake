@@ -10,6 +10,7 @@ for img in "$WALL_DIR"/*.{png,jpg,jpeg,webp}; do
     thumb="$THUMB_DIR/$filename"
     if [ ! -f "$thumb" ]; then
         echo "Generating thumbnail for $filename..."
-        convert "$img" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb"
+        ffmpeg -y -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
+            -update 1 -frames:v 1 "$thumb" 2>/dev/null
     fi
 done
