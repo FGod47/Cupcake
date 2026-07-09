@@ -55,7 +55,7 @@ hl.bind("CTRL + SHIFT + tab", hl.dsp.exec_cmd(apps.terminal .. " " .. apps.taskM
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(apps.colorpicker .. " -a"))
 
 -- Wallpaper switcher
-hl.bind(sMod .. " + W", hl.dsp.global("quickshell:wallpaperswitcher_toggle"))
+hl.bind(sMod .. " + W", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/WallpaperSwitcher.qml"))
 
 -- Volume Control
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.local/bin/volume.sh up"), { repeating = true })

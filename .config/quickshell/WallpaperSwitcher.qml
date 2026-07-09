@@ -36,7 +36,7 @@ PanelWindow {
     readonly property int    padV:        15
     readonly property int    labelGap:    7            // spacing.small
     readonly property int    maxVisible:  Math.min(5, wallModel.count)
-    readonly property int    numVisible:  maxVisible > 1 && maxVisible % 2 === 0 ? maxVisible - 1 : (maxVisible || 1)
+    readonly property int    numVisible:  maxVisible || 1
 
     // ── Palette ──────────────────────────────────────────────────────────
     readonly property color colBg:      Theme.colSurfaceContainerHigh
@@ -68,9 +68,9 @@ PanelWindow {
     Process {
         command: ["cat", root.homeDir + "/.cache/current_wallpaper"]
         running: true
-        stdout: SplitParser {
-            onRead: data => {
-                if (data.trim() !== "") root.currentWall = data.trim()
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) root.currentWall = text.trim()
             }
         }
     }
@@ -81,71 +81,21 @@ PanelWindow {
 
 
     function dismiss() {
-        isOpen = false
-        killTimer.restart()
+        if (userDismissed) return;
+        userDismissed = true;
+        isOpen = false;
+        Quickshell.execDetached(["bash", "-c",
+            "sleep 0.55 && pkill -f '[q]uickshell.*WallpaperSwitcher.qml'"]);
     }
 
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: console.log("Debug info:", root.width, root.isOpen, pill.width, pill.height, root.isInitialized, innerContent.opacity)
-    }
+    property bool userDismissed: false
 
-    Timer {
-        id: killTimer
-        interval: 520
-        onTriggered: root.visible = false
-    }
-
-    IpcHandler {
-        target: "wallpaperswitcher"
-        property real lastToggleTime: 0
-        function toggle(): void {
-            if (Date.now() - lastToggleTime < 300) return;
-            lastToggleTime = Date.now();
-            
-            if (root.visible && root.isOpen) {
-                root.dismiss()
-            } else {
-                root.moveDuration = 0
-                root.isOpen = false
-                root.visible = true
-                
-                Qt.callLater(() => {
-                    root.isOpen = true
-                    root.requestActivate()
-                    pv.forceActiveFocus()
-                    // Fetch latest desktop wallpaper on reappear
-                    queryProc.running = true
-                })
-            }
-        }
-    }
-
-    GlobalShortcut {
-        name: "wallpaperswitcher_toggle"
-        property real lastToggleTime: 0
-        onPressed: {
-            if (Date.now() - lastToggleTime < 300) return;
-            lastToggleTime = Date.now();
-            
-            if (root.visible && root.isOpen) {
-                root.dismiss()
-            } else {
-                root.moveDuration = 0
-                root.isOpen = false
-                root.visible = true
-                
-                Qt.callLater(() => {
-                    root.isOpen = true
-                    root.requestActivate()
-                    pv.forceActiveFocus()
-                    // Fetch latest desktop wallpaper on reappear
-                    queryProc.running = true
-                })
-            }
-        }
+    Component.onCompleted: {
+        root.visible = true;
+        Qt.callLater(() => {
+            root.isOpen = true;
+            pv.forceActiveFocus();
+        });
     }
 
     // ── Find Current Wallpaper ───────────────────────────────────────────
@@ -188,9 +138,9 @@ PanelWindow {
         onStatusChanged: {
             if (status === FolderListModel.Ready) {
                 if (root.currentWall !== "") {
-                    const fileName = root.currentWall.split('/').pop()
-                    for (let i = 0; i < count; i++) {
-                        if (get(i, "fileName") === fileName) {
+                    const currentFileName = root.currentWall.split('/').pop()
+                    for (let i = 0; i < wallModel.count; i++) {
+                        if (wallModel.get(i, "fileName") === currentFileName) {
                             pv.currentIndex = i
                             break
                         }
@@ -215,6 +165,12 @@ PanelWindow {
             root.isInitialized = true
             root.moveDuration = 300
         }
+    }
+
+    // ── Invisible Scrim (Click outside to close) ───────────────────────
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.dismiss()
     }
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
@@ -321,11 +277,11 @@ PanelWindow {
 
             path: Path {
                 startX: pv.width / 2
-                startY: 0
+                startY: (root.numVisible % 2 === 0) ? root.itemH / 2 : 0
                 PathAttribute { name: "z"; value: 0 }
-                PathLine { x: pv.width / 2; y: pv.height / 2 }
+                PathLine { x: pv.width / 2; y: ((root.numVisible % 2 === 0) ? root.itemH / 2 : 0) + pv.height / 2 }
                 PathAttribute { name: "z"; value: 10 }
-                PathLine { x: pv.width / 2; y: pv.height }
+                PathLine { x: pv.width / 2; y: ((root.numVisible % 2 === 0) ? root.itemH / 2 : 0) + pv.height }
                 PathAttribute { name: "z"; value: 0 }
             }
 
