@@ -191,7 +191,7 @@ PanelWindow {
                 property bool isWifi: false
                 property bool isWired: false
                 
-                color: isWired ? "#7862de" : (isWifi ? "#389b6c" : (root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface))
+                color: isWired ? Theme.colPrimary : (isWifi ? Theme.colSecondary : (root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface))
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 32
@@ -208,7 +208,7 @@ PanelWindow {
                     Text {
                         id: networkIcon
                         text: "\ueb52"
-                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : fg
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
@@ -216,7 +216,7 @@ PanelWindow {
                     Text {
                         id: networkText
                         text: ""
-                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : fg
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                         font.family: Theme.defaultFontFamily
                         font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
@@ -227,7 +227,7 @@ PanelWindow {
                     Rectangle {
                         width: 1
                         height: 14
-                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : Theme.colOnSurfaceVariant
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                         opacity: 0.4
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkSpeedText.visible
@@ -236,7 +236,7 @@ PanelWindow {
                     Text {
                         id: networkSpeedText
                         text: ""
-                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : Theme.colOnSurfaceVariant
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
                         anchors.verticalCenter: parent.verticalCenter
