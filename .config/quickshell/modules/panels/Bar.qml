@@ -202,10 +202,35 @@ PanelWindow {
                 
                 Process {
                     id: networkProc
-                    command: ["sh", "-c", "ip route get 1.1.1.1"]
+                    command: ["nmcli", "-t", "-f", "TYPE,STATE,CONNECTION", "d"]
                     stdout: StdioCollector {
                         onStreamFinished: (data) => {
-                            networkText.text = (data || "").includes("uid") ? "  Connected" : "󰖪"
+                            if (!data) {
+                                networkText.text = "󰖪  Disconnected"
+                                return;
+                            }
+                            const lines = data.trim().split("\n");
+                            let activeWifi = "";
+                            let activeEthernet = false;
+                            
+                            for (let i = 0; i < lines.length; i++) {
+                                const parts = lines[i].split(":");
+                                if (parts.length >= 3) {
+                                    if (parts[0] === "wifi" && parts[1] === "connected") {
+                                        activeWifi = parts.slice(2).join(":"); // Handle colons in SSID
+                                    } else if (parts[0] === "ethernet" && parts[1] === "connected") {
+                                        activeEthernet = true;
+                                    }
+                                }
+                            }
+                            
+                            if (activeWifi !== "") {
+                                networkText.text = "  " + activeWifi;
+                            } else if (activeEthernet) {
+                                networkText.text = "󰈀  Wired";
+                            } else {
+                                networkText.text = "󰖪  Disconnected";
+                            }
                         }
                     }
                 }
