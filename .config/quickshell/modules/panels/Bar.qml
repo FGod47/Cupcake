@@ -317,9 +317,10 @@ PanelWindow {
                                 let txDiff = totalTx - networkPill.lastTx;
                                 
                                 let formatSpeed = (bytes) => {
-                                    if (bytes > 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
-                                    if (bytes >= 1024) return (bytes / 1024).toFixed(0) + " KB/s";
-                                    return ""; // Hide if it's under 1KB/s (i.e. just bytes)
+                                    let bits = bytes * 8;
+                                    if (bits >= 1000000) return (bits / 1000000).toFixed(1) + " Mbps";
+                                    if (bits >= 1000) return (bits / 1000).toFixed(0) + " Kbps";
+                                    return ""; // Hide if it's less than 1 Kbps
                                 }
                                 
                                 let rxText = formatSpeed(rxDiff);
@@ -328,9 +329,8 @@ PanelWindow {
                                 if (rxText === "" && txText === "") {
                                     networkSpeedText.text = ""; // Hide the text completely
                                 } else {
-                                    // If one is empty but the other isn't, fallback to 0 KB/s for the empty one
-                                    if (rxText === "") rxText = "0 KB/s";
-                                    if (txText === "") txText = "0 KB/s";
+                                    if (rxText === "") rxText = "0 Kbps";
+                                    if (txText === "") txText = "0 Kbps";
                                     networkSpeedText.text = "↓ " + rxText + "  ↑ " + txText;
                                 }
                             } else {
