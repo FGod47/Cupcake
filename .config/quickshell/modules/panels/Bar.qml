@@ -207,7 +207,7 @@ PanelWindow {
                     spacing: 8
                     Text {
                         id: networkIcon
-                        text: ""
+                        text: "\ueb52"
                         color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : fg
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
@@ -272,17 +272,17 @@ PanelWindow {
                             if (activeWifi !== "") {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
-                                networkIcon.text = "";
+                                networkIcon.text = "\ueb52";
                                 networkText.text = activeWifi;
                             } else if (activeEthernet) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = true;
-                                networkIcon.text = "󰈀";
+                                networkIcon.text = "\uebb3";
                                 networkText.text = "Wired";
                             } else {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
-                                networkIcon.text = "󰖪";
+                                networkIcon.text = "\ueb53";
                                 networkText.text = "Disconnected";
                             }
                         }
