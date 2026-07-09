@@ -223,6 +223,24 @@ PanelWindow {
                         visible: text !== ""
                     }
                     
+                    Rectangle {
+                        width: 1
+                        height: 14
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                        opacity: 0.4
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && networkSpeedText.text !== ""
+                    }
+                    
+                    Text {
+                        id: networkSpeedText
+                        text: "↓ 0 KB/s  ↑ 0 KB/s"
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded
+                    }
                 }
                 
                 Process {
@@ -275,6 +293,50 @@ PanelWindow {
                     onTriggered: networkProc.running = true
                 }
                 
+                Process {
+                    id: speedProc
+                    command: ["cat", "/proc/net/dev"]
+                    stdout: StdioCollector {
+                        onStreamFinished: () => {
+                            if (!text) return;
+                            const lines = text.trim().split("\n");
+                            let totalRx = 0;
+                            let totalTx = 0;
+                            for (let i = 2; i < lines.length; i++) {
+                                const parts = lines[i].trim().split(/\s+/);
+                                if (parts.length >= 10 && (parts[0].startsWith("en") || parts[0].startsWith("wl") || parts[0].startsWith("eth"))) {
+                                    totalRx += parseInt(parts[1]);
+                                    totalTx += parseInt(parts[9]);
+                                }
+                            }
+                            
+                            if (networkPill.lastRx > 0 && networkPill.lastTx > 0) {
+                                let rxDiff = totalRx - networkPill.lastRx;
+                                let txDiff = totalTx - networkPill.lastTx;
+                                
+                                let formatSpeed = (bytes) => {
+                                    if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
+                                    // Even if it's less than 1024 bytes, we divide by 1024 and show 0 KB/s or 0.x KB/s, avoiding B/s entirely.
+                                    return (bytes / 1024).toFixed(0) + " KB/s";
+                                }
+                                
+                                let rxText = formatSpeed(rxDiff);
+                                let txText = formatSpeed(txDiff);
+                                
+                                networkSpeedText.text = "↓ " + rxText + "  ↑ " + txText;
+                            } else {
+                                networkSpeedText.text = "↓ 0 KB/s  ↑ 0 KB/s";
+                            }
+                            networkPill.lastRx = totalRx;
+                            networkPill.lastTx = totalTx;
+                        }
+                    }
+                }
+                
+                Timer {
+                    interval: 1000; running: true; repeat: true
+                    onTriggered: speedProc.running = true
+                }
 
             }
 
