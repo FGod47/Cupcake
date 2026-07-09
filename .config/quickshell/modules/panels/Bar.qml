@@ -277,7 +277,7 @@ PanelWindow {
                             } else if (activeEthernet) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = true;
-                                networkIcon.text = "\uebb3";
+                                networkIcon.text = "\uebd9";
                                 networkText.text = "Wired";
                             } else {
                                 networkPill.isWifi = false;

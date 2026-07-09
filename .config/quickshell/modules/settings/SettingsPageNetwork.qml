@@ -539,7 +539,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uebb3"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\uebd9"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
