@@ -19,7 +19,7 @@ Item {
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
-    property int currentIndex: 1
+    property int currentIndex: 10
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
@@ -414,25 +414,18 @@ Item {
                                 }
                             }
 
-                        NavHeader { text: "PERSONALIZATION" }
-                        
-                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
-                        NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
-                        NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
-                        NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
-                        
-                        NavHeader { text: "SYSTEM" }
                         NavButton { iconText: "\ueb20"; labelText: "System"; pageIndex: 10 }
-                        NavButton { iconText: "\ueb1f"; labelText: "Services"; pageIndex: 11 }
-                        NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
-                        NavButton { iconText: "\ueb0d"; labelText: "Power"; pageIndex: 13 }
-                        
-
-                        NavHeader { text: "CUPCAKE EXTRA" }
-                        NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
                         NavButton { iconText: "\uea89"; labelText: "Display"; pageIndex: 18 }
-                        NavButton { iconText: "\uf6d7"; labelText: "AI"; pageIndex: 19 }
+                        NavButton { iconText: "\ueb0d"; labelText: "Power"; pageIndex: 13 }
+                        NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
+                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
+                        NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
+                        NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
+                        NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                         NavButton { iconText: "\ueb4d"; labelText: "User"; pageIndex: 20 }
+                        NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
+                        NavButton { iconText: "\ueb1f"; labelText: "Services"; pageIndex: 11 }
+                        NavButton { iconText: "\uf6d7"; labelText: "AI"; pageIndex: 19 }
                         NavButton { iconText: "\ueac5"; labelText: "About"; pageIndex: 21 }
 
                         Item { Layout.fillHeight: true } // Spacer
@@ -478,10 +471,10 @@ Item {
                         // Dynamic Content Header
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: isAppearanceNav ? 0 : 64
+                            Layout.preferredHeight: (isAppearanceNav || root.currentIndex === 10) ? 0 : 64
                             clip: true
                             color: "transparent"
-                            visible: !isAppearanceNav
+                            visible: !(isAppearanceNav || root.currentIndex === 10)
                             Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
                             property bool isAppearanceNav: [0, 1, 3, 4].includes(root.currentIndex)
@@ -587,6 +580,8 @@ Item {
                                 TopNavBtn { text: "Desktop"; icon: "\uea89"; pageIndex: 3 }
                             }
                         }
+
+
                         // Content Stack
                         Item {
                             Layout.fillWidth: true

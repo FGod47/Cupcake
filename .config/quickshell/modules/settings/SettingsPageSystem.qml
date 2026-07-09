@@ -8,117 +8,34 @@ import "../common"
 
 Item {
     id: root
-    
+
     // =====================================================================
-    // Reusable inline components based on the reference UI
+    // Reusable inline components (matching Dock page style)
     // =====================================================================
+    component SettingsCard: Rectangle {
+        default property alias content: innerCol.data
+        Layout.fillWidth: true
+        Layout.leftMargin: 20
+        Layout.rightMargin: 20
+        implicitHeight: innerCol.implicitHeight + 40
+        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        radius: 12
+        clip: true
+        ColumnLayout {
+            id: innerCol
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 8
+        }
+    }
 
     component SectionLabel: Text {
-        font.family: Theme.defaultFontFamily
         font.pixelSize: 11
-        font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+        font.weight: Font.DemiBold
         font.letterSpacing: 0.4
         color: Theme.colOnSurface
         opacity: 0.45
-    }
-
-    component ToggleSwitch: Rectangle {
-        id: sw
-        property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-
-        Behavior on color { ColorAnimation { duration: 120 } }
-
-        Rectangle {
-            width: 18; height: 18
-            radius: 9
-            anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
-        }
-    }
-
-    component SegmentedControl: Rectangle {
-        id: seg
-        property var options: []
-        property string current: options.length > 0 ? options[0] : ""
-        signal selected(string value)
-
-        color: Qt.rgba(0, 0, 0, 0.28)
-        radius: 8
-        height: 30
-        width: row.implicitWidth + 4
-
-        Row {
-            id: row
-            anchors.centerIn: parent
-            spacing: 1
-
-            Repeater {
-                model: seg.options
-                delegate: Rectangle {
-                    required property string modelData
-                    property bool active: modelData === seg.current
-                    height: 26
-                    width: label.implicitWidth + 24
-                    radius: 6
-                    color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
-
-                    Text {
-                        id: label
-                        anchors.centerIn: parent
-                        text: modelData
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: 500
-                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: { seg.current = modelData; seg.selected(modelData) }
-                    }
-                }
-            }
-        }
-    }
-
-    component Pill: Rectangle {
-        id: pill
-        property string label: ""
-        property bool active: false
-        signal clicked()
-
-        radius: 8
-        height: 26
-        width: pillText.implicitWidth + 24
-        color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-
-        Text {
-            id: pillText
-            anchors.centerIn: parent
-            text: pill.label
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 12
-            font.weight: 500
-            color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: pill.clicked()
-        }
     }
 
     component SettingsRow: RowLayout {
@@ -128,10 +45,53 @@ Item {
         spacing: 12
     }
 
-    // =====================================================================
-    // Main Content
-    // =====================================================================
+    component SystemListItem: SettingsRow {
+        id: listItem
 
+        property string iconName: ""
+        property string title: ""
+        property string subtitle: ""
+
+        RowLayout {
+            spacing: 12
+            Rectangle {
+                width: 32; height: 32; radius: 16
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                Text {
+                    anchors.centerIn: parent
+                    text: listItem.iconName
+                    color: Theme.colOnSurfaceVariant
+                    font.family: "tabler-icons"
+                    font.pixelSize: 16
+                }
+            }
+            ColumnLayout {
+                spacing: 1
+                Text { text: listItem.title; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                Text { text: listItem.subtitle; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+            }
+        }
+
+        Item { Layout.fillWidth: true }
+
+        Text {
+            text: "\uea61"
+            font.family: "tabler-icons"
+            font.pixelSize: 16
+            color: Theme.colOnSurfaceVariant
+            opacity: 0.5
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    // =====================================================================
+    // Main UI Layout
+    // =====================================================================
     ScrollView {
         anchors.fill: parent
         contentWidth: availableWidth
@@ -141,59 +101,135 @@ Item {
             width: Math.min(parent.width, 1000)
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 24
-            
+
             Item { Layout.preferredHeight: 8 }
 
-            
-            // --- Language section ---
-            ColumnLayout {
+            // TOP CARD — Device Identity
+            Rectangle {
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
-                Layout.topMargin: 16
-                spacing: 8
+                Layout.preferredHeight: 144
+                radius: 12
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                border.width: 1
+                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
 
-                SectionLabel { text: "Language" }
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 16
 
-                SettingsRow {
                     RowLayout {
-                        spacing: 12
-                        Text { text: "\uebbe"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        spacing: 16
+                        Rectangle {
+                            Layout.preferredWidth: 64
+                            Layout.preferredHeight: 64
+                            radius: 12
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                            Text { anchors.centerIn: parent; text: "\ueb02"; font.family: "tabler-icons"; font.pixelSize: 32; color: Theme.colPrimary }
+                        }
                         ColumnLayout {
                             spacing: 2
-                            Text { text: "Application Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }
-                            Text { text: "Language used in the application's interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "cupcake-pc"; font.family: Theme.defaultFontFamily; font.pixelSize: 18; font.weight: 700; color: Theme.colOnSurface }
+                            Text { text: "Arch Linux — Hyprland"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant }
+                            Text {
+                                text: "Rename this device"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: 600
+                                color: Theme.colPrimary
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                            }
                         }
+                        Item { Layout.fillWidth: true }
                     }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox {
-                        Layout.preferredWidth: 200
-                        model: ["Automatic (en)"]
+
+                    RowLayout {
+                        spacing: 24
+                        RowLayout {
+                            spacing: 8
+                            Rectangle {
+                                width: 28; height: 28; radius: 6
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                            }
+                            ColumnLayout {
+                                spacing: 0
+                                Text { text: "Arch Linux"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: Theme.colOnSurface }
+                                Text { text: "View system info"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant }
+                            }
+                        }
+                        RowLayout {
+                            spacing: 8
+                            Rectangle {
+                                width: 28; height: 28; radius: 6
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                                Text { anchors.centerIn: parent; text: "\uea64"; font.family: "tabler-icons"; font.pixelSize: 14; color: Theme.colPrimary }
+                            }
+                            ColumnLayout {
+                                spacing: 0
+                                Text { text: "Backups"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: Theme.colOnSurface }
+                                Text { text: "Last backup 3h ago"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant }
+                            }
+                        }
+                        RowLayout {
+                            spacing: 8
+                            Rectangle {
+                                width: 28; height: 28; radius: 6
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                                Text { anchors.centerIn: parent; text: "\uea2d"; font.family: "tabler-icons"; font.pixelSize: 14; color: Theme.colPrimary }
+                            }
+                            ColumnLayout {
+                                spacing: 0
+                                Text { text: "Updates"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: Theme.colOnSurface }
+                                Text { text: "Checked 7h ago"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant }
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
                     }
-                }
-            }
-            
-            // SETUP WIZARD BUTTON
-            Rectangle {
-                Layout.topMargin: 16
-                Layout.fillWidth: true
-                Layout.minimumWidth: 200
-                Layout.maximumWidth: 350
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredHeight: 38
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.8)
-                radius: 8
-                Text {
-                    anchors.centerIn: parent
-                    text: "Launch the setup wizard"
-                    color: Theme.colOnPrimary
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: Theme.defaultFontSize
-                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
                 }
             }
 
-            Item { Layout.preferredHeight: 24 } // Bottom padding
+            // 1. DEVICE CARD
+            SettingsCard {
+                SectionLabel { text: "Device" }
+
+                SystemListItem { iconName: "\uea89"; title: "Display"; subtitle: "Monitors, brightness, night light, display profile" }
+                SystemListItem { iconName: "\ueb4f"; title: "Sound"; subtitle: "Volume levels, output, input, sound devices" }
+                SystemListItem { iconName: "\ueb0d"; title: "Power & battery"; subtitle: "Sleep, battery usage, power profiles" }
+                SystemListItem { iconName: "\ueadc"; title: "Storage"; subtitle: "Disk usage, drives, mount points" }
+            }
+
+            // 2. APPS & NOTIFICATIONS CARD
+            SettingsCard {
+                SectionLabel { text: "Apps & Notifications" }
+
+                SystemListItem { iconName: "\uea35"; title: "Notifications"; subtitle: "Alerts from apps and system" }
+                SystemListItem { iconName: "\ueb07"; title: "Focus mode"; subtitle: "Do not disturb, automatic rules" }
+                SystemListItem { iconName: "\uea6e"; title: "Clipboard"; subtitle: "Clipboard history, sync, clear" }
+                SystemListItem { iconName: "\ueae2"; title: "Multitasking"; subtitle: "Workspaces, window snapping, task switching" }
+            }
+
+            // 3. CONNECTIVITY CARD
+            SettingsCard {
+                SectionLabel { text: "Connectivity" }
+
+                SystemListItem { iconName: "\ueb13"; title: "File sharing"; subtitle: "Local network sharing, received files" }
+                SystemListItem { iconName: "\uea5c"; title: "Screen mirroring"; subtitle: "Cast this display to another device" }
+                SystemListItem { iconName: "\ueb02"; title: "Remote desktop"; subtitle: "Remote access users and permissions" }
+            }
+
+            // 4. SYSTEM CARD
+            SettingsCard {
+                SectionLabel { text: "System" }
+
+                SystemListItem { iconName: "\uea3a"; title: "Package updates"; subtitle: "Update channel, pacman/AUR sources" }
+                SystemListItem { iconName: "\ueb53"; title: "Troubleshoot"; subtitle: "Recommended fixes, logs, diagnostics" }
+                SystemListItem { iconName: "\uea67"; title: "Recovery"; subtitle: "Reset settings, advanced startup options" }
+                SystemListItem { iconName: "\ueac5"; title: "About"; subtitle: "Device specs, hostname, kernel version" }
+            }
+
+            Item { Layout.preferredHeight: 24 }
         }
     }
 }

@@ -82,6 +82,45 @@ Item {
     property string wifiDeviceState: "Checking..."
     
     property bool btRadioEnabled: false
+    property bool hotspotEnabled: false
+
+    Process {
+        id: hotspotStatusProcess
+        command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d | grep -i 'wifi:connected' | grep -qi -E 'hotspot' && echo 'on' || echo 'off'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "on") root.hotspotEnabled = true;
+                else root.hotspotEnabled = false;
+            }
+        }
+    }
+
+    property string hotspotSsid: ""
+    property string hotspotPassword: ""
+    property bool showHotspotPassword: false
+
+    Process {
+        id: hotspotDetailsProcess
+        command: ["bash", "-c", "nmcli -g 802-11-wireless.ssid connection show Hotspot 2>/dev/null || echo 'cupcake-hotspot'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") root.hotspotSsid = text.trim();
+            }
+        }
+    }
+
+    Process {
+        id: hotspotPassProcess
+        command: ["bash", "-c", "nmcli -s -g 802-11-wireless-security.psk connection show Hotspot 2>/dev/null || echo '12345678'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "") root.hotspotPassword = text.trim();
+            }
+        }
+    }
 
     Process {
         id: wifiRadioProcess
@@ -195,6 +234,9 @@ Item {
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
             btProcess.running = true;
+            hotspotStatusProcess.running = true;
+            hotspotDetailsProcess.running = true;
+            hotspotPassProcess.running = true;
             if (root.wifiRadioEnabled) {
                 let anyExpanded = false;
                 for (let i = 0; i < wifiModel.count; i++) {
@@ -416,6 +458,169 @@ Item {
                     color: Theme.colPrimary
                     font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                }
+            }
+
+            // ── Mobile Hotspot ────────────────────────────────────────────
+            SettingsCard {
+                SectionLabel { text: "Mobile Hotspot" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: root.hotspotEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text { anchors.centerIn: parent; text: "\ued1b"; color: root.hotspotEnabled ? Theme.colPrimary : Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Wi-Fi Hotspot"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.hotspotEnabled ? "Sharing connection..." : "Off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    
+                    ToggleSwitch {
+                        checked: root.hotspotEnabled
+                        onToggled: {
+                            root.hotspotEnabled = checked;
+                            if (checked) {
+                                Quickshell.execDetached(["nmcli", "device", "wifi", "hotspot"]);
+                            } else {
+                                Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]);
+                            }
+                            hotspotStatusProcess.running = true;
+                        }
+                    }
+                }
+                
+                Item { Layout.preferredHeight: 8 }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Text { text: "\ueac3"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        Text { text: "Network name"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 8
+                        StyledTextField {
+                            id: ssidField
+                            text: root.hotspotSsid
+                            placeholderText: "Hotspot Name"
+                            horizontalAlignment: TextInput.AlignRight
+                            Layout.preferredWidth: 150
+                            onEditingFinished: {
+                                if (text.trim() !== "" && text !== root.hotspotSsid) {
+                                    root.hotspotSsid = text.trim();
+                                    Quickshell.execDetached(["bash", "-c", 'nmcli connection modify Hotspot "$1" "$2"; if nmcli -t -f TYPE,STATE,CONNECTION d | grep -i "wifi:connected" | grep -qi "hotspot"; then nmcli connection up Hotspot; fi', "--", "wifi.ssid", root.hotspotSsid]);
+                                }
+                            }
+                        }
+                        Rectangle {
+                            Layout.preferredWidth: 28; Layout.preferredHeight: 28
+                            radius: 14
+                            color: Theme.colPrimary
+                            visible: ssidField.text !== root.hotspotSsid
+                            Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colOnPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (ssidField.text.trim() !== "") {
+                                        root.hotspotSsid = ssidField.text.trim();
+                                        Quickshell.execDetached(["bash", "-c", 'nmcli connection modify Hotspot "$1" "$2"; if nmcli -t -f TYPE,STATE,CONNECTION d | grep -i "wifi:connected" | grep -qi "hotspot"; then nmcli connection up Hotspot; fi', "--", "wifi.ssid", root.hotspotSsid]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Text { text: "\ueac7"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        Text { text: "Password"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 8
+                        StyledTextField {
+                            id: passField
+                            text: root.hotspotPassword
+                            placeholderText: "Password"
+                            font.letterSpacing: root.showHotspotPassword ? 0 : 2
+                            echoMode: root.showHotspotPassword ? TextInput.Normal : TextInput.Password
+                            horizontalAlignment: TextInput.AlignRight
+                            Layout.preferredWidth: 120
+                            onEditingFinished: {
+                                if (text.trim() !== "" && text !== root.hotspotPassword) {
+                                    root.hotspotPassword = text.trim();
+                                    Quickshell.execDetached(["bash", "-c", 'nmcli connection modify Hotspot "$1" "$2"; if nmcli -t -f TYPE,STATE,CONNECTION d | grep -i "wifi:connected" | grep -qi "hotspot"; then nmcli connection up Hotspot; fi', "--", "wifi-sec.psk", root.hotspotPassword]);
+                                }
+                            }
+                        }
+                        MouseArea {
+                            Layout.preferredWidth: 24; Layout.preferredHeight: 24
+                            cursorShape: Qt.PointingHandCursor
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.showHotspotPassword ? "\uecf0" : "\uea9a"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                            onClicked: root.showHotspotPassword = !root.showHotspotPassword
+                        }
+                        Rectangle {
+                            Layout.preferredWidth: 28; Layout.preferredHeight: 28
+                            radius: 14
+                            color: Theme.colPrimary
+                            visible: passField.text !== root.hotspotPassword
+                            Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colOnPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (passField.text.trim() !== "") {
+                                        root.hotspotPassword = passField.text.trim();
+                                        Quickshell.execDetached(["bash", "-c", 'nmcli connection modify Hotspot "$1" "$2"; if nmcli -t -f TYPE,STATE,CONNECTION d | grep -i "wifi:connected" | grep -qi "hotspot"; then nmcli connection up Hotspot; fi', "--", "wifi-sec.psk", root.hotspotPassword]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Text { text: "\uebf2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        Text { text: "Connected devices"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text { text: root.hotspotEnabled ? "0" : "0"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Text { text: "\uf548"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        Text { text: "Auto-disable when idle"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch { checked: true }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Text { text: "\uea38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        Text { text: "Maximize compatibility"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch { checked: false }
                 }
             }
 
