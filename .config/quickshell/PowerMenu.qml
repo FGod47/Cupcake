@@ -38,7 +38,7 @@ PanelWindow {
             spacing: 15
 
             Button {
-                text: "󰐥" // Poweroff
+                text: "\ueb0d" // ti-power
                 font.pixelSize: 22
                 Layout.fillWidth: true
                 onClicked: {
@@ -49,6 +49,7 @@ PanelWindow {
                 contentItem: Text {
                     text: parent.text
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -56,7 +57,7 @@ PanelWindow {
             }
 
             Button {
-                text: "󰜉" // Reboot
+                text: "\ueb13" // ti-refresh
                 font.pixelSize: 22
                 Layout.fillWidth: true
                 onClicked: {
@@ -67,6 +68,7 @@ PanelWindow {
                 contentItem: Text {
                     text: parent.text
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -74,7 +76,7 @@ PanelWindow {
             }
 
             Button {
-                text: "󰤄" // Suspend
+                text: "\ueaf8" // ti-moon
                 font.pixelSize: 22
                 Layout.fillWidth: true
                 onClicked: {
@@ -85,6 +87,7 @@ PanelWindow {
                 contentItem: Text {
                     text: parent.text
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -92,7 +95,7 @@ PanelWindow {
             }
 
             Button {
-                text: "󰌾" // Lock
+                text: "\ueae2" // ti-lock
                 font.pixelSize: 22
                 Layout.fillWidth: true
                 onClicked: {
@@ -103,6 +106,7 @@ PanelWindow {
                 contentItem: Text {
                     text: parent.text
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -110,7 +114,7 @@ PanelWindow {
             }
 
             Button {
-                text: "󰍃" // Logout
+                text: "\ueba8" // ti-logout
                 font.pixelSize: 22
                 Layout.fillWidth: true
                 onClicked: {
@@ -121,6 +125,7 @@ PanelWindow {
                 contentItem: Text {
                     text: parent.text
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

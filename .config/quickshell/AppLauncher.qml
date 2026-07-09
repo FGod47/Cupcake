@@ -215,8 +215,8 @@ PanelWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "" // \uf002
-                    font.family: "JetBrainsMono Nerd Font"
+                    text: "\ueb1c" // ti-search
+                    font.family: "tabler-icons"
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 42
                     color: root.colOnSurfaceVariant
                 }
@@ -383,8 +383,8 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                text: "" // \uf002
-                font.family: "JetBrainsMono Nerd Font"
+                text: "\ueb1c" // ti-search
+                font.family: "tabler-icons"
                 font.weight: Theme.defaultFontWeight; font.pixelSize: 17
                 color: root.colOnSurfaceVariant
             }
@@ -445,7 +445,8 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                text: "✕"
+                text: "\ueb55" // ti-x
+                font.family: "tabler-icons"
                 font.weight: Theme.defaultFontWeight; font.pixelSize: 15
                 color: root.colOnSurfaceVariant
                 opacity: searchField.text.length > 0 ? 1 : 0

@@ -158,7 +158,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Text { text: "󰊿"; color: Theme.colOnSurfaceVariant; font.family: Theme.monoFontFamily; font.pixelSize: 16 }
+                        Text { text: "\uebbe"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Application Language"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 500 }

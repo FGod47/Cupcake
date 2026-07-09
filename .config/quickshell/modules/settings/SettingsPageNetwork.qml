@@ -253,7 +253,7 @@ Item {
                         visible: root.wifiRadioEnabled
                         width: 32; height: 32; radius: 8
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                        Text { anchors.centerIn: parent; text: "\ueb38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
+                        Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { wifiDeviceProcess.running = true; wifiProcess.running = true; } }
                     }
 
@@ -312,8 +312,8 @@ Item {
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
                             Text { anchors.centerIn: parent; text: "Strong"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
                         }
-                        Text { text: "\ueb04"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
-                        Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
+                        Text { text: "\ueae2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
+                        Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
                     }
                 }
 
@@ -334,7 +334,7 @@ Item {
                                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                                     Text {
                                         anchors.centerIn: parent
-                                        text: model.signal > 50 ? "\ueb52" : "\ueb53"
+                                        text: model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa")
                                         color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16
                                     }
                                 }
@@ -345,8 +345,8 @@ Item {
                                 }
                             }
                             Item { Layout.fillWidth: true }
-                            Text { visible: model.isSecure; text: "\ueb04"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
-                            Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
+                            Text { visible: model.isSecure; text: "\ueae2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
+                            Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
 
                             MouseArea {
                                 anchors.fill: parent
@@ -444,7 +444,7 @@ Item {
                         visible: root.btRadioEnabled
                         width: 32; height: 32; radius: 8
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                        Text { anchors.centerIn: parent; text: "\ueb38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
+                        Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
                         MouseArea { 
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
                             onClicked: { Quickshell.execDetached(["bluetoothctl", "--timeout", "10", "scan", "on"]); btProcess.running = true; } 
@@ -516,7 +516,7 @@ Item {
                         }
                         
                         Text { 
-                            text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 
+                            text: "\ueb41"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
@@ -561,7 +561,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
@@ -584,7 +584,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb61"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\ued58"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
@@ -594,7 +594,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     Text { text: "Connect"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Text { text: "\uea62"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
+                    Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
                 }
 
                 Text {
@@ -616,7 +616,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uebcc"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\ueab9"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
@@ -643,7 +643,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uebcc"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\ueab9"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
@@ -672,7 +672,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea12"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { anchors.centerIn: parent; text: "\ueb6f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1

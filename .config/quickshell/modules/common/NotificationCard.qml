@@ -120,9 +120,9 @@ Item {
                     visible: status === Image.Ready
                 }
                 Text {
-                    text: "\uf0f3"
+                    text: "\uea35" // ti-bell
                     color: Theme.colOnPrimary
-                    font.family: Theme.monoFontFamily
+                    font.family: "tabler-icons"
                     font.pixelSize: 18
                     anchors.centerIn: parent
                     visible: !iconImg.visible

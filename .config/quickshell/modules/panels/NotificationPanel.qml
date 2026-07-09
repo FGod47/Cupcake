@@ -109,9 +109,9 @@ PanelWindow {
                         width: 32; height: 32; radius: 16
                         color: closeHover.hovered ? Theme.colOutline : "transparent"
                         Text {
-                            text: ""
+                            text: "\ueb55" // ti-x
                             color: Theme.colOnSurface
-                            font.family: Theme.monoFontFamily
+                            font.family: "tabler-icons"
                             font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                             anchors.centerIn: parent
                         }
@@ -154,9 +154,9 @@ PanelWindow {
                             anchors.centerIn: parent
                             spacing: 16
                             Text {
-                                text: "󰂚"
+                                text: "\uea35" // ti-bell
                                 color: Theme.colOnSurfaceVariant
-                                font.family: Theme.monoFontFamily
+                                font.family: "tabler-icons"
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 64
                                 Layout.alignment: Qt.AlignHCenter
                             }
@@ -201,9 +201,9 @@ PanelWindow {
             anchors.margins: 24
             
             Text {
-                text: "󰎟" // Trash / Clear All icon
+                text: "\ueb41" // ti-trash
                 color: clearHover.hovered ? "#11111b" : Theme.colOnSurface
-                font.family: Theme.monoFontFamily
+                font.family: "tabler-icons"
                 font.weight: Theme.defaultFontWeight; font.pixelSize: 24
                 anchors.centerIn: parent
             }

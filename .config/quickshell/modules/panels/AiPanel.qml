@@ -111,7 +111,8 @@ PanelWindow {
 
                     // Gemini Icon
                     Text {
-                        text: "✨"
+                        text: "\uf6d7" // ti-sparkles
+                        font.family: "tabler-icons"
                         font.weight: Theme.defaultFontWeight; font.pixelSize: 24
                         color: Theme.colPrimary
                     }
@@ -125,8 +126,8 @@ PanelWindow {
                         color: clearMouse.containsMouse ? Theme.colSurfaceContainerHigh : "transparent"
                         Text {
                             anchors.centerIn: parent
-                            text: "󰃢" // Broom icon
-                            font.family: Theme.monoFontFamily
+                            text: "\ueb8b" // ti-eraser
+                            font.family: "tabler-icons"
                             font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
@@ -147,8 +148,8 @@ PanelWindow {
                         color: settingsMouse.containsMouse ? Theme.colSurfaceContainerHigh : "transparent"
                         Text {
                             anchors.centerIn: parent
-                            text: "" // Gear icon
-                            font.family: Theme.monoFontFamily
+                            text: "\ueb20" // ti-settings
+                            font.family: "tabler-icons"
                             font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                             color: Theme.colOnSurfaceVariant
                         }
@@ -225,7 +226,8 @@ PanelWindow {
                             
                             Text {
                                 anchors.centerIn: parent
-                                text: "✨"
+                                text: "\uf6d7" // ti-sparkles
+                                font.family: "tabler-icons"
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 20
                                 color: "#8AB4F8"
                             }
@@ -381,9 +383,9 @@ PanelWindow {
                     
                     Text {
                         anchors.centerIn: parent
-                        text: "" // Plus icon
+                        text: "\ueb0b" // ti-plus
                         color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
+                        font.family: "tabler-icons"
                         font.pixelSize: 18
                     }
                     
