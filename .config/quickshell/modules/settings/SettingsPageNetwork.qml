@@ -167,7 +167,16 @@ Item {
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
             if (root.wifiRadioEnabled) {
-                wifiProcess.running = true;
+                let anyExpanded = false;
+                for (let i = 0; i < wifiModel.count; i++) {
+                    if (wifiModel.get(i).expanded) {
+                        anyExpanded = true;
+                        break;
+                    }
+                }
+                if (!anyExpanded) {
+                    wifiProcess.running = true;
+                }
             }
         }
     }
@@ -339,7 +348,12 @@ Item {
                                     verticalAlignment: TextInput.AlignVCenter
                                     color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12
                                     echoMode: TextInput.Password; clip: true
-                                    onTextChanged: wifiModel.setProperty(index, "password", text)
+                                    text: model.password
+                                    onTextChanged: {
+                                        if (text !== model.password) {
+                                            wifiModel.setProperty(index, "password", text)
+                                        }
+                                    }
                                 }
                                 Text {
                                     anchors { left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter }
