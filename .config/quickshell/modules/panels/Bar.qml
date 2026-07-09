@@ -234,7 +234,7 @@ PanelWindow {
                     
                     Text {
                         id: networkSpeedText
-                        text: "↓ 0 KB/s  ↑ 0 KB/s"
+                        text: "\uea16 0 KB/s  \uea25 0 KB/s"
                         color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
@@ -323,9 +323,9 @@ PanelWindow {
                                 let rxText = formatSpeed(rxDiff);
                                 let txText = formatSpeed(txDiff);
                                 
-                                networkSpeedText.text = "↓ " + rxText + "  ↑ " + txText;
+                                networkSpeedText.text = "\uea16 " + rxText + "  \uea25 " + txText;
                             } else {
-                                networkSpeedText.text = "↓ 0 KB/s  ↑ 0 KB/s";
+                                networkSpeedText.text = "\uea16 0 KB/s  \uea25 0 KB/s";
                             }
                             networkPill.lastRx = totalRx;
                             networkPill.lastTx = totalTx;
