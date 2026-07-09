@@ -165,7 +165,7 @@ Item {
 
     Process {
         id: btProcess
-        command: ["bash", "/home/code/.config/quickshell/modules/settings/bt_status.sh"]
+        command: ["python3", "/home/code/.config/quickshell/modules/settings/bt_status.py"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -438,6 +438,19 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
+                    
+                    // Rescan button
+                    Rectangle {
+                        visible: root.btRadioEnabled
+                        width: 32; height: 32; radius: 8
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                        Text { anchors.centerIn: parent; text: "\ueb38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
+                        MouseArea { 
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
+                            onClicked: { Quickshell.execDetached(["bluetoothctl", "--timeout", "10", "scan", "on"]); btProcess.running = true; } 
+                        }
+                    }
+
                     ToggleSwitch {
                         checked: root.btRadioEnabled
                         onToggled: Quickshell.execDetached(["bash", "-c", "bluetoothctl power " + (checked ? "on" : "off")])
