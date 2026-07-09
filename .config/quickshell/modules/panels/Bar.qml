@@ -192,6 +192,7 @@ PanelWindow {
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
+                Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
                 property real lastRx: 0
                 property real lastTx: 0
                 
@@ -223,7 +224,7 @@ PanelWindow {
                         font.family: Theme.defaultFontFamily
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && text !== ""
+                        visible: networkText.text !== "Disconnected" && text !== "" && !powerPill.actionsExpanded
                     }
                 }
                 
