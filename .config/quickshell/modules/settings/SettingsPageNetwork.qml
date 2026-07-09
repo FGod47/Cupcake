@@ -77,12 +77,47 @@ Item {
     // Background data
     // =====================================================================
 
+    property bool wifiRadioEnabled: true
+    property string wifiDeviceName: "Wi-Fi"
+    property string wifiDeviceState: "Checking..."
+
+    Process {
+        id: wifiRadioProcess
+        command: ["nmcli", "-t", "-f", "WIFI", "radio"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "enabled") root.wifiRadioEnabled = true;
+                else root.wifiRadioEnabled = false;
+            }
+        }
+    }
+
+    Process {
+        id: wifiDeviceProcess
+        command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "d"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const lines = text.trim().split("\n");
+                for (let i = 0; i < lines.length; i++) {
+                    const parts = lines[i].split(":");
+                    if (parts[1] === "wifi" && parts[0].indexOf("p2p") === -1) {
+                        root.wifiDeviceName = "Wi-Fi (" + parts[0] + ")";
+                        root.wifiDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     ListModel { id: wifiModel }
 
     Process {
         id: wifiProcess
         command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
-        running: true
+        running: root.wifiRadioEnabled
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: StdioCollector {
             onStreamFinished: {
@@ -108,6 +143,19 @@ Item {
                     seen[ssid] = true;
                     wifiModel.append({ ssid, inUse, isSecure, signal, expanded: false, password: "" });
                 }
+            }
+        }
+    }
+
+    Timer {
+        interval: 5000
+        running: root.visible
+        repeat: true
+        onTriggered: {
+            wifiRadioProcess.running = true;
+            wifiDeviceProcess.running = true;
+            if (root.wifiRadioEnabled) {
+                wifiProcess.running = true;
             }
         }
     }
@@ -144,23 +192,29 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Wi-Fi"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Connect to wireless networks"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: root.wifiDeviceName; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.wifiRadioEnabled ? root.wifiDeviceState : "Turned off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
 
                     // Rescan button
                     Rectangle {
+                        visible: root.wifiRadioEnabled
                         width: 32; height: 32; radius: 8
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                         Text { anchors.centerIn: parent; text: "\ueb38"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: wifiProcess.running = true }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { wifiDeviceProcess.running = true; wifiProcess.running = true; } }
                     }
 
                     ToggleSwitch {
-                        id: wifiSwitch; checked: true
-                        onToggled: Quickshell.execDetached(["nmcli", "radio", "wifi", checked ? "on" : "off"])
+                        id: wifiSwitch
+                        checked: root.wifiRadioEnabled
+                        onToggled: {
+                            Quickshell.execDetached(["nmcli", "radio", "wifi", checked ? "on" : "off"])
+                            root.wifiRadioEnabled = checked
+                            if (checked) { wifiProcess.running = true; wifiDeviceProcess.running = true; }
+                        }
                     }
 
                     // Collapse chevron
@@ -185,7 +239,7 @@ Item {
 
                 // Connected network(s)
                 Repeater {
-                    visible: root.wifiExpanded
+                    visible: root.wifiExpanded && root.wifiRadioEnabled
                     model: wifiModel
                     delegate: SettingsRow {
                         visible: model.inUse
@@ -215,7 +269,7 @@ Item {
 
                 // Other networks
                 Repeater {
-                    visible: root.wifiExpanded
+                    visible: root.wifiExpanded && root.wifiRadioEnabled
                     model: wifiModel
                     delegate: ColumnLayout {
                         visible: !model.inUse
@@ -302,7 +356,7 @@ Item {
 
                 // Add network link
                 Text {
-                    visible: root.wifiExpanded
+                    visible: root.wifiExpanded && root.wifiRadioEnabled
                     text: "+ Add network manually"
                     color: Theme.colPrimary
                     font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium
