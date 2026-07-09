@@ -342,8 +342,8 @@ Item {
 
                         ColumnLayout {
                             width: navScrollView.availableWidth
+                            height: Math.max(implicitHeight, navScrollView.availableHeight)
                             spacing: 8
-                            anchors.topMargin: 20
 
                             component NavHeader: Text {
                                 visible: navExpanded
@@ -382,8 +382,9 @@ Item {
                                 
                                 RowLayout {
                                     anchors.fill: parent
-                                    anchors.leftMargin: 24
-                                    spacing: 12
+                                    anchors.leftMargin: navExpanded ? 24 : 0
+                                    spacing: navExpanded ? 12 : 0
+                                    Behavior on anchors.leftMargin { NumberAnimation { duration: 150 } }
                                     
                                     Text {
                                         text: iconText
@@ -391,6 +392,8 @@ Item {
                                         font.family: "tabler-icons"
                                         font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                                         opacity: isActive ? 1.0 : 0.6
+                                        Layout.fillWidth: !navExpanded
+                                        horizontalAlignment: navExpanded ? Text.AlignLeft : Text.AlignHCenter
                                     }
                                     
                                     Text {
@@ -414,18 +417,20 @@ Item {
                                 }
                             }
 
-                        NavButton { iconText: "\ueb20"; labelText: "System"; pageIndex: 10 }
-                        NavButton { iconText: "\uea89"; labelText: "Display"; pageIndex: 18 }
-                        NavButton { iconText: "\ueb0d"; labelText: "Power"; pageIndex: 13 }
-                        NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
-                        NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
-                        NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
-                        NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
-                        NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
-                        NavButton { iconText: "\ueb4d"; labelText: "User"; pageIndex: 20 }
+                            Item { Layout.fillHeight: true } // Top Spacer
+
+                            NavButton { iconText: "\uea89"; labelText: "System"; pageIndex: 10 }
+                            NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
+                            NavButton { iconText: "\uea37"; labelText: "Bluetooth"; pageIndex: 22 }
+                            NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
+                            NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
+                            NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
+                            NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
+                            NavButton { iconText: "\ueb4d"; labelText: "User"; pageIndex: 20 }
+
                         NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
                         NavButton { iconText: "\ueb1f"; labelText: "Services"; pageIndex: 11 }
-                        NavButton { iconText: "\uf6d7"; labelText: "AI"; pageIndex: 19 }
+
                         NavButton { iconText: "\ueac5"; labelText: "About"; pageIndex: 21 }
 
                         Item { Layout.fillHeight: true } // Spacer
@@ -451,11 +456,12 @@ Item {
                             case 6: return { icon: "\uea35", title: "Notifications" };
                             case 7: return { icon: "\ueaed", title: "OSD" };
                             case 8: return { icon: "\uebdc", title: "Shell" };
-                            case 10: return { icon: "\ueb20", title: "System" };
+                            case 10: return { icon: "\uea89", title: "System" };
                             case 11: return { icon: "\ueb1f", title: "Services" };
                             case 12: return { icon: "\ueae8", title: "Location" };
                             case 13: return { icon: "\ueb0d", title: "Power" };
                             case 17: return { icon: "\ueb52", title: "Network" };
+                            case 22: return { icon: "\uea37", title: "Bluetooth" };
                             case 18: return { icon: "\uea89", title: "Display" };
                             case 19: return { icon: "\uf6d7", title: "AI" };
                             case 20: return { icon: "\ueb4d", title: "User" };
@@ -769,6 +775,17 @@ Item {
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
                     Loader { anchors.fill: parent; active: root.currentIndex === 17; source: "SettingsPageNetwork.qml" }
+                }
+
+                // PAGE 22: BLUETOOTH
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 22 ? 0 : 20
+                    opacity: root.currentIndex === 22 ? 1 : 0
+                    visible: root.currentIndex === 22 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 22; source: "SettingsPageBluetooth.qml" }
                 }
 
                 // PAGE 19: AI PANEL

@@ -10,7 +10,6 @@ Item {
     id: root
 
     property bool wifiExpanded: true
-    property bool btExpanded: true
 
     // =====================================================================
     // Reusable inline components — identical to SettingsPageAppearance
@@ -81,7 +80,6 @@ Item {
     property string wifiDeviceName: "Wi-Fi"
     property string wifiDeviceState: "Checking..."
     
-    property bool btRadioEnabled: false
     property bool hotspotEnabled: false
 
     Process {
@@ -200,31 +198,6 @@ Item {
         }
     }
 
-    ListModel { id: btModel }
-
-    Process {
-        id: btProcess
-        command: ["python3", "/home/code/.config/quickshell/modules/settings/bt_status.py"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const data = JSON.parse(text);
-                    root.btRadioEnabled = data.powered;
-                    
-                    if (data.powered) {
-                        let newDevices = data.devices || [];
-                        btModel.clear();
-                        for (let i = 0; i < newDevices.length; i++) {
-                            btModel.append(newDevices[i]);
-                        }
-                    } else {
-                        btModel.clear();
-                    }
-                } catch(e) {}
-            }
-        }
-    }
 
     Timer {
         interval: 5000
@@ -233,7 +206,6 @@ Item {
         onTriggered: {
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
-            btProcess.running = true;
             hotspotStatusProcess.running = true;
             hotspotDetailsProcess.running = true;
             hotspotPassProcess.running = true;
@@ -624,115 +596,6 @@ Item {
                 }
             }
 
-            // ── Bluetooth ─────────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "Bluetooth" }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea37"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Bluetooth"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Manage paired and nearby devices"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    
-                    // Rescan button
-                    Rectangle {
-                        visible: root.btRadioEnabled
-                        width: 32; height: 32; radius: 8
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                        Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
-                        MouseArea { 
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
-                            onClicked: { Quickshell.execDetached(["bluetoothctl", "--timeout", "10", "scan", "on"]); btProcess.running = true; } 
-                        }
-                    }
-
-                    ToggleSwitch {
-                        checked: root.btRadioEnabled
-                        onToggled: Quickshell.execDetached(["bash", "-c", "bluetoothctl power " + (checked ? "on" : "off")])
-                    }
-                    // Collapse chevron
-                    Text {
-                        id: btChevron
-                        text: "\uea5e"
-                        font.family: "tabler-icons"; font.pixelSize: 18
-                        color: Theme.colOnSurfaceVariant; opacity: 0.5
-                        rotation: root.btExpanded ? 0 : -90
-                        Behavior on rotation { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                        MouseArea {
-                            width: 200; height: 44
-                            x: -180; y: -14
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.btExpanded = !root.btExpanded
-                        }
-                    }
-                }
-
-                Repeater {
-                    visible: root.btExpanded
-                    model: btModel
-                    delegate: SettingsRow {
-                        RowLayout {
-                            spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: model.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                Text { anchors.centerIn: parent; text: "\uea37"; color: model.connected ? Theme.colPrimary : Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: model.name; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: model.connected ? "Connected" : (model.paired ? "Paired" : "Available"); color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        
-                        // Status Badge / Action Button
-                        Rectangle {
-                            width: model.connected ? 74 : (model.paired ? 52 : 44)
-                            height: 24; radius: 6
-                            color: model.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
-                            Text { 
-                                anchors.centerIn: parent
-                                text: model.connected ? "Connected" : (model.paired ? "Paired" : "Pair")
-                                color: model.connected ? Theme.colPrimary : Theme.colOnSurfaceVariant
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium 
-                            }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (model.connected) {
-                                        Quickshell.execDetached(["bluetoothctl", "disconnect", model.mac]);
-                                    } else {
-                                        Quickshell.execDetached(["bluetoothctl", "connect", model.mac]);
-                                    }
-                                    btProcess.running = true;
-                                }
-                            }
-                        }
-                        
-                        Text { 
-                            text: "\ueb41"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Quickshell.execDetached(["bluetoothctl", "remove", model.mac]);
-                                    btProcess.running = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             // ── Ethernet ──────────────────────────────────────────────────
             SettingsCard {

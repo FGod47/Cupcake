@@ -7,7 +7,7 @@ import "../../theme"
 import "../common"
 
 Item {
-    id: root
+    id: systemPageRoot
 
     // =====================================================================
     // Reusable inline components (matching Dock page style)
@@ -51,6 +51,7 @@ Item {
         property string iconName: ""
         property string title: ""
         property string subtitle: ""
+        property int pageIndex: -1
 
         RowLayout {
             spacing: 12
@@ -86,6 +87,18 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                if (listItem.pageIndex !== -1) {
+                    var p = systemPageRoot;
+                    while (p) {
+                        if (p.currentIndex !== undefined) {
+                            p.currentIndex = listItem.pageIndex;
+                            break;
+                        }
+                        p = p.parent;
+                    }
+                }
+            }
         }
     }
 
@@ -194,7 +207,7 @@ Item {
             SettingsCard {
                 SectionLabel { text: "Device" }
 
-                SystemListItem { iconName: "\uea89"; title: "Display"; subtitle: "Monitors, brightness, night light, display profile" }
+                SystemListItem { iconName: "\uea89"; title: "Display"; subtitle: "Monitors, brightness, night light, display profile"; pageIndex: 18 }
                 SystemListItem { iconName: "\ueb4f"; title: "Sound"; subtitle: "Volume levels, output, input, sound devices" }
                 SystemListItem { iconName: "\ueb0d"; title: "Power & battery"; subtitle: "Sleep, battery usage, power profiles" }
                 SystemListItem { iconName: "\ueadc"; title: "Storage"; subtitle: "Disk usage, drives, mount points" }
