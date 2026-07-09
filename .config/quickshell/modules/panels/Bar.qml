@@ -187,12 +187,17 @@ PanelWindow {
             // Network Pill
             Rectangle {
                 id: networkPill
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                
+                property bool isWifi: false
+                property bool isWired: false
+                
+                color: isWired ? "#7862de" : (isWifi ? "#389b6c" : (root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface))
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
                 Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+                Behavior on color { ColorAnimation { duration: 300 } }
                 property real lastRx: 0
                 property real lastTx: 0
                 
@@ -203,7 +208,7 @@ PanelWindow {
                     Text {
                         id: networkIcon
                         text: ""
-                        color: fg
+                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : fg
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
@@ -211,18 +216,29 @@ PanelWindow {
                     Text {
                         id: networkText
                         text: ""
-                        color: fg
+                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : fg
                         font.family: Theme.defaultFontFamily
-                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                        font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
                         visible: text !== ""
                     }
+                    
+                    // Separator
+                    Rectangle {
+                        width: 1
+                        height: 14
+                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : Theme.colOnSurfaceVariant
+                        opacity: 0.4
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkSpeedText.visible
+                    }
+                    
                     Text {
                         id: networkSpeedText
                         text: ""
-                        color: Theme.colOnSurfaceVariant
+                        color: (networkPill.isWifi || networkPill.isWired) ? "#ffffff" : Theme.colOnSurfaceVariant
                         font.family: Theme.defaultFontFamily
-                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 3
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkText.text !== "Disconnected" && text !== "" && !powerPill.actionsExpanded
                     }
@@ -254,12 +270,18 @@ PanelWindow {
                             }
                             
                             if (activeWifi !== "") {
+                                networkPill.isWifi = true;
+                                networkPill.isWired = false;
                                 networkIcon.text = "";
                                 networkText.text = activeWifi;
                             } else if (activeEthernet) {
+                                networkPill.isWifi = false;
+                                networkPill.isWired = true;
                                 networkIcon.text = "󰈀";
                                 networkText.text = "Wired";
                             } else {
+                                networkPill.isWifi = false;
+                                networkPill.isWired = false;
                                 networkIcon.text = "󰖪";
                                 networkText.text = "Disconnected";
                             }
