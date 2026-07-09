@@ -219,13 +219,13 @@ PanelWindow {
                     id: networkProc
                     command: ["nmcli", "-t", "-f", "TYPE,STATE,CONNECTION", "d"]
                     stdout: StdioCollector {
-                        onStreamFinished: (data) => {
-                            if (!data) {
+                        onStreamFinished: () => {
+                            if (!text) {
                                 networkIcon.text = "󰖪"
                                 networkText.text = "Disconnected"
                                 return;
                             }
-                            const lines = data.trim().split("\n");
+                            const lines = text.trim().split("\n");
                             let activeWifi = "";
                             let activeEthernet = false;
                             
