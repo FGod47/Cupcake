@@ -189,15 +189,30 @@ PanelWindow {
                 color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
-                implicitWidth: networkText.implicitWidth + 32
+                implicitWidth: networkRow.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
-                Text {
-                    id: networkText
+                
+                Row {
+                    id: networkRow
                     anchors.centerIn: parent
-                    text: ""
-                    color: fg
-                    font.family: fontName
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                    spacing: 8
+                    Text {
+                        id: networkIcon
+                        text: ""
+                        color: fg
+                        font.family: fontName
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        id: networkText
+                        text: ""
+                        color: fg
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: text !== ""
+                    }
                 }
                 
                 Process {
@@ -206,7 +221,8 @@ PanelWindow {
                     stdout: StdioCollector {
                         onStreamFinished: (data) => {
                             if (!data) {
-                                networkText.text = "󰖪  Disconnected"
+                                networkIcon.text = "󰖪"
+                                networkText.text = "Disconnected"
                                 return;
                             }
                             const lines = data.trim().split("\n");
@@ -225,11 +241,14 @@ PanelWindow {
                             }
                             
                             if (activeWifi !== "") {
-                                networkText.text = "  " + activeWifi;
+                                networkIcon.text = "";
+                                networkText.text = activeWifi;
                             } else if (activeEthernet) {
-                                networkText.text = "󰈀  Wired";
+                                networkIcon.text = "󰈀";
+                                networkText.text = "Wired";
                             } else {
-                                networkText.text = "󰖪  Disconnected";
+                                networkIcon.text = "󰖪";
+                                networkText.text = "Disconnected";
                             }
                         }
                     }
