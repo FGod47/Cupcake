@@ -223,6 +223,26 @@ PanelWindow {
                         visible: text !== ""
                     }
                     
+                    // Separator
+                    Rectangle {
+                        width: 1
+                        height: 14
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                        opacity: 0.4
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkSpeedText.visible
+                    }
+                    
+                    Text {
+                        id: networkSpeedText
+                        text: ""
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                        anchors.verticalCenter: parent.verticalCenter
+                        // Hide if speed is empty or disconnected
+                        visible: networkText.text !== "Disconnected" && text !== "" && !powerPill.actionsExpanded
+                    }
                 }
                 
                 Process {
@@ -273,6 +293,58 @@ PanelWindow {
                 Timer {
                     interval: 2000; running: true; repeat: true
                     onTriggered: networkProc.running = true
+                }
+                
+                Process {
+                    id: speedProc
+                    command: ["cat", "/proc/net/dev"]
+                    stdout: StdioCollector {
+                        onStreamFinished: () => {
+                            if (!text) return;
+                            const lines = text.trim().split("\n");
+                            let totalRx = 0;
+                            let totalTx = 0;
+                            for (let i = 2; i < lines.length; i++) {
+                                const parts = lines[i].trim().split(/\s+/);
+                                if (parts.length >= 10 && (parts[0].startsWith("en") || parts[0].startsWith("wl") || parts[0].startsWith("eth"))) {
+                                    totalRx += parseInt(parts[1]);
+                                    totalTx += parseInt(parts[9]);
+                                }
+                            }
+                            
+                            if (networkPill.lastRx > 0 && networkPill.lastTx > 0) {
+                                let rxDiff = totalRx - networkPill.lastRx;
+                                let txDiff = totalTx - networkPill.lastTx;
+                                
+                                let formatSpeed = (bytes) => {
+                                    if (bytes > 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
+                                    if (bytes >= 1024) return (bytes / 1024).toFixed(0) + " KB/s";
+                                    return ""; // Hide if it's under 1KB/s (i.e. just bytes)
+                                }
+                                
+                                let rxText = formatSpeed(rxDiff);
+                                let txText = formatSpeed(txDiff);
+                                
+                                if (rxText === "" && txText === "") {
+                                    networkSpeedText.text = ""; // Hide the text completely
+                                } else {
+                                    // If one is empty but the other isn't, fallback to 0 KB/s for the empty one
+                                    if (rxText === "") rxText = "0 KB/s";
+                                    if (txText === "") txText = "0 KB/s";
+                                    networkSpeedText.text = "↓ " + rxText + "  ↑ " + txText;
+                                }
+                            } else {
+                                networkSpeedText.text = "";
+                            }
+                            networkPill.lastRx = totalRx;
+                            networkPill.lastTx = totalTx;
+                        }
+                    }
+                }
+                
+                Timer {
+                    interval: 1000; running: true; repeat: true
+                    onTriggered: speedProc.running = true
                 }
             }
 
