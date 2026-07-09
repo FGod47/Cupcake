@@ -186,6 +186,7 @@ PanelWindow {
 
             // Network Pill
             Rectangle {
+                id: networkPill
                 color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
@@ -282,9 +283,9 @@ PanelWindow {
                                 }
                             }
                             
-                            if (parent.lastRx > 0 && parent.lastTx > 0) {
-                                let rxDiff = totalRx - parent.lastRx;
-                                let txDiff = totalTx - parent.lastTx;
+                            if (networkPill.lastRx > 0 && networkPill.lastTx > 0) {
+                                let rxDiff = totalRx - networkPill.lastRx;
+                                let txDiff = totalTx - networkPill.lastTx;
                                 
                                 let formatSpeed = (bytes) => {
                                     if (bytes > 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
@@ -296,8 +297,8 @@ PanelWindow {
                             } else {
                                 networkSpeedText.text = "↓ 0 B/s  ↑ 0 B/s";
                             }
-                            parent.lastRx = totalRx;
-                            parent.lastTx = totalTx;
+                            networkPill.lastRx = totalRx;
+                            networkPill.lastTx = totalTx;
                         }
                     }
                 }
