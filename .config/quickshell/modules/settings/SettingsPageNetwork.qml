@@ -121,6 +121,15 @@ Item {
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: StdioCollector {
             onStreamFinished: {
+                let oldExpanded = {};
+                let oldPasswords = {};
+                for (let i = 0; i < wifiModel.count; i++) {
+                    const item = wifiModel.get(i);
+                    if (item.expanded) {
+                        oldExpanded[item.ssid] = true;
+                        oldPasswords[item.ssid] = item.password;
+                    }
+                }
                 wifiModel.clear();
                 const textStr = text.trim();
                 if (textStr === "") return;
@@ -141,7 +150,10 @@ Item {
                     if (ssid === "" || ssid === "--") continue;
                     if (seen[ssid]) continue;
                     seen[ssid] = true;
-                    wifiModel.append({ ssid, inUse, isSecure, signal, expanded: false, password: "" });
+                    
+                    const isExpanded = oldExpanded[ssid] ? true : false;
+                    const savedPwd = oldPasswords[ssid] ? oldPasswords[ssid] : "";
+                    wifiModel.append({ ssid, inUse, isSecure, signal, expanded: isExpanded, password: savedPwd });
                 }
             }
         }
