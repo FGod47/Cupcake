@@ -36,12 +36,12 @@ PanelWindow {
         id: bg
         width: parent.width
         height: Math.max(48, mainCol.implicitHeight + 28)
-        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+        Behavior on height { NumberAnimation { duration: 900; easing.type: Easing.OutExpo } }
         clip: true
         radius: 24
         color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.osdOpacity)
         opacity: osdWindow.visible ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.InOutQuad } }
+        Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
         
         MouseArea {
             id: osdHover
@@ -114,7 +114,8 @@ PanelWindow {
                 height: osdHover.containsMouse ? innerCol.implicitHeight : 0
                 opacity: osdHover.containsMouse ? 1 : 0
                 visible: height > 0 || opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.InOutQuad } }
+                clip: true
+                Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.InOutCubic } }
                 
                 Column {
                     id: innerCol
