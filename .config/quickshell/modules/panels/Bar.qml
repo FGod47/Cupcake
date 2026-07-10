@@ -796,20 +796,41 @@ PanelWindow {
                                 text: "Power "
                                 color: bg
                                 font.family: Theme.defaultFontFamily
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                                font.weight: Theme.defaultFontWeight
+                                font.pixelSize: Theme.defaultFontSize
                                 visible: !powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             
-                            // State 2: Clicked Actions
+                            // State 2: Clicked Actions — single Text per button keeps icon+label in same font run, fixing all alignment issues
                             Row {
-                                spacing: 12
+                                spacing: 14
                                 visible: powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
-                                Item { implicitWidth: sleepRow.implicitWidth; implicitHeight: sleepRow.implicitHeight; Row { id: sleepRow; spacing: 4; Text { text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Sleep "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } } }
-                                Item { implicitWidth: logoutRow.implicitWidth; implicitHeight: logoutRow.implicitHeight; Row { id: logoutRow; spacing: 4; Text { text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Logout "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } } }
-                                Item { implicitWidth: rebootRow.implicitWidth; implicitHeight: rebootRow.implicitHeight; Row { id: rebootRow; spacing: 4; Text { text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Reboot "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } } }
-                                Item { implicitWidth: shutdownRow.implicitWidth; implicitHeight: shutdownRow.implicitHeight; Row { id: shutdownRow; spacing: 4; Text { text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } Text { text: "Shutdown "; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 } } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } } }
+
+                                Item {
+                                    width: sleepLabel.implicitWidth; height: 34
+                                    Text { id: sleepLabel; anchors.centerIn: parent; text: "\ueaf8  Sleep "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } }
+                                }
+
+                                Item {
+                                    width: logoutLabel.implicitWidth; height: 34
+                                    Text { id: logoutLabel; anchors.centerIn: parent; text: "\ueba8  Logout "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } }
+                                }
+
+                                Item {
+                                    width: rebootLabel.implicitWidth; height: 34
+                                    Text { id: rebootLabel; anchors.centerIn: parent; text: "\ueb13  Reboot "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } }
+                                }
+
+                                Item {
+                                    width: shutdownLabel.implicitWidth; height: 34
+                                    Text { id: shutdownLabel; anchors.centerIn: parent; text: "\ueb0d  Shutdown "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
+                                }
                             }
                         }
                     }
@@ -819,7 +840,8 @@ PanelWindow {
                         text: "\ueb0d"
                         color: bg
                         font.family: fontName
-                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !powerPill.actionsExpanded
                     }

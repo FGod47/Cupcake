@@ -152,7 +152,7 @@ Rectangle {
                 Text {
                     id: timeLabel
                     color: "#f5f5f5"
-                    font.pixelSize: 130
+                    font.pixelSize: 64
                     font.weight: Font.Medium
                     font.family: fontName
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -161,7 +161,7 @@ Rectangle {
                 Text {
                     id: dateLabel
                     color: "#a0a0a0"
-                    font.pixelSize: 22
+                    font.pixelSize: 18
                     font.family: fontName
                     font.weight: Font.Medium
                     anchors.horizontalCenter: parent.horizontalCenter
