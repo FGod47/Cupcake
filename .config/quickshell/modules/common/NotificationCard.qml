@@ -54,12 +54,12 @@ Item {
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton
             preventStealing: true
-            onEntered: { if (!wrapper.inPanel && notificationData && notificationData.timer) notificationData.timer.stop() }
-            onExited:  { if (!pressed && !wrapper.inPanel && notificationData && notificationData.timer) notificationData.timer.start() }
+            onEntered: { if (!wrapper.inPanel) globalState.popupHovered = true; }
+            onExited:  { if (!pressed && !wrapper.inPanel) globalState.popupHovered = false; }
             drag.target: toastCard
             drag.axis: Drag.XAxis
             onPressed: event => {
-                if (!wrapper.inPanel && notificationData && notificationData.timer) notificationData.timer.stop()
+                if (!wrapper.inPanel) globalState.popupHovered = true;
                 startY = event.y
                 if (event.button === Qt.MiddleButton) {
                     if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== notificationData)
@@ -67,7 +67,9 @@ Item {
                 }
             }
             onReleased: event => {
-                if (!containsMouse && !wrapper.inPanel && notificationData && notificationData.timer) notificationData.timer.start()
+                if (!containsMouse && !wrapper.inPanel) {
+                    globalState.popupHovered = false;
+                }
                 if (Math.abs(toastCard.x) < 150) {
                     toastCard.x = 0
                 } else {

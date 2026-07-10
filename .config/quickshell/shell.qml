@@ -98,6 +98,20 @@ ShellRoot {
         property bool settingsOpen: false
         property real dimOverlay: 0.0
         property real notifPanelOpacity: 0.90
+        property bool popupHovered: false
+        onPopupHoveredChanged: {
+            if (popupHovered) {
+                islandTimer.stop();
+                islandHideTimer.stop();
+                islandCloseTimer.stop();
+                closingIsland = false;
+                hideIsland = false;
+            } else {
+                if (popups.length > 0) {
+                    islandTimer.restart();
+                }
+            }
+        }
     }
 
     Process {
