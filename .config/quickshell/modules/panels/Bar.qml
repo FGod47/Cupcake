@@ -221,7 +221,7 @@ PanelWindow {
                         font.family: Theme.defaultFontFamily
                         font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== "" && !powerPill.actionsExpanded
+                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded
                     }
                     
                     Rectangle {
@@ -230,7 +230,7 @@ PanelWindow {
                         color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                         opacity: 0.4
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && networkSpeedText.text !== "" && !powerPill.actionsExpanded
+                        visible: networkText.text !== "Disconnected" && networkSpeedText.text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded
                     }
                     
                     Text {
@@ -240,7 +240,7 @@ PanelWindow {
                         font.family: Theme.defaultFontFamily
                         font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded
                     }
                 }
                 
