@@ -134,14 +134,14 @@ Rectangle {
             id: clockColumn
             z: 5
             anchors.top: parent.top
-            anchors.topMargin: 81
+            anchors.topMargin: 120
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 23
 
             Text {
                 id: timeLabel
                 color: "#f5f5f5"
-                font.pixelSize: 64
+                font.pixelSize: 84
                 font.weight: Font.Medium
                 font.family: fontName
                 anchors.horizontalCenter: parent.horizontalCenter
