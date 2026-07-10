@@ -64,6 +64,7 @@ PanelWindow {
 
     Item {
         // Fixed 46px top strip — never resizes when bar grows
+        z: 10
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -802,33 +803,57 @@ PanelWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             
-                            // State 2: Clicked Actions — single Text per button keeps icon+label in same font run, fixing all alignment issues
+                            // State 2: Clicked Actions
                             Row {
                                 spacing: 14
                                 visible: powerPill.actionsExpanded
                                 anchors.verticalCenter: parent.verticalCenter
 
+                                // Sleep
                                 Item {
-                                    width: sleepLabel.implicitWidth; height: 34
-                                    Text { id: sleepLabel; anchors.centerIn: parent; text: "\ueaf8  Sleep "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    width: sleepIconText.implicitWidth + sleepLabelText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: sleepIconText; text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: sleepLabelText; text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } }
                                 }
 
+                                // Logout
                                 Item {
-                                    width: logoutLabel.implicitWidth; height: 34
-                                    Text { id: logoutLabel; anchors.centerIn: parent; text: "\ueba8  Logout "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    width: logoutIconText.implicitWidth + logoutLabelText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: logoutIconText; text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: logoutLabelText; text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } }
                                 }
 
+                                // Reboot
                                 Item {
-                                    width: rebootLabel.implicitWidth; height: 34
-                                    Text { id: rebootLabel; anchors.centerIn: parent; text: "\ueb13  Reboot "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    width: rebootIconText.implicitWidth + rebootLabelText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: rebootIconText; text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: rebootLabelText; text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } }
                                 }
 
+                                // Shutdown
                                 Item {
-                                    width: shutdownLabel.implicitWidth; height: 34
-                                    Text { id: shutdownLabel; anchors.centerIn: parent; text: "\ueb0d  Shutdown "; color: bg; font.family: fontName + ", " + Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600 }
+                                    width: shutdownIconText.implicitWidth + shutdownLabelText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
                                 }
                             }
