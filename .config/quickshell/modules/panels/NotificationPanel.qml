@@ -448,10 +448,28 @@ PanelWindow {
                                 }
                                 
                                 delegate: Rectangle {
+                                    id: delegateRoot
                                     width: notifList.width
                                     height: notifCol.height + 24
                                     color: bgSurface0
                                     radius: 16
+                                    
+                                    // Cache properties locally to prevent flickering/type-errors during removal animation
+                                    property string summaryText: ""
+                                    property string bodyText: ""
+                                    property var timeVal: null
+                                    property string appIconVal: ""
+                                    property string imageVal: ""
+                                    
+                                    Component.onCompleted: {
+                                        if (modelData) {
+                                            summaryText = modelData.summary || "";
+                                            bodyText = modelData.body || "";
+                                            timeVal = modelData.time;
+                                            appIconVal = modelData.appIcon || "";
+                                            imageVal = modelData.image || "";
+                                        }
+                                    }
                                     
                                     // Function to format time relatively
                                     function getRelativeTime(timeVal) {
@@ -482,13 +500,12 @@ PanelWindow {
                                                 anchors.fill: parent
                                                 anchors.margins: 4
                                                 source: {
-                                                    if (!modelData) return "";
-                                                    if (modelData.image) return modelData.image;
-                                                    if (modelData.appIcon) {
-                                                        if (modelData.appIcon.startsWith("/")) {
-                                                            return "file://" + modelData.appIcon;
+                                                    if (imageVal) return imageVal;
+                                                    if (appIconVal) {
+                                                        if (appIconVal.startsWith("/")) {
+                                                            return "file://" + appIconVal;
                                                         }
-                                                        return "image://icon/" + modelData.appIcon;
+                                                        return "image://icon/" + appIconVal;
                                                     }
                                                     return "";
                                                 }
@@ -511,10 +528,10 @@ PanelWindow {
                                             spacing: 3
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Text { text: modelData.summary || "Notification"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700; Layout.fillWidth: true }
-                                                Text { text: getRelativeTime(modelData.time); color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                                Text { text: summaryText || "Notification"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700; Layout.fillWidth: true }
+                                                Text { text: getRelativeTime(timeVal); color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                                             }
-                                            Text { text: modelData.body || ""; color: textSubtext1; font.family: Theme.defaultFontFamily; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true; maximumLineCount: 2; elide: Text.ElideRight }
+                                            Text { text: bodyText || ""; color: textSubtext1; font.family: Theme.defaultFontFamily; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true; maximumLineCount: 2; elide: Text.ElideRight }
                                             
                                             // Dismiss/Copy Action Row
                                             RowLayout {
@@ -529,7 +546,7 @@ PanelWindow {
                                                         Text { text: "\ueb55"; font.family: "tabler-icons"; color: textText; font.pixelSize: 10; anchors.verticalCenter: parent.verticalCenter }
                                                         Text { text: "Dismiss"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; anchors.verticalCenter: parent.verticalCenter }
                                                     }
-                                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.dismiss() }
+                                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { if (modelData) modelData.dismiss() } }
                                                 }
                                                 
                                                 Rectangle {
@@ -538,8 +555,8 @@ PanelWindow {
                                                     MouseArea {
                                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
                                                         onClicked: {
-                                                            Quickshell.execDetached(["wl-copy", modelData.body || ""]);
-                                                            modelData.dismiss();
+                                                            Quickshell.execDetached(["wl-copy", bodyText || ""]);
+                                                            if (modelData) modelData.dismiss();
                                                         }
                                                     }
                                                 }
