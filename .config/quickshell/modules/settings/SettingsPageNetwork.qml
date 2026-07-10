@@ -210,6 +210,10 @@ Item {
         }
     }
 
+    Process {
+        id: wifiRescanProcess
+        command: ["nmcli", "device", "wifi", "rescan"]
+    }
 
     Timer {
         interval: 5000
@@ -259,10 +263,18 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
+
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                             Text { anchors.centerIn: parent; text: "\ueb52"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            MouseArea {
+                                width: 250; height: 44
+                                anchors.verticalCenter: parent.verticalCenter
+                                x: -8
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.wifiExpanded = !root.wifiExpanded
+                            }
                         }
                         ColumnLayout {
                             spacing: 1
@@ -274,11 +286,45 @@ Item {
 
                     // Rescan button
                     Rectangle {
+                        id: wifiRescanButton
+                        property bool isScanning: false
                         visible: root.wifiRadioEnabled
                         width: 32; height: 32; radius: 8
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                        Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 15 }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { wifiDeviceProcess.running = true; wifiProcess.running = true; } }
+                        
+                        Timer {
+                            id: wifiRescanTimer
+                            interval: 3000
+                            running: false
+                            repeat: false
+                            onTriggered: {
+                                wifiRescanButton.isScanning = false;
+                                wifiDeviceProcess.running = true;
+                                wifiProcess.running = true;
+                            }
+                        }
+
+                        Text { 
+                            anchors.centerIn: parent; text: "\ueb13"
+                            color: wifiRescanButton.isScanning ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                            font.family: "tabler-icons"; font.pixelSize: 15 
+                            RotationAnimation on rotation {
+                                running: wifiRescanButton.isScanning
+                                loops: Animation.Infinite
+                                from: 0; to: 360
+                                duration: 1000
+                            }
+                        }
+                        MouseArea { 
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
+                            onClicked: { 
+                                if (!wifiRescanButton.isScanning) {
+                                    wifiRescanButton.isScanning = true;
+                                    wifiRescanProcess.running = true;
+                                    wifiRescanTimer.running = true;
+                                }
+                            } 
+                        }
                     }
 
                     ToggleSwitch {
@@ -288,25 +334,6 @@ Item {
                             Quickshell.execDetached(["nmcli", "radio", "wifi", checked ? "on" : "off"])
                             root.wifiRadioEnabled = checked
                             if (checked) { wifiProcess.running = true; wifiDeviceProcess.running = true; }
-                        }
-                    }
-
-                    // Collapse chevron
-                    Text {
-                        id: wifiChevron
-                        text: "\uea5e"
-                        font.family: "tabler-icons"; font.pixelSize: 18
-                        color: Theme.colOnSurfaceVariant; opacity: 0.5
-                        rotation: root.wifiExpanded ? 0 : -90
-                        Behavior on rotation { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                        MouseArea {
-                            anchors.fill: parent
-                            width: 200; height: 44
-                            anchors.horizontalCenter: undefined
-                            anchors.verticalCenter: undefined
-                            x: -180; y: -14
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.wifiExpanded = !root.wifiExpanded
                         }
                     }
                 }

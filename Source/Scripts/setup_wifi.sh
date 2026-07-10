@@ -16,3 +16,8 @@ EOF'
 else
     echo -e "   \033[1;33m[SKIP]\033[0m MT7902 adapter not found. Skipping MT7902 driver override."
 fi
+
+echo -e "\n   \033[1;36m[ACTION]\033[0m Enabling IPv4 forwarding for Hotspot support..."
+sudo bash -c 'echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/90-ipforward.conf'
+sudo sysctl -p /etc/sysctl.d/90-ipforward.conf >/dev/null 2>&1
+echo -e "   \033[1;32m[DONE]\033[0m IPv4 forwarding enabled."
