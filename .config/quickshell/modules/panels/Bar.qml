@@ -64,7 +64,7 @@ PanelWindow {
 
     Item {
         // Fixed 46px top strip — never resizes when bar grows
-        z: 10
+        z: 1
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -893,6 +893,7 @@ PanelWindow {
         
         Rectangle {
             id: archPill
+            z: 20
             y: 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
