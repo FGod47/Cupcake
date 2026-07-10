@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STATE_FILE="/tmp/waybar_clock_state"
+STATE_FILE="/tmp/cupcake_clock_state"
 STATE="compact"
 
 # Correct fallback if file exists

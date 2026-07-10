@@ -699,9 +699,17 @@ PanelWindow {
                                             globalState.notifPanelVisible = !globalState.notifPanelVisible;
                                         } else {
                                             Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh");
+                                            clockUpdateTimer.start();
                                         }
                                     }
                                 }
+                            }
+                            
+                            Timer {
+                                id: clockUpdateTimer
+                                interval: 100
+                                repeat: false
+                                onTriggered: clockProc.running = true
                             }
                             
                             Process {
