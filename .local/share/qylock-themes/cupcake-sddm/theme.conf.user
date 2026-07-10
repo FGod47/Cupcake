@@ -1,5 +1,5 @@
 [General]
-background=background.webp
+background=background.png
 blurRadius=45
 backgroundFillMode=aspect
 passwordCursorColor=#ffffff

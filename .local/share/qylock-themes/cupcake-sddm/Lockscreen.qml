@@ -1,7 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.0
 import SddmComponents 2.0
-import Qt5Compat.GraphicalEffects
 
 Rectangle {
     id: root
@@ -109,20 +107,13 @@ Rectangle {
                 source: "file:///tmp/lockbg.png"
                 smooth: true
                 fillMode: Image.PreserveAspectCrop
-                z: 2
+                z: 3
 
                 onStatusChanged: {
                     if (status === Image.Error) {
                         source = config.background || "background.webp"
                     }
                 }
-            }
-            FastBlur {
-                id: fastBlur
-                z: 3
-                anchors.fill: image
-                source: image
-                radius: 120 // heavily blurred
             }
             Rectangle {
                 z: 4

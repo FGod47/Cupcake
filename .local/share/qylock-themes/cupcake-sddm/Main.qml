@@ -1,7 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.0
 import SddmComponents 2.0
-import Qt5Compat.GraphicalEffects
 
 Rectangle {
     id: root
@@ -57,14 +55,7 @@ Rectangle {
                 source: config.background || "background.webp"
                 smooth: true
                 fillMode: Image.PreserveAspectCrop
-                z: 2
-            }
-            FastBlur {
-                id: fastBlur
                 z: 3
-                anchors.fill: image
-                source: image
-                radius: 65 // heavily blurred as in screenshot
             }
             Rectangle {
                 z: 4
