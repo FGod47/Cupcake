@@ -30,8 +30,8 @@ PanelWindow {
     
     // Exact colors matching the screenshot (Catppuccin Mocha themed)
     property color bgBase: "#11111b"       // crust
-    property color bgMantle: "#181825"     // mantle
-    property color bgSurface0: "#1e1e2e"   // base
+    property color bgMantle: Qt.rgba(0.094, 0.094, 0.145, 0.60)     // mantle (semi-transparent)
+    property color bgSurface0: Qt.rgba(0.118, 0.118, 0.180, 0.45)   // base (semi-transparent)
     property color bgSurface1: "#313244"   // surface0
     property color textText: "#cdd6f4"     // text
     property color textSubtext0: "#a6adc8"   // subtext0
