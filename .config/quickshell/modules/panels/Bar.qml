@@ -221,7 +221,7 @@ PanelWindow {
                         font.family: Theme.defaultFontFamily
                         font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== ""
+                        visible: text !== "" && !powerPill.actionsExpanded
                     }
                     
                     Rectangle {
@@ -230,7 +230,7 @@ PanelWindow {
                         color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                         opacity: 0.4
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && networkSpeedText.text !== ""
+                        visible: networkText.text !== "Disconnected" && networkSpeedText.text !== "" && !powerPill.actionsExpanded
                     }
                     
                     Text {
