@@ -421,6 +421,7 @@ Item {
 
                             NavButton { iconText: "\uea89"; labelText: "System"; pageIndex: 10 }
                             NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
+                            NavButton { iconText: "\ued1b"; labelText: "Hotspot"; pageIndex: 23 }
                             NavButton { iconText: "\uea37"; labelText: "Bluetooth"; pageIndex: 22 }
                             NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
                             NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
@@ -459,6 +460,7 @@ Item {
                             case 12: return { icon: "\ueae8", title: "Location" };
                             case 13: return { icon: "\ueb0d", title: "Power" };
                             case 17: return { icon: "\ueb52", title: "Network" };
+                            case 23: return { icon: "\ued1b", title: "Hotspot" };
                             case 22: return { icon: "\uea37", title: "Bluetooth" };
                             case 18: return { icon: "\uea89", title: "Display" };
                             case 19: return { icon: "\uf6d7", title: "AI" };
@@ -784,6 +786,17 @@ Item {
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                     Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
                     Loader { anchors.fill: parent; active: root.currentIndex === 22; source: "SettingsPageBluetooth.qml" }
+                }
+
+                // PAGE 23: HOTSPOT
+                Item {
+                    anchors.fill: parent
+                    anchors.topMargin: root.currentIndex === 23 ? 0 : 20
+                    opacity: root.currentIndex === 23 ? 1 : 0
+                    visible: root.currentIndex === 23 || opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on anchors.topMargin { NumberAnimation { duration: 300; easing.type: Easing.OutBack } }
+                    Loader { anchors.fill: parent; active: root.currentIndex === 23; source: "SettingsPageHotspot.qml" }
                 }
 
                 // PAGE 19: AI PANEL
