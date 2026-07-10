@@ -20,7 +20,7 @@ PanelWindow {
         right: 12
     }
     implicitWidth: 360
-    implicitHeight: Math.min(mainLayout.implicitHeight + 28, (screen ? screen.height : 1080) - 70)
+    implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
     visible: globalState.notifPanelVisible || panelBg.width > 0
