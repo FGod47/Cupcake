@@ -127,30 +127,6 @@ PanelWindow {
                                 Row {
                                     spacing: 16
                                     
-                                    // Edit
-                                    Text {
-                                        text: "\uea8c"
-                                        font.family: "tabler-icons"
-                                        color: textSubtext0
-                                        font.pixelSize: 16
-                                        MouseArea {
-                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached("antigravity-ide")
-                                        }
-                                    }
-                                    
-                                    // Refresh
-                                    Text {
-                                        text: "\ueb13"
-                                        font.family: "tabler-icons"
-                                        color: textSubtext0
-                                        font.pixelSize: 16
-                                        MouseArea {
-                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached("quickshell -c cupcake --replace")
-                                        }
-                                    }
-                                    
                                     // Settings
                                     Text {
                                         text: "\ueb20"
@@ -160,18 +136,6 @@ PanelWindow {
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: Quickshell.execDetached("quickshell -p ~/.config/quickshell/Settings.qml")
-                                        }
-                                    }
-                                    
-                                    // Power
-                                    Text {
-                                        text: "\ueb0d"
-                                        font.family: "tabler-icons"
-                                        color: textSubtext0
-                                        font.pixelSize: 16
-                                        MouseArea {
-                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached("quickshell -p ~/.config/quickshell/PowerMenu.qml")
                                         }
                                     }
                                 }
