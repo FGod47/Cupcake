@@ -656,27 +656,43 @@ PanelWindow {
                                 
                                 Repeater {
                                     model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-                                    Text { text: modelData; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; Layout.alignment: Qt.AlignHCenter }
+                                    Text {
+                                        text: modelData
+                                        color: textSubtext0
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        Layout.fillWidth: true
+                                        horizontalAlignment: Text.AlignHCenter
+                                    }
                                 }
                                 
                                 Repeater {
                                     model: calGrid.startOffset
-                                    Item { Layout.preferredWidth: 28; Layout.preferredHeight: 28 }
+                                    Item {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 28
+                                    }
                                 }
                                 
                                 Repeater {
                                     model: calGrid.totalDays
-                                    Rectangle {
-                                        Layout.preferredWidth: 28; Layout.preferredHeight: 28; radius: 14
-                                        property bool isToday: (index + 1) === calGrid.today && calGrid.year === new Date().getFullYear() && calGrid.month === new Date().getMonth()
-                                        color: isToday ? colGreen : "transparent"
-                                        Text {
-                                            text: index + 1
-                                            color: parent.isToday ? bgBase : textSubtext1
-                                            font.family: Theme.defaultFontFamily; font.pixelSize: 12
+                                    Item {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 28
+                                        
+                                        Rectangle {
+                                            width: 28; height: 28; radius: 14
                                             anchors.centerIn: parent
+                                            property bool isToday: (index + 1) === calGrid.today && calGrid.year === new Date().getFullYear() && calGrid.month === new Date().getMonth()
+                                            color: isToday ? colGreen : "transparent"
+                                            
+                                            Text {
+                                                text: index + 1
+                                                color: parent.isToday ? bgBase : textSubtext1
+                                                font.family: Theme.defaultFontFamily; font.pixelSize: 12
+                                                anchors.centerIn: parent
+                                            }
                                         }
-                                        Layout.alignment: Qt.AlignHCenter
                                     }
                                 }
                             }
