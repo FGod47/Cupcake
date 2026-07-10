@@ -14,6 +14,9 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
     
+    property var modelData
+    screen: modelData
+    
     Rectangle {
         anchors.fill: parent
         color: "black"

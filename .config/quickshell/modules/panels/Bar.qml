@@ -54,8 +54,8 @@ PanelWindow {
     MouseArea {
         id: fullScreenClickAway
         anchors.fill: parent
-        enabled: bar.settingsOpen
-        onClicked: bar.settingsOpen = false
+        enabled: globalState.settingsOpen
+        onClicked: globalState.settingsOpen = false
         z: -1
     }
 
@@ -688,8 +688,8 @@ PanelWindow {
                                 id: customClockText
                                 text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
                                 color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
-                                onTextChanged: globalState.clockString = text
-                                Component.onCompleted: globalState.clockString = text
+                                onTextChanged: globalState.clockString = customClockText.text
+                                Component.onCompleted: globalState.clockString = customClockText.text
                                 MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
                             }
                             

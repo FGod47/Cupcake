@@ -22,7 +22,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: Bar {
-            visible: globalState.barMonitors.includes("all") || globalState.barMonitors.includes(modelData.name)
+            visible: !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
 
@@ -30,7 +30,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: Dock {
-            visible: globalState.dockMonitors.includes("all") || globalState.dockMonitors.includes(modelData.name)
+            visible: !!globalState.dockMonitors && (globalState.dockMonitors.includes("all") || (modelData && globalState.dockMonitors.includes(modelData.name)))
         }
     }
 
