@@ -241,7 +241,7 @@ PanelWindow {
                                 Rectangle {
                                     id: wifiToggle
                                     Layout.fillWidth: true; Layout.preferredHeight: 82
-                                    color: bgSurface0
+                                    color: wifiActive ? colGreenDim : bgSurface0
                                     radius: 16
                                     border.color: wifiActive ? colGreen : bgSurface1
                                     border.width: 1
@@ -267,7 +267,7 @@ PanelWindow {
                                 Rectangle {
                                     id: btToggle
                                     Layout.fillWidth: true; Layout.preferredHeight: 82
-                                    color: bgSurface0
+                                    color: btActive ? colGreenDim : bgSurface0
                                     radius: 16
                                     border.color: btActive ? colGreen : bgSurface1
                                     border.width: 1
@@ -293,7 +293,7 @@ PanelWindow {
                                 Rectangle {
                                     id: eeToggle
                                     Layout.fillWidth: true; Layout.preferredHeight: 82
-                                    color: bgSurface0
+                                    color: eeActive ? colGreenDim : bgSurface0
                                     radius: 16
                                     border.color: eeActive ? colGreen : bgSurface1
                                     border.width: 1
@@ -686,6 +686,18 @@ PanelWindow {
             }
         }
 
+    Connections {
+        target: globalState
+        function onNotifPanelVisibleChanged() {
+            if (globalState.notifPanelVisible) {
+                updateVolume.running = true
+                updateBrightness.running = true
+                updateUptime.running = true
+                updateToggles.running = true
+            }
+        }
+    }
+
     Component.onCompleted: {
         updateVolume.running = true
         updateBrightness.running = true
@@ -762,6 +774,7 @@ PanelWindow {
         command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes'; bluetoothctl show | grep 'Powered:'; pgrep easyeffects"]
         stdout: StdioCollector { id: togglesStdout }
         onExited: {
+            console.log("updateToggles stdout text: '" + togglesStdout.text + "'");
             let lines = (togglesStdout.text || "").split("\n");
             
             // Check wifi
@@ -774,6 +787,7 @@ PanelWindow {
                     break;
                 }
             }
+            console.log("wifiActive:", wifiActive, "wifiSSID:", wifiSSID, "colGreen:", colGreen);
             
             // Check bluetooth
             btActive = false;
