@@ -29,15 +29,15 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell:notifpanel"
     
     // Exact colors matching the screenshot (Catppuccin Mocha themed)
-    property color bgBase: "#11111b"       // crust
-    property color bgMantle: Qt.rgba(0.094, 0.094, 0.145, 0.60)     // mantle (semi-transparent)
-    property color bgSurface0: Qt.rgba(0.118, 0.118, 0.180, 0.45)   // base (semi-transparent)
-    property color bgSurface1: "#313244"   // surface0
-    property color textText: "#cdd6f4"     // text
-    property color textSubtext0: "#a6adc8"   // subtext0
-    property color textSubtext1: "#bac2de"   // subtext1
-    property color colGreen: "#a6e3a1"     // green
-    property color colGreenDim: "#2e3d30"  // dark green background for active status
+    property color bgBase: Theme.colBackground
+    property color bgMantle: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.60)
+    property color bgSurface0: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.45)
+    property color bgSurface1: Theme.colSurfaceVariant
+    property color textText: Theme.colOnSurface
+    property color textSubtext0: Theme.colOnSurfaceVariant
+    property color textSubtext1: Theme.colOnSurfaceVariant
+    property color colGreen: Theme.colPrimary
+    property color colGreenDim: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20)
     
     property string uptimeStr: "Up 0m"
     
@@ -88,7 +88,7 @@ PanelWindow {
                 }
             ]
             
-            color: Qt.rgba(0.067, 0.067, 0.106, globalState.notifPanelOpacity)
+            color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, globalState.notifPanelOpacity)
             radius: 24
             clip: true
             
