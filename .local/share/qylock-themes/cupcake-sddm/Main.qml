@@ -133,7 +133,7 @@ Rectangle {
         Column {
             z: 5
             anchors.centerIn: parent
-            spacing: 20
+            spacing: 15
             width: 400
 
             // CLOCK
@@ -195,15 +195,12 @@ Rectangle {
                 font.family: fontName
                 anchors.horizontalCenter: parent.horizontalCenter
             }
-            
-            Item { width: 1; height: 10 } // spacer
-
             // PASSWORD INPUT
             Rectangle {
                 id: passwordInputContainer
-                width: 380
-                height: 55
-                radius: 12
+                width: 260
+                height: 45
+                radius: 8
                 color: "#15ffffff"
                 border.color: "#30ffffff"
                 border.width: 1
@@ -219,7 +216,7 @@ Rectangle {
                     source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2'></rect><path d='M7 11V7a5 5 0 0 1 10 0v4'></path></svg>"
                     width: 20; height: 20
                     anchors.left: parent.left
-                    anchors.leftMargin: 20
+                    anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -227,10 +224,10 @@ Rectangle {
                     id: passwordInput
                     anchors.left: parent.left
                     anchors.right: eyeIconMA.left
-                    anchors.leftMargin: 55
+                    anchors.leftMargin: 45
                     anchors.rightMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 24
+                    font.pixelSize: 18
                     font.family: fontName
                     color: "#ffffff"
                     echoMode: eyeIconMA.pressed ? TextInput.Normal : TextInput.Password
@@ -246,7 +243,7 @@ Rectangle {
 
                 MouseArea {
                     id: eyeIconMA
-                    width: 40; height: 40
+                    width: 35; height: 35
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
@@ -263,9 +260,9 @@ Rectangle {
 
             // SIGN IN BUTTON
             Rectangle {
-                width: 380
-                height: 55
-                radius: 12
+                width: 260
+                height: 45
+                radius: 8
                 color: themeGreen
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -299,8 +296,6 @@ Rectangle {
                     }
                 }
             }
-
-            Item { width: 1; height: 10 }
 
             // SWITCH USER
             MouseArea {
