@@ -349,7 +349,7 @@ ShellRoot {
 
     Timer {
         id: islandCloseTimer
-        interval: 2050 // Wait for the visual closing animations to finish before clearing popups
+        interval: 450 // Wait for the visual closing animations (400ms) to finish before clearing popups
         repeat: false
         onTriggered: {
             globalState.popups = [];
