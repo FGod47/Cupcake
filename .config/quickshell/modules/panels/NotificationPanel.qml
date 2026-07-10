@@ -586,7 +586,7 @@ PanelWindow {
                                     Layout.fillWidth: true
                                 }
                                 Text {
-                                    text: "\uea5f"
+                                    text: "\uea60"
                                     font.family: "tabler-icons"
                                     color: textSubtext0
                                     font.pixelSize: 16
