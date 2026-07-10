@@ -535,11 +535,10 @@ PanelWindow {
                                             }
                                             Text { text: bodyText || ""; color: textSubtext1; font.family: Theme.defaultFontFamily; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true; maximumLineCount: 2; elide: Text.ElideRight }
                                             
-                                            // Dismiss/Copy Action Row
+                                            // Dismiss Action Row
                                             RowLayout {
                                                 Layout.fillWidth: true
                                                 Layout.topMargin: 4
-                                                spacing: 8
                                                 
                                                 Rectangle {
                                                     color: bgSurface1; radius: 8; implicitHeight: 26; implicitWidth: 80
@@ -549,18 +548,6 @@ PanelWindow {
                                                         Text { text: "Dismiss"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; anchors.verticalCenter: parent.verticalCenter }
                                                     }
                                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { if (modelData) modelData.dismiss() } }
-                                                }
-                                                
-                                                Rectangle {
-                                                    color: colGreenDim; radius: 8; implicitHeight: 26; implicitWidth: 60
-                                                    Text { text: "Copy"; color: colGreen; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: 700; anchors.centerIn: parent }
-                                                    MouseArea {
-                                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
-                                                        onClicked: {
-                                                            Quickshell.execDetached(["wl-copy", bodyText || ""]);
-                                                            if (modelData) modelData.dismiss();
-                                                        }
-                                                    }
                                                 }
                                             }
                                         }
