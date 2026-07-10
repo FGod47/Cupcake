@@ -78,9 +78,9 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 color: "#a0a0a0"
-                font.pixelSize: 18
+                font.pixelSize: 15
                 font.family: fontName
-                font.weight: Font.Medium
+                font.weight: Font.Normal
                 text: Qt.formatDate(new Date(), "ddd, MMM dd")
             }
 
@@ -97,9 +97,9 @@ Rectangle {
                     }
                     Text {
                         color: "#a0a0a0"
-                        font.pixelSize: 18
+                        font.pixelSize: 15
                         font.family: fontName
-                        font.weight: Font.Medium
+                        font.weight: Font.Normal
                         text: "EN"
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -118,9 +118,9 @@ Rectangle {
                         }
                         Text {
                             color: "#a0a0a0"
-                            font.pixelSize: 18
+                            font.pixelSize: 15
                             font.family: fontName
-                            font.weight: Font.Medium
+                            font.weight: Font.Normal
                             text: currentSession
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -129,49 +129,54 @@ Rectangle {
             }
         }
 
-        // CENTER COLUMN
+        // CLOCK (Top Positioned)
+        Column {
+            id: clockColumn
+            z: 5
+            anchors.top: parent.top
+            anchors.topMargin: 81
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 23
+
+            Text {
+                id: timeLabel
+                color: "#f5f5f5"
+                font.pixelSize: 64
+                font.weight: Font.Medium
+                font.family: fontName
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Qt.formatTime(new Date(), "hh:mm")
+            }
+            Text {
+                id: dateLabel
+                color: "#a0a0a0"
+                font.pixelSize: 18
+                font.family: fontName
+                font.weight: Font.Normal
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Qt.formatDate(new Date(), "dddd, MMMM d")
+            }
+        }
+
+        // LOGIN FORM (Shifted Downwards)
         Column {
             z: 5
-            anchors.centerIn: parent
-            spacing: 15
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 65
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 0
             width: 400
-
-            // CLOCK
-            Column {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
-                Text {
-                    id: timeLabel
-                    color: "#f5f5f5"
-                    font.pixelSize: 64
-                    font.weight: Font.Medium
-                    font.family: fontName
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Qt.formatTime(new Date(), "hh:mm")
-                }
-                Text {
-                    id: dateLabel
-                    color: "#a0a0a0"
-                    font.pixelSize: 18
-                    font.family: fontName
-                    font.weight: Font.Medium
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Qt.formatDate(new Date(), "dddd, MMMM d")
-                }
-            }
-
-            Item { width: 1; height: 30 } // spacer
 
             // AVATAR
             Rectangle {
-                width: 90; height: 90
-                radius: 45
-                color: "#40ffffff" // placeholder for avatar bg
+                width: 76; height: 76
+                radius: 38
+                color: "#40ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
                 
                 Image {
                     source: "data:image/svg+xml;utf8,<svg width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='#f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'></path><circle cx='12' cy='7' r='4'></circle></svg>"
-                    width: 40; height: 40
+                    width: 36; height: 36
                     anchors.centerIn: parent
                 }
 
@@ -182,24 +187,30 @@ Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.margins: 2
-                    border.color: "#304030" // approx bg matching
+                    border.color: "#11140f"
                     border.width: 2
                 }
             }
 
+            Item { width: 1; height: 17 } // gap: avatar -> username
+
+            // USERNAME
             Text {
                 text: currentUsername
                 color: "#f5f5f5"
-                font.pixelSize: 24
-                font.weight: Font.DemiBold
+                font.pixelSize: 13
+                font.weight: Font.Normal
                 font.family: fontName
                 anchors.horizontalCenter: parent.horizontalCenter
             }
+
+            Item { width: 1; height: 36 } // gap: username -> password input
+
             // PASSWORD INPUT
             Rectangle {
                 id: passwordInputContainer
                 width: 260
-                height: 45
+                height: 42
                 radius: 8
                 color: "#15ffffff"
                 border.color: "#30ffffff"
@@ -227,7 +238,7 @@ Rectangle {
                     anchors.leftMargin: 45
                     anchors.rightMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 18
+                    font.pixelSize: 16
                     font.family: fontName
                     color: "#ffffff"
                     echoMode: eyeIconMA.pressed ? TextInput.Normal : TextInput.Password
@@ -243,7 +254,7 @@ Rectangle {
 
                 MouseArea {
                     id: eyeIconMA
-                    width: 35; height: 35
+                    width: 30; height: 30
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
@@ -258,10 +269,12 @@ Rectangle {
                 }
             }
 
+            Item { width: 1; height: 18 } // gap: password input -> sign in button
+
             // SIGN IN BUTTON
             Rectangle {
                 width: 260
-                height: 45
+                height: 42
                 radius: 8
                 color: themeGreen
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -281,7 +294,7 @@ Rectangle {
                     Text {
                         text: "Sign in"
                         color: "#1a1a1a"
-                        font.pixelSize: 18
+                        font.pixelSize: 16
                         font.weight: Font.DemiBold
                         font.family: fontName
                         anchors.verticalCenter: parent.verticalCenter
@@ -289,7 +302,7 @@ Rectangle {
                     Text {
                         text: "→"
                         color: "#1a1a1a"
-                        font.pixelSize: 20
+                        font.pixelSize: 18
                         font.weight: Font.Bold
                         font.family: fontName
                         anchors.verticalCenter: parent.verticalCenter
@@ -297,9 +310,11 @@ Rectangle {
                 }
             }
 
+            Item { width: 1; height: 22 } // gap: sign in button -> switch user
+
             // SWITCH USER
             MouseArea {
-                width: 200; height: 40
+                width: 200; height: 25
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: usersCycleSelectNext()
                 Row {
@@ -307,12 +322,12 @@ Rectangle {
                     spacing: 8
                     Image {
                         source: "data:image/svg+xml;utf8,<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='#a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>"
-                        width: 18; height: 18; anchors.verticalCenter: parent.verticalCenter
+                        width: 16; height: 16; anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {
                         text: "Switch user"
                         color: "#a0a0a0"
-                        font.pixelSize: 16
+                        font.pixelSize: 15
                         font.family: fontName
                         anchors.verticalCenter: parent.verticalCenter
                     }
