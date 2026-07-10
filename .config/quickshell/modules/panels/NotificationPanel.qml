@@ -23,7 +23,7 @@ PanelWindow {
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
-    visible: globalState.notifPanelVisible || panelBg.width > 0
+    visible: globalState.notifPanelVisible || panelBg.anchors.rightMargin > -372
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell:notifpanel"
@@ -61,28 +61,30 @@ PanelWindow {
             id: panelBg
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
+            width: 360
+            height: parent.height
             
             states: [
                 State {
                     name: "open"
                     when: globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; width: 360; height: parent.height }
+                    PropertyChanges { target: panelBg; anchors.rightMargin: 0 }
                 },
                 State {
                     name: "closed"
                     when: !globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; width: 0; height: parent.height * 0.8 }
+                    PropertyChanges { target: panelBg; anchors.rightMargin: -372 }
                 }
             ]
             
             transitions: [
                 Transition {
                     from: "closed"; to: "open"
-                    NumberAnimation { properties: "width,height"; duration: 400; easing.type: Easing.OutExpo }
+                    NumberAnimation { properties: "anchors.rightMargin"; duration: 350; easing.type: Easing.OutCubic }
                 },
                 Transition {
                     from: "open"; to: "closed"
-                    NumberAnimation { properties: "width,height"; duration: 300; easing.type: Easing.InExpo }
+                    NumberAnimation { properties: "anchors.rightMargin"; duration: 250; easing.type: Easing.InCubic }
                 }
             ]
             
