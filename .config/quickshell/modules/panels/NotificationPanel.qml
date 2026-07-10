@@ -17,9 +17,9 @@ PanelWindow {
     
     margins {
         top: 58
-        right: 12
+        right: 0
     }
-    implicitWidth: 360
+    implicitWidth: 380
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
@@ -68,7 +68,7 @@ PanelWindow {
                 State {
                     name: "open"
                     when: globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; anchors.rightMargin: 0 }
+                    PropertyChanges { target: panelBg; anchors.rightMargin: 12 }
                 },
                 State {
                     name: "closed"
