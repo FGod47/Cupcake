@@ -703,6 +703,10 @@ Item {
                             Text { text: "Off"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.fillWidth: true }
                             Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 }
                         }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached(["nm-connection-editor"])
+                        }
                     }
                 }
 
@@ -731,6 +735,12 @@ Item {
                             verticalAlignment: TextInput.AlignVCenter
                             text: "Automatic"; color: Theme.colOnSurface
                             font.family: Theme.defaultFontFamily; font.pixelSize: 12; clip: true
+                            onEditingFinished: {
+                                let dns = text.trim();
+                                if (dns === "") dns = "Automatic";
+                                text = dns;
+                                Quickshell.execDetached(["bash", "-c", 'ACTIVE=$(nmcli -t -f NAME,TYPE connection show --active | grep 802-11-wireless | head -n1 | cut -d: -f1); if [ -n "$ACTIVE" ]; then if [ "$1" = "Automatic" ]; then nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns no ipv4.dns ""; else nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns yes ipv4.dns "$1"; fi; nmcli con up "$ACTIVE"; fi', "--", dns]);
+                            }
                         }
                     }
                 }
