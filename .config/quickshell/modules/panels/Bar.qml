@@ -687,11 +687,21 @@ PanelWindow {
 
                             Text {
                                 id: customClockText
-                                text: Qt.formatDateTime(timeClock.date, "MMM dd  hh:mm AP")
+                                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
                                 color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                                 onTextChanged: globalState.clockString = customClockText.text
                                 Component.onCompleted: globalState.clockString = customClockText.text
-                                MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh") }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                    onClicked: (mouse) => {
+                                        if (mouse.button === Qt.RightButton) {
+                                            globalState.notifPanelVisible = !globalState.notifPanelVisible;
+                                        } else {
+                                            Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh");
+                                        }
+                                    }
+                                }
                             }
                             
                             Process {
@@ -725,7 +735,7 @@ PanelWindow {
                             }
                         }
 
-                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd  hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
+                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd • hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
                     }
 
                     // The dropdown column

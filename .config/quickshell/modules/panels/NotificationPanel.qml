@@ -13,28 +13,45 @@ PanelWindow {
     anchors {
         top: true
         right: true
-        bottom: true
     }
     
     margins {
-        top: 50
-        right: 24
-        bottom: 15
+        top: 12
+        right: 12
     }
-    implicitWidth: 340
+    implicitWidth: 400
+    implicitHeight: Math.min(mainLayout.implicitHeight + 28, (screen ? screen.height : 1080) - 24)
     color: "transparent"
     
-    // Only keep the window visible while open or while animating closed.
-    // The panelBg width animation takes 550ms. We use a Timer or state check.
-    // However, an easy way to prevent blocking clicks is to just disable interaction when not visible.
-    // Or just bind visibility to globalState.notifPanelVisible! If we want it to animate out, we need a small delay.
-    // Actually, Quickshell ignores clicks if WlrLayershell.keyboardFocus is none and we set pass-through...
-    // Let's just make it visible: globalState.notifPanelVisible (animation out will clip instantly, but it fixes the massive mouse block bug!)
-    // To allow animation: 
     visible: globalState.notifPanelVisible || panelBg.width > 0
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.namespace: "quickshell:notifpanel"
     
+    // Exact colors matching the screenshot (Catppuccin Mocha themed)
+    property color bgBase: "#11111b"       // crust
+    property color bgMantle: "#181825"     // mantle
+    property color bgSurface0: "#1e1e2e"   // base
+    property color bgSurface1: "#313244"   // surface0
+    property color textText: "#cdd6f4"     // text
+    property color textSubtext0: "#a6adc8"   // subtext0
+    property color textSubtext1: "#bac2de"   // subtext1
+    property color colGreen: "#a6e3a1"     // green
+    property color colGreenDim: "#2e3d30"  // dark green background for active status
+    
+    property string uptimeStr: "Up 0m"
+    
+    // Network toggle state
+    property bool wifiActive: false
+    property string wifiSSID: "Disconnected"
+    
+    // Bluetooth toggle state
+    property bool btActive: false
+    property string btDevice: "Not connected"
+    
+    // EasyEffects toggle state
+    property bool eeActive: false
+    property string eeStatus: "Inactive"
 
     Item {
         anchors.fill: parent
@@ -49,7 +66,7 @@ PanelWindow {
                 State {
                     name: "open"
                     when: globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; width: 340; height: parent.height }
+                    PropertyChanges { target: panelBg; width: 400; height: parent.height }
                 },
                 State {
                     name: "closed"
@@ -61,160 +78,725 @@ PanelWindow {
             transitions: [
                 Transition {
                     from: "closed"; to: "open"
-                    NumberAnimation { properties: "width,height"; duration: 550; easing.type: Easing.InOutExpo }
+                    NumberAnimation { properties: "width,height"; duration: 400; easing.type: Easing.OutExpo }
                 },
                 Transition {
                     from: "open"; to: "closed"
-                    NumberAnimation { properties: "width,height"; duration: 550; easing.type: Easing.InOutExpo }
+                    NumberAnimation { properties: "width,height"; duration: 300; easing.type: Easing.InExpo }
                 }
             ]
             
-            color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.globalOpacity)
-            radius: 24
-            border.color: "#80000000" // sleek dark border
-            border.width: 0
+            color: "transparent"
             clip: true
             
-            Item {
+            ScrollView {
                 id: contentWrapper
-                width: 340
+                width: 400
                 height: notifPanel.height
                 anchors.centerIn: parent
                 opacity: globalState.notifPanelVisible ? 1 : 0
-                Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.InOutQuad } }
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.InOutQuad } }
+                
+                contentWidth: availableWidth
+                clip: true
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                background: Item {}
                 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 24
-                
-                // Header Row
-                RowLayout {
-                    Layout.fillWidth: true
-                    Text {
-                        text: "Notifications"
-                        color: Theme.colOnSurface
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 20
-                        font.weight: 600
-                        Layout.fillWidth: true
-                    }
+                    id: mainLayout
+                    width: parent.width
+                    spacing: 14
+                    anchors.margins: 14
+                    anchors.top: parent.top
+                    anchors.topMargin: 14
                     
+                    // 1. Controls Section (Top Card)
                     Rectangle {
-                        width: 32; height: 32; radius: 16
-                        color: closeHover.hovered ? Theme.colOutline : "transparent"
-                        Text {
-                            text: "\ueb55" // ti-x
-                            color: Theme.colOnSurface
-                            font.family: "tabler-icons"
-                            font.weight: Theme.defaultFontWeight; font.pixelSize: 20
-                            anchors.centerIn: parent
-                        }
-                        HoverHandler { id: closeHover }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: globalState.notifPanelVisible = false
-                        }
-                    }
-                }
-                
-                // Header Separator
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 2
-                    color: Theme.colSurfaceContainerHigh
-                    radius: 1
-                }
-                
-                // Notification List
-                ListView {
-                    id: notifList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    spacing: 8
-                    ScrollBar.vertical: ScrollBar { active: false; policy: ScrollBar.AlwaysOff }
-                    
-                    model: globalState.notifications ? globalState.notifications.values : null
-                    
-                    // Empty State
-                    Item {
-                        anchors.centerIn: parent
-                        width: parent.width
-                        height: 200
-                        visible: notifList.count === 0
+                        Layout.fillWidth: true
+                        implicitHeight: controlsLayout.implicitHeight + 28
+                        color: bgMantle
+                        radius: 20
                         
                         ColumnLayout {
-                            anchors.centerIn: parent
+                            id: controlsLayout
+                            anchors.fill: parent
+                            anchors.margins: 14
                             spacing: 16
-                            Text {
-                                text: "\uea35" // ti-bell
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: 64
-                                Layout.alignment: Qt.AlignHCenter
+                            
+                            // Header Row
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text {
+                                    text: "\uea70  " + uptimeStr
+                                    font.family: "tabler-icons, " + Theme.defaultFontFamily
+                                    color: textSubtext0
+                                    font.pixelSize: 13
+                                    Layout.fillWidth: true
+                                }
+                                
+                                Row {
+                                    spacing: 16
+                                    
+                                    // Edit
+                                    Text {
+                                        text: "\uea8c"
+                                        font.family: "tabler-icons"
+                                        color: textSubtext0
+                                        font.pixelSize: 16
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: Quickshell.execDetached("antigravity-ide")
+                                        }
+                                    }
+                                    
+                                    // Refresh
+                                    Text {
+                                        text: "\ueb13"
+                                        font.family: "tabler-icons"
+                                        color: textSubtext0
+                                        font.pixelSize: 16
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: Quickshell.execDetached("quickshell -c cupcake --replace")
+                                        }
+                                    }
+                                    
+                                    // Settings
+                                    Text {
+                                        text: "\ueb20"
+                                        font.family: "tabler-icons"
+                                        color: textSubtext0
+                                        font.pixelSize: 16
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: Quickshell.execDetached("quickshell -p ~/.config/quickshell/Settings.qml")
+                                        }
+                                    }
+                                    
+                                    // Power
+                                    Text {
+                                        text: "\ueb0d"
+                                        font.family: "tabler-icons"
+                                        color: textSubtext0
+                                        font.pixelSize: 16
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: Quickshell.execDetached("quickshell -p ~/.config/quickshell/PowerMenu.qml")
+                                        }
+                                    }
+                                }
                             }
-                            Text {
-                                text: "No Notifications"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 20
-                                font.weight: 600
-                                Layout.alignment: Qt.AlignHCenter
+                            
+                            // Sliders Row
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 12
+                                
+                                // Brightness Slider
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 12
+                                    Text { text: "\uec4e"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
+                                    Slider {
+                                        id: backlightSlider
+                                        Layout.fillWidth: true
+                                        from: 0; to: 100; value: 69
+                                        
+                                        background: Rectangle {
+                                            x: backlightSlider.leftPadding
+                                            y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
+                                            width: backlightSlider.availableWidth
+                                            height: 5
+                                            radius: 2.5
+                                            color: bgSurface1
+                                            Rectangle {
+                                                width: backlightSlider.visualPosition * parent.width
+                                                height: parent.height
+                                                color: colGreen
+                                                radius: 2.5
+                                            }
+                                        }
+                                        handle: Rectangle {
+                                            x: backlightSlider.leftPadding + backlightSlider.visualPosition * (backlightSlider.availableWidth - width)
+                                            y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
+                                            width: 14; height: 14; radius: 7
+                                            color: "#ffffff"
+                                        }
+                                        
+                                        Timer {
+                                            id: ddcTimer
+                                            interval: 150; repeat: false
+                                            property int targetValue: 100
+                                            onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                                        }
+                                        onMoved: { ddcTimer.targetValue = value; ddcTimer.restart() }
+                                        onPressedChanged: { if (!pressed) { ddcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]) } }
+                                    }
+                                    Text { text: Math.round(backlightSlider.value) + "%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.preferredWidth: 32; horizontalAlignment: Text.AlignRight }
+                                    Text { text: "\ueb30"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
+                                }
+                                
+                                // Volume Slider
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 12
+                                    Text { text: "\uf1c3"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
+                                    Slider {
+                                        id: volumeSlider
+                                        Layout.fillWidth: true
+                                        from: 0; to: 100; value: 45
+                                        
+                                        background: Rectangle {
+                                            x: volumeSlider.leftPadding
+                                            y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                            width: volumeSlider.availableWidth
+                                            height: 5
+                                            radius: 2.5
+                                            color: bgSurface1
+                                            Rectangle {
+                                                width: volumeSlider.visualPosition * parent.width
+                                                height: parent.height
+                                                color: colGreen
+                                                radius: 2.5
+                                            }
+                                        }
+                                        handle: Rectangle {
+                                            x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
+                                            y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                            width: 14; height: 14; radius: 7
+                                            color: "#ffffff"
+                                        }
+                                        
+                                        onMoved: Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`)
+                                    }
+                                    Text { text: Math.round(volumeSlider.value) + "%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.preferredWidth: 32; horizontalAlignment: Text.AlignRight }
+                                    Text { text: "\ueb51"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
+                                }
+                            }
+                            
+                            // Toggles Grid
+                            GridLayout {
+                                Layout.fillWidth: true
+                                columns: 3
+                                rowSpacing: 10
+                                columnSpacing: 10
+                                
+                                // Wi-Fi Toggle
+                                Rectangle {
+                                    id: wifiToggle
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: wifiActive ? colGreen : bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\ueb52"; color: wifiActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: wifiSSID; color: wifiActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: Quickshell.execDetached(wifiActive ? "nmcli radio wifi off" : "nmcli radio wifi on")
+                                    }
+                                }
+                                
+                                // Bluetooth Toggle
+                                Rectangle {
+                                    id: btToggle
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: btActive ? colGreen : bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\uea37"; color: btActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: btDevice; color: btActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: Quickshell.execDetached(btActive ? "bluetoothctl power off" : "bluetoothctl power on")
+                                    }
+                                }
+                                
+                                // EasyEffects Toggle
+                                Rectangle {
+                                    id: eeToggle
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: eeActive ? colGreen : bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\uf6d7"; color: eeActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "EasyEffects"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: eeStatus; color: eeActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon")
+                                    }
+                                }
+                                
+                                // Firewall Toggle
+                                Rectangle {
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\uec2c"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "Firewall"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                    }
+                                }
+                                
+                                // Cast Toggle
+                                Rectangle {
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\uea56"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "Cast"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                    }
+                                }
+                                
+                                // Anti-flash Toggle
+                                Rectangle {
+                                    Layout.fillWidth: true; Layout.preferredHeight: 82
+                                    color: bgSurface0
+                                    radius: 16
+                                    border.color: bgSurface1
+                                    border.width: 1
+                                    
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 12
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 12
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 4
+                                        Text { text: "\uea2e"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                        Text { text: "Anti-flash"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                        Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                    }
+                                }
                             }
                         }
                     }
                     
-                    delegate: Item {
-                        width: notifList.width
-                        height: cardContainer.implicitHeight
+                    // 2. Notifications Section (Middle Card)
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: notifLayout.implicitHeight + 28
+                        color: bgMantle
+                        radius: 20
                         
-                        Item {
-                            id: cardContainer
-                            width: notifList.width
-                            implicitHeight: card.height
+                        ColumnLayout {
+                            id: notifLayout
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 16
                             
-                            NotificationCard {
-                                id: card
-                                notificationData: modelData
-                                inPanel: true
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text {
+                                    text: "\uea35  " + (globalState.notifications ? Object.keys(globalState.notifications.values).length : 0) + " notifications"
+                                    font.family: "tabler-icons, " + Theme.defaultFontFamily
+                                    color: textSubtext0
+                                    font.pixelSize: 13
+                                    Layout.fillWidth: true
+                                }
+                                Text {
+                                    text: "\ueb6b"
+                                    font.family: "tabler-icons"
+                                    color: textSubtext0
+                                    font.pixelSize: 16
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            if (globalState.notifications) {
+                                                var arr = globalState.notifications.values;
+                                                for (var i = arr.length - 1; i >= 0; i--) {
+                                                    arr[i].dismiss();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            ListView {
+                                id: notifList
+                                Layout.fillWidth: true
+                                implicitHeight: count > 0 ? Math.min(contentHeight, 350) : 60
+                                clip: true
+                                spacing: 10
+                                interactive: contentHeight > 350
+                                model: globalState.notifications ? globalState.notifications.values : null
+                                
+                                delegate: Rectangle {
+                                    width: notifList.width
+                                    height: notifCol.height + 24
+                                    color: bgSurface0
+                                    radius: 16
+                                    
+                                    // Function to format time relatively
+                                    function getRelativeTime(timeVal) {
+                                        if (!timeVal) return "";
+                                        let diffMs = new Date().getTime() - (timeVal / 1000);
+                                        let diffMins = Math.floor(diffMs / 60000);
+                                        if (diffMins < 1) return "now";
+                                        if (diffMins < 60) return diffMins + "m";
+                                        let diffHours = Math.floor(diffMins / 60);
+                                        if (diffHours < 24) return diffHours + "h";
+                                        return "Yesterday";
+                                    }
+                                    
+                                    RowLayout {
+                                        id: notifCol
+                                        anchors.left: parent.left; anchors.right: parent.right
+                                        anchors.top: parent.top; anchors.margins: 12
+                                        spacing: 12
+                                        
+                                        // Green Translucent Icon Box with Dynamic Icon
+                                        Rectangle {
+                                            width: 36; height: 36; radius: 10
+                                            color: colGreenDim
+                                            Layout.alignment: Qt.AlignTop
+                                            
+                                            Image {
+                                                id: notifIconImg
+                                                anchors.fill: parent
+                                                anchors.margins: 4
+                                                source: modelData && modelData.appIcon
+                                                    ? (modelData.appIcon.startsWith("/")
+                                                        ? "file://" + modelData.appIcon
+                                                        : "image://icon/" + modelData.appIcon)
+                                                    : ""
+                                                sourceSize: Qt.size(36, 36)
+                                                fillMode: Image.PreserveAspectFit
+                                                asynchronous: true
+                                                visible: status === Image.Ready
+                                            }
+                                            Text {
+                                                text: "\uea35"
+                                                color: colGreen
+                                                font.family: "tabler-icons"; font.pixelSize: 18
+                                                anchors.centerIn: parent
+                                                visible: !notifIconImg.visible
+                                            }
+                                        }
+                                        
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 3
+                                            RowLayout {
+                                                Layout.fillWidth: true
+                                                Text { text: modelData.summary || "Notification"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700; Layout.fillWidth: true }
+                                                Text { text: getRelativeTime(modelData.time); color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                            }
+                                            Text { text: modelData.body || ""; color: textSubtext1; font.family: Theme.defaultFontFamily; font.pixelSize: 12; wrapMode: Text.Wrap; Layout.fillWidth: true; maximumLineCount: 2; elide: Text.ElideRight }
+                                            
+                                            // Dismiss/Copy Action Row
+                                            RowLayout {
+                                                Layout.fillWidth: true
+                                                Layout.topMargin: 4
+                                                spacing: 8
+                                                
+                                                Rectangle {
+                                                    color: bgSurface1; radius: 8; implicitHeight: 26; implicitWidth: 80
+                                                    Row {
+                                                        anchors.centerIn: parent; spacing: 4
+                                                        Text { text: "\ueb55"; font.family: "tabler-icons"; color: textText; font.pixelSize: 10; anchors.verticalCenter: parent.verticalCenter }
+                                                        Text { text: "Dismiss"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; anchors.verticalCenter: parent.verticalCenter }
+                                                    }
+                                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.dismiss() }
+                                                }
+                                                
+                                                Rectangle {
+                                                    color: colGreenDim; radius: 8; implicitHeight: 26; implicitWidth: 60
+                                                    Text { text: "Copy"; color: colGreen; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: 700; anchors.centerIn: parent }
+                                                    MouseArea {
+                                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                                        onClicked: {
+                                                            Quickshell.execDetached(["wl-copy", modelData.body || ""]);
+                                                            modelData.dismiss();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                Item {
+                                    width: parent.width; height: 60; visible: notifList.count === 0
+                                    Text { anchors.centerIn: parent; text: "No new notifications"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 3. Calendar Section (Bottom Card)
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: calLayout.implicitHeight + 28
+                        color: bgMantle
+                        radius: 20
+                        
+                        ColumnLayout {
+                            id: calLayout
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 16
+                            
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text {
+                                    text: Qt.formatDateTime(calGrid.currentDate, "MMMM yyyy")
+                                    font.family: Theme.defaultFontFamily
+                                    color: textText
+                                    font.pixelSize: 14
+                                    font.weight: 700
+                                    Layout.fillWidth: true
+                                }
+                                Text {
+                                    text: "\uea5f"
+                                    font.family: "tabler-icons"
+                                    color: textSubtext0
+                                    font.pixelSize: 16
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            let prevMonth = calGrid.month - 1;
+                                            let prevYear = calGrid.year;
+                                            if (prevMonth < 0) { prevMonth = 11; prevYear--; }
+                                            calGrid.currentDate = new Date(prevYear, prevMonth, 1);
+                                        }
+                                    }
+                                }
+                                Text {
+                                    text: "\uea61"
+                                    font.family: "tabler-icons"
+                                    color: textSubtext0
+                                    font.pixelSize: 16
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            let nextMonth = calGrid.month + 1;
+                                            let nextYear = calGrid.year;
+                                            if (nextMonth > 11) { nextMonth = 0; nextYear++; }
+                                            calGrid.currentDate = new Date(nextYear, nextMonth, 1);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            GridLayout {
+                                id: calGrid
+                                Layout.fillWidth: true
+                                columns: 7
+                                rowSpacing: 8
+                                columnSpacing: 4
+                                
+                                property date currentDate: new Date()
+                                property int year: currentDate.getFullYear()
+                                property int month: currentDate.getMonth()
+                                property int today: currentDate.getDate()
+                                
+                                function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+                                function startDayOfWeek(y, m) {
+                                    let day = new Date(y, m, 1).getDay();
+                                    return day === 0 ? 6 : day - 1;
+                                }
+                                
+                                property int totalDays: daysInMonth(year, month)
+                                property int startOffset: startDayOfWeek(year, month)
+                                
+                                Repeater {
+                                    model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+                                    Text { text: modelData; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; Layout.alignment: Qt.AlignHCenter }
+                                }
+                                
+                                Repeater {
+                                    model: calGrid.startOffset
+                                    Item { Layout.preferredWidth: 28; Layout.preferredHeight: 28 }
+                                }
+                                
+                                Repeater {
+                                    model: calGrid.totalDays
+                                    Rectangle {
+                                        Layout.preferredWidth: 28; Layout.preferredHeight: 28; radius: 14
+                                        property bool isToday: (index + 1) === calGrid.today && calGrid.year === new Date().getFullYear() && calGrid.month === new Date().getMonth()
+                                        color: isToday ? colGreen : "transparent"
+                                        Text {
+                                            text: index + 1
+                                            color: parent.isToday ? bgBase : textSubtext1
+                                            font.family: Theme.defaultFontFamily; font.pixelSize: 12
+                                            anchors.centerIn: parent
+                                        }
+                                        Layout.alignment: Qt.AlignHCenter
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
-        
-        // Floating Clear All Button
-        Rectangle {
-            visible: notifList.count > 0
-            width: 48; height: 48; radius: 16
-            color: clearHover.hovered ? "#f38ba8" : Theme.colOutline
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 24
-            
-            Text {
-                text: "\ueb41" // ti-trash
-                color: clearHover.hovered ? "#11111b" : Theme.colOnSurface
-                font.family: "tabler-icons"
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 24
-                anchors.centerIn: parent
-            }
-            HoverHandler { id: clearHover }
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (globalState.notifications) {
-                        var arr = globalState.notifications.values;
-                        for (var i = arr.length - 1; i >= 0; i--) {
-                            arr[i].dismiss();
-                        }
-                    }
-                }
-            }
-        }
             }
         }
     }
+
+    Component.onCompleted: {
+        updateVolume.running = true
+        updateBrightness.running = true
+        updateUptime.running = true
+        updateToggles.running = true
+    }
+
+    Timer {
+        id: updateTimer
+        interval: 1000
+        running: globalState.notifPanelVisible
+        repeat: true
+        onTriggered: {
+            updateVolume.running = true
+            updateBrightness.running = true
+        }
+    }
+
+    // Refresh toggles and uptime every 10s
+    Timer {
+        id: slowTimer
+        interval: 10000
+        running: globalState.notifPanelVisible
+        repeat: true
+        onTriggered: {
+            updateUptime.running = true
+            updateToggles.running = true
+        }
+    }
+
+    Process {
+        id: updateVolume
+        command: ["pamixer", "--get-volume"]
+        stdout: StdioCollector { id: updateVolumeStdout }
+        onExited: {
+            if (!volumeSlider.pressed) {
+                var vol = parseInt((updateVolumeStdout.text || "").trim())
+                if (!isNaN(vol)) volumeSlider.value = vol
+            }
+        }
+    }
+
+    Process {
+        id: updateBrightness
+        command: ["ddcutil", "getvcp", "10", "--terse"]
+        stdout: StdioCollector { id: updateBrightnessStdout }
+        onExited: {
+            if (!backlightSlider.pressed) {
+                let match = (updateBrightnessStdout.text || "").match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                if (match && match[1]) {
+                    let bright = parseInt(match[1]);
+                    if (!isNaN(bright)) backlightSlider.value = bright
+                }
+            }
+        }
+    }
+
+    Process {
+        id: updateUptime
+        command: ["uptime", "-p"]
+        stdout: StdioCollector { id: uptimeStdout }
+        onExited: {
+            let clean = (uptimeStdout.text || "").trim();
+            clean = clean.replace("up ", "");
+            clean = clean.replace(" hours", "h").replace(" hour", "h");
+            clean = clean.replace(" minutes", "m").replace(" minute", "m");
+            clean = clean.replace(",", "");
+            uptimeStr = "Up " + clean;
+        }
+    }
+
+    Process {
+        id: updateToggles
+        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes'; bluetoothctl show | grep 'Powered:'; pgrep easyeffects"]
+        stdout: StdioCollector { id: togglesStdout }
+        onExited: {
+            let lines = (togglesStdout.text || "").split("\n");
+            
+            // Check wifi
+            wifiActive = false;
+            wifiSSID = "Disconnected";
+            for (let i=0; i<lines.length; i++) {
+                if (lines[i].startsWith("yes:")) {
+                    wifiActive = true;
+                    wifiSSID = lines[i].split(":")[1] || "Connected";
+                    break;
+                }
+            }
+            
+            // Check bluetooth
+            btActive = false;
+            btDevice = "Not connected";
+            for (let i=0; i<lines.length; i++) {
+                if (lines[i].includes("Powered: yes")) {
+                    btActive = true;
+                    btDevice = "Enabled";
+                    break;
+                }
+            }
+            
+            // Check easyeffects
+            eeActive = false;
+            eeStatus = "Inactive";
+            for (let i=0; i<lines.length; i++) {
+                if (lines[i].trim() !== "" && !isNaN(parseInt(lines[i])) && !lines[i].includes("Powered") && !lines[i].includes("yes:")) {
+                    eeActive = true;
+                    eeStatus = "Active";
+                    break;
+                }
+            }
+        }
+    }
+}
