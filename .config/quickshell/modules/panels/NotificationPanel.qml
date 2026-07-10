@@ -86,7 +86,7 @@ PanelWindow {
                 }
             ]
             
-            color: "#e611111b"
+            color: Qt.rgba(0.067, 0.067, 0.106, globalState.notifPanelOpacity)
             radius: 24
             border.color: "#313244"
             border.width: 1

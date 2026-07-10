@@ -62,6 +62,7 @@ Item {
     property real wallpaperOpacity: 0.80
     property real settingsOpacity: 0.80
     property real osdOpacity: 0.95
+    property real notifPanelOpacity: 0.90
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
@@ -119,6 +120,16 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.settingsOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.notif_panel_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.notifPanelOpacity = v; }
             }
         }
     }
@@ -963,6 +974,55 @@ Item {
                         
                         Text { 
                             text: Math.round(root.settingsOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb00"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Notification Panel opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Background fill opacity of the notification panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.notifPanelOpacity
+                            onValueChanged: {
+                                root.notifPanelOpacity = value;
+                            }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.notifPanelOpacity.toFixed(2) + "' > ~/.config/cupcake/.notif_panel_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.notifPanelOpacity * 100) + "%"
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12

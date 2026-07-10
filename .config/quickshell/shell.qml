@@ -97,6 +97,7 @@ ShellRoot {
         property bool hideIsland: false
         property bool settingsOpen: false
         property real dimOverlay: 0.0
+        property real notifPanelOpacity: 0.90
     }
 
     Process {
@@ -110,6 +111,18 @@ ShellRoot {
         }
     }
     Timer { interval: 500; running: true; repeat: true; onTriggered: initDimOverlay.running = true }
+
+    Process {
+        id: initNotifPanelOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.notif_panel_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: initNotifPanelOpacity.running = true }
 
     Process {
         id: initBarTransparency
