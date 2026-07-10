@@ -54,6 +54,7 @@ Item {
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton
             preventStealing: true
+            enabled: wrapper.inPanel || (globalState.popups.length > 0 && !globalState.hideIsland && !globalState.closingIsland)
             onEntered: { if (!wrapper.inPanel) globalState.popupHovered = true; }
             onExited:  { if (!pressed && !wrapper.inPanel) globalState.popupHovered = false; }
             drag.target: toastCard
