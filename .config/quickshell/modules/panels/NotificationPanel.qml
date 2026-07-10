@@ -431,6 +431,22 @@ PanelWindow {
                                 interactive: contentHeight > height
                                 model: globalState.notifications ? globalState.notifications.values : null
                                 
+                                add: Transition {
+                                    NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 250; easing.type: Easing.OutQuad }
+                                    NumberAnimation { property: "scale"; from: 0.85; to: 1.0; duration: 250; easing.type: Easing.OutQuad }
+                                }
+                                
+                                remove: Transition {
+                                    ParallelAnimation {
+                                        NumberAnimation { property: "opacity"; to: 0.0; duration: 200; easing.type: Easing.OutQuad }
+                                        NumberAnimation { property: "scale"; to: 0.85; duration: 200; easing.type: Easing.OutQuad }
+                                    }
+                                }
+                                
+                                displaced: Transition {
+                                    NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.OutQuad }
+                                }
+                                
                                 delegate: Rectangle {
                                     width: notifList.width
                                     height: notifCol.height + 24
