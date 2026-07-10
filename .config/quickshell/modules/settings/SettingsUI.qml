@@ -425,11 +425,9 @@ Item {
                             NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
                             NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
                             NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
-                            NavButton { iconText: "\uea35"; labelText: "Notifications"; pageIndex: 6 }
                             NavButton { iconText: "\ueb4d"; labelText: "User"; pageIndex: 20 }
 
                         NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
-                        NavButton { iconText: "\ueb1f"; labelText: "Services"; pageIndex: 11 }
 
                         NavButton { iconText: "\ueac5"; labelText: "About"; pageIndex: 21 }
 

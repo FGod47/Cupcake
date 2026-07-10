@@ -256,28 +256,39 @@ PanelWindow {
                             const lines = text.trim().split("\n");
                             let activeWifi = "";
                             let activeEthernet = false;
-                            
+                            let hotspotActive = false;
+
                             for (let i = 0; i < lines.length; i++) {
                                 const parts = lines[i].split(":");
                                 if (parts.length >= 3) {
                                     if (parts[0] === "wifi" && parts[1] === "connected") {
-                                        activeWifi = parts.slice(2).join(":"); // Handle colons in SSID
+                                        const connName = parts.slice(2).join(":");
+                                        if (connName.toLowerCase() === "hotspot") {
+                                            hotspotActive = true; // Our own hotspot — don't show as Wi-Fi
+                                        } else {
+                                            activeWifi = connName;
+                                        }
                                     } else if (parts[0] === "ethernet" && parts[1] === "connected") {
                                         activeEthernet = true;
                                     }
                                 }
                             }
-                            
-                            if (activeWifi !== "") {
-                                networkPill.isWifi = true;
-                                networkPill.isWired = false;
-                                networkIcon.text = "\ueb52";
-                                networkText.text = activeWifi;
-                            } else if (activeEthernet) {
+
+                            if (activeEthernet) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = true;
                                 networkIcon.text = "\uebd9";
                                 networkText.text = "Wired";
+                            } else if (activeWifi !== "") {
+                                networkPill.isWifi = true;
+                                networkPill.isWired = false;
+                                networkIcon.text = "\ueb52";
+                                networkText.text = activeWifi;
+                            } else if (hotspotActive) {
+                                networkPill.isWifi = true;
+                                networkPill.isWired = false;
+                                networkIcon.text = "\ued1b"; // hotspot icon
+                                networkText.text = "Hotspot";
                             } else {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;

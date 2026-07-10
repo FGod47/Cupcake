@@ -217,7 +217,7 @@ Item {
             SettingsCard {
                 SectionLabel { text: "Apps & Notifications" }
 
-                SystemListItem { iconName: "\uea35"; title: "Notifications"; subtitle: "Alerts from apps and system" }
+                SystemListItem { iconName: "\uea35"; title: "Notifications"; subtitle: "Alerts from apps and system"; pageIndex: 6 }
                 SystemListItem { iconName: "\ueb07"; title: "Focus mode"; subtitle: "Do not disturb, automatic rules" }
                 SystemListItem { iconName: "\uea6e"; title: "Clipboard"; subtitle: "Clipboard history, sync, clear" }
                 SystemListItem { iconName: "\ueae2"; title: "Multitasking"; subtitle: "Workspaces, window snapping, task switching" }

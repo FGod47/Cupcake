@@ -134,16 +134,20 @@ Item {
 
     Process {
         id: wifiDeviceProcess
-        command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "d"]
+        command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE,CONNECTION", "d"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = text.trim().split("\n");
                 for (let i = 0; i < lines.length; i++) {
                     const parts = lines[i].split(":");
-                    if (parts[1] === "wifi" && parts[0].indexOf("p2p") === -1) {
+                    if (parts.length >= 4 && parts[1] === "wifi" && parts[0].indexOf("p2p") === -1) {
                         root.wifiDeviceName = "Wi-Fi (" + parts[0] + ")";
-                        root.wifiDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
+                        if (parts[3] === "Hotspot") {
+                            root.wifiDeviceState = "Broadcasting Hotspot";
+                        } else {
+                            root.wifiDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
+                        }
                         break;
                     }
                 }
@@ -187,6 +191,7 @@ Item {
                     const security = net[5] ? net[5].replace(rep2, ":") : "";
                     const isSecure = security.length > 0 && security !== "--";
                     if (ssid === "" || ssid === "--") continue;
+                    if (ssid === root.hotspotSsid) continue; // Don't show our own hotspot in the wifi list
                     if (seen[ssid]) continue;
                     seen[ssid] = true;
                     
@@ -423,6 +428,46 @@ Item {
                     }
                 }
 
+                SettingsRow {
+                    visible: root.wifiExpanded && root.wifiRadioEnabled
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: "\ueb92"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Disable MAC Randomization"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Fixes connection issues for MediaTek Wi-Fi chips"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        id: macRandToggle
+                        checked: false
+                        onToggled: {
+                            if (checked) {
+                                Quickshell.execDetached(["bash", "-c", "echo -e '[device-mac-randomization]\\nwifi.scan-rand-mac-address=no\\n[connection-mac-randomization]\\nwifi.cloned-mac-address=preserve' | pkexec tee /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
+                            } else {
+                                Quickshell.execDetached(["bash", "-c", "pkexec rm -f /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
+                            }
+                        }
+                    }
+                }
+
+                Process {
+                    command: ["bash", "-c", "test -f /etc/NetworkManager/conf.d/mac-randomization.conf && echo 1 || echo 0"]
+                    running: true
+                    stdout: StdioCollector {
+                        onStreamFinished: {
+                            if (text.trim() === "1") macRandToggle.checked = true;
+                            else macRandToggle.checked = false;
+                        }
+                    }
+                }
+
                 // Add network link
                 Text {
                     visible: root.wifiExpanded && root.wifiRadioEnabled
@@ -458,7 +503,13 @@ Item {
                         onToggled: {
                             root.hotspotEnabled = checked;
                             if (checked) {
-                                Quickshell.execDetached(["nmcli", "device", "wifi", "hotspot"]);
+                                // Stop BT scanning first — MT7921 combo chip can't run
+                                // AP mode and BT discovery simultaneously on 2.4GHz
+                                Quickshell.execDetached(["bash", "-c",
+                                    "bluetoothctl scan off 2>/dev/null; " +
+                                    "sleep 0.5; " +
+                                    "nmcli connection up Hotspot 2>/dev/null || nmcli device wifi hotspot"
+                                ]);
                             } else {
                                 Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]);
                             }
