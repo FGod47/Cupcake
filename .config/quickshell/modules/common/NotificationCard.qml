@@ -91,9 +91,11 @@ Item {
         Item {
             id: mainRow
             anchors.left: parent.left
+            anchors.leftMargin: wrapper.inPanel ? 10 : 20
             anchors.right: parent.right
+            anchors.rightMargin: 10
             anchors.top: parent.top
-            anchors.margins: 10
+            anchors.topMargin: 10
             // Height tracks the text column so the icon can center against it
             height: textCol.height
 
@@ -102,18 +104,24 @@ Item {
                 id: iconRect
                 width: 40; height: 40
                 radius: 20
-                color: Theme.colPrimary
+                color: !iconImg.visible ? Theme.colPrimary : "transparent"
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 Image {
                     id: iconImg
                     anchors.fill: parent
                     anchors.margins: 2
-                    source: notificationData && notificationData.appIcon
-                        ? (notificationData.appIcon.startsWith("/")
-                            ? "file://" + notificationData.appIcon
-                            : "image://icon/" + notificationData.appIcon)
-                        : ""
+                    source: {
+                        if (!notificationData) return "";
+                        if (notificationData.image) return notificationData.image;
+                        if (notificationData.appIcon) {
+                            if (notificationData.appIcon.startsWith("/")) {
+                                return "file://" + notificationData.appIcon;
+                            }
+                            return "image://icon/" + notificationData.appIcon;
+                        }
+                        return "";
+                    }
                     sourceSize: Qt.size(40, 40)
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true

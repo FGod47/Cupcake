@@ -494,18 +494,24 @@ PanelWindow {
                                         // Green Translucent Icon Box with Dynamic Icon
                                         Rectangle {
                                             width: 36; height: 36; radius: 10
-                                            color: colGreenDim
+                                            color: !notifIconImg.visible ? colGreenDim : "transparent"
                                             Layout.alignment: Qt.AlignTop
                                             
                                             Image {
                                                 id: notifIconImg
                                                 anchors.fill: parent
                                                 anchors.margins: 4
-                                                source: modelData && modelData.appIcon
-                                                    ? (modelData.appIcon.startsWith("/")
-                                                        ? "file://" + modelData.appIcon
-                                                        : "image://icon/" + modelData.appIcon)
-                                                    : ""
+                                                source: {
+                                                    if (!modelData) return "";
+                                                    if (modelData.image) return modelData.image;
+                                                    if (modelData.appIcon) {
+                                                        if (modelData.appIcon.startsWith("/")) {
+                                                            return "file://" + modelData.appIcon;
+                                                        }
+                                                        return "image://icon/" + modelData.appIcon;
+                                                    }
+                                                    return "";
+                                                }
                                                 sourceSize: Qt.size(36, 36)
                                                 fillMode: Image.PreserveAspectFit
                                                 asynchronous: true
