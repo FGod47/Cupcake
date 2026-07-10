@@ -19,7 +19,7 @@ PanelWindow {
         top: 12
         right: 12
     }
-    implicitWidth: 400
+    implicitWidth: 360
     implicitHeight: Math.min(mainLayout.implicitHeight + 28, (screen ? screen.height : 1080) - 24)
     color: "transparent"
     
@@ -66,7 +66,7 @@ PanelWindow {
                 State {
                     name: "open"
                     when: globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; width: 400; height: parent.height }
+                    PropertyChanges { target: panelBg; width: 360; height: parent.height }
                 },
                 State {
                     name: "closed"
@@ -86,29 +86,21 @@ PanelWindow {
                 }
             ]
             
-            color: "transparent"
+            color: "#e611111b"
+            radius: 24
+            border.color: "#313244"
+            border.width: 1
             clip: true
             
-            ScrollView {
-                id: contentWrapper
-                width: 400
-                height: notifPanel.height
-                anchors.centerIn: parent
-                opacity: globalState.notifPanelVisible ? 1 : 0
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.InOutQuad } }
-                
-                contentWidth: availableWidth
-                clip: true
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-                background: Item {}
-                
-                ColumnLayout {
-                    id: mainLayout
-                    width: parent.width
-                    spacing: 14
-                    anchors.margins: 14
-                    anchors.top: parent.top
-                    anchors.topMargin: 14
+            ColumnLayout {
+                id: mainLayout
+                width: 332
+                height: parent.height - 28
+                anchors.right: parent.right
+                anchors.rightMargin: 14
+                anchors.top: parent.top
+                anchors.topMargin: 14
+                spacing: 14
                     
                     // 1. Controls Section (Top Card)
                     Rectangle {
@@ -428,7 +420,8 @@ PanelWindow {
                     // 2. Notifications Section (Middle Card)
                     Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: notifLayout.implicitHeight + 28
+                        Layout.fillHeight: true
+                        Layout.preferredHeight: notifLayout.implicitHeight + 28
                         color: bgMantle
                         radius: 20
                         
@@ -469,10 +462,11 @@ PanelWindow {
                             ListView {
                                 id: notifList
                                 Layout.fillWidth: true
+                                Layout.fillHeight: true
                                 implicitHeight: count > 0 ? Math.min(contentHeight, 350) : 60
                                 clip: true
                                 spacing: 10
-                                interactive: contentHeight > 350
+                                interactive: contentHeight > height
                                 model: globalState.notifications ? globalState.notifications.values : null
                                 
                                 delegate: Rectangle {
@@ -701,7 +695,6 @@ PanelWindow {
                 }
             }
         }
-    }
 
     Component.onCompleted: {
         updateVolume.running = true
