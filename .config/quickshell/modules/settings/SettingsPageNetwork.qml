@@ -79,9 +79,25 @@ Item {
     property bool wifiRadioEnabled: true
     property string wifiDeviceName: "Wi-Fi"
     property string wifiDeviceState: "Checking..."
-    }
 
+    property bool ethernetEnabled: false
+    property string ethernetDeviceState: "Checking..."
+    property string ethernetDetails: "Checking..."
+    property string ethernetDeviceName: "enp6s0"
+
+    property bool hotspotEnabled: false
     property string hotspotSsid: ""
+
+    Process {
+        id: hotspotStatusProcess
+        command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d | grep -i 'wifi:connected' | grep -qi -E 'hotspot' && echo 'on' || echo 'off'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "on") root.hotspotEnabled = true;
+                else root.hotspotEnabled = false;
+            }
+        }
     }
 
     Process {
@@ -93,7 +109,6 @@ Item {
                 if (text.trim() !== "") root.hotspotSsid = text.trim();
             }
         }
-    }
     }
 
     Process {
@@ -115,6 +130,7 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = text.trim().split("\n");
+                let ethFound = false;
                 for (let i = 0; i < lines.length; i++) {
                     const parts = lines[i].split(":");
                     if (parts.length >= 4 && parts[1] === "wifi" && parts[0].indexOf("p2p") === -1) {
@@ -124,8 +140,23 @@ Item {
                         } else {
                             root.wifiDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
                         }
-                        break;
                     }
+                    if (parts.length >= 4 && parts[1] === "ethernet") {
+                        ethFound = true;
+                        root.ethernetDeviceName = parts[0];
+                        root.ethernetEnabled = (parts[2] === "connected" || parts[2] === "connecting");
+                        root.ethernetDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
+                        if (parts[2] === "connected") {
+                            root.ethernetDetails = parts[3] + " \u00B7 " + parts[0];
+                        } else {
+                            root.ethernetDetails = "Not connected";
+                        }
+                    }
+                }
+                if (!ethFound) {
+                    root.ethernetDeviceState = "No device";
+                    root.ethernetDetails = "N/A";
+                    root.ethernetEnabled = false;
                 }
             }
         }
@@ -452,6 +483,83 @@ Item {
                 }
             }
 
+            // ── Mobile Hotspot ────────────────────────────────────────────
+            SettingsCard {
+                SectionLabel { text: "Mobile Hotspot" }
+
+                SettingsRow {
+                    id: hotspotSettingsRow
+
+                    Item {
+                        implicitWidth: leftContentRow.implicitWidth
+                        implicitHeight: leftContentRow.implicitHeight
+                        
+                        RowLayout {
+                            id: leftContentRow
+                            spacing: 12
+                            Rectangle {
+                                width: 32; height: 32; radius: 16
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                                Text { anchors.centerIn: parent; text: "\ued1b"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            }
+                            ColumnLayout {
+                                spacing: 1
+                                Text { text: "Mobile Hotspot"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: root.hotspotEnabled ? "On" : "Off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                let p = root;
+                                while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
+                                if (p.currentIndex !== undefined) {
+                                    p.currentIndex = 23;
+                                }
+                            }
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true } // spacer
+
+                    ToggleSwitch {
+                        id: hotspotToggle
+                        checked: root.hotspotEnabled
+                        onToggled: {
+                            if (root.hotspotEnabled) {
+                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "connection", "down", "Hotspot"]; running: true }', root);
+                                root.hotspotEnabled = false;
+                            } else {
+                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]; running: true }', root);
+                                root.hotspotEnabled = true;
+                            }
+                        }
+                    }
+                    
+                    Text {
+                        text: "\uea61" // chevron-right
+                        color: Theme.colOnSurfaceVariant
+                        font.family: "tabler-icons"
+                        font.pixelSize: 18
+                        opacity: 0.6
+                        Layout.alignment: Qt.AlignVCenter
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                let p = root;
+                                while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
+                                if (p.currentIndex !== undefined) {
+                                    p.currentIndex = 23;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // ── Ethernet ──────────────────────────────────────────────────
             SettingsCard {
                 SectionLabel { text: "Ethernet" }
@@ -467,14 +575,26 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wired connection"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Connected · 1 Gbps · 192.168.1.42"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: root.ethernetDetails; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
                     Rectangle {
                         width: 74; height: 24; radius: 6
-                        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                        Text { anchors.centerIn: parent; text: "Connected"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
+                        color: root.ethernetEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                        Text { anchors.centerIn: parent; text: root.ethernetEnabled ? "Connected" : "Disabled"; color: root.ethernetEnabled ? Theme.colPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
+                    }
+                    ToggleSwitch {
+                        id: ethToggle
+                        checked: root.ethernetEnabled
+                        onToggled: {
+                            if (root.ethernetEnabled) {
+                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "device", "disconnect", root.ethernetDeviceName]; running: true; onExited: wifiDeviceProcess.running = true }', root);
+                            } else {
+                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "device", "connect", root.ethernetDeviceName]; running: true; onExited: wifiDeviceProcess.running = true }', root);
+                            }
+                            root.ethernetEnabled = checked;
+                        }
                     }
                 }
 

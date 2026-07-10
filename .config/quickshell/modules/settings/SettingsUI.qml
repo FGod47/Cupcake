@@ -421,7 +421,6 @@ Item {
 
                             NavButton { iconText: "\uea89"; labelText: "System"; pageIndex: 10 }
                             NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
-                            NavButton { iconText: "\ued1b"; labelText: "Hotspot"; pageIndex: 23 }
                             NavButton { iconText: "\uea37"; labelText: "Bluetooth"; pageIndex: 22 }
                             NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
                             NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
