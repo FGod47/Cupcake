@@ -93,7 +93,7 @@ Item {
                 startY = event.y
                 if (event.button === Qt.MiddleButton) {
                     if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                    try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
+                    try { if (wrapper.notificationData) wrapper.notificationData.dismiss() } catch(e){}
                 }
             }
             onReleased: event => {
@@ -102,7 +102,7 @@ Item {
                     toastCard.x = 0
                 } else {
                     if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                    try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
+                    try { if (wrapper.notificationData) wrapper.notificationData.dismiss() } catch(e){}
                 }
             }
             onPositionChanged: event => {
@@ -342,7 +342,7 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                                try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
+                                try { if (wrapper.notificationData) wrapper.notificationData.dismiss() } catch(e){}
                             }
                         }
                     }
