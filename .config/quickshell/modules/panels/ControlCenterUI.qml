@@ -663,10 +663,27 @@ Item {
         }
     }
 
+    property bool ccActive: false
+
+    Timer {
+        id: activationDelay
+        interval: 650
+        running: ccUi.visible
+        repeat: false
+        onTriggered: ccActive = true
+    }
+
+    onVisibleChanged: {
+        if (!visible) {
+            ccActive = false
+            activationDelay.stop()
+        }
+    }
+
     Timer {
         id: slowTimer
         interval: 10000
-        running: ccUi.visible
+        running: ccUi.ccActive
         repeat: true
         triggeredOnStart: true
         onTriggered: {
@@ -682,7 +699,7 @@ Item {
     Timer {
         id: fastTimer
         interval: 3000
-        running: ccUi.visible
+        running: ccUi.ccActive
         repeat: true
         triggeredOnStart: true
         onTriggered: {
