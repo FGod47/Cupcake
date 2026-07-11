@@ -9,6 +9,8 @@ import QtQuick.Controls
 import "../../theme"
 import "../common"
 import "../settings"
+import Quickshell.Services.Mpris
+import QtQuick.Effects
 
 PanelWindow {
     id: bar
@@ -20,6 +22,10 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     exclusiveZone: 46
+
+    // Track active player status for Dynamic Island animations
+    property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
+    property bool isMusicPlaying: activePlayer !== null && activePlayer.isPlaying
 
     // and to allow the Settings menu to animate to the center of the screen
     implicitHeight: modelData.height
@@ -972,7 +978,7 @@ PanelWindow {
             y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
-            width: bar.ccOpen ? 362 : archText.implicitWidth + 32
+            width: bar.ccOpen ? 362 : (bar.isMusicPlaying ? 190 : archText.implicitWidth + 32)
             height: targetHeight
             clip: true
             
@@ -1017,20 +1023,122 @@ PanelWindow {
             Row {
                 id: archText
                 anchors.centerIn: parent
-                spacing: 6
+                spacing: 8
                 opacity: bar.ccOpen ? 0.0 : 1.0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Text {
-                    text: ""
-                    color: Theme.colSurfaceContainerHigh
-                    font.family: Theme.monoFontFamily
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+
+                // 1. Album art thumbnail (left side)
+                // 1. Album art thumbnail (left side)
+                Rectangle {
+                    id: artContainer
+                    width: 24
+                    height: 24
+                    radius: 6
+                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                    visible: bar.isMusicPlaying
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    // Sibling mask Rectangle with explicitly resolved dimensions
+                    Rectangle {
+                        id: artMask
+                        width: 24
+                        height: 24
+                        radius: 6
+                        visible: false
+                    }
+
+                    // Enable layer rendering with MultiEffect mask for perfect rounded corners
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        maskEnabled: true
+                        maskSource: artMask
+                    }
+
+                    Image {
+                        anchors.fill: parent
+                        source: (bar.activePlayer && bar.activePlayer.trackArtUrl) ? bar.activePlayer.trackArtUrl : ""
+                        visible: source != ""
+                        fillMode: Image.PreserveAspectCrop
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible: !parent.children[0].visible
+                        text: "\ueafc" // music icon
+                        font.family: "tabler-icons"
+                        font.pixelSize: 11
+                        color: Theme.colPrimary
+                    }
                 }
-                Text {
-                    text: "Arch"
-                    color: Theme.colSurfaceContainerHigh
-                    font.family: Theme.defaultFontFamily
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+
+                // 2. Middle label (logo + name)
+                Row {
+                    spacing: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: !bar.isMusicPlaying
+                    Text {
+                        text: ""
+                        color: Theme.colSurfaceContainerHigh
+                        font.family: Theme.monoFontFamily
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
+                    }
+                    Text {
+                        text: "Arch"
+                        color: Theme.colSurfaceContainerHigh
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
+                    }
+                }
+
+                // 3. Audio visualizer (right side)
+                Row {
+                    id: visualizerRow
+                    width: 15
+                    height: 14
+                    spacing: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: bar.isMusicPlaying
+
+                    Rectangle {
+                        width: 3
+                        height: 12
+                        radius: 1.5
+                        color: Theme.colOnBackground
+                        SequentialAnimation on height {
+                            loops: Animation.Infinite
+                            running: true
+                            NumberAnimation { to: 4; duration: 300; easing.type: Easing.InOutSine }
+                            NumberAnimation { to: 12; duration: 350; easing.type: Easing.InOutSine }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 3
+                        height: 12
+                        radius: 1.5
+                        color: Theme.colOnBackground
+                        SequentialAnimation on height {
+                            loops: Animation.Infinite
+                            running: true
+                            NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine }
+                            NumberAnimation { to: 6; duration: 300; easing.type: Easing.InOutSine }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 3
+                        height: 12
+                        radius: 1.5
+                        color: Theme.colOnBackground
+                        SequentialAnimation on height {
+                            loops: Animation.Infinite
+                            running: true
+                            NumberAnimation { to: 8; duration: 350; easing.type: Easing.InOutSine }
+                            NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine }
+                        }
+                    }
                 }
             }
             
