@@ -223,8 +223,8 @@ Item {
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                wifiProcess.running = true;
-                                ccUi.wifiPageOpen = true;
+                                ccUi.wifiPageOpen = true
+                                wifiPageDelayTimer.restart()
                             }
                         }
                     }
@@ -677,6 +677,17 @@ Item {
         if (!visible) {
             ccActive = false
             activationDelay.stop()
+        }
+    }
+
+    Timer {
+        id: wifiPageDelayTimer
+        interval: 420
+        repeat: false
+        onTriggered: {
+            if (ccUi.wifiPageOpen && wifiRadioEnabled) {
+                wifiProcess.running = true
+            }
         }
     }
 
