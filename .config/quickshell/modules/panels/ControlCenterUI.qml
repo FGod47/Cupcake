@@ -39,6 +39,26 @@ Item {
     property string wifiDeviceName: "Wi-Fi"
     property string wifiDeviceState: wifiActive ? "Connected" : "Disconnected"
 
+    property bool hotspotActive: false
+
+    Process {
+        id: hotspotStatusProcess
+        command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d | grep -i 'wifi:connected' | grep -qi -E 'hotspot' && echo 'on' || echo 'off'"]
+        running: ccUi.ccActive
+        stdout: StdioCollector {
+            onStreamFinished: {
+                hotspotActive = (text.trim() === "on")
+            }
+        }
+    }
+
+    Timer {
+        id: hotspotQueryTimer
+        interval: 2000
+        repeat: false
+        onTriggered: hotspotStatusProcess.running = true
+    }
+
     // Bluetooth data
     property bool btRadioEnabled: Bluetooth.defaultAdapter?.enabled ?? false
     property string btConnectedDeviceName: {
@@ -357,12 +377,13 @@ Item {
                         }
                     }
 
-                    // Cast Toggle
+                    // Hotspot Toggle
                     Rectangle {
+                        id: hotspotToggle
                         Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: bgSurface0
+                        color: hotspotActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: bgSurface1
+                        border.color: hotspotActive ? colGreen : bgSurface1
                         border.width: 1
 
                         Column {
@@ -372,9 +393,21 @@ Item {
                             anchors.rightMargin: 12
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 4
-                            Text { text: "\uea56"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Cast"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                            Text { text: "\ued1b"; color: hotspotActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { text: "Hotspot"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                            Text { text: hotspotActive ? "Active" : "Inactive"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (hotspotActive) {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"])
+                                } else {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli radio wifi on && (nmcli connection up Hotspot || nmcli connection up hotspot)"])
+                                }
+                                hotspotActive = !hotspotActive
+                                hotspotQueryTimer.restart()
+                            }
                         }
                     }
 
@@ -1017,6 +1050,7 @@ Item {
             updateUptime.running = true
             updateToggles.running = true
             wifiRadioProcess.running = true
+            hotspotStatusProcess.running = true
             if (ccUi.wifiPageOpen && wifiRadioEnabled) {
                 wifiProcess.running = true
             }
