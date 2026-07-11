@@ -200,13 +200,12 @@ Item {
                     rowSpacing: 10
                     columnSpacing: 10
 
-                    // Wi-Fi Toggle
                     Rectangle {
                         id: wifiToggle
                         Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: wifiActive ? colGreenDim : bgSurface0
+                        color: wifiRadioEnabled ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: wifiActive ? colGreen : bgSurface1
+                        border.color: wifiRadioEnabled ? colGreen : bgSurface1
                         border.width: 1
 
                         Column {
@@ -216,9 +215,9 @@ Item {
                             anchors.rightMargin: 12
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 4
-                            Text { text: "\ueb52"; color: wifiActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
                             Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: wifiSSID; color: wifiActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                            Text { text: wifiActive ? wifiSSID : (wifiRadioEnabled ? "Disconnected" : "Disabled"); color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -776,7 +775,6 @@ Item {
                     break;
                 }
             }
-            wifiRadioEnabled = wifiActive;
 
             btActive = false;
             btDevice = "Not connected";
