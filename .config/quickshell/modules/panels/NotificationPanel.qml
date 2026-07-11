@@ -429,7 +429,7 @@ PanelWindow {
                                 clip: true
                                 spacing: 10
                                 interactive: contentHeight > height
-                                model: globalState.notifications ? globalState.notifications.values : null
+                                model: globalState.notifications || null
                                 
                                 add: Transition {
                                     NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 250; easing.type: Easing.OutQuad }
