@@ -165,7 +165,7 @@ Rectangle {
                 }
                 Text {
                     id: dateLabel
-                    color: "#a0a0a0"
+                    color: "#a0ffffff"
                     font.pixelSize: 32
                     font.family: fontName
                     font.weight: Font.Medium
