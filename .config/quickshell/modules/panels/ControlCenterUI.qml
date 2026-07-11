@@ -188,19 +188,9 @@ Item {
                         Layout.fillWidth: true
                     }
 
-                    // Warning text
-                    Text {
-                        visible: ccUi.showWarning
-                        text: "\uea23  Wi-Fi needed for Hotspot"
-                        font.family: "tabler-icons, " + Theme.defaultFontFamily
-                        color: Theme.colError
-                        font.pixelSize: 12
-                        font.weight: Font.Bold
-                    }
-
                     // Uptime pill
                     Rectangle {
-                        visible: !ccUi.showWarning
+                        visible: true
                         Layout.preferredHeight: 28
                         Layout.preferredWidth: uptimePillText.contentWidth + 24
                         Layout.alignment: Qt.AlignTop
