@@ -157,7 +157,7 @@ Item {
                     Row {
                         id: appTitleRow
                         anchors.left: parent.left
-                        anchors.right: timeText.left
+                        anchors.right: topRightControls.left
                         anchors.rightMargin: 6
                         spacing: 0
 
@@ -197,14 +197,40 @@ Item {
                         }
                     }
 
-                    Text {
-                        id: timeText
-                        text: wrapper.notificationData ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 10
+                    Row {
+                        id: topRightControls
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
+                        spacing: 6
+                        
+                        Text {
+                            id: timeText
+                            text: wrapper.notificationData ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            id: expandIcon
+                            text: toastCard.expanded ? "\uea62" : "\uea5f" // chevron-up / chevron-down
+                            color: expandMouse.containsMouse ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                            font.family: "tabler-icons"
+                            font.pixelSize: 14
+                            anchors.verticalCenter: parent.verticalCenter
+                            
+                            Behavior on color { ColorAnimation { duration: 150 } }
+
+                            MouseArea {
+                                id: expandMouse
+                                anchors.fill: parent
+                                anchors.margins: -4
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: toastCard.expanded = !toastCard.expanded
+                            }
+                        }
                     }
                 }
 
