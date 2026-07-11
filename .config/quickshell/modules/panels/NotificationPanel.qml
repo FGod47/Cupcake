@@ -23,10 +23,9 @@ PanelWindow {
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
-    visible: true
-    mask: Region { rects: globalState.notifPanelVisible ? [ Qt.rect(0, 0, width, height) ] : [] }
+    visible: globalState.notifPanelVisible || panelBg.x < 380
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "quickshell:notifpanel"
     
     // Exact colors matching the screenshot (Catppuccin Mocha themed)
@@ -60,19 +59,36 @@ PanelWindow {
         
         Rectangle {
             id: panelBg
-            property int targetX: 380
-            x: targetX
-            y: 0
             width: 360
             height: parent.height
             
-            Behavior on x {
-                NumberAnimation { duration: 400; easing.type: Easing.OutExpo }
-            }
-            
             color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, globalState.notifPanelOpacity)
             radius: 24
-            clip: false
+            clip: true
+
+            states: [
+                State {
+                    name: "open"
+                    when: globalState.notifPanelVisible
+                    PropertyChanges { target: panelBg; x: 8 }
+                },
+                State {
+                    name: "closed"
+                    when: !globalState.notifPanelVisible
+                    PropertyChanges { target: panelBg; x: 380 }
+                }
+            ]
+            
+            transitions: [
+                Transition {
+                    from: "closed"; to: "open"
+                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
+                },
+                Transition {
+                    from: "open"; to: "closed"
+                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
+                }
+            ]
             
             ColumnLayout {
                 id: mainLayout
@@ -672,10 +688,8 @@ PanelWindow {
         target: globalState
         function onNotifPanelVisibleChanged() {
             if (globalState.notifPanelVisible) {
-                panelBg.targetX = 8
                 postOpenUpdateTimer.restart()
             } else {
-                panelBg.targetX = 380
                 postOpenUpdateTimer.stop()
             }
         }
