@@ -25,7 +25,8 @@ PanelWindow {
     implicitHeight: modelData.height
     color: "transparent"
     
-    mask: globalState.settingsOpen ? null : normalMask
+    property bool ccOpen: false
+    mask: (globalState.settingsOpen || ccOpen) ? null : normalMask
     
     Region {
         id: normalMask
@@ -56,12 +57,14 @@ PanelWindow {
     property string fontName: "tabler-icons"
     property int fontSize: Theme.defaultFontSize
 
-    // Full-screen click-away area when settings is open
     MouseArea {
         id: fullScreenClickAway
         anchors.fill: parent
-        enabled: globalState.settingsOpen
-        onClicked: globalState.settingsOpen = false
+        enabled: globalState.settingsOpen || bar.ccOpen
+        onClicked: {
+            globalState.settingsOpen = false;
+            bar.ccOpen = false;
+        }
         z: -1
     }
 
@@ -963,16 +966,24 @@ PanelWindow {
         Rectangle {
             id: archPill
             z: 20
-            y: 10
+            y: bar.ccOpen ? (modelData.height - height) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
-            width: archText.implicitWidth + 32
-            height: 34
+            width: bar.ccOpen ? 362 : archText.implicitWidth + 32
+            height: bar.ccOpen ? (ccLoader.item ? ccLoader.item.height : 330) : 34
+            
+            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
             property color c1: Theme.colPrimary
             property color c2: Theme.colSecondary
             
-            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+            property real morphProgress: bar.ccOpen ? 1.0 : 0.0
+            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            
+            property real currentAlpha: root.barOpacity + (Theme.bgAlpha - root.barOpacity) * archPill.morphProgress
+            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha) : Theme.colSurface
             border.width: 1
             border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
             
@@ -982,8 +993,8 @@ PanelWindow {
                 
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: archPill.c1 }
-                    GradientStop { position: 1.0; color: archPill.c2 }
+                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
+                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
                 }
             }
 
@@ -1003,6 +1014,8 @@ PanelWindow {
                 id: archText
                 anchors.centerIn: parent
                 spacing: 6
+                opacity: bar.ccOpen ? 0.0 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 Text {
                     text: ""
                     color: Theme.colSurfaceContainerHigh
@@ -1017,12 +1030,53 @@ PanelWindow {
                 }
             }
             
+            // Catch clicks inside the expanded card
             MouseArea {
                 anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    // Placeholder for future use
+                enabled: bar.ccOpen
+                onPressed: mouse.accepted = true
+                onReleased: mouse.accepted = true
+                onClicked: mouse.accepted = true
+            }
+
+            // Inner clipping container for the content
+            Item {
+                anchors.fill: parent
+                anchors.margins: 0
+                clip: true
+                visible: bar.ccOpen || archPill.morphProgress > 0.0
+                
+                Loader {
+                    id: ccLoader
+                    anchors.centerIn: parent
+                    width: 362
+                    height: item ? item.height : 330
+                    source: "ControlCenterUI.qml"
+                    active: true
+                    
+                    layer.enabled: true
+                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
+                    visible: true
+                    enabled: bar.ccOpen
+                    
+                    onLoaded: {
+                        item.anchors.centerIn = ccLoader;
+                    }
+                    
+                    Connections {
+                        target: ccLoader.item
+                        function onRequestClose() {
+                            bar.ccOpen = false;
+                        }
+                    }
                 }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: !bar.ccOpen
+                cursorShape: Qt.PointingHandCursor
+                onClicked: bar.ccOpen = true
             }
         }
 }
