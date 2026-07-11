@@ -384,9 +384,9 @@ Item {
                                         color: bgSurface1
 
                                         Rectangle {
-                                            y: (1.0 - backlightSlider.visualPosition) * parent.height
+                                            y: backlightSlider.visualPosition * parent.height
                                             width: parent.width
-                                            height: backlightSlider.visualPosition * parent.height
+                                            height: (1.0 - backlightSlider.visualPosition) * parent.height
                                             color: colGreen
                                             radius: 3
                                         }
@@ -394,7 +394,7 @@ Item {
 
                                     handle: Rectangle {
                                         x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
-                                        y: backlightSlider.topPadding + (1.0 - backlightSlider.visualPosition) * (backlightSlider.availableHeight - height)
+                                        y: backlightSlider.topPadding + backlightSlider.visualPosition * (backlightSlider.availableHeight - height)
                                         width: 14; height: 14; radius: 7
                                         color: "#ffffff"
                                     }
@@ -446,9 +446,9 @@ Item {
                                         color: bgSurface1
 
                                         Rectangle {
-                                            y: (1.0 - volumeSlider.visualPosition) * parent.height
+                                            y: volumeSlider.visualPosition * parent.height
                                             width: parent.width
-                                            height: volumeSlider.visualPosition * parent.height
+                                            height: (1.0 - volumeSlider.visualPosition) * parent.height
                                             color: colGreen
                                             radius: 3
                                         }
@@ -456,7 +456,7 @@ Item {
 
                                     handle: Rectangle {
                                         x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
-                                        y: volumeSlider.topPadding + (1.0 - volumeSlider.visualPosition) * (volumeSlider.availableHeight - height)
+                                        y: volumeSlider.topPadding + volumeSlider.visualPosition * (volumeSlider.availableHeight - height)
                                         width: 14; height: 14; radius: 7
                                         color: "#ffffff"
                                     }
