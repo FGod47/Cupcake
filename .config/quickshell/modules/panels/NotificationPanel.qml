@@ -55,7 +55,7 @@ PanelWindow {
 
     Item {
         anchors.fill: parent
-        clip: true
+        clip: false
         
         Rectangle {
             id: panelBg
@@ -90,7 +90,7 @@ PanelWindow {
             
             color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, globalState.notifPanelOpacity)
             radius: 24
-            clip: true
+            clip: false
             
             ColumnLayout {
                 id: mainLayout
