@@ -16,6 +16,14 @@ Item {
 
     property bool wifiPageOpen: false
     property bool btPageOpen: false
+    property bool showWarning: false
+
+    Timer {
+        id: warningTimer
+        interval: 3000
+        repeat: false
+        onTriggered: ccUi.showWarning = false
+    }
 
     // Colors matching the theme (Catppuccin Mocha)
     property color bgBase: Theme.colBackground
@@ -147,10 +155,21 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
+                        visible: !ccUi.showWarning
                         text: "\uea70  " + uptimeStr
                         font.family: "tabler-icons, " + Theme.defaultFontFamily
                         color: textSubtext0
                         font.pixelSize: 13
+                        Layout.fillWidth: true
+                    }
+                    
+                    Text {
+                        visible: ccUi.showWarning
+                        text: "\uea23  Turn on Wi-Fi to activate Hotspot"
+                        font.family: "tabler-icons, " + Theme.defaultFontFamily
+                        color: Theme.colError
+                        font.pixelSize: 13
+                        font.weight: Font.Bold
                         Layout.fillWidth: true
                     }
 
@@ -400,10 +419,16 @@ Item {
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
+                                if (!wifiRadioEnabled) {
+                                    ccUi.showWarning = true
+                                    warningTimer.restart()
+                                    return
+                                }
+                                
                                 if (hotspotActive) {
                                     Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"])
                                 } else {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli radio wifi on && (nmcli connection up Hotspot || nmcli connection up hotspot)"])
+                                    Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"])
                                 }
                                 hotspotActive = !hotspotActive
                                 hotspotQueryTimer.restart()
