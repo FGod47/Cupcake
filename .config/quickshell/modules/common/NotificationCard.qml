@@ -153,6 +153,7 @@ Item {
                         anchors.margins: isPill ? 10 : 8
                         source: {
                             if (!wrapper.notificationData) return "";
+                            if (notifCategory === "screenshot") return "";
                             if (wrapper.notificationData.image) return wrapper.notificationData.image;
                             if (wrapper.notificationData.appIcon) {
                                 if (wrapper.notificationData.appIcon.startsWith("/")) return "file://" + wrapper.notificationData.appIcon;
@@ -163,7 +164,7 @@ Item {
                         sourceSize: Qt.size(24, 24)
                         fillMode: Image.PreserveAspectFit
                         asynchronous: true
-                        visible: status === Image.Ready
+                        visible: status === Image.Ready && notifCategory !== "screenshot"
                     }
                     Text {
                         text: {
