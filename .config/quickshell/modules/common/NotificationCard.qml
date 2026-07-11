@@ -73,16 +73,7 @@ Item {
         Behavior on y { enabled: !swipeArea.pressed; NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 0.5 } }
         Behavior on x { enabled: !swipeArea.pressed; NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
-        // Left Accent Bar (Screenshot)
-        Rectangle {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: 4
-            color: accentColor
-            visible: notifCategory === "screenshot"
-            radius: 2
-        }
+        // Left Accent Bar removed per user request
 
         MouseArea {
             id: swipeArea
