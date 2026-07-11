@@ -52,7 +52,7 @@ Rectangle {
             Image {
                 id: image
                 anchors.fill: parent
-                source: config.background || "background.webp"
+                source: config.background || "background.png"
                 smooth: true
                 fillMode: Image.PreserveAspectCrop
                 z: 3
@@ -60,25 +60,27 @@ Rectangle {
             Rectangle {
                 z: 4
                 anchors.fill: parent
-                color: "#20000000" // subtle dark overlay for text readability
+                color: "transparent" // transparent overlay to let custom gradient shine in full purity
             }
         }
 
-        // TOP BAR
+        // TOP BAR (Position: absolute, top: 40px, left/right: 56px)
         Item {
             z: 5
             anchors.top: parent.top
+            anchors.topMargin: 40
             anchors.left: parent.left
+            anchors.leftMargin: 56
             anchors.right: parent.right
-            height: 80
-            anchors.margins: 40
+            anchors.rightMargin: 56
+            height: 40
 
             Text {
                 id: topDate
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                color: "#a0ffffff"
-                font.pixelSize: 15
+                color: "#b9c6bd"
+                font.pixelSize: 16
                 font.family: fontName
                 font.weight: Font.Normal
                 text: Qt.formatDate(new Date(), "ddd, MMM dd")
@@ -87,17 +89,17 @@ Rectangle {
             Row {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 24
+                spacing: 28
 
                 Row {
                     spacing: 8
                     Image {
-                        source: "data:image/svg+xml;utf8,<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-opacity='0.62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='4' width='20' height='16' rx='2' ry='2'></rect><line x1='6' y1='8' x2='6' y2='8'></line><line x1='10' y1='8' x2='10' y2='8'></line><line x1='14' y1='8' x2='14' y2='8'></line><line x1='18' y1='8' x2='18' y2='8'></line><line x1='6' y1='12' x2='6' y2='12'></line><line x1='10' y1='12' x2='10' y2='12'></line><line x1='14' y1='12' x2='14' y2='12'></line><line x1='18' y1='12' x2='18' y2='12'></line><line x1='8' y1='16' x2='16' y2='16'></line></svg>"
+                        source: "data:image/svg+xml;utf8,<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='#b9c6bd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='4' width='20' height='16' rx='2' ry='2'></rect><line x1='6' y1='8' x2='6' y2='8'></line><line x1='10' y1='8' x2='10' y2='8'></line><line x1='14' y1='8' x2='14' y2='8'></line><line x1='18' y1='8' x2='18' y2='8'></line><line x1='6' y1='12' x2='6' y2='12'></line><line x1='10' y1='12' x2='10' y2='12'></line><line x1='14' y1='12' x2='14' y2='12'></line><line x1='18' y1='12' x2='18' y2='12'></line><line x1='8' y1='16' x2='16' y2='16'></line></svg>"
                         width: 18; height: 18; anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {
-                        color: "#a0ffffff"
-                        font.pixelSize: 15
+                        color: "#b9c6bd"
+                        font.pixelSize: 16
                         font.family: fontName
                         font.weight: Font.Normal
                         text: "EN"
@@ -113,12 +115,12 @@ Rectangle {
                         id: sessionRow
                         spacing: 8
                         Image {
-                            source: "data:image/svg+xml;utf8,<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-opacity='0.62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='14' rx='2' ry='2'></rect><line x1='8' y1='21' x2='16' y2='21'></line><line x1='12' y1='17' x2='12' y2='21'></line></svg>"
+                            source: "data:image/svg+xml;utf8,<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='#b9c6bd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='14' rx='2' ry='2'></rect><line x1='8' y1='21' x2='16' y2='21'></line><line x1='12' y1='17' x2='12' y2='21'></line></svg>"
                             width: 18; height: 18; anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
-                            color: "#a0ffffff"
-                            font.pixelSize: 15
+                            color: "#b9c6bd"
+                            font.pixelSize: 16
                             font.family: fontName
                             font.weight: Font.Normal
                             text: currentSession
@@ -129,28 +131,29 @@ Rectangle {
             }
         }
 
-        // CLOCK (Top Positioned)
+        // CLOCK (Centered horizontally, top: 70px)
         Column {
             id: clockColumn
             z: 5
             anchors.top: parent.top
-            anchors.topMargin: 120
+            anchors.topMargin: 70
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 23
+            spacing: 10
 
             Text {
                 id: timeLabel
-                color: "#f5f5f5"
-                font.pixelSize: 84
-                font.weight: Font.Medium
+                color: "#f5f8f3"
+                font.pixelSize: 76
+                font.weight: Font.Light
                 font.family: fontName
+                font.letterSpacing: -1.5
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatTime(new Date(), "hh:mm")
             }
             Text {
                 id: dateLabel
-                color: "#a0ffffff"
-                font.pixelSize: 18
+                color: "#93a390"
+                font.pixelSize: 16
                 font.family: fontName
                 font.weight: Font.Normal
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -158,11 +161,11 @@ Rectangle {
             }
         }
 
-        // LOGIN FORM (Shifted Downwards)
+        // AVATAR + FORM BLOCK (Centered horizontally, top: 470px)
         Column {
             z: 5
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 45
+            anchors.top: parent.top
+            anchors.topMargin: 470
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 0
             width: 400
@@ -171,63 +174,63 @@ Rectangle {
             Rectangle {
                 width: 76; height: 76
                 radius: 38
-                color: "#40ffffff"
+                color: "#33453a"
                 anchors.horizontalCenter: parent.horizontalCenter
                 
                 Image {
-                    source: "data:image/svg+xml;utf8,<svg width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='#f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'></path><circle cx='12' cy='7' r='4'></circle></svg>"
-                    width: 36; height: 36
+                    source: "data:image/svg+xml;utf8,<svg width='30' height='30' viewBox='0 0 24 24' fill='none' stroke='#b9c6bd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'></path><circle cx='12' cy='7' r='4'></circle></svg>"
+                    width: 30; height: 30
                     anchors.centerIn: parent
                 }
 
                 Rectangle {
-                    width: 16; height: 16
-                    radius: 8
-                    color: themeGreen
+                    width: 12; height: 12
+                    radius: 6
+                    color: "#9ed36f"
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     anchors.margins: 2
-                    border.color: "#11140f"
+                    border.color: "#12190f"
                     border.width: 2
                 }
             }
 
-            Item { width: 1; height: 17 } // gap: avatar -> username
+            Item { width: 1; height: 12 } // 12px gap below avatar
 
             // USERNAME
             Text {
                 text: currentUsername
-                color: "#f5f5f5"
-                font.pixelSize: 13
-                font.weight: Font.Normal
+                color: "#f5f8f3"
+                font.pixelSize: 16
+                font.weight: Font.Medium
                 font.family: fontName
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Item { width: 1; height: 36 } // gap: username -> password input
+            Item { width: 1; height: 34 } // 34px gap to form container
 
-            // PASSWORD INPUT
+            // PASSWORD INPUT (300px wide, dark translucent)
             Rectangle {
                 id: passwordInputContainer
-                width: 260
-                height: 42
-                radius: 8
-                color: "#15ffffff"
-                border.color: "#30ffffff"
+                width: 300
+                height: 45
+                radius: 10
+                color: "#0dffffff" // rgba(255,255,255,0.05)
+                border.color: "#0fffffff" // rgba(255,255,255,0.06)
                 border.width: 1
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 SequentialAnimation on border.color {
                     id: failAnimation
                     running: false
-                    ColorAnimation { from: "#ff4a4a"; to: "#30ffffff"; duration: 800 }
+                    ColorAnimation { from: "#ff4a4a"; to: "#0fffffff"; duration: 800 }
                 }
 
                 Image {
-                    source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2'></rect><path d='M7 11V7a5 5 0 0 1 10 0v4'></path></svg>"
-                    width: 20; height: 20
+                    source: "data:image/svg+xml;utf8,<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#93a390' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2'></rect><path d='M7 11V7a5 5 0 0 1 10 0v4'></path></svg>"
+                    width: 15; height: 15
                     anchors.left: parent.left
-                    anchors.leftMargin: 15
+                    anchors.leftMargin: 13
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -235,7 +238,7 @@ Rectangle {
                     id: passwordInput
                     anchors.left: parent.left
                     anchors.right: eyeIconMA.left
-                    anchors.leftMargin: 45
+                    anchors.leftMargin: 40
                     anchors.rightMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 16
@@ -261,22 +264,22 @@ Rectangle {
                     Image {
                         id: eyeIcon
                         source: eyeIconMA.pressed 
-                            ? "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'></path><circle cx='12' cy='12' r='3'></circle></svg>"
-                            : "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'></path><line x1='1' y1='1' x2='23' y2='23'></line></svg>"
-                        width: 20; height: 20
+                            ? "data:image/svg+xml;utf8,<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#93a390' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'></path><circle cx='12' cy='12' r='3'></circle></svg>"
+                            : "data:image/svg+xml;utf8,<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#93a390' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'></path><line x1='1' y1='1' x2='23' y2='23'></line></svg>"
+                        width: 15; height: 15
                         anchors.centerIn: parent
                     }
                 }
             }
 
-            Item { width: 1; height: 18 } // gap: password input -> sign in button
+            Item { width: 1; height: 18 } // 18px gap: password input -> sign in button
 
-            // SIGN IN BUTTON
+            // SIGN IN BUTTON (300px wide, solid #9ed36f background, dark text #16210f)
             Rectangle {
-                width: 260
-                height: 42
-                radius: 8
-                color: themeGreen
+                width: 300
+                height: 45
+                radius: 10
+                color: "#9ed36f"
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 MouseArea {
@@ -293,26 +296,22 @@ Rectangle {
                     spacing: 10
                     Text {
                         text: "Sign in"
-                        color: "#1a1a1a"
-                        font.pixelSize: 16
+                        color: "#16210f"
+                        font.pixelSize: 14
                         font.weight: Font.DemiBold
                         font.family: fontName
                         anchors.verticalCenter: parent.verticalCenter
                     }
-                    Text {
-                        text: "→"
-                        color: "#1a1a1a"
-                        font.pixelSize: 18
-                        font.weight: Font.Bold
-                        font.family: fontName
-                        anchors.verticalCenter: parent.verticalCenter
+                    Image {
+                        source: "data:image/svg+xml;utf8,<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#16210f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'></line><polyline points='12 5 19 12 12 19'></polyline></svg>"
+                        width: 14; height: 14; anchors.verticalCenter: parent.verticalCenter
                     }
                 }
             }
 
-            Item { width: 1; height: 22 } // gap: sign in button -> switch user
+            Item { width: 1; height: 22 } // 22px gap: sign in button -> switch user
 
-            // SWITCH USER
+            // SWITCH USER (Centered below)
             MouseArea {
                 width: 200; height: 25
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -321,12 +320,12 @@ Rectangle {
                     anchors.centerIn: parent
                     spacing: 8
                     Image {
-                        source: "data:image/svg+xml;utf8,<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-opacity='0.62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>"
+                        source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='#93a390' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>"
                         width: 16; height: 16; anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {
                         text: "Switch user"
-                        color: "#a0ffffff"
+                        color: "#93a390"
                         font.pixelSize: 15
                         font.family: fontName
                         anchors.verticalCenter: parent.verticalCenter
@@ -335,21 +334,22 @@ Rectangle {
             }
         }
 
-        // BOTTOM RIGHT POWER OPTIONS
+        // BOTTOM-RIGHT CONTROLS (Position: absolute, bottom: 44px, right: 56px, 16px gap)
         Row {
             z: 5
             anchors.bottom: parent.bottom
+            anchors.bottomMargin: 44
             anchors.right: parent.right
-            anchors.margins: 40
-            spacing: 15
+            anchors.rightMargin: 56
+            spacing: 16
 
             Rectangle {
-                width: 44; height: 44; radius: 22
-                color: "#15ffffff"
-                border.color: "#30ffffff"
+                width: 48; height: 48; radius: 24
+                color: "#15ffffff" // translucent bg
+                border.color: "#10ffffff" // 1px border
                 border.width: 1
                 Image {
-                    source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-opacity='0.62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'></path><polyline points='3 3 3 8 8 8'></polyline></svg>"
+                    source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#b9c6bd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'></path><polyline points='3 3 3 8 8 8'></polyline></svg>"
                     width: 20; height: 20; anchors.centerIn: parent
                 }
                 MouseArea {
@@ -358,12 +358,12 @@ Rectangle {
                 }
             }
             Rectangle {
-                width: 44; height: 44; radius: 22
-                color: "#15ffffff"
-                border.color: "#30ffffff"
+                width: 48; height: 48; radius: 24
+                color: "#15ffffff" // translucent bg
+                border.color: "#10ffffff" // 1px border
                 border.width: 1
                 Image {
-                    source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-opacity='0.62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18.36 6.64a9 9 0 1 1-12.73 0'></path><line x1='12' y1='2' x2='12' y2='12'></line></svg>"
+                    source: "data:image/svg+xml;utf8,<svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#b9c6bd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M18.36 6.64a9 9 0 1 1-12.73 0'></path><line x1='12' y1='2' x2='12' y2='12'></line></svg>"
                     width: 20; height: 20; anchors.centerIn: parent
                 }
                 MouseArea {
