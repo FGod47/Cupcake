@@ -9,9 +9,7 @@ import "../common"
 Item {
     id: ccUi
     width: 362
-    height: wifiPageOpen ? 420 : 330
-
-    Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutExpo } }
+    height: 420
 
     signal requestClose()
 

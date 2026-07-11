@@ -1051,9 +1051,10 @@ PanelWindow {
                 
                 Loader {
                     id: ccLoader
-                    anchors.centerIn: parent
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
                     width: 362
-                    height: item ? item.height : 330
+                    height: 420
                     source: "ControlCenterUI.qml"
                     active: true
                     
@@ -1063,7 +1064,8 @@ PanelWindow {
                     enabled: bar.ccOpen
                     
                     onLoaded: {
-                        item.anchors.centerIn = ccLoader;
+                        item.anchors.top = ccLoader.top;
+                        item.anchors.horizontalCenter = ccLoader.horizontalCenter;
                     }
                     
                     Connections {
