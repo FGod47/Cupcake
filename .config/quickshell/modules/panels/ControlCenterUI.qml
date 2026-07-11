@@ -593,7 +593,7 @@ Item {
 
                                 Rectangle {
                                     Layout.fillWidth: true
-                                    height: 44
+                                    height: 52
                                     color: model.inUse ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                                     radius: 12
                                     border.color: model.inUse ? colGreen : "transparent"
@@ -603,24 +603,29 @@ Item {
                                         anchors.fill: parent
                                         anchors.leftMargin: 12
                                         anchors.rightMargin: 12
-                                        spacing: 12
+                                        spacing: 14
 
                                         // Signal Icon
-                                        Text {
-                                            text: model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa")
-                                            color: model.inUse ? colGreen : textText
-                                            font.family: "tabler-icons"
-                                            font.pixelSize: 16
+                                        Rectangle {
+                                            width: 32; height: 32; radius: 16
+                                            color: model.inUse ? colGreen : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: model.inUse ? "\ueb52" : (model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa"))
+                                                color: model.inUse ? Theme.colSurface : textText
+                                                font.family: "tabler-icons"
+                                                font.pixelSize: 16
+                                            }
                                         }
 
                                         ColumnLayout {
-                                            spacing: 1
+                                            spacing: 2
                                             Layout.fillWidth: true
                                             Text {
                                                 text: model.ssid
                                                 color: textText
                                                 font.family: Theme.defaultFontFamily
-                                                font.pixelSize: 13
+                                                font.pixelSize: 14
                                                 font.weight: Font.Medium
                                                 elide: Text.ElideRight
                                             }
