@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import Quickshell.Bluetooth
 import "../../theme"
 import "../common"
 
@@ -14,6 +15,7 @@ Item {
     signal requestClose()
 
     property bool wifiPageOpen: false
+    property bool btPageOpen: false
 
     // Colors matching the theme (Catppuccin Mocha)
     property color bgBase: Theme.colBackground
@@ -29,8 +31,6 @@ Item {
     property string uptimeStr: "Up 0m"
     property bool wifiActive: false
     property string wifiSSID: "Disconnected"
-    property bool btActive: false
-    property string btDevice: "Not connected"
     property bool eeActive: false
     property string eeStatus: "Inactive"
 
@@ -38,6 +38,52 @@ Item {
     property bool wifiRadioEnabled: false
     property string wifiDeviceName: "Wi-Fi"
     property string wifiDeviceState: wifiActive ? "Connected" : "Disconnected"
+
+    // Bluetooth data
+    property bool btRadioEnabled: Bluetooth.defaultAdapter?.enabled ?? false
+    property string btConnectedDeviceName: {
+        if (!Bluetooth.devices) return ""
+        let conn = Bluetooth.devices.values.find(d => d.connected)
+        return conn ? conn.name : ""
+    }
+
+    property list<var> pairedDevices: {
+        if (!Bluetooth.devices) return []
+        let arr = Bluetooth.devices.values.filter(d => d.paired)
+        arr.sort((a, b) => {
+            if (a.connected !== b.connected) return a.connected ? -1 : 1
+            return (a.name || "").localeCompare(b.name || "")
+        })
+        return arr
+    }
+
+    property list<var> availableDevices: {
+        if (!Bluetooth.devices) return []
+        let arr = Bluetooth.devices.values.filter(d => !d.paired && d.name)
+        arr.sort((a, b) => {
+            const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/
+            const aIsMac = macRegex.test(a.name || "")
+            const bIsMac = macRegex.test(b.name || "")
+            if (aIsMac !== bIsMac) return aIsMac ? 1 : -1
+            return (a.name || "").localeCompare(b.name || "")
+        })
+        return arr
+    }
+
+    function getDeviceIcon(device) {
+        let iconName = device.icon || ""
+        if (iconName.includes("headset") || iconName.includes("headphones") || iconName.includes("audio"))
+            return "\ueabd" // headphones
+        if (iconName.includes("phone"))
+            return "\uea8a" // mobile
+        if (iconName.includes("mouse"))
+            return "\ueaf9" // mouse
+        if (iconName.includes("keyboard"))
+            return "\uebd6" // keyboard
+        if (iconName.includes("printer"))
+            return "\ueb0e" // printer
+        return "\uea37" // default bluetooth
+    }
 
     Process {
         id: wifiRadioProcess
@@ -70,7 +116,7 @@ Item {
             anchors.rightMargin: 14
             height: 322
             visible: opacity > 0.0
-            opacity: ccUi.wifiPageOpen ? 0.0 : 1.0
+            opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             ColumnLayout {
@@ -202,6 +248,7 @@ Item {
                     rowSpacing: 10
                     columnSpacing: 10
 
+                    // Wi-Fi Toggle
                     Rectangle {
                         id: wifiToggle
                         Layout.fillWidth: true; Layout.preferredHeight: 82
@@ -234,9 +281,9 @@ Item {
                     Rectangle {
                         id: btToggle
                         Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: btActive ? colGreenDim : bgSurface0
+                        color: btRadioEnabled ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: btActive ? colGreen : bgSurface1
+                        border.color: btRadioEnabled ? colGreen : bgSurface1
                         border.width: 1
 
                         Column {
@@ -246,13 +293,15 @@ Item {
                             anchors.rightMargin: 12
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 4
-                            Text { text: "\uea37"; color: btActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            Text { text: "\uea37"; color: btRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
                             Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: btDevice; color: btActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                            Text { text: btConnectedDeviceName !== "" ? btConnectedDeviceName : (btRadioEnabled ? "Enabled" : "Disabled"); color: btRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(btActive ? "bluetoothctl power off" : "bluetoothctl power on")
+                            onClicked: {
+                                ccUi.btPageOpen = true
+                            }
                         }
                     }
 
@@ -611,6 +660,273 @@ Item {
                 }
             }
         }
+
+        // =====================================================================
+        // PAGE 2: Bluetooth Manager Page
+        // =====================================================================
+        Item {
+            id: btCcPage
+            anchors.top: parent.top
+            anchors.topMargin: 14
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.right: parent.right
+            anchors.rightMargin: 14
+            height: 392
+            visible: opacity > 0.0
+            opacity: ccUi.btPageOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 12
+
+                // Header Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Back Button
+                    Text {
+                        text: "\uea60"
+                        font.family: "tabler-icons"
+                        color: textSubtext0
+                        font.pixelSize: 18
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: ccUi.btPageOpen = false
+                        }
+                    }
+
+                    Text {
+                        text: "Bluetooth Devices"
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Font.Bold
+                        color: textText
+                        font.pixelSize: 14
+                        Layout.fillWidth: true
+                    }
+
+                    // Rescan/Discovering Button
+                    Rectangle {
+                        id: btRescanButton
+                        width: 28; height: 28; radius: 6
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+
+                        Text {
+                            anchors.centerIn: parent; text: "\ueb13"
+                            color: Bluetooth.defaultAdapter?.discovering ? colGreen : textSubtext0
+                            font.family: "tabler-icons"; font.pixelSize: 14
+                            RotationAnimation on rotation {
+                                running: Bluetooth.defaultAdapter?.discovering ?? false
+                                loops: Animation.Infinite
+                                from: 0; to: 360
+                                duration: 1000
+                            }
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (Bluetooth.defaultAdapter) {
+                                    Bluetooth.defaultAdapter.discovering = !Bluetooth.defaultAdapter.discovering
+                                }
+                            }
+                        }
+                    }
+
+                    // Bluetooth Power Switch
+                    Rectangle {
+                        id: btSwitch
+                        width: 38; height: 22; radius: height / 2
+                        color: btRadioEnabled ? colGreen : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+                        border.width: btRadioEnabled ? 0 : 1
+                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Rectangle {
+                            width: 18; height: 18; radius: 9
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: btRadioEnabled ? parent.width - width - 2 : 2
+                            color: btRadioEnabled ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+                            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (Bluetooth.defaultAdapter) {
+                                    Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Bluetooth Devices List
+                ScrollView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+                    contentWidth: availableWidth
+
+                    ColumnLayout {
+                        width: parent.width
+                        spacing: 8
+
+                        // Paired Devices Header
+                        Text {
+                            visible: pairedDevices.length > 0
+                            text: "PAIRED"
+                            font.pixelSize: 10
+                            font.weight: Font.Bold
+                            font.letterSpacing: 0.6
+                            color: textSubtext0
+                            opacity: 0.6
+                        }
+
+                        // Paired Devices List
+                        Repeater {
+                            model: pairedDevices
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                height: 44
+                                color: modelData.connected ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                                radius: 12
+                                border.color: modelData.connected ? colGreen : "transparent"
+                                border.width: modelData.connected ? 1 : 0
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 12
+                                    anchors.rightMargin: 12
+                                    spacing: 12
+
+                                    Text {
+                                        text: ccUi.getDeviceIcon(modelData)
+                                        color: modelData.connected ? colGreen : textText
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 16
+                                    }
+
+                                    ColumnLayout {
+                                        spacing: 1
+                                        Layout.fillWidth: true
+                                        Text {
+                                            text: modelData.name || "Unknown device"
+                                            color: textText
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 13
+                                            font.weight: Font.Medium
+                                            elide: Text.ElideRight
+                                        }
+                                        Text {
+                                            text: modelData.connected ? "Connected" : "Paired"
+                                            color: modelData.connected ? colGreen : textSubtext0
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 11
+                                            opacity: 0.8
+                                        }
+                                    }
+
+                                    // Action / Disconnect Button
+                                    Rectangle {
+                                        width: 52; height: 24; radius: 6
+                                        color: modelData.connected ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: modelData.connected ? "Disconnect" : "Connect"
+                                            color: modelData.connected ? Theme.colError : textSubtext0
+                                            font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium
+                                        }
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                if (modelData.connected) modelData.disconnect()
+                                                else modelData.connect()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item { Layout.fillWidth: true; height: 4; visible: pairedDevices.length > 0 && availableDevices.length > 0 }
+
+                        // Available Devices Header
+                        Text {
+                            visible: availableDevices.length > 0
+                            text: "AVAILABLE"
+                            font.pixelSize: 10
+                            font.weight: Font.Bold
+                            font.letterSpacing: 0.6
+                            color: textSubtext0
+                            opacity: 0.6
+                        }
+
+                        // Available Devices List
+                        Repeater {
+                            model: availableDevices
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                height: 44
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                                radius: 12
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 12
+                                    anchors.rightMargin: 12
+                                    spacing: 12
+
+                                    Text {
+                                        text: ccUi.getDeviceIcon(modelData)
+                                        color: textText
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 16
+                                    }
+
+                                    ColumnLayout {
+                                        spacing: 1
+                                        Layout.fillWidth: true
+                                        Text {
+                                            text: modelData.name || "Unknown device"
+                                            color: textText
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 13
+                                            font.weight: Font.Medium
+                                            elide: Text.ElideRight
+                                        }
+                                        Text {
+                                            text: "Available"
+                                            color: textSubtext0
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 11
+                                            opacity: 0.8
+                                        }
+                                    }
+
+                                    // Action / Connect Button
+                                    Rectangle {
+                                        width: 52; height: 24; radius: 6
+                                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "Pair"
+                                            color: textSubtext0
+                                            font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium
+                                        }
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                modelData.connect()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // WiFi scanner model & processes
@@ -687,17 +1003,6 @@ Item {
     }
 
     Timer {
-        id: wifiPageDelayTimer
-        interval: 420
-        repeat: false
-        onTriggered: {
-            if (ccUi.wifiPageOpen && wifiRadioEnabled) {
-                wifiProcess.running = true
-            }
-        }
-    }
-
-    Timer {
         id: slowTimer
         interval: 10000
         running: ccUi.ccActive
@@ -768,7 +1073,7 @@ Item {
 
     Process {
         id: updateToggles
-        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes'; bluetoothctl show | grep 'Powered:'; pgrep easyeffects"]
+        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes'; pgrep easyeffects"]
         stdout: StdioCollector { id: togglesStdout }
         onExited: {
             let lines = (togglesStdout.text || "").split("\n");
@@ -783,20 +1088,10 @@ Item {
                 }
             }
 
-            btActive = false;
-            btDevice = "Not connected";
-            for (let i=0; i<lines.length; i++) {
-                if (lines[i].includes("Powered: yes")) {
-                    btActive = true;
-                    btDevice = "Enabled";
-                    break;
-                }
-            }
-
             eeActive = false;
             eeStatus = "Inactive";
             for (let i=0; i<lines.length; i++) {
-                if (lines[i].trim() !== "" && !isNaN(parseInt(lines[i])) && !lines[i].includes("Powered") && !lines[i].includes("yes:")) {
+                if (lines[i].trim() !== "" && !isNaN(parseInt(lines[i])) && !lines[i].includes("yes:")) {
                     eeActive = true;
                     eeStatus = "Active";
                     break;
