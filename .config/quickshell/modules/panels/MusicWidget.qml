@@ -203,18 +203,18 @@ Rectangle {
             Item { Layout.fillWidth: true } // spacer
 
             Rectangle {
-                width: 40; height: 40; radius: 12
+                width: 40; height: 40; radius: 20
                 color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
                 Text { anchors.centerIn: parent; text: "\ued48"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface } // prev (skip-back)
                 MouseArea { anchors.fill: parent; onClicked: if (hasPlayer) player.previous() }
             }
 
             Item { // Wrapper for glow effect (simulated with a background rectangle)
-                width: 60; height: 46
+                width: 48; height: 48
                 Rectangle {
                     anchors.centerIn: parent
                     width: parent.width - 4; height: parent.height - 4
-                    radius: 14
+                    radius: 22
                     color: Theme.colPrimary
                     opacity: 0.4
                     scale: 1.15
@@ -222,7 +222,7 @@ Rectangle {
                 }
                 Rectangle {
                     anchors.fill: parent
-                    radius: 14
+                    radius: 24
                     color: Theme.colPrimary
                     Text {
                         anchors.centerIn: parent
@@ -236,7 +236,7 @@ Rectangle {
             }
 
             Rectangle {
-                width: 40; height: 40; radius: 12
+                width: 40; height: 40; radius: 20
                 color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
                 Text { anchors.centerIn: parent; text: "\ued49"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface } // next (skip-forward)
                 MouseArea { anchors.fill: parent; onClicked: if (hasPlayer) player.next() }
