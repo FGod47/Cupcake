@@ -9,7 +9,7 @@ Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 170
     radius: 20
-    color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.60)
+    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
 
 
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null

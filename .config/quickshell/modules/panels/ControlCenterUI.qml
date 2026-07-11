@@ -10,7 +10,7 @@ import "../common"
 Item {
     id: ccUi
     width: 362
-    height: 600
+    height: 615
 
     signal requestClose()
 
@@ -32,8 +32,8 @@ Item {
 
     // Colors matching the theme (Catppuccin Mocha)
     property color bgBase: Theme.colBackground
-    property color bgMantle: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.60)
-    property color bgSurface0: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.45)
+    property color bgMantle: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+    property color bgSurface0: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
     property color bgSurface1: Theme.colSurfaceVariant
     property color textText: Theme.colOnSurface
     property color textSubtext0: Theme.colOnSurfaceVariant
@@ -132,7 +132,7 @@ Item {
     Rectangle {
         id: controlsCard
         anchors.fill: parent
-        color: Theme.colBackground
+        color: "transparent"
         radius: 20
         clip: true
 
@@ -147,7 +147,8 @@ Item {
             anchors.leftMargin: 14
             anchors.right: parent.right
             anchors.rightMargin: 14
-            height: 572
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 14
             visible: opacity > 0.0
             opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -159,49 +160,95 @@ Item {
                 // Header Row
                 RowLayout {
                     Layout.fillWidth: true
-                    Text {
-                        visible: !ccUi.showWarning
-                        text: "\uea70  " + uptimeStr
-                        font.family: "tabler-icons, " + Theme.defaultFontFamily
-                        color: textSubtext0
-                        font.pixelSize: 13
+                    spacing: 8
+
+                    Item { width: 4 } // Left spacing before clock
+
+                    // Clock + date (top left)
+                    ColumnLayout {
+                        spacing: 2
+
+                        Text {
+                            text: Qt.formatDateTime(new Date(), "hh:mm")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 42
+                            font.weight: Font.Bold
+                            color: textText
+                        }
+                        Text {
+                            text: Qt.formatDateTime(new Date(), "dddd · MMM d")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            color: textSubtext0
+                        }
+                    }
+
+                    // Spacer to push uptime and settings to the far right corner
+                    Item {
                         Layout.fillWidth: true
                     }
-                    
+
+                    // Warning text
                     Text {
                         visible: ccUi.showWarning
-                        text: "\uea23  Turn on Wi-Fi to activate Hotspot"
+                        text: "\uea23  Wi-Fi needed for Hotspot"
                         font.family: "tabler-icons, " + Theme.defaultFontFamily
                         color: Theme.colError
-                        font.pixelSize: 13
+                        font.pixelSize: 12
                         font.weight: Font.Bold
-                        Layout.fillWidth: true
                     }
 
-                    Row {
-                        spacing: 16
+                    // Uptime pill
+                    Rectangle {
+                        visible: !ccUi.showWarning
+                        Layout.preferredHeight: 28
+                        Layout.preferredWidth: uptimePillText.contentWidth + 24
+                        Layout.alignment: Qt.AlignTop
+                        radius: 14
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                        Text {
+                            id: uptimePillText
+                            anchors.centerIn: parent
+                            text: "\uea70  " + uptimeStr.replace("Up ", "Uptime ")
+                            font.family: "tabler-icons, " + Theme.defaultFontFamily
+                            color: textSubtext0
+                            font.pixelSize: 12
+                        }
+                    }
 
-                        // Settings Launcher
-                        Rectangle {
-                            width: 28; height: 28; radius: 14
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb20"
-                                font.family: "tabler-icons"
-                                color: textSubtext0
-                                font.pixelSize: 15
-                            }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"])
-                                    ccUi.requestClose()
-                                }
+                    Item { width: 4 }
+
+                    // Settings Launcher
+                    Rectangle {
+                        Layout.preferredWidth: 28
+                        Layout.preferredHeight: 28
+                        radius: 14
+                        Layout.alignment: Qt.AlignTop
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\ueb20"
+                            font.family: "tabler-icons"
+                            color: textSubtext0
+                            font.pixelSize: 15
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"])
+                                ccUi.requestClose()
                             }
                         }
                     }
+                }
+
+                // Clock timer to update every minute
+                Timer {
+                    interval: 1000
+                    running: true
+                    repeat: true
+                    onTriggered: {} // binding on Qt.formatDateTime auto-updates
                 }
 
                 // Columns Row (Left: WiFi/BT/Hotspot, Right: Brightness/Volume)
@@ -337,141 +384,13 @@ Item {
                         }
                     }
 
-                    // Right Column (Sliders in One Card Side-by-Side)
+                    // Right card — reserved for future content
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 160
                         Layout.preferredHeight: 236
                         color: bgSurface0
                         radius: 20
-
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 12
-                            spacing: 12
-
-                            // Brightness Column
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "\ueb30"
-                                    font.family: "tabler-icons"
-                                    font.pixelSize: 16
-                                    color: textSubtext0
-                                    Layout.alignment: Qt.AlignHCenter
-                                }
-
-                                Slider {
-                                    id: backlightSlider
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: 32
-                                    Layout.alignment: Qt.AlignHCenter
-                                    orientation: Qt.Vertical
-                                    from: 0; to: 100; value: 69
-                                    leftPadding: 0; rightPadding: 0
-
-                                    background: Rectangle {
-                                        x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
-                                        y: backlightSlider.topPadding
-                                        width: 6
-                                        height: backlightSlider.availableHeight
-                                        radius: 3
-                                        color: bgSurface1
-
-                                        Rectangle {
-                                            y: backlightSlider.visualPosition * parent.height
-                                            width: parent.width
-                                            height: (1.0 - backlightSlider.visualPosition) * parent.height
-                                            color: colGreen
-                                            radius: 3
-                                        }
-                                    }
-
-                                    handle: Rectangle {
-                                        x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
-                                        y: backlightSlider.topPadding + backlightSlider.visualPosition * (backlightSlider.availableHeight - height)
-                                        width: 14; height: 14; radius: 7
-                                        color: "#ffffff"
-                                    }
-
-                                    Timer {
-                                        id: ddcTimer
-                                        interval: 150; repeat: false
-                                        property int targetValue: 100
-                                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
-                                    }
-                                    onMoved: { ddcTimer.targetValue = value; ddcTimer.restart() }
-                                    onPressedChanged: { if (!pressed) { ddcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]) } }
-                                }
-
-                                Text {
-                                    text: Math.round(backlightSlider.value) + "%"
-                                    color: textSubtext0
-                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                                    Layout.alignment: Qt.AlignHCenter
-                                }
-                            }
-
-                            // Volume Column
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "\ueb51"
-                                    font.family: "tabler-icons"
-                                    font.pixelSize: 16
-                                    color: textSubtext0
-                                    Layout.alignment: Qt.AlignHCenter
-                                }
-
-                                Slider {
-                                    id: volumeSlider
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: 32
-                                    Layout.alignment: Qt.AlignHCenter
-                                    orientation: Qt.Vertical
-                                    from: 0; to: 100; value: 45
-                                    leftPadding: 0; rightPadding: 0
-
-                                    background: Rectangle {
-                                        x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
-                                        y: volumeSlider.topPadding
-                                        width: 6
-                                        height: volumeSlider.availableHeight
-                                        radius: 3
-                                        color: bgSurface1
-
-                                        Rectangle {
-                                            y: volumeSlider.visualPosition * parent.height
-                                            width: parent.width
-                                            height: (1.0 - volumeSlider.visualPosition) * parent.height
-                                            color: colGreen
-                                            radius: 3
-                                        }
-                                    }
-
-                                    handle: Rectangle {
-                                        x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
-                                        y: volumeSlider.topPadding + volumeSlider.visualPosition * (volumeSlider.availableHeight - height)
-                                        width: 14; height: 14; radius: 7
-                                        color: "#ffffff"
-                                    }
-
-                                    onMoved: Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`)
-                                }
-
-                                Text {
-                                    text: Math.round(volumeSlider.value) + "%"
-                                    color: textSubtext0
-                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                                    Layout.alignment: Qt.AlignHCenter
-                                }
-                            }
-                        }
                     }
                 }
 
@@ -586,6 +505,12 @@ Item {
                             MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
                         }
                     }
+                }
+
+                // Spacing at the bottom of the card
+                Item {
+                    Layout.preferredHeight: 12
+                    Layout.fillWidth: true
                 }
             }
         }

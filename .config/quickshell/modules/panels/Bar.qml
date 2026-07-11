@@ -967,7 +967,7 @@ PanelWindow {
             id: archPill
             z: 20
             
-            property int targetHeight: bar.ccOpen ? 600 : 34
+            property int targetHeight: bar.ccOpen ? 615 : 34
             
             y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
