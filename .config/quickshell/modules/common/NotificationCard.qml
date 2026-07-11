@@ -225,11 +225,17 @@ Item {
                             }
 
                             Text {
-                                text: toastCard.expanded ? "\uea62" : "\uea5f" // chevron-up / chevron-down
+                                id: expandChevronText
+                                text: "\uea5f" // always chevron-down
                                 color: expandMouse.containsMouse ? Theme.colOnSurface : Theme.colOnSurfaceVariant
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
                                 anchors.centerIn: parent
+                                rotation: toastCard.expanded ? -180 : 0
+                                
+                                Behavior on rotation {
+                                    NumberAnimation { duration: 300; easing.type: Easing.OutQuart }
+                                }
                             }
 
                             MouseArea {
@@ -238,6 +244,38 @@ Item {
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: toastCard.expanded = !toastCard.expanded
+                            }
+                        }
+
+                        Item {
+                            width: 24
+                            height: 24
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: 12
+                                color: closeMouse.containsMouse ? Theme.colSurfaceVariant : "transparent"
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                            }
+
+                            Text {
+                                text: "\ueb55" // close x
+                                color: closeMouse.containsMouse ? Theme.colError : Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 14
+                                anchors.centerIn: parent
+                            }
+
+                            MouseArea {
+                                id: closeMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
+                                    if (wrapper.notificationData) wrapper.notificationData.close()
+                                }
                             }
                         }
                     }
