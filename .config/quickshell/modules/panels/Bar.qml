@@ -763,8 +763,31 @@ PanelWindow {
                         Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
 
                         spacing: 6
-                        Repeater {
-                            model: globalState.popups ? Math.min(globalState.popups.length, 4) : 0
+                        ListView {
+                            width: dropdownCol.width
+                            implicitHeight: contentHeight
+                            interactive: false
+                            spacing: 6
+                            
+                            add: Transition {
+                                ParallelAnimation {
+                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 250; easing.type: Easing.OutQuad }
+                                    NumberAnimation { property: "scale"; from: 0.8; to: 1; duration: 250; easing.type: Easing.OutQuad }
+                                }
+                            }
+                            
+                            remove: Transition {
+                                ParallelAnimation {
+                                    NumberAnimation { property: "opacity"; to: 0; duration: 200; easing.type: Easing.OutQuad }
+                                    NumberAnimation { property: "scale"; to: 0.8; duration: 200; easing.type: Easing.OutQuad }
+                                }
+                            }
+                            
+                            displaced: Transition {
+                                NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.OutQuad }
+                            }
+                            
+                            model: globalState.popups ? globalState.popups.slice(0, 4) : []
                             delegate: Item {
                                 width: dropdownCol.width
                                 property bool isOverflow: globalState.popups.length > 3 && index === 3
@@ -773,7 +796,7 @@ PanelWindow {
                                 NotificationCard {
                                     id: notifCard
                                     width: parent.width
-                                    notificationData: !parent.isOverflow ? globalState.popups[index] : null
+                                    notificationData: !parent.isOverflow ? modelData : null
                                     inPanel: false
                                     visible: !parent.isOverflow
                                 }
