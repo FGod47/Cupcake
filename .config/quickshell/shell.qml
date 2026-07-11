@@ -164,6 +164,7 @@ ShellRoot {
 
     property real dockOpacity: 0.50
     property real osdOpacity: 0.95
+    property real ccOpacity: 0.85
     Process {
         id: initDockOpacity
         command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
@@ -185,7 +186,18 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDockOpacity.running = true; initOsdOpacity.running = true; } }
+
+    Process {
+        id: initCcOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.cc_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; }
+            }
+        }
+    }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDockOpacity.running = true; initOsdOpacity.running = true; initCcOpacity.running = true; } }
 
     Process {
         id: initMonitorTargets

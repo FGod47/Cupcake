@@ -132,7 +132,7 @@ Item {
     Rectangle {
         id: controlsCard
         anchors.fill: parent
-        color: bgMantle
+        color: Theme.colBackground
         radius: 20
         clip: true
 

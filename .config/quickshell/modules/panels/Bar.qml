@@ -986,7 +986,7 @@ PanelWindow {
             property real morphProgress: bar.ccOpen ? 1.0 : 0.0
             Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
-            property real currentAlpha: root.barOpacity + (Theme.bgAlpha - root.barOpacity) * archPill.morphProgress
+            property real currentAlpha: root.barOpacity + (root.ccOpacity - root.barOpacity) * archPill.morphProgress
             color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha) : Theme.colSurface
             border.width: bar.ccOpen ? 0 : 1
             border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)

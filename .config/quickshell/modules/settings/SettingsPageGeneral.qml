@@ -63,6 +63,7 @@ Item {
     property real settingsOpacity: 0.80
     property real osdOpacity: 0.95
     property real notifPanelOpacity: 0.90
+    property real ccOpacity: 0.85
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
@@ -130,6 +131,16 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.notifPanelOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.cc_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; }
             }
         }
     }
@@ -764,6 +775,53 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
+                            Text { text: "Control Centre opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Background fill opacity of the control centre"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.ccOpacity
+                            onValueChanged: { root.ccOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(root.ccOpacity * 100) + "%"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb00"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
                             Text { text: "Dock opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the application dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
@@ -1041,6 +1099,7 @@ Item {
                             let v = root.barOpacity;
                             root.dockOpacity = v;
                             root.osdOpacity = v;
+                            root.ccOpacity = v;
                             root.launcherOpacity = v;
                             root.wallpaperOpacity = v;
                             root.settingsOpacity = v;
@@ -1049,6 +1108,7 @@ Item {
                                       "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.launcher_opacity && " +
                                       "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.wallpaper_opacity && " +
                                       "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity && " +
+                                      "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity && " +
                                       "echo '" + v.toFixed(2) + "' > ~/.config/cupcake/.osd_opacity";
                             
                             Quickshell.execDetached(["bash", "-c", cmd]);
