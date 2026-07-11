@@ -967,7 +967,7 @@ PanelWindow {
             id: archPill
             z: 20
             
-            property int targetHeight: bar.ccOpen ? (ccLoader.item && ccLoader.item.wifiPageOpen ? 420 : 330) : 34
+            property int targetHeight: bar.ccOpen ? (ccLoader.item && ccLoader.item.wifiPageOpen ? 420 : 350) : 34
             
             y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
