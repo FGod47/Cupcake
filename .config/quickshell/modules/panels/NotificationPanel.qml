@@ -24,7 +24,7 @@ PanelWindow {
     color: "transparent"
     
     property bool isOpen: false
-    visible: globalState.notifPanelVisible || isOpen || panelBg.anchors.rightMargin > -372
+    visible: globalState.notifPanelVisible || isOpen || panelBg.x < 380
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell:notifpanel"
@@ -60,8 +60,8 @@ PanelWindow {
         
         Rectangle {
             id: panelBg
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
+            x: 380
+            y: 0
             width: 360
             height: parent.height
             
@@ -69,23 +69,23 @@ PanelWindow {
                 State {
                     name: "open"
                     when: isOpen
-                    PropertyChanges { target: panelBg; anchors.rightMargin: 12 }
+                    PropertyChanges { target: panelBg; x: 8 }
                 },
                 State {
                     name: "closed"
                     when: !isOpen
-                    PropertyChanges { target: panelBg; anchors.rightMargin: -372 }
+                    PropertyChanges { target: panelBg; x: 380 }
                 }
             ]
             
             transitions: [
                 Transition {
                     from: "closed"; to: "open"
-                    NumberAnimation { properties: "anchors.rightMargin"; duration: 350; easing.type: Easing.OutCubic }
+                    NumberAnimation { properties: "x"; duration: 350; easing.type: Easing.OutCubic }
                 },
                 Transition {
                     from: "open"; to: "closed"
-                    NumberAnimation { properties: "anchors.rightMargin"; duration: 250; easing.type: Easing.InCubic }
+                    NumberAnimation { properties: "x"; duration: 250; easing.type: Easing.InCubic }
                 }
             ]
             
