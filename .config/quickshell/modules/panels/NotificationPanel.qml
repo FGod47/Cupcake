@@ -59,34 +59,15 @@ PanelWindow {
         
         Rectangle {
             id: panelBg
-            x: 380
+            property int targetX: 380
+            x: targetX
             y: 0
             width: 360
             height: parent.height
             
-            states: [
-                State {
-                    name: "open"
-                    when: globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; x: 8 }
-                },
-                State {
-                    name: "closed"
-                    when: !globalState.notifPanelVisible
-                    PropertyChanges { target: panelBg; x: 380 }
-                }
-            ]
-            
-            transitions: [
-                Transition {
-                    from: "closed"; to: "open"
-                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
-                },
-                Transition {
-                    from: "open"; to: "closed"
-                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
-                }
-            ]
+            Behavior on x {
+                NumberAnimation { duration: 400; easing.type: Easing.OutExpo }
+            }
             
             color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, globalState.notifPanelOpacity)
             radius: 24
@@ -690,10 +671,22 @@ PanelWindow {
         target: globalState
         function onNotifPanelVisibleChanged() {
             if (globalState.notifPanelVisible) {
+                openDelayTimer.restart()
                 postOpenUpdateTimer.restart()
             } else {
+                openDelayTimer.stop()
+                panelBg.targetX = 380
                 postOpenUpdateTimer.stop()
             }
+        }
+    }
+
+    Timer {
+        id: openDelayTimer
+        interval: 50 // Delay animation to let Wayland map the window
+        repeat: false
+        onTriggered: {
+            panelBg.targetX = 8
         }
     }
 
