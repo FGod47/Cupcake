@@ -23,7 +23,8 @@ PanelWindow {
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
-    visible: globalState.notifPanelVisible || panelBg.anchors.rightMargin > -372
+    property bool isOpen: false
+    visible: globalState.notifPanelVisible || isOpen || panelBg.anchors.rightMargin > -372
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell:notifpanel"
@@ -67,13 +68,24 @@ PanelWindow {
             states: [
                 State {
                     name: "open"
-                    when: globalState.notifPanelVisible
+                    when: isOpen
                     PropertyChanges { target: panelBg; anchors.rightMargin: 12 }
                 },
                 State {
                     name: "closed"
-                    when: !globalState.notifPanelVisible
+                    when: !isOpen
                     PropertyChanges { target: panelBg; anchors.rightMargin: -372 }
+                }
+            ]
+            
+            transitions: [
+                Transition {
+                    from: "closed"; to: "open"
+                    NumberAnimation { properties: "anchors.rightMargin"; duration: 350; easing.type: Easing.OutCubic }
+                },
+                Transition {
+                    from: "open"; to: "closed"
+                    NumberAnimation { properties: "anchors.rightMargin"; duration: 250; easing.type: Easing.InCubic }
                 }
             ]
             
@@ -683,8 +695,18 @@ PanelWindow {
                 updateBrightness.running = true
                 updateUptime.running = true
                 updateToggles.running = true
+                openTimer.restart()
+            } else {
+                isOpen = false
             }
         }
+    }
+
+    Timer {
+        id: openTimer
+        interval: 50
+        repeat: false
+        onTriggered: isOpen = true
     }
 
     Component.onCompleted: {
