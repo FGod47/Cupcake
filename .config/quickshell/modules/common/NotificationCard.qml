@@ -33,10 +33,10 @@ Item {
 
     property color accentColor: {
         switch (notifCategory) {
-            case "screenshot": return Theme.colSuccess;
+            case "screenshot": return "#a9d291";
             case "music": return "#b185fa";
-            case "update": return Theme.colSuccess;
-            case "battery": return Theme.colWarning;
+            case "update": return "#a9d291";
+            case "battery": return "#e5c07b";
             case "error": return Theme.colError;
             default: return Theme.colPrimary;
         }
@@ -55,7 +55,7 @@ Item {
 
         color: {
             if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.08);
-            return Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity);
+            return Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, globalState.notifPanelOpacity);
         }
         
         clip: true
@@ -63,8 +63,8 @@ Item {
         
         border.color: {
             if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.3);
-            if (notifCategory === "battery") return Qt.rgba(Theme.colWarning.r, Theme.colWarning.g, Theme.colWarning.b, 0.3);
-            if (notifCategory === "update") return Qt.rgba(Theme.colSuccess.r, Theme.colSuccess.g, Theme.colSuccess.b, 0.2);
+            if (notifCategory === "battery") return Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3);
+            if (notifCategory === "update") return Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.2);
             return Qt.rgba(1, 1, 1, 0.05);
         }
         border.width: 1
@@ -197,7 +197,7 @@ Item {
                         width: parent.width
                         text: wrapper.notificationData ? wrapper.notificationData.summary : ""
                         color: Theme.colOnSurface
-                        font.family: Theme.fontFamily
+                        font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.bold: true
                         elide: Text.ElideRight
@@ -210,7 +210,7 @@ Item {
                         width: parent.width
                         text: wrapper.notificationData ? wrapper.notificationData.body : ""
                         color: Theme.colOnSurfaceVariant
-                        font.family: Theme.fontFamily
+                        font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         wrapMode: toastCard.expanded ? Text.Wrap : Text.NoWrap
                         elide: toastCard.expanded ? Text.ElideNone : Text.ElideRight
@@ -230,7 +230,7 @@ Item {
                         id: timeText
                         text: wrapper.notificationData && wrapper.notificationData.time ? "just now" : "" // simplified for UI match
                         color: Theme.colOnSurfaceVariant
-                        font.family: Theme.fontFamily
+                        font.family: Theme.defaultFontFamily
                         font.pixelSize: 11
                         anchors.verticalCenter: parent.verticalCenter
                         visible: notifCategory === "screenshot"
@@ -241,14 +241,14 @@ Item {
                         width: batteryPctText.implicitWidth + 16
                         height: 24
                         radius: 12
-                        color: Qt.rgba(Theme.colWarning.r, Theme.colWarning.g, Theme.colWarning.b, 0.15)
+                        color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.15)
                         anchors.verticalCenter: parent.verticalCenter
                         visible: notifCategory === "battery"
                         Text {
                             id: batteryPctText
                             text: "12%" // mock or extract from notificationData.percentage if available
-                            color: Theme.colWarning
-                            font.family: Theme.fontFamily
+                            color: accentColor
+                            font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
                             font.bold: true
                             anchors.centerIn: parent
@@ -270,7 +270,7 @@ Item {
                             id: inlineActionText
                             text: parent.action ? parent.action.text : (notifCategory === "music" ? "Copy" : "Retry")
                             color: accentColor
-                            font.family: Theme.fontFamily
+                            font.family: Theme.defaultFontFamily
                             font.pixelSize: 12
                             anchors.centerIn: parent
                         }
@@ -394,7 +394,7 @@ Item {
                             id: al; 
                             text: modelData.text; 
                             color: isFirst ? Theme.colOnPrimary : Theme.colOnSurface; 
-                            font.family: Theme.fontFamily; 
+                            font.family: Theme.defaultFontFamily; 
                             font.pixelSize: 12; 
                             font.bold: isFirst
                             anchors.centerIn: parent 

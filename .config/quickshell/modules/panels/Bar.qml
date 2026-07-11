@@ -791,7 +791,7 @@ PanelWindow {
                                         anchors.centerIn: parent
                                         text: "+" + (globalState.popups.length - 3) + " more"
                                         color: Theme.colOnSurfaceVariant
-                                        font.family: Theme.fontFamily
+                                        font.family: Theme.defaultFontFamily
                                         font.pixelSize: 13
                                         font.bold: true
                                     }
