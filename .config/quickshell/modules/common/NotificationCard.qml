@@ -63,8 +63,8 @@ Item {
                 if (!wrapper.inPanel) globalState.popupHovered = true;
                 startY = event.y
                 if (event.button === Qt.MiddleButton) {
-                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== notificationData)
-                    if (notificationData) notificationData.close()
+                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
+                    if (wrapper.notificationData) wrapper.notificationData.close()
                 }
             }
             onReleased: event => {
@@ -74,8 +74,8 @@ Item {
                 if (Math.abs(toastCard.x) < 150) {
                     toastCard.x = 0
                 } else {
-                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== notificationData)
-                    if (notificationData) notificationData.close()
+                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
+                    if (wrapper.notificationData) wrapper.notificationData.close()
                 }
             }
             onPositionChanged: event => {
@@ -86,7 +86,7 @@ Item {
             }
             onClicked: event => {
                 if (event.button !== Qt.LeftButton) return
-                const actions = notificationData ? notificationData.actions : []
+                const actions = wrapper.notificationData ? wrapper.notificationData.actions : []
                 if (actions && actions.length > 0) actions[0].invoke()
             }
         }
@@ -115,13 +115,13 @@ Item {
                     anchors.fill: parent
                     anchors.margins: 2
                     source: {
-                        if (!notificationData) return "";
-                        if (notificationData.image) return notificationData.image;
-                        if (notificationData.appIcon) {
-                            if (notificationData.appIcon.startsWith("/")) {
-                                return "file://" + notificationData.appIcon;
+                        if (!wrapper.notificationData) return "";
+                        if (wrapper.notificationData.image) return wrapper.notificationData.image;
+                        if (wrapper.notificationData.appIcon) {
+                            if (wrapper.notificationData.appIcon.startsWith("/")) {
+                                return "file://" + wrapper.notificationData.appIcon;
                             }
-                            return "image://icon/" + notificationData.appIcon;
+                            return "image://icon/" + wrapper.notificationData.appIcon;
                         }
                         return "";
                     }
@@ -163,7 +163,7 @@ Item {
 
                         Text {
                             id: appNameText
-                            text: notificationData ? notificationData.appName : ""
+                            text: wrapper.notificationData ? wrapper.notificationData.appName : ""
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 11
@@ -179,7 +179,7 @@ Item {
                         }
                         Text {
                             id: summaryText
-                            text: notificationData ? notificationData.summary : ""
+                            text: wrapper.notificationData ? wrapper.notificationData.summary : ""
                             color: Theme.colOnSurface
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 12
@@ -199,7 +199,7 @@ Item {
 
                     Text {
                         id: timeText
-                        text: notificationData ? Qt.formatTime(new Date(notificationData.time / 1000), "hh:mm") : ""
+                        text: wrapper.notificationData ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
                         color: Theme.colOnSurfaceVariant
                         font.family: Theme.monoFontFamily
                         font.pixelSize: 10
@@ -211,7 +211,7 @@ Item {
                 // ── Body preview (collapsed, 1 line) ────────────────────────
                 Text {
                     width: parent.width
-                    text: notificationData ? notificationData.body : ""
+                    text: wrapper.notificationData ? wrapper.notificationData.body : ""
                     color: Theme.colOnSurfaceVariant
                     font.family: Theme.monoFontFamily
                     font.pixelSize: 11
@@ -228,7 +228,7 @@ Item {
                 // ── Full body (expanded, wrapping) ──────────────────────────
                 Text {
                     width: parent.width
-                    text: notificationData ? notificationData.body : ""
+                    text: wrapper.notificationData ? wrapper.notificationData.body : ""
                     color: Theme.colOnSurfaceVariant
                     font.family: Theme.monoFontFamily
                     font.pixelSize: 11
@@ -247,14 +247,14 @@ Item {
                 Flow {
                     width: parent.width
                     spacing: 6
-                    height: (toastCard.expanded && notificationData && notificationData.actions && notificationData.actions.length > 0) ? implicitHeight : 0
+                    height: (toastCard.expanded && wrapper.notificationData && wrapper.notificationData.actions && wrapper.notificationData.actions.length > 0) ? implicitHeight : 0
                     opacity: toastCard.expanded ? 1 : 0
                     clip: true
                     Behavior on height  { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
                     Behavior on opacity { NumberAnimation { duration: 200 } }
 
                     Repeater {
-                        model: notificationData ? notificationData.actions : null
+                        model: wrapper.notificationData ? wrapper.notificationData.actions : null
                         delegate: Rectangle {
                             color: ah.hovered ? Theme.colOnSurfaceVariant : Theme.colOutline
                             radius: 6
