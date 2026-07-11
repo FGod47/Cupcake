@@ -50,6 +50,8 @@ Item {
 
         width: wrapper.width
         height: mainCol.height + 24
+        
+        Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
         color: {
             if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.08);
