@@ -486,16 +486,16 @@ Item {
                     Rectangle {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.fillWidth: true
-                        Layout.maximumWidth: 48
-                        Layout.preferredHeight: 48
-                        radius: 24
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        radius: 28
                         color: nightActive ? colGreenDim : bgSurface0
 
                         Text {
                             anchors.centerIn: parent
                             text: "\ueaf8"
                             font.family: "tabler-icons"
-                            font.pixelSize: 20
+                            font.pixelSize: 24
                             color: nightActive ? colGreen : textSubtext0
                         }
                         MouseArea { anchors.fill: parent; onClicked: nightActive = !nightActive }
@@ -505,16 +505,16 @@ Item {
                     Rectangle {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.fillWidth: true
-                        Layout.maximumWidth: 48
-                        Layout.preferredHeight: 48
-                        radius: 24
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        radius: 28
                         color: firewallActive ? colGreenDim : bgSurface0
 
                         Text {
                             anchors.centerIn: parent
                             text: "\uec2c"
                             font.family: "tabler-icons"
-                            font.pixelSize: 20
+                            font.pixelSize: 24
                             color: firewallActive ? colGreen : textSubtext0
                         }
                         MouseArea { anchors.fill: parent; onClicked: firewallActive = !firewallActive }
@@ -524,16 +524,16 @@ Item {
                     Rectangle {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.fillWidth: true
-                        Layout.maximumWidth: 48
-                        Layout.preferredHeight: 48
-                        radius: 24
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        radius: 28
                         color: eeActive ? colGreenDim : bgSurface0
 
                         Text {
                             anchors.centerIn: parent
                             text: "\uf6d7"
                             font.family: "tabler-icons"
-                            font.pixelSize: 20
+                            font.pixelSize: 24
                             color: eeActive ? colGreen : textSubtext0
                         }
                         MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon") }
@@ -543,16 +543,16 @@ Item {
                     Rectangle {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.fillWidth: true
-                        Layout.maximumWidth: 48
-                        Layout.preferredHeight: 48
-                        radius: 24
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        radius: 28
                         color: antiflashActive ? colGreenDim : bgSurface0
 
                         Text {
                             anchors.centerIn: parent
                             text: "\uea2e"
                             font.family: "tabler-icons"
-                            font.pixelSize: 20
+                            font.pixelSize: 24
                             color: antiflashActive ? colGreen : textSubtext0
                         }
                         MouseArea { anchors.fill: parent; onClicked: antiflashActive = !antiflashActive }
@@ -562,16 +562,16 @@ Item {
                     Rectangle {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.fillWidth: true
-                        Layout.maximumWidth: 48
-                        Layout.preferredHeight: 48
-                        radius: 24
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        radius: 28
                         color: airplaneActive ? colGreenDim : bgSurface0
 
                         Text {
                             anchors.centerIn: parent
                             text: "\ueb6f"
                             font.family: "tabler-icons"
-                            font.pixelSize: 20
+                            font.pixelSize: 24
                             color: airplaneActive ? colGreen : textSubtext0
                         }
                         MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
