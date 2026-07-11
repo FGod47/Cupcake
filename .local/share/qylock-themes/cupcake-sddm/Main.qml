@@ -162,7 +162,7 @@ Rectangle {
         Column {
             z: 5
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 30
+            anchors.verticalCenterOffset: 45
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 0
             width: 400
