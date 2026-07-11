@@ -77,17 +77,6 @@ PanelWindow {
                 }
             ]
             
-            transitions: [
-                Transition {
-                    from: "closed"; to: "open"
-                    NumberAnimation { properties: "anchors.rightMargin"; duration: 350; easing.type: Easing.OutCubic }
-                },
-                Transition {
-                    from: "open"; to: "closed"
-                    NumberAnimation { properties: "anchors.rightMargin"; duration: 250; easing.type: Easing.InCubic }
-                }
-            ]
-            
             color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, globalState.notifPanelOpacity)
             radius: 24
             clip: true
