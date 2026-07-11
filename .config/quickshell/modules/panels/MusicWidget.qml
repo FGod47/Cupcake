@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
 import "../../theme"
+import QtQuick.Effects
 
 Rectangle {
     id: musicWidget
@@ -52,27 +53,51 @@ Rectangle {
             spacing: 12
 
             // Art/Icon
-            Rectangle {
+            Item {
                 width: 52
                 height: 52
-                radius: 14
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1)
-                clip: true
 
+                // Sibling mask Rectangle with explicitly resolved dimensions
+                Rectangle {
+                    id: widgetArtMask
+                    width: 52
+                    height: 52
+                    radius: 14
+                    visible: false
+                }
+
+                // Fallback music icon if no track art is loaded
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 14
+                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1)
+                    visible: widgetArtImage.status !== Image.Ready
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "\ueafc" // music icon
+                        font.family: "tabler-icons"
+                        font.pixelSize: 26
+                        color: Theme.colPrimary
+                    }
+                }
+
+                // Raw Image (hidden, used as source for MultiEffect)
                 Image {
+                    id: widgetArtImage
                     anchors.fill: parent
                     source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-                    visible: source != ""
+                    visible: false
                     fillMode: Image.PreserveAspectCrop
                 }
 
-                Text {
-                    anchors.centerIn: parent
-                    visible: !parent.children[0].visible
-                    text: "\ueafc" // music
-                    font.family: "tabler-icons"
-                    font.pixelSize: 26
-                    color: Theme.colPrimary
+                // MultiEffect applies the mask to crop rawArtImage corners
+                MultiEffect {
+                    source: widgetArtImage
+                    anchors.fill: parent
+                    visible: widgetArtImage.status === Image.Ready
+                    maskEnabled: true
+                    maskSource: widgetArtMask
                 }
             }
 
