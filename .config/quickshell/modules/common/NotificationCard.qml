@@ -205,27 +205,36 @@ Item {
                         
                         Text {
                             id: timeText
-                            text: wrapper.notificationData ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
+                            text: wrapper.notificationData && wrapper.notificationData.time ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.monoFontFamily
                             font.pixelSize: 10
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
-                        Text {
-                            id: expandIcon
-                            text: toastCard.expanded ? "\uea62" : "\uea5f" // chevron-up / chevron-down
-                            color: expandMouse.containsMouse ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                            font.family: "tabler-icons"
-                            font.pixelSize: 14
+                        Item {
+                            width: 24
+                            height: 24
                             anchors.verticalCenter: parent.verticalCenter
-                            
-                            Behavior on color { ColorAnimation { duration: 150 } }
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: 12
+                                color: expandMouse.containsMouse ? Theme.colSurfaceVariant : "transparent"
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                            }
+
+                            Text {
+                                text: toastCard.expanded ? "\uea62" : "\uea5f" // chevron-up / chevron-down
+                                color: expandMouse.containsMouse ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                                anchors.centerIn: parent
+                            }
 
                             MouseArea {
                                 id: expandMouse
                                 anchors.fill: parent
-                                anchors.margins: -4
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: toastCard.expanded = !toastCard.expanded
