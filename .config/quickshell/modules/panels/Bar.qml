@@ -987,7 +987,7 @@ PanelWindow {
             
             property real currentAlpha: root.barOpacity + (Theme.bgAlpha - root.barOpacity) * archPill.morphProgress
             color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha) : Theme.colSurface
-            border.width: 1
+            border.width: bar.ccOpen ? 0 : 1
             border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
             
             Rectangle {

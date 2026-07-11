@@ -57,8 +57,6 @@ Item {
         anchors.fill: parent
         color: bgMantle
         radius: 20
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
-        border.width: 1
 
         // =====================================================================
         // PAGE 0: Main Control Center
