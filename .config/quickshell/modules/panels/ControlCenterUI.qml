@@ -371,9 +371,11 @@ Item {
                                 Slider {
                                     id: backlightSlider
                                     Layout.fillHeight: true
+                                    Layout.preferredWidth: 32
                                     Layout.alignment: Qt.AlignHCenter
                                     orientation: Qt.Vertical
                                     from: 0; to: 100; value: 69
+                                    leftPadding: 0; rightPadding: 0
 
                                     background: Rectangle {
                                         x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
@@ -433,9 +435,11 @@ Item {
                                 Slider {
                                     id: volumeSlider
                                     Layout.fillHeight: true
+                                    Layout.preferredWidth: 32
                                     Layout.alignment: Qt.AlignHCenter
                                     orientation: Qt.Vertical
                                     from: 0; to: 100; value: 45
+                                    leftPadding: 0; rightPadding: 0
 
                                     background: Rectangle {
                                         x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
