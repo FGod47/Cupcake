@@ -25,7 +25,7 @@ PanelWindow {
     implicitHeight: modelData.height
     color: "transparent"
     
-    property bool ccOpen: false
+    property bool ccOpen: true
     mask: (globalState.settingsOpen || ccOpen) ? null : normalMask
     
     Region {
@@ -967,7 +967,7 @@ PanelWindow {
             id: archPill
             z: 20
             
-            property int targetHeight: bar.ccOpen ? (ccLoader.item && (ccLoader.item.wifiPageOpen || ccLoader.item.btPageOpen) ? 420 : 350) : 34
+            property int targetHeight: bar.ccOpen ? 600 : 34
             
             y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter

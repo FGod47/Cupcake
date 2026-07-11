@@ -10,13 +10,18 @@ import "../common"
 Item {
     id: ccUi
     width: 362
-    height: 420
+    height: 600
 
     signal requestClose()
 
     property bool wifiPageOpen: false
     property bool btPageOpen: false
     property bool showWarning: false
+
+    property bool nightActive: false
+    property bool airplaneActive: false
+    property bool firewallActive: false
+    property bool antiflashActive: false
 
     Timer {
         id: warningTimer
@@ -142,14 +147,14 @@ Item {
             anchors.leftMargin: 14
             anchors.right: parent.right
             anchors.rightMargin: 14
-            height: 322
+            height: 572
             visible: opacity > 0.0
             opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 16
+                spacing: 12
 
                 // Header Row
                 RowLayout {
@@ -199,262 +204,395 @@ Item {
                     }
                 }
 
-                // Sliders Row
-                ColumnLayout {
+                // Columns Row (Left: WiFi/BT/Hotspot, Right: Brightness/Volume)
+                RowLayout {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Brightness Slider
-                    RowLayout {
+                    // Left Column (WiFi, BT, Hotspot)
+                    ColumnLayout {
                         Layout.fillWidth: true
+                        Layout.preferredWidth: 160
                         spacing: 12
-                        Text { text: "\uec4e"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
-                        Slider {
-                            id: backlightSlider
-                            Layout.fillWidth: true
-                            from: 0; to: 100; value: 69
 
-                            background: Rectangle {
-                                x: backlightSlider.leftPadding
-                                y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
-                                width: backlightSlider.availableWidth
-                                height: 5
-                                radius: 2.5
-                                color: bgSurface1
+                        // Wi-Fi
+                        Rectangle {
+                            id: wifiToggle
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 96
+                            color: wifiRadioEnabled ? colGreenDim : bgSurface0
+                            radius: 20
+                            border.color: wifiRadioEnabled ? colGreen : bgSurface1
+                            border.width: 1
+                            clip: true
+
+                            // Circular overlay
+                            Rectangle {
+                                width: 100; height: 100; radius: 50
+                                color: Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.15)
+                                x: parent.width - 50; y: -50
+                                visible: wifiRadioEnabled
+                            }
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 4
+                                Text { text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
+                                Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700 }
+                                Text { text: wifiActive ? wifiSSID : (wifiRadioEnabled ? "Disconnected" : "Disabled"); color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width - 16 }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: ccUi.wifiPageOpen = true
+                            }
+                        }
+
+                        // Bluetooth
+                        Rectangle {
+                            id: btToggle
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: btRadioEnabled ? colGreenDim : bgSurface0
+                            radius: 20
+                            border.color: btRadioEnabled ? colGreen : bgSurface1
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                spacing: 10
+
                                 Rectangle {
-                                    width: backlightSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: colGreen
-                                    radius: 2.5
+                                    width: 36; height: 36; radius: 18
+                                    color: btRadioEnabled ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\uea37"
+                                        color: btRadioEnabled ? colGreen : textSubtext0
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 16
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 1
+                                    Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                    Text { text: btConnectedDeviceName !== "" ? btConnectedDeviceName : (btRadioEnabled ? "Enabled" : "Disabled"); color: btRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                                 }
                             }
-                            handle: Rectangle {
-                                x: backlightSlider.leftPadding + backlightSlider.visualPosition * (backlightSlider.availableWidth - width)
-                                y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
-                                width: 14; height: 14; radius: 7
-                                color: "#ffffff"
+
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: ccUi.btPageOpen = true
+                            }
+                        }
+
+                        // Hotspot
+                        Rectangle {
+                            id: hotspotToggle
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 64
+                            color: hotspotActive ? colGreenDim : bgSurface0
+                            radius: 20
+                            border.color: hotspotActive ? colGreen : bgSurface1
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                spacing: 10
+
+                                Rectangle {
+                                    width: 36; height: 36; radius: 18
+                                    color: hotspotActive ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\ued1b"
+                                        color: hotspotActive ? colGreen : textSubtext0
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 16
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 1
+                                    Text { text: "Hotspot"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                    Text { text: hotspotActive ? "Active" : "Off"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
+                                }
                             }
 
-                            Timer {
-                                id: ddcTimer
-                                interval: 150; repeat: false
-                                property int targetValue: 100
-                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (!wifiRadioEnabled) {
+                                        ccUi.showWarning = true
+                                        warningTimer.restart()
+                                        return
+                                    }
+
+                                    if (hotspotActive) {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"])
+                                    } else {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"])
+                                    }
+                                    hotspotActive = !hotspotActive
+                                    hotspotQueryTimer.restart()
+                                }
                             }
-                            onMoved: { ddcTimer.targetValue = value; ddcTimer.restart() }
-                            onPressedChanged: { if (!pressed) { ddcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]) } }
                         }
-                        Text { text: Math.round(backlightSlider.value) + "%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.preferredWidth: 32; horizontalAlignment: Text.AlignRight }
-                        Text { text: "\ueb30"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
                     }
 
-                    // Volume Slider
-                    RowLayout {
+                    // Right Column (Brightness & Volume Vertical Sliders)
+                    ColumnLayout {
                         Layout.fillWidth: true
+                        Layout.preferredWidth: 160
                         spacing: 12
-                        Text { text: "\uf1c3"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
-                        Slider {
-                            id: volumeSlider
-                            Layout.fillWidth: true
-                            from: 0; to: 100; value: 45
 
-                            background: Rectangle {
-                                x: volumeSlider.leftPadding
-                                y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                width: volumeSlider.availableWidth
-                                height: 5
-                                radius: 2.5
-                                color: bgSurface1
-                                Rectangle {
-                                    width: volumeSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: colGreen
-                                    radius: 2.5
+                        // Brightness Card
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 118
+                            color: bgSurface0
+                            radius: 20
+                            border.color: bgSurface1
+                            border.width: 1
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 12
+                                spacing: 8
+
+                                Text {
+                                    text: "\ueb30"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 16
+                                    color: textSubtext0
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+
+                                Slider {
+                                    id: backlightSlider
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignHCenter
+                                    orientation: Qt.Vertical
+                                    from: 0; to: 100; value: 69
+
+                                    background: Rectangle {
+                                        x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
+                                        y: backlightSlider.topPadding
+                                        width: 6
+                                        height: backlightSlider.availableHeight
+                                        radius: 3
+                                        color: bgSurface1
+
+                                        Rectangle {
+                                            y: (1.0 - backlightSlider.visualPosition) * parent.height
+                                            width: parent.width
+                                            height: backlightSlider.visualPosition * parent.height
+                                            color: colGreen
+                                            radius: 3
+                                        }
+                                    }
+
+                                    handle: Rectangle {
+                                        x: backlightSlider.leftPadding + backlightSlider.availableWidth / 2 - width / 2
+                                        y: backlightSlider.topPadding + (1.0 - backlightSlider.visualPosition) * (backlightSlider.availableHeight - height)
+                                        width: 14; height: 14; radius: 7
+                                        color: "#ffffff"
+                                    }
+
+                                    Timer {
+                                        id: ddcTimer
+                                        interval: 150; repeat: false
+                                        property int targetValue: 100
+                                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                                    }
+                                    onMoved: { ddcTimer.targetValue = value; ddcTimer.restart() }
+                                    onPressedChanged: { if (!pressed) { ddcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]) } }
+                                }
+
+                                Text {
+                                    text: Math.round(backlightSlider.value) + "%"
+                                    color: textSubtext0
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    Layout.alignment: Qt.AlignHCenter
                                 }
                             }
-                            handle: Rectangle {
-                                x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
-                                y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                width: 14; height: 14; radius: 7
-                                color: "#ffffff"
-                            }
-
-                            onMoved: Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`)
                         }
-                        Text { text: Math.round(volumeSlider.value) + "%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.preferredWidth: 32; horizontalAlignment: Text.AlignRight }
-                        Text { text: "\ueb51"; font.family: "tabler-icons"; color: textSubtext0; font.pixelSize: 16 }
+
+                        // Volume Card
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 118
+                            color: bgSurface0
+                            radius: 20
+                            border.color: bgSurface1
+                            border.width: 1
+
+                            ColumnLayout {
+                                anchors.fill: parent
+                                anchors.margins: 12
+                                spacing: 8
+
+                                Text {
+                                    text: "\ueb51"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 16
+                                    color: textSubtext0
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+
+                                Slider {
+                                    id: volumeSlider
+                                    Layout.fillHeight: true
+                                    Layout.alignment: Qt.AlignHCenter
+                                    orientation: Qt.Vertical
+                                    from: 0; to: 100; value: 45
+
+                                    background: Rectangle {
+                                        x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
+                                        y: volumeSlider.topPadding
+                                        width: 6
+                                        height: volumeSlider.availableHeight
+                                        radius: 3
+                                        color: bgSurface1
+
+                                        Rectangle {
+                                            y: (1.0 - volumeSlider.visualPosition) * parent.height
+                                            width: parent.width
+                                            height: volumeSlider.visualPosition * parent.height
+                                            color: colGreen
+                                            radius: 3
+                                        }
+                                    }
+
+                                    handle: Rectangle {
+                                        x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
+                                        y: volumeSlider.topPadding + (1.0 - volumeSlider.visualPosition) * (volumeSlider.availableHeight - height)
+                                        width: 14; height: 14; radius: 7
+                                        color: "#ffffff"
+                                    }
+
+                                    onMoved: Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`)
+                                }
+
+                                Text {
+                                    text: Math.round(volumeSlider.value) + "%"
+                                    color: textSubtext0
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+                        }
                     }
                 }
 
-                // Toggles Grid
-                GridLayout {
+                MusicWidget {}
+
+                // Bottom Row of 5 Quick Toggles
+                RowLayout {
                     Layout.fillWidth: true
-                    columns: 3
-                    rowSpacing: 10
-                    columnSpacing: 10
+                    spacing: 8
 
-                    // Wi-Fi Toggle
+                    // Night Light
                     Rectangle {
-                        id: wifiToggle
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: wifiRadioEnabled ? colGreenDim : bgSurface0
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 76
+                        color: nightActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: wifiRadioEnabled ? colGreen : bgSurface1
+                        border.color: nightActive ? colGreen : bgSurface1
                         border.width: 1
 
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
                             spacing: 4
-                            Text { text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: wifiActive ? wifiSSID : (wifiRadioEnabled ? "Disconnected" : "Disabled"); color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                            Text { text: "\ueaf8"; font.family: "tabler-icons"; font.pixelSize: 18; color: nightActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: "Night"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
                         }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                ccUi.wifiPageOpen = true
-                            }
-                        }
+                        MouseArea { anchors.fill: parent; onClicked: nightActive = !nightActive }
                     }
 
-                    // Bluetooth Toggle
+                    // Firewall
                     Rectangle {
-                        id: btToggle
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: btRadioEnabled ? colGreenDim : bgSurface0
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 76
+                        color: firewallActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: btRadioEnabled ? colGreen : bgSurface1
+                        border.color: firewallActive ? colGreen : bgSurface1
                         border.width: 1
 
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
                             spacing: 4
-                            Text { text: "\uea37"; color: btRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: btConnectedDeviceName !== "" ? btConnectedDeviceName : (btRadioEnabled ? "Enabled" : "Disabled"); color: btRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                            Text { text: "\uec2c"; font.family: "tabler-icons"; font.pixelSize: 18; color: firewallActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: "Firewall"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
                         }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                ccUi.btPageOpen = true
-                            }
-                        }
+                        MouseArea { anchors.fill: parent; onClicked: firewallActive = !firewallActive }
                     }
 
-                    // EasyEffects Toggle
+                    // Effects
                     Rectangle {
-                        id: eeToggle
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 76
                         color: eeActive ? colGreenDim : bgSurface0
                         radius: 16
                         border.color: eeActive ? colGreen : bgSurface1
                         border.width: 1
 
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
                             spacing: 4
-                            Text { text: "\uf6d7"; color: eeActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "EasyEffects"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: eeStatus; color: eeActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
+                            Text { text: "\uf6d7"; font.family: "tabler-icons"; font.pixelSize: 18; color: eeActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: "Effects"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
                         }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon")
-                        }
+                        MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon") }
                     }
 
-                    // Firewall Toggle
+                    // Anti-flash
                     Rectangle {
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: bgSurface0
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 76
+                        color: antiflashActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: bgSurface1
+                        border.color: antiflashActive ? colGreen : bgSurface1
                         border.width: 1
 
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 4
-                            Text { text: "\uec2c"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Firewall"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 6
+                            spacing: 2
+                            Text { text: "\uea2e"; font.family: "tabler-icons"; font.pixelSize: 18; color: antiflashActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: "Anti-\nflash"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium; horizontalAlignment: Text.AlignHCenter; Layout.alignment: Qt.AlignHCenter }
                         }
+                        MouseArea { anchors.fill: parent; onClicked: antiflashActive = !antiflashActive }
                     }
 
-                    // Hotspot Toggle
+                    // Airplane
                     Rectangle {
-                        id: hotspotToggle
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: hotspotActive ? colGreenDim : bgSurface0
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 76
+                        color: airplaneActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: hotspotActive ? colGreen : bgSurface1
+                        border.color: airplaneActive ? colGreen : bgSurface1
                         border.width: 1
 
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 8
                             spacing: 4
-                            Text { text: "\ued1b"; color: hotspotActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Hotspot"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: hotspotActive ? "Active" : "Inactive"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                            Text { text: "\ueb6f"; font.family: "tabler-icons"; font.pixelSize: 18; color: airplaneActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: "Airplane"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
                         }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (!wifiRadioEnabled) {
-                                    ccUi.showWarning = true
-                                    warningTimer.restart()
-                                    return
-                                }
-                                
-                                if (hotspotActive) {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"])
-                                } else {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"])
-                                }
-                                hotspotActive = !hotspotActive
-                                hotspotQueryTimer.restart()
-                            }
-                        }
-                    }
-
-                    // Anti-flash Toggle
-                    Rectangle {
-                        Layout.fillWidth: true; Layout.preferredHeight: 82
-                        color: bgSurface0
-                        radius: 16
-                        border.color: bgSurface1
-                        border.width: 1
-
-                        Column {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 12
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 4
-                            Text { text: "\uea2e"; color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            Text { text: "Anti-flash"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                            Text { text: "Inactive"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
-                        }
+                        MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
                     }
                 }
             }
@@ -471,7 +609,7 @@ Item {
             anchors.leftMargin: 14
             anchors.right: parent.right
             anchors.rightMargin: 14
-            height: 392
+            height: 572
             visible: opacity > 0.0
             opacity: ccUi.wifiPageOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -740,7 +878,7 @@ Item {
             anchors.leftMargin: 14
             anchors.right: parent.right
             anchors.rightMargin: 14
-            height: 392
+            height: 572
             visible: opacity > 0.0
             opacity: ccUi.btPageOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
