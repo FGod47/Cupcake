@@ -25,7 +25,7 @@ PanelWindow {
     implicitHeight: modelData.height
     color: "transparent"
     
-    property bool ccOpen: true
+    property bool ccOpen: false
     mask: (globalState.settingsOpen || ccOpen) ? null : normalMask
     
     Region {

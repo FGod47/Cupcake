@@ -226,13 +226,7 @@ Item {
                             border.width: 1
                             clip: true
 
-                            // Circular overlay
-                            Rectangle {
-                                width: 100; height: 100; radius: 50
-                                color: Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.15)
-                                x: parent.width - 50; y: -50
-                                visible: wifiRadioEnabled
-                            }
+
 
                             Column {
                                 anchors.fill: parent
@@ -346,24 +340,24 @@ Item {
                         }
                     }
 
-                    // Right Column (Brightness & Volume Vertical Sliders)
-                    ColumnLayout {
+                    // Right Column (Sliders in One Card Side-by-Side)
+                    Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 160
-                        spacing: 12
+                        Layout.preferredHeight: 236
+                        color: bgSurface0
+                        radius: 20
+                        border.color: bgSurface1
+                        border.width: 1
 
-                        // Brightness Card
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 118
-                            color: bgSurface0
-                            radius: 20
-                            border.color: bgSurface1
-                            border.width: 1
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 12
+                            spacing: 12
 
+                            // Brightness Column
                             ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 12
+                                Layout.fillWidth: true
                                 spacing: 8
 
                                 Text {
@@ -418,25 +412,14 @@ Item {
                                 Text {
                                     text: Math.round(backlightSlider.value) + "%"
                                     color: textSubtext0
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
                                     Layout.alignment: Qt.AlignHCenter
                                 }
                             }
-                        }
 
-                        // Volume Card
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 118
-                            color: bgSurface0
-                            radius: 20
-                            border.color: bgSurface1
-                            border.width: 1
-
+                            // Volume Column
                             ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 12
+                                Layout.fillWidth: true
                                 spacing: 8
 
                                 Text {
@@ -484,8 +467,7 @@ Item {
                                 Text {
                                     text: Math.round(volumeSlider.value) + "%"
                                     color: textSubtext0
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
                                     Layout.alignment: Qt.AlignHCenter
                                 }
                             }
