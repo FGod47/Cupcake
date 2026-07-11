@@ -711,8 +711,7 @@ Item {
                                     height: 52
                                     color: model.inUse ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                                     radius: 12
-                                    border.color: model.inUse ? colGreen : "transparent"
-                                    border.width: model.inUse ? 1 : 0
+
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -973,8 +972,6 @@ Item {
                                 height: 44
                                 color: modelData.connected ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                                 radius: 12
-                                border.color: modelData.connected ? colGreen : "transparent"
-                                border.width: modelData.connected ? 1 : 0
 
                                 RowLayout {
                                     anchors.fill: parent
