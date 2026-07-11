@@ -10,8 +10,7 @@ Rectangle {
     Layout.preferredHeight: 170
     radius: 20
     color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.45)
-    border.width: 1
-    border.color: Theme.colSurfaceVariant
+
 
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool hasPlayer: player !== null

@@ -222,8 +222,7 @@ Item {
                             Layout.preferredHeight: 96
                             color: wifiRadioEnabled ? colGreenDim : bgSurface0
                             radius: 20
-                            border.color: wifiRadioEnabled ? colGreen : bgSurface1
-                            border.width: 1
+
                             clip: true
 
 
@@ -250,8 +249,7 @@ Item {
                             Layout.preferredHeight: 64
                             color: btRadioEnabled ? colGreenDim : bgSurface0
                             radius: 20
-                            border.color: btRadioEnabled ? colGreen : bgSurface1
-                            border.width: 1
+
 
                             RowLayout {
                                 anchors.fill: parent
@@ -291,8 +289,7 @@ Item {
                             Layout.preferredHeight: 64
                             color: hotspotActive ? colGreenDim : bgSurface0
                             radius: 20
-                            border.color: hotspotActive ? colGreen : bgSurface1
-                            border.width: 1
+
 
                             RowLayout {
                                 anchors.fill: parent
@@ -347,8 +344,7 @@ Item {
                         Layout.preferredHeight: 236
                         color: bgSurface0
                         radius: 20
-                        border.color: bgSurface1
-                        border.width: 1
+
 
                         RowLayout {
                             anchors.fill: parent
@@ -492,8 +488,7 @@ Item {
                         Layout.preferredHeight: 76
                         color: nightActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: nightActive ? colGreen : bgSurface1
-                        border.width: 1
+
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -511,8 +506,7 @@ Item {
                         Layout.preferredHeight: 76
                         color: firewallActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: firewallActive ? colGreen : bgSurface1
-                        border.width: 1
+
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -530,8 +524,7 @@ Item {
                         Layout.preferredHeight: 76
                         color: eeActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: eeActive ? colGreen : bgSurface1
-                        border.width: 1
+
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -549,8 +542,7 @@ Item {
                         Layout.preferredHeight: 76
                         color: antiflashActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: antiflashActive ? colGreen : bgSurface1
-                        border.width: 1
+
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -568,8 +560,7 @@ Item {
                         Layout.preferredHeight: 76
                         color: airplaneActive ? colGreenDim : bgSurface0
                         radius: 16
-                        border.color: airplaneActive ? colGreen : bgSurface1
-                        border.width: 1
+
 
                         ColumnLayout {
                             anchors.fill: parent
