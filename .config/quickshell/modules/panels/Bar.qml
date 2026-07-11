@@ -966,11 +966,14 @@ PanelWindow {
         Rectangle {
             id: archPill
             z: 20
-            y: bar.ccOpen ? (modelData.height - height) / 2 : 10
+            
+            property int targetHeight: bar.ccOpen ? (ccLoader.item && ccLoader.item.wifiPageOpen ? 420 : 330) : 34
+            
+            y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: 18
             width: bar.ccOpen ? 362 : archText.implicitWidth + 32
-            height: bar.ccOpen ? (ccLoader.item ? ccLoader.item.height : 330) : 34
+            height: targetHeight
             
             Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
@@ -1050,7 +1053,7 @@ PanelWindow {
                     id: ccLoader
                     anchors.centerIn: parent
                     width: 362
-                    height: item ? item.height : 330
+                    height: parent.height
                     source: "ControlCenterUI.qml"
                     active: true
                     
@@ -1060,7 +1063,8 @@ PanelWindow {
                     enabled: bar.ccOpen
                     
                     onLoaded: {
-                        item.anchors.centerIn = ccLoader;
+                        item.anchors.top = ccLoader.top;
+                        item.anchors.horizontalCenter = ccLoader.horizontalCenter;
                     }
                     
                     Connections {
