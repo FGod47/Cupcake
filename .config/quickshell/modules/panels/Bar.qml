@@ -25,13 +25,19 @@ PanelWindow {
     implicitHeight: modelData.height
     color: "transparent"
     
-    mask: normalMask
+    mask: globalState.settingsOpen ? null : normalMask
     
     Region {
         id: normalMask
         Region { item: leftModules }
         Region { item: archPill }
-        Region { item: rightModules }
+        Region { item: networkPill }
+        Region { item: hwPill }
+        Region { item: recPill }
+        Region { item: trayPill }
+        Region { item: controlsPill }
+        Region { item: clockWrapper }
+        Region { item: powerPill }
     }
 
     property var modelData
@@ -68,8 +74,8 @@ PanelWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        // Make this item exactly 46px tall, but account for margins inside or don't set topMargin on the item itself
-        height: 46
+        // Make this item tall enough to encompass expanding popups instantly so Wayland mask updates reliably
+        height: clockPill.hasDropdown ? 800 : 46
 
         // Inner wrapper to keep the original padding logic identical
         Item {
@@ -84,7 +90,7 @@ PanelWindow {
         Row {
             id: leftModules
             anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
             spacing: 8
             
             visible: true
@@ -179,7 +185,7 @@ PanelWindow {
         Row {
             id: rightModules
             anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
             spacing: 8
             
             visible: true
@@ -419,6 +425,7 @@ PanelWindow {
 
             // Tray Pill
             Rectangle {
+                id: trayPill
                 color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                 radius: 18
                 implicitHeight: 34
@@ -633,8 +640,15 @@ PanelWindow {
 
             // Clock/Notif Pill (#clock-notif-pill)
             Item {
+                id: clockWrapper
+                width: clockPill.width
+                height: clockPill.hasDropdown ? 800 : 34
                 implicitWidth: clockPill.width
-                implicitHeight: 34
+                implicitHeight: clockPill.hasDropdown ? 800 : 34
+                
+                onHeightChanged: {
+                    console.log("clockWrapper height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
+                }
                 
                 Rectangle {
                     id: clockPill
@@ -650,8 +664,17 @@ PanelWindow {
                     property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
                     property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
                     
-                    onWidthChanged: globalState.islandWidth = width
-                    Component.onCompleted: globalState.islandWidth = width
+                    onWidthChanged: {
+                        globalState.islandWidth = width
+                        console.log("clockPill width changed:", width)
+                    }
+                    onHeightChanged: {
+                        console.log("clockPill height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
+                    }
+                    Component.onCompleted: {
+                        globalState.islandWidth = width
+                        console.log("clockPill completed. Height:", height)
+                    }
 
                     Row {
                         id: clockRow
@@ -763,35 +786,13 @@ PanelWindow {
                         Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
 
                         spacing: 6
-                        ListView {
-                            width: dropdownCol.width
-                            implicitHeight: contentHeight
-                            interactive: false
-                            spacing: 6
-                            
-                            add: Transition {
-                                ParallelAnimation {
-                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 250; easing.type: Easing.OutQuad }
-                                    NumberAnimation { property: "scale"; from: 0.8; to: 1; duration: 250; easing.type: Easing.OutQuad }
-                                }
-                            }
-                            
-                            remove: Transition {
-                                ParallelAnimation {
-                                    NumberAnimation { property: "opacity"; to: 0; duration: 200; easing.type: Easing.OutQuad }
-                                    NumberAnimation { property: "scale"; to: 0.8; duration: 200; easing.type: Easing.OutQuad }
-                                }
-                            }
-                            
-                            displaced: Transition {
-                                NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.OutQuad }
-                            }
-                            
-                            model: globalState.popups ? globalState.popups.slice(0, 4) : []
+                        Repeater {
+                            model: globalState.popups ? globalState.popups : []
                             delegate: Item {
                                 width: dropdownCol.width
                                 property bool isOverflow: globalState.popups.length > 3 && index === 3
                                 height: isOverflow ? overflowBadge.height : notifCard.height
+                                visible: index <= 3
 
                                 NotificationCard {
                                     id: notifCard
