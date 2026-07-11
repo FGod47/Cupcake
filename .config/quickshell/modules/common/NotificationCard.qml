@@ -210,8 +210,9 @@ Item {
                         color: Theme.colOnSurfaceVariant
                         font.family: Theme.fontFamily
                         font.pixelSize: 12
-                        elide: Text.ElideRight
-                        maximumLineCount: 1
+                        wrapMode: toastCard.expanded ? Text.Wrap : Text.NoWrap
+                        elide: toastCard.expanded ? Text.ElideNone : Text.ElideRight
+                        maximumLineCount: toastCard.expanded ? 10 : 1
                         visible: text !== ""
                         clip: true
                     }
@@ -284,7 +285,7 @@ Item {
                         width: 26
                         height: 26
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: !isPill && notifCategory !== "error" && notifCategory !== "update"
+                        visible: !isPill && notifCategory !== "error" && notifCategory !== "update" && (bodyText.truncated || toastCard.expanded || (wrapper.notificationData && wrapper.notificationData.actions && wrapper.notificationData.actions.length > 0))
 
                         Rectangle {
                             anchors.fill: parent
