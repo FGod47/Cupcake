@@ -483,93 +483,144 @@ Item {
                     spacing: 8
 
                     // Night Light
-                    Rectangle {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 76
-                        color: nightActive ? colGreenDim : bgSurface0
-                        radius: 16
+                        spacing: 6
 
+                        Rectangle {
+                            Layout.alignment: Qt.AlignHCenter
+                            width: 48; height: 48; radius: 24
+                            color: nightActive ? colGreenDim : bgSurface0
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 8
-                            spacing: 4
-                            Text { text: "\ueaf8"; font.family: "tabler-icons"; font.pixelSize: 18; color: nightActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
-                            Text { text: "Night"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueaf8"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 20
+                                color: nightActive ? colGreen : textSubtext0
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: nightActive = !nightActive }
                         }
-                        MouseArea { anchors.fill: parent; onClicked: nightActive = !nightActive }
+
+                        Text {
+                            text: "Night"
+                            color: textText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
 
                     // Firewall
-                    Rectangle {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 76
-                        color: firewallActive ? colGreenDim : bgSurface0
-                        radius: 16
+                        spacing: 6
 
+                        Rectangle {
+                            Layout.alignment: Qt.AlignHCenter
+                            width: 48; height: 48; radius: 24
+                            color: firewallActive ? colGreenDim : bgSurface0
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 8
-                            spacing: 4
-                            Text { text: "\uec2c"; font.family: "tabler-icons"; font.pixelSize: 18; color: firewallActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
-                            Text { text: "Firewall"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uec2c"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 20
+                                color: firewallActive ? colGreen : textSubtext0
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: firewallActive = !firewallActive }
                         }
-                        MouseArea { anchors.fill: parent; onClicked: firewallActive = !firewallActive }
+
+                        Text {
+                            text: "Firewall"
+                            color: textText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
 
                     // Effects
-                    Rectangle {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 76
-                        color: eeActive ? colGreenDim : bgSurface0
-                        radius: 16
+                        spacing: 6
 
+                        Rectangle {
+                            Layout.alignment: Qt.AlignHCenter
+                            width: 48; height: 48; radius: 24
+                            color: eeActive ? colGreenDim : bgSurface0
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 8
-                            spacing: 4
-                            Text { text: "\uf6d7"; font.family: "tabler-icons"; font.pixelSize: 18; color: eeActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
-                            Text { text: "Effects"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uf6d7"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 20
+                                color: eeActive ? colGreen : textSubtext0
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon") }
                         }
-                        MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon") }
+
+                        Text {
+                            text: "Effects"
+                            color: textText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
 
                     // Anti-flash
-                    Rectangle {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 76
-                        color: antiflashActive ? colGreenDim : bgSurface0
-                        radius: 16
+                        spacing: 6
 
+                        Rectangle {
+                            Layout.alignment: Qt.AlignHCenter
+                            width: 48; height: 48; radius: 24
+                            color: antiflashActive ? colGreenDim : bgSurface0
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 6
-                            spacing: 2
-                            Text { text: "\uea2e"; font.family: "tabler-icons"; font.pixelSize: 18; color: antiflashActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
-                            Text { text: "Anti-\nflash"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium; horizontalAlignment: Text.AlignHCenter; Layout.alignment: Qt.AlignHCenter }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea2e"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 20
+                                color: antiflashActive ? colGreen : textSubtext0
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: antiflashActive = !antiflashActive }
                         }
-                        MouseArea { anchors.fill: parent; onClicked: antiflashActive = !antiflashActive }
+
+                        Text {
+                            text: "Anti-flash"
+                            color: textText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
 
                     // Airplane
-                    Rectangle {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 76
-                        color: airplaneActive ? colGreenDim : bgSurface0
-                        radius: 16
+                        spacing: 6
 
+                        Rectangle {
+                            Layout.alignment: Qt.AlignHCenter
+                            width: 48; height: 48; radius: 24
+                            color: airplaneActive ? colGreenDim : bgSurface0
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 8
-                            spacing: 4
-                            Text { text: "\ueb6f"; font.family: "tabler-icons"; font.pixelSize: 18; color: airplaneActive ? colGreen : textSubtext0; Layout.alignment: Qt.AlignHCenter }
-                            Text { text: "Airplane"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium; Layout.alignment: Qt.AlignHCenter }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb6f"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 20
+                                color: airplaneActive ? colGreen : textSubtext0
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
                         }
-                        MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
+
+                        Text {
+                            text: "Airplane"
+                            color: textText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
                 }
             }
