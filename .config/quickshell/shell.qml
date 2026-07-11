@@ -327,13 +327,27 @@ ShellRoot {
 
     Timer {
         id: islandTimer
-        interval: 5000 // Island stays open for 5 seconds
+        interval: 5000 // Informational toasts disappear after 5s
         repeat: false
         onTriggered: {
             if (globalState.popups.length > 0) {
-                globalState.closingIsland = true;
-                islandHideTimer.start();
-                islandCloseTimer.start();
+                let hasWarnings = false;
+                let newPopups = [];
+                for (let i = 0; i < globalState.popups.length; i++) {
+                    let n = globalState.popups[i];
+                    let sum = n.summary ? n.summary.toLowerCase() : "";
+                    let app = n.appName ? n.appName.toLowerCase() : "";
+                    let isWarning = n.urgency === 2 || sum.includes("battery") || app.includes("power") || sum.includes("fail") || sum.includes("error");
+                    if (isWarning) newPopups.push(n);
+                }
+                
+                if (newPopups.length === 0) {
+                    globalState.closingIsland = true;
+                    islandHideTimer.start();
+                    islandCloseTimer.start();
+                } else {
+                    globalState.popups = newPopups;
+                }
             }
         }
     }
@@ -349,7 +363,7 @@ ShellRoot {
 
     Timer {
         id: islandCloseTimer
-        interval: 450 // Wait for the visual closing animations (400ms) to finish before clearing popups
+        interval: 450
         repeat: false
         onTriggered: {
             globalState.popups = [];

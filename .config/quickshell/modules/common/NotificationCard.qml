@@ -16,33 +16,72 @@ Item {
         NumberAnimation { duration: 400; easing.type: Easing.OutQuart }
     }
 
+    // Dynamic Category Detection
+    property string notifCategory: {
+        let sum = wrapper.notificationData ? wrapper.notificationData.summary.toLowerCase() : "";
+        let app = wrapper.notificationData ? wrapper.notificationData.appName.toLowerCase() : "";
+        let urg = wrapper.notificationData ? wrapper.notificationData.urgency : 1;
+        
+        if (sum.includes("battery") || app.includes("power")) return "battery";
+        if (sum.includes("screenshot") || app.includes("grim") || app.includes("screenshot")) return "screenshot";
+        if (sum.includes("music") || app.includes("spotify") || app.includes("player")) return "music";
+        if (sum.includes("update") || app.includes("pacman") || app.includes("yay")) return "update";
+        if (urg === 2 || sum.includes("fail") || sum.includes("error")) return "error";
+        
+        return "default";
+    }
+
+    property color accentColor: {
+        switch (notifCategory) {
+            case "screenshot": return Theme.colSuccess;
+            case "music": return "#b185fa";
+            case "update": return Theme.colSuccess;
+            case "battery": return Theme.colWarning;
+            case "error": return Theme.colError;
+            default: return Theme.colPrimary;
+        }
+    }
+
+    property bool isPill: notifCategory === "music" || notifCategory === "battery"
+
     Rectangle {
         id: toastCard
         property bool expanded: false
 
         width: wrapper.width
-        height: Math.max(textCol.height, iconRect.height) + 20
+        height: mainCol.height + 24
 
-        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity)
+        color: {
+            if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.08);
+            return Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity);
+        }
+        
         clip: true
-        radius: 16
-        border.color: Qt.rgba(1, 1, 1, 0.05)
+        radius: isPill ? height / 2 : 16
+        
+        border.color: {
+            if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.3);
+            if (notifCategory === "battery") return Qt.rgba(Theme.colWarning.r, Theme.colWarning.g, Theme.colWarning.b, 0.3);
+            if (notifCategory === "update") return Qt.rgba(Theme.colSuccess.r, Theme.colSuccess.g, Theme.colSuccess.b, 0.2);
+            return Qt.rgba(1, 1, 1, 0.05);
+        }
         border.width: 1
 
         x: 0
         y: wrapper.inPanel ? 0 : -150
-        Component.onCompleted: {
-            if (!wrapper.inPanel) {
-                y = 0;
-            }
-        }
-        Behavior on y {
-            enabled: !swipeArea.pressed
-            NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 0.5 }
-        }
-        Behavior on x {
-            enabled: !swipeArea.pressed
-            NumberAnimation { duration: 300; easing.type: Easing.OutQuart }
+        Component.onCompleted: { if (!wrapper.inPanel) y = 0; }
+        Behavior on y { enabled: !swipeArea.pressed; NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 0.5 } }
+        Behavior on x { enabled: !swipeArea.pressed; NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+
+        // Left Accent Bar (Screenshot)
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 4
+            color: accentColor
+            visible: notifCategory === "screenshot"
+            radius: 2
         }
 
         MouseArea {
@@ -63,18 +102,16 @@ Item {
                 startY = event.y
                 if (event.button === Qt.MiddleButton) {
                     if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                    if (wrapper.notificationData) wrapper.notificationData.close()
+                    try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
                 }
             }
             onReleased: event => {
-                if (!containsMouse && !wrapper.inPanel) {
-                    globalState.popupHovered = false;
-                }
+                if (!containsMouse && !wrapper.inPanel) globalState.popupHovered = false;
                 if (Math.abs(toastCard.x) < 150) {
                     toastCard.x = 0
                 } else {
                     if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                    if (wrapper.notificationData) wrapper.notificationData.close()
+                    try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
                 }
             }
             onPositionChanged: event => {
@@ -90,244 +127,286 @@ Item {
             }
         }
 
-        Item {
-            id: mainRow
+        Column {
+            id: mainCol
             anchors.left: parent.left
-            anchors.leftMargin: wrapper.inPanel ? 10 : 12
+            anchors.leftMargin: wrapper.inPanel ? 12 : 16
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: 12
             anchors.top: parent.top
-            anchors.topMargin: 10
-            height: Math.max(textCol.height, iconRect.height)
+            anchors.topMargin: 12
+            spacing: 12
 
-            // App icon (Left)
-            Rectangle {
-                id: iconRect
-                width: 36; height: 36
-                radius: 10
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1)
-                border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3)
-                border.width: 1
-                anchors.left: parent.left
-                anchors.top: parent.top
+            // Top Section (Icon + Text + Controls)
+            Item {
+                width: parent.width
+                height: Math.max(textCol.height, iconRect.height)
 
-                Image {
-                    id: iconImg
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    source: {
-                        if (!wrapper.notificationData) return "";
-                        if (wrapper.notificationData.image) return wrapper.notificationData.image;
-                        if (wrapper.notificationData.appIcon) {
-                            if (wrapper.notificationData.appIcon.startsWith("/")) {
-                                return "file://" + wrapper.notificationData.appIcon;
+                // App icon (Left)
+                Rectangle {
+                    id: iconRect
+                    width: isPill ? 40 : 36
+                    height: isPill ? 40 : 36
+                    radius: isPill ? width / 2 : 10
+                    color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.15)
+                    border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3)
+                    border.width: 1
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+
+                    Image {
+                        id: iconImg
+                        anchors.fill: parent
+                        anchors.margins: isPill ? 10 : 8
+                        source: {
+                            if (!wrapper.notificationData) return "";
+                            if (wrapper.notificationData.image) return wrapper.notificationData.image;
+                            if (wrapper.notificationData.appIcon) {
+                                if (wrapper.notificationData.appIcon.startsWith("/")) return "file://" + wrapper.notificationData.appIcon;
+                                return "image://icon/" + wrapper.notificationData.appIcon;
                             }
-                            return "image://icon/" + wrapper.notificationData.appIcon;
+                            return "";
                         }
-                        return "";
+                        sourceSize: Qt.size(24, 24)
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        visible: status === Image.Ready
                     }
-                    sourceSize: Qt.size(22, 22)
-                    fillMode: Image.PreserveAspectFit
-                    asynchronous: true
-                    visible: status === Image.Ready
+                    Text {
+                        text: {
+                            if (notifCategory === "screenshot") return ""; // camera
+                            if (notifCategory === "music") return ""; // music
+                            if (notifCategory === "update") return ""; // refresh
+                            if (notifCategory === "battery") return ""; // battery
+                            if (notifCategory === "error") return ""; // bluetooth-off (as example) or alert
+                            return ""; // bell
+                        }
+                        color: accentColor
+                        font.family: "tabler-icons"
+                        font.pixelSize: 20
+                        anchors.centerIn: parent
+                        visible: !iconImg.visible
+                    }
                 }
-                Text {
-                    text: "\uea35" // ti-bell
-                    color: Theme.colPrimary
-                    font.family: "tabler-icons"
-                    font.pixelSize: 20
-                    anchors.centerIn: parent
-                    visible: !iconImg.visible
-                }
-            }
 
-            // Text column
-            Column {
-                id: textCol
-                anchors.left: iconRect.right
-                anchors.leftMargin: 12
-                anchors.right: parent.right
-                anchors.top: parent.top
-                spacing: 4
-
-                // Top row: AppName • Title + Controls
-                Item {
-                    width: parent.width
-                    height: Math.max(combinedTitleText.implicitHeight, topRightControls.implicitHeight)
+                // Text column
+                Column {
+                    id: textCol
+                    anchors.left: iconRect.right
+                    anchors.leftMargin: 12
+                    anchors.right: topRightControls.left
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 2
 
                     Text {
-                        id: combinedTitleText
-                        anchors.left: parent.left
-                        anchors.right: topRightControls.left
-                        anchors.rightMargin: 8
-                        anchors.verticalCenter: parent.verticalCenter
-                        textFormat: Text.RichText
-                        text: {
-                            let app = wrapper.notificationData ? wrapper.notificationData.appName : ""
-                            let sum = wrapper.notificationData ? wrapper.notificationData.summary : ""
-                            let out = ""
-                            if (app) out += `<font color="${Theme.colOnSurfaceVariant}">${app} &bull; </font>`
-                            out += `<b>${sum}</b>`
-                            return out
-                        }
+                        id: summaryText
+                        width: parent.width
+                        text: wrapper.notificationData ? wrapper.notificationData.summary : ""
                         color: Theme.colOnSurface
                         font.family: Theme.fontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: 13
+                        font.bold: true
                         elide: Text.ElideRight
                         maximumLineCount: 1
                         clip: true
                     }
 
-                    Row {
-                        id: topRightControls
-                        anchors.right: parent.right
+                    Text {
+                        id: bodyText
+                        width: parent.width
+                        text: wrapper.notificationData ? wrapper.notificationData.body : ""
+                        color: Theme.colOnSurfaceVariant
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 12
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                        visible: text !== ""
+                        clip: true
+                    }
+                }
+
+                Row {
+                    id: topRightControls
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 6
+                    
+                    Text {
+                        id: timeText
+                        text: wrapper.notificationData && wrapper.notificationData.time ? "just now" : "" // simplified for UI match
+                        color: Theme.colOnSurfaceVariant
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 11
                         anchors.verticalCenter: parent.verticalCenter
-                        spacing: 6
-                        
+                        visible: notifCategory === "screenshot"
+                    }
+
+                    // Battery Percentage Pill
+                    Rectangle {
+                        width: batteryPctText.implicitWidth + 16
+                        height: 24
+                        radius: 12
+                        color: Qt.rgba(Theme.colWarning.r, Theme.colWarning.g, Theme.colWarning.b, 0.15)
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: notifCategory === "battery"
                         Text {
-                            id: timeText
-                            text: wrapper.notificationData && wrapper.notificationData.time ? Qt.formatTime(new Date(wrapper.notificationData.time / 1000), "hh:mm") : ""
-                            color: Theme.colOnSurfaceVariant
+                            id: batteryPctText
+                            text: "12%" // mock or extract from notificationData.percentage if available
+                            color: Theme.colWarning
                             font.family: Theme.fontFamily
                             font.pixelSize: 11
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: text !== ""
+                            font.bold: true
+                            anchors.centerIn: parent
+                        }
+                    }
+
+                    // Copy / Retry Inline Buttons (Action 0)
+                    Rectangle {
+                        property var action: (wrapper.notificationData && wrapper.notificationData.actions && wrapper.notificationData.actions.length > 0) ? wrapper.notificationData.actions[0] : null
+                        visible: (notifCategory === "music" || notifCategory === "error") && action !== null
+                        width: inlineActionText.implicitWidth + 24
+                        height: 28
+                        radius: isPill ? 14 : 8
+                        color: inlineActionMouse.containsMouse ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.2) : Qt.rgba(1,1,1,0.05)
+                        border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3)
+                        border.width: 1
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            id: inlineActionText
+                            text: parent.action ? parent.action.text : (notifCategory === "music" ? "Copy" : "Retry")
+                            color: accentColor
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            id: inlineActionMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (parent.action) parent.action.invoke()
+                        }
+                    }
+
+                    Item {
+                        width: 26
+                        height: 26
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: !isPill && notifCategory !== "error" && notifCategory !== "update"
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 6
+                            color: expandMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05)
+                            Behavior on color { ColorAnimation { duration: 150 } }
                         }
 
-                        Item {
-                            width: 24
-                            height: 24
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: wrapper.notificationData && (wrapper.notificationData.body !== "" || (wrapper.notificationData.actions && wrapper.notificationData.actions.length > 0))
-
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: 6
-                                color: expandMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05)
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                            }
-
-                            Text {
-                                id: expandChevronText
-                                text: "\uea5f" // always chevron-down
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                                anchors.centerIn: parent
-                                rotation: toastCard.expanded ? -180 : 0
-                                Behavior on rotation { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
-                            }
-
-                            MouseArea {
-                                id: expandMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: toastCard.expanded = !toastCard.expanded
-                            }
+                        Text {
+                            id: expandChevronText
+                            text: "" // chevron-down
+                            color: Theme.colOnSurfaceVariant
+                            font.family: "tabler-icons"
+                            font.pixelSize: 16
+                            anchors.centerIn: parent
+                            rotation: toastCard.expanded ? -180 : 0
+                            Behavior on rotation { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
                         }
 
-                        Item {
-                            width: 24
-                            height: 24
-                            anchors.verticalCenter: parent.verticalCenter
+                        MouseArea {
+                            id: expandMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: toastCard.expanded = !toastCard.expanded
+                        }
+                    }
 
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: 6
-                                color: closeMouse.containsMouse ? Qt.rgba(1, 0.2, 0.2, 0.2) : Qt.rgba(1, 1, 1, 0.05)
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                            }
+                    Item {
+                        width: 26
+                        height: 26
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: notifCategory !== "battery" // battery has no close button
 
-                            Text {
-                                text: "\ueb55" // close x
-                                color: closeMouse.containsMouse ? Theme.colError : Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 14
-                                anchors.centerIn: parent
-                            }
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: isPill ? 13 : 6
+                            color: closeMouse.containsMouse ? Qt.rgba(1, 0.2, 0.2, 0.2) : Qt.rgba(1, 1, 1, 0.05)
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                        }
 
-                            MouseArea {
-                                id: closeMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
-                                    if (wrapper.notificationData) wrapper.notificationData.close()
-                                }
+                        Text {
+                            text: "" // close x
+                            color: closeMouse.containsMouse ? Theme.colError : Theme.colOnSurfaceVariant
+                            font.family: "tabler-icons"
+                            font.pixelSize: 14
+                            anchors.centerIn: parent
+                        }
+
+                        MouseArea {
+                            id: closeMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (!wrapper.inPanel) globalState.popups = globalState.popups.filter(n => n !== wrapper.notificationData)
+                                try { if (wrapper.notificationData) wrapper.notificationData.close() } catch(e){}
                             }
                         }
                     }
                 }
+            }
 
-                // Body preview (collapsed, 1 line)
-                Text {
-                    width: parent.width
-                    text: wrapper.notificationData ? wrapper.notificationData.body : ""
-                    color: Theme.colOnSurfaceVariant
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 12
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                    visible: text !== ""
-                    height: (!toastCard.expanded && text !== "") ? implicitHeight : 0
-                    opacity: toastCard.expanded ? 0 : 1
-                    clip: true
-                    Behavior on height  { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
+            // Progress Bar (Update)
+            Item {
+                width: parent.width
+                height: 4
+                visible: notifCategory === "update"
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 2
+                    color: Qt.rgba(1,1,1,0.1)
+                    Rectangle {
+                        width: parent.width * 0.6 // Mock progress 60%
+                        height: parent.height
+                        radius: 2
+                        color: accentColor
+                    }
                 }
+            }
 
-                // Full body (expanded, wrapping)
-                Text {
-                    width: parent.width
-                    text: wrapper.notificationData ? wrapper.notificationData.body : ""
-                    color: Theme.colOnSurfaceVariant
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 12
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    textFormat: Text.StyledText
-                    visible: text !== ""
-                    onLinkActivated: Qt.openUrlExternally(link)
-                    height: (toastCard.expanded && text !== "") ? implicitHeight : 0
-                    opacity: toastCard.expanded ? 1 : 0
-                    clip: true
-                    Behavior on height  { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
-                }
-
-                // Action buttons (expanded)
-                Flow {
-                    width: parent.width
-                    spacing: 8
-                    height: (toastCard.expanded && wrapper.notificationData && wrapper.notificationData.actions && wrapper.notificationData.actions.length > 0) ? implicitHeight : 0
-                    opacity: toastCard.expanded ? 1 : 0
-                    clip: true
-                    Behavior on height  { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
-
-                    Repeater {
-                        model: wrapper.notificationData ? wrapper.notificationData.actions : null
-                        delegate: Rectangle {
-                            property bool isFirst: index === 0
-                            color: ah.hovered ? (isFirst ? Qt.lighter(Theme.colPrimary, 1.2) : Qt.rgba(1, 1, 1, 0.15)) : (isFirst ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.05))
-                            border.color: isFirst ? "transparent" : Qt.rgba(1, 1, 1, 0.1)
-                            border.width: isFirst ? 0 : 1
-                            radius: 8
-                            width: al.implicitWidth + 24; height: 32
-                            
-                            Text { 
-                                id: al; 
-                                text: modelData.text; 
-                                color: isFirst ? Theme.colOnPrimary : Theme.colOnSurface; 
-                                font.family: Theme.fontFamily; 
-                                font.pixelSize: 12; 
-                                font.bold: isFirst
-                                anchors.centerIn: parent 
-                            }
-                            HoverHandler { id: ah }
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.invoke() }
+            // Bottom Actions Row (Update, or expanded generic)
+            Flow {
+                width: parent.width
+                spacing: 8
+                visible: notifCategory === "update" || (toastCard.expanded && notifCategory !== "music" && notifCategory !== "error")
+                
+                Repeater {
+                    model: wrapper.notificationData ? wrapper.notificationData.actions : null
+                    delegate: Rectangle {
+                        property bool isFirst: index === 0
+                        color: {
+                            if (isFirst && notifCategory === "update") return ah.hovered ? Qt.lighter(Theme.colSuccess, 1.1) : Theme.colSuccess;
+                            if (isFirst) return ah.hovered ? Qt.lighter(Theme.colPrimary, 1.1) : Theme.colPrimary;
+                            return ah.hovered ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05);
                         }
+                        border.color: isFirst ? "transparent" : Qt.rgba(1, 1, 1, 0.1)
+                        border.width: isFirst ? 0 : 1
+                        radius: 8
+                        width: Math.max(100, al.implicitWidth + 24)
+                        height: 32
+                        
+                        Text { 
+                            id: al; 
+                            text: modelData.text; 
+                            color: isFirst ? Theme.colOnPrimary : Theme.colOnSurface; 
+                            font.family: Theme.fontFamily; 
+                            font.pixelSize: 12; 
+                            font.bold: isFirst
+                            anchors.centerIn: parent 
+                        }
+                        HoverHandler { id: ah }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.invoke() }
                     }
                 }
             }

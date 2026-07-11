@@ -764,11 +764,38 @@ PanelWindow {
 
                         spacing: 6
                         Repeater {
-                            model: globalState.popups && globalState.popups.length > 0 ? globalState.popups.slice(0, 5) : []
-                            delegate: NotificationCard {
+                            model: globalState.popups ? Math.min(globalState.popups.length, 4) : 0
+                            delegate: Item {
                                 width: dropdownCol.width
-                                notificationData: modelData
-                                inPanel: false
+                                property bool isOverflow: globalState.popups.length > 3 && index === 3
+                                height: isOverflow ? overflowBadge.height : notifCard.height
+
+                                NotificationCard {
+                                    id: notifCard
+                                    width: parent.width
+                                    notificationData: !parent.isOverflow ? globalState.popups[index] : null
+                                    inPanel: false
+                                    visible: !parent.isOverflow
+                                }
+
+                                Rectangle {
+                                    id: overflowBadge
+                                    width: parent.width
+                                    height: 32
+                                    radius: 16
+                                    color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity)
+                                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                                    border.width: 1
+                                    visible: parent.isOverflow
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "+" + (globalState.popups.length - 3) + " more"
+                                        color: Theme.colOnSurfaceVariant
+                                        font.family: Theme.fontFamily
+                                        font.pixelSize: 13
+                                        font.bold: true
+                                    }
+                                }
                             }
                         }
                     }
