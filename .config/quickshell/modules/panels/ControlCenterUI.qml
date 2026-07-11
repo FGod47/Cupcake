@@ -138,11 +138,17 @@ Item {
                         spacing: 16
 
                         // Settings Launcher
-                        Text {
-                            text: "\ueb20"
-                            font.family: "tabler-icons"
-                            color: textSubtext0
-                            font.pixelSize: 16
+                        Rectangle {
+                            width: 28; height: 28; radius: 14
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb20"
+                                font.family: "tabler-icons"
+                                color: textSubtext0
+                                font.pixelSize: 15
+                            }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
@@ -272,7 +278,6 @@ Item {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 ccUi.wifiPageOpen = true
-                                wifiPageDelayTimer.restart()
                             }
                         }
                     }
