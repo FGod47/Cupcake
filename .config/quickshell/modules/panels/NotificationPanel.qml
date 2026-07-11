@@ -691,22 +691,32 @@ PanelWindow {
         target: globalState
         function onNotifPanelVisibleChanged() {
             if (globalState.notifPanelVisible) {
-                updateVolume.running = true
-                updateBrightness.running = true
-                updateUptime.running = true
-                updateToggles.running = true
                 openTimer.restart()
+                postOpenUpdateTimer.restart()
             } else {
                 isOpen = false
+                postOpenUpdateTimer.stop()
             }
         }
     }
 
     Timer {
         id: openTimer
-        interval: 50
+        interval: 30
         repeat: false
         onTriggered: isOpen = true
+    }
+
+    Timer {
+        id: postOpenUpdateTimer
+        interval: 400 // trigger CPU-heavy updates only after 350ms slide animation finishes
+        repeat: false
+        onTriggered: {
+            updateVolume.running = true
+            updateBrightness.running = true
+            updateUptime.running = true
+            updateToggles.running = true
+        }
     }
 
     Component.onCompleted: {
