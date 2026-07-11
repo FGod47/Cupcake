@@ -23,8 +23,7 @@ PanelWindow {
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
-    property bool isOpen: false
-    visible: globalState.notifPanelVisible || isOpen || panelBg.x < 380
+    visible: globalState.notifPanelVisible || panelBg.x < 380
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell:notifpanel"
@@ -68,12 +67,12 @@ PanelWindow {
             states: [
                 State {
                     name: "open"
-                    when: isOpen
+                    when: globalState.notifPanelVisible
                     PropertyChanges { target: panelBg; x: 8 }
                 },
                 State {
                     name: "closed"
-                    when: !isOpen
+                    when: !globalState.notifPanelVisible
                     PropertyChanges { target: panelBg; x: 380 }
                 }
             ]
@@ -81,11 +80,11 @@ PanelWindow {
             transitions: [
                 Transition {
                     from: "closed"; to: "open"
-                    NumberAnimation { properties: "x"; duration: 350; easing.type: Easing.OutCubic }
+                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
                 },
                 Transition {
                     from: "open"; to: "closed"
-                    NumberAnimation { properties: "x"; duration: 250; easing.type: Easing.InCubic }
+                    NumberAnimation { properties: "x"; duration: 400; easing.type: Easing.OutExpo }
                 }
             ]
             
@@ -691,20 +690,11 @@ PanelWindow {
         target: globalState
         function onNotifPanelVisibleChanged() {
             if (globalState.notifPanelVisible) {
-                openTimer.restart()
                 postOpenUpdateTimer.restart()
             } else {
-                isOpen = false
                 postOpenUpdateTimer.stop()
             }
         }
-    }
-
-    Timer {
-        id: openTimer
-        interval: 30
-        repeat: false
-        onTriggered: isOpen = true
     }
 
     Timer {
