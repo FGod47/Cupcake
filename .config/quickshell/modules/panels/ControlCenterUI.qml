@@ -62,8 +62,13 @@ Item {
         // =====================================================================
         Item {
             id: mainCcPage
-            anchors.fill: parent
-            anchors.margins: 14
+            anchors.top: parent.top
+            anchors.topMargin: 14
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.right: parent.right
+            anchors.rightMargin: 14
+            height: 322
             visible: opacity > 0.0
             opacity: ccUi.wifiPageOpen ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -348,8 +353,13 @@ Item {
         // =====================================================================
         Item {
             id: wifiCcPage
-            anchors.fill: parent
-            anchors.margins: 14
+            anchors.top: parent.top
+            anchors.topMargin: 14
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.right: parent.right
+            anchors.rightMargin: 14
+            height: 392
             visible: opacity > 0.0
             opacity: ccUi.wifiPageOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
