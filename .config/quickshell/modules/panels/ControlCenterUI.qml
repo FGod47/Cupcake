@@ -55,6 +55,7 @@ Item {
         anchors.fill: parent
         color: bgMantle
         radius: 20
+        clip: true
 
         // =====================================================================
         // PAGE 0: Main Control Center

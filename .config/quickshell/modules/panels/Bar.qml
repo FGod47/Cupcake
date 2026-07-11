@@ -974,6 +974,7 @@ PanelWindow {
             radius: 18
             width: bar.ccOpen ? 362 : archText.implicitWidth + 32
             height: targetHeight
+            clip: true
             
             Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
