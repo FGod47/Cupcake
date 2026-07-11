@@ -23,7 +23,8 @@ PanelWindow {
     implicitHeight: (screen ? screen.height : 1080) - 70
     color: "transparent"
     
-    visible: globalState.notifPanelVisible || panelBg.x < 380
+    visible: true
+    mask: Region { rects: globalState.notifPanelVisible ? [ Qt.rect(0, 0, width, height) ] : [] }
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell:notifpanel"
@@ -671,24 +672,16 @@ PanelWindow {
         target: globalState
         function onNotifPanelVisibleChanged() {
             if (globalState.notifPanelVisible) {
-                openDelayTimer.restart()
+                panelBg.targetX = 8
                 postOpenUpdateTimer.restart()
             } else {
-                openDelayTimer.stop()
                 panelBg.targetX = 380
                 postOpenUpdateTimer.stop()
             }
         }
     }
 
-    Timer {
-        id: openDelayTimer
-        interval: 50 // Delay animation to let Wayland map the window
-        repeat: false
-        onTriggered: {
-            panelBg.targetX = 8
-        }
-    }
+
 
     Timer {
         id: postOpenUpdateTimer
