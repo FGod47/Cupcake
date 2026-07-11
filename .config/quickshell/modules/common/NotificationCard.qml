@@ -100,7 +100,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 10
             // Height tracks the text column so the icon can center against it
-            height: Math.max(textCol.height, iconRect.height)
+            height: textCol.height
 
             // App icon — vertically centered against the whole card
             Rectangle {
