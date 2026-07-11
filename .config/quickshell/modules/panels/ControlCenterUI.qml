@@ -152,7 +152,7 @@ Item {
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    Quickshell.execDetached("quickshell -p ~/.config/quickshell/Settings.qml")
+                                    Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"])
                                     ccUi.requestClose()
                                 }
                             }
