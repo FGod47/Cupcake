@@ -125,6 +125,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showSliderThumb = false; } }
     }
 
+    property bool showCardBackground: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_card_background"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showCardBackground = false; } }
+    }
+
 
 
 

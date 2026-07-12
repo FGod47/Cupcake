@@ -204,7 +204,7 @@ Item {
         Layout.rightMargin: 20
         implicitHeight: innerCol.implicitHeight + 40
         Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
         radius: 12
         clip: true
         ColumnLayout {
@@ -1081,7 +1081,7 @@ Item {
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 implicitHeight: fontColumn.implicitHeight + 40
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
                 radius: 12
 
                 ColumnLayout {
@@ -1264,7 +1264,7 @@ Item {
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 implicitHeight: appFontColumn.implicitHeight + 40
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
                 radius: 12
 
                 ColumnLayout {
@@ -1586,6 +1586,38 @@ Item {
                             if (checked !== Theme.showSliderThumb) {
                                 Theme.showSliderThumb = checked;
                                 Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_slider_thumb"]);
+                            }
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueac4"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Show card backgrounds"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display a subtle background fill on settings cards"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSwitch {
+                        checked: Theme.showCardBackground
+                        onCheckedChanged: {
+                            if (checked !== Theme.showCardBackground) {
+                                Theme.showCardBackground = checked;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_card_background"]);
                             }
                         }
                     }
