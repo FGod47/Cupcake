@@ -419,7 +419,7 @@ Item {
                     spacing: 6
 
                     Repeater {
-                        model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
+                        model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow", "Vibrant"]
                         delegate: Pill {
                             required property string modelData
                             label: modelData
