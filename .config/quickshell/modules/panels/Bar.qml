@@ -25,14 +25,15 @@ PanelWindow {
 
     // Track active player status for Dynamic Island animations
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
-    property bool isMusicPlaying: activePlayer !== null && activePlayer.isPlaying
+    property bool hasPlayer: activePlayer !== null
+    property bool isMusicPlaying: hasPlayer && activePlayer.isPlaying
 
     // and to allow the Settings menu to animate to the center of the screen
     implicitHeight: modelData.height
     color: "transparent"
     
     property bool ccOpen: false
-    mask: (globalState.settingsOpen || ccOpen) ? null : normalMask
+    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded) ? null : normalMask
     
     Region {
         id: normalMask
@@ -66,10 +67,13 @@ PanelWindow {
     MouseArea {
         id: fullScreenClickAway
         anchors.fill: parent
-        enabled: globalState.settingsOpen || bar.ccOpen
+        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded
         onClicked: {
             globalState.settingsOpen = false;
             bar.ccOpen = false;
+            if (archPill.isExpanded) {
+                archPill.isExpanded = false;
+            }
         }
         z: -1
     }
@@ -975,12 +979,20 @@ PanelWindow {
             
             property bool isExpanded: false
             
-            property int targetHeight: bar.ccOpen ? 615 : (bar.isMusicPlaying ? (archPill.isExpanded ? 340 : 34) : 34)
+            property bool showMusicPill: bar.hasPlayer && (bar.activePlayer.isPlaying || pillMouseArea.containsMouse)
+            
+            onShowMusicPillChanged: {
+                if (!archPill.showMusicPill) {
+                    archPill.isExpanded = false;
+                }
+            }
+            
+            property int targetHeight: bar.ccOpen ? 615 : (archPill.showMusicPill ? (archPill.isExpanded ? 340 : 34) : 34)
             
             y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: bar.ccOpen ? 18 : (archPill.isExpanded ? 28 : 18)
-            width: bar.ccOpen ? 362 : (bar.isMusicPlaying ? (archPill.isExpanded ? 220 : 160) : archText.implicitWidth + 32)
+            width: bar.ccOpen ? 362 : (archPill.showMusicPill ? (archPill.isExpanded ? 220 : 160) : archText.implicitWidth + 32)
             height: targetHeight
             
             Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
@@ -991,40 +1003,38 @@ PanelWindow {
             property real morphProgress: bar.ccOpen ? 1.0 : 0.0
             Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
             
-            property real currentAlpha: root.barOpacity + (root.ccOpacity - root.barOpacity) * archPill.morphProgress
-            color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, currentAlpha) : Theme.colSurface
+            // Fade out the gradient if either CC is open or the music player is expanded
+            property real gradientAlpha: 1.0 - Math.max(archPill.morphProgress, archPill.expandFade)
+            property real expandFade: archPill.isExpanded ? 1.0 : 0.0
+            Behavior on expandFade { NumberAnimation { duration: 300 } }
             
-            property color c1: Theme.colPrimary
-            property color c2: Theme.colSecondary
-
-            SequentialAnimation on c1 {
-                loops: Animation.Infinite
-                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-            }
-
-            SequentialAnimation on c2 {
-                loops: Animation.Infinite
-                ColorAnimation { to: Theme.colPrimary; duration: 2000 }
-                ColorAnimation { to: Theme.colSecondary; duration: 2000 }
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                radius: parent.radius
-                visible: archPill.morphProgress < 1.0
-                
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop { position: 0.0; color: Qt.rgba(archPill.c1.r, archPill.c1.g, archPill.c1.b, 1.0 - archPill.morphProgress) }
-                    GradientStop { position: 1.0; color: Qt.rgba(archPill.c2.r, archPill.c2.g, archPill.c2.b, 1.0 - archPill.morphProgress) }
-                }
-            }
+            property real expansion: Math.max(archPill.morphProgress, archPill.expandFade)
+            property color mixColor: Qt.rgba(
+                Theme.colPrimary.r * (1 - expansion) + Theme.colSurfaceContainer.r * expansion,
+                Theme.colPrimary.g * (1 - expansion) + Theme.colSurfaceContainer.g * expansion,
+                Theme.colPrimary.b * (1 - expansion) + Theme.colSurfaceContainer.b * expansion,
+                1.0
+            )
+            property real currentAlpha: 1.0 * (1 - expansion) + (root.barTransparency ? root.ccOpacity : 1.0) * expansion
+            color: root.barTransparency ? Qt.rgba(mixColor.r, mixColor.g, mixColor.b, currentAlpha) : mixColor
+            
 
             MouseArea {
+                id: pillMouseArea
                 anchors.fill: parent
-                enabled: !bar.ccOpen && bar.isMusicPlaying
-                onClicked: archPill.isExpanded = !archPill.isExpanded
+                enabled: !bar.ccOpen
+                hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                cursorShape: Qt.PointingHandCursor
+                onClicked: (mouse) => {
+                    if (mouse.button === Qt.RightButton || mouse.button === Qt.MiddleButton) {
+                        if (bar.hasPlayer) {
+                            archPill.isExpanded = !archPill.isExpanded;
+                        }
+                    } else {
+                        bar.ccOpen = true;
+                    }
+                }
             }
             
             // Center label (Arch logo + name)
@@ -1032,17 +1042,17 @@ PanelWindow {
                 id: archText
                 anchors.centerIn: parent
                 spacing: 6
-                opacity: bar.ccOpen ? 0.0 : (bar.isMusicPlaying ? 0.0 : 1.0)
+                opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 0.0 : 1.0)
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Text { text: ""; color: Theme.colSurfaceContainerHigh; font.family: Theme.monoFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
-                Text { text: "Arch"; color: Theme.colSurfaceContainerHigh; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
+                Text { text: ""; color: Theme.colOnPrimary; font.family: Theme.monoFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
+                Text { text: "Arch"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
             }
 
             // Music Island Container
             Item {
                 anchors.fill: parent
-                opacity: bar.ccOpen ? 0.0 : (bar.isMusicPlaying ? 1.0 : 0.0)
+                opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 1.0 : 0.0)
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
@@ -1071,6 +1081,7 @@ PanelWindow {
                     ]
                     
                     Item {
+                        id: albumArtSmall
                         width: 24; height: 24
                         anchors.left: parent.left; anchors.leftMargin: 8
                         anchors.verticalCenter: parent.verticalCenter
@@ -1081,20 +1092,42 @@ PanelWindow {
                         }
                     }
 
-                    Row {
-                        width: 15; height: 14; spacing: 3
-                        anchors.left: parent.left; anchors.leftMargin: 40
+                    Item {
+                        anchors.left: albumArtSmall.right
+                        anchors.right: playBtnSmall.left
                         anchors.verticalCenter: parent.verticalCenter
-                        Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: "#1E1E2E"; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded; NumberAnimation { to: 4; duration: 300; easing.type: Easing.InOutSine } NumberAnimation { to: 12; duration: 350; easing.type: Easing.InOutSine } } }
-                        Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: "#1E1E2E"; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded; NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } NumberAnimation { to: 6; duration: 300; easing.type: Easing.InOutSine } } }
-                        Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: "#1E1E2E"; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded; NumberAnimation { to: 8; duration: 350; easing.type: Easing.InOutSine } NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } } }
+                        height: 14
+                        
+                        Row {
+                            height: 14; spacing: 3
+                            anchors.centerIn: parent
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 4; duration: 300; easing.type: Easing.InOutSine } NumberAnimation { to: 12; duration: 350; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } NumberAnimation { to: 6; duration: 300; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 8; duration: 350; easing.type: Easing.InOutSine } NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 6; duration: 320; easing.type: Easing.InOutSine } NumberAnimation { to: 10; duration: 280; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 12; duration: 380; easing.type: Easing.InOutSine } NumberAnimation { to: 4; duration: 340; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 4; duration: 290; easing.type: Easing.InOutSine } NumberAnimation { to: 14; duration: 390; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 14; duration: 410; easing.type: Easing.InOutSine } NumberAnimation { to: 8; duration: 310; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 10; duration: 330; easing.type: Easing.InOutSine } NumberAnimation { to: 6; duration: 360; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 8; duration: 370; easing.type: Easing.InOutSine } NumberAnimation { to: 12; duration: 320; easing.type: Easing.InOutSine } } }
+                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 12; duration: 340; easing.type: Easing.InOutSine } NumberAnimation { to: 4; duration: 380; easing.type: Easing.InOutSine } } }
+                        }
                     }
                     
                     Text {
+                        id: playBtnSmall
                         anchors.right: parent.right; anchors.rightMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
-                        text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ueb0c" : "\ueb2a"
-                        font.family: "tabler-icons"; font.pixelSize: 15; color: "#1E1E2E"
+                        text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\uF04C" : "\uF04B"
+                        font.family: "Symbols Nerd Font"; font.pixelSize: 15; color: Theme.colOnPrimary
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            anchors.margins: -10
+                            onClicked: {
+                                if (bar.activePlayer) bar.activePlayer.isPlaying = !bar.activePlayer.isPlaying
+                            }
+                        }
                     }
                 }
 
@@ -1123,7 +1156,8 @@ PanelWindow {
                     ]
                     
                     Column {
-                        anchors.top: parent.top; anchors.topMargin: 12
+                        width: parent.width - 32
+                        anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 14
                         
@@ -1142,16 +1176,16 @@ PanelWindow {
                                 spacing: 4
                                 anchors.bottom: parent.bottom; anchors.bottomMargin: 14
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:18;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:6;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:12;duration:250;easing.type:Easing.InOutSine} NumberAnimation{to:22;duration:450;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:24;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:10;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:14;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:26;duration:400;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:6;duration:450;easing.type:Easing.InOutSine} NumberAnimation{to:18;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:20;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:8;duration:400;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:10;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:24;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:22;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:12;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:400;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:350;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:18;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:6;duration:300;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:12;duration:250;easing.type:Easing.InOutSine} NumberAnimation{to:22;duration:450;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:24;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:10;duration:300;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:14;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:26;duration:400;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:6;duration:450;easing.type:Easing.InOutSine} NumberAnimation{to:18;duration:350;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:20;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:8;duration:400;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:10;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:24;duration:300;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:22;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:12;duration:350;easing.type:Easing.InOutSine} } }
+                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:400;easing.type:Easing.InOutSine} } }
                             }
                         }
                         
@@ -1160,14 +1194,14 @@ PanelWindow {
                             spacing: 2
                             Text {
                                 text: bar.activePlayer ? bar.activePlayer.trackTitle : ""
-                                font.pixelSize: 15; font.weight: 600; color: "#1E1E2E"
+                                font.pixelSize: 15; font.weight: 600; color: Theme.colOnSurface
                                 font.family: Theme.defaultFontFamily
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 width: 180; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter
                             }
                             Text {
                                 text: bar.activePlayer ? bar.activePlayer.trackArtist : ""
-                                font.pixelSize: 12; color: "#1E1E2E"; opacity: 0.7
+                                font.pixelSize: 12; color: Theme.colOnSurface; opacity: 0.7
                                 font.family: Theme.defaultFontFamily
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 width: 180; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter
@@ -1177,9 +1211,9 @@ PanelWindow {
                         Item {
                             width: 180; height: 4
                             anchors.horizontalCenter: parent.horizontalCenter
-                            Rectangle { anchors.fill: parent; color: "#1E1E2E"; opacity: 0.2; radius: 2 }
+                            Rectangle { anchors.fill: parent; color: Theme.colOnSurface; opacity: 0.2; radius: 2 }
                             Rectangle { 
-                                height: 4; radius: 2; color: "#1E1E2E"
+                                height: 4; radius: 2; color: Theme.colOnSurface
                                 width: parent.width * (bar.activePlayer && bar.activePlayer.length > 0 ? (bar.activePlayer.position / bar.activePlayer.length) : 0)
                             }
                         }
@@ -1187,12 +1221,19 @@ PanelWindow {
                         Row {
                             anchors.horizontalCenter: parent.horizontalCenter
                             spacing: 22
-                            Text { text: "\ueb20"; font.family: "tabler-icons"; font.pixelSize: 18; color: "#1E1E2E"; anchors.verticalCenter: parent.verticalCenter }
-                            Rectangle {
-                                width: 44; height: 44; radius: 22; color: "#1E1E2E"
-                                Text { anchors.centerIn: parent; text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ueb0c" : "\ueb2a"; font.family: "tabler-icons"; font.pixelSize: 20; color: "#f5c2e7" }
+                            Text { 
+                                text: "\uF048"; font.family: "Symbols Nerd Font"; font.pixelSize: 18; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
+                                MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.previous() }
                             }
-                            Text { text: "\ueb21"; font.family: "tabler-icons"; font.pixelSize: 18; color: "#1E1E2E"; anchors.verticalCenter: parent.verticalCenter }
+                            Rectangle {
+                                width: 44; height: 44; radius: 22; color: Theme.colOnSurface
+                                Text { anchors.centerIn: parent; text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\uF04C" : "\uF04B"; font.family: "Symbols Nerd Font"; font.pixelSize: 20; color: Theme.colSurface }
+                                MouseArea { anchors.fill: parent; onClicked: if (bar.activePlayer) bar.activePlayer.isPlaying = !bar.activePlayer.isPlaying }
+                            }
+                            Text { 
+                                text: "\uF051"; font.family: "Symbols Nerd Font"; font.pixelSize: 18; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
+                                MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.next() }
+                            }
                         }
                     }
                 }
@@ -1230,18 +1271,6 @@ PanelWindow {
                         }
                     }
                 }
-            }
-        }
-            MouseArea {
-                anchors.fill: parent
-                enabled: !bar.ccOpen
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (bar.isMusicPlaying) {
-                        archPill.isExpanded = !archPill.isExpanded;
-                    } else {
-                        bar.ccOpen = true;
-                    }
                 }
             }
         }
