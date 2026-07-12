@@ -931,7 +931,7 @@ PanelWindow {
                     spacing: 16
                     visible: powerPill.actionsExpanded
                     opacity: powerPill.actionsExpanded ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: 200; delay: powerPill.actionsExpanded ? 200 : 0 } }
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
 
                     // Icon & Text
                     Column {
