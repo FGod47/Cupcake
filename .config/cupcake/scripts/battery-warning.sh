@@ -21,7 +21,10 @@ while true; do
     STATUS=$(cat /sys/class/power_supply/$BATTERY/status)
 
     if [ "$STATUS" = "Discharging" ]; then
-        if [ "$CAPACITY" -le 5 ] && [ "$WARNING_5" = false ]; then
+        if [ -f "$HOME/.config/cupcake/disable_battery_warnings" ]; then
+            # Do nothing if warnings are disabled
+            :
+        elif [ "$CAPACITY" -le 5 ] && [ "$WARNING_5" = false ]; then
             notify-send "Battery Critical" "Battery is at $CAPACITY%. Please plug in immediately!" -u critical -i battery-empty
             WARNING_5=true
             WARNING_10=true

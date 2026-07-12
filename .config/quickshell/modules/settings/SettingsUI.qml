@@ -457,7 +457,7 @@ Item {
                             case 10: return { icon: "\uea89", title: "System" };
                             case 11: return { icon: "\ueb1f", title: "Services" };
                             case 12: return { icon: "\ueae8", title: "Location" };
-                            case 13: return { icon: "\ueb0d", title: "Power" };
+                            case 13: return { icon: "\ueb0d", title: "Power & Battery" };
                             case 17: return { icon: "\ueb52", title: "Network" };
                             case 23: return { icon: "\ued1b", title: "Hotspot" };
                             case 22: return { icon: "\uea37", title: "Bluetooth" };
