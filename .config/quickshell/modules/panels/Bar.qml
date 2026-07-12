@@ -926,7 +926,7 @@ PanelWindow {
                                         Text { id: rebootIconText; text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: rebootLabelText; text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Reboot' --text 'Are you sure you want to reboot?' --width=300 --height=150 && systemctl reboot"]); } }
                                 }
 
                                 // Shutdown
@@ -938,7 +938,7 @@ PanelWindow {
                                         Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Shutdown' --text 'Are you sure you want to shutdown?' --width=300 --height=150 && systemctl poweroff"]); } }
                                 }
                             }
                         }

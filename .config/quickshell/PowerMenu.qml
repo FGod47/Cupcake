@@ -43,7 +43,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
+                    Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Shutdown' --text 'Are you sure you want to shutdown?' --width=300 --height=150 && systemctl poweroff"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
@@ -62,7 +62,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 onClicked: {
                     powerMenu.visible = false
-                    Quickshell.execDetached(["bash", "-c", "systemctl reboot"])
+                    Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Reboot' --text 'Are you sure you want to reboot?' --width=300 --height=150 && systemctl reboot"])
                 }
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
