@@ -21,12 +21,12 @@ Item {
     property bool suspendLid: false
     property string screenTimeout: "5 min"
 
-    Command {
+    Process {
         id: batCommand
-        command: ["bash", "-c", "bat=$(ls /sys/class/power_supply | grep -i bat | head -n 1); if [ -n \"$bat\" ]; then echo \"$(cat /sys/class/power_supply/$bat/capacity)|$(cat /sys/class/power_supply/$bat/status)\"; else echo \"No Battery\"; fi"]
-        onStdoutLinesChanged: {
-            if (stdoutLines.length > 0) {
-                let out = stdoutLines[0];
+        command: ["bash", "-c", "bat=$(ls /sys/class/power_supply | grep -i bat | head -n 1); if [ -n \"$bat\" ]; then echo \"$(cat /sys/class/power_supply/$bat/capacity)|$(cat /sys/class/power_supply/$bat/status)\"; else echo 'No Battery'; fi"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let out = text.trim();
                 if (out === "No Battery" || out === "") {
                     root.hasBattery = false;
                 } else {
@@ -34,8 +34,9 @@ Item {
                     let parts = out.split("|");
                     root.batteryValue = parseInt(parts[0]);
                     root.batteryPercent = parts[0] + "%";
-                    // Format status like "Charging - 1h 12m until full" for mock purposes, but just showing status is fine
-                    root.batteryStatus = parts[1] === "Charging" ? "Charging - ~1h left" : (parts[1] === "Discharging" ? "Discharging - ~3h left" : parts[1]);
+                    let st = parts[1];
+                    root.batteryStatus = st === "Charging" ? "Charging - ~1h left"
+                        : (st === "Discharging" ? "Discharging - ~3h left" : st);
                 }
             }
         }
