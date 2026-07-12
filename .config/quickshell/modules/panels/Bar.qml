@@ -848,11 +848,7 @@ PanelWindow {
                 id: powerPill
                 radius: (actionsExpanded && showConfirmation) ? 28 : 18
                 implicitHeight: (actionsExpanded && showConfirmation) ? 290 : 34
-                implicitWidth: {
-                    if (actionsExpanded && showConfirmation) return 230;
-                    if (actionsExpanded && !showConfirmation) return powerRow.implicitWidth + 32;
-                    return (powerHover.hovered ? (powerRow.implicitWidth + 32) : 34);
-                }
+                implicitWidth: (actionsExpanded && showConfirmation) ? 230 : (powerRow.implicitWidth + 32)
                 color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.hovered ? Theme.colError : Theme.colPrimary)
                 Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
                 Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
