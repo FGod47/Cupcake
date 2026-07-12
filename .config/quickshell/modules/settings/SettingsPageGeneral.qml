@@ -1491,6 +1491,73 @@ Item {
                         }
                     }
                 }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueadc"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Slider thickness"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Thinness/thickness of sliders across the UI"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 1; to: 10; stepSize: 1
+                            value: Theme.sliderThickness
+                            onValueChanged: { Theme.sliderThickness = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(Theme.sliderThickness) + "' > ~/.config/cupcake/.slider_thickness"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(Theme.sliderThickness) + "px"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        
+                        Rectangle {
+                            width: 20; height: 20; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text { 
+                                anchors.centerIn: parent
+                                text: "\ueb13"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 9
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Theme.sliderThickness = 2.0;
+                                    Quickshell.execDetached(["bash", "-c", "echo '2' > ~/.config/cupcake/.slider_thickness"]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
         } // Close main ColumnLayout

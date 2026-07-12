@@ -111,6 +111,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.appFontWeight = v; } }
     }
 
+    property real sliderThickness: 2.0
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.slider_thickness"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.sliderThickness = v; } }
+    }
+
 
 
 
@@ -120,17 +127,17 @@ Item {
         return Qt.rgba(c.r, c.g, c.b, alpha);
     }
 
-    property color colBackground: transparentize("#11140f", bgAlpha)
-    property color colOnBackground: "#e1e4d9"
-    property color colSurface: transparentize("#11140f", bgAlpha)
-    property color colSurfaceContainer: transparentize("#1d211a", bgAlpha)
-    property color colSurfaceContainerHigh: transparentize("#282b24", bgAlpha)
-    property color colSurfaceVariant: transparentize("#43483e", bgAlpha)
-    property color colOnSurface: "#e1e4d9"
-    property color colOnSurfaceVariant: "#c3c8bb"
-    property color colOutline: "#8d9286"
-    property color colPrimary: "#a9d291"
-    property color colOnPrimary: "#173807"
-    property color colSecondary: "#bccbb0"
+    property color colBackground: transparentize("#15121c", bgAlpha)
+    property color colOnBackground: "#e8dfee"
+    property color colSurface: transparentize("#37333e", bgAlpha)
+    property color colSurfaceContainer: transparentize("#221e28", bgAlpha)
+    property color colSurfaceContainerHigh: transparentize("#2c2833", bgAlpha)
+    property color colSurfaceVariant: transparentize("#4a4550", bgAlpha)
+    property color colOnSurface: "#e8dfee"
+    property color colOnSurfaceVariant: "#cbc4d2"
+    property color colOutline: "#958e9b"
+    property color colPrimary: "#d4bbff"
+    property color colOnPrimary: "#40008c"
+    property color colSecondary: "#d7bde4"
     property color colError: "#ffb4ab"
 }

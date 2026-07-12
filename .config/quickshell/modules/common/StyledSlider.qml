@@ -10,7 +10,7 @@ Slider {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2
         implicitWidth: 200
-        implicitHeight: 2
+        implicitHeight: Theme.sliderThickness
         width: control.availableWidth
         height: implicitHeight
         radius: height / 2
