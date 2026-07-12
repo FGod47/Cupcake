@@ -171,7 +171,7 @@ Item {
         Layout.rightMargin: 20
         implicitHeight: innerCol.implicitHeight + 40
         Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
         radius: 12
         clip: true
         ColumnLayout {
@@ -984,7 +984,7 @@ Item {
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 implicitHeight: fontColumn.implicitHeight + 40
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
                 radius: 12
 
                 ColumnLayout {
@@ -1167,7 +1167,7 @@ Item {
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
                 implicitHeight: appFontColumn.implicitHeight + 40
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
                 radius: 12
 
                 ColumnLayout {
