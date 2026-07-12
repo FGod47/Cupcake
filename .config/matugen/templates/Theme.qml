@@ -111,8 +111,40 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.appFontWeight = v; } }
     }
 
+    property real sliderThickness: 2.0
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.slider_thickness"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.sliderThickness = v; } }
+    }
 
+    property bool showSliderThumb: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_slider_thumb"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showSliderThumb = false; } }
+    }
 
+    property bool showCardBackground: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_card_background"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showCardBackground = false; } }
+    }
+
+    property bool showDividers: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_dividers"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showDividers = false; } }
+    }
+
+    property real rowSpacing: 4.0
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.row_spacing"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; } }
+    }
 
     // helper function to parse hex string into color with alpha
     function transparentize(hexStr, alpha) {
@@ -122,7 +154,7 @@ Item {
 
     property color colBackground: transparentize("{{colors.background.default.hex}}", bgAlpha)
     property color colOnBackground: "{{colors.on_background.default.hex}}"
-    property color colSurface: transparentize("{{colors.surface.default.hex}}", bgAlpha)
+    property color colSurface: transparentize("{{colors.surface_container_highest.default.hex}}", bgAlpha)
     property color colSurfaceContainer: transparentize("{{colors.surface_container.default.hex}}", bgAlpha)
     property color colSurfaceContainerHigh: transparentize("{{colors.surface_container_high.default.hex}}", bgAlpha)
     property color colSurfaceVariant: transparentize("{{colors.surface_variant.default.hex}}", bgAlpha)
