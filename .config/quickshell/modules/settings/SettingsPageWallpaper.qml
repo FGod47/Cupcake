@@ -460,7 +460,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Wallpaper directory"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Wallpaper directory"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Location where your wallpaper images are stored"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -498,7 +498,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Per-monitor wallpapers"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Per-monitor wallpapers"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Use a different wallpaper on each display"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -517,7 +517,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Select Display"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Select Display"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Choose which monitor to set the wallpaper for"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -575,7 +575,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Slideshow"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Slideshow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Automatically cycle through your wallpaper library"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -593,7 +593,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Change every"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Change every"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "How often the wallpaper changes"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -631,7 +631,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Shuffle order"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Shuffle order"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Play wallpapers in a random order"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -654,7 +654,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Dim overlay"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Dim overlay"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Darken the wallpaper for better icon contrast"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -703,7 +703,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Apply a blur effect while the screen is locked"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }

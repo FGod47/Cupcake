@@ -384,7 +384,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Color Mode"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Color Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Switch between light and dark theme"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -422,7 +422,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Color Scheme"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Color Scheme"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Choose the accent palette for the interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -463,7 +463,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Dynamic Accent"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Dynamic Accent"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Derive accent color from the current wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -499,7 +499,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Toggle style"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Toggle style"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Choose the visual style for toggle switches"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -534,7 +534,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Background blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Background blur"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Enable frosted-glass blur behind panels"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -566,7 +566,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Strength"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Adjust the intensity of the blur effect"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -614,7 +614,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Global translucency level for all surfaces"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -661,7 +661,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Passes"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Passes"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Number of blur iterations — higher is smoother"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -712,7 +712,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Quickshell blur"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Enable transparency for the top bar and dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -743,7 +743,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Top Bar opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Top Bar opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the status bar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -790,7 +790,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Control Centre opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Control Centre opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the control centre"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -837,7 +837,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Dock opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Dock opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the application dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -884,7 +884,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "OSD opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "OSD opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the on-screen display"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -931,7 +931,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App Launcher opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App Launcher opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the app launcher"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -978,7 +978,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Wall Switcher opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Wall Switcher opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the wallpaper picker"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1027,7 +1027,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Notification Panel opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Notification Panel opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of the notification panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1110,7 +1110,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uec50"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Main font used throughout the interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1148,7 +1148,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uec50"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Font used for numbers and stats display"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1186,7 +1186,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb5a"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Font weight"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Change the boldness of the interface text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1223,7 +1223,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueaf2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Change the size of standard text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1249,7 +1249,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueaf2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Change the size of monospaced text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1293,7 +1293,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uec50"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App default font"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App default font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Main font for GTK/Qt applications"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1331,7 +1331,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\uec50"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App monospaced font"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App monospaced font"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Monospaced font for GTK/Qt applications"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1369,7 +1369,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb5a"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App font weight"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App font weight"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Boldness of GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1406,7 +1406,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueaf2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App default font size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App default font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Size of standard GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1432,7 +1432,7 @@ Item {
                         Rectangle { width: 32; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueaf2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "App monospaced font size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "App monospaced font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Size of monospaced GTK/Qt application text"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1473,7 +1473,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Settings app opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Settings app opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Background fill opacity of this settings panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1520,7 +1520,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Slider thickness"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Slider thickness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Thinness/thickness of sliders across the UI"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1587,7 +1587,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Show slider thumbs"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show slider thumbs"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Display a circular thumb on sliders"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1619,7 +1619,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Show card backgrounds"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show card backgrounds"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Display a subtle background fill on settings cards"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1651,7 +1651,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Show option dividers"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show option dividers"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Display a thin separator line between each option"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -1683,7 +1683,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Option spacing"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Option spacing"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Adjust the vertical space between each option in the list"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }

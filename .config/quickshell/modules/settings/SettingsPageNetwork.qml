@@ -290,7 +290,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: root.wifiDeviceName; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.wifiDeviceName; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: root.wifiRadioEnabled ? root.wifiDeviceState : "Turned off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -365,7 +365,7 @@ Item {
                             }
                             ColumnLayout {
                                 spacing: 1
-                                Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                                 Text { text: "Connected · Secured"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                             }
                         }
@@ -403,7 +403,7 @@ Item {
                                 }
                                 ColumnLayout {
                                     spacing: 1
-                                    Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                    Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                                     Text { text: model.isSecure ? "Secured" : "Open network"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                                 }
                             }
@@ -483,7 +483,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Disable MAC Randomization"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Disable MAC Randomization"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Fixes connection issues for MediaTek Wi-Fi chips"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -543,7 +543,7 @@ Item {
                             }
                             ColumnLayout {
                                 spacing: 1
-                                Text { text: "Mobile Hotspot"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Mobile Hotspot"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                                 Text { text: root.hotspotEnabled ? "On" : "Off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                             }
                         }
@@ -613,7 +613,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Wired connection"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Wired connection"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: root.ethernetDetails; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -647,7 +647,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Connect automatically"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Connect automatically"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Use this connection whenever a cable is plugged in"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -670,7 +670,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Work VPN"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Work VPN"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Disconnected"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -702,7 +702,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Proxy"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Proxy"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Route traffic through a proxy server"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -733,7 +733,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "DNS server"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "DNS server"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Override the DNS server provided by your network"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
@@ -768,7 +768,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Airplane mode"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Airplane mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Disable all wireless connections"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }

@@ -114,7 +114,7 @@ Item {
                 }
                 ColumnLayout {
                     spacing: 1
-                    Text { text: modelData.name || "Unknown device"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    Text { text: modelData.name || "Unknown device"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     Text { 
                         text: {
                             if (!modelData.paired) return "Available";
@@ -229,7 +229,7 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Bluetooth"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Bluetooth"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: "Manage paired and nearby devices"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }

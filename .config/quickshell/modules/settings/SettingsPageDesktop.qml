@@ -208,7 +208,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Widgets Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Widgets Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
@@ -236,7 +236,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Screen Corners Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Screen Corners Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
@@ -262,7 +262,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Screen Corners Size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Screen Corners Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     StyledSlider {
@@ -305,7 +305,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Inner Gaps"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Inner Gaps"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     StyledSlider {
@@ -342,7 +342,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Outer Gaps"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Outer Gaps"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     StyledSlider {
@@ -383,7 +383,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Borders Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Borders Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
@@ -409,7 +409,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Border Size"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Border Size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     StyledSlider {
@@ -451,7 +451,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Shadows Enabled"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Shadows Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     ToggleSwitch {
@@ -477,7 +477,7 @@ Item {
                                 font.pixelSize: 16
                             }
                         }
-                        Text { text: "Shadow Thickness"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Shadow Thickness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
                     StyledSlider {

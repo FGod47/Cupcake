@@ -80,7 +80,7 @@ Item {
             }
             ColumnLayout {
                 spacing: 1
-                Text { text: listItem.title; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                Text { text: listItem.title; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                 Text { text: listItem.subtitle; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
             }
         }
