@@ -7,15 +7,19 @@ import "../common"
 
 Item {
     id: root
-    property string activeTab: "battery"
     
     // Battery State
     property string batteryPercent: "Unknown"
     property string batteryStatus: "Unknown"
+    property int batteryValue: 0
     property bool hasBattery: false
     
-    // Warning State
-    property bool warningsEnabled: true
+    // Mock settings
+    property string powerMode: "balanced"
+    property bool autoBrightness: true
+    property bool wifiStandby: true
+    property bool suspendLid: false
+    property string screenTimeout: "5 min"
 
     Command {
         id: batCommand
@@ -28,19 +32,11 @@ Item {
                 } else {
                     root.hasBattery = true;
                     let parts = out.split("|");
+                    root.batteryValue = parseInt(parts[0]);
                     root.batteryPercent = parts[0] + "%";
-                    root.batteryStatus = parts[1];
+                    // Format status like "Charging - 1h 12m until full" for mock purposes, but just showing status is fine
+                    root.batteryStatus = parts[1] === "Charging" ? "Charging - ~1h left" : (parts[1] === "Discharging" ? "Discharging - ~3h left" : parts[1]);
                 }
-            }
-        }
-    }
-
-    Command {
-        id: checkWarningsCommand
-        command: ["bash", "-c", "if [ -f ~/.config/cupcake/disable_battery_warnings ]; then echo 'disabled'; else echo 'enabled'; fi"]
-        onStdoutLinesChanged: {
-            if (stdoutLines.length > 0) {
-                root.warningsEnabled = (stdoutLines[0] === "enabled");
             }
         }
     }
@@ -50,162 +46,397 @@ Item {
         running: root.visible
         repeat: true
         triggeredOnStart: true
-        onTriggered: {
-            batCommand.running = true;
-            checkWarningsCommand.running = true;
-        }
+        onTriggered: batCommand.running = true
     }
 
-    onVisibleChanged: {
-        if (visible) {
-            batCommand.running = true;
-            checkWarningsCommand.running = true;
-        }
-    }
-
-    ColumnLayout {
+    ScrollView {
         anchors.fill: parent
-        anchors.margins: 24
-        spacing: 16
+        contentWidth: availableWidth
+        clip: true
         
-        SettingsSegmentedControl {
-            Layout.fillWidth: true
-            model: [
-                { label: "Battery", value: "battery" },
-                { label: "Session & Idle", value: "session-panel" }
-            ]
-            currentValue: root.activeTab
-            onValueChanged: (val, idx) => { root.activeTab = val; }
-        }
-        
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        ColumnLayout {
+            width: Math.min(parent.width, 1000)
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 24
             
-            // BATTERY TAB
-            ScrollView {
-                anchors.fill: parent
-                contentWidth: availableWidth
-                clip: true
-                visible: root.activeTab === "battery"
-                
+            Item { Layout.preferredHeight: 8 }
+
+            // TITLE ROW
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                spacing: 12
+                Text { text: "\ueb0d"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 24; font.weight: Font.Bold }
+                Text { text: "Power & Battery"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 20; font.weight: Font.Bold }
+            }
+
+            // BATTERY MAIN CARD
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                implicitHeight: 120
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                border.width: 1
+                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                radius: 12
+
                 ColumnLayout {
-                    width: Math.min(parent.width, 1000)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 24
-                    
-                    SettingsCard {
-                        title: "Battery Information"
-                        icon: "\uea38"
-                        surfaceColor: Theme.colSurfaceContainer
-                        outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                        primaryColor: Theme.colPrimary
-                        onSurfaceColor: Theme.colOnSurface
-                        
-                        RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 16
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 12
+                        Text { text: "\uea38"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 20; Layout.alignment: Qt.AlignTop }
+                        ColumnLayout {
+                            spacing: 2
                             Layout.fillWidth: true
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Current Level"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: root.hasBattery ? root.batteryStatus : "Not found"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                            }
-                            Text {
-                                text: root.hasBattery ? root.batteryPercent : "--"
-                                color: Theme.colPrimary
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 24
-                                font.weight: 800
-                            }
+                            Text { text: "Battery"; font.family: Theme.defaultFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.colOnSurface }
+                            Text { text: root.hasBattery ? root.batteryStatus : "Not available"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant }
+                        }
+                        Text { 
+                            text: root.hasBattery ? root.batteryPercent : "--"
+                            color: Theme.colPrimary
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 28
+                            font.weight: Font.Medium
                         }
                     }
 
-                    SettingsCard {
-                        title: "Power Alerts"
-                        icon: "\uea02"
-                        surfaceColor: Theme.colSurfaceContainer
-                        outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                        primaryColor: Theme.colPrimary
-                        onSurfaceColor: Theme.colOnSurface
-                        
+                    // Progress Bar
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 6
+                            radius: 3
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                            Rectangle {
+                                width: parent.width * (root.hasBattery ? (root.batteryValue / 100.0) : 0)
+                                height: parent.height
+                                radius: 3
+                                color: Theme.colPrimary
+                            }
+                        }
                         RowLayout {
                             Layout.fillWidth: true
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Low Battery Warnings"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Show desktop notifications when battery drops below 20%, 10%, and 5%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                            Text { text: "0%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 10 }
+                            Item { Layout.fillWidth: true }
+                            Text { text: "100%"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 10 }
+                        }
+                    }
+                }
+            }
+
+            // INFO CARDS ROW
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                spacing: 12
+
+                // Screen On
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 70
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                    radius: 12
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 16
+                        spacing: 4
+                        Text { text: "Screen on"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant; font.weight: Font.DemiBold }
+                        Text { text: "3h 24m"; font.family: Theme.defaultFontFamily; font.pixelSize: 16; color: Theme.colOnSurface }
+                    }
+                }
+                
+                // Standby
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 70
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                    radius: 12
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 16
+                        spacing: 4
+                        Text { text: "Standby"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant; font.weight: Font.DemiBold }
+                        Text { text: "18h 40m"; font.family: Theme.defaultFontFamily; font.pixelSize: 16; color: Theme.colOnSurface }
+                    }
+                }
+
+                // Health
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 70
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                    radius: 12
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 16
+                        spacing: 4
+                        Text { text: "Health"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Theme.colOnSurfaceVariant; font.weight: Font.DemiBold }
+                        Text { text: "Good"; font.family: Theme.defaultFontFamily; font.pixelSize: 16; color: Theme.colPrimary }
+                    }
+                }
+            }
+
+            // POWER MODE
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                spacing: 12
+
+                Text {
+                    text: "POWER MODE"
+                    font.pixelSize: 11
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: 0.4
+                    color: Theme.colOnSurface
+                    opacity: 0.45
+                }
+
+                // Custom Segmented Control for Power Mode
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 40
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                    border.width: 1
+                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                    radius: height / 2
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        spacing: 4
+
+                        // Saver
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: height / 2
+                            color: root.powerMode === "saver" ? Theme.colPrimary : "transparent"
+                            border.width: 1
+                            border.color: root.powerMode === "saver" ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 8
+                                Text { text: "\ueaef"; font.family: "tabler-icons"; font.pixelSize: 14; color: root.powerMode === "saver" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
+                                Text { text: "Saver"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: root.powerMode === "saver" ? Font.DemiBold : Font.Normal; color: root.powerMode === "saver" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
                             }
-                            StyledSwitch {
-                                checked: root.warningsEnabled
-                                onCheckedChanged: {
-                                    if (checked) {
-                                        Quickshell.execDetached(["bash", "-c", "rm -f ~/.config/cupcake/disable_battery_warnings"]);
-                                    } else {
-                                        Quickshell.execDetached(["bash", "-c", "touch ~/.config/cupcake/disable_battery_warnings"]);
-                                    }
+                            MouseArea { anchors.fill: parent; onClicked: root.powerMode = "saver"; cursorShape: Qt.PointingHandCursor }
+                        }
+                        
+                        // Balanced
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: height / 2
+                            color: root.powerMode === "balanced" ? Theme.colPrimary : "transparent"
+                            border.width: 1
+                            border.color: root.powerMode === "balanced" ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 8
+                                Text { text: "\uea03"; font.family: "tabler-icons"; font.pixelSize: 14; color: root.powerMode === "balanced" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
+                                Text { text: "Balanced"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: root.powerMode === "balanced" ? Font.DemiBold : Font.Normal; color: root.powerMode === "balanced" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: root.powerMode = "balanced"; cursorShape: Qt.PointingHandCursor }
+                        }
+
+                        // Performance
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: height / 2
+                            color: root.powerMode === "performance" ? Theme.colPrimary : "transparent"
+                            border.width: 1
+                            border.color: root.powerMode === "performance" ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 8
+                                Text { text: "\ueb1d"; font.family: "tabler-icons"; font.pixelSize: 14; color: root.powerMode === "performance" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
+                                Text { text: "Performance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: root.powerMode === "performance" ? Font.DemiBold : Font.Normal; color: root.powerMode === "performance" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant }
+                            }
+                            MouseArea { anchors.fill: parent; onClicked: root.powerMode = "performance"; cursorShape: Qt.PointingHandCursor }
+                        }
+                    }
+                }
+            }
+
+            // SETTINGS LIST CARD
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                implicitHeight: settingsCol.implicitHeight + 16
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                border.width: 1
+                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                radius: 12
+                
+                ColumnLayout {
+                    id: settingsCol
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    spacing: 0
+
+                    // Screen Timeout
+                    Item {
+                        Layout.fillWidth: true; implicitHeight: 64
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 16
+                            Text { text: "\ueaf8"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colPrimary }
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 2
+                                Text { text: "Screen timeout"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.colOnSurface }
+                                Text { text: "Dim after inactivity"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                            }
+                            Rectangle {
+                                width: 80; height: 32; radius: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                                RowLayout {
+                                    anchors.centerIn: parent; spacing: 6
+                                    Text { text: root.screenTimeout; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant }
+                                    Text { text: "\uea61"; font.family: "tabler-icons"; font.pixelSize: 14; color: Theme.colOnSurfaceVariant }
                                 }
                             }
                         }
+                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); anchors.bottom: parent.bottom; visible: true }
+                    }
+
+                    // Auto brightness
+                    Item {
+                        Layout.fillWidth: true; implicitHeight: 64
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 16
+                            Text { text: "\uea4f"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colPrimary }
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 2
+                                Text { text: "Auto brightness"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.colOnSurface }
+                                Text { text: "Adjust based on ambient light"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                            }
+                            StyledSwitch { checked: root.autoBrightness; onCheckedChanged: root.autoBrightness = checked }
+                        }
+                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); anchors.bottom: parent.bottom; visible: true }
+                    }
+
+                    // Wi-Fi on standby
+                    Item {
+                        Layout.fillWidth: true; implicitHeight: 64
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 16
+                            Text { text: "\ueb52"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colPrimary }
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 2
+                                Text { text: "Wi-Fi on standby"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.colOnSurface }
+                                Text { text: "Keep connection when sleeping"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                            }
+                            StyledSwitch { checked: root.wifiStandby; onCheckedChanged: root.wifiStandby = checked }
+                        }
+                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); anchors.bottom: parent.bottom; visible: true }
+                    }
+
+                    // Suspend on lid close
+                    Item {
+                        Layout.fillWidth: true; implicitHeight: 64
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 16
+                            Text { text: "\uea89"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colPrimary }
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 2
+                                Text { text: "Suspend on lid close"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.colOnSurface }
+                                Text { text: "Sleep when laptop is closed"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                            }
+                            StyledSwitch { checked: root.suspendLid; onCheckedChanged: root.suspendLid = checked }
+                        }
                     }
                 }
             }
 
-            // SESSION TAB
-            ScrollView {
-                anchors.fill: parent
-                contentWidth: availableWidth
-                clip: true
-                visible: root.activeTab === "session-panel"
-                
-                ColumnLayout {
-                    width: Math.min(parent.width, 1000)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 24
-                    
-                    SettingsCard {
-                        title: "Session Panel Settings"
-                        icon: ""
-                        surfaceColor: Theme.colSurfaceContainer
-                        outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                        primaryColor: Theme.colPrimary
-                        onSurfaceColor: Theme.colOnSurface
-                        
-                        RowLayout {
-                            Layout.fillWidth: true
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Session Actions"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Show session actions directly in the panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                            }
-                            StyledSwitch {
-                                checked: true
-                                onCheckedChanged: {}
-                            }
+            // QUICK ACTIONS
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
+                spacing: 12
+
+                Text {
+                    text: "QUICK ACTIONS"
+                    font.pixelSize: 11
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: 0.4
+                    color: Theme.colOnSurface
+                    opacity: 0.45
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Sleep
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: 70
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                        border.width: 1
+                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        radius: 12
+                        ColumnLayout {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "\ueaf8"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colOnSurfaceVariant }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "Sleep"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant }
                         }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["bash", "-c", "systemctl suspend"]) }
                     }
-                    
-                    SettingsCard {
-                        title: "Idle Settings"
-                        icon: "\uea63"
-                        surfaceColor: Theme.colSurfaceContainer
-                        outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-                        primaryColor: Theme.colPrimary
-                        onSurfaceColor: Theme.colOnSurface
-                        
-                        RowLayout {
-                            Layout.fillWidth: true
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Pre Action Fade"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
-                                Text { text: "Fade screen before sleeping"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
-                            }
-                            StyledSwitch {
-                                checked: false
-                                onCheckedChanged: {}
-                            }
+
+                    // Reboot
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: 70
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                        border.width: 1
+                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        radius: 12
+                        ColumnLayout {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "\ueb13"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colOnSurfaceVariant }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "Reboot"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant }
                         }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Reboot' --text 'Are you sure you want to reboot?' && systemctl reboot"]) }
+                    }
+
+                    // Shutdown
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: 70
+                        color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.05)
+                        border.width: 1
+                        border.color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.2)
+                        radius: 12
+                        ColumnLayout {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "\ueb0d"; font.family: "tabler-icons"; font.pixelSize: 18; color: Theme.colError }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "Shutdown"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: Theme.colError }
+                        }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Shutdown' --text 'Are you sure you want to shut down?' && systemctl poweroff"]) }
                     }
                 }
             }
+            
+            Item { Layout.preferredHeight: 24 }
         }
     }
 }
