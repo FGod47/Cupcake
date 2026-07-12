@@ -851,8 +851,8 @@ PanelWindow {
                 implicitWidth: (actionsExpanded && showConfirmation) ? 230 : (powerRow.implicitWidth + 32)
                 color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.containsMouse ? Theme.colError : Theme.colPrimary)
                 Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
-                Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
+                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.OutExpo; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
+                Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.OutExpo; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 clip: true
                 
@@ -922,7 +922,7 @@ PanelWindow {
                         height: 34
                         width: (powerHover.containsMouse || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 500; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.OutExpo; easing.overshoot: 1.5 } }
                         
                         Row {
                             id: innerContent
