@@ -129,11 +129,23 @@ Item {
         opacity: 0.45
     }
 
-    component SettingsRow: RowLayout {
+    component SettingsRow: ColumnLayout {
+        default property alias content: innerRow.data
         Layout.fillWidth: true
         Layout.topMargin: 4
         Layout.bottomMargin: 4
         spacing: 12
+        RowLayout {
+            id: innerRow
+            Layout.fillWidth: true
+            spacing: 12
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+            visible: Theme.showDividers
+        }
     }
 
     component ToggleSwitch: Rectangle {

@@ -323,11 +323,23 @@ Item {
         }
     }
 
-    component SettingsRow: RowLayout {
+    component SettingsRow: ColumnLayout {
+        default property alias content: innerRow.data
         Layout.fillWidth: true
         Layout.topMargin: 4
         Layout.bottomMargin: 4
         spacing: 12
+        RowLayout {
+            id: innerRow
+            Layout.fillWidth: true
+            spacing: 12
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+            visible: Theme.showDividers
+        }
     }
 
     // =====================================================================
@@ -1618,6 +1630,38 @@ Item {
                             if (checked !== Theme.showCardBackground) {
                                 Theme.showCardBackground = checked;
                                 Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_card_background"]);
+                            }
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea81"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Show option dividers"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display a thin separator line between each option"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSwitch {
+                        checked: Theme.showDividers
+                        onCheckedChanged: {
+                            if (checked !== Theme.showDividers) {
+                                Theme.showDividers = checked;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_dividers"]);
                             }
                         }
                     }

@@ -132,6 +132,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showCardBackground = false; } }
     }
 
+    property bool showDividers: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_dividers"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showDividers = false; } }
+    }
+
 
 
 
