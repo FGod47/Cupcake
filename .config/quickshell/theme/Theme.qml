@@ -118,6 +118,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.sliderThickness = v; } }
     }
 
+    property bool showSliderThumb: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_slider_thumb"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showSliderThumb = false; } }
+    }
+
 
 
 

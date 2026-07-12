@@ -31,6 +31,7 @@ Slider {
         implicitHeight: control.pressed ? 16 : (control.hovered ? 14 : 10)
         radius: width / 2
         color: Theme.colPrimary
+        visible: Theme.showSliderThumb
         
         Behavior on implicitWidth { NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 2.0 } }
         Behavior on implicitHeight { NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 2.0 } }

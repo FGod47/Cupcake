@@ -1558,6 +1558,38 @@ Item {
                         }
                     }
                 }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueadc"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Show slider thumbs"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display a circular thumb on sliders"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSwitch {
+                        checked: Theme.showSliderThumb
+                        onCheckedChanged: {
+                            if (checked !== Theme.showSliderThumb) {
+                                Theme.showSliderThumb = checked;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_slider_thumb"]);
+                            }
+                        }
+                    }
+                }
             }
 
         } // Close main ColumnLayout
