@@ -342,9 +342,11 @@ Item {
         anchors.leftMargin: 0
         anchors.rightMargin: 0
         contentWidth: availableWidth
+        contentHeight: mainCol.implicitHeight
         clip: true
 
         ColumnLayout {
+            id: mainCol
             width: parent.width
             spacing: 24
 
