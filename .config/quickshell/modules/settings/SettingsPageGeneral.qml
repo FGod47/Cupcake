@@ -11,6 +11,7 @@ Item {
     Process { id: bashProcess }
     
     // Properties simulating the backend state for this page
+    property string activeTab: "General"
     property string uiStyle: "Liquid"
     property string accent: "Tonal Spot"
     property string colorMode: "Dark"
@@ -347,6 +348,75 @@ Item {
         ColumnLayout {
             width: parent.width
             spacing: 24
+
+            SegmentedControl {
+                Layout.alignment: Qt.AlignHCenter
+                options: ["General", "Settings App"]
+                current: root.activeTab
+                onSelected: (v) => { root.activeTab = v; }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 24
+                visible: root.activeTab === "Settings App"
+                
+                SettingsCard {
+                    SectionLabel { text: "App Customization" }
+                    
+                    SettingsRow {
+                        RowLayout {
+                            spacing: 12
+                            Rectangle {
+                                width: 32; height: 32; radius: 16
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueb00"
+                                    color: Theme.colOnSurfaceVariant
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 16
+                                }
+                            }
+                            ColumnLayout {
+                                spacing: 1
+                                Text { text: "Settings app opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Background fill opacity of this settings panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
+                        RowLayout {
+                            spacing: 16
+                            
+                            StyledSlider {
+                                Layout.preferredWidth: 160
+                                from: 0.1; to: 1.0; stepSize: 0.05
+                                value: root.settingsOpacity
+                                onValueChanged: { root.settingsOpacity = value; }
+                                onPressedChanged: {
+                                    if (!pressed) {
+                                        Quickshell.execDetached(["bash", "-c", "echo '" + root.settingsOpacity.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity"]);
+                                    }
+                                }
+                            }
+                            
+                            Text { 
+                                text: Math.round(root.settingsOpacity * 100) + "%"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 12
+                                Layout.preferredWidth: 32
+                                horizontalAlignment: Text.AlignRight
+                            }
+                        }
+                    }
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 24
+                visible: root.activeTab === "General"
 
             // --- Mode section ---
 
@@ -994,52 +1064,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb00"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Settings app opacity"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Background fill opacity of this settings panel"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 0.1; to: 1.0; stepSize: 0.05
-                            value: root.settingsOpacity
-                            onValueChanged: { root.settingsOpacity = value; }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.settingsOpacity.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity"]);
-                                }
-                            }
-                        }
-                        
-                        Text { 
-                            text: Math.round(root.settingsOpacity * 100) + "%"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
+                // Moved Settings app opacity to Settings App tab
 
                 SettingsRow {
                     RowLayout {
@@ -1481,8 +1506,10 @@ Item {
                         }
                     }
                 }
-            }
-        }
-    }
+                } // Extra brace to close inner block
+            } // Close wrapper ColumnLayout
+        } // Close main ColumnLayout
+    } // Close ScrollView
+} // Close root Item
 }
-}
+
