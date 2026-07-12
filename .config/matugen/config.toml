@@ -2,7 +2,7 @@
 version_check = false
 
 [templates.hyprland]
-input_path = "~/.config/matugen/templates/colors-hyprland.conf"
+input_path = "~/.config/matugen/templates/hyprland-colors.conf"
 output_path = "~/.config/hypr/colors.conf"
 
 [templates.hyprland_lua]
