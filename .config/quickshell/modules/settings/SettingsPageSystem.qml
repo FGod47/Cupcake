@@ -209,7 +209,7 @@ Item {
 
                 SystemListItem { iconName: "\uea89"; title: "Display"; subtitle: "Monitors, brightness, night light, display profile"; pageIndex: 18 }
                 SystemListItem { iconName: "\ueb4f"; title: "Sound"; subtitle: "Volume levels, output, input, sound devices" }
-                SystemListItem { iconName: "\ueb0d"; title: "Power & battery"; subtitle: "Sleep, battery usage, power profiles" }
+                SystemListItem { iconName: "\ueb0d"; title: "Power & battery"; subtitle: "Sleep, battery usage, power profiles"; pageIndex: 13 }
                 SystemListItem { iconName: "\ueadc"; title: "Storage"; subtitle: "Disk usage, drives, mount points" }
             }
 
