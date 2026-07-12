@@ -41,8 +41,8 @@ Item {
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
         Layout.fillWidth: true
-        Layout.topMargin: 4
-        Layout.bottomMargin: 4
+        Layout.topMargin: Theme.rowSpacing
+        Layout.bottomMargin: Theme.rowSpacing
         spacing: 12
         RowLayout {
             id: innerRow

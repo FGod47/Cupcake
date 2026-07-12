@@ -139,6 +139,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showDividers = false; } }
     }
 
+    property real rowSpacing: 4.0
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.row_spacing"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; } }
+    }
+
 
 
 

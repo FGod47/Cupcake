@@ -326,8 +326,8 @@ Item {
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
         Layout.fillWidth: true
-        Layout.topMargin: 4
-        Layout.bottomMargin: 4
+        Layout.topMargin: Theme.rowSpacing
+        Layout.bottomMargin: Theme.rowSpacing
         spacing: 12
         RowLayout {
             id: innerRow
@@ -1662,6 +1662,73 @@ Item {
                             if (checked !== Theme.showDividers) {
                                 Theme.showDividers = checked;
                                 Quickshell.execDetached(["bash", "-c", "echo '" + (checked ? "true" : "false") + "' > ~/.config/cupcake/.show_dividers"]);
+                            }
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea23"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Option spacing"; color: Theme.colOnSurface; font.family: Theme.monoFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Adjust the vertical space between each option in the list"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0; to: 16; stepSize: 1
+                            value: Theme.rowSpacing
+                            onValueChanged: { Theme.rowSpacing = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(Theme.rowSpacing) + "' > ~/.config/cupcake/.row_spacing"]);
+                                }
+                            }
+                        }
+                        
+                        Text { 
+                            text: Math.round(Theme.rowSpacing) + "px"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 32
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        
+                        Rectangle {
+                            width: 20; height: 20; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text { 
+                                anchors.centerIn: parent
+                                text: "\ueb13"
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 9
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Theme.rowSpacing = 4.0;
+                                    Quickshell.execDetached(["bash", "-c", "echo '4' > ~/.config/cupcake/.row_spacing"]);
+                                }
                             }
                         }
                     }
