@@ -849,7 +849,7 @@ PanelWindow {
                 radius: (actionsExpanded && showConfirmation) ? 28 : 18
                 implicitHeight: (actionsExpanded && showConfirmation) ? 290 : 34
                 implicitWidth: (actionsExpanded && showConfirmation) ? 230 : (powerRow.implicitWidth + 32)
-                color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.hovered ? Theme.colError : Theme.colPrimary)
+                color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.containsMouse ? Theme.colError : Theme.colPrimary)
                 Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
                 Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
                 Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
@@ -900,6 +900,11 @@ PanelWindow {
                             powerPill.actionsExpanded = false;
                         }
                     }
+                    onContainsMouseChanged: {
+                        if (!containsMouse && powerPill.actionsExpanded && !powerPill.showConfirmation) {
+                            powerPill.actionsExpanded = false;
+                        }
+                    }
                 }
 
                 // Collapsed and horizontal options content (Original Behavior)
@@ -915,9 +920,9 @@ PanelWindow {
                     Item {
                         id: powerRevealer
                         height: 34
-                        width: (powerHover.hovered || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
+                        width: (powerHover.containsMouse || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 500; easing.type: (powerHover.hovered || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: 500; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                         
                         Row {
                             id: innerContent
