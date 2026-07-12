@@ -1129,45 +1129,6 @@ Item {
         }
     }
 
-    Timer {
-        id: fastTimer
-        interval: 3000
-        running: ccUi.ccActive
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            updateVolume.running = true
-            updateBrightness.running = true
-        }
-    }
-
-    Process {
-        id: updateVolume
-        command: ["pamixer", "--get-volume"]
-        stdout: StdioCollector { id: updateVolumeStdout }
-        onExited: {
-            if (!volumeSlider.pressed) {
-                var vol = parseInt((updateVolumeStdout.text || "").trim())
-                if (!isNaN(vol)) volumeSlider.value = vol
-            }
-        }
-    }
-
-    Process {
-        id: updateBrightness
-        command: ["ddcutil", "getvcp", "10", "--terse"]
-        stdout: StdioCollector { id: updateBrightnessStdout }
-        onExited: {
-            if (!backlightSlider.pressed) {
-                let match = (updateBrightnessStdout.text || "").match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                if (match && match[1]) {
-                    let bright = parseInt(match[1]);
-                    if (!isNaN(bright)) backlightSlider.value = bright
-                }
-            }
-        }
-    }
-
     Process {
         id: updateUptime
         command: ["uptime", "-p"]

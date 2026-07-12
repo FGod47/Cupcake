@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
 import "../../theme"
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 Rectangle {
     id: musicWidget
@@ -57,11 +57,9 @@ Rectangle {
                 width: 52
                 height: 52
 
-                // Sibling mask Rectangle with explicitly resolved dimensions
                 Rectangle {
                     id: widgetArtMask
-                    width: 52
-                    height: 52
+                    anchors.fill: parent
                     radius: 14
                     visible: false
                 }
@@ -82,22 +80,16 @@ Rectangle {
                     }
                 }
 
-                // Raw Image (hidden, used as source for MultiEffect)
                 Image {
                     id: widgetArtImage
                     anchors.fill: parent
                     source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-                    visible: false
+                    visible: status === Image.Ready
                     fillMode: Image.PreserveAspectCrop
-                }
-
-                // MultiEffect applies the mask to crop rawArtImage corners
-                MultiEffect {
-                    source: widgetArtImage
-                    anchors.fill: parent
-                    visible: widgetArtImage.status === Image.Ready
-                    maskEnabled: true
-                    maskSource: widgetArtMask
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: widgetArtMask
+                    }
                 }
             }
 
