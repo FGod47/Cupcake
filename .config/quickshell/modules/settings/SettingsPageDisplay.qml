@@ -654,7 +654,20 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: true }
+                    Process {
+                        id: nightLightProc
+                        command: ["wlsunset", "-t", "3400", "-T", "6500"]
+                        running: nlToggle.checked
+                    }
+                    ToggleSwitch {
+                        id: nlToggle
+                        checked: false
+                        onToggled: function(checked) {
+                            if (!checked) {
+                                let killProc = Qt.createQmlObject('import Quickshell 1.0; Process { command: ["killall", "wlsunset"]; running: true }', nlToggle, "killnl");
+                            }
+                        }
+                    }
                 }
                 SettingsRow {
                     RowLayout {
