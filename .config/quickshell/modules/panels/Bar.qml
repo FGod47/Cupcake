@@ -852,7 +852,6 @@ PanelWindow {
                 color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.containsMouse ? Theme.colError : Theme.colPrimary)
                 Behavior on radius { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
                 Behavior on implicitHeight { NumberAnimation { duration: 300; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
-                Behavior on implicitWidth { NumberAnimation { duration: 300; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 clip: true
                 
