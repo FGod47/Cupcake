@@ -536,7 +536,7 @@ PanelWindow {
                                     radius: 7
                                 }
                             }
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: 500; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
                             onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
@@ -562,7 +562,7 @@ PanelWindow {
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -615,7 +615,7 @@ PanelWindow {
                                     Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
                                 }
                             }
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: 500; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
                             
@@ -640,7 +640,7 @@ PanelWindow {
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 300; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -850,8 +850,8 @@ PanelWindow {
                 implicitHeight: (actionsExpanded && showConfirmation) ? 290 : 34
                 implicitWidth: (actionsExpanded && showConfirmation) ? 230 : (powerRow.implicitWidth + 32)
                 color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.containsMouse ? Theme.colError : Theme.colPrimary)
-                Behavior on radius { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-                Behavior on implicitHeight { NumberAnimation { duration: 300; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
+                Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
+                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 clip: true
                 
@@ -921,7 +921,7 @@ PanelWindow {
                         height: 34
                         width: (powerHover.containsMouse || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: 500; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
                         
                         Row {
                             id: innerContent
