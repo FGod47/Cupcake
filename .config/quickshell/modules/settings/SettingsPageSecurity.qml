@@ -52,6 +52,23 @@ Item {
                                 Layout.fillWidth: true
                                 ColumnLayout {
                                     Layout.fillWidth: true
+                                    Text { text: "Login Lockout"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
+                                    Text { text: "Max incorrect passwords before freezing account"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
+                                }
+                                SettingsSegmentedControl {
+                                    Layout.preferredWidth: 220
+                                    model: [ { label: "3 (Default)", value: 3 }, { label: "10", value: 10 }, { label: "Disable", value: 0 } ]
+                                    currentValue: 3
+                                    onValueChanged: (val, idx) => {
+                                        Qt.createQmlObject('import Quickshell 1.0; Process { command: ["bash", "' + Theme.homeDir + '/.config/cupcake/scripts/set_faillock.sh", "' + val + '"]; running: true }', root, "faillockProc");
+                                    }
+                                }
+                            }
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                ColumnLayout {
+                                    Layout.fillWidth: true
                                     Text { text: "Offline Mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Math.min(900, Theme.defaultFontWeight + 200) }
                                     Text { text: "Offline Mode"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: 12; Layout.maximumWidth: 300; wrapMode: Text.WordWrap }
                                 }
