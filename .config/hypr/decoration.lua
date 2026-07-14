@@ -23,13 +23,14 @@ hl.config({
         screen_shader = "~/.config/hypr/shaders/rounded_corners.glsl",
 
         blur = {
-            special = true,
             enabled = true,
-            size = 6,
-            passes = 3,
+            xray = false,
+            special = false,
             new_optimizations = true,
+            size = 10,
+            passes = 3,
+            popups = false,
             ignore_opacity = true,
-            xray = false
         }
     }
 })
