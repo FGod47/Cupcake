@@ -342,7 +342,7 @@ PanelWindow {
                                 text: delegateItem.modelData?.comment
                                       || delegateItem.modelData?.genericName
                                       || ""
-                                color: root.colOutline
+                                color: root.colOnSurfaceVariant
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 12
                                 font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
