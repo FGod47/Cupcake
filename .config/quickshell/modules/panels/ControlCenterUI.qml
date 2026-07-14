@@ -23,6 +23,26 @@ Item {
     property bool firewallActive: false
     property bool antiflashActive: false
 
+    Process {
+        id: nlQuickProc
+        command: ["hyprctl", "hyprsunset", "temperature", "3400"]
+        running: false
+    }
+    Process {
+        id: nlQuickReset
+        command: ["hyprctl", "hyprsunset", "identity"]
+        running: false
+    }
+    function applyNightLightQuick(on) {
+        if (on) {
+            nlQuickProc.running = false;
+            Qt.callLater(function() { nlQuickProc.running = true; });
+        } else {
+            nlQuickReset.running = false;
+            Qt.callLater(function() { nlQuickReset.running = true; });
+        }
+    }
+
     Timer {
         id: warningTimer
         interval: 3000
@@ -408,7 +428,13 @@ Item {
                                 font.pixelSize: 24
                                 color: nightActive ? colGreen : textSubtext0
                             }
-                            MouseArea { anchors.fill: parent; onClicked: nightActive = !nightActive }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    nightActive = !nightActive;
+                                    ccUi.applyNightLightQuick(nightActive);
+                                }
+                            }
                         }
                     }
 

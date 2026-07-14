@@ -638,7 +638,44 @@ Item {
 
             // 5. Night light
             SettingsCard {
+                id: nightLightCard
                 SectionLabel { text: "Night light" }
+
+                // Night light state
+                property int nightTemp: 3400
+                property string nlSchedule: "manual"
+                property string customStart: "20:00"
+                property string customEnd: "06:00"
+
+                Process {
+                    id: stateWriter
+                    command: ["echo", "test"]
+                    running: false
+                }
+
+                Timer {
+                    id: nlDebounce
+                    interval: 100
+                    repeat: false
+                    onTriggered: {
+                        stateWriter.command = [
+                            "python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/night_light_scheduler.py",
+                            "--enabled", nlToggle.checked ? "true" : "false",
+                            "--temperature", nightLightCard.nightTemp.toString(),
+                            "--schedule", nightLightCard.nlSchedule,
+                            "--custom-start", nightLightCard.customStart,
+                            "--custom-end", nightLightCard.customEnd
+                        ];
+                        stateWriter.running = false;
+                        Qt.callLater(function() { stateWriter.running = true; });
+                    }
+                }
+
+                function applyNightLight() {
+                    nlDebounce.restart();
+                }
+
+
                 SettingsRow {
                     RowLayout {
                         spacing: 12
@@ -654,21 +691,15 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    Process {
-                        id: nightLightProc
-                        command: ["wlsunset", "-t", "3400", "-T", "6500"]
-                        running: nlToggle.checked
-                    }
                     ToggleSwitch {
                         id: nlToggle
                         checked: false
-                        onToggled: function(checked) {
-                            if (!checked) {
-                                let killProc = Qt.createQmlObject('import Quickshell 1.0; Process { command: ["killall", "wlsunset"]; running: true }', nlToggle, "killnl");
-                            }
+                        onToggled: function(v) {
+                            nightLightCard.applyNightLight();
                         }
                     }
                 }
+
                 SettingsRow {
                     RowLayout {
                         spacing: 12
@@ -680,12 +711,55 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Schedule"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Choose when night light turns on automatically"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "When night light activates"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    SegmentedControl { options: ["Off", "Sunset-sunrise", "Custom"]; current: "Sunset-sunrise" }
+                    SegmentedControl {
+                        options: ["Always", "Sunset", "Custom"]
+                        current: "Always"
+                        onSelected: function(v) {
+                            if (v === "Always") nightLightCard.nlSchedule = "manual";
+                            else if (v === "Sunset") nightLightCard.nlSchedule = "auto";
+                            else nightLightCard.nlSchedule = "custom";
+                            nightLightCard.applyNightLight();
+                        }
+                    }
                 }
+
+                SettingsRow {
+                    visible: nightLightCard.nlSchedule === "custom"
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text { anchors.centerIn: parent; text: "\uea60"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Custom schedule times"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Format: HH:MM (24-hour)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 8
+                        Text { text: "From"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
+                        StyledTextField {
+                            text: nightLightCard.customStart
+                            Layout.preferredWidth: 60
+                            onEditingFinished: { nightLightCard.customStart = text; nightLightCard.applyNightLight(); }
+                        }
+                        Text { text: "to"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
+                        StyledTextField {
+                            text: nightLightCard.customEnd
+                            Layout.preferredWidth: 60
+                            onEditingFinished: { nightLightCard.customEnd = text; nightLightCard.applyNightLight(); }
+                        }
+                    }
+                }
+
                 SettingsRow {
                     RowLayout {
                         spacing: 12
@@ -697,14 +771,53 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Color temperature"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "How warm the display looks while night light is on"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Warmer = more orange, Cooler = more blue"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
                     RowLayout {
-                        spacing: 8
-                        Rectangle { width: 120; height: 30; color: Theme.colPrimary; radius: 6 } // Placeholder for slider
-                        Text { text: "3400K"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
+                        spacing: 10
+                        Text {
+                            text: nightLightCard.nightTemp + "K"
+                            color: Theme.colOnSurfaceVariant
+                            font.pixelSize: 12
+                            font.family: Theme.defaultFontFamily
+                            Layout.preferredWidth: 46
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        Slider {
+                            id: tempSlider
+                            from: 1000; to: 6500; stepSize: 100
+                            value: nightLightCard.nightTemp
+                            Layout.preferredWidth: 130
+                            
+                            background: Rectangle {
+                                x: tempSlider.leftPadding; y: tempSlider.topPadding + tempSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 130; implicitHeight: 24 // Fix: Give the slider a height so the MouseArea works!
+                                width: tempSlider.availableWidth; height: 6; radius: 3
+                                gradient: Gradient {
+                                    orientation: Gradient.Horizontal
+                                    GradientStop { position: 0.0; color: "#ff6000" }
+                                    GradientStop { position: 1.0; color: "#c8e8ff" }
+                                }
+                            }
+                            
+                            handle: Rectangle {
+                                x: tempSlider.leftPadding + tempSlider.visualPosition * (tempSlider.availableWidth - width)
+                                y: tempSlider.topPadding + tempSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 16; implicitHeight: 16
+                                width: 16; height: 16; radius: 8
+                                color: Theme.colPrimary
+                                border.color: Qt.rgba(0,0,0,0.15); border.width: 1
+                            }
+                            
+                            onValueChanged: {
+                                if (pressed) {
+                                    nightLightCard.nightTemp = Math.round(value / 100) * 100;
+                                    nightLightCard.applyNightLight();
+                                }
+                            }
+                        }
                     }
                 }
             }
