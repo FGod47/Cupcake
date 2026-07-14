@@ -33,7 +33,7 @@ PanelWindow {
     color: "transparent"
     
     property bool ccOpen: false
-    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded) ? null : normalMask
+    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || globalState.overviewOpen) ? null : normalMask
     
     Region {
         id: normalMask
@@ -159,7 +159,10 @@ PanelWindow {
 
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})")
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onClicked: function(mouse) {
+                                    Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})")
+                                }
                                 cursorShape: Qt.PointingHandCursor
                             }
                         }
@@ -1212,16 +1215,16 @@ PanelWindow {
             
             property int targetHeight: bar.ccOpen ? 615 : (archPill.showMusicPill ? (archPill.isExpanded ? 340 : 34) : 34)
             
-            y: bar.ccOpen ? (modelData.height - targetHeight) / 2 : 10
+            y: 10
             anchors.horizontalCenter: parent.horizontalCenter
             radius: bar.ccOpen ? 18 : (archPill.isExpanded ? 28 : 18)
             width: bar.ccOpen ? 362 : (archPill.showMusicPill ? (archPill.isExpanded ? 220 : 160) : archText.implicitWidth + 32)
             height: targetHeight
             
-            Behavior on y { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
-            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-            Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-            Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+            Behavior on y { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+            Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+            Behavior on radius { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
             
             property real morphProgress: bar.ccOpen ? 1.0 : 0.0
             Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
@@ -1233,9 +1236,9 @@ PanelWindow {
             
             property real expansion: Math.max(archPill.morphProgress, archPill.expandFade)
             property color mixColor: Qt.rgba(
-                Theme.colPrimary.r * (1 - expansion) + Theme.colSurfaceContainer.r * expansion,
-                Theme.colPrimary.g * (1 - expansion) + Theme.colSurfaceContainer.g * expansion,
-                Theme.colPrimary.b * (1 - expansion) + Theme.colSurfaceContainer.b * expansion,
+                Theme.colPrimary.r * (1 - expansion) + Theme.colSurface.r * expansion,
+                Theme.colPrimary.g * (1 - expansion) + Theme.colSurface.g * expansion,
+                Theme.colPrimary.b * (1 - expansion) + Theme.colSurface.b * expansion,
                 1.0
             )
             property real currentAlpha: 1.0 * (1 - expansion) + (root.barTransparency ? root.ccOpacity : 1.0) * expansion
@@ -1264,7 +1267,6 @@ PanelWindow {
             Row {
                 id: archText
                 anchors.centerIn: parent
-                spacing: 6
                 opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 0.0 : 1.0)
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

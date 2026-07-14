@@ -96,6 +96,7 @@ ShellRoot {
         property bool closingIsland: false
         property bool hideIsland: false
         property bool settingsOpen: false
+        property bool overviewOpen: false
         property real dimOverlay: 0.0
         property real notifPanelOpacity: 0.90
         property bool popupHovered: false
@@ -336,6 +337,17 @@ ShellRoot {
     NotificationPanel {}
     Osd {}
     AiPanel {}
+
+    // Overview (workspace switcher)
+    Variants {
+        model: Quickshell.screens
+        delegate: Overview {}
+    }
+
+    GlobalShortcut {
+        name: "overview_toggle"
+        onPressed: { globalState.overviewOpen = !globalState.overviewOpen }
+    }
 
     Timer {
         id: islandTimer
