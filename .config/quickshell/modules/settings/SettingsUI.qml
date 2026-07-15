@@ -543,15 +543,7 @@ Item {
                         Item {
                             anchors.fill: parent
                             
-                            Loader {
-                                anchors.fill: parent
-                                source: {
-                                    switch (root.currentIndex) {
-                                        case 10: return "SettingsPageSystem.qml";
-                                        default: return "";
-                                    }
-                                }
-                            }
+                            // LOADERS INJECTED HERE
             
                         }
                     }
