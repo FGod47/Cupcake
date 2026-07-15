@@ -243,6 +243,24 @@ Item {
         stdout: StdioCollector { onStreamFinished: root.localIp = text.trim() || "—" }
     }
 
+    property var savedNetworks: ({})
+
+    Process {
+        id: savedNetworksProcess
+        command: ["nmcli", "-g", "NAME", "connection", "show"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = {};
+                if (text) {
+                    let lines = text.trim().split("\n");
+                    for (let i = 0; i < lines.length; i++) if (lines[i]) s[lines[i]] = true;
+                }
+                root.savedNetworks = s;
+            }
+        }
+    }
+
     Process {
         id: wifiScanProcess
         command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
@@ -267,9 +285,15 @@ Item {
                     const ssid     = net[3] ? net[3].replace(new RegExp(PLACEHOLDER, "g"), ":") : "";
                     const security = net[5] ? net[5].replace(new RegExp(PLACEHOLDER, "g"), ":") : "";
                     const isSecure = security.length > 0 && security !== "--";
+                    const isSaved = !!root.savedNetworks[ssid];
                     if (!ssid || ssid === "--" || ssid === root.hotspotSsid || seen[ssid]) continue;
                     seen[ssid] = true;
-                    wifiModel.append({ ssid, inUse, isSecure, signal, expanded: !!oldExp[ssid], password: oldPwd[ssid] || "" });
+                    wifiModel.append({ ssid, inUse, isSecure, isSaved, signal, expanded: !!oldExp[ssid], password: oldPwd[ssid] || "" });
+                }
+                for (let savedSsid in root.savedNetworks) {
+                    if (!seen[savedSsid] && savedSsid !== root.hotspotSsid) {
+                        wifiModel.append({ ssid: savedSsid, inUse: false, isSecure: true, isSaved: true, signal: 0, expanded: false, password: "" });
+                    }
                 }
             }
         }
@@ -280,6 +304,7 @@ Item {
     Timer {
         interval: 5000; running: root.visible; repeat: true
         onTriggered: {
+            savedNetworksProcess.running = true;
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
             hotspotStatusProcess.running = true;
@@ -546,7 +571,30 @@ Item {
                                     Text { text: model.isSecure ? "Secured" : "Open network"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                                 }
                                 Item { Layout.fillWidth: true }
-                                Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
+                                Rectangle {
+                                    visible: model.isSaved
+                                    height: 26; width: forgetText.implicitWidth + 24; radius: 6
+                                    color: forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05)
+                                    border.color: forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent"
+                                    border.width: 1
+                                    Text {
+                                        id: forgetText
+                                        anchors.centerIn: parent
+                                        text: "Forget"
+                                        color: forgetMa.containsMouse ? "#ff8f8f" : cTextDim
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                                    }
+                                    MouseArea {
+                                        id: forgetMa
+                                        anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Quickshell.execDetached(["nmcli", "connection", "delete", model.ssid]);
+                                            savedNetworksProcess.running = true;
+                                            wifiScanProcess.running = true;
+                                        }
+                                    }
+                                }
+                                Text { visible: !model.isSaved; text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
                             }
 
                             MouseArea {
@@ -557,8 +605,8 @@ Item {
                                         wifiModel.setProperty(index, "expanded", false);
                                     } else {
                                         for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
-                                        if (!model.isSecure) { 
-                                            Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]); 
+                                        if (!model.isSecure || model.isSaved) { 
+                                            Quickshell.execDetached(["nmcli", "connection", "up", model.ssid]); 
                                             wifiScanProcess.running = true; 
                                         } else {
                                             wifiModel.setProperty(index, "expanded", true);
