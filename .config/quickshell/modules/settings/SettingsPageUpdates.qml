@@ -56,6 +56,7 @@ Item {
     // =========================================================================
 
     ListModel { id: packagesModel }
+    ListModel { id: cupcakeLogsModel }
 
     Process {
         id: checkSysUpdatesProc
@@ -93,13 +94,31 @@ Item {
 
     Process {
         id: checkCupcakeUpdatesProc
-        command: ["bash", "-c", "cd ~/Cupcake && git fetch -q && git rev-list --count HEAD..@{u} 2>/dev/null || echo 0"]
+        command: ["bash", "-c", "cd ~/Cupcake && git fetch -q && git log --pretty=format:'%h|%s|%ar' HEAD..@{u} 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                const count = parseInt(text.trim()) || 0;
-                root.cupcakeUpdateCount = count;
-                root.cupcakeUpdatesAvailable = count > 0;
+                cupcakeLogsModel.clear();
+                const textStr = text.trim();
+                if (textStr === "") {
+                    root.cupcakeUpdateCount = 0;
+                    root.cupcakeUpdatesAvailable = false;
+                } else {
+                    const lines = textStr.split("\n");
+                    root.cupcakeUpdateCount = lines.length;
+                    root.cupcakeUpdatesAvailable = true;
+                    
+                    for (let i = 0; i < lines.length; i++) {
+                        const parts = lines[i].split("|");
+                        if (parts.length >= 3) {
+                            cupcakeLogsModel.append({
+                                hash: parts[0],
+                                subject: parts[1],
+                                timeago: parts[2]
+                            });
+                        }
+                    }
+                }
                 root.isCheckingCupcake = false;
                 
                 const d = new Date();
@@ -267,6 +286,90 @@ Item {
                     }
                 }
             }
+
+            // ── Cupcake Commit Logs ──────────────────────────────────────
+            UCard {
+                visible: root.cupcakeUpdatesAvailable
+                
+                // Header
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.bottomMargin: 8
+                    Text {
+                        text: "NEW COMMITS"
+                        color: cTextDim
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 0.8
+                    }
+                }
+
+                Repeater {
+                    model: cupcakeLogsModel
+                    delegate: Item {
+                        Layout.fillWidth: true
+                        implicitHeight: 48
+                        
+                        Rectangle {
+                            anchors.fill: parent; anchors.leftMargin: -10; anchors.rightMargin: -10; radius: 6
+                            color: logRowMa.containsMouse ? cSurfaceHover : "transparent"
+                            Behavior on color { ColorAnimation { duration: 100 } }
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 12
+
+                            Rectangle {
+                                width: 32; height: 32; radius: 8
+                                color: cBgElevated
+                                Text { anchors.centerIn: parent; text: "\uea4e"; font.family: "tabler-icons"; font.pixelSize: 16; color: cTextDim } // git-commit icon
+                            }
+
+                            Rectangle {
+                                height: 24; radius: 6
+                                width: hashText.implicitWidth + 16
+                                color: cBgElevated; border.color: cBorder; border.width: 1
+                                Text {
+                                    id: hashText
+                                    anchors.centerIn: parent
+                                    text: model.hash
+                                    color: cAccent
+                                    font.family: Theme.monoFontFamily; font.pixelSize: 11
+                                }
+                            }
+
+                            Text {
+                                text: model.subject
+                                color: cText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
+                            
+                            Text {
+                                text: model.timeago
+                                color: cTextFaint
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                            }
+                        }
+
+                        MouseArea { id: logRowMa; anchors.fill: parent; hoverEnabled: true }
+
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left; anchors.right: parent.right
+                            height: 1; color: cBorder; opacity: 0.5
+                            visible: index < cupcakeLogsModel.count - 1
+                        }
+                    }
+                }
+            }
+
 
             // ── System Packages Update Hero ──────────────────────────
             Rectangle {
