@@ -170,8 +170,8 @@ Item {
                 anchors.bottom: parent ? parent.bottom : undefined
                 radius: 2
                 color: {
-                    const threshold = (index + 1) * 25;
-                    if (signal >= threshold) return cAccent;
+                    const threshold = index * 25;
+                    if (signal > threshold) return cAccent;
                     return cBorderSoft;
                 }
             }
@@ -521,7 +521,7 @@ Item {
                                 spacing: 12
 
                                 NIconBadge {
-                                    icon: model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa")
+                                    icon: model.signal > 75 ? "\ueb52" : (model.signal > 40 ? "\ueba5" : (model.signal > 10 ? "\ueba4" : "\ueba3"))
                                     iconColor: cTextDim
                                     bgColor: cBgElevated
                                 }
