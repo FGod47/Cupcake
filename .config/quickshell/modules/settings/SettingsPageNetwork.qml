@@ -557,6 +557,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.leftMargin: 48
                             Layout.bottomMargin: 4
+                            Layout.preferredHeight: height
                             height: model.expanded ? 48 : 0
                             opacity: model.expanded ? 1 : 0
                             Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
