@@ -10,76 +10,69 @@ Rectangle {
     property string icon: ""
     
     // Colors
-    property color surfaceColor
-    property color outlineColor
-    property color primaryColor
-    property color onSurfaceColor
+    property color cSurface: Theme.isDark ? "#171c24" : "#ffffff"
+    property color cBorder: Theme.isDark ? "#242b36" : "#dde1e7"
+    property color cTextFaint: Theme.isDark ? "#4d5566" : "#9aa2af"
     
     default property alias content: innerLayout.data
 
     Layout.fillWidth: true
-    implicitHeight: mainLayout.implicitHeight + 40
-    color: surfaceColor
-    radius: 16
-    border.width: 0
+    implicitHeight: mainLayout.implicitHeight
+    color: cSurface
+    radius: 10
+    border.color: cBorder
+    border.width: 1
+    clip: true
 
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.topMargin: 20
-        anchors.bottomMargin: 20
-        spacing: 8
+        anchors.topMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
+        spacing: 0
 
-        ColumnLayout {
+        // Card Title Header
+        Item {
             Layout.fillWidth: true
-            visible: cardRoot.title !== "" || cardRoot.description !== ""
-            spacing: 4
-
+            implicitHeight: titleLayout.implicitHeight + 13
+            visible: cardRoot.title !== ""
+            
             RowLayout {
-                Layout.fillWidth: true
-                visible: cardRoot.title !== ""
-                spacing: 12
+                id: titleLayout
+                anchors.fill: parent
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                anchors.topMargin: 13
+                anchors.bottomMargin: 0
+                spacing: 8
                 
                 Text { 
                     visible: cardRoot.icon !== ""
                     text: cardRoot.icon
-                    color: Theme.colOnSurfaceVariant
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 14
+                    color: cTextFaint
+                    font.pixelSize: 13
                     font.family: Theme.monoFontFamily 
                 }
                 Text { 
                     text: cardRoot.title
-                    color: Theme.colOnSurface
+                    color: cTextFaint
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 11
-                    font.weight: 500
-                    font.letterSpacing: 0.4
-                    opacity: 0.45
+                    font.weight: 600
+                    font.capitalization: Font.AllUppercase
+                    font.letterSpacing: 0.6
                     Layout.fillWidth: true 
                 }
             }
-            
-            Text {
-                visible: cardRoot.description !== ""
-                text: cardRoot.description
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
-            }
         }
-
+        
+        // Rows inside innerLayout will handle their own borders/padding
         ColumnLayout {
             id: innerLayout
             Layout.fillWidth: true
-            spacing: 16
+            spacing: 0
         }
-
-        Item { Layout.fillHeight: true; Layout.minimumHeight: 1 }
     }
-    
-    // Removed the dynamic bubble backgrounds to match the new flat liquid UI style
 }

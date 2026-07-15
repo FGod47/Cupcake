@@ -222,11 +222,30 @@ Item {
 
 
 
-    Item {
+
+    // Theme Colors based on reference design
+    property color cBg: Theme.isDark ? "#0a0d11" : "#eef0f3"
+    property color cBgElevated: Theme.isDark ? "#12161c" : "#f7f8fa"
+    property color cSurface: Theme.isDark ? "#171c24" : "#ffffff"
+    property color cSurfaceHover: Theme.isDark ? "#1e242e" : "#eef1f5"
+    property color cSurfaceActive: Theme.isDark ? "#232a35" : "#e6eaf0"
+    property color cBorder: Theme.isDark ? "#242b36" : "#dde1e7"
+    property color cBorderSoft: Theme.isDark ? "#1a2029" : "#e5e8ed"
+    property color cText: Theme.isDark ? "#e8ecf1" : "#171b21"
+    property color cTextDim: Theme.isDark ? "#8891a0" : "#5b6472"
+    property color cTextFaint: Theme.isDark ? "#4d5566" : "#9aa2af"
+    property color cAccent: Theme.colPrimary
+    property color cAccentDim: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14)
+
+    Rectangle {
         id: mainWrapper
         anchors.fill: parent
-        focus: true
-
+        color: cBgElevated
+        border.color: cBorder
+        border.width: 1
+        radius: 16
+        clip: true
+        
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -235,292 +254,303 @@ Item {
             onReleased: mouse.accepted = true
             onClicked: mouse.accepted = true
             onWheel: wheel.accepted = true
-        }
-
-        Item {
-            id: contentOpacity
-            anchors.fill: parent
-            clip: true
-            opacity: 1.0
-
-            Item {
-                anchors.fill: parent
-
-                Keys.onPressed: (event) => {
-                    if (event.modifiers === Qt.ControlModifier) {
-                        if (event.key === Qt.Key_PageDown) {
-                            root.currentIndex = Math.min(root.currentIndex + 1, 5)
-                            event.accepted = true;
-                        } 
-                        else if (event.key === Qt.Key_PageUp) {
-                            root.currentIndex = Math.max(root.currentIndex - 1, 0)
-                            event.accepted = true;
-                        }
-                        else if (event.key === Qt.Key_Tab) {
-                            root.currentIndex = (root.currentIndex + 1) % 6;
-                            event.accepted = true;
-                        }
-                else if (event.key === Qt.Key_Backtab) {
-                    root.currentIndex = (root.currentIndex - 1 + 6) % 6;
-                    event.accepted = true;
+            
+            Keys.onPressed: (event) => {
+                if (event.modifiers === Qt.ControlModifier) {
+                    if (event.key === Qt.Key_Tab) {
+                        root.currentIndex = (root.currentIndex + 1) % 6;
+                        event.accepted = true;
+                    }
                 }
             }
         }
-
-        ColumnLayout {
+        
+        RowLayout {
             anchors.fill: parent
-            anchors.margins: 8
-            spacing: 8
-
-            // Custom Title Bar
-            Item {
-                Layout.fillWidth: true
-                implicitHeight: 40
+            spacing: 0
+            
+            // ICON RAIL
+            Rectangle {
+                Layout.fillHeight: true
+                Layout.preferredWidth: 64
+                color: cBg
                 
-
-                
-                Text {
-                    anchors.centerIn: parent
-                    text: "Settings"
-                    color: Theme.colOnSurface
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 16
-                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
-                }
-                
-                MouseArea {
+                Rectangle {
                     anchors.right: parent.right
-                    anchors.rightMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32; height: 32
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.requestClose()
-                    
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: 8
-                        color: parent.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1) : "transparent"
-                        Behavior on color { ColorAnimation { duration: 150 } }
-                    }
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: "\ueb55"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: "tabler-icons"
-                        font.pixelSize: 18
-                    }
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: 1
+                    color: cBorderSoft
                 }
                 
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.topMargin: 16
+                    anchors.bottomMargin: 16
+                    spacing: 4
+                    
+                    // Logo
+                    Rectangle {
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.topMargin: 0
+                        Layout.bottomMargin: 18
+                        width: 34; height: 34
+                        radius: 9
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: cAccent }
+                            GradientStop { position: 1.0; color: Theme.colPrimary } // accent-2
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "A"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 15
+                            font.weight: 700
+                            color: "#0a0d11"
+                        }
+                    }
+                    
+                    component RailBtn: Item {
+                        property string icon
+                        property string tip
+                        property int pageIndex
+                        property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3,4].includes(root.currentIndex))
+                        
+                        Layout.preferredWidth: 44
+                        Layout.preferredHeight: 44
+                        Layout.alignment: Qt.AlignHCenter
+                        
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 6
+                            color: isActive ? cAccentDim : (ma.containsMouse ? cSurfaceHover : "transparent")
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                        }
+                        
+                        Rectangle {
+                            visible: isActive
+                            anchors.left: parent.left
+                            anchors.leftMargin: -10
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 3; height: 16
+                            radius: 2
+                            color: cAccent
+                        }
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: icon
+                            font.family: "tabler-icons"
+                            font.pixelSize: 19
+                            color: isActive ? cAccent : (ma.containsMouse ? cTextDim : cTextFaint)
+                        }
+                        
+                        // Tooltip
+                        Rectangle {
+                            id: tooltip
+                            anchors.left: parent.right
+                            anchors.leftMargin: ma.containsMouse ? 12 : 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: tipText.implicitWidth + 18
+                            height: tipText.implicitHeight + 10
+                            radius: 6
+                            color: Theme.isDark ? "#000000" : "#171b21"
+                            opacity: ma.containsMouse ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 120 } }
+                            Behavior on anchors.leftMargin { NumberAnimation { duration: 120 } }
+                            Text {
+                                id: tipText
+                                anchors.centerIn: parent
+                                text: tip
+                                color: "#ffffff"
+                                font.pixelSize: 11.5
+                                font.weight: 500
+                                font.family: Theme.defaultFontFamily
+                            }
+                        }
+                        
+                        MouseArea {
+                            id: ma
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.currentIndex = pageIndex
+                        }
+                    }
+                    
+                    RailBtn { icon: ""; tip: "System"; pageIndex: 10 }
+                    RailBtn { icon: ""; tip: "Appearance"; pageIndex: 1 }
+                    RailBtn { icon: ""; tip: "Displays"; pageIndex: 18 }
+                    RailBtn { icon: ""; tip: "Network"; pageIndex: 17 }
+                    RailBtn { icon: ""; tip: "Sound"; pageIndex: 7 }
+                    RailBtn { icon: ""; tip: "Power"; pageIndex: 13 }
+                    RailBtn { icon: ""; tip: "Updates"; pageIndex: 11 }
+                    
+                    Item { Layout.fillHeight: true } // spacer
+                    
+                    RailBtn { icon: ""; tip: "About"; pageIndex: 21 }
+                }
             }
-
-            RowLayout {
+            
+            // MAIN
+            ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.margins: 12
-                spacing: 4
-
-                // Navigation Rail
-                Item {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: navExpanded ? 220 : 72
-                    Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
-                    
-                    HoverHandler {
-                        id: sidebarHover
-                    }
-
-                    ScrollView {
-                        id: navScrollView
-                        anchors.fill: parent
-                        anchors.margins: 4
-                        contentWidth: availableWidth
-                        clip: true
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-                        ColumnLayout {
-                            width: navScrollView.availableWidth
-                            height: Math.max(implicitHeight, navScrollView.availableHeight)
-                            spacing: 8
-
-                            component NavHeader: Text {
-                                visible: navExpanded
-                                Layout.fillWidth: true
-                                Layout.leftMargin: 24
-                                Layout.topMargin: 16
-                                Layout.bottomMargin: 8
-                                color: Theme.colPrimary
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Math.min(900, Theme.defaultFontWeight + 200)
-                                opacity: 0.8
-                            }
-                            
-                            component NavButton: Item {
-                                property string iconText
-                                property string labelText
-                                property int pageIndex
-                                property bool isActive: root.currentIndex === pageIndex
-
-                                Layout.fillWidth: true
-                                implicitHeight: 44
-                                
-                                Rectangle {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 12
-                                    anchors.rightMargin: 12
-                                    anchors.topMargin: 2
-                                    anchors.bottomMargin: 2
-                                    radius: 12
-                                    color: isActive 
-                                        ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-                                        : (navMouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                }
-                                
-                                RowLayout {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: navExpanded ? 24 : 0
-                                    spacing: navExpanded ? 12 : 0
-                                    Behavior on anchors.leftMargin { NumberAnimation { duration: 150 } }
-                                    
-                                    Text {
-                                        text: iconText
-                                        color: isActive ? Theme.colPrimary : Theme.colOnSurfaceVariant
-                                        font.family: "tabler-icons"
-                                        font.weight: Theme.defaultFontWeight; font.pixelSize: 18
-                                        opacity: isActive ? 1.0 : 0.6
-                                        Layout.fillWidth: !navExpanded
-                                        horizontalAlignment: navExpanded ? Text.AlignLeft : Text.AlignHCenter
-                                    }
-                                    
-                                    Text {
-                                        visible: navExpanded
-                                        text: labelText
-                                        color: Theme.colOnSurface
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: Theme.defaultFontSize
-                                        font.weight: Math.min(900, Theme.defaultFontWeight + 200)
-                                        Layout.fillWidth: true
-                                        opacity: isActive ? 1.0 : 0.6
-                                    }
-                                }
-
-                                MouseArea {
-                                    id: navMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.currentIndex = pageIndex
-                                }
-                            }
-
-                            Item { Layout.fillHeight: true } // Top Spacer
-
-                            NavButton { iconText: "\uea89"; labelText: "System"; pageIndex: 10 }
-                            NavButton { iconText: "\ueb52"; labelText: "Network"; pageIndex: 17 }
-                            NavButton { iconText: "\uea37"; labelText: "Bluetooth"; pageIndex: 22 }
-                            NavButton { iconText: "\ueb01"; labelText: "Appearance"; pageIndex: 1; isActive: [0, 1, 4, 3].includes(root.currentIndex) }
-                            NavButton { iconText: "\uebdc"; labelText: "Shell"; pageIndex: 8 }
-                            NavButton { iconText: "\ueaed"; labelText: "OSD"; pageIndex: 7 }
-                            NavButton { iconText: "\ueb4d"; labelText: "User"; pageIndex: 20 }
-
-                        NavButton { iconText: "\ueae8"; labelText: "Location"; pageIndex: 12 }
-
-                        NavButton { iconText: "\ueac5"; labelText: "About"; pageIndex: 21 }
-
-                        Item { Layout.fillHeight: true } // Spacer
-                    }
-                }
-            }
-
-                // Content Area
-
+                spacing: 0
+                
+                // TOPBAR
                 Rectangle {
-                    id: contentAreaContainer
-                    Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 64
                     color: "transparent"
-                    clip: true
-
-                                        function getPageData(index) {
+                    
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: 1
+                        color: cBorderSoft
+                    }
+                    
+                    function getPageData(index) {
                         switch(index) {
-                            case 0: return { icon: "\ueb01", title: "General" };
-                            case 1: return { icon: "\ueb0a", title: "Wallpaper" };
-                            case 3: return { icon: "\uea89", title: "Desktop" };
-                            case 4: return { icon: "\uead3", title: "Dock" };
-                            case 6: return { icon: "\uea35", title: "Notifications" };
-                            case 7: return { icon: "\ueaed", title: "OSD" };
-                            case 8: return { icon: "\uebdc", title: "Shell" };
-                            case 10: return { icon: "\uea89", title: "System" };
-                            case 11: return { icon: "\ueb1f", title: "Services" };
-                            case 12: return { icon: "\ueae8", title: "Location" };
-                            case 13: return { icon: "\ueb0d", title: "Power & Battery" };
-                            case 17: return { icon: "\ueb52", title: "Network" };
-                            case 23: return { icon: "\ued1b", title: "Hotspot" };
-                            case 22: return { icon: "\uea37", title: "Bluetooth" };
-                            case 18: return { icon: "\uea89", title: "Display" };
-                            case 19: return { icon: "\uf6d7", title: "AI" };
-                            case 20: return { icon: "\ueb4d", title: "User" };
-                            case 21: return { icon: "\ueac5", title: "About" };
-                            default: return { icon: "\ueb20", title: "Settings" };
+                            case 0: return { title: "Appearance", path: "settings › appearance › general" };
+                            case 1: return { title: "Appearance", path: "settings › appearance › wallpaper" };
+                            case 3: return { title: "Appearance", path: "settings › appearance › desktop" };
+                            case 4: return { title: "Appearance", path: "settings › appearance › dock" };
+                            case 6: return { title: "Notifications", path: "settings › notifications" };
+                            case 7: return { title: "Sound", path: "settings › sound" };
+                            case 8: return { title: "Shell", path: "settings › shell" };
+                            case 10: return { title: "System", path: "settings › system" };
+                            case 11: return { title: "Updates", path: "settings › updates" };
+                            case 12: return { title: "Location", path: "settings › location" };
+                            case 13: return { title: "Power", path: "settings › power" };
+                            case 17: return { title: "Network", path: "settings › network" };
+                            case 23: return { title: "Hotspot", path: "settings › network › hotspot" };
+                            case 22: return { title: "Bluetooth", path: "settings › bluetooth" };
+                            case 18: return { title: "Displays", path: "settings › displays" };
+                            case 19: return { title: "AI", path: "settings › ai" };
+                            case 20: return { title: "User", path: "settings › user" };
+                            case 21: return { title: "About", path: "settings › about" };
+                            default: return { title: "Settings", path: "settings" };
                         }
                     }
-
-                    ColumnLayout {
+                    
+                    RowLayout {
                         anchors.fill: parent
-                        spacing: 0
-
-                        // Dynamic Content Header
+                        anchors.leftMargin: 24
+                        anchors.rightMargin: 24
+                        spacing: 16
+                        
+                        ColumnLayout {
+                            spacing: 1
+                            Text {
+                                text: parent.parent.getPageData(root.currentIndex).title
+                                color: cText
+                                font.family: Theme.defaultFontFamily // Should be Space Grotesk in HTML but we use system
+                                font.pixelSize: 18
+                                font.weight: 600
+                                font.letterSpacing: -0.3
+                            }
+                            Text {
+                                text: parent.parent.getPageData(root.currentIndex).path
+                                color: cTextFaint
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 12
+                            }
+                        }
+                        
+                        Item { Layout.fillWidth: true }
+                        
+                        // Search
                         Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: (isAppearanceNav || root.currentIndex === 10) ? 0 : 64
-                            clip: true
-                            color: "transparent"
-                            visible: !(isAppearanceNav || root.currentIndex === 10)
-                            Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-
-                            property bool isAppearanceNav: [0, 1, 3, 4].includes(root.currentIndex)
-
+                            Layout.preferredWidth: 230
+                            Layout.preferredHeight: 34
+                            radius: 8
+                            color: cSurface
+                            border.color: cBorder
+                            border.width: 1
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.leftMargin: 24
-                                anchors.rightMargin: 16
-                                spacing: 16
-                                
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 5
                                 Text {
-                                    text: contentAreaContainer.getPageData(root.currentIndex).icon
-                                    color: Theme.colOnSurfaceVariant
+                                    text: "" // search icon
                                     font.family: "tabler-icons"
-                                    font.weight: Theme.defaultFontWeight; font.pixelSize: 20
+                                    color: cTextFaint
                                 }
-                                
-                                Text {
-                                    text: contentAreaContainer.getPageData(root.currentIndex).title
-                                    color: Theme.colOnSurface
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 20
-                                    font.weight: Math.min(900, Theme.defaultFontWeight + 200)
+                                TextInput {
                                     Layout.fillWidth: true
+                                    color: cText
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 12.5
+                                }
+                                Rectangle {
+                                    Layout.preferredWidth: 26
+                                    Layout.preferredHeight: 18
+                                    radius: 4
+                                    color: "transparent"
+                                    border.color: cBorder
+                                    border.width: 1
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "⌘K"
+                                        font.family: Theme.monoFontFamily
+                                        font.pixelSize: 10.5
+                                        color: cTextFaint
+                                    }
                                 }
                             }
                         }
-
+                        
+                        // Close button
+                        Rectangle {
+                            Layout.preferredWidth: 34
+                            Layout.preferredHeight: 34
+                            radius: 8
+                            color: "transparent"
+                            Text {
+                                anchors.centerIn: parent
+                                text: "" // X icon
+                                font.family: "tabler-icons"
+                                color: cTextFaint
+                                font.pixelSize: 18
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.requestClose()
+                            }
+                        }
+                    }
+                }
+                
+                // CONTENT GRID
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.margins: 24
+                    spacing: 20
+                    
+                    // PANELS
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        clip: true
+                        
                         // Appearance Top Nav Bar
                         Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: isAppearanceCategory ? 40 : 0
-                            Layout.leftMargin: 20
-                            Layout.rightMargin: 20
-                            Layout.topMargin: 0
-                            Layout.bottomMargin: 8
+                            id: appNav
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: isAppearanceCategory ? 40 : 0
                             visible: isAppearanceCategory
                             opacity: isAppearanceCategory ? 1 : 0
                             Behavior on opacity { NumberAnimation { duration: 200 } }
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
-                            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.12)
+                            color: cSurfaceActive
+                            border.color: cBorder
                             border.width: 1
                             radius: 10
                             clip: true
@@ -528,7 +558,6 @@ Item {
                             property bool isAppearanceCategory: [0, 1, 4, 3].includes(root.currentIndex)
                             
                             RowLayout {
-                                id: topBarRow
                                 anchors.fill: parent
                                 spacing: 0
                                 
@@ -543,9 +572,7 @@ Item {
                                         anchors.fill: parent
                                         anchors.margins: 2
                                         radius: 8
-                                        color: root.currentIndex === pageIndex 
-                                            ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                                            : (ma.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
+                                        color: root.currentIndex === pageIndex ? cAccentDim : (ma.containsMouse ? cSurfaceHover : "transparent")
                                         Behavior on color { ColorAnimation { duration: 150 } }
                                     }
                                     
@@ -556,18 +583,14 @@ Item {
                                             text: parent.parent.icon
                                             font.family: "tabler-icons"
                                             font.pixelSize: 14
-                                            color: root.currentIndex === pageIndex ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                            Behavior on color { ColorAnimation { duration: 150 } }
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            color: root.currentIndex === pageIndex ? cAccent : cTextDim
                                         }
                                         Text {
                                             text: parent.parent.text
                                             font.family: Theme.defaultFontFamily
                                             font.pixelSize: 13
                                             font.weight: Font.Medium
-                                            color: root.currentIndex === pageIndex ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                            Behavior on color { ColorAnimation { duration: 150 } }
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            color: root.currentIndex === pageIndex ? cText : cTextDim
                                         }
                                     }
                                     MouseArea {
@@ -579,29 +602,22 @@ Item {
                                     }
                                 }
                                 
-                                TopNavBtn { text: "Wallpaper"; icon: "\ueb0a"; pageIndex: 1 }
-                                TopNavBtn { text: "General"; icon: "\ueb01"; pageIndex: 0 }
-                                TopNavBtn { text: "Dock"; icon: "\uead3"; pageIndex: 4 }
-                                TopNavBtn { text: "Desktop"; icon: "\uea89"; pageIndex: 3 }
+                                TopNavBtn { text: "Wallpaper"; icon: ""; pageIndex: 1 }
+                                TopNavBtn { text: "General"; icon: ""; pageIndex: 0 }
+                                TopNavBtn { text: "Dock"; icon: ""; pageIndex: 4 }
+                                TopNavBtn { text: "Desktop"; icon: ""; pageIndex: 3 }
                             }
                         }
-
-
-                        // Content Stack
+                        
                         Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            clip: true
-
-            // We use Loader to get page transition animations, or just StackLayout.
-            // StackLayout doesn't animate easily without custom item delegates.
-            // I will implement a quick fade for the StackLayout children.
-
-            Item {
-                anchors.fill: parent
-
-
-                // PAGE 0: APPEARANCE
+                            anchors.top: appNav.bottom
+                            anchors.topMargin: appNav.isAppearanceCategory ? 14 : 0
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            
+                            // LOADERS INJECTED HERE
+                            // PAGE 0: APPEARANCE
                 Item {
                     id: appearancePage
                     anchors.fill: parent
@@ -1336,12 +1352,133 @@ Item {
                     Loader { anchors.fill: parent; active: root.currentIndex === 18; source: "SettingsPageDisplay.qml" }
                 }
             }
+            
+                        }
+                    }
+                    
+                    // SESSION CARD
+                    Rectangle {
+                        Layout.preferredWidth: 250
+                        Layout.alignment: Qt.AlignTop
+                        implicitHeight: fetchCol.implicitHeight + 36
+                        radius: 10
+                        color: cSurface
+                        border.color: cBorder
+                        border.width: 1
+                        
+                        ColumnLayout {
+                            id: fetchCol
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 4
+                            
+                            Text {
+                                Layout.alignment: Qt.AlignHCenter
+                                text: "      /\ 
+     /  \ 
+    /    \ 
+   /      \ 
+  /   ,,   \ 
+ /   |  |   \ 
+/_-''    ''-_\"
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 9.5
+                                font.weight: 600
+                                color: cAccent
+                                horizontalAlignment: Text.AlignHCenter
+                                Layout.bottomMargin: 12
+                            }
+                            
+                            Text {
+                                Layout.alignment: Qt.AlignHCenter
+                                text: Quickshell.env("USER") + "@" + Quickshell.env("HOSTNAME")
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 12.5
+                                font.weight: 600
+                                color: cText
+                            }
+                            Text {
+                                Layout.alignment: Qt.AlignHCenter
+                                text: "------------------"
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 10.5
+                                color: cTextFaint
+                                Layout.bottomMargin: 10
+                            }
+                            
+                            component FetchLine: RowLayout {
+                                property string key
+                                property string val
+                                Layout.fillWidth: true
+                                Text { text: key; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 11.5 }
+                                Item { Layout.fillWidth: true }
+                                Text { text: val; color: cTextDim; font.family: Theme.monoFontFamily; font.pixelSize: 11.5 }
+                            }
+                            
+                            FetchLine { key: "OS"; val: "Arch Linux x86_64" }
+                            FetchLine { key: "Kernel"; val: "6.10.3-arch1-1" }
+                            FetchLine { key: "WM"; val: "Hyprland" }
+                            FetchLine { key: "Shell"; val: "zsh 5.9" }
+                            
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.topMargin: 10
+                                Layout.bottomMargin: 10
+                                height: 1
+                                color: cBorderSoft
+                            }
+                            
+                            // CPU / RAM bars
+                            component FetchBar: ColumnLayout {
+                                property string label
+                                property string val
+                                property real percent
+                                Layout.fillWidth: true
+                                spacing: 4
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Text { text: label; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10.5 }
+                                    Item { Layout.fillWidth: true }
+                                    Text { text: val; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10.5 }
+                                }
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 5
+                                    radius: 3
+                                    color: cSurfaceActive
+                                    Rectangle {
+                                        width: parent.width * parent.parent.percent
+                                        height: parent.height
+                                        radius: 3
+                                        color: cAccent
+                                    }
+                                }
+                            }
+                            
+                            FetchBar { label: "CPU"; val: "23%"; percent: 0.23 }
+                            Item { Layout.preferredHeight: 6 }
+                            FetchBar { label: "RAM"; val: "41%"; percent: 0.41 }
+                            
+                            Item { Layout.preferredHeight: 12 }
+                            
+                            // Swatches
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 4
+                                component SSwatch: Rectangle { Layout.fillWidth: true; height: 8; radius: 2; property color c; color: c }
+                                SSwatch { c: "#2b2f38" }
+                                SSwatch { c: "#f2777a" }
+                                SSwatch { c: "#7ee787" }
+                                SSwatch { c: "#e6b450" }
+                                SSwatch { c: "#4fb8e8" }
+                                SSwatch { c: "#9d8cf2" }
+                                SSwatch { c: "#66c2cd" }
+                                SSwatch { c: "#e8ecf1" }
+                            }
+                        }
+                    }
+                }
             }
         }
-        }
-        }
     }
-}
-}
-}
 }
