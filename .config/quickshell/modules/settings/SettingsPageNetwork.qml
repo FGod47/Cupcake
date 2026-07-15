@@ -8,131 +8,187 @@ import "../common"
 
 Item {
     id: root
+    anchors.fill: parent
 
+    // =========================================================================
+    // State
+    // =========================================================================
     property bool wifiExpanded: true
+    property bool wifiRadioEnabled: true
+    property string wifiDeviceName: "wlan0"
+    property string wifiDeviceState: "Checking..."
+    property bool ethernetEnabled: false
+    property string ethernetDeviceState: "Checking..."
+    property string ethernetDetails: "Not connected"
+    property string ethernetDeviceName: "eth0"
+    property bool hotspotEnabled: false
+    property string hotspotSsid: ""
+    property string localIp: ""
+    property string publicIp: ""
 
-    // =====================================================================
-    // Reusable inline components — identical to SettingsPageAppearance
-    // =====================================================================
+    // =========================================================================
+    // Color aliases from parent SettingsUI (inherits via QML scope)
+    // =========================================================================
 
-    component SettingsCard: Rectangle {
-        default property alias content: innerCol.data
+    // =========================================================================
+    // Components
+    // =========================================================================
+
+    component NCard: Rectangle {
+        default property alias content: cardCol.data
+        property string sectionTitle: ""
         Layout.fillWidth: true
-        Layout.leftMargin: 20
-        Layout.rightMargin: 20
-        implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
         radius: 12
+        color: cSurface
+        border.color: cBorder
+        border.width: 1
+        implicitHeight: cardCol.implicitHeight + (sectionTitle !== "" ? 56 : 32)
+        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
         clip: true
-        ColumnLayout {
-            id: innerCol
-            anchors.fill: parent
-            anchors.margins: 20
+
+        // Section header
+        RowLayout {
+            id: cardHeader
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 16
+            visible: sectionTitle !== ""
             spacing: 8
+
+            Text {
+                text: sectionTitle
+                color: cTextDim
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.8
+                font.capitalization: Font.AllUppercase
+            }
+            Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+        }
+
+        ColumnLayout {
+            id: cardCol
+            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+            anchors.topMargin: cardHeader.visible ? 12 : 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.bottomMargin: 16
+            spacing: 0
         }
     }
 
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
+    component NRow: Rectangle {
+        default property alias rowContent: innerLayout.data
+        Layout.fillWidth: true
+        implicitHeight: innerLayout.implicitHeight + 20
+        color: "transparent"
+        radius: 8
+
+        property bool hoverable: false
+        property bool hovered: hoverArea.containsMouse
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        RowLayout {
+            id: innerLayout
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
+            spacing: 12
+        }
+
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+
+        // Bottom divider
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: cBorder
+            opacity: 0.6
+        }
     }
 
-    component ToggleSwitch: Rectangle {
-        id: sw
+    component NIconBadge: Rectangle {
+        property string icon: ""
+        property color iconColor: cTextDim
+        property color bgColor: cBgElevated
+        width: 36; height: 36; radius: 10
+        color: bgColor
+        Text {
+            anchors.centerIn: parent
+            text: parent.icon
+            font.family: "tabler-icons"
+            font.pixelSize: 18
+            color: parent.iconColor
+        }
+    }
+
+    component NToggle: Rectangle {
+        id: tog
         property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-        Behavior on color { ColorAnimation { duration: 120 } }
+        signal toggled(bool val)
+        width: 44; height: 24; radius: 12
+        color: checked ? cAccent : cBorderSoft
+        Behavior on color { ColorAnimation { duration: 150 } }
         Rectangle {
             width: 18; height: 18; radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+            x: tog.checked ? parent.width - width - 3 : 3
+            color: "white"
+            Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+            layer.enabled: true
+            layer.effect: null
         }
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
+            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
         }
     }
 
-    component SettingsRow: ColumnLayout {
-        default property alias content: innerRow.data
-        Layout.fillWidth: true
-        Layout.topMargin: Theme.rowSpacing
-        Layout.bottomMargin: Theme.rowSpacing
-        spacing: 12
-        RowLayout {
-            id: innerRow
-            Layout.fillWidth: true
-            spacing: 12
-        }
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-            visible: Theme.showDividers
-        }
-    }
-
-    // =====================================================================
-    // Background data
-    // =====================================================================
-
-    property bool wifiRadioEnabled: true
-    property string wifiDeviceName: "Wi-Fi"
-    property string wifiDeviceState: "Checking..."
-
-    property bool ethernetEnabled: false
-    property string ethernetDeviceState: "Checking..."
-    property string ethernetDetails: "Checking..."
-    property string ethernetDeviceName: "enp6s0"
-
-    property bool hotspotEnabled: false
-    property string hotspotSsid: ""
-
-    Process {
-        id: hotspotStatusProcess
-        command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d | grep -i 'wifi:connected' | grep -qi -E 'hotspot' && echo 'on' || echo 'off'"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() === "on") root.hotspotEnabled = true;
-                else root.hotspotEnabled = false;
+    component SignalBars: Row {
+        property int signal: 0
+        spacing: 2
+        Repeater {
+            model: 4
+            Rectangle {
+                width: 4
+                height: 4 + index * 4
+                anchors.bottom: parent ? parent.bottom : undefined
+                radius: 2
+                color: {
+                    const threshold = (index + 1) * 25;
+                    if (signal >= threshold) return cAccent;
+                    return cBorderSoft;
+                }
             }
         }
     }
 
-    Process {
-        id: hotspotDetailsProcess
-        command: ["bash", "-c", "nmcli -g 802-11-wireless.ssid connection show Hotspot 2>/dev/null || echo 'cupcake-hotspot'"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() !== "") root.hotspotSsid = text.trim();
-            }
-        }
-    }
+    // =========================================================================
+    // Data processes
+    // =========================================================================
+
+    ListModel { id: wifiModel }
 
     Process {
         id: wifiRadioProcess
         command: ["nmcli", "-t", "-f", "WIFI", "radio"]
         running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() === "enabled") root.wifiRadioEnabled = true;
-                else root.wifiRadioEnabled = false;
-            }
-        }
+        stdout: StdioCollector { onStreamFinished: root.wifiRadioEnabled = text.trim() === "enabled" }
     }
 
     Process {
@@ -145,642 +201,657 @@ Item {
                 let ethFound = false;
                 for (let i = 0; i < lines.length; i++) {
                     const parts = lines[i].split(":");
-                    if (parts.length >= 4 && parts[1] === "wifi" && parts[0].indexOf("p2p") === -1) {
-                        root.wifiDeviceName = "Wi-Fi (" + parts[0] + ")";
-                        if (parts[3] === "Hotspot") {
-                            root.wifiDeviceState = "Broadcasting Hotspot";
-                        } else {
-                            root.wifiDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
-                        }
+                    if (parts.length >= 4 && parts[1] === "wifi" && !parts[0].includes("p2p")) {
+                        root.wifiDeviceName = parts[0];
+                        root.wifiDeviceState = parts[3] !== "" && parts[3] !== "--"
+                            ? parts[3]
+                            : parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
                     }
                     if (parts.length >= 4 && parts[1] === "ethernet") {
                         ethFound = true;
                         root.ethernetDeviceName = parts[0];
                         root.ethernetEnabled = (parts[2] === "connected" || parts[2] === "connecting");
                         root.ethernetDeviceState = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
-                        if (parts[2] === "connected") {
-                            root.ethernetDetails = parts[3] + " \u00B7 " + parts[0];
-                        } else {
-                            root.ethernetDetails = "Not connected";
-                        }
+                        root.ethernetDetails = parts[2] === "connected"
+                            ? (parts[3] + " · " + parts[0])
+                            : "Not connected";
                     }
                 }
-                if (!ethFound) {
-                    root.ethernetDeviceState = "No device";
-                    root.ethernetDetails = "N/A";
-                    root.ethernetEnabled = false;
-                }
+                if (!ethFound) { root.ethernetEnabled = false; root.ethernetDetails = "No device"; }
             }
         }
     }
 
-    ListModel { id: wifiModel }
+    Process {
+        id: hotspotStatusProcess
+        command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d | grep -i 'wifi:connected' | grep -qi -E 'hotspot' && echo 'on' || echo 'off'"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: root.hotspotEnabled = text.trim() === "on" }
+    }
 
     Process {
-        id: wifiProcess
+        id: hotspotDetailsProcess
+        command: ["bash", "-c", "nmcli -g 802-11-wireless.ssid connection show Hotspot 2>/dev/null || echo 'cupcake-hotspot'"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") root.hotspotSsid = text.trim() } }
+    }
+
+    Process {
+        id: localIpProcess
+        command: ["bash", "-c", "ip -4 addr show scope global | grep -oP '(?<=inet )\\d+\\.\\d+\\.\\d+\\.\\d+' | head -1"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: root.localIp = text.trim() || "—" }
+    }
+
+    Process {
+        id: wifiScanProcess
         command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
         running: root.wifiRadioEnabled
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: StdioCollector {
             onStreamFinished: {
-                let oldExpanded = {};
-                let oldPasswords = {};
+                let oldExp = {}, oldPwd = {};
                 for (let i = 0; i < wifiModel.count; i++) {
-                    const item = wifiModel.get(i);
-                    if (item.expanded) {
-                        oldExpanded[item.ssid] = true;
-                        oldPasswords[item.ssid] = item.password;
-                    }
+                    const it = wifiModel.get(i);
+                    if (it.expanded) { oldExp[it.ssid] = true; oldPwd[it.ssid] = it.password; }
                 }
                 wifiModel.clear();
-                const textStr = text.trim();
-                if (textStr === "") return;
-                const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
-                const rep  = new RegExp("\\\\:", "g");
-                const rep2 = new RegExp(PLACEHOLDER, "g");
-                const lines = textStr.split("\n");
+                const PLACEHOLDER = "___COLON___";
+                const lines = text.trim().split("\n");
                 let seen = {};
                 for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    if (line === "") continue;
-                    const net      = line.replace(rep, PLACEHOLDER).split(":");
+                    if (!lines[i]) continue;
+                    const net = lines[i].replace(/\\:/g, PLACEHOLDER).split(":");
                     const inUse    = net[0] === "yes";
                     const signal   = parseInt(net[1]) || 0;
-                    const ssid     = net[3] ? net[3].replace(rep2, ":") : "";
-                    const security = net[5] ? net[5].replace(rep2, ":") : "";
+                    const ssid     = net[3] ? net[3].replace(new RegExp(PLACEHOLDER, "g"), ":") : "";
+                    const security = net[5] ? net[5].replace(new RegExp(PLACEHOLDER, "g"), ":") : "";
                     const isSecure = security.length > 0 && security !== "--";
-                    if (ssid === "" || ssid === "--") continue;
-                    if (ssid === root.hotspotSsid) continue; // Don't show our own hotspot in the wifi list
-                    if (seen[ssid]) continue;
+                    if (!ssid || ssid === "--" || ssid === root.hotspotSsid || seen[ssid]) continue;
                     seen[ssid] = true;
-                    
-                    const isExpanded = oldExpanded[ssid] ? true : false;
-                    const savedPwd = oldPasswords[ssid] ? oldPasswords[ssid] : "";
-                    wifiModel.append({ ssid, inUse, isSecure, signal, expanded: isExpanded, password: savedPwd });
+                    wifiModel.append({ ssid, inUse, isSecure, signal, expanded: !!oldExp[ssid], password: oldPwd[ssid] || "" });
                 }
             }
         }
     }
 
-    Process {
-        id: wifiRescanProcess
-        command: ["nmcli", "device", "wifi", "rescan"]
-    }
+    Process { id: wifiRescanProcess; command: ["nmcli", "device", "wifi", "rescan"] }
 
     Timer {
-        interval: 5000
-        running: root.visible
-        repeat: true
+        interval: 5000; running: root.visible; repeat: true
         onTriggered: {
             wifiRadioProcess.running = true;
             wifiDeviceProcess.running = true;
+            hotspotStatusProcess.running = true;
             hotspotDetailsProcess.running = true;
+            localIpProcess.running = true;
             if (root.wifiRadioEnabled) {
                 let anyExpanded = false;
-                for (let i = 0; i < wifiModel.count; i++) {
-                    if (wifiModel.get(i).expanded) {
-                        anyExpanded = true;
-                        break;
-                    }
-                }
-                if (!anyExpanded) {
-                    wifiProcess.running = true;
-                }
+                for (let i = 0; i < wifiModel.count; i++) if (wifiModel.get(i).expanded) { anyExpanded = true; break; }
+                if (!anyExpanded) wifiScanProcess.running = true;
             }
         }
     }
 
-    // =====================================================================
+    // =========================================================================
     // UI
-    // =====================================================================
+    // =========================================================================
 
     ScrollView {
         anchors.fill: parent
-        anchors.topMargin: 0
-        anchors.bottomMargin: 30
-        anchors.leftMargin: 0
-        anchors.rightMargin: 24
         contentWidth: availableWidth
         clip: true
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
         ColumnLayout {
             width: parent.width
-            spacing: 24
+            spacing: 16
 
-            // ── Wi-Fi ─────────────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "Wi-Fi" }
+            // ── Status Hero Card ─────────────────────────────────────────────
+            Rectangle {
+                Layout.fillWidth: true
+                height: 80
+                radius: 14
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, Theme.isDark ? 0.18 : 0.12) }
+                    GradientStop { position: 1.0; color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.04) }
+                }
+                border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25)
+                border.width: 1
 
-                // Wi-Fi header row (clickable to collapse)
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 20
+                    anchors.rightMargin: 20
+                    spacing: 16
 
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb52"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            MouseArea {
-                                width: 250; height: 44
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: -8
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.wifiExpanded = !root.wifiExpanded
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: root.wifiDeviceName; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: root.wifiRadioEnabled ? root.wifiDeviceState : "Turned off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                    // Big wifi icon
+                    Rectangle {
+                        width: 48; height: 48; radius: 12
+                        color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15)
+                        Text {
+                            anchors.centerIn: parent
+                            text: root.wifiRadioEnabled ? "\ueb52" : "\uecfa"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 24
+                            color: cAccent
                         }
                     }
+
+                    ColumnLayout {
+                        spacing: 3
+                        Text {
+                            text: root.wifiRadioEnabled ? root.wifiDeviceState : "Wi-Fi Off"
+                            color: cText
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 15
+                            font.weight: Font.SemiBold
+                        }
+                        Text {
+                            text: root.localIp !== "" ? "IP: " + root.localIp + "  ·  " + root.wifiDeviceName : root.wifiDeviceName
+                            color: cTextDim
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 12
+                        }
+                    }
+
                     Item { Layout.fillWidth: true }
 
                     // Rescan button
                     Rectangle {
-                        id: wifiRescanButton
-                        property bool isScanning: false
+                        id: rescanBtn
+                        property bool scanning: false
+                        width: 36; height: 36; radius: 8
+                        color: rescanMa.containsMouse ? cSurfaceHover : Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.1)
+                        Behavior on color { ColorAnimation { duration: 120 } }
                         visible: root.wifiRadioEnabled
-                        width: 32; height: 32; radius: 8
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                        
+
                         Timer {
-                            id: wifiRescanTimer
-                            interval: 3000
-                            running: false
-                            repeat: false
+                            id: rescanTimer; interval: 3000; running: false; repeat: false
                             onTriggered: {
-                                wifiRescanButton.isScanning = false;
+                                rescanBtn.scanning = false;
                                 wifiDeviceProcess.running = true;
-                                wifiProcess.running = true;
+                                wifiScanProcess.running = true;
+                                localIpProcess.running = true;
                             }
                         }
 
-                        Text { 
-                            anchors.centerIn: parent; text: "\ueb13"
-                            color: wifiRescanButton.isScanning ? Theme.colPrimary : Theme.colOnSurfaceVariant
-                            font.family: "tabler-icons"; font.pixelSize: 15 
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\ueb13"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 16
+                            color: rescanBtn.scanning ? cAccent : cTextDim
                             RotationAnimation on rotation {
-                                running: wifiRescanButton.isScanning
-                                loops: Animation.Infinite
-                                from: 0; to: 360
-                                duration: 1000
+                                running: rescanBtn.scanning
+                                loops: Animation.Infinite; from: 0; to: 360; duration: 900
                             }
                         }
-                        MouseArea { 
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
-                            onClicked: { 
-                                if (!wifiRescanButton.isScanning) {
-                                    wifiRescanButton.isScanning = true;
+                        MouseArea {
+                            id: rescanMa; anchors.fill: parent; hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (!rescanBtn.scanning) {
+                                    rescanBtn.scanning = true;
                                     wifiRescanProcess.running = true;
-                                    wifiRescanTimer.running = true;
+                                    rescanTimer.running = true;
                                 }
-                            } 
+                            }
                         }
                     }
 
-                    ToggleSwitch {
-                        id: wifiSwitch
+                    // Wi-Fi toggle
+                    NToggle {
+                        id: wifiToggle
                         checked: root.wifiRadioEnabled
                         onToggled: {
-                            Quickshell.execDetached(["nmcli", "radio", "wifi", checked ? "on" : "off"])
-                            root.wifiRadioEnabled = checked
-                            if (checked) { wifiProcess.running = true; wifiDeviceProcess.running = true; }
+                            Quickshell.execDetached(["nmcli", "radio", "wifi", val ? "on" : "off"])
+                            root.wifiRadioEnabled = val
+                            if (val) { wifiScanProcess.running = true; wifiDeviceProcess.running = true; }
+                        }
+                    }
+                }
+            }
+
+            // ── Wi-Fi Networks ───────────────────────────────────────────────
+            NCard {
+                sectionTitle: "Wi-Fi Networks"
+                visible: root.wifiRadioEnabled
+
+                // Connected network(s)
+                Repeater {
+                    model: wifiModel
+                    delegate: Item {
+                        visible: model.inUse
+                        Layout.fillWidth: true
+                        implicitHeight: connRow.implicitHeight + 20
+
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -2
+                            radius: 10
+                            color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.07)
+                            border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.2)
+                            border.width: 1
+                        }
+
+                        RowLayout {
+                            id: connRow
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 12
+
+                            NIconBadge {
+                                icon: "\ueb52"
+                                iconColor: cAccent
+                                bgColor: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15)
+                            }
+
+                            ColumnLayout {
+                                spacing: 2
+                                Text { text: model.ssid; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
+                                RowLayout {
+                                    spacing: 6
+                                    Rectangle {
+                                        width: 6; height: 6; radius: 3
+                                        color: "#4ade80"
+                                    }
+                                    Text { text: "Connected"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                    Text { text: "·"; color: cTextFaint; font.pixelSize: 11 }
+                                    Text { text: model.isSecure ? "Secured" : "Open"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                }
+                            }
+
+                            Item { Layout.fillWidth: true }
+
+                            SignalBars { signal: model.signal }
+
+                            // Chip
+                            Rectangle {
+                                height: 22; radius: 6
+                                width: chipText.implicitWidth + 16
+                                color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12)
+                                Text {
+                                    id: chipText
+                                    anchors.centerIn: parent
+                                    text: model.signal > 66 ? "Excellent" : (model.signal > 33 ? "Good" : "Weak")
+                                    color: cAccent
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                                }
+                            }
+
+                            Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
                         }
                     }
                 }
 
-                // Connected network(s)
-                Repeater {
-                    visible: root.wifiExpanded && root.wifiRadioEnabled
-                    model: wifiModel
-                    delegate: SettingsRow {
-                        visible: model.inUse
-                        RowLayout {
-                            spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                                Text { anchors.centerIn: parent; text: "\ueb52"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Connected · Secured"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        Rectangle {
-                            width: 60; height: 24; radius: 6
-                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "Strong"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
-                        }
-                        Text { text: "\ueae2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
-                        Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
+                // Divider after connected
+                Rectangle {
+                    Layout.fillWidth: true; height: 1; color: cBorder; opacity: 0.6
+                    visible: {
+                        for (let i = 0; i < wifiModel.count; i++) if (wifiModel.get(i).inUse) return true;
+                        return false;
                     }
                 }
 
                 // Other networks
                 Repeater {
-                    visible: root.wifiExpanded && root.wifiRadioEnabled
                     model: wifiModel
                     delegate: ColumnLayout {
                         visible: !model.inUse
                         Layout.fillWidth: true
                         spacing: 0
 
-                        SettingsRow {
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: otherRow.implicitHeight + 20
+                            color: otherMa.containsMouse ? cSurfaceHover : "transparent"
+                            Behavior on color { ColorAnimation { duration: 100 } }
+                            radius: 8
+
                             RowLayout {
+                                id: otherRow
+                                anchors.left: parent.left; anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.leftMargin: 6; anchors.rightMargin: 6
                                 spacing: 12
-                                Rectangle {
-                                    width: 32; height: 32; radius: 16
-                                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa")
-                                        color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16
-                                    }
+
+                                NIconBadge {
+                                    icon: model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa")
+                                    iconColor: cTextDim
+                                    bgColor: cBgElevated
                                 }
                                 ColumnLayout {
-                                    spacing: 1
-                                    Text { text: model.ssid; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                    Text { text: model.isSecure ? "Secured" : "Open network"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                                    spacing: 2
+                                    Text { text: model.ssid; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                    Text { text: model.isSecure ? "Secured" : "Open network"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                                 }
+                                Item { Layout.fillWidth: true }
+                                SignalBars { signal: model.signal }
+                                Text {
+                                    visible: model.isSecure
+                                    text: "\ueb9d"
+                                    font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint
+                                }
+                                Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
                             }
-                            Item { Layout.fillWidth: true }
-                            Text { visible: model.isSecure; text: "\ueae2"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.4 }
-                            Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
 
                             MouseArea {
-                                anchors.fill: parent
+                                id: otherMa; anchors.fill: parent; hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 enabled: !model.expanded
                                 onClicked: {
                                     for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
-                                    if (!model.isSecure) { Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]); wifiProcess.running = true; }
+                                    if (!model.isSecure) { Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]); wifiScanProcess.running = true; }
                                     else wifiModel.setProperty(index, "expanded", true);
                                 }
                             }
                         }
 
-                        // Expanded password row
-                        RowLayout {
+                        // Password expand
+                        Rectangle {
                             Layout.fillWidth: true
-                            Layout.leftMargin: 44; Layout.rightMargin: 0; Layout.bottomMargin: 4
-                            spacing: 8
-                            visible: model.expanded
-                            Rectangle {
-                                Layout.fillWidth: true; Layout.preferredHeight: 34
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                radius: 8
-                                border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.12); border.width: 1
-                                TextInput {
-                                    id: pwdIn
-                                    anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
-                                    verticalAlignment: TextInput.AlignVCenter
-                                    color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12
-                                    echoMode: TextInput.Password; clip: true
-                                    text: model.password
-                                    onTextChanged: {
-                                        if (text !== model.password) {
-                                            wifiModel.setProperty(index, "password", text)
+                            Layout.leftMargin: 48
+                            Layout.bottomMargin: 4
+                            height: model.expanded ? 48 : 0
+                            opacity: model.expanded ? 1 : 0
+                            Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
+                            clip: true
+                            color: "transparent"
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.topMargin: 4
+                                spacing: 8
+
+                                Rectangle {
+                                    Layout.fillWidth: true; height: 36; radius: 8
+                                    color: cBgElevated
+                                    border.color: cBorder; border.width: 1
+
+                                    TextInput {
+                                        id: pwdInput
+                                        anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
+                                        verticalAlignment: TextInput.AlignVCenter
+                                        color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                                        echoMode: TextInput.Password; clip: true
+                                        text: model.password
+                                        onTextChanged: { if (text !== model.password) wifiModel.setProperty(index, "password", text) }
+                                    }
+                                    Text {
+                                        anchors { left: parent.left; leftMargin: 12; verticalCenter: parent.verticalCenter }
+                                        text: "Password"; color: cTextFaint
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                                        visible: pwdInput.text === ""
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 80; height: 36; radius: 8
+                                    color: cAccent
+                                    Text { anchors.centerIn: parent; text: "Connect"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            if (model.isSecure) Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid, "password", model.password]);
+                                            else Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]);
+                                            wifiModel.setProperty(index, "expanded", false);
+                                            wifiScanProcess.running = true;
                                         }
                                     }
                                 }
-                                Text {
-                                    anchors { left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter }
-                                    text: "Password..."; color: Theme.colOnSurfaceVariant
-                                    font.family: Theme.defaultFontFamily; font.pixelSize: 12; opacity: 0.5
-                                    visible: pwdIn.text === ""
-                                }
-                            }
-                            Rectangle {
-                                width: 76; height: 34; radius: 8
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
-                                Text { anchors.centerIn: parent; text: "Connect"; color: Theme.colSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        if (model.isSecure) Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid, "password", model.password]);
-                                        else Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]);
-                                        wifiModel.setProperty(index, "expanded", false);
-                                        wifiProcess.running = true;
+
+                                Rectangle {
+                                    width: 36; height: 36; radius: 8
+                                    color: cBgElevated; border.color: cBorder; border.width: 1
+                                    Text { anchors.centerIn: parent; text: "\uea76"; font.family: "tabler-icons"; font.pixelSize: 16; color: cTextDim }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: wifiModel.setProperty(index, "expanded", false)
                                     }
                                 }
                             }
                         }
+
+                        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder; opacity: 0.4 }
                     }
                 }
 
-                SettingsRow {
-                    visible: root.wifiExpanded && root.wifiRadioEnabled
+                // MAC Randomization
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: macRow.implicitHeight + 20
+                    color: "transparent"
                     RowLayout {
+                        id: macRow
+                        anchors.left: parent.left; anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb92"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\ueb92"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
-                            spacing: 1
-                            Text { text: "Disable MAC Randomization"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Fixes connection issues for MediaTek Wi-Fi chips"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            spacing: 2
+                            Text { text: "Disable MAC Randomization"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Fixes connection issues for MediaTek Wi-Fi chips"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                         }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch {
-                        id: macRandToggle
-                        checked: false
-                        onToggled: {
-                            if (checked) {
-                                Quickshell.execDetached(["bash", "-c", "echo -e '[device-mac-randomization]\\nwifi.scan-rand-mac-address=no\\n[connection-mac-randomization]\\nwifi.cloned-mac-address=preserve' | pkexec tee /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
-                            } else {
-                                Quickshell.execDetached(["bash", "-c", "pkexec rm -f /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
+                        Item { Layout.fillWidth: true }
+                        NToggle {
+                            id: macRandToggle
+                            onToggled: {
+                                if (val) {
+                                    Quickshell.execDetached(["bash", "-c", "echo -e '[device-mac-randomization]\\nwifi.scan-rand-mac-address=no\\n[connection-mac-randomization]\\nwifi.cloned-mac-address=preserve' | pkexec tee /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
+                                } else {
+                                    Quickshell.execDetached(["bash", "-c", "pkexec rm -f /etc/NetworkManager/conf.d/mac-randomization.conf && pkexec systemctl restart NetworkManager"]);
+                                }
                             }
                         }
-                    }
-                }
-
-                Process {
-                    command: ["bash", "-c", "test -f /etc/NetworkManager/conf.d/mac-randomization.conf && echo 1 || echo 0"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: {
-                            if (text.trim() === "1") macRandToggle.checked = true;
-                            else macRandToggle.checked = false;
+                        Process {
+                            command: ["bash", "-c", "test -f /etc/NetworkManager/conf.d/mac-randomization.conf && echo 1 || echo 0"]
+                            running: true
+                            stdout: StdioCollector { onStreamFinished: macRandToggle.checked = text.trim() === "1" }
                         }
                     }
                 }
 
-                // Add network link
-                Text {
-                    visible: root.wifiExpanded && root.wifiRadioEnabled
-                    text: "+ Add network manually"
-                    color: Theme.colPrimary
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                // Add network
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: 44; radius: 8
+                    color: addMa.containsMouse ? cSurfaceHover : "transparent"
+                    Behavior on color { ColorAnimation { duration: 100 } }
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 10; spacing: 8
+                        Text { text: "\uea13"; font.family: "tabler-icons"; font.pixelSize: 16; color: cAccent }
+                        Text { text: "Add network manually"; color: cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                    }
+                    MouseArea { id: addMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
                 }
             }
 
-            // ── Mobile Hotspot ────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "Mobile Hotspot" }
-
-                SettingsRow {
-                    id: hotspotSettingsRow
-
-                    Item {
-                        implicitWidth: leftContentRow.implicitWidth
-                        implicitHeight: leftContentRow.implicitHeight
-                        
-                        RowLayout {
-                            id: leftContentRow
-                            spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                Text { anchors.centerIn: parent; text: "\ued1b"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Mobile Hotspot"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: root.hotspotEnabled ? "On" : "Off"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                let p = root;
-                                while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
-                                if (p.currentIndex !== undefined) {
-                                    p.currentIndex = 23;
-                                }
-                            }
-                        }
-                    }
-                    
-                    Item { Layout.fillWidth: true } // spacer
-
-                    ToggleSwitch {
-                        id: hotspotToggle
-                        checked: root.hotspotEnabled
-                        onToggled: {
-                            if (root.hotspotEnabled) {
-                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "connection", "down", "Hotspot"]; running: true }', root);
-                                root.hotspotEnabled = false;
-                            } else {
-                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]; running: true }', root);
-                                root.hotspotEnabled = true;
-                            }
-                        }
-                    }
-                    
-                    Text {
-                        text: "\uea61" // chevron-right
-                        color: Theme.colOnSurfaceVariant
-                        font.family: "tabler-icons"
-                        font.pixelSize: 18
-                        opacity: 0.6
-                        Layout.alignment: Qt.AlignVCenter
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                let p = root;
-                                while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
-                                if (p.currentIndex !== undefined) {
-                                    p.currentIndex = 23;
-                                }
-                            }
-                        }
+            // Wi-Fi disabled state
+            NCard {
+                sectionTitle: "Wi-Fi"
+                visible: !root.wifiRadioEnabled
+                Rectangle {
+                    Layout.fillWidth: true; height: 64; radius: 10
+                    color: cBgElevated
+                    ColumnLayout {
+                        anchors.centerIn: parent; spacing: 4
+                        Text { Layout.alignment: Qt.AlignHCenter; text: "\uecfa"; font.family: "tabler-icons"; font.pixelSize: 22; color: cTextFaint }
+                        Text { Layout.alignment: Qt.AlignHCenter; text: "Wi-Fi is turned off"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12 }
                     }
                 }
             }
 
-            // ── Ethernet ──────────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "Ethernet" }
+            // ── Ethernet & Hotspot Row ────────────────────────────────────────
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 16
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uebd9"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 16 }
+                // Ethernet
+                NCard {
+                    Layout.fillWidth: true
+                    sectionTitle: "Ethernet"
+                    NRow {
+                        NIconBadge {
+                            icon: "\uebd9"
+                            iconColor: root.ethernetEnabled ? cAccent : cTextDim
+                            bgColor: root.ethernetEnabled ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cBgElevated
                         }
                         ColumnLayout {
-                            spacing: 1
-                            Text { text: "Wired connection"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: root.ethernetDetails; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            spacing: 2
+                            Text { text: "Wired"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.ethernetDetails; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                         }
+                        Item { Layout.fillWidth: true }
+                        NToggle {
+                            checked: root.ethernetEnabled
+                            onToggled: {
+                                const cmd = val
+                                    ? ["nmcli", "device", "connect", root.ethernetDeviceName]
+                                    : ["nmcli", "device", "disconnect", root.ethernetDeviceName];
+                                Quickshell.execDetached(cmd);
+                                root.ethernetEnabled = val;
+                            }
+                        }
+                    }
+                }
+
+                // Hotspot
+                NCard {
+                    Layout.fillWidth: true
+                    sectionTitle: "Hotspot"
+                    NRow {
+                        NIconBadge {
+                            icon: "\ued1b"
+                            iconColor: root.hotspotEnabled ? cAccent : cTextDim
+                            bgColor: root.hotspotEnabled ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cBgElevated
+                        }
+                        ColumnLayout {
+                            spacing: 2
+                            Text { text: "Mobile Hotspot"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text {
+                                text: root.hotspotEnabled ? ("SSID: " + root.hotspotSsid) : "Off"
+                                color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
+                        NToggle {
+                            checked: root.hotspotEnabled
+                            onToggled: {
+                                if (root.hotspotEnabled) {
+                                    Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli","connection","down","Hotspot"]; running: true }', root);
+                                } else {
+                                    Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash","-c","nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]; running: true }', root);
+                                }
+                                root.hotspotEnabled = val;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── VPN ───────────────────────────────────────────────────────────
+            NCard {
+                sectionTitle: "VPN"
+
+                NRow {
+                    NIconBadge { icon: "\ued58"; iconColor: cTextDim; bgColor: cBgElevated }
+                    ColumnLayout {
+                        spacing: 2
+                        Text { text: "No VPN configured"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Add a VPN to route traffic securely"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
                     Rectangle {
-                        width: 74; height: 24; radius: 6
-                        color: root.ethernetEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                        Text { anchors.centerIn: parent; text: root.ethernetEnabled ? "Connected" : "Disabled"; color: root.ethernetEnabled ? Theme.colPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium }
+                        height: 30; radius: 8; width: vpnBtnText.implicitWidth + 20
+                        color: vpnBtnMa.containsMouse ? cSurfaceHover : cBgElevated
+                        border.color: cBorder; border.width: 1
+                        Behavior on color { ColorAnimation { duration: 100 } }
+                        Text { id: vpnBtnText; anchors.centerIn: parent; text: "Add VPN"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium }
+                        MouseArea { id: vpnBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["nm-connection-editor"]) }
                     }
-                    ToggleSwitch {
-                        id: ethToggle
-                        checked: root.ethernetEnabled
-                        onToggled: {
-                            if (root.ethernetEnabled) {
-                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "device", "disconnect", root.ethernetDeviceName]; running: true; onExited: wifiDeviceProcess.running = true }', root);
-                            } else {
-                                let proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli", "device", "connect", root.ethernetDeviceName]; running: true; onExited: wifiDeviceProcess.running = true }', root);
-                            }
-                            root.ethernetEnabled = checked;
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Connect automatically"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Use this connection whenever a cable is plugged in"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: true }
                 }
             }
 
-            // ── VPN ───────────────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "VPN" }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ued58"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Work VPN"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Disconnected"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "Connect"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 14; opacity: 0.35 }
-                }
-
-                Text {
-                    text: "+ Add VPN connection"
-                    color: Theme.colPrimary
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["nm-connection-editor"]) }
-                }
-            }
-
-            // ── Proxy & DNS ───────────────────────────────────────────────
-            SettingsCard {
-                SectionLabel { text: "Proxy & DNS" }
+            // ── Proxy & DNS & Airplane ─────────────────────────────────────────
+            NCard {
+                sectionTitle: "Advanced"
 
                 // Proxy
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueab9"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Proxy"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Route traffic through a proxy server"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
+                NRow {
+                    NIconBadge { icon: "\ueab9"; iconColor: cTextDim; bgColor: cBgElevated }
+                    ColumnLayout {
+                        spacing: 2
+                        Text { text: "Proxy"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Route traffic through a proxy server"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
                     Rectangle {
-                        width: 90; height: 28; radius: 8
-                        color: Qt.rgba(0, 0, 0, 0.28)
+                        height: 30; radius: 8; width: 80
+                        color: cBgElevated; border.color: cBorder; border.width: 1
                         RowLayout {
-                            anchors { fill: parent; leftMargin: 10; rightMargin: 8 }
-                            Text { text: "Off"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.fillWidth: true }
-                            Text { text: "\uea5f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 13 }
+                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 8
+                            Text { text: "Off"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.fillWidth: true }
+                            Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 13; color: cTextFaint }
                         }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["nm-connection-editor"])
-                        }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(["nm-connection-editor"]) }
                     }
                 }
 
                 // DNS
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueab9"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "DNS server"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Override the DNS server provided by your network"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
+                NRow {
+                    NIconBadge { icon: "\ueab9"; iconColor: cTextDim; bgColor: cBgElevated }
+                    ColumnLayout {
+                        spacing: 2
+                        Text { text: "DNS Server"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Override the network-provided DNS"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
                     Rectangle {
-                        width: 110; height: 28; radius: 8
-                        color: Qt.rgba(0, 0, 0, 0.28)
-                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.10); border.width: 1
+                        height: 30; radius: 8; width: 120
+                        color: cBgElevated; border.color: dnsFocus.activeFocus ? cAccent : cBorder; border.width: dnsFocus.activeFocus ? 2 : 1
+                        Behavior on border.color { ColorAnimation { duration: 120 } }
                         TextInput {
+                            id: dnsFocus
                             anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
                             verticalAlignment: TextInput.AlignVCenter
-                            text: "Automatic"; color: Theme.colOnSurface
-                            font.family: Theme.defaultFontFamily; font.pixelSize: 12; clip: true
+                            text: "Automatic"; color: cText
+                            font.family: Theme.monoFontFamily; font.pixelSize: 12; clip: true
                             onEditingFinished: {
-                                let dns = text.trim();
-                                if (dns === "") dns = "Automatic";
+                                let dns = text.trim() || "Automatic";
                                 text = dns;
-                                Quickshell.execDetached(["bash", "-c", 'ACTIVE=$(nmcli -t -f NAME,TYPE connection show --active | grep 802-11-wireless | head -n1 | cut -d: -f1); if [ -n "$ACTIVE" ]; then if [ "$1" = "Automatic" ]; then nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns no ipv4.dns ""; else nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns yes ipv4.dns "$1"; fi; nmcli con up "$ACTIVE"; fi', "--", dns]);
+                                Quickshell.execDetached(["bash", "-c",
+                                    'ACTIVE=$(nmcli -t -f NAME,TYPE connection show --active | grep 802-11-wireless | head -n1 | cut -d: -f1); ' +
+                                    'if [ -n "$ACTIVE" ]; then ' +
+                                    'if [ "' + dns + '" = "Automatic" ]; then nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns no ipv4.dns ""; ' +
+                                    'else nmcli con mod "$ACTIVE" ipv4.ignore-auto-dns yes ipv4.dns "' + dns + '"; fi; nmcli con up "$ACTIVE"; fi'
+                                ]);
                             }
                         }
                     }
                 }
 
                 // Airplane mode
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb6f"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Airplane mode"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Disable all wireless connections"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
+                NRow {
+                    NIconBadge { icon: "\ueb6f"; iconColor: cTextDim; bgColor: cBgElevated }
+                    ColumnLayout {
+                        spacing: 2
+                        Text { text: "Airplane Mode"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        Text { text: "Disable all wireless connections"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: false
-                        onToggled: Quickshell.execDetached(["nmcli", "radio", "all", checked ? "off" : "on"])
+                        onToggled: Quickshell.execDetached(["nmcli", "radio", "all", val ? "off" : "on"])
                     }
                 }
             }
 
-            Item { Layout.preferredHeight: 32 }
+            Item { Layout.preferredHeight: 24 }
         }
     }
 }
