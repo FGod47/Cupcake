@@ -161,11 +161,11 @@ Item {
 
     component SignalBars: Row {
         property int signal: 0
-        spacing: 2
+        spacing: 4
         Repeater {
             model: 4
             Rectangle {
-                width: 4
+                width: 5
                 height: 4 + index * 4
                 anchors.bottom: parent ? parent.bottom : undefined
                 radius: 2
@@ -538,11 +538,18 @@ Item {
                             MouseArea {
                                 id: otherMa; anchors.fill: parent; hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                enabled: !model.expanded
                                 onClicked: {
-                                    for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
-                                    if (!model.isSecure) { Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]); wifiScanProcess.running = true; }
-                                    else wifiModel.setProperty(index, "expanded", true);
+                                    if (model.expanded) {
+                                        wifiModel.setProperty(index, "expanded", false);
+                                    } else {
+                                        for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
+                                        if (!model.isSecure) { 
+                                            Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", model.ssid]); 
+                                            wifiScanProcess.running = true; 
+                                        } else {
+                                            wifiModel.setProperty(index, "expanded", true);
+                                        }
+                                    }
                                 }
                             }
                         }
