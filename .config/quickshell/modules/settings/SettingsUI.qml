@@ -363,7 +363,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: tip
                                 color: "#ffffff"
-                                font.pixelSize: 11.5
+                                font.pixelSize: 11
                                 font.weight: 500
                                 font.family: Theme.defaultFontFamily
                             }
@@ -483,7 +483,7 @@ Item {
                                     Layout.fillWidth: true
                                     color: cText
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 12.5
+                                    font.pixelSize: 12
                                 }
                                 Rectangle {
                                     Layout.preferredWidth: 26
@@ -496,7 +496,7 @@ Item {
                                         anchors.centerIn: parent
                                         text: "⌘K"
                                         font.family: Theme.monoFontFamily
-                                        font.pixelSize: 10.5
+                                        font.pixelSize: 10
                                         color: cTextFaint
                                     }
                                 }
@@ -1376,7 +1376,7 @@ Item {
                                 Layout.alignment: Qt.AlignHCenter
                                 text: "      /\\\\ \n     /  \\\\ \n    /    \\\\ \n   /      \\\\ \n  /   ,,   \\\\ \n /   |  |   \\\\ \n/_-''    ''-_\\\\"
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 9.5
+                                font.pixelSize: 9
                                 font.weight: 600
                                 color: cAccent
                                 horizontalAlignment: Text.AlignHCenter
@@ -1387,7 +1387,7 @@ Item {
                                 Layout.alignment: Qt.AlignHCenter
                                 text: Quickshell.env("USER") + "@" + Quickshell.env("HOSTNAME")
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 12.5
+                                font.pixelSize: 12
                                 font.weight: 600
                                 color: cText
                             }
@@ -1395,7 +1395,7 @@ Item {
                                 Layout.alignment: Qt.AlignHCenter
                                 text: "------------------"
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 10.5
+                                font.pixelSize: 10
                                 color: cTextFaint
                                 Layout.bottomMargin: 10
                             }
@@ -1404,9 +1404,9 @@ Item {
                                 property string key
                                 property string val
                                 Layout.fillWidth: true
-                                Text { text: key; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 11.5 }
+                                Text { text: key; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 11 }
                                 Item { Layout.fillWidth: true }
-                                Text { text: val; color: cTextDim; font.family: Theme.monoFontFamily; font.pixelSize: 11.5 }
+                                Text { text: val; color: cTextDim; font.family: Theme.monoFontFamily; font.pixelSize: 11 }
                             }
                             
                             FetchLine { key: "OS"; val: "Arch Linux x86_64" }
@@ -1431,9 +1431,9 @@ Item {
                                 spacing: 4
                                 RowLayout {
                                     Layout.fillWidth: true
-                                    Text { text: label; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10.5 }
+                                    Text { text: label; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10 }
                                     Item { Layout.fillWidth: true }
-                                    Text { text: val; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10.5 }
+                                    Text { text: val; color: cTextFaint; font.family: Theme.monoFontFamily; font.pixelSize: 10 }
                                 }
                                 Rectangle {
                                     Layout.fillWidth: true
