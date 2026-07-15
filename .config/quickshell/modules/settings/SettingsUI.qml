@@ -400,6 +400,7 @@ Item {
                 
                 // TOPBAR
                 Rectangle {
+                    id: topBarRect
                     Layout.fillWidth: true
                     Layout.preferredHeight: 64
                     color: "transparent"
@@ -445,7 +446,7 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text {
-                                text: parent.parent.getPageData(root.currentIndex).title
+                                text: topBarRect.getPageData(root.currentIndex).title
                                 color: cText
                                 font.family: Theme.defaultFontFamily // Should be Space Grotesk in HTML but we use system
                                 font.pixelSize: 18
@@ -453,7 +454,7 @@ Item {
                                 font.letterSpacing: -0.3
                             }
                             Text {
-                                text: parent.parent.getPageData(root.currentIndex).path
+                                text: topBarRect.getPageData(root.currentIndex).path
                                 color: cTextFaint
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 12
