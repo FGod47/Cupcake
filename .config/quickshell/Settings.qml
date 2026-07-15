@@ -12,6 +12,8 @@ Window {
     visible: true
     width: 900
     height: 800
+    minimumWidth: 800
+    minimumHeight: 600
     title: "Cupcake Settings"
     color: "transparent"
     flags: Qt.Window | Qt.FramelessWindowHint
