@@ -540,82 +540,8 @@ Item {
                         Layout.fillHeight: true
                         clip: true
                         
-                        // Appearance Top Nav Bar
-                        Rectangle {
-                            id: appNav
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            height: isAppearanceCategory ? 40 : 0
-                            visible: isAppearanceCategory
-                            opacity: isAppearanceCategory ? 1 : 0
-                            Behavior on opacity { NumberAnimation { duration: 200 } }
-                            color: cSurfaceActive
-                            border.color: cBorder
-                            border.width: 1
-                            radius: 10
-                            clip: true
-                            
-                            property bool isAppearanceCategory: [0, 1, 4, 3].includes(root.currentIndex)
-                            
-                            RowLayout {
-                                anchors.fill: parent
-                                spacing: 0
-                                
-                                component TopNavBtn: Item {
-                                    property string text
-                                    property string icon
-                                    property int pageIndex
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        anchors.margins: 2
-                                        radius: 8
-                                        color: root.currentIndex === pageIndex ? cAccentDim : (ma.containsMouse ? cSurfaceHover : "transparent")
-                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                    }
-                                    
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 7
-                                        Text {
-                                            text: parent.parent.icon
-                                            font.family: "tabler-icons"
-                                            font.pixelSize: 14
-                                            color: root.currentIndex === pageIndex ? cAccent : cTextDim
-                                        }
-                                        Text {
-                                            text: parent.parent.text
-                                            font.family: Theme.defaultFontFamily
-                                            font.pixelSize: 13
-                                            font.weight: Font.Medium
-                                            color: root.currentIndex === pageIndex ? cText : cTextDim
-                                        }
-                                    }
-                                    MouseArea {
-                                        id: ma
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: root.currentIndex = pageIndex
-                                    }
-                                }
-                                
-                                TopNavBtn { text: "Wallpaper"; icon: ""; pageIndex: 1 }
-                                TopNavBtn { text: "General"; icon: ""; pageIndex: 0 }
-                                TopNavBtn { text: "Dock"; icon: ""; pageIndex: 4 }
-                                TopNavBtn { text: "Desktop"; icon: ""; pageIndex: 3 }
-                            }
-                        }
-                        
                         Item {
-                            anchors.top: appNav.bottom
-                            anchors.topMargin: appNav.isAppearanceCategory ? 14 : 0
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            anchors.fill: parent
                             
                             // LOADERS INJECTED HERE
             
