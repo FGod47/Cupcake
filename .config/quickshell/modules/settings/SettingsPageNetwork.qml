@@ -532,11 +532,6 @@ Item {
                                 }
                                 Item { Layout.fillWidth: true }
                                 SignalBars { signal: model.signal }
-                                Text {
-                                    visible: model.isSecure
-                                    text: "\ueb9d"
-                                    font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint
-                                }
                                 Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
                             }
 
