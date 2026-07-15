@@ -256,7 +256,7 @@ Item {
                             MouseArea {
                                 id: updateCcBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    Quickshell.execDetached(["kitty", "--class", "cupcake_updater", "-T", "Theme Update", "-e", "bash", "-c", "echo -e '\\033[1;34m[Cupcake Updater]\\033[0m Updating theme dotfiles...'; cd ~/Cupcake && git pull; echo -e '\\n\\033[1;32mUpdates complete!\\033[0m Press enter to exit...'; read"]);
+                                    Quickshell.execDetached(["kitty", "--class", "cupcake_updater", "-T", "Theme Update", "-e", "bash", "-c", "echo -e '\\033[1;34m[Cupcake Updater]\\033[0m Updating theme dotfiles...'; cd ~/Cupcake && git pull && cp -r .config/quickshell/* ~/.config/quickshell/ && echo -e '\\n\\033[1;32mUpdates complete! Restarting UI...\\033[0m'; sleep 1; pkill -x quickshell; quickshell > /dev/null 2>&1 &"]);
                                     checkCupcakeUpdatesProc.running = true;
                                     root.isCheckingCupcake = true;
                                 }
