@@ -10,6 +10,19 @@ Item {
 
     property bool globalTransparency: true
     
+    property bool isDark: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.color_mode"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() === "light") {
+                    themeSingleton.isDark = false;
+                }
+            }
+        }
+    }
+    
     Process {
         command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.transparency"]
         running: true

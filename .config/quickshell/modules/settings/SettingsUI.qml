@@ -234,8 +234,8 @@ Item {
     property color cText: Theme.isDark ? "#e8ecf1" : "#171b21"
     property color cTextDim: Theme.isDark ? "#8891a0" : "#5b6472"
     property color cTextFaint: Theme.isDark ? "#4d5566" : "#9aa2af"
-    property color cAccent: Theme.colPrimary
-    property color cAccentDim: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14)
+    property color cAccent: Theme.isDark ? Theme.colPrimary : "#1785c1"
+    property color cAccentDim: Theme.isDark ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14) : "rgba(23,133,193,0.12)"
 
     Rectangle {
         id: mainWrapper
