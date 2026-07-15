@@ -468,8 +468,6 @@ Item {
 
                             Item { Layout.fillWidth: true }
 
-                            SignalBars { signal: model.signal }
-
                             // Chip
                             Rectangle {
                                 height: 22; radius: 6
@@ -484,7 +482,12 @@ Item {
                                 }
                             }
 
-                            Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
+                            NButton {
+                                text: "Disconnect"
+                                onClicked: {
+                                    Quickshell.execDetached(["nmcli", "connection", "down", "id", model.ssid]);
+                                }
+                            }
                         }
                     }
                 }
@@ -531,7 +534,6 @@ Item {
                                     Text { text: model.isSecure ? "Secured" : "Open network"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                                 }
                                 Item { Layout.fillWidth: true }
-                                SignalBars { signal: model.signal }
                                 Text { text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
                             }
 
