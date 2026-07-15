@@ -1267,11 +1267,12 @@ PanelWindow {
             Row {
                 id: archText
                 anchors.centerIn: parent
+                spacing: 8
                 opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 0.0 : 1.0)
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Text { text: ""; color: Theme.colOnPrimary; font.family: Theme.monoFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
-                Text { text: "Arch"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
+                Text { anchors.verticalCenter: parent.verticalCenter; text: ""; color: Theme.colOnPrimary; font.family: Theme.monoFontFamily; font.pixelSize: Theme.defaultFontSize + 2; font.weight: Theme.defaultFontWeight }
+                Text { anchors.verticalCenter: parent.verticalCenter; text: "Arch"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
             }
 
             // Music Island Container
