@@ -1374,13 +1374,7 @@ Item {
                             
                             Text {
                                 Layout.alignment: Qt.AlignHCenter
-                                text: "      /\ 
-     /  \ 
-    /    \ 
-   /      \ 
-  /   ,,   \ 
- /   |  |   \ 
-/_-''    ''-_\"
+                                text: "      /\\\\ \n     /  \\\\ \n    /    \\\\ \n   /      \\\\ \n  /   ,,   \\\\ \n /   |  |   \\\\ \n/_-''    ''-_\\\\"
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 9.5
                                 font.weight: 600
@@ -1481,4 +1475,3 @@ Item {
             }
         }
     }
-}
