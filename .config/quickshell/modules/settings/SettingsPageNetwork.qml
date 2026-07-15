@@ -247,7 +247,7 @@ Item {
 
     Process {
         id: savedNetworksProcess
-        command: ["nmcli", "-g", "NAME", "connection", "show"]
+        command: ["bash", "-c", "nmcli -t -f TYPE,NAME connection show | grep '^802-11-wireless:' | sed 's/^802-11-wireless://'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
