@@ -161,18 +161,18 @@ Item {
 
     component SignalBars: Row {
         property int signal: 0
-        spacing: 4
+        spacing: 6
         Repeater {
             model: 4
             Rectangle {
-                width: 5
-                height: 4 + index * 4
+                width: 6
+                height: 4 + index * 5
                 anchors.bottom: parent ? parent.bottom : undefined
-                radius: 2
+                radius: 3
                 color: {
                     const threshold = index * 25;
                     if (signal > threshold) return cAccent;
-                    return cBorderSoft;
+                    return Qt.rgba(cText.r, cText.g, cText.b, 0.15);
                 }
             }
         }
