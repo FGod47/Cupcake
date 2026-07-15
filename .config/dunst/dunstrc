@@ -1,0 +1,43 @@
+[global]
+    width = 360
+    height = 300
+    origin = top-right
+    offset = 20x20
+    notification_limit = 4
+    progress_bar = true
+    progress_bar_height = 6
+    progress_bar_corner_radius = 3
+    padding = 16
+    horizontal_padding = 16
+    text_icon_padding = 16
+    frame_width = 1
+    frame_color = "#3a3a4a"
+    gap_size = 8
+    separator_color = frame
+    font = Inter 11
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    word_wrap = yes
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    corner_radius = 12
+
+[urgency_low]
+    background = "#181825"
+    foreground = "#c4c4cc"
+    frame_color = "#3a3a4a"
+    timeout = 4
+
+[urgency_normal]
+    background = "#181825"
+    foreground = "#ffffff"
+    frame_color = "#d4bbff"
+    timeout = 8
+
+[urgency_critical]
+    background = "#181825"
+    foreground = "#ffffff"
+    frame_color = "#ff8f8f"
+    timeout = 0
