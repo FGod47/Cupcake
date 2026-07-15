@@ -13,14 +13,15 @@ Item {
     // =========================================================================
     // State
     // =========================================================================
-    property bool isChecking: true
-    property bool updatesAvailable: false
-    property int updateCount: 0
-    property string lastCheckTime: "Just now"
+    property bool isCheckingSys: true
+    property bool sysUpdatesAvailable: false
+    property int sysUpdateCount: 0
+    property string lastSysCheckTime: "Just now"
 
-    // =========================================================================
-    // Color aliases from parent SettingsUI
-    // =========================================================================
+    property bool isCheckingCupcake: true
+    property bool cupcakeUpdatesAvailable: false
+    property int cupcakeUpdateCount: 0
+    property string lastCupcakeCheckTime: "Just now"
 
     // =========================================================================
     // Components
@@ -57,7 +58,7 @@ Item {
     ListModel { id: packagesModel }
 
     Process {
-        id: checkUpdatesProc
+        id: checkSysUpdatesProc
         command: ["bash", "-c", "checkupdates"]
         running: true
         stdout: StdioCollector {
@@ -65,15 +66,14 @@ Item {
                 packagesModel.clear();
                 const textStr = text.trim();
                 if (textStr === "") {
-                    root.updateCount = 0;
-                    root.updatesAvailable = false;
+                    root.sysUpdateCount = 0;
+                    root.sysUpdatesAvailable = false;
                 } else {
                     const lines = textStr.split("\n");
-                    root.updateCount = lines.length;
-                    root.updatesAvailable = true;
+                    root.sysUpdateCount = lines.length;
+                    root.sysUpdatesAvailable = true;
                     
                     for (let i = 0; i < lines.length; i++) {
-                        // Format: package oldver -> newver
                         const parts = lines[i].split(" ");
                         if (parts.length >= 4) {
                             packagesModel.append({
@@ -84,10 +84,26 @@ Item {
                         }
                     }
                 }
-                root.isChecking = false;
+                root.isCheckingSys = false;
+                const d = new Date();
+                root.lastSysCheckTime = d.toLocaleTimeString(Qt.locale(), Locale.ShortFormat);
+            }
+        }
+    }
+
+    Process {
+        id: checkCupcakeUpdatesProc
+        command: ["bash", "-c", "cd ~/Cupcake && git fetch -q && git rev-list --count HEAD..@{u} 2>/dev/null || echo 0"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const count = parseInt(text.trim()) || 0;
+                root.cupcakeUpdateCount = count;
+                root.cupcakeUpdatesAvailable = count > 0;
+                root.isCheckingCupcake = false;
                 
                 const d = new Date();
-                root.lastCheckTime = d.toLocaleTimeString(Qt.locale(), Locale.ShortFormat);
+                root.lastCupcakeCheckTime = d.toLocaleTimeString(Qt.locale(), Locale.ShortFormat);
             }
         }
     }
@@ -97,8 +113,10 @@ Item {
         running: root.visible
         repeat: true
         onTriggered: {
-            root.isChecking = true;
-            checkUpdatesProc.running = true;
+            root.isCheckingSys = true;
+            root.isCheckingCupcake = true;
+            checkSysUpdatesProc.running = true;
+            checkCupcakeUpdatesProc.running = true;
         }
     }
 
@@ -114,27 +132,161 @@ Item {
 
         ColumnLayout {
             width: parent.width
-            spacing: 16
+            spacing: 24
 
-            // ── Hero Banner ─────────────────────────────────────────────
+            // ── Cupcake (Dotfiles) Update Hero ──────────────────────────
             Rectangle {
                 Layout.fillWidth: true
-                height: 140
+                height: 120
                 radius: 14
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
                     GradientStop { 
                         position: 0.0; 
-                        color: root.isChecking ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.1) :
-                              (root.updatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, Theme.isDark ? 0.18 : 0.12) : Qt.rgba(0.29, 0.87, 0.50, 0.15)) 
+                        color: root.isCheckingCupcake ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.1) :
+                              (root.cupcakeUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, Theme.isDark ? 0.18 : 0.12) : Qt.rgba(0.29, 0.87, 0.50, 0.15)) 
                     }
                     GradientStop { 
                         position: 1.0; 
-                        color: root.isChecking ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.03) :
-                              (root.updatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.04) : Qt.rgba(0.29, 0.87, 0.50, 0.04)) 
+                        color: root.isCheckingCupcake ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.03) :
+                              (root.cupcakeUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.04) : Qt.rgba(0.29, 0.87, 0.50, 0.04)) 
                     }
                 }
-                border.color: root.isChecking ? cBorder : (root.updatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25) : Qt.rgba(0.29, 0.87, 0.50, 0.25))
+                border.color: root.isCheckingCupcake ? cBorder : (root.cupcakeUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25) : Qt.rgba(0.29, 0.87, 0.50, 0.25))
+                border.width: 1
+                Behavior on border.color { ColorAnimation { duration: 300 } }
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 24
+                    anchors.rightMargin: 24
+                    spacing: 20
+
+                    // Cupcake Icon
+                    Rectangle {
+                        width: 56; height: 56; radius: 28
+                        color: root.isCheckingCupcake ? cBgElevated : (root.cupcakeUpdatesAvailable ? cAccent : "#4ade80")
+                        Behavior on color { ColorAnimation { duration: 300 } }
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: root.isCheckingCupcake ? "\ueb13" : "\ueb7d" // cup/code icon
+                            font.family: "tabler-icons"
+                            font.pixelSize: 28
+                            color: root.isCheckingCupcake ? cTextDim : "#ffffff"
+                            
+                            RotationAnimation on rotation {
+                                running: root.isCheckingCupcake
+                                loops: Animation.Infinite; from: 0; to: 360; duration: 1000
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        spacing: 4
+                        Text {
+                            text: "Cupcake Theme Updates"
+                            color: cTextFaint
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.DemiBold
+                            font.capitalization: Font.AllUppercase
+                        }
+                        Text {
+                            text: root.isCheckingCupcake ? "Checking for theme updates..." : 
+                                 (root.cupcakeUpdatesAvailable ? "Theme Updates Available" : "Cupcake is up to date")
+                            color: cText
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 20
+                            font.weight: Font.Bold
+                            font.letterSpacing: -0.5
+                        }
+                        Text {
+                            text: root.isCheckingCupcake ? "Fetching the latest git commits" : 
+                                 (root.cupcakeUpdatesAvailable ? "There are " + root.cupcakeUpdateCount + " new commits ready to pull." : "You have the latest dotfiles configuration.")
+                            color: cTextDim
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                        }
+                        Item { Layout.preferredHeight: 2 }
+                        Text {
+                            text: "Last checked: " + root.lastCupcakeCheckTime
+                            color: cTextFaint
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 10
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    ColumnLayout {
+                        spacing: 10
+                        Layout.alignment: Qt.AlignVCenter
+
+                        // Update Button
+                        Rectangle {
+                            visible: root.cupcakeUpdatesAvailable && !root.isCheckingCupcake
+                            width: 140; height: 38; radius: 8
+                            color: updateCcBtnMa.containsMouse ? Qt.rgba(cAccent.r*0.9, cAccent.g*0.9, cAccent.b*0.9, 1) : cAccent
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                            RowLayout {
+                                anchors.centerIn: parent; spacing: 8
+                                Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: "white" }
+                                Text { text: "Update Theme"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
+                            }
+                            MouseArea {
+                                id: updateCcBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["kitty", "--class", "cupcake_updater", "-T", "Theme Update", "-e", "bash", "-c", "echo -e '\\033[1;34m[Cupcake Updater]\\033[0m Updating theme dotfiles...'; cd ~/Cupcake && git pull; echo -e '\\n\\033[1;32mUpdates complete!\\033[0m Press enter to exit...'; read"]);
+                                    checkCupcakeUpdatesProc.running = true;
+                                    root.isCheckingCupcake = true;
+                                }
+                            }
+                        }
+                        
+                        // Check Button
+                        Rectangle {
+                            visible: !root.isCheckingCupcake
+                            width: 140; height: 38; radius: 8
+                            color: checkCcBtnMa.containsMouse ? cSurfaceHover : "transparent"
+                            border.color: cBorder; border.width: 1
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                            RowLayout {
+                                anchors.centerIn: parent; spacing: 8
+                                Text { text: "\ueb13"; font.family: "tabler-icons"; font.pixelSize: 16; color: cText }
+                                Text { text: "Check Again"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            }
+                            MouseArea {
+                                id: checkCcBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.isCheckingCupcake = true;
+                                    checkCupcakeUpdatesProc.running = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── System Packages Update Hero ──────────────────────────
+            Rectangle {
+                Layout.fillWidth: true
+                height: 120
+                radius: 14
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { 
+                        position: 0.0; 
+                        color: root.isCheckingSys ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.1) :
+                              (root.sysUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, Theme.isDark ? 0.18 : 0.12) : Qt.rgba(0.29, 0.87, 0.50, 0.15)) 
+                    }
+                    GradientStop { 
+                        position: 1.0; 
+                        color: root.isCheckingSys ? Qt.rgba(cTextDim.r, cTextDim.g, cTextDim.b, 0.03) :
+                              (root.sysUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.04) : Qt.rgba(0.29, 0.87, 0.50, 0.04)) 
+                    }
+                }
+                border.color: root.isCheckingSys ? cBorder : (root.sysUpdatesAvailable ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25) : Qt.rgba(0.29, 0.87, 0.50, 0.25))
                 border.width: 1
                 Behavior on border.color { ColorAnimation { duration: 300 } }
 
@@ -146,19 +298,19 @@ Item {
 
                     // Big Icon
                     Rectangle {
-                        width: 64; height: 64; radius: 32
-                        color: root.isChecking ? cBgElevated : (root.updatesAvailable ? cAccent : "#4ade80")
+                        width: 56; height: 56; radius: 28
+                        color: root.isCheckingSys ? cBgElevated : (root.sysUpdatesAvailable ? cAccent : "#4ade80")
                         Behavior on color { ColorAnimation { duration: 300 } }
                         
                         Text {
                             anchors.centerIn: parent
-                            text: root.isChecking ? "\ueb13" : (root.updatesAvailable ? "\uea20" : "\uea5e")
+                            text: root.isCheckingSys ? "\ueb13" : (root.sysUpdatesAvailable ? "\uea20" : "\uea5e")
                             font.family: "tabler-icons"
-                            font.pixelSize: 32
-                            color: root.isChecking ? cTextDim : "#ffffff"
+                            font.pixelSize: 28
+                            color: root.isCheckingSys ? cTextDim : "#ffffff"
                             
                             RotationAnimation on rotation {
-                                running: root.isChecking
+                                running: root.isCheckingSys
                                 loops: Animation.Infinite; from: 0; to: 360; duration: 1000
                             }
                         }
@@ -167,66 +319,70 @@ Item {
                     ColumnLayout {
                         spacing: 4
                         Text {
-                            text: root.isChecking ? "Checking for updates..." : 
-                                 (root.updatesAvailable ? "Updates Available" : "You're up to date")
+                            text: "System Packages"
+                            color: cTextFaint
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.DemiBold
+                            font.capitalization: Font.AllUppercase
+                        }
+                        Text {
+                            text: root.isCheckingSys ? "Checking for system updates..." : 
+                                 (root.sysUpdatesAvailable ? "System Updates Available" : "System is up to date")
                             color: cText
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 22
+                            font.pixelSize: 20
                             font.weight: Font.Bold
                             font.letterSpacing: -0.5
                         }
                         Text {
-                            text: root.isChecking ? "Fetching the latest repository data" : 
-                                 (root.updatesAvailable ? root.updateCount + " packages can be upgraded" : "Your system has all the latest packages and security fixes.")
+                            text: root.isCheckingSys ? "Fetching the latest repository data" : 
+                                 (root.sysUpdatesAvailable ? root.sysUpdateCount + " packages can be upgraded" : "Your system has all the latest packages and security fixes.")
                             color: cTextDim
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 14
+                            font.pixelSize: 13
                         }
-                        Item { Layout.preferredHeight: 4 }
+                        Item { Layout.preferredHeight: 2 }
                         Text {
-                            text: "Last checked: " + root.lastCheckTime
+                            text: "Last checked: " + root.lastSysCheckTime
                             color: cTextFaint
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 11
+                            font.pixelSize: 10
                         }
                     }
 
                     Item { Layout.fillWidth: true }
 
-                    // Action Buttons
                     ColumnLayout {
                         spacing: 10
                         Layout.alignment: Qt.AlignVCenter
 
                         // Update Button
                         Rectangle {
-                            visible: root.updatesAvailable && !root.isChecking
+                            visible: root.sysUpdatesAvailable && !root.isCheckingSys
                             width: 140; height: 38; radius: 8
-                            color: updateBtnMa.containsMouse ? Qt.rgba(cAccent.r*0.9, cAccent.g*0.9, cAccent.b*0.9, 1) : cAccent
+                            color: updateSysBtnMa.containsMouse ? Qt.rgba(cAccent.r*0.9, cAccent.g*0.9, cAccent.b*0.9, 1) : cAccent
                             Behavior on color { ColorAnimation { duration: 120 } }
                             RowLayout {
                                 anchors.centerIn: parent; spacing: 8
                                 Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: "white" }
-                                Text { text: "Install Updates"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
+                                Text { text: "Install Packages"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
                             }
                             MouseArea {
-                                id: updateBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                id: updateSysBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    // Launch kitty to run the update command
                                     Quickshell.execDetached(["kitty", "--class", "cupcake_updater", "-T", "System Update", "-e", "bash", "-c", "echo -e '\\033[1;34m[Cupcake Updater]\\033[0m Starting system update...'; sudo pacman -Syu; echo -e '\\n\\033[1;32mUpdates complete!\\033[0m Press enter to exit...'; read"]);
-                                    
-                                    // After clicking, check again soon to see if they updated
-                                    checkUpdatesProc.running = true;
-                                    root.isChecking = true;
+                                    checkSysUpdatesProc.running = true;
+                                    root.isCheckingSys = true;
                                 }
                             }
                         }
                         
                         // Check Button
                         Rectangle {
-                            visible: !root.isChecking
+                            visible: !root.isCheckingSys
                             width: 140; height: 38; radius: 8
-                            color: checkBtnMa.containsMouse ? cSurfaceHover : "transparent"
+                            color: checkSysBtnMa.containsMouse ? cSurfaceHover : "transparent"
                             border.color: cBorder; border.width: 1
                             Behavior on color { ColorAnimation { duration: 120 } }
                             RowLayout {
@@ -235,11 +391,11 @@ Item {
                                 Text { text: "Check Again"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                             }
                             MouseArea {
-                                id: checkBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                id: checkSysBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    root.isChecking = true;
+                                    root.isCheckingSys = true;
                                     packagesModel.clear();
-                                    checkUpdatesProc.running = true;
+                                    checkSysUpdatesProc.running = true;
                                 }
                             }
                         }
@@ -249,14 +405,14 @@ Item {
 
             // ── Package List ─────────────────────────────────────────────
             UCard {
-                visible: root.updatesAvailable
+                visible: root.sysUpdatesAvailable
                 
                 // Header
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.bottomMargin: 8
                     Text {
-                        text: "AVAILABLE UPGRADES"
+                        text: "AVAILABLE PACKAGE UPGRADES"
                         color: cTextDim
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 11
