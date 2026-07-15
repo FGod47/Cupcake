@@ -482,10 +482,22 @@ Item {
                                 }
                             }
 
-                            NButton {
-                                text: "Disconnect"
-                                onClicked: {
-                                    Quickshell.execDetached(["nmcli", "connection", "down", "id", model.ssid]);
+                            Rectangle {
+                                height: 26; width: disconnectText.implicitWidth + 24; radius: 6
+                                color: disconnectMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05)
+                                border.color: disconnectMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent"
+                                border.width: 1
+                                Text {
+                                    id: disconnectText
+                                    anchors.centerIn: parent
+                                    text: "Disconnect"
+                                    color: disconnectMa.containsMouse ? "#ff8f8f" : cTextDim
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                                }
+                                MouseArea {
+                                    id: disconnectMa
+                                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                    onClicked: Quickshell.execDetached(["nmcli", "connection", "down", "id", model.ssid])
                                 }
                             }
                         }
