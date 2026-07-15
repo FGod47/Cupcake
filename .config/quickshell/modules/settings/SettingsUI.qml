@@ -547,6 +547,7 @@ Item {
                                 anchors.fill: parent
                                 source: {
                                     switch (root.currentIndex) {
+                                        case 11: return "SettingsPageUpdates.qml";
                                         case 17: return "SettingsPageNetwork.qml";
                                         default: return "";
                                     }
