@@ -185,14 +185,6 @@ Item {
     ListModel { id: wifiModel }
 
     Process {
-        id: forgetProcess
-        onExited: {
-            savedNetworksProcess.running = true;
-            wifiScanProcess.running = true;
-        }
-    }
-
-    Process {
         id: wifiRadioProcess
         command: ["nmcli", "-t", "-f", "WIFI", "radio"]
         running: true
