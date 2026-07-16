@@ -514,16 +514,21 @@ Item {
                         Rectangle {
                             Layout.preferredWidth: 34
                             Layout.preferredHeight: 34
-                            radius: 8
-                            color: "transparent"
+                            radius: 17
+                            color: closeMa.containsMouse ? Qt.rgba(cText.r, cText.g, cText.b, 0.05) : "transparent"
+                            border.color: cBorder
+                            border.width: 1
+                            Behavior on color { ColorAnimation { duration: 150 } }
                             Text {
                                 anchors.centerIn: parent
                                 text: "" // X icon
                                 font.family: "tabler-icons"
-                                color: cTextFaint
-                                font.pixelSize: 18
+                                color: closeMa.containsMouse ? cText : cTextFaint
+                                font.pixelSize: 16
+                                Behavior on color { ColorAnimation { duration: 150 } }
                             }
                             MouseArea {
+                                id: closeMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
