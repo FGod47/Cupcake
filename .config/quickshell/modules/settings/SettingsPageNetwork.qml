@@ -94,6 +94,12 @@ Item {
         property bool hovered: hoverArea.containsMouse
         Behavior on color { ColorAnimation { duration: 120 } }
 
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+
         RowLayout {
             id: innerLayout
             anchors.fill: parent
@@ -102,12 +108,6 @@ Item {
             anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
-        }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
         }
 
         // Bottom divider
@@ -924,9 +924,9 @@ Item {
                             checked: root.hotspotEnabled
                             onToggled: {
                                 if (root.hotspotEnabled) {
-                                    Qt.createQmlObject('import Quickshell.Io; Process { command: ["nmcli","connection","down","Hotspot"]; running: true }', root);
+                                    Quickshell.execDetached(["nmcli","connection","down","Hotspot"]);
                                 } else {
-                                    Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash","-c","nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]; running: true }', root);
+                                    Quickshell.execDetached(["bash","-c","nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]);
                                 }
                                 root.hotspotEnabled = val;
                             }
