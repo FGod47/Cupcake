@@ -11,15 +11,12 @@ Item {
     property bool globalTransparency: true
     
     property bool isDark: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.color_mode"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() === "light") {
-                    themeSingleton.isDark = false;
-                }
-            }
+    FileView {
+        path: themeSingleton.homeDir + "/.config/cupcake/.color_mode"
+        watchChanges: true
+        onFileChanged: {
+            reload();
+            themeSingleton.isDark = (text.trim() !== "light");
         }
     }
     
@@ -168,17 +165,58 @@ Item {
         return Qt.rgba(c.r, c.g, c.b, alpha);
     }
 
-    property color colBackground: isDark ? transparentize("#15121c", bgAlpha) : transparentize("#fffbff", bgAlpha)
-    property color colOnBackground: isDark ? "#e8dfee" : "#1d1b20"
-    property color colSurface: isDark ? transparentize("#37333e", bgAlpha) : transparentize("#fdf8fd", bgAlpha)
-    property color colSurfaceContainer: isDark ? transparentize("#221e28", bgAlpha) : transparentize("#f4eef4", bgAlpha)
-    property color colSurfaceContainerHigh: isDark ? transparentize("#2c2833", bgAlpha) : transparentize("#ebe5eb", bgAlpha)
-    property color colSurfaceVariant: isDark ? transparentize("#4a4550", bgAlpha) : transparentize("#e7e0ec", bgAlpha)
-    property color colOnSurface: isDark ? "#e8dfee" : "#1d1b20"
-    property color colOnSurfaceVariant: isDark ? "#cbc4d2" : "#49454f"
-    property color colOutline: isDark ? "#958e9b" : "#7a757f"
-    property color colPrimary: isDark ? "#d4bbff" : "#6a35ce"
-    property color colOnPrimary: isDark ? "#40008c" : "#ffffff"
-    property color colSecondary: isDark ? "#d7bde4" : "#665a6f"
-    property color colError: isDark ? "#ffb4ab" : "#ba1a1a"
+    Timer {
+        id: delayedColorRead
+        interval: 100
+        repeat: false
+        running: false
+        onTriggered: {
+            var text = colorsFileView.text();
+            if (text && text.trim().length > 0) {
+                try {
+                    var c = JSON.parse(text.trim());
+                    themeSingleton.colBackground = themeSingleton.transparentize(c.background, themeSingleton.bgAlpha);
+                    themeSingleton.colOnBackground = c.onBackground;
+                    themeSingleton.colSurface = themeSingleton.transparentize(c.surfaceContainerHighest, themeSingleton.bgAlpha);
+                    themeSingleton.colSurfaceContainer = themeSingleton.transparentize(c.surfaceContainer, themeSingleton.bgAlpha);
+                    themeSingleton.colSurfaceContainerHigh = themeSingleton.transparentize(c.surfaceContainerHigh, themeSingleton.bgAlpha);
+                    themeSingleton.colSurfaceVariant = themeSingleton.transparentize(c.surfaceVariant, themeSingleton.bgAlpha);
+                    themeSingleton.colOnSurface = c.onSurface;
+                    themeSingleton.colOnSurfaceVariant = c.onSurfaceVariant;
+                    themeSingleton.colOutline = c.outline;
+                    themeSingleton.colPrimary = c.primary;
+                    themeSingleton.colOnPrimary = c.onPrimary;
+                    themeSingleton.colSecondary = c.secondary;
+                    themeSingleton.colError = c.error;
+                } catch (e) {}
+            }
+        }
+    }
+
+    FileView {
+        id: colorsFileView
+        path: themeSingleton.homeDir + "/.cache/quickshell_colors.json"
+        watchChanges: true
+        onFileChanged: {
+            reload();
+            delayedColorRead.start();
+        }
+        onLoadedChanged: {
+            delayedColorRead.start();
+        }
+    }
+
+    property color colBackground: transparentize("#15121c", bgAlpha)
+    property color colOnBackground: "#e8dfee"
+    property color colSurface: transparentize("#37333e", bgAlpha)
+    property color colSurfaceContainer: transparentize("#221e28", bgAlpha)
+    property color colSurfaceContainerHigh: transparentize("#2c2833", bgAlpha)
+    property color colSurfaceVariant: transparentize("#4a4550", bgAlpha)
+    property color colOnSurface: "#e8dfee"
+    property color colOnSurfaceVariant: "#cbc4d2"
+    property color colOutline: "#958e9b"
+    property color colPrimary: "#d4bbff"
+    property color colOnPrimary: "#40008c"
+    property color colSecondary: "#d7bde4"
+    property color colError: "#ffb4ab"
 }

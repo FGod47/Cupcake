@@ -14,8 +14,8 @@ input_path = "~/.config/matugen/templates/colors-kitty.conf"
 output_path = "~/.config/kitty/colors.conf"
 
 [templates.quickshell]
-input_path = "~/.config/matugen/templates/Theme.qml"
-output_path = "~/.config/quickshell/theme/Theme.qml"
+input_path = "~/.config/matugen/templates/colors.json"
+output_path = "~/.cache/quickshell_colors.json"
 
 [templates.gtk3]
 input_path = "~/.config/matugen/templates/gtk-3.0/gtk.css"

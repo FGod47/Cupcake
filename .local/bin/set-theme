@@ -60,11 +60,9 @@ echo "Reloading Kitty..."
 touch ~/.config/kitty/kitty.conf
 killall -SIGUSR1 kitty 2>/dev/null || true
 
-# Reload Hyprland and hot-reload Quickshell theme
+# Reload Hyprland; Quickshell theme updates automatically via FileView watchers
 echo "Reloading Hyprland and Quickshell..."
 hyprctl reload
-sleep 0.2
-quickshell ipc call theme reload || true
 
 # Run slow GTK and Icon updates in the background so they don't block
 (
