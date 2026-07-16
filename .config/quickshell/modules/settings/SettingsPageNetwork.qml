@@ -600,24 +600,45 @@ Item {
                                 }
                                 Item { Layout.fillWidth: true }
                                 Rectangle {
+                                    id: forgetBtnContainer
+                                    property bool confirm: false
                                     visible: model.isSaved
                                     height: 26; width: forgetText.implicitWidth + 24; radius: 6
-                                    color: forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05)
-                                    border.color: forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent"
+                                    color: confirm ? "#e55a5a" : (forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
+                                    border.color: confirm ? "#e55a5a" : (forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent")
                                     border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                    
+                                    Timer {
+                                        id: confirmReset
+                                        interval: 3000
+                                        onTriggered: forgetBtnContainer.confirm = false
+                                    }
+
                                     Text {
                                         id: forgetText
                                         anchors.centerIn: parent
-                                        text: "Forget"
-                                        color: forgetMa.containsMouse ? "#ff8f8f" : cTextDim
+                                        text: forgetBtnContainer.confirm ? "Sure?" : "Forget"
+                                        color: forgetBtnContainer.confirm ? "#ffffff" : (forgetMa.containsMouse ? "#ff8f8f" : cTextDim)
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
                                     }
                                     MouseArea {
                                         id: forgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
-                                            forgetRefreshTimer.restart();
+                                            if (!forgetBtnContainer.confirm) {
+                                                forgetBtnContainer.confirm = true;
+                                                confirmReset.restart();
+                                            } else {
+                                                Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
+                                                forgetRefreshTimer.restart();
+                                            }
+                                        }
+                                        onExited: {
+                                            if (forgetBtnContainer.confirm) {
+                                                // Optional: don't reset immediately on mouse exit, let timer do it
+                                                // so user has time if they accidentally slip
+                                            }
                                         }
                                     }
                                 }
@@ -788,23 +809,38 @@ Item {
                                 }
                                 Item { Layout.fillWidth: true }
                                 Rectangle {
+                                    id: savedForgetBtnContainer
+                                    property bool confirm: false
                                     height: 26; width: savedForgetText.implicitWidth + 24; radius: 6
-                                    color: savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05)
-                                    border.color: savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent"
+                                    color: confirm ? "#e55a5a" : (savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
+                                    border.color: confirm ? "#e55a5a" : (savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent")
                                     border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                    
+                                    Timer {
+                                        id: savedConfirmReset
+                                        interval: 3000
+                                        onTriggered: savedForgetBtnContainer.confirm = false
+                                    }
+
                                     Text {
                                         id: savedForgetText
                                         anchors.centerIn: parent
-                                        text: "Forget"
-                                        color: savedForgetMa.containsMouse ? "#ff8f8f" : cTextDim
+                                        text: savedForgetBtnContainer.confirm ? "Sure?" : "Forget"
+                                        color: savedForgetBtnContainer.confirm ? "#ffffff" : (savedForgetMa.containsMouse ? "#ff8f8f" : cTextDim)
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
                                     }
                                     MouseArea {
                                         id: savedForgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
-                                            forgetRefreshTimer.restart();
+                                            if (!savedForgetBtnContainer.confirm) {
+                                                savedForgetBtnContainer.confirm = true;
+                                                savedConfirmReset.restart();
+                                            } else {
+                                                Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
+                                                forgetRefreshTimer.restart();
+                                            }
                                         }
                                     }
                                 }
