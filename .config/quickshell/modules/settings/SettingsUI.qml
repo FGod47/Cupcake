@@ -272,8 +272,16 @@ Item {
             // ICON RAIL
             Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 64
+                Layout.preferredWidth: navExpanded ? 160 : 64
+                Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                 color: cBg
+                clip: true
+                
+                MouseArea {
+                    id: sidebarHover
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
                 
                 Rectangle {
                     anchors.right: parent.right
@@ -316,7 +324,8 @@ Item {
                         property int pageIndex
                         property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3,4].includes(root.currentIndex))
                         
-                        Layout.preferredWidth: 44
+                        Layout.preferredWidth: navExpanded ? 140 : 44
+                        Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         Layout.preferredHeight: 44
                         Layout.alignment: Qt.AlignHCenter
                         
@@ -330,19 +339,38 @@ Item {
                         Rectangle {
                             visible: isActive
                             anchors.left: parent.left
-                            anchors.leftMargin: -10
+                            anchors.leftMargin: navExpanded ? -10 : -10
                             anchors.verticalCenter: parent.verticalCenter
                             width: 3; height: 16
                             radius: 2
                             color: cAccent
                         }
                         
-                        Text {
-                            anchors.centerIn: parent
-                            text: icon
-                            font.family: "tabler-icons"
-                            font.pixelSize: 19
-                            color: isActive ? cAccent : (ma.containsMouse ? cTextDim : cTextFaint)
+                        Item {
+                            anchors.fill: parent
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: navExpanded ? 14 : (parent.width - implicitWidth) / 2
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: icon
+                                font.family: "tabler-icons"
+                                font.pixelSize: 19
+                                color: isActive ? cAccent : (ma.containsMouse ? cTextDim : cTextFaint)
+                                Behavior on anchors.leftMargin { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            }
+                            
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 46
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: tip
+                                color: isActive ? cAccent : (ma.containsMouse ? cText : cTextDim)
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                                opacity: navExpanded ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
+                            }
                         }
                         
                         // Tooltip
@@ -362,7 +390,7 @@ Item {
                             radius: 6
                             z: 999
                             color: Theme.isDark ? "#000000" : "#171b21"
-                            opacity: ma.containsMouse ? 1 : 0
+                            opacity: (ma.containsMouse && !navExpanded) ? 1 : 0
                             Behavior on opacity { NumberAnimation { duration: 120 } }
                             Text {
                                 id: tipText
