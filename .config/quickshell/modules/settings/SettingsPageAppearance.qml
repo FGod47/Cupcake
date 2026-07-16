@@ -201,11 +201,16 @@ Item {
         color: checked ? "transparent" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
         border.width: checked ? 0 : 1
         border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-        
-        gradient: checked ? Gradient {
-            GradientStop { position: 0.0; color: Theme.colPrimary }
-            GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
-        } : null
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            opacity: sw.checked ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 150 } }
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Theme.colPrimary }
+                GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
+            }
+        }
 
         Rectangle {
             width: 20; height: 20
@@ -257,10 +262,10 @@ Item {
                         radius: 8
                         opacity: active ? 1 : (ma.containsMouse ? 0.05 : 0)
                         color: active ? "transparent" : Theme.colOnSurface
-                        gradient: active ? Gradient {
+                        gradient: Gradient {
                             GradientStop { position: 0.0; color: Theme.colPrimary }
                             GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
-                        } : null
+                        }
                         Behavior on opacity { NumberAnimation { duration: 200 } }
                     }
 
@@ -303,10 +308,10 @@ Item {
             radius: 14
             opacity: active ? 1 : (ma.containsMouse ? 0.05 : 0.03)
             color: active ? "transparent" : Theme.colOnSurface
-            gradient: active ? Gradient {
+            gradient: Gradient {
                 GradientStop { position: 0.0; color: Theme.colPrimary }
                 GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
-            } : null
+            }
             Behavior on opacity { NumberAnimation { duration: 200 } }
         }
 
