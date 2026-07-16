@@ -213,7 +213,7 @@ Item {
     }
 
 
-    property bool navExpanded: sidebarHover.containsMouse
+    property bool navExpanded: sidebarHover.hovered
 
     // Extracted StyledSwitch to StyledSwitch.qml
 
@@ -277,10 +277,8 @@ Item {
                 color: cBg
                 clip: true
                 
-                MouseArea {
+                HoverHandler {
                     id: sidebarHover
-                    anchors.fill: parent
-                    hoverEnabled: true
                 }
                 
                 Rectangle {
