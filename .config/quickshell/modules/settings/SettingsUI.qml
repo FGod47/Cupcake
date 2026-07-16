@@ -320,28 +320,12 @@ Item {
                                 clip: true
                                 
                                 Text {
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: navExpanded ? 16 : (parent.width - implicitWidth) / 2
-                                    Behavior on anchors.leftMargin { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: "A"
+                                    anchors.centerIn: parent
+                                    text: navExpanded ? "Arch" : "A"
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 15
+                                    font.pixelSize: navExpanded ? 14 : 15
                                     font.weight: 800
                                     color: "#0a0d11"
-                                }
-                                
-                                Text {
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 40
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: "Arch"
-                                    color: "#0a0d11"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 14
-                                    font.weight: 800
-                                    opacity: navExpanded ? 1 : 0
-                                    Behavior on opacity { NumberAnimation { duration: 150 } }
                                 }
                             }
                         }
