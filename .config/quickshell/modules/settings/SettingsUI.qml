@@ -329,7 +329,7 @@ Item {
                         
                         Rectangle {
                             anchors.fill: parent
-                            radius: 6
+                            radius: 12
                             color: isActive ? cAccentDim : (ma.containsMouse ? cSurfaceHover : "transparent")
                             Behavior on color { ColorAnimation { duration: 150 } }
                         }
