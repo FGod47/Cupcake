@@ -213,7 +213,7 @@ Item {
     }
 
 
-    property bool navExpanded: sidebarHover.hovered
+    property bool navExpanded: sidebarHover.containsMouse
 
     // Extracted StyledSwitch to StyledSwitch.qml
 
