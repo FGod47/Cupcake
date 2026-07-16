@@ -905,6 +905,7 @@ Item {
                 NCard {
                     Layout.fillWidth: true
                     sectionTitle: "Hotspot"
+                    
                     NRow {
                         NIconBadge {
                             icon: "\ued1b"
@@ -920,15 +921,37 @@ Item {
                             }
                         }
                         Item { Layout.fillWidth: true }
+                        
                         NToggle {
                             checked: root.hotspotEnabled
                             onToggled: {
-                                if (root.hotspotEnabled) {
-                                    Quickshell.execDetached(["nmcli","connection","down","Hotspot"]);
-                                } else {
-                                    Quickshell.execDetached(["bash","-c","nmcli connection up Hotspot || nmcli device wifi hotspot ssid cupcake-hotspot password cupcake-password"]);
-                                }
                                 root.hotspotEnabled = val;
+                                if (val) {
+                                    Quickshell.execDetached(["bash", "-c", "bluetoothctl scan off 2>/dev/null; sleep 0.5; nmcli connection up Hotspot 2>/dev/null || nmcli device wifi hotspot"]);
+                                } else {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]);
+                                    wifiScanProcess.running = true;
+                                }
+                            }
+                        }
+                        
+                        Text {
+                            text: "\uea61" // chevron-right
+                            color: cTextDim
+                            font.family: "tabler-icons"
+                            font.pixelSize: 18
+                            opacity: 0.6
+                            Layout.alignment: Qt.AlignVCenter
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    let p = root;
+                                    while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
+                                    if (p.currentIndex !== undefined) {
+                                        p.currentIndex = 23;
+                                    }
+                                }
                             }
                         }
                     }
