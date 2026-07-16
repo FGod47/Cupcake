@@ -288,11 +288,11 @@ Item {
                     const isSaved = !!root.savedNetworks[ssid];
                     if (!ssid || ssid === "--" || ssid === root.hotspotSsid || seen[ssid]) continue;
                     seen[ssid] = true;
-                    wifiModel.append({ ssid, inUse, isSecure, isSaved, signal, expanded: !!oldExp[ssid], password: oldPwd[ssid] || "" });
+                    wifiModel.append({ ssid, inUse, isSecure, isSaved, signal, isOutOfRange: false, expanded: !!oldExp[ssid], password: oldPwd[ssid] || "" });
                 }
                 for (let savedSsid in root.savedNetworks) {
                     if (!seen[savedSsid] && savedSsid !== root.hotspotSsid) {
-                        wifiModel.append({ ssid: savedSsid, inUse: false, isSecure: true, isSaved: true, signal: 0, expanded: false, password: "" });
+                        wifiModel.append({ ssid: savedSsid, inUse: false, isSecure: true, isSaved: true, signal: 0, isOutOfRange: true, expanded: false, password: "" });
                     }
                 }
             }
@@ -538,11 +538,11 @@ Item {
                     }
                 }
 
-                // Other networks
+                // Other networks (in range)
                 Repeater {
                     model: wifiModel
                     delegate: ColumnLayout {
-                        visible: !model.inUse
+                        visible: !model.inUse && !model.isOutOfRange
                         Layout.fillWidth: true
                         spacing: 0
 
@@ -736,7 +736,79 @@ Item {
                 }
             }
 
-            // Wi-Fi disabled state
+            // ── Saved Networks (out of range) ────────────────────────────────
+            NCard {
+                sectionTitle: "Saved Networks"
+                visible: root.wifiRadioEnabled && (function() { for (let i = 0; i < wifiModel.count; i++) if (wifiModel.get(i).isOutOfRange) return true; return false; })()
+
+                Repeater {
+                    model: wifiModel
+                    delegate: ColumnLayout {
+                        visible: model.isOutOfRange
+                        Layout.fillWidth: true
+                        spacing: 0
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: savedRow.implicitHeight + 20
+                            color: savedItemMa.containsMouse ? cSurfaceHover : "transparent"
+                            Behavior on color { ColorAnimation { duration: 100 } }
+                            radius: 8
+
+                            RowLayout {
+                                id: savedRow
+                                anchors.left: parent.left; anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.leftMargin: 6; anchors.rightMargin: 6
+                                spacing: 12
+
+                                NIconBadge {
+                                    icon: "\ueba3"
+                                    iconColor: cTextFaint
+                                    bgColor: cBgElevated
+                                }
+                                ColumnLayout {
+                                    spacing: 2
+                                    Text { text: model.ssid; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                    Text { text: "Not in range"; color: cTextFaint; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                                }
+                                Item { Layout.fillWidth: true }
+                                Rectangle {
+                                    height: 26; width: savedForgetText.implicitWidth + 24; radius: 6
+                                    color: savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05)
+                                    border.color: savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent"
+                                    border.width: 1
+                                    Text {
+                                        id: savedForgetText
+                                        anchors.centerIn: parent
+                                        text: "Forget"
+                                        color: savedForgetMa.containsMouse ? "#ff8f8f" : cTextDim
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                                    }
+                                    MouseArea {
+                                        id: savedForgetMa
+                                        anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Quickshell.execDetached(["nmcli", "connection", "delete", model.ssid]);
+                                            savedNetworksProcess.running = true;
+                                            wifiScanProcess.running = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                id: savedItemMa; anchors.fill: parent; hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+
+                        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder; opacity: 0.4 }
+                    }
+                }
+            }
+
+
             NCard {
                 sectionTitle: "Wi-Fi"
                 visible: !root.wifiRadioEnabled
