@@ -185,6 +185,14 @@ Item {
     ListModel { id: wifiModel }
 
     Process {
+        id: forgetProcess
+        onExited: {
+            savedNetworksProcess.running = true;
+            wifiScanProcess.running = true;
+        }
+    }
+
+    Process {
         id: wifiRadioProcess
         command: ["nmcli", "-t", "-f", "WIFI", "radio"]
         running: true
@@ -263,8 +271,6 @@ Item {
 
     Process {
         id: forgetProcess
-        property string targetSsid: ""
-        command: ["nmcli", "connection", "delete", "id", targetSsid]
         onExited: {
             savedNetworksProcess.running = true;
             wifiScanProcess.running = true;
@@ -598,8 +604,7 @@ Item {
                                         id: forgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.targetSsid = model.ssid;
-                                            forgetProcess.running = true;
+                                            forgetProcess.exec(["nmcli", "connection", "delete", "id", model.ssid]);
                                         }
                                     }
                                 }
@@ -798,8 +803,7 @@ Item {
                                         id: savedForgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.targetSsid = model.ssid;
-                                            forgetProcess.running = true;
+                                            forgetProcess.exec(["nmcli", "connection", "delete", "id", model.ssid]);
                                         }
                                     }
                                 }
