@@ -1018,18 +1018,10 @@ Item {
             }
 
             // --- Fonts section ---
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                implicitHeight: fontColumn.implicitHeight + 40
-                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
-                radius: 12
-
+            SettingsCard {
                 ColumnLayout {
                     id: fontColumn
-                    anchors.fill: parent
-                    anchors.margins: 20
+                    Layout.fillWidth: true
                     spacing: 8
 
                 SectionLabel { text: "Shell fonts" }
@@ -1201,18 +1193,10 @@ Item {
                 }
             } // end Shell fonts card
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                implicitHeight: appFontColumn.implicitHeight + 40
-                color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
-                radius: 12
-
+            SettingsCard {
                 ColumnLayout {
                     id: appFontColumn
-                    anchors.fill: parent
-                    anchors.margins: 20
+                    Layout.fillWidth: true
                     spacing: 8
 
                 SectionLabel { text: "Application fonts" }
