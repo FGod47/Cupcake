@@ -511,28 +511,31 @@ Item {
                         }
                         
                         // Close button
-                        Rectangle {
+                        Item {
                             Layout.preferredWidth: 34
                             Layout.preferredHeight: 34
-                            radius: 17
-                            color: closeMa.containsMouse ? Qt.rgba(cText.r, cText.g, cText.b, 0.05) : "transparent"
-                            border.color: cBorder
-                            border.width: 1
-                            Behavior on color { ColorAnimation { duration: 150 } }
-                            Text {
+                            Rectangle {
                                 anchors.centerIn: parent
-                                text: "" // X icon
-                                font.family: "tabler-icons"
-                                color: closeMa.containsMouse ? cText : cTextFaint
-                                font.pixelSize: 16
+                                width: 28
+                                height: 28
+                                radius: 14
+                                color: closeMa.containsMouse ? Qt.rgba(cText.r, cText.g, cText.b, 0.08) : Qt.rgba(cText.r, cText.g, cText.b, 0.04)
                                 Behavior on color { ColorAnimation { duration: 150 } }
-                            }
-                            MouseArea {
-                                id: closeMa
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.requestClose()
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "" // X icon
+                                    font.family: "tabler-icons"
+                                    color: closeMa.containsMouse ? cText : cTextFaint
+                                    font.pixelSize: 14
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                }
+                                MouseArea {
+                                    id: closeMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.requestClose()
+                                }
                             }
                         }
                     }
