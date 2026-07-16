@@ -224,18 +224,18 @@ Item {
 
 
     // Theme Colors based on reference design
-    property color cBg: Theme.isDark ? "#0a0d11" : "#eef0f3"
-    property color cBgElevated: Theme.isDark ? "#12161c" : "#f7f8fa"
-    property color cSurface: Theme.isDark ? "#171c24" : "#ffffff"
-    property color cSurfaceHover: Theme.isDark ? "#1e242e" : "#eef1f5"
-    property color cSurfaceActive: Theme.isDark ? "#232a35" : "#e6eaf0"
-    property color cBorder: Theme.isDark ? "#242b36" : "#dde1e7"
-    property color cBorderSoft: Theme.isDark ? "#1a2029" : "#e5e8ed"
-    property color cText: Theme.isDark ? "#e8ecf1" : "#171b21"
-    property color cTextDim: Theme.isDark ? "#8891a0" : "#5b6472"
-    property color cTextFaint: Theme.isDark ? "#4d5566" : "#9aa2af"
-    property color cAccent: Theme.isDark ? Theme.colPrimary : "#1785c1"
-    property color cAccentDim: Theme.isDark ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14) : "rgba(23,133,193,0.12)"
+    property color cBg: Theme.colBackground
+    property color cBgElevated: Theme.colSurfaceContainer
+    property color cSurface: Theme.colSurface
+    property color cSurfaceHover: Theme.colSurfaceContainerHigh
+    property color cSurfaceActive: Theme.colSurfaceVariant
+    property color cBorder: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.4)
+    property color cBorderSoft: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+    property color cText: Theme.colOnBackground
+    property color cTextDim: Theme.colOnSurfaceVariant
+    property color cTextFaint: Qt.rgba(Theme.colOnSurfaceVariant.r, Theme.colOnSurfaceVariant.g, Theme.colOnSurfaceVariant.b, 0.6)
+    property color cAccent: Theme.colPrimary
+    property color cAccentDim: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14)
 
     Rectangle {
         id: mainWrapper
