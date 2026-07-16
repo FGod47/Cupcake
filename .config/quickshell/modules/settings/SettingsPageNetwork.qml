@@ -261,9 +261,11 @@ Item {
         }
     }
 
-    Process {
-        id: forgetProcess
-        onExited: {
+    Timer {
+        id: forgetRefreshTimer
+        interval: 300
+        repeat: false
+        onTriggered: {
             savedNetworksProcess.running = true;
             wifiScanProcess.running = true;
         }
@@ -596,8 +598,8 @@ Item {
                                         id: forgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.command = ["nmcli", "connection", "delete", "id", model.ssid];
-                                            forgetProcess.running = true;
+                                            Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
+                                            forgetRefreshTimer.restart();
                                         }
                                     }
                                 }
@@ -796,8 +798,8 @@ Item {
                                         id: savedForgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.command = ["nmcli", "connection", "delete", "id", model.ssid];
-                                            forgetProcess.running = true;
+                                            Quickshell.execDetached(["nmcli", "connection", "delete", "id", model.ssid]);
+                                            forgetRefreshTimer.restart();
                                         }
                                     }
                                 }
