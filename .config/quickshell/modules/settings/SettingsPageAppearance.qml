@@ -1019,12 +1019,7 @@ Item {
 
             // --- Fonts section ---
             SettingsCard {
-                ColumnLayout {
-                    id: fontColumn
-                    Layout.fillWidth: true
-                    spacing: 8
-
-                SectionLabel { text: "Shell fonts" }
+                sectionTitle: "Shell fonts"
 
                 SettingsRow {
                     RowLayout {
@@ -1189,17 +1184,10 @@ Item {
                         }
                         Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
                     }
-                }
-                }
             } // end Shell fonts card
 
             SettingsCard {
-                ColumnLayout {
-                    id: appFontColumn
-                    Layout.fillWidth: true
-                    spacing: 8
-
-                SectionLabel { text: "Application fonts" }
+                sectionTitle: "Application fonts"
 
                 SettingsRow {
                     RowLayout {
