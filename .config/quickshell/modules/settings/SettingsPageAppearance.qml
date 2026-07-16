@@ -166,19 +166,43 @@ Item {
 
     component SettingsCard: Rectangle {
         default property alias content: cardCol.data
+        property string sectionTitle: ""
         Layout.fillWidth: true
         radius: 12
         color: cSurface
         border.color: cBorder
         border.width: 1
-        implicitHeight: cardCol.implicitHeight + 32
+        implicitHeight: cardCol.implicitHeight + (sectionTitle !== "" ? 56 : 32)
         Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
         clip: true
 
+        RowLayout {
+            id: cardHeader
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 16
+            visible: sectionTitle !== ""
+            spacing: 8
+
+            Text {
+                text: sectionTitle
+                color: cTextDim
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.8
+                font.capitalization: Font.AllUppercase
+            }
+            Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+        }
+
         ColumnLayout {
             id: cardCol
-            anchors.top: parent.top
-            anchors.topMargin: 16
+            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+            anchors.topMargin: cardHeader.visible ? 12 : 16
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: 20
