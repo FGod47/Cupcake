@@ -563,6 +563,24 @@ Item {
                             Behavior on color { ColorAnimation { duration: 100 } }
                             radius: 8
 
+                            MouseArea {
+                                id: otherMa; anchors.fill: parent; hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (model.expanded) {
+                                        wifiModel.setProperty(index, "expanded", false);
+                                    } else {
+                                        for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
+                                        if (!model.isSecure || model.isSaved) { 
+                                            Quickshell.execDetached(["nmcli", "connection", "up", model.ssid]); 
+                                            wifiScanProcess.running = true; 
+                                        } else {
+                                            wifiModel.setProperty(index, "expanded", true);
+                                        }
+                                    }
+                                }
+                            }
+
                             RowLayout {
                                 id: otherRow
                                 anchors.left: parent.left; anchors.right: parent.right
@@ -604,24 +622,6 @@ Item {
                                     }
                                 }
                                 Text { visible: !model.isSaved; text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 14; color: cTextFaint }
-                            }
-
-                            MouseArea {
-                                id: otherMa; anchors.fill: parent; hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (model.expanded) {
-                                        wifiModel.setProperty(index, "expanded", false);
-                                    } else {
-                                        for (let i = 0; i < wifiModel.count; i++) wifiModel.setProperty(i, "expanded", false);
-                                        if (!model.isSecure || model.isSaved) { 
-                                            Quickshell.execDetached(["nmcli", "connection", "up", model.ssid]); 
-                                            wifiScanProcess.running = true; 
-                                        } else {
-                                            wifiModel.setProperty(index, "expanded", true);
-                                        }
-                                    }
-                                }
                             }
                         }
 
@@ -764,6 +764,11 @@ Item {
                             Behavior on color { ColorAnimation { duration: 100 } }
                             radius: 8
 
+                            MouseArea {
+                                id: savedItemMa; anchors.fill: parent; hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                            }
+
                             RowLayout {
                                 id: savedRow
                                 anchors.left: parent.left; anchors.right: parent.right
@@ -803,11 +808,6 @@ Item {
                                         }
                                     }
                                 }
-                            }
-
-                            MouseArea {
-                                id: savedItemMa; anchors.fill: parent; hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
                             }
                         }
 
