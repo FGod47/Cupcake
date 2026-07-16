@@ -348,16 +348,22 @@ Item {
                         // Tooltip
                         Rectangle {
                             id: tooltip
-                            anchors.left: parent.right
-                            anchors.leftMargin: ma.containsMouse ? 12 : 8
-                            anchors.verticalCenter: parent.verticalCenter
+                            parent: root
+                            x: {
+                                const pt = ma.mapToItem(root, parent.width, (parent.height - height) / 2);
+                                return pt.x + (ma.containsMouse ? 12 : 8);
+                            }
+                            y: {
+                                const pt = ma.mapToItem(root, 0, (parent.height - height) / 2);
+                                return pt.y;
+                            }
                             width: tipText.implicitWidth + 18
                             height: tipText.implicitHeight + 10
                             radius: 6
+                            z: 999
                             color: Theme.isDark ? "#000000" : "#171b21"
                             opacity: ma.containsMouse ? 1 : 0
                             Behavior on opacity { NumberAnimation { duration: 120 } }
-                            Behavior on anchors.leftMargin { NumberAnimation { duration: 120 } }
                             Text {
                                 id: tipText
                                 anchors.centerIn: parent
