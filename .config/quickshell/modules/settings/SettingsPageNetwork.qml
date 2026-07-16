@@ -596,7 +596,8 @@ Item {
                                         id: forgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.exec(["nmcli", "connection", "delete", "id", model.ssid]);
+                                            forgetProcess.command = ["nmcli", "connection", "delete", "id", model.ssid];
+                                            forgetProcess.running = true;
                                         }
                                     }
                                 }
@@ -795,7 +796,8 @@ Item {
                                         id: savedForgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            forgetProcess.exec(["nmcli", "connection", "delete", "id", model.ssid]);
+                                            forgetProcess.command = ["nmcli", "connection", "delete", "id", model.ssid];
+                                            forgetProcess.running = true;
                                         }
                                     }
                                 }
