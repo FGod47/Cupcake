@@ -224,13 +224,13 @@ Item {
 
 
     // Theme Colors based on reference design
-    property color cBg: Theme.colBackground
-    property color cBgElevated: Theme.colSurfaceContainer
-    property color cSurface: Theme.colSurface
-    property color cSurfaceHover: Theme.colSurfaceContainerHigh
-    property color cSurfaceActive: Theme.colSurfaceVariant
-    property color cBorder: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.4)
-    property color cBorderSoft: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+    property color cBg: Theme.isDark ? Theme.colBackground : Theme.colSurface
+    property color cBgElevated: Theme.isDark ? Theme.colSurfaceContainer : Theme.colSurfaceContainer
+    property color cSurface: Theme.isDark ? Theme.colSurface : Theme.colBackground
+    property color cSurfaceHover: Theme.isDark ? Theme.colSurfaceContainerHigh : Theme.colSurfaceVariant
+    property color cSurfaceActive: Theme.isDark ? Theme.colSurfaceVariant : Theme.colSurface
+    property color cBorder: Theme.isDark ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.4) : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.25)
+    property color cBorderSoft: Theme.isDark ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2) : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cText: Theme.colOnBackground
     property color cTextDim: Theme.colOnSurfaceVariant
     property color cTextFaint: Qt.rgba(Theme.colOnSurfaceVariant.r, Theme.colOnSurfaceVariant.g, Theme.colOnSurfaceVariant.b, 0.6)
