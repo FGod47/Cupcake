@@ -1208,6 +1208,7 @@ Item {
                         }
                         Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
                     }
+                }
             } // end Shell fonts card
 
             SettingsCard {
@@ -1381,4 +1382,4 @@ Item {
         }
     }
 }
-}
+
