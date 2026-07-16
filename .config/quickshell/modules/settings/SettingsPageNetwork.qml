@@ -262,6 +262,16 @@ Item {
     }
 
     Process {
+        id: forgetProcess
+        property string targetSsid: ""
+        command: ["nmcli", "connection", "delete", "id", targetSsid]
+        onExited: {
+            savedNetworksProcess.running = true;
+            wifiScanProcess.running = true;
+        }
+    }
+
+    Process {
         id: wifiScanProcess
         command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
         running: root.wifiRadioEnabled
@@ -588,9 +598,8 @@ Item {
                                         id: forgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["nmcli", "connection", "delete", model.ssid]);
-                                            savedNetworksProcess.running = true;
-                                            wifiScanProcess.running = true;
+                                            forgetProcess.targetSsid = model.ssid;
+                                            forgetProcess.running = true;
                                         }
                                     }
                                 }
@@ -789,9 +798,8 @@ Item {
                                         id: savedForgetMa
                                         anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["nmcli", "connection", "delete", model.ssid]);
-                                            savedNetworksProcess.running = true;
-                                            wifiScanProcess.running = true;
+                                            forgetProcess.targetSsid = model.ssid;
+                                            forgetProcess.running = true;
                                         }
                                     }
                                 }
