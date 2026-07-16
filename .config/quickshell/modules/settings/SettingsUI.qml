@@ -335,7 +335,7 @@ Item {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 40
                                     anchors.verticalCenter: parent.verticalCenter
-                                    text: "Settings"
+                                    text: "Arch"
                                     color: "#0a0d11"
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 14
