@@ -170,15 +170,17 @@ Item {
         Layout.leftMargin: 20
         Layout.rightMargin: 20
         implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
-        radius: 12
+        Behavior on implicitHeight { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.02) : "transparent"
+        border.width: 1
+        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+        radius: 16
         clip: true
         ColumnLayout {
             id: innerCol
             anchors.fill: parent
             anchors.margins: 20
-            spacing: 8
+            spacing: 12
         }
     }
 
@@ -194,25 +196,29 @@ Item {
         id: sw
         property bool checked: false
         signal toggled(bool checked)
-        width: 38; height: 22
+        width: 44; height: 24
         radius: height / 2
-        color: checked ? (root.colorMode === "Light" ? "black" : Theme.colPrimary) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+        color: checked ? "transparent" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
         border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-
-        Behavior on color { ColorAnimation { duration: 120 } }
+        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+        
+        gradient: checked ? Gradient {
+            GradientStop { position: 0.0; color: Theme.colPrimary }
+            GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
+        } : null
 
         Rectangle {
-            width: 18; height: 18
-            radius: 9
+            width: 20; height: 20
+            radius: 10
             anchors.verticalCenter: parent.verticalCenter
             x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+            color: sw.checked ? "#ffffff" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+            Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutElastic; easing.amplitude: 1.2 } }
         }
 
         MouseArea {
             anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
             onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
         }
     }
@@ -223,38 +229,57 @@ Item {
         property string current: options.length > 0 ? options[0] : ""
         signal selected(string value)
 
-        color: Qt.rgba(0, 0, 0, 0.28)
-        radius: 8
-        height: 30
-        width: row.implicitWidth + 4
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+        border.width: 1
+        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+        radius: 10
+        height: 36
+        width: row.implicitWidth + 8
 
         Row {
             id: row
             anchors.centerIn: parent
-            spacing: 1
+            spacing: 2
 
             Repeater {
                 model: seg.options
                 delegate: Rectangle {
                     required property string modelData
                     property bool active: modelData === seg.current
-                    height: 26
-                    width: label.implicitWidth + 24
-                    radius: 6
-                    color: active ? (root.colorMode === "Light" ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)) : "transparent"
+                    
+                    height: 28
+                    width: label.implicitWidth + 32
+                    radius: 8
+                    color: "transparent"
+                    
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 8
+                        opacity: active ? 1 : (ma.containsMouse ? 0.05 : 0)
+                        color: active ? "transparent" : Theme.colOnSurface
+                        gradient: active ? Gradient {
+                            GradientStop { position: 0.0; color: Theme.colPrimary }
+                            GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
+                        } : null
+                        Behavior on opacity { NumberAnimation { duration: 200 } }
+                    }
 
                     Text {
                         id: label
                         anchors.centerIn: parent
                         text: modelData
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Medium
-                        color: active ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                        font.pixelSize: 13
+                        font.weight: active ? Font.Bold : Font.Medium
+                        color: active ? "#ffffff" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+                        Behavior on color { ColorAnimation { duration: 150 } }
                     }
 
                     MouseArea {
+                        id: ma
                         anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: { seg.current = modelData; seg.selected(modelData) }
                     }
                 }
@@ -268,23 +293,38 @@ Item {
         property bool active: false
         signal clicked()
 
-        radius: 8
-        height: 26
-        width: pillText.implicitWidth + 24
-        color: active ? (root.colorMode === "Light" ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+        radius: 14
+        height: 32
+        width: pillText.implicitWidth + 32
+        color: "transparent"
+        
+        Rectangle {
+            anchors.fill: parent
+            radius: 14
+            opacity: active ? 1 : (ma.containsMouse ? 0.05 : 0.03)
+            color: active ? "transparent" : Theme.colOnSurface
+            gradient: active ? Gradient {
+                GradientStop { position: 0.0; color: Theme.colPrimary }
+                GradientStop { position: 1.0; color: Qt.rgba(Math.max(0, Theme.colPrimary.r - 0.1), Math.max(0, Theme.colPrimary.g - 0.1), Math.max(0, Theme.colPrimary.b - 0.1), 1) }
+            } : null
+            Behavior on opacity { NumberAnimation { duration: 200 } }
+        }
 
         Text {
             id: pillText
             anchors.centerIn: parent
             text: pill.label
             font.family: Theme.defaultFontFamily
-            font.pixelSize: 12
-            font.weight: Font.Medium
-            color: active ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
+            font.pixelSize: 13
+            font.weight: active ? Font.Bold : Font.Medium
+            color: active ? "#ffffff" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+            Behavior on color { ColorAnimation { duration: 150 } }
         }
 
         MouseArea {
+            id: ma
             anchors.fill: parent
+            hoverEnabled: true
             onClicked: pill.clicked()
             cursorShape: Qt.PointingHandCursor
         }
