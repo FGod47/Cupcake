@@ -296,23 +296,46 @@ Item {
                     spacing: 4
                     
                     // Logo
-                    Rectangle {
+                    Item {
+                        Layout.preferredWidth: navExpanded ? 140 : 44
+                        Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Layout.preferredHeight: 34
                         Layout.alignment: Qt.AlignHCenter
                         Layout.topMargin: 0
                         Layout.bottomMargin: 18
-                        width: 34; height: 34
-                        radius: 9
-                        gradient: Gradient {
-                            GradientStop { position: 0.0; color: cAccent }
-                            GradientStop { position: 1.0; color: Theme.colPrimary } // accent-2
+
+                        Rectangle {
+                            width: 34; height: 34
+                            radius: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: navExpanded ? 5 : (parent.width - width) / 2
+                            Behavior on anchors.leftMargin { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            anchors.verticalCenter: parent.verticalCenter
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: cAccent }
+                                GradientStop { position: 1.0; color: Theme.colPrimary } // accent-2
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "A"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 15
+                                font.weight: 700
+                                color: "#0a0d11"
+                            }
                         }
+
                         Text {
-                            anchors.centerIn: parent
-                            text: "A"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 46
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "Settings"
+                            color: cText
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 15
-                            font.weight: 700
-                            color: "#0a0d11"
+                            font.weight: 800
+                            opacity: navExpanded ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
                         }
                     }
                     
