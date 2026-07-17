@@ -22,6 +22,15 @@ Item {
     }
     property string homeDir: Quickshell.env("HOME")
 
+    property color cBg: Theme.colSurface
+    property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+    property color cSurfaceHover: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+    property color cBorderSoft: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+    property color cText: Theme.colOnSurface
+    property color cTextDim: Theme.colOnSurfaceVariant
+    property color cAccent: Theme.colPrimary
+
+
     Timer {
         id: revertTimer
         interval: 1000
@@ -315,21 +324,21 @@ Item {
                     Rectangle {
                         width: 72; height: 30; radius: 8
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-                        Text { anchors.centerIn: parent; text: "Revert"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
+                        Text { anchors.centerIn: parent; text: "Revert"; color: cTextDim; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.revertDisplay() }
                     }
                     Rectangle {
                         width: 64; height: 30; radius: 8
                         color: Theme.colPrimary
-                        Text { anchors.centerIn: parent; text: "Keep"; color: Theme.colOnPrimary; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
+                        Text { anchors.centerIn: parent; text: "Keep"; color: cText; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.keepDisplay() }
                     }
                 }
             }
 
             // 1. Monitors selector
-            SettingsCard {
-                SectionLabel { text: "Monitors" }
+            NCard {
+                sectionTitle: "Monitors"
                 Flow {
                     Layout.fillWidth: true
                     spacing: 8
@@ -375,7 +384,7 @@ Item {
             // 2. Resolution, Refresh rate, Scale — per-monitor card
             Repeater {
                 model: root.monitorsData
-                delegate: SettingsCard {
+                delegate: NCard {
                     id: monCard
                     required property var modelData
                     required property int index
@@ -453,18 +462,14 @@ Item {
 
                     SectionLabel { text: "Resolution & Refresh Rate" }
 
-                    SettingsRow {
+                    NRow {
                         RowLayout {
                             spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                Text { anchors.centerIn: parent; text: "\uea27"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
+                            NIconBadge { icon: "🖥️"; iconColor: cTextDim; bgColor: cBgElevated }
                             ColumnLayout {
                                 spacing: 1
-                                Text { text: "Resolution"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Native resolution recommended for sharpest image"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                                Text { text: "Resolution"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Native resolution recommended for sharpest image"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                             }
                         }
                         Item { Layout.fillWidth: true }
@@ -475,18 +480,14 @@ Item {
                         }
                     }
 
-                    SettingsRow {
+                    NRow {
                         RowLayout {
                             spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
+                            NIconBadge { icon: "🔄"; iconColor: cTextDim; bgColor: cBgElevated }
                             ColumnLayout {
                                 spacing: 1
-                                Text { text: "Refresh rate"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Higher rates feel smoother but use more power"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                                Text { text: "Refresh rate"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Higher rates feel smoother but use more power"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                             }
                         }
                         Item { Layout.fillWidth: true }
@@ -498,18 +499,14 @@ Item {
                         }
                     }
 
-                    SettingsRow {
+                    NRow {
                         RowLayout {
                             spacing: 12
-                            Rectangle {
-                                width: 32; height: 32; radius: 16
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                                Text { anchors.centerIn: parent; text: "\ueb56"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                            }
+                            NIconBadge { icon: "🔍"; iconColor: cTextDim; bgColor: cBgElevated }
                             ColumnLayout {
                                 spacing: 1
-                                Text { text: "Scale"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Adjust the size of text, icons and apps"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                                Text { text: "Scale"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Adjust the size of text, icons and apps"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                             }
                         }
                         Item { Layout.fillWidth: true }
@@ -561,20 +558,16 @@ Item {
             }
 
             // 3. Orientation
-            SettingsCard {
-                SectionLabel { text: "Orientation" }
-                SettingsRow {
+            NCard {
+                sectionTitle: "Orientation"
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb16"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "🔁"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Orientation"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Rotate the display to match your setup"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Orientation"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Rotate the display to match your setup"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -598,46 +591,38 @@ Item {
             }
 
             // 4. Arrangement
-            SettingsCard {
-                SectionLabel { text: "Arrangement" }
-                SettingsRow {
+            NCard {
+                sectionTitle: "Arrangement"
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb2e"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "⭐"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Primary display"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Use this monitor for the taskbar and default windows"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Primary display"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Use this monitor for the taskbar and default windows"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: true }
+                    NToggle { checked: true }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea7a"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "🪞"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Mirror displays"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Show the same content on every connected monitor"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Mirror displays"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show the same content on every connected monitor"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: false }
+                    NToggle { checked: false }
                 }
             }
 
             // 5. Night light
-            SettingsCard {
+            NCard {
                 id: nightLightCard
                 SectionLabel { text: "Night light" }
 
@@ -676,22 +661,18 @@ Item {
                 }
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueaf8"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "🌙"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Night light"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Shift colors warmer to reduce eye strain at night"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Night light"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Shift colors warmer to reduce eye strain at night"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         id: nlToggle
                         checked: false
                         onToggled: function(v) {
@@ -700,18 +681,14 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea70"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "🕒"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Schedule"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "When night light activates"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Schedule"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "When night light activates"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -727,31 +704,27 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     visible: nightLightCard.nlSchedule === "custom"
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea60"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "⌚"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Custom schedule times"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Format: HH:MM (24-hour)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Custom schedule times"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Format: HH:MM (24-hour)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 8
-                        Text { text: "From"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
+                        Text { text: "From"; color: cTextDim; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
                         StyledTextField {
                             text: nightLightCard.customStart
                             Layout.preferredWidth: 60
                             onEditingFinished: { nightLightCard.customStart = text; nightLightCard.applyNightLight(); }
                         }
-                        Text { text: "to"; color: Theme.colOnSurfaceVariant; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
+                        Text { text: "to"; color: cTextDim; font.pixelSize: 12; font.family: Theme.defaultFontFamily }
                         StyledTextField {
                             text: nightLightCard.customEnd
                             Layout.preferredWidth: 60
@@ -760,18 +733,14 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uef67"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "🌡️"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Color temperature"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Warmer = more orange, Cooler = more blue"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Color temperature"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Warmer = more orange, Cooler = more blue"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -823,41 +792,33 @@ Item {
             }
 
             // 6. Advanced
-            SettingsCard {
-                SectionLabel { text: "Advanced" }
-                SettingsRow {
+            NCard {
+                sectionTitle: "Advanced"
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ued23"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "⚡"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Variable refresh rate"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Reduce screen tearing by matching the GPU frame rate"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Variable refresh rate"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Reduce screen tearing by matching the GPU frame rate"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: true }
+                    NToggle { checked: true }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueff3"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "☀️"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "HDR"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Enable high dynamic range if your display supports it"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "HDR"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Enable high dynamic range if your display supports it"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch { checked: false }
+                    NToggle { checked: false }
                 }
             }
 
