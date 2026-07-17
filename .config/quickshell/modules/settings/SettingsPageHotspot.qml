@@ -142,10 +142,119 @@ Item {
     property color cAccent: Theme.colPrimary
 
     // State
+    component NEditableRow: NRow {
+        property string labelText: ""
+        property string iconStr: ""
+        property string currentValue: ""
+        signal saveRequested(string newValue)
+        
+        property bool editing: false
+        
+        NIconBadge { icon: iconStr; iconColor: cTextDim; bgColor: cBgElevated }
+        Text { text: labelText; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+        Item { Layout.fillWidth: true }
+        
+        TextField {
+            id: field
+            text: currentValue
+            enabled: editing
+            color: editing ? cText : cTextDim
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 13
+            horizontalAlignment: Text.AlignRight
+            selectByMouse: true
+            background: Rectangle {
+                color: editing && field.activeFocus ? cSurfaceHover : "transparent"
+                radius: 6
+                border.color: editing && field.activeFocus ? cAccent : (editing ? cBorderSoft : "transparent")
+                border.width: 1
+            }
+            padding: 6
+            rightPadding: 8
+            leftPadding: 8
+            onAccepted: btnMa.saveAction()
+        }
+        
+        RowLayout {
+            spacing: 8
+            
+            Rectangle {
+                width: cancelTxt.width + 16; height: 26; radius: 13
+                visible: editing
+                color: cancelMa.containsMouse ? cSurfaceHover : "transparent"
+                border.color: cBorderSoft
+                border.width: 1
+                Text {
+                    id: cancelTxt
+                    anchors.centerIn: parent
+                    text: "Cancel"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 12
+                    font.weight: Font.Medium
+                    color: cTextDim
+                }
+                MouseArea {
+                    id: cancelMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        field.text = currentValue;
+                        editing = false;
+                    }
+                }
+            }
+            
+            Rectangle {
+                width: btnTxt.width + 16; height: 26; radius: 13
+                color: btnMa.containsMouse ? (editing ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cSurfaceHover) : (editing ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.1) : "transparent")
+                border.color: editing ? cAccent : cBorderSoft
+                border.width: 1
+                Text {
+                    id: btnTxt
+                    anchors.centerIn: parent
+                    text: editing ? "Save" : "Edit"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 12
+                    font.weight: Font.Medium
+                    color: editing ? cAccent : cTextDim
+                }
+                MouseArea {
+                    id: btnMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    function saveAction() {
+                        if (editing) {
+                            if (field.text.trim() !== "" && field.text.trim() !== currentValue) {
+                                saveRequested(field.text.trim());
+                            } else {
+                                field.text = currentValue;
+                            }
+                            editing = false;
+                        }
+                    }
+                    onClicked: {
+                        if (editing) {
+                            saveAction();
+                        } else {
+                            editing = true;
+                            field.forceActiveFocus();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     property bool hotspotEnabled: false
     property string hotspotSsid: ""
     property string hotspotPassword: ""
     property int connectedClients: 0
+
+    ListModel {
+        id: clientsModel
+    }
 
     Process {
         id: hotspotStatusProcess
@@ -170,9 +279,23 @@ Item {
 
     Process {
         id: hotspotClientsProcess
-        command: ["bash", "-c", "iw dev | grep -oP '(?<=Interface )\\w+' | while read iface; do iw dev $iface station dump 2>/dev/null | grep Station | wc -l; done | head -n 1"]
+        command: ["python3", "/home/code/.local/bin/quickshell-hotspot-clients.py"]
         running: root.hotspotEnabled
-        stdout: StdioCollector { onStreamFinished: root.connectedClients = parseInt(text.trim()) || 0 }
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let devices = JSON.parse(text.trim());
+                    root.connectedClients = devices.length;
+                    clientsModel.clear();
+                    for (let i = 0; i < devices.length; i++) {
+                        clientsModel.append(devices[i]);
+                    }
+                } catch (e) {
+                    root.connectedClients = 0;
+                    clientsModel.clear();
+                }
+            }
+        }
     }
 
     Timer {
@@ -255,18 +378,24 @@ Item {
                     }
                 }
 
-                NRow {
-                    NIconBadge { icon: "\ueabc"; iconColor: cTextDim; bgColor: cBgElevated }
-                    Text { text: "Network Name"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Item { Layout.fillWidth: true }
-                    Text { text: root.hotspotSsid; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                NEditableRow {
+                    iconStr: "\ueabc"
+                    labelText: "Network Name"
+                    currentValue: root.hotspotSsid
+                    onSaveRequested: function(newValue) {
+                        Quickshell.execDetached(["nmcli", "connection", "modify", "Hotspot", "802-11-wireless.ssid", newValue]);
+                        root.hotspotSsid = newValue;
+                    }
                 }
 
-                NRow {
-                    NIconBadge { icon: "\ueb07"; iconColor: cTextDim; bgColor: cBgElevated }
-                    Text { text: "Password"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                    Item { Layout.fillWidth: true }
-                    Text { text: root.hotspotPassword !== "" ? root.hotspotPassword : "cupcake-password"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 13 }
+                NEditableRow {
+                    iconStr: "\ueb07"
+                    labelText: "Password"
+                    currentValue: root.hotspotPassword !== "" ? root.hotspotPassword : "cupcake-password"
+                    onSaveRequested: function(newValue) {
+                        Quickshell.execDetached(["nmcli", "connection", "modify", "Hotspot", "802-11-wireless-security.key-mgmt", "wpa-psk", "802-11-wireless-security.psk", newValue]);
+                        root.hotspotPassword = newValue;
+                    }
                 }
             }
 
@@ -282,6 +411,50 @@ Item {
                         Text { text: root.connectedClients + " device(s) connected"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
+                }
+
+                Repeater {
+                    model: clientsModel
+                    delegate: NRow {
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "📱"; font.pixelSize: 14; color: cTextDim }
+                        }
+                        ColumnLayout {
+                            spacing: 2
+                            Text { text: model.name; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: model.ip + " • " + model.mac; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                        }
+                        Item { Layout.fillWidth: true }
+                        
+                        Rectangle {
+                            width: blockTxt.width + 16; height: 26; radius: 13
+                            color: blockMa.containsMouse ? Qt.rgba(255, 0, 0, 0.1) : "transparent"
+                            border.color: blockMa.containsMouse ? "#ff4444" : cBorderSoft
+                            border.width: 1
+                            Text {
+                                id: blockTxt
+                                anchors.centerIn: parent
+                                text: "Block"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: blockMa.containsMouse ? "#ff4444" : cTextDim
+                            }
+                            MouseArea {
+                                id: blockMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli connection modify Hotspot +802-11-wireless.mac-address-blacklist " + model.mac + " && nmcli connection up Hotspot"]);
+                                    clientsModel.remove(index);
+                                    root.connectedClients -= 1;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
