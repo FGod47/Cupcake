@@ -605,6 +605,7 @@ Item {
                                         case 1: return "SettingsPageAppearance.qml";
                                         case 11: return "SettingsPageUpdates.qml";
                                         case 17: return "SettingsPageNetwork.qml";
+                                        case 18: return "SettingsPageDisplay.qml";
                                         case 23: return "SettingsPageHotspot.qml";
                                         default: return "";
                                     }

@@ -8,6 +8,7 @@ import "../common"
 
 Item {
     id: root
+    anchors.fill: parent
 
     property var monitorsData: []
     property string pendingOutput: ""
