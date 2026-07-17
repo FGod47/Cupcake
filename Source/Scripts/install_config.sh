@@ -91,16 +91,17 @@ else
   echo -e "${YELLOW}[SKIP]${RESET} cupcake/scripts folder not found.\n"
 fi
 
-# ──────────────── Install set-theme script ────────────────
-SET_THEME_SRC="$SOURCE_DIR/../.local/bin/set-theme"
-if [ -f "$SET_THEME_SRC" ]; then
-  echo -e "${GREEN}[INSTALL]${RESET} set-theme → ~/.local/bin/set-theme"
+# ──────────────── Install local bin scripts ────────────────
+BIN_SRC_DIR="$(cd "$SCRIPT_DIR/../../.local/bin" && pwd 2>/dev/null)"
+if [ -d "$BIN_SRC_DIR" ]; then
+  echo -e "${GREEN}[INSTALL]${RESET} local bin scripts → ~/.local/bin"
   mkdir -p "$HOME/.local/bin"
-  cp "$SET_THEME_SRC" "$HOME/.local/bin/set-theme"
-  chmod +x "$HOME/.local/bin/set-theme"
+  cp -r "$BIN_SRC_DIR/"* "$HOME/.local/bin/"
+  chmod +x "$HOME/.local/bin/"*
 else
-  echo -e "${YELLOW}[SKIP]${RESET} set-theme script not found"
+  echo -e "${YELLOW}[SKIP]${RESET} local bin scripts not found"
 fi
+
 
 # ──────────────── Install Desktop Entry ────────────────
 DESKTOP_ENTRY_SRC="$SCRIPT_DIR/../cupcake-keybinds.desktop"
@@ -158,7 +159,7 @@ mkdir -p "$HOME/.config/gtk-3.0"
 cat <<EOF > "$HOME/.config/gtk-3.0/settings.ini"
 [Settings]
 gtk-theme-name=catppuccin-frappe-blue-standard+default
-gtk-icon-theme-name=Colloid-Pastel-Dark
+gtk-icon-theme-name=Papirus-Dark
 gtk-font-name=Adwaita Sans 11
 gtk-cursor-theme-name=Bibata-Modern-Ice
 gtk-cursor-theme-size=24
@@ -176,3 +177,6 @@ gtk-application-prefer-dark-theme=0
 EOF
 
 gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-frappe-blue-standard+default' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11' 2>/dev/null || true

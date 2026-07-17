@@ -96,21 +96,23 @@ packages=(
     git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
     slurp grim android-tools bc cava zenity
-    wget pamixer pavucontrol telegram-desktop bat nwg-look
+    wget pamixer pavucontrol telegram-desktop bat
     libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc mtpfs libmtp repo os-prober cpio 7zip
-    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-dkms linux-headers
+    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-dkms linux-headers brightnessctl
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
+    hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian
+    atuin fzf awww starship zip unzip
+    zsh-history-substring-search zsh-completions
+    zsh-autosuggestions zsh-syntax-highlighting
 )
 
 # ──────────────── AUR Package List ────────────────
 aur_packages=(
-    atuin fzf awww starship zip unzip
-    zsh-history-substring-search zsh-completions
-    zsh-autosuggestions zsh-syntax-highlighting quickshell
+    quickshell
     ttf-firacode-nerd ttf-jetbrains-mono-nerd 
     matugen-bin bibata-cursor-theme-bin papirus-folders
-    cloudflare-warp-bin
+    cloudflare-warp-bin google-chrome
 )
 
 # ──────────────── Install All Pacman Packages ────────────────
@@ -140,8 +142,6 @@ sudo modprobe i2c-dev || true
 echo "i2c-dev" | sudo tee /etc/modules-load.d/i2c-dev.conf > /dev/null
 sudo usermod -aG i2c $USER || echo -e "${YELLOW}⚠ Could not add user to i2c group. You may need to create it manually.${RESET}"
 
-# Ensure linux-headers is installed for DKMS (moved to main packages array but kept here just in case)
-yay -S --noconfirm --needed linux-headers
 
 echo -e "${GREEN}✔ AUR packages installed successfully.${RESET}"
 

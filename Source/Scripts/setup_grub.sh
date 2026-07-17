@@ -29,6 +29,13 @@ spinner() {
 # ──────────────── Sudo Authentication ────────────────
 sudo -v || { echo -e "${RED}✘ Sudo authentication failed. Exiting.${RESET}"; exit 1; }
 
+# ──────────────── Check If GRUB is Used ────────────────
+if [ ! -f "/etc/default/grub" ] && ! command -v grub-mkconfig &>/dev/null; then
+    echo -e "${YELLOW}[SKIP]${RESET} GRUB is not installed or configured on this system. Skipping GRUB theme."
+    exit 0
+fi
+
+
 # ──────────────── Show Banner ────────────────
 echo
 for line in "${BANNER[@]}"; do

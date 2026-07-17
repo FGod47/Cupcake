@@ -131,7 +131,7 @@ if [[ "$user_input" =~ ^[Yy]$ ]]; then
     fi
     
     echo -e "\n\033[1;34m[ 󰃠 ]\033[0m \033[1mStep 7: Configuring ddcutil (Monitor Brightness)...\033[0m"
-    bash "$SCRIPT_DIR/../../.config/cupcake/scripts/setup_ddcutil.sh"
+    bash "$HOME/.config/cupcake/scripts/setup_ddcutil.sh"
     
     echo -e "\n\033[1;36m[ 󰖩 ]\033[0m \033[1mStep 8: Configuring Hardware Drivers...\033[0m"
     bash "$SCRIPT_DIR/Source/Scripts/setup_wifi.sh"

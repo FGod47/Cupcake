@@ -28,7 +28,7 @@ ZSHRC="$HOME/.zshrc"
 touch "$ZSHRC"
 
 # ──────────────── Set Zsh as Default ────────────────
-ZSH_PATH="$(which zsh)"
+ZSH_PATH="/usr/bin/zsh"
 CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
 
 if [[ "$CURRENT_SHELL" != "$ZSH_PATH" ]]; then
