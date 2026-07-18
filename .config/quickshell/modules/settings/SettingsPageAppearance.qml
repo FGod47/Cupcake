@@ -435,35 +435,7 @@ Item {
                     }
                 } 
                 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb28"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Dynamic Accent"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Derive accent color from the current wallpaper"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    ToggleSwitch {
-                        checked: root.dynamicAccent
-                        onToggled: (c) => {
-                            root.dynamicAccent = c;
-                            Quickshell.execDetached(["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.dynamic_accent && ~/.local/bin/set-theme"]);
-                        }
-                    }
-                }
+
                 }
 
             // --- Quick Toggles section ---
