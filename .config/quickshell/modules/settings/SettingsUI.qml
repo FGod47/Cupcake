@@ -285,7 +285,7 @@ Item {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
-                    width: 212
+                    anchors.right: parent.right
                     anchors.topMargin: 20
                     anchors.bottomMargin: 20
                     anchors.leftMargin: 12
