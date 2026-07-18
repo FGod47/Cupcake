@@ -170,13 +170,11 @@ Item {
         default property alias content: cardCol.data
         property string sectionTitle: ""
         Layout.fillWidth: true
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
-        color: cSurface
-        border.color: cBorder
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
         border.width: 1
-        implicitHeight: cardCol.implicitHeight + (sectionTitle !== "" ? 56 : 32)
-        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-        clip: true
 
         RowLayout {
             id: cardHeader
@@ -191,14 +189,14 @@ Item {
 
             Text {
                 text: sectionTitle
-                color: cTextDim
+                color: Theme.colOnSurfaceVariant
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 11
                 font.weight: Font.DemiBold
                 font.letterSpacing: 0.8
                 font.capitalization: Font.AllUppercase
             }
-            Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
         }
 
         ColumnLayout {
@@ -214,21 +212,12 @@ Item {
         }
     }
 
-    component SectionLabel: RowLayout {
-        property string text: ""
-        Layout.fillWidth: true
-        Layout.bottomMargin: 8
-        spacing: 8
-        Text {
-            text: parent.text
-            color: cTextDim
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Font.DemiBold
-            font.letterSpacing: 0.8
-            font.capitalization: Font.AllUppercase
-        }
-        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+    component SectionLabel: Text {
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.4
+        color: Theme.colOnSurface
+        opacity: 0.45
     }
 
     component ToggleSwitch: Rectangle {
@@ -257,37 +246,32 @@ Item {
         property var options: []
         property string current: options.length > 0 ? options[0] : ""
         signal selected(string value)
-
-        color: cBgElevated
+        color: Qt.rgba(0, 0, 0, 0.28)
         radius: 8
         height: 30
-        width: row.implicitWidth + 4
-
+        width: segRow.implicitWidth + 4
         Row {
-            id: row
+            id: segRow
             anchors.centerIn: parent
             spacing: 1
-
             Repeater {
                 model: seg.options
                 delegate: Rectangle {
                     required property string modelData
                     property bool active: modelData === seg.current
                     height: 26
-                    width: label.implicitWidth + 24
+                    width: segLabel.implicitWidth + 24
                     radius: 6
-                    color: active ? cAccent : "transparent"
-
+                    color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
                     Text {
-                        id: label
+                        id: segLabel
                         anchors.centerIn: parent
                         text: modelData
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.Medium
-                        color: active ? "white" : cTextDim
+                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     }
-
                     MouseArea {
                         anchors.fill: parent
                         onClicked: { seg.current = modelData; seg.selected(modelData) }
@@ -326,9 +310,9 @@ Item {
     }
 
     component SettingsRow: Rectangle {
-        default property alias content: innerRow.data
+        default property alias rowContent: innerLayout.data
         Layout.fillWidth: true
-        implicitHeight: innerRow.implicitHeight + 20
+        implicitHeight: innerLayout.implicitHeight + 20
         color: "transparent"
         radius: 8
 
@@ -343,9 +327,11 @@ Item {
         }
 
         RowLayout {
-            id: innerRow
+            id: innerLayout
             anchors.fill: parent
-                    anchors.topMargin: 10
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
         }
@@ -355,7 +341,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: cBorder
+            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
             opacity: 0.6
         }
     }
@@ -391,7 +377,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: root.colorMode === "Light" ? "\ueb30" : "\ueb2e"
@@ -429,7 +415,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb3b"
@@ -470,7 +456,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb3b"
@@ -506,7 +492,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb13"
@@ -534,7 +520,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
@@ -578,7 +564,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb13"
@@ -610,7 +596,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueaa2"
@@ -658,7 +644,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -705,7 +691,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -756,7 +742,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uead7"
@@ -787,7 +773,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -834,7 +820,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -881,7 +867,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -928,7 +914,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueacb"
@@ -975,7 +961,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
