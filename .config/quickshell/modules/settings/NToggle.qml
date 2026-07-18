@@ -26,6 +26,18 @@ Rectangle {
     Behavior on color { ColorAnimation { duration: 280 } }
 
     Rectangle {
+        id: shadow
+        width: 20; height: 20; radius: 10
+        anchors.verticalCenter: parent.verticalCenter
+        x: tog.checked ? parent.width - width - 3 : 3
+        anchors.verticalCenterOffset: 2
+        color: Qt.rgba(0, 0, 0, 0.25)
+        scale: ma.pressed ? 0.9 : 1.0
+        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 200 } }
+    }
+
+    Rectangle {
         id: thumb
         width: 20; height: 20; radius: 10
         anchors.verticalCenter: parent.verticalCenter
@@ -36,15 +48,6 @@ Rectangle {
         
         Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
         Behavior on scale { NumberAnimation { duration: 200 } }
-
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            color: Qt.rgba(0, 0, 0, 0.35)
-            radius: 4
-            samples: 9
-            verticalOffset: 2
-        }
     }
 
     MouseArea {

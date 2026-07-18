@@ -29,6 +29,25 @@ Switch {
         Behavior on color { ColorAnimation { duration: 280 } }
     }
 
+    Rectangle {
+        width: 20 * customSwitch.scale
+        height: 20 * customSwitch.scale
+        radius: 10 * customSwitch.scale
+        
+        y: ((customSwitch.implicitHeight - height) / 2) + (2 * customSwitch.scale)
+        
+        x: customSwitch.checked 
+            ? (customSwitch.implicitWidth - width - (3 * customSwitch.scale))
+            : (3 * customSwitch.scale)
+
+        color: Qt.rgba(0, 0, 0, 0.25)
+        
+        scale: (customSwitch.pressed || customSwitch.down) ? 0.9 : 1.0
+        
+        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 200 } }
+    }
+
     indicator: Rectangle {
         width: 20 * customSwitch.scale
         height: 20 * customSwitch.scale
@@ -46,14 +65,5 @@ Switch {
         
         Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
         Behavior on scale { NumberAnimation { duration: 200 } }
-
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            color: Qt.rgba(0, 0, 0, 0.35)
-            radius: 4 * customSwitch.scale
-            samples: 9
-            verticalOffset: 2 * customSwitch.scale
-        }
     }
 }
