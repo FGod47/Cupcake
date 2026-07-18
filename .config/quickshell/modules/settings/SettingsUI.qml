@@ -603,6 +603,7 @@ Item {
                                 source: {
                                     switch (root.currentIndex) {
                                         case 1: return "SettingsPageAppearance.qml";
+                                        case 4: return "SettingsPageDock.qml";
                                         case 11: return "SettingsPageUpdates.qml";
                                         case 17: return "SettingsPageNetwork.qml";
                                         case 18: return "SettingsPageDisplay.qml";
