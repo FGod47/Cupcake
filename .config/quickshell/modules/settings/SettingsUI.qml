@@ -269,14 +269,9 @@ Item {
             // RAIL
             Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: sidebarHover.hovered ? 212 : 54
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Layout.preferredWidth: 212
                 color: cBg
                 clip: true
-                
-                HoverHandler {
-                    id: sidebarHover
-                }
                 
                 Rectangle {
                     anchors.right: parent.right
@@ -290,29 +285,24 @@ Item {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.topMargin: 20
-                    anchors.bottomMargin: 0
+                    width: 212
                     anchors.leftMargin: 12
                     anchors.rightMargin: 12
+                    anchors.topMargin: 20
+                    anchors.bottomMargin: 0
                     spacing: 0
                     
                     // BRAND
-                    Item {
+                    RowLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-                        Layout.bottomMargin: 22
-
-                        // Centered logo (always visible)
+                        Layout.bottomMargin: 16
+                        Layout.leftMargin: 0
+                        Layout.rightMargin: 8
+                        spacing: 10
+                        
                         Rectangle {
-                            id: brandMark
                             width: 30; height: 30; radius: 9
-                            anchors.left: parent.left
-                            anchors.leftMargin: sidebarHover.hovered ? 8 : (parent.width / 2 - 15)
-                            Behavior on anchors.leftMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                            anchors.verticalCenter: parent.verticalCenter
                             gradient: Gradient {
-                                orientation: Gradient.Horizontal
                                 GradientStop { position: 0.0; color: cAccent }
                                 GradientStop { position: 1.0; color: "#efe6ff" }
                             }
@@ -325,15 +315,8 @@ Item {
                                 color: Theme.colOnPrimary
                             }
                         }
-
-                        // Text fades in on hover
                         ColumnLayout {
-                            anchors.left: brandMark.right
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
                             spacing: 1
-                            opacity: sidebarHover.hovered ? 1 : 0
-                            Behavior on opacity { NumberAnimation { duration: 200 } }
                             Text {
                                 text: "cupcake"
                                 font.family: Theme.defaultFontFamily
@@ -349,6 +332,7 @@ Item {
                                 color: cTextFaint
                             }
                         }
+                        Item { Layout.fillWidth: true }
                     }
                     
                     component GroupLabel: Text {
@@ -363,8 +347,6 @@ Item {
                         Layout.topMargin: 14
                         Layout.bottomMargin: 6
                         Layout.leftMargin: 10
-                        opacity: sidebarHover.hovered ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: 200 } }
                     }
                     
                     component RailItem: Rectangle {
@@ -372,43 +354,37 @@ Item {
                         property string icon
                         property int pageIndex
                         property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3].includes(root.currentIndex))
-
+                        
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 36
+                        Layout.preferredHeight: 34
                         radius: 10
                         color: isActive ? cAccent : (ma.containsMouse ? cSurfaceHover : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
-
-                        // Icon — always centered when collapsed, left-aligned when expanded
-                        Text {
-                            id: railIcon
-                            text: parent.icon
-                            font.family: "tabler-icons"
-                            font.pixelSize: 17
-                            color: parent.isActive ? Theme.colOnPrimary : cTextDim
-                            Behavior on color { ColorAnimation { duration: 140 } }
-                            anchors.verticalCenter: parent.verticalCenter
-                            // Animate from centered (collapsed) to left-aligned (expanded)
-                            anchors.left: parent.left
-                            anchors.leftMargin: sidebarHover.hovered ? 10 : (parent.width / 2 - width / 2)
-                            Behavior on anchors.leftMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                        
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 6
+                            anchors.rightMargin: 10
+                            spacing: 10
+                            
+                            Text {
+                                text: parent.parent.icon
+                                font.family: "tabler-icons"
+                                font.pixelSize: 17
+                                color: parent.parent.isActive ? Theme.colOnPrimary : cTextDim
+                                Behavior on color { ColorAnimation { duration: 140 } }
+                            }
+                            Text {
+                                text: parent.parent.label
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                                color: parent.parent.isActive ? Theme.colOnPrimary : (ma.containsMouse ? cText : cTextDim)
+                                Behavior on color { ColorAnimation { duration: 140 } }
+                            }
+                            Item { Layout.fillWidth: true }
                         }
-
-                        // Label — fades in on expand
-                        Text {
-                            text: parent.label
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: parent.isActive ? Theme.colOnPrimary : (ma.containsMouse ? cText : cTextDim)
-                            opacity: sidebarHover.hovered ? 1 : 0
-                            Behavior on opacity { NumberAnimation { duration: 200 } }
-                            Behavior on color { ColorAnimation { duration: 140 } }
-                            anchors.left: railIcon.right
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
+                        
                         MouseArea {
                             id: ma
                             anchors.fill: parent
@@ -435,12 +411,12 @@ Item {
                     RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }
                     
                     // FOOTER
-                    Item {
+                    Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 46
                         Layout.topMargin: 8
-
-                        // Top border
+                        color: "transparent"
+                        
                         Rectangle {
                             anchors.top: parent.top
                             anchors.left: parent.left
@@ -448,30 +424,25 @@ Item {
                             height: 1
                             color: cBorderSoft
                         }
-
-                        // Avatar — centers when collapsed
-                        Rectangle {
-                            id: footerAvatar
-                            width: 26; height: 26; radius: 13
-                            color: cBgElevated
-                            border.color: cBorder
-                            border.width: 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: sidebarHover.hovered ? 2 : (parent.width / 2 - 13)
-                            Behavior on anchors.leftMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                        }
-
-                        // Text — fades in on expand
-                        ColumnLayout {
-                            anchors.left: footerAvatar.right
-                            anchors.leftMargin: 9
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 0
-                            opacity: sidebarHover.hovered ? 1 : 0
-                            Behavior on opacity { NumberAnimation { duration: 200 } }
-                            Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.SemiBold; color: cText }
-                            Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
+                        
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 2
+                            anchors.rightMargin: 10
+                            spacing: 9
+                            
+                            Rectangle {
+                                width: 26; height: 26; radius: 13
+                                color: cBgElevated
+                                border.color: cBorder
+                                border.width: 1
+                            }
+                            ColumnLayout {
+                                spacing: 0
+                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: cText }
+                                Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
+                            }
+                            Item { Layout.fillWidth: true }
                         }
                     }
                 }
