@@ -240,10 +240,10 @@ Item {
     Rectangle {
         id: mainWrapper
         anchors.fill: parent
-        color: cBgElevated
-        border.color: cBorder
+        color: cSurface
+        border.color: cBorderSoft
         border.width: 1
-        radius: 16
+        radius: 20
         clip: true
         
         MouseArea {
@@ -269,17 +269,12 @@ Item {
             anchors.fill: parent
             spacing: 0
             
-            // ICON RAIL
+            // RAIL
             Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: navExpanded ? 160 : 64
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                Layout.preferredWidth: 212
                 color: cBg
                 clip: true
-                
-                HoverHandler {
-                    id: sidebarHover
-                }
                 
                 Rectangle {
                     anchors.right: parent.right
@@ -291,129 +286,103 @@ Item {
                 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.topMargin: 16
-                    anchors.bottomMargin: 16
-                    spacing: 4
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
+                    anchors.topMargin: 20
+                    anchors.bottomMargin: 0
+                    spacing: 0
                     
-                    // Logo
-                    Item {
-                        Layout.preferredWidth: navExpanded ? 140 : 44
-                        Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                        Layout.preferredHeight: 34
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.topMargin: 0
-                        Layout.bottomMargin: 18
-
+                    // BRAND
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.bottomMargin: 16
+                        Layout.leftMargin: 8
+                        Layout.rightMargin: 8
+                        spacing: 10
+                        
                         Rectangle {
-                            width: navExpanded ? parent.width - 10 : 34
-                            height: 34
-                            radius: 12
-                            anchors.centerIn: parent
-                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            width: 30; height: 30; radius: 9
                             gradient: Gradient {
                                 GradientStop { position: 0.0; color: cAccent }
-                                GradientStop { position: 1.0; color: Theme.colPrimary } // accent-2
+                                GradientStop { position: 1.0; color: "#efe6ff" }
                             }
-                            
-                            Item {
-                                anchors.fill: parent
-                                clip: true
-                                
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: navExpanded ? "Arch" : "A"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: navExpanded ? 14 : 15
-                                    font.weight: 800
-                                    color: "#0a0d11"
-                                }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "C"
+                                font.family: Theme.defaultFontFamily
+                                font.weight: Font.Black
+                                font.pixelSize: 14
+                                color: Theme.colOnPrimary
                             }
                         }
+                        ColumnLayout {
+                            spacing: 1
+                            Text {
+                                text: "cupcake"
+                                font.family: Theme.defaultFontFamily
+                                font.weight: Font.Bold
+                                font.pixelSize: 14.5
+                                font.letterSpacing: -0.2
+                                color: cText
+                            }
+                            Text {
+                                text: "shell settings"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 10.5
+                                color: cTextFaint
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
                     }
                     
-                    component RailBtn: Item {
+                    component GroupLabel: Text {
+                        property string label: ""
+                        text: label
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.8
+                        font.capitalization: Font.AllUppercase
+                        color: cTextFaint
+                        Layout.topMargin: 14
+                        Layout.bottomMargin: 6
+                        Layout.leftMargin: 10
+                    }
+                    
+                    component RailItem: Rectangle {
+                        property string label
                         property string icon
-                        property string tip
                         property int pageIndex
-                        property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3,4].includes(root.currentIndex))
+                        property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3].includes(root.currentIndex))
                         
-                        Layout.preferredWidth: navExpanded ? 140 : 44
-                        Behavior on Layout.preferredWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                        Layout.preferredHeight: 44
-                        Layout.alignment: Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 34
+                        radius: 10
+                        color: isActive ? cAccent : (ma.containsMouse ? cSurfaceHover : "transparent")
+                        Behavior on color { ColorAnimation { duration: 140 } }
                         
-                        Rectangle {
+                        RowLayout {
                             anchors.fill: parent
-                            radius: 12
-                            color: isActive ? cAccentDim : (ma.containsMouse ? cSurfaceHover : "transparent")
-                            Behavior on color { ColorAnimation { duration: 150 } }
-                        }
-                        
-                        Rectangle {
-                            visible: isActive
-                            anchors.left: parent.left
-                            anchors.leftMargin: navExpanded ? -10 : -10
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 3; height: 16
-                            radius: 2
-                            color: cAccent
-                        }
-                        
-                        Item {
-                            anchors.fill: parent
-                            Text {
-                                anchors.left: parent.left
-                                anchors.leftMargin: navExpanded ? 14 : (parent.width - implicitWidth) / 2
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: icon
-                                font.family: "tabler-icons"
-                                font.pixelSize: 19
-                                color: isActive ? cAccent : (ma.containsMouse ? cTextDim : cTextFaint)
-                                Behavior on anchors.leftMargin { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                            }
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
                             
                             Text {
-                                anchors.left: parent.left
-                                anchors.leftMargin: 46
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: tip
-                                color: isActive ? cAccent : (ma.containsMouse ? cText : cTextDim)
+                                text: parent.parent.icon
+                                font.family: "tabler-icons"
+                                font.pixelSize: 17
+                                color: parent.parent.isActive ? Theme.colOnPrimary : cTextDim
+                                Behavior on color { ColorAnimation { duration: 140 } }
+                            }
+                            Text {
+                                text: parent.parent.label
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 13
                                 font.weight: Font.Medium
-                                opacity: navExpanded ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
+                                color: parent.parent.isActive ? Theme.colOnPrimary : (ma.containsMouse ? cText : cTextDim)
+                                Behavior on color { ColorAnimation { duration: 140 } }
                             }
-                        }
-                        
-                        // Tooltip
-                        Rectangle {
-                            id: tooltip
-                            parent: root
-                            x: {
-                                const pt = ma.mapToItem(root, parent.width, (parent.height - height) / 2);
-                                return pt.x + (ma.containsMouse ? 12 : 8);
-                            }
-                            y: {
-                                const pt = ma.mapToItem(root, 0, (parent.height - height) / 2);
-                                return pt.y;
-                            }
-                            width: tipText.implicitWidth + 18
-                            height: tipText.implicitHeight + 10
-                            radius: 6
-                            z: 999
-                            color: Theme.isDark ? "#000000" : "#171b21"
-                            opacity: (ma.containsMouse && !navExpanded) ? 1 : 0
-                            Behavior on opacity { NumberAnimation { duration: 120 } }
-                            Text {
-                                id: tipText
-                                anchors.centerIn: parent
-                                text: tip
-                                color: "#ffffff"
-                                font.pixelSize: 11
-                                font.weight: 500
-                                font.family: Theme.defaultFontFamily
-                            }
+                            Item { Layout.fillWidth: true }
                         }
                         
                         MouseArea {
@@ -421,21 +390,61 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: root.currentIndex = pageIndex
+                            onClicked: root.currentIndex = parent.pageIndex
                         }
                     }
                     
-                    RailBtn { icon: ""; tip: "System"; pageIndex: 10 }
-                    RailBtn { icon: ""; tip: "Appearance"; pageIndex: 1 }
-                    RailBtn { icon: ""; tip: "Displays"; pageIndex: 18 }
-                    RailBtn { icon: ""; tip: "Network"; pageIndex: 17 }
-                    RailBtn { icon: ""; tip: "Sound"; pageIndex: 7 }
-                    RailBtn { icon: "\ueba8"; tip: "Power"; pageIndex: 13 }
-                    RailBtn { icon: ""; tip: "Updates"; pageIndex: 11 }
+                    GroupLabel { label: "Preferences" }
+                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
+                    RailItem { icon: "\uec50"; label: "Appearance"; pageIndex: 1 }
+                    RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
+                    RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
+                    RailItem { icon: "\uebc4"; label: "Dock"; pageIndex: 4 }
+                    
+                    GroupLabel { label: "Machine" }
+                    RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
+                    RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
+                    RailItem { icon: "\ueba8"; label: "Power"; pageIndex: 13 }
                     
                     Item { Layout.fillHeight: true } // spacer
                     
-                    RailBtn { icon: ""; tip: "About"; pageIndex: 21 }
+                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }
+                    
+                    // FOOTER
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 46
+                        Layout.topMargin: 8
+                        color: "transparent"
+                        
+                        Rectangle {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: 1
+                            color: cBorderSoft
+                        }
+                        
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 9
+                            
+                            Rectangle {
+                                width: 26; height: 26; radius: 13
+                                color: cBgElevated
+                                border.color: cBorder
+                                border.width: 1
+                            }
+                            ColumnLayout {
+                                spacing: 0
+                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11.5; font.weight: Font.DemiBold; color: cText }
+                                Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
+                            }
+                            Item { Layout.fillWidth: true }
+                        }
+                    }
                 }
             }
             
@@ -449,24 +458,16 @@ Item {
                 Rectangle {
                     id: topBarRect
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 64
+                    Layout.preferredHeight: 70
                     color: "transparent"
-                    
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        height: 1
-                        color: cBorderSoft
-                    }
                     
                     function getPageData(index) {
                         switch(index) {
                             case 0: return { title: "Appearance", path: "settings › appearance › general" };
                             case 1: return { title: "Appearance", path: "settings › appearance › wallpaper" };
-                            case 2: return { title: "Appearance", path: "settings › appearance › fonts" };
+                            case 2: return { title: "Fonts", path: "settings › fonts" };
                             case 3: return { title: "Appearance", path: "settings › appearance › desktop" };
-                            case 4: return { title: "Appearance", path: "settings › appearance › dock" };
+                            case 4: return { title: "Dock", path: "settings › dock" };
                             case 6: return { title: "Notifications", path: "settings › notifications" };
                             case 7: return { title: "Sound", path: "settings › sound" };
                             case 8: return { title: "Shell", path: "settings › shell" };
@@ -487,97 +488,47 @@ Item {
                     
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 24
-                        anchors.rightMargin: 24
+                        anchors.leftMargin: 32
+                        anchors.rightMargin: 32
+                        anchors.topMargin: 22
+                        anchors.bottomMargin: 6
                         spacing: 16
                         
                         ColumnLayout {
-                            spacing: 1
+                            spacing: 2
                             Text {
                                 text: topBarRect.getPageData(root.currentIndex).title
                                 color: cText
-                                font.family: Theme.defaultFontFamily // Should be Space Grotesk in HTML but we use system
-                                font.pixelSize: 18
-                                font.weight: 600
-                                font.letterSpacing: -0.3
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 22
+                                font.weight: Font.Black
+                                font.letterSpacing: -0.4
                             }
                             Text {
-                                text: topBarRect.getPageData(root.currentIndex).path
+                                text: "~/.config/cupcake › " + topBarRect.getPageData(root.currentIndex).title.toLowerCase()
                                 color: cTextFaint
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 12
+                                font.pixelSize: 11.5
                             }
                         }
                         
                         Item { Layout.fillWidth: true }
                         
-                        // Search
                         Rectangle {
-                            Layout.preferredWidth: 230
-                            Layout.preferredHeight: 34
-                            radius: 8
-                            color: cSurface
-                            border.color: cBorder
+                            Layout.alignment: Qt.AlignVCenter
+                            color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12)
+                            border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25)
                             border.width: 1
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 5
-                                Text {
-                                    text: "" // search icon
-                                    font.family: "tabler-icons"
-                                    color: cTextFaint
-                                }
-                                TextInput {
-                                    Layout.fillWidth: true
-                                    color: cText
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 12
-                                }
-                                Rectangle {
-                                    Layout.preferredWidth: 26
-                                    Layout.preferredHeight: 18
-                                    radius: 4
-                                    color: "transparent"
-                                    border.color: cBorder
-                                    border.width: 1
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "⌘K"
-                                        font.family: Theme.monoFontFamily
-                                        font.pixelSize: 10
-                                        color: cTextFaint
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Close button
-                        Item {
-                            Layout.preferredWidth: 34
-                            Layout.preferredHeight: 34
-                            Rectangle {
+                            radius: 20
+                            height: 22
+                            width: badgeText.implicitWidth + 20
+                            Text {
+                                id: badgeText
                                 anchors.centerIn: parent
-                                width: 28
-                                height: 28
-                                radius: 14
-                                color: closeMa.containsMouse ? Qt.rgba(cText.r, cText.g, cText.b, 0.08) : Qt.rgba(cText.r, cText.g, cText.b, 0.04)
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "" // X icon
-                                    font.family: "tabler-icons"
-                                    color: closeMa.containsMouse ? cText : cTextFaint
-                                    font.pixelSize: 14
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                }
-                                MouseArea {
-                                    id: closeMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.requestClose()
-                                }
+                                text: "Liquid · Tonal Spot"
+                                color: cAccent
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 11
                             }
                         }
                     }
@@ -587,39 +538,30 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.margins: 24
-                    spacing: 20
+                    spacing: 0
                     
-                    // PANELS
                     Item {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         clip: true
                         
-                        Item {
+                        Loader {
                             anchors.fill: parent
-                            
-                            Loader {
-                                anchors.fill: parent
-                                source: {
-                                    switch (root.currentIndex) {
-                                        case 1: return "SettingsPageAppearance.qml";
-                                        case 2: return "SettingsPageFonts.qml";
-                                        case 4: return "SettingsPageDock.qml";
-                                        case 10: return "SettingsPageSystem.qml";
-                                        case 11: return "SettingsPageUpdates.qml";
-                                        case 17: return "SettingsPageNetwork.qml";
-                                        case 18: return "SettingsPageDisplay.qml";
-                                        case 23: return "SettingsPageHotspot.qml";
-                                        default: return "";
-                                    }
+                            source: {
+                                switch (root.currentIndex) {
+                                    case 1: return "SettingsPageAppearance.qml";
+                                    case 2: return "SettingsPageFonts.qml";
+                                    case 4: return "SettingsPageDock.qml";
+                                    case 10: return "SettingsPageSystem.qml";
+                                    case 11: return "SettingsPageUpdates.qml";
+                                    case 17: return "SettingsPageNetwork.qml";
+                                    case 18: return "SettingsPageDisplay.qml";
+                                    case 23: return "SettingsPageHotspot.qml";
+                                    default: return "";
                                 }
                             }
-            
                         }
                     }
-                    
-
                 }
             }
         }
