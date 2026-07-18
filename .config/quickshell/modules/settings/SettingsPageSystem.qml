@@ -225,7 +225,7 @@ Item {
             font.letterSpacing: 0.8
             font.capitalization: Font.AllUppercase
         }
-        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.05) }
     }
 
     component ToggleSwitch: Rectangle {
@@ -391,18 +391,9 @@ Item {
         RowLayout {
             id: innerRow
             anchors.fill: parent
-                    anchors.topMargin: 10
+            anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: cBorderSoft
-            visible: !parent.isLast
         }
     }
 
@@ -410,7 +401,7 @@ Item {
         property string glyph: ""
         property bool accented: false
         width: 32; height: 32; radius: 10
-        color: cBg
+        color: Qt.rgba(1, 1, 1, 0.05)
         Text {
             anchors.centerIn: parent
             text: parent.glyph
