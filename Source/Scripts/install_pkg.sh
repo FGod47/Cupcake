@@ -104,7 +104,7 @@ packages=(
     hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian
     atuin fzf awww starship zip unzip
     zsh-history-substring-search zsh-completions
-    zsh-autosuggestions zsh-syntax-highlighting
+    zsh-autosuggestions zsh-syntax-highlighting bluez bluez-utils
 )
 
 # ──────────────── AUR Package List ────────────────
@@ -134,6 +134,13 @@ sleep 2
 warp-cli --accept-tos registration new >/dev/null 2>&1
 warp-cli --accept-tos connect >/dev/null 2>&1
 echo -e "\r\033[K${GREEN}[DONE]${RESET} WARP VPN configured and connected"
+
+# ──────────────── Setup Bluetooth ────────────────
+echo -e "\n[*] Enabling Bluetooth service..."
+(sudo systemctl enable bluetooth.service >/dev/null 2>&1) &
+spinner "bluetoothd"
+wait $!
+echo -e "\r\033[K${GREEN}[DONE]${RESET} Bluetooth service enabled"
 
 # ──────────────── Completion Notice ────────────────
 # ──────────────── Configure i2c & ddcci for external monitors ────────────────
