@@ -115,78 +115,118 @@ Item {
             indexToRemove = -1;
         }
     }
+
     // =====================================================================
-    // Reusable inline components (1:1 identical to Appearance page)
+    // Color aliases
+    // =====================================================================
+    property color cBg: Theme.darkMode ? "#11111B" : "#F4F5F8"
+    property color cBgElevated: Theme.darkMode ? "#181825" : "#FFFFFF"
+    property color cSurface: Theme.darkMode ? "#1E1E2E" : "#FFFFFF"
+    property color cBorder: Theme.darkMode ? "#313244" : "#E5E7EB"
+    property color cBorderSoft: Theme.darkMode ? "#45475A" : "#D1D5DB"
+    property color cText: Theme.darkMode ? "#CDD6F4" : "#1F2937"
+    property color cTextDim: Theme.darkMode ? "#A6ADC8" : "#6B7280"
+    property color cAccent: Theme.colPrimary
+
+    // =====================================================================
+    // Reusable inline components (Modern Design)
     // =====================================================================
     component SettingsCard: Rectangle {
-        default property alias content: innerCol.data
+        default property alias content: cardCol.data
         Layout.fillWidth: true
-        Layout.leftMargin: 20
-        Layout.rightMargin: 20
-        implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
         radius: 12
+        color: cSurface
+        border.color: cBorder
+        border.width: 1
+        implicitHeight: cardCol.implicitHeight + 32
+        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
         clip: true
+
         ColumnLayout {
-            id: innerCol
-            anchors.fill: parent
-            anchors.margins: 20
-            spacing: 8
+            id: cardCol
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.bottomMargin: 16
+            spacing: 0
         }
     }
 
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
+    component SectionLabel: RowLayout {
+        Layout.fillWidth: true
+        Layout.bottomMargin: 12
+        property string text: ""
+        spacing: 8
+        Text {
+            text: parent.text
+            color: cTextDim
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 11
+            font.weight: Font.DemiBold
+            font.letterSpacing: 0.8
+            font.capitalization: Font.AllUppercase
+        }
+        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
     }
 
-    component SettingsRow: ColumnLayout {
-        default property alias content: innerRow.data
+    component SettingsRow: Rectangle {
+        default property alias rowContent: innerLayout.data
         Layout.fillWidth: true
-        Layout.topMargin: Theme.rowSpacing
-        Layout.bottomMargin: Theme.rowSpacing
-        spacing: 12
+        implicitHeight: innerLayout.implicitHeight + 20
+        color: "transparent"
+        radius: 8
+
+        property bool hoverable: false
+        property bool hovered: hoverArea.containsMouse
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+
         RowLayout {
-            id: innerRow
-            Layout.fillWidth: true
+            id: innerLayout
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
             spacing: 12
         }
+
         Rectangle {
-            Layout.fillWidth: true
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
             height: 1
-            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-            visible: Theme.showDividers
+            color: cBorder
+            opacity: 0.6
         }
     }
 
     component ToggleSwitch: Rectangle {
-        id: sw
+        id: tog
         property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.b, Theme.colOutline.g, 0.1)
-
-        Behavior on color { ColorAnimation { duration: 120 } }
-
+        signal toggled(bool val)
+        width: 44; height: 24; radius: 12
+        color: checked ? cAccent : cBorderSoft
+        Behavior on color { ColorAnimation { duration: 150 } }
         Rectangle {
-            width: 18; height: 18
-            radius: 9
+            width: 18; height: 18; radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+            x: tog.checked ? parent.width - width - 3 : 3
+            color: "white"
+            Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
         }
-
         MouseArea {
             anchors.fill: parent
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
+            cursorShape: Qt.PointingHandCursor
+            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
         }
     }
 
@@ -196,25 +236,29 @@ Item {
         property string current: options.length > 0 ? options[0] : ""
         signal selected(string value)
 
-        color: Qt.rgba(0, 0, 0, 0.28)
-        radius: 8
-        height: 30
-        width: row.implicitWidth + 4
+        color: cBgElevated
+        border.color: cBorder
+        border.width: 1
+        radius: 10
+        height: 32
+        width: row.implicitWidth + 8
 
         Row {
             id: row
             anchors.centerIn: parent
-            spacing: 1
+            spacing: 4
 
             Repeater {
                 model: seg.options
                 delegate: Rectangle {
                     required property string modelData
                     property bool active: modelData === seg.current
-                    height: 26
+                    height: 24
                     width: label.implicitWidth + 24
-                    radius: 6
-                    color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
+                    radius: 8
+                    color: active ? cSurface : "transparent"
+                    border.color: active ? cBorder : "transparent"
+                    border.width: 1
 
                     Text {
                         id: label
@@ -223,7 +267,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.Medium
-                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                        color: active ? cText : cTextDim
                     }
 
                     MouseArea {
@@ -241,10 +285,12 @@ Item {
         property bool active: false
         signal clicked()
 
-        radius: 8
-        height: 26
+        radius: 10
+        height: 28
         width: pillText.implicitWidth + 24
-        color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+        color: active ? cAccent : cBgElevated
+        border.color: active ? cAccent : cBorder
+        border.width: 1
 
         Text {
             id: pillText
@@ -253,7 +299,7 @@ Item {
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
             font.weight: Font.Medium
-            color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
+            color: active ? "white" : cTextDim
         }
 
         MouseArea {
@@ -274,7 +320,7 @@ Item {
         ColumnLayout {
             width: Math.min(parent.width, 1000)
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 24
+            spacing: 20
 
             // 1. GENERAL CARD
             SettingsCard {
@@ -284,14 +330,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea9a"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uea9a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Show the dock on your desktop"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Enabled"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show the dock on your desktop"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -309,14 +355,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uebd3"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uebd3"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Active monitor only"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Only show the dock on the focused monitor"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Active monitor only"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Only show the dock on the focused monitor"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -330,14 +376,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ufa59"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ufa59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Monitors"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Choose which monitors display the dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Monitors"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Choose which monitors display the dock"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -356,14 +402,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uecf0"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uecf0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Auto hide"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Hide the dock until the cursor reaches the edge"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Auto hide"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Hide the dock until the cursor reaches the edge"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -381,14 +427,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb2c"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb2c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Reserve space"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Keep windows from overlapping the dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Reserve space"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Keep windows from overlapping the dock"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -408,14 +454,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uefb1"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uefb1"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Show dots"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Use dots for running app markers"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Show dots"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Use dots for running app markers"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -433,14 +479,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uf554"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uf554"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Show instance count"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Badge with open window count per app"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Show instance count"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Badge with open window count per app"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -454,14 +500,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uedba"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uedba"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Launcher position"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Place the launcher at the start or end"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Launcher position"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Place the launcher at the start or end"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -482,14 +528,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb56"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb56"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Pop up"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Enlarge icons on hover"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Pop up"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Enlarge icons on hover"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -514,14 +560,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueecf"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueecf"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Icon size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Size of each dock icon"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Icon size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Size of each dock icon"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -548,14 +594,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb59"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Main axis padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Padding along the dock length"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Main axis padding"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Padding along the dock length"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -582,14 +628,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb5b"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb5b"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Cross axis padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Padding across the dock thickness"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Cross axis padding"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Padding across the dock thickness"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -616,14 +662,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uedb0"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uedb0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Item spacing"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Space between dock icons"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Item spacing"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Space between dock icons"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -650,14 +696,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea0e"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uea0e"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Ends margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Margin at the start and end"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Ends margin"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Margin at the start and end"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -684,14 +730,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uec89"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uec89"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Edge margin"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Distance from the screen edge"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Edge margin"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Distance from the screen edge"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -723,14 +769,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb7c"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb7c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Corner radius"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Overall corner rounding"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Corner radius"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Overall corner rounding"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -762,14 +808,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea97"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uea97"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Background opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Transparency of the dock background"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Background opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Transparency of the dock background"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -796,14 +842,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueed8"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueed8"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Shadow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Drop shadow beneath the dock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Shadow"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Drop shadow beneath the dock"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -823,14 +869,14 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uec9c"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                            width: 36; height: 36; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uec9c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Pinned apps"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Keep chosen apps permanently docked"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Pinned apps"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Keep chosen apps permanently docked"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
