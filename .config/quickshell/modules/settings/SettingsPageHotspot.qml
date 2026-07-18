@@ -418,7 +418,7 @@ Item {
                     delegate: NRow {
                         Rectangle {
                             width: 32; height: 32; radius: 16
-                            color: cBgElevated
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text { anchors.centerIn: parent; text: "\uea8a"; font.pixelSize: 14; color: cTextDim }
                         }
                         ColumnLayout {

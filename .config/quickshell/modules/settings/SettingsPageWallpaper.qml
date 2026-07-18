@@ -97,7 +97,7 @@ Item {
     }
 
     component ToggleSwitch: Rectangle {
-        id: sw
+        id: tog
         property bool checked: false
         signal toggled(bool checked)
         width: 38; height: 22
@@ -107,16 +107,17 @@ Item {
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
         Behavior on color { ColorAnimation { duration: 120 } }
         Rectangle {
-            width: 18; height: 18; radius: 9
+            width: 18; height: 18
+            radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+            x: tog.checked ? parent.width - width - 2 : 2
+            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
             Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
         }
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
+            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
         }
     }
 
@@ -145,7 +146,8 @@ Item {
         property string current: options.length > 0 ? options[0] : ""
         signal selected(string value)
         color: Qt.rgba(0, 0, 0, 0.28)
-        radius: 8; height: 30
+        radius: 8
+        height: 30
         width: segRow.implicitWidth + 4
         Row {
             id: segRow
@@ -156,15 +158,23 @@ Item {
                 delegate: Rectangle {
                     required property string modelData
                     property bool active: modelData === seg.current
-                    height: 26; width: segLabel.implicitWidth + 24; radius: 6
+                    height: 26
+                    width: segLabel.implicitWidth + 24
+                    radius: 6
                     color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
                     Text {
                         id: segLabel
-                        anchors.centerIn: parent; text: modelData
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium
+                        anchors.centerIn: parent
+                        text: modelData
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
                         color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { seg.current = modelData; seg.selected(modelData) } }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: { seg.current = modelData; seg.selected(modelData) }
+                    }
                 }
             }
         }

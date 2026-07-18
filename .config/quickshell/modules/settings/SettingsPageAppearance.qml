@@ -224,15 +224,19 @@ Item {
         id: tog
         property bool checked: false
         signal toggled(bool checked)
-        width: 44; height: 24; radius: 12
-        color: checked ? cAccent : cBorderSoft
-        Behavior on color { ColorAnimation { duration: 150 } }
+        width: 38; height: 22
+        radius: height / 2
+        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+        border.width: checked ? 0 : 1
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+        Behavior on color { ColorAnimation { duration: 120 } }
         Rectangle {
-            width: 18; height: 18; radius: 9
+            width: 18; height: 18
+            radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: tog.checked ? parent.width - width - 3 : 3
-            color: "white"
-            Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+            x: tog.checked ? parent.width - width - 2 : 2
+            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
         }
         MouseArea {
             anchors.fill: parent

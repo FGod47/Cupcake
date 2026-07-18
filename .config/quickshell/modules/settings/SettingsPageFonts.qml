@@ -19,13 +19,11 @@ Item {
         default property alias content: cardCol.data
         property string sectionTitle: ""
         Layout.fillWidth: true
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
-        color: cSurface
-        border.color: cBorder
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
         border.width: 1
-        implicitHeight: cardCol.implicitHeight + (sectionTitle !== "" ? 56 : 32)
-        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-        clip: true
 
         RowLayout {
             id: cardHeader
@@ -40,14 +38,14 @@ Item {
 
             Text {
                 text: sectionTitle
-                color: cTextDim
+                color: Theme.colOnSurfaceVariant
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 11
                 font.weight: Font.DemiBold
                 font.letterSpacing: 0.8
                 font.capitalization: Font.AllUppercase
             }
-            Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
         }
 
         ColumnLayout {
@@ -63,36 +61,31 @@ Item {
         }
     }
 
-    component SectionLabel: RowLayout {
-        property string text: ""
-        Layout.fillWidth: true
-        Layout.bottomMargin: 8
-        spacing: 8
-        Text {
-            text: parent.text
-            color: cTextDim
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Font.DemiBold
-            font.letterSpacing: 0.8
-            font.capitalization: Font.AllUppercase
-        }
-        Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+    component SectionLabel: Text {
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.4
+        color: Theme.colOnSurface
+        opacity: 0.45
     }
 
     component ToggleSwitch: Rectangle {
         id: tog
         property bool checked: false
         signal toggled(bool checked)
-        width: 44; height: 24; radius: 12
-        color: checked ? cAccent : cBorderSoft
-        Behavior on color { ColorAnimation { duration: 150 } }
+        width: 38; height: 22
+        radius: height / 2
+        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+        border.width: checked ? 0 : 1
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+        Behavior on color { ColorAnimation { duration: 120 } }
         Rectangle {
-            width: 18; height: 18; radius: 9
+            width: 18; height: 18
+            radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: tog.checked ? parent.width - width - 3 : 3
-            color: "white"
-            Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+            x: tog.checked ? parent.width - width - 2 : 2
+            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
         }
         MouseArea {
             anchors.fill: parent
@@ -106,37 +99,32 @@ Item {
         property var options: []
         property string current: options.length > 0 ? options[0] : ""
         signal selected(string value)
-
-        color: cBgElevated
+        color: Qt.rgba(0, 0, 0, 0.28)
         radius: 8
         height: 30
-        width: row.implicitWidth + 4
-
+        width: segRow.implicitWidth + 4
         Row {
-            id: row
+            id: segRow
             anchors.centerIn: parent
             spacing: 1
-
             Repeater {
                 model: seg.options
                 delegate: Rectangle {
                     required property string modelData
                     property bool active: modelData === seg.current
                     height: 26
-                    width: label.implicitWidth + 24
+                    width: segLabel.implicitWidth + 24
                     radius: 6
-                    color: active ? cAccent : "transparent"
-
+                    color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
                     Text {
-                        id: label
+                        id: segLabel
                         anchors.centerIn: parent
                         text: modelData
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.Medium
-                        color: active ? "white" : cTextDim
+                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     }
-
                     MouseArea {
                         anchors.fill: parent
                         onClicked: { seg.current = modelData; seg.selected(modelData) }
@@ -175,9 +163,9 @@ Item {
     }
 
     component SettingsRow: Rectangle {
-        default property alias content: innerRow.data
+        default property alias rowContent: innerLayout.data
         Layout.fillWidth: true
-        implicitHeight: innerRow.implicitHeight + 20
+        implicitHeight: innerLayout.implicitHeight + 20
         color: "transparent"
         radius: 8
 
@@ -192,9 +180,11 @@ Item {
         }
 
         RowLayout {
-            id: innerRow
+            id: innerLayout
             anchors.fill: parent
-                    anchors.topMargin: 10
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
         }
@@ -204,7 +194,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: cBorder
+            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
             opacity: 0.6
         }
     }

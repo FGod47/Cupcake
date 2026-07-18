@@ -58,7 +58,7 @@ Item {
     }
 
     component ToggleSwitch: Rectangle {
-        id: sw
+        id: tog
         property bool checked: false
         signal toggled(bool checked)
         width: 38; height: 22
@@ -68,16 +68,17 @@ Item {
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
         Behavior on color { ColorAnimation { duration: 120 } }
         Rectangle {
-            width: 18; height: 18; radius: 9
+            width: 18; height: 18
+            radius: 9
             anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
+            x: tog.checked ? parent.width - width - 2 : 2
+            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
             Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
         }
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
+            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
         }
     }
 

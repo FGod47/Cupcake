@@ -9,66 +9,50 @@ Rectangle {
     property string description: ""
     property string icon: ""
     
-    // Colors
-    property color cSurface: Theme.isDark ? "#171c24" : "#ffffff"
-    property color cBorder: Theme.isDark ? "#242b36" : "#dde1e7"
-    property color cTextFaint: Theme.isDark ? "#4d5566" : "#9aa2af"
-    
     default property alias content: innerLayout.data
 
     Layout.fillWidth: true
-    implicitHeight: mainLayout.implicitHeight
-    color: cSurface
-    radius: 10
-    border.color: cBorder
+    implicitHeight: mainLayout.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+    radius: 12
+    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
     border.width: 1
     clip: true
 
+    RowLayout {
+        id: cardHeader
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.topMargin: 16
+        visible: cardRoot.title !== ""
+        spacing: 8
+
+        Text {
+            text: cardRoot.title
+            color: Theme.colOnSurfaceVariant
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 11
+            font.weight: Font.DemiBold
+            font.letterSpacing: 0.8
+            font.capitalization: Font.AllUppercase
+        }
+        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
+    }
+
     ColumnLayout {
         id: mainLayout
-        anchors.fill: parent
-        anchors.topMargin: 0
-        anchors.bottomMargin: 0
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
+        anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+        anchors.topMargin: cardHeader.visible ? 12 : 16
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.bottomMargin: 16
         spacing: 0
-
-        // Card Title Header
-        Item {
-            Layout.fillWidth: true
-            implicitHeight: titleLayout.implicitHeight + 13
-            visible: cardRoot.title !== ""
-            
-            RowLayout {
-                id: titleLayout
-                anchors.fill: parent
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-                anchors.topMargin: 13
-                anchors.bottomMargin: 0
-                spacing: 8
-                
-                Text { 
-                    visible: cardRoot.icon !== ""
-                    text: cardRoot.icon
-                    color: cTextFaint
-                    font.pixelSize: 13
-                    font.family: Theme.monoFontFamily 
-                }
-                Text { 
-                    text: cardRoot.title
-                    color: cTextFaint
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 11
-                    font.weight: 600
-                    font.capitalization: Font.AllUppercase
-                    font.letterSpacing: 0.6
-                    Layout.fillWidth: true 
-                }
-            }
-        }
         
-        // Rows inside innerLayout will handle their own borders/padding
         ColumnLayout {
             id: innerLayout
             Layout.fillWidth: true
