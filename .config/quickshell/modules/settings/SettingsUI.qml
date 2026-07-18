@@ -606,6 +606,7 @@ Item {
                                         case 1: return "SettingsPageAppearance.qml";
                                         case 2: return "SettingsPageFonts.qml";
                                         case 4: return "SettingsPageDock.qml";
+                                        case 10: return "SettingsPageSystem.qml";
                                         case 11: return "SettingsPageUpdates.qml";
                                         case 17: return "SettingsPageNetwork.qml";
                                         case 18: return "SettingsPageDisplay.qml";
