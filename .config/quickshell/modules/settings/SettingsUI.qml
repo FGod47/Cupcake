@@ -19,7 +19,7 @@ Item {
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
-    property int currentIndex: 10
+    property int currentIndex: 17
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
@@ -578,6 +578,11 @@ Item {
                                     case 18: return "SettingsPageDisplay.qml";
                                     case 23: return "SettingsPageHotspot.qml";
                                     default: return "";
+                                }
+                            }
+                            onStatusChanged: {
+                                if (status === Loader.Error) {
+                                    console.log("LOADER ERROR:", source, sourceComponent ? sourceComponent.errorString() : "unknown error");
                                 }
                             }
                         }
