@@ -406,6 +406,7 @@ Item {
                     RailItem { icon: "\uebc4"; label: "Dock"; pageIndex: 4 }
                     
                     GroupLabel { label: "Machine" }
+                    RailItem { icon: "\uea97"; label: "Displays"; pageIndex: 18 }
                     RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
                     RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
                     RailItem { icon: "\ueba8"; label: "Power"; pageIndex: 13 }
