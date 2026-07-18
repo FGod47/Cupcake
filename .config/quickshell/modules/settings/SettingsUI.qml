@@ -563,7 +563,7 @@ Item {
                                 Behavior on color { ColorAnimation { duration: 150 } }
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "\uea76" // X icon
+                                    text: "" // X icon
                                     font.family: "tabler-icons"
                                     color: closeMa.containsMouse ? cText : cTextFaint
                                     font.pixelSize: 14
