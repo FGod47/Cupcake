@@ -175,6 +175,8 @@ Item {
     // =====================================================================
 
     ScrollView {
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.fill: parent
         anchors.bottomMargin: 28
         leftPadding: 32

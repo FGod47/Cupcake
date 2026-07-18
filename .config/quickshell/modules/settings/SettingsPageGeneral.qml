@@ -347,6 +347,8 @@ Item {
     // =====================================================================
 
     ScrollView {
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         id: scrollView
         anchors.fill: parent
         anchors.bottomMargin: 28

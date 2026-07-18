@@ -301,6 +301,8 @@ Item {
     // Main UI Layout
     // =====================================================================
     ScrollView {
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.fill: parent
         leftPadding: 32
         rightPadding: 32
