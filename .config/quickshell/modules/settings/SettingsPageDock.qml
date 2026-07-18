@@ -117,16 +117,6 @@ Item {
     }
 
     // =====================================================================
-    // Color aliases
-    // =====================================================================
-    property color cBg: Theme.darkMode ? "#11111B" : "#F4F5F8"
-    property color cBgElevated: Theme.darkMode ? "#181825" : "#FFFFFF"
-    property color cSurface: Theme.darkMode ? "#1E1E2E" : "#FFFFFF"
-    property color cBorder: Theme.darkMode ? "#313244" : "#E5E7EB"
-    property color cBorderSoft: Theme.darkMode ? "#45475A" : "#D1D5DB"
-    property color cText: Theme.darkMode ? "#CDD6F4" : "#1F2937"
-    property color cTextDim: Theme.darkMode ? "#A6ADC8" : "#6B7280"
-    property color cAccent: Theme.colPrimary
 
     // =====================================================================
     // Reusable inline components (Modern Design)
