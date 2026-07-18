@@ -438,7 +438,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb3b"
+                                text: "\ueb28"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
