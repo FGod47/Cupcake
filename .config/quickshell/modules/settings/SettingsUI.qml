@@ -271,7 +271,17 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 212
                 color: cBg
+                radius: 20
                 clip: true
+                
+                // Square off the right side
+                Rectangle {
+                    width: 20
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    color: cBg
+                }
                 
                 Rectangle {
                     anchors.right: parent.right
