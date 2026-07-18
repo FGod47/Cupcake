@@ -179,7 +179,7 @@ Item {
             text: parent.text
             color: parent.status === "good" ? cAccent : "#f6d488"
             font.family: Theme.monoFontFamily
-            font.pixelSize: 10.5
+            font.pixelSize: 10
             font.weight: Font.DemiBold
         }
     }
@@ -417,7 +417,7 @@ Item {
                         Text {
                             text: "10"
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 11.5
+                            font.pixelSize: 11
                             color: cTextDim
                         }
                     }
@@ -445,7 +445,7 @@ Item {
                     control: RowLayout {
                         spacing: 12
                         StyledSlider { from: 1; to: 30; value: 10 }
-                        Text { text: "10m"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cTextDim }
+                        Text { text: "10m"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextDim }
                     }
                 }
                 SettingsRow { iconName: ""; title: "Lock on suspend"; control: ToggleSwitch { checked: true } }
@@ -490,28 +490,28 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.topMargin: 4; Layout.bottomMargin: 4
-                    Text { text: "linux"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cText }
+                    Text { text: "linux"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cText }
                     Item { Layout.fillWidth: true }
-                    Text { text: "6.10.2 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cTextFaint }
-                    Text { text: "6.10.3"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cAccent }
+                    Text { text: "6.10.2 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                    Text { text: "6.10.3"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent }
                 }
                 Rectangle { Layout.fillWidth: true; height: 1; color: cBorderSoft }
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.topMargin: 4; Layout.bottomMargin: 4
-                    Text { text: "mesa"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cText }
+                    Text { text: "mesa"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cText }
                     Item { Layout.fillWidth: true }
-                    Text { text: "24.1.4 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cTextFaint }
-                    Text { text: "24.1.5"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cAccent }
+                    Text { text: "24.1.4 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                    Text { text: "24.1.5"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent }
                 }
                 Rectangle { Layout.fillWidth: true; height: 1; color: cBorderSoft }
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.topMargin: 4; Layout.bottomMargin: 4
-                    Text { text: "quickshell-git"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cText }
+                    Text { text: "quickshell-git"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cText }
                     Item { Layout.fillWidth: true }
-                    Text { text: "r412 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cTextFaint }
-                    Text { text: "r418"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: cAccent }
+                    Text { text: "r412 → "; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                    Text { text: "r418"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent }
                 }
                 Rectangle { Layout.fillWidth: true; height: 1; color: cBorderSoft }
                 SettingsRow { iconName: ""; title: "Check automatically every day"; control: ToggleSwitch { checked: true } }

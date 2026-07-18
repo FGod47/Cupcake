@@ -213,7 +213,7 @@ Item {
     }
 
 
-    property bool navExpanded: sidebarHover.hovered
+    property bool navExpanded: false
 
     // Extracted StyledSwitch to StyledSwitch.qml
 
@@ -321,14 +321,14 @@ Item {
                                 text: "cupcake"
                                 font.family: Theme.defaultFontFamily
                                 font.weight: Font.Bold
-                                font.pixelSize: 14.5
+                                font.pixelSize: 14
                                 font.letterSpacing: -0.2
                                 color: cText
                             }
                             Text {
                                 text: "shell settings"
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10.5
+                                font.pixelSize: 10
                                 color: cTextFaint
                             }
                         }
@@ -439,7 +439,7 @@ Item {
                             }
                             ColumnLayout {
                                 spacing: 0
-                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11.5; font.weight: Font.DemiBold; color: cText }
+                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: cText }
                                 Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
                             }
                             Item { Layout.fillWidth: true }
@@ -508,7 +508,7 @@ Item {
                                 text: "~/.config/cupcake › " + topBarRect.getPageData(root.currentIndex).title.toLowerCase()
                                 color: cTextFaint
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 11.5
+                                font.pixelSize: 11
                             }
                         }
                         
