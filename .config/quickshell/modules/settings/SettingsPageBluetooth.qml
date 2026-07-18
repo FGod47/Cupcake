@@ -220,7 +220,7 @@ Item {
             spacing: 20
 
             SettingsCard {
-                SectionLabel { text: "Bluetooth" }
+                sectionTitle: "Bluetooth"
 
                 SettingsRow {
                     RowLayout {

@@ -374,7 +374,7 @@ Item {
             // --- Mode section ---
 
                 SettingsCard {
-                SectionLabel { text: "Mode" }
+                sectionTitle: "Mode"
 
                 SettingsRow {
                     RowLayout {
@@ -412,7 +412,7 @@ Item {
 
             // --- Accent section ---
                 SettingsCard {
-                SectionLabel { text: "Accent" }
+                sectionTitle: "Accent"
                 Item { Layout.preferredHeight: 8 }
 
 
@@ -469,7 +469,7 @@ Item {
             // --- Quick Toggles section ---
 
                 SettingsCard {
-                SectionLabel { text: "Quick Toggles" }
+                sectionTitle: "Quick Toggles"
 
                 SettingsRow {
                     RowLayout {
@@ -541,7 +541,7 @@ Item {
             // --- Blur section ---
 
                 SettingsCard {
-                SectionLabel { text: "Transparency & Blur" }
+                sectionTitle: "Transparency & Blur"
 
                 SettingsRow {
                     RowLayout {
@@ -719,7 +719,7 @@ Item {
             }
 
             SettingsCard {
-                SectionLabel { text: "Quickshell Opacity" }
+                sectionTitle: "Quickshell Opacity"
 
                 SettingsRow {
                     RowLayout {

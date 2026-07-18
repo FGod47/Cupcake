@@ -194,7 +194,7 @@ Item {
 
             // --- Widgets section ---
             SettingsCard {
-                SectionLabel { text: "Widgets" }
+                sectionTitle: "Widgets"
 
                 SettingsRow {
                     RowLayout {
@@ -222,7 +222,7 @@ Item {
 
             // --- Screen Corners section ---
             SettingsCard {
-                SectionLabel { text: "Screen Corners" }
+                sectionTitle: "Screen Corners"
 
                 SettingsRow {
                     RowLayout {
@@ -291,7 +291,7 @@ Item {
 
             // --- Window Gaps section ---
             SettingsCard {
-                SectionLabel { text: "Window Gaps" }
+                sectionTitle: "Window Gaps"
 
                 SettingsRow {
                     RowLayout {
@@ -369,7 +369,7 @@ Item {
             }
             // --- Window Borders section ---
             SettingsCard {
-                SectionLabel { text: "Window Borders" }
+                sectionTitle: "Window Borders"
 
                 SettingsRow {
                     RowLayout {
@@ -437,7 +437,7 @@ Item {
 
             // --- Window Shadows section ---
             SettingsCard {
-                SectionLabel { text: "Window Shadows" }
+                sectionTitle: "Window Shadows"
 
                 SettingsRow {
                     RowLayout {

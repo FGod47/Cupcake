@@ -326,7 +326,7 @@ Item {
 
             // 1. GENERAL CARD
             SettingsCard {
-                SectionLabel { text: "General" }
+                sectionTitle: "General"
 
                 SettingsRow {
                     RowLayout {
@@ -398,7 +398,7 @@ Item {
 
             // 2. BEHAVIOR CARD
             SettingsCard {
-                SectionLabel { text: "Behavior" }
+                sectionTitle: "Behavior"
 
                 SettingsRow {
                     RowLayout {
@@ -554,7 +554,7 @@ Item {
 
             // 3. LAYOUT CARD
             SettingsCard {
-                SectionLabel { text: "Layout" }
+                sectionTitle: "Layout"
 
 
 
@@ -765,7 +765,7 @@ Item {
 
             // 4. SHAPE CARD
             SettingsCard {
-                SectionLabel { text: "Shape" }
+                sectionTitle: "Shape"
 
                 SettingsRow {
                     RowLayout {
@@ -804,7 +804,7 @@ Item {
 
             // 5. EFFECTS CARD
             SettingsCard {
-                SectionLabel { text: "Effects" }
+                sectionTitle: "Effects"
 
                 SettingsRow {
                     RowLayout {
@@ -865,7 +865,7 @@ Item {
 
             // 7. PINNED APPS CARD
             SettingsCard {
-                SectionLabel { text: "Pinned apps" }
+                sectionTitle: "Pinned apps"
 
                 SettingsRow {
                     RowLayout {

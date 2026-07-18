@@ -200,7 +200,7 @@ Item {
 
             // ── Current wallpaper card ─────────────────────────────────────
             SettingsCard {
-                SectionLabel { text: "Current wallpaper" }
+                sectionTitle: "Current wallpaper"
 
                 RowLayout {
                     Layout.fillWidth: true
@@ -302,7 +302,7 @@ Item {
 
             // ── Wallpaper library ──────────────────────────────────────────
             SettingsCard {
-                SectionLabel { text: "Wallpaper library" }
+                sectionTitle: "Wallpaper library"
 
                 GridLayout {
                     Layout.fillWidth: true
@@ -496,7 +496,7 @@ Item {
 
             // ── Fit & display ──────────────────────────────────────────────
             SettingsCard {
-                SectionLabel { text: "Fit & display" }
+                sectionTitle: "Fit & display"
 
 
                 SettingsRow {
@@ -574,7 +574,7 @@ Item {
 
             // ── Slideshow ──────────────────────────────────────────────────
             SettingsCard {
-                SectionLabel { text: "Slideshow" }
+                sectionTitle: "Slideshow"
 
                 SettingsRow {
                     RowLayout {
@@ -653,7 +653,7 @@ Item {
 
             // ── Effects ────────────────────────────────────────────────────
             SettingsCard {
-                SectionLabel { text: "Effects" }
+                sectionTitle: "Effects"
 
                 SettingsRow {
                     RowLayout {

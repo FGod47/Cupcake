@@ -509,7 +509,7 @@ Item {
 
             // --- Device section ---
             SettingsCard {
-                SectionLabel { text: "Device" }
+                sectionTitle: "Device"
 
                 SettingsRow {
                     RowLayout {
@@ -580,7 +580,7 @@ Item {
 
             // --- Performance section ---
             SettingsCard {
-                SectionLabel { text: "Performance" }
+                sectionTitle: "Performance"
 
                 SettingsRow {
                     RowLayout {
@@ -653,7 +653,7 @@ Item {
 
             // --- Startup applications section ---
             SettingsCard {
-                SectionLabel { text: "Startup Applications" }
+                sectionTitle: "Startup Applications"
 
                 SettingsRow {
                     RowLayout {
@@ -720,7 +720,7 @@ Item {
 
             // --- Session & power section ---
             SettingsCard {
-                SectionLabel { text: "Session & Power" }
+                sectionTitle: "Session & Power"
 
                 SettingsRow {
                     RowLayout {
@@ -786,7 +786,7 @@ Item {
 
             // --- Default applications section ---
             SettingsCard {
-                SectionLabel { text: "Default Applications" }
+                sectionTitle: "Default Applications"
 
                 SettingsRow {
                     hoverable: true
@@ -873,7 +873,7 @@ Item {
 
             // --- System updates section ---
             SettingsCard {
-                SectionLabel { text: "System Updates" }
+                sectionTitle: "System Updates"
 
                 SettingsRow {
                     RowLayout {
@@ -967,7 +967,7 @@ Item {
 
             // --- Quickshell section ---
             SettingsCard {
-                SectionLabel { text: "Quickshell" }
+                sectionTitle: "Quickshell"
 
                 SettingsRow {
                     RowLayout {
