@@ -167,13 +167,11 @@ Item {
         default property alias content: cardCol.data
         property string sectionTitle: ""
         Layout.fillWidth: true
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
-        color: cSurface
-        border.color: cBorder
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
         border.width: 1
-        implicitHeight: cardCol.implicitHeight + (sectionTitle !== "" ? 56 : 32)
-        Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-        clip: true
 
         RowLayout {
             id: cardHeader
@@ -188,14 +186,14 @@ Item {
 
             Text {
                 text: sectionTitle
-                color: cTextDim
+                color: Theme.colOnSurfaceVariant
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 11
                 font.weight: Font.DemiBold
                 font.letterSpacing: 0.8
                 font.capitalization: Font.AllUppercase
             }
-            Rectangle { Layout.fillWidth: true; height: 1; color: cBorder }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
         }
 
         ColumnLayout {
@@ -206,7 +204,7 @@ Item {
             anchors.right: parent.right
             anchors.leftMargin: 20
             anchors.rightMargin: 20
-            anchors.bottomMargin: 6
+            anchors.bottomMargin: 16
             spacing: 0
         }
     }
@@ -366,16 +364,41 @@ Item {
     }
 
     component SettingsRow: Rectangle {
-        default property alias content: innerRow.data
+        default property alias rowContent: innerLayout.data
         Layout.fillWidth: true
-        implicitHeight: innerRow.implicitHeight + 20
+        implicitHeight: innerLayout.implicitHeight + 20
         color: "transparent"
         radius: 8
 
         property bool hoverable: false
         property bool hovered: hoverArea.containsMouse
-        property bool isLast: false   // set true on last row in a card to hide separator
         Behavior on color { ColorAnimation { duration: 120 } }
+
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+
+        RowLayout {
+            id: innerLayout
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
+            spacing: 12
+        }
+
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+            opacity: 0.6
+        }
+    } }
 
         MouseArea {
             id: hoverArea

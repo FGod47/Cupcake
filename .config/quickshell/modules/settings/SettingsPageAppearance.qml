@@ -410,28 +410,7 @@ Item {
                 SettingsCard {
                 SectionLabel { text: "Accent" }
 
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb3b"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Color Scheme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Choose the accent palette for the interface"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                }
+
 
                 Flow {
                     Layout.fillWidth: true
