@@ -6,6 +6,7 @@ import "../../theme"
 Rectangle {
     id: cardRoot
     property string title: ""
+    property alias sectionTitle: cardRoot.title
     property string description: ""
     property string icon: ""
     

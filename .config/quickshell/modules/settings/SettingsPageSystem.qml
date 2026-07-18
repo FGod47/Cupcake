@@ -525,7 +525,6 @@ Item {
                 }
 
                 SettingsRow {
-                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -577,7 +576,6 @@ Item {
                 }
 
                 SettingsRow {
-                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uead7" }
@@ -662,7 +660,6 @@ Item {
                     }
                 }
                 SettingsRow {
-                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb4b" }
@@ -729,7 +726,6 @@ Item {
                 }
 
                 SettingsRow {
-                    isLast: true
                     RowLabel { label: "Session actions" }
                     Item { Layout.fillWidth: true }
                     RowLayout {
@@ -807,7 +803,6 @@ Item {
                     }
                 }
                 SettingsRow {
-                    isLast: true
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -907,7 +902,6 @@ Item {
                 }
 
                 SettingsRow {
-                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -954,7 +948,6 @@ Item {
                 }
 
                 SettingsRow {
-                    isLast: true
                     RowLabel { label: "Shell process"; desc: "Restart the quickshell daemon" }
                     Item { Layout.fillWidth: true }
                     Pill {
