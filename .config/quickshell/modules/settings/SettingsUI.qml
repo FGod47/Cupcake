@@ -590,8 +590,6 @@ Item {
                     Item {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.leftMargin: 32
-                        Layout.rightMargin: 32
                         clip: true
                         
                         Loader {
