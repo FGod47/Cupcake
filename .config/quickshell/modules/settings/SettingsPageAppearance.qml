@@ -536,7 +536,7 @@ Item {
                             color: cBgElevated
                             Text {
                                 anchors.centerIn: parent
-                                text: "󰑐"
+                                text: ""
                                 color: cTextDim
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 16

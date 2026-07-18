@@ -41,7 +41,7 @@ Item {
                         
                         SettingsCard {
                             title: "Privacy Security Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -133,7 +133,7 @@ Item {
                         
                         SettingsCard {
                             title: "Lock Screen Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary

@@ -7,7 +7,7 @@ Rectangle {
     id: root
     
     // API
-    property var model: [] // Array of { label: "Text", value: "val", icon: "󰏘" }
+    property var model: [] // Array of { label: "Text", value: "val", icon: "" }
     property string currentValue: ""
     property int currentIndex: -1
     signal valueChanged(string value, int index)

@@ -41,7 +41,7 @@ Item {
                         
                         SettingsCard {
                             title: "Built In Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -90,7 +90,7 @@ Item {
                         
                         SettingsCard {
                             title: "Community Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary

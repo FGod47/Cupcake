@@ -485,7 +485,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                             Text {
                                 anchors.centerIn: parent
-                                text: "󰑐"
+                                text: ""
                                 color: Theme.colOnSurfaceVariant
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 16

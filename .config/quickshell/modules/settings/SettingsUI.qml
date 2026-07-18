@@ -425,13 +425,13 @@ Item {
                         }
                     }
                     
-                    RailBtn { icon: ""; tip: "System"; pageIndex: 10 }
+                    RailBtn { icon: ""; tip: "System"; pageIndex: 10 }
                     RailBtn { icon: ""; tip: "Appearance"; pageIndex: 1 }
-                    RailBtn { icon: ""; tip: "Displays"; pageIndex: 18 }
+                    RailBtn { icon: ""; tip: "Displays"; pageIndex: 18 }
                     RailBtn { icon: ""; tip: "Network"; pageIndex: 17 }
-                    RailBtn { icon: ""; tip: "Sound"; pageIndex: 7 }
-                    RailBtn { icon: ""; tip: "Power"; pageIndex: 13 }
-                    RailBtn { icon: ""; tip: "Updates"; pageIndex: 11 }
+                    RailBtn { icon: ""; tip: "Sound"; pageIndex: 7 }
+                    RailBtn { icon: "\ueba8"; tip: "Power"; pageIndex: 13 }
+                    RailBtn { icon: ""; tip: "Updates"; pageIndex: 11 }
                     
                     Item { Layout.fillHeight: true } // spacer
                     

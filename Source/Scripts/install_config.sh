@@ -180,3 +180,16 @@ gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice' 2>/de
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null || true
 gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-frappe-blue-standard+default' 2>/dev/null || true
 gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11' 2>/dev/null || true
+
+# ──────────────── Tabler Icons Font ────────────────
+echo -e "${YELLOW}[INFO]${RESET} Installing Tabler Icons font..."
+mkdir -p "$HOME/.local/share/fonts"
+if [ ! -f "$HOME/.local/share/fonts/tabler-icons.ttf" ]; then
+  curl -sL "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/fonts/tabler-icons.ttf" \
+    -o "$HOME/.local/share/fonts/tabler-icons.ttf" \
+    && echo -e "${GREEN}[OK]${RESET} Tabler Icons font installed" \
+    || echo -e "${RED}[WARN]${RESET} Failed to download Tabler Icons font"
+  fc-cache -f 2>/dev/null || true
+else
+  echo -e "${GREEN}[SKIP]${RESET} Tabler Icons font already installed"
+fi

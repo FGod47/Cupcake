@@ -23,7 +23,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
 
     property real osdValue: 50
-    property string osdIcon: ""
+    property string osdIcon: "\ueb51"
     
     // Auto-hide timer
     Timer {
@@ -74,6 +74,7 @@ PanelWindow {
                     id: iconText
                     text: osdWindow.osdIcon
                     color: Theme.colOnSurface
+                    font.family: "tabler-icons"
                     font.pixelSize: 18
                     anchors.verticalCenter: parent.verticalCenter
                     width: 24
@@ -134,21 +135,22 @@ PanelWindow {
                         property real currentVol: 0
                         
                         function getIcon(name) {
-                            if (!name) return "󰎆";
+                            if (!name) return "\ueb7e";
                             let n = name.toLowerCase();
-                            if (n.includes("chrome") || n.includes("firefox") || n.includes("brave") || n.includes("edge")) return "󰊯";
-                            if (n.includes("spotify") || n.includes("music")) return "󰓇";
-                            if (n.includes("discord") || n.includes("teamspeak")) return "󰙯";
-                            if (n.includes("steam")) return "󰓓";
-                            if (n.includes("mpv") || n.includes("vlc") || n.includes("player")) return "󰕼";
-                            if (n.includes("obs")) return "󰑋";
-                            return "󰎆";
+                            if (n.includes("chrome") || n.includes("firefox") || n.includes("brave") || n.includes("edge")) return "\uebb7";
+                            if (n.includes("spotify") || n.includes("music")) return "\ueafc";
+                            if (n.includes("discord") || n.includes("teamspeak")) return "\uece3";
+                            if (n.includes("steam")) return "\ued6f";
+                            if (n.includes("mpv") || n.includes("vlc") || n.includes("player")) return "\ueafa";
+                            if (n.includes("obs")) return "\ued22";
+                            return "\ueb7e";
                         }
                         
                         Text {
                             id: appIcon
-                            text: isAudioStream ? getIcon(modelData.name) : "󰎆"
+                            text: isAudioStream ? getIcon(modelData.name) : "\ueb7e"
                             color: Theme.colOnSurfaceVariant
+                            font.family: "tabler-icons"
                             font.pixelSize: 18
                             anchors.verticalCenter: parent.verticalCenter
                             width: 24
@@ -243,7 +245,7 @@ PanelWindow {
         target: "osd"
         function volume(vol: int): void {
             osdWindow.osdValue = vol
-            osdWindow.osdIcon = vol === 0 ? "󰝟" : ["󰕿", "󰖀", "󰕾"][Math.min(2, Math.floor((vol - 1) / 33))]
+            osdWindow.osdIcon = vol === 0 ? "" : ["\ueb7d", "\ueb7e", "\ueb7d"][Math.min(2, Math.floor((vol - 1) / 33))]
             
             if (!osdWindow.visible) {
                 osdWindow.visible = true
@@ -253,7 +255,7 @@ PanelWindow {
         
         function brightness(bright: int): void {
             osdWindow.osdValue = bright
-            osdWindow.osdIcon = ["󰃞", "󰃞", "󰃟", "󰃟", "󰃠", "󰃠", "󰃠"][Math.min(6, Math.floor(bright / 15))]
+            osdWindow.osdIcon = ["\uf1c3", "\uf1c3", "\ueb51", "\ueb51", "\ueb4f", "\ueb4f", "\ueb4f"][Math.min(6, Math.floor(bright / 15))]
             
             if (!osdWindow.visible) {
                 osdWindow.visible = true

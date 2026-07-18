@@ -168,11 +168,11 @@ Item {
                     }
                     Text {
                         text: {
-                            if (notifCategory === "screenshot") return ""; // camera
-                            if (notifCategory === "music") return ""; // music
-                            if (notifCategory === "update") return ""; // refresh
+                            if (notifCategory === "screenshot") return ""; // camera
+                            if (notifCategory === "music") return ""; // music
+                            if (notifCategory === "update") return ""; // refresh
                             if (notifCategory === "battery") return ""; // battery
-                            if (notifCategory === "error") return ""; // bluetooth-off (as example) or alert
+                            if (notifCategory === "error") return ""; // bluetooth-off (as example) or alert
                             return ""; // bell
                         }
                         color: accentColor

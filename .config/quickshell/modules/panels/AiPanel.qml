@@ -435,7 +435,7 @@ PanelWindow {
                     }
                     
                     contentItem: Text {
-                        text: modelCombo.currentText.replace("gemini-", "").replace("-flash", " Flash").replace("-pro", " Pro") + " "
+                        text: modelCombo.currentText.replace("gemini-", "").replace("-flash", " Flash").replace("-pro", " Pro") + " \uea5f"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.weight: 600
@@ -483,8 +483,8 @@ PanelWindow {
                             spacing: 15
 
                             Text {
-                                text: modelCombo.currentIndex === index ? "" : ""
-                                font.family: Theme.monoFontFamily
+                                text: modelCombo.currentIndex === index ? "\uea5e" : ""
+                                font.family: "tabler-icons"
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                                 color: Theme.colOnSurfaceVariant
                                 Layout.preferredWidth: 20
@@ -574,9 +574,9 @@ PanelWindow {
                     
                     Text {
                         anchors.centerIn: parent
-                        text: promptInput.text.length > 0 ? "" : "" // Up arrow if typing, else Mic
+                        text: promptInput.text.length > 0 ? "\uea62" : "\ueaf0" // Up arrow if typing, else Mic
                         color: promptInput.text.length > 0 ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
+                        font.family: "tabler-icons"
                         font.pixelSize: 18
                         font.weight: 800
                     }

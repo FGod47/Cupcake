@@ -896,7 +896,7 @@ Item {
                                         }
                                         Item { Layout.fillWidth: true }
                                         Text {
-                                            text: aiSettingsPage.keyExists ? "✅ Accounts Loaded" : "❌ No Accounts"
+                                            text: aiSettingsPage.keyExists ? "\uea5e Accounts Loaded" : "\ueb55 No Accounts"
                                             color: aiSettingsPage.keyExists ? Theme.colPrimary : Theme.colError
                                             font.family: root.font.family
                                             font.pixelSize: Theme.defaultFontSize

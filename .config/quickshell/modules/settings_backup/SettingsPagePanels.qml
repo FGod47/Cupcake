@@ -45,7 +45,7 @@ Item {
                         
                         SettingsCard {
                             title: "Effects Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -120,7 +120,7 @@ Item {
                         
                         SettingsCard {
                             title: "Control Center Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -221,7 +221,7 @@ Item {
                         
                         SettingsCard {
                             title: "Launcher Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -335,7 +335,7 @@ Item {
                         
                         SettingsCard {
                             title: "Clipboard Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -384,7 +384,7 @@ Item {
                         
                         SettingsCard {
                             title: "Wallpaper Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -433,7 +433,7 @@ Item {
                         
                         SettingsCard {
                             title: "Session Panel Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary

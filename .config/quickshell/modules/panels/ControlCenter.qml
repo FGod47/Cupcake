@@ -42,8 +42,9 @@ PanelWindow {
                 spacing: 12
                 
                 Text {
-                    text: volumeSlider.value === 0 ? " " : (volumeSlider.value < 50 ? " " : " ")
+                    text: volumeSlider.value === 0 ? "\uf1c3 " : (volumeSlider.value < 50 ? "\ueb4f " : "\ueb51 ")
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: 16
                     MouseArea {
                         anchors.fill: parent
@@ -80,8 +81,9 @@ PanelWindow {
                 spacing: 12
                 
                 Text {
-                    text: backlightSlider.value < 33 ? "󰃞 " : (backlightSlider.value < 66 ? "󰃟 " : "󰃠 ")
+                    text: backlightSlider.value < 33 ? "\ueb7d " : (backlightSlider.value < 66 ? "\uea3c " : "\ueb7e ")
                     color: "white"
+                    font.family: "tabler-icons"
                     font.pixelSize: 16
                 }
 

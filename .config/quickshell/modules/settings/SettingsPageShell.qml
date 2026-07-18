@@ -43,7 +43,7 @@ Item {
                         
                         SettingsCard {
                             title: "General Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -144,7 +144,7 @@ Item {
                         
                         SettingsCard {
                             title: "Clipboard Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -232,7 +232,7 @@ Item {
                         
                         SettingsCard {
                             title: "Screenshot Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary
@@ -346,7 +346,7 @@ Item {
                         
                         SettingsCard {
                             title: "Keybinds Settings"
-                            icon: ""
+                            icon: "\ueb20"
                             surfaceColor: Theme.colSurfaceContainer
                             outlineColor: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                             primaryColor: Theme.colPrimary

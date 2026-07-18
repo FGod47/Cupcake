@@ -419,7 +419,7 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 16
                             color: cBgElevated
-                            Text { anchors.centerIn: parent; text: "📱"; font.pixelSize: 14; color: cTextDim }
+                            Text { anchors.centerIn: parent; text: "\uea8a"; font.pixelSize: 14; color: cTextDim }
                         }
                         ColumnLayout {
                             spacing: 2
