@@ -1481,6 +1481,7 @@ PanelWindow {
                     source: "ControlCenterUI.qml"
                     active: true
                     
+                    layer.enabled: true
                     opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
                     visible: true
                     enabled: bar.ccOpen
