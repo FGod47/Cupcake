@@ -461,6 +461,7 @@ Item {
                     id: topBarRect
                     Layout.fillWidth: true
                     Layout.preferredHeight: 70
+                    Layout.bottomMargin: 16
                     color: "transparent"
                     
                     function getPageData(index) {
