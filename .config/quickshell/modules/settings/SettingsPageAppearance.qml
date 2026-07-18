@@ -409,6 +409,7 @@ Item {
             // --- Accent section ---
                 SettingsCard {
                 SectionLabel { text: "Accent" }
+                Item { Layout.preferredHeight: 8 }
 
 
 
