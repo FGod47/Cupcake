@@ -206,7 +206,7 @@ Item {
             anchors.right: parent.right
             anchors.leftMargin: 20
             anchors.rightMargin: 20
-            anchors.bottomMargin: 16
+            anchors.bottomMargin: 6
             spacing: 0
         }
     }
@@ -299,11 +299,12 @@ Item {
         property string label: ""
         property bool active: false
         property bool danger: false
+        property bool big: false
         signal clicked()
 
         radius: 8
-        height: 26
-        width: pillText.implicitWidth + 24
+        height: big ? 34 : 26
+        width: pillText.implicitWidth + (big ? 32 : 24)
         color: active ? cAccent : cBgElevated
 
         Text {
@@ -312,7 +313,7 @@ Item {
             text: pill.label
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
-            font.weight: Font.Medium
+            font.weight: pill.big ? Font.SemiBold : Font.Medium
             color: active ? "white" : (pill.danger ? cDanger : cTextDim)
         }
 
@@ -326,6 +327,44 @@ Item {
         }
     }
 
+    component PkgRow: RowLayout {
+        property string pkgName: ""
+        property string oldVer: ""
+        property string newVer: ""
+        Layout.fillWidth: true
+        spacing: 0
+
+        Text {
+            text: pkgName
+            font.family: Theme.monoFontFamily
+            font.pixelSize: 11
+            color: cText
+            Layout.fillWidth: true
+        }
+        RowLayout {
+            spacing: 4
+            Text {
+                text: oldVer + " →"
+                font.family: Theme.monoFontFamily
+                font.pixelSize: 11
+                color: cTextFaint
+            }
+            Text {
+                text: newVer
+                font.family: Theme.monoFontFamily
+                font.pixelSize: 11
+                color: cAccent
+            }
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.columnSpan: 2
+            height: 1
+            color: cBorderSoft
+            // This is placed as a bottom border via parent's bottom anchor in usage
+        }
+    }
+
     component SettingsRow: Rectangle {
         default property alias content: innerRow.data
         Layout.fillWidth: true
@@ -335,12 +374,18 @@ Item {
 
         property bool hoverable: false
         property bool hovered: hoverArea.containsMouse
+        property bool isLast: false   // set true on last row in a card to hide separator
         Behavior on color { ColorAnimation { duration: 120 } }
 
         MouseArea {
             id: hoverArea
             anchors.fill: parent
             hoverEnabled: parent.hoverable
+            cursorShape: parent.hoverable ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onContainsMouseChanged: {
+                if (parent.hoverable)
+                    parent.color = containsMouse ? Qt.rgba(1,1,1,0.03) : "transparent"
+            }
         }
 
         RowLayout {
@@ -358,8 +403,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: cBorder
-            opacity: 0.6
+            color: cBorderSoft
+            visible: !parent.isLast
         }
     }
 
@@ -380,15 +425,25 @@ Item {
     component RowLabel: ColumnLayout {
         property string label: ""
         property string desc: ""
-        spacing: 1
-        Text { text: parent.label; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+        spacing: 2
+        Layout.fillWidth: true
+        Text {
+            text: parent.label
+            color: cText
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 13
+            font.weight: Font.Medium
+        }
         Text {
             text: parent.desc
             color: cTextDim
             font.family: Theme.defaultFontFamily
             font.pixelSize: 11
-            opacity: 0.8
+            font.weight: Font.Normal
+            opacity: 0.85
             visible: text !== ""
+            wrapMode: Text.NoWrap
+            elide: Text.ElideRight
         }
     }
 
@@ -396,15 +451,15 @@ Item {
         property string text: ""
         radius: 6
         color: Qt.rgba(0, 0, 0, 0.25)
-        implicitWidth: Math.min(chipText.implicitWidth + 16, 220)
-        implicitHeight: 22
+        implicitWidth: Math.min(chipText.implicitWidth + 20, 220)
+        implicitHeight: 26
         Text {
             id: chipText
             anchors.centerIn: parent
-            width: parent.width - 16
+            width: parent.width - 20
             text: parent.parent.text
             font.family: Theme.monoFontFamily
-            font.pixelSize: 10
+            font.pixelSize: 11
             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
             elide: Text.ElideMiddle
             horizontalAlignment: Text.AlignHCenter
@@ -427,15 +482,15 @@ Item {
     ScrollView {
         id: scrollView
         anchors.fill: parent
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 28
         contentWidth: availableWidth
         clip: true
 
         ColumnLayout {
             width: parent.width
-            spacing: 24
+            spacing: 20
 
-            Item { Layout.preferredHeight: 8 }
+            Item { Layout.preferredHeight: 14 }
 
             // --- Device section ---
             SettingsCard {
@@ -497,6 +552,7 @@ Item {
                 }
 
                 SettingsRow {
+                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -548,6 +604,7 @@ Item {
                 }
 
                 SettingsRow {
+                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uead7" }
@@ -555,9 +612,9 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     RowLayout {
-                        spacing: 16
+                        spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 150
                             from: 0; to: 100; stepSize: 1
                             value: root.swappiness
                             onValueChanged: { root.swappiness = value; }
@@ -632,6 +689,7 @@ Item {
                     }
                 }
                 SettingsRow {
+                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb4b" }
@@ -657,9 +715,9 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     RowLayout {
-                        spacing: 16
+                        spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 150
                             from: 1; to: 30; stepSize: 1
                             value: root.lockTimeout
                             onValueChanged: { root.lockTimeout = value; }
@@ -698,6 +756,7 @@ Item {
                 }
 
                 SettingsRow {
+                    isLast: true
                     RowLabel { label: "Session actions" }
                     Item { Layout.fillWidth: true }
                     RowLayout {
@@ -775,6 +834,7 @@ Item {
                     }
                 }
                 SettingsRow {
+                    isLast: true
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -806,18 +866,75 @@ Item {
                         IconChip { glyph: "\ueb1d"; accented: true }
                         RowLabel {
                             label: root.updateCount + " packages can be updated"
-                            desc: root.aurUpdateCount + " from the AUR"
+                            desc: root.aurUpdateCount + " from the AUR · mirrorlist synced 2h ago"
                         }
                     }
                     Item { Layout.fillWidth: true }
                     Pill {
                         label: "Update now"
                         active: true
+                        big: true
                         onClicked: Quickshell.execDetached(["bash", "-c", "kitty -e sh -c 'sudo pacman -Syu; read -p \"Press enter to close\"'"])
                     }
                 }
 
+                // Package list rows (mirrors HTML .pkg-row)
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 0
+                    Layout.rightMargin: 0
+                    spacing: 0
+
+                    Repeater {
+                        model: [
+                            { name: "linux",           old: "6.10.2", ver: "6.10.3" },
+                            { name: "mesa",            old: "24.1.4", ver: "24.1.5" },
+                            { name: "quickshell-git",  old: "r412",   ver: "r418"   }
+                        ]
+                        delegate: RowLayout {
+                            required property var modelData
+                            Layout.fillWidth: true
+                            spacing: 0
+
+                            Text {
+                                text: modelData.name
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 11
+                                color: cText
+                                Layout.fillWidth: true
+                                topPadding: 7
+                                bottomPadding: 7
+                            }
+                            RowLayout {
+                                spacing: 4
+                                topPadding: 7
+                                bottomPadding: 7
+                                Text {
+                                    text: modelData.old + " →"
+                                    font.family: Theme.monoFontFamily
+                                    font.pixelSize: 11
+                                    color: cTextFaint
+                                }
+                                Text {
+                                    text: modelData.ver
+                                    font.family: Theme.monoFontFamily
+                                    font.pixelSize: 11
+                                    color: cAccent
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 1
+                                color: cBorderSoft
+                                anchors.bottom: parent.bottom
+                            }
+                        }
+                    }
+                }
+
                 SettingsRow {
+                    isLast: true
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -864,6 +981,7 @@ Item {
                 }
 
                 SettingsRow {
+                    isLast: true
                     RowLabel { label: "Shell process"; desc: "Restart the quickshell daemon" }
                     Item { Layout.fillWidth: true }
                     Pill {
@@ -873,7 +991,7 @@ Item {
                 }
             }
 
-            Item { Layout.preferredHeight: 8 }
+            Item { Layout.preferredHeight: 28 }
         }
     }
 }
