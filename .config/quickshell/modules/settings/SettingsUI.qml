@@ -473,6 +473,7 @@ Item {
                             case 2: return { title: "Fonts", path: "settings › fonts" };
                             case 3: return { title: "Appearance", path: "settings › appearance › desktop" };
                             case 4: return { title: "Dock", path: "settings › dock" };
+                            case 5: return { title: "Wallpaper", path: "settings › wallpaper" };
                             case 6: return { title: "Notifications", path: "settings › notifications" };
                             case 7: return { title: "Sound", path: "settings › sound" };
                             case 8: return { title: "Shell", path: "settings › shell" };
@@ -572,6 +573,7 @@ Item {
                                     case 1: return "SettingsPageAppearance.qml";
                                     case 2: return "SettingsPageFonts.qml";
                                     case 4: return "SettingsPageDock.qml";
+                                    case 5: return "SettingsPageWallpaper.qml";
                                     case 10: return "SettingsPageSystem.qml";
                                     case 11: return "SettingsPageUpdates.qml";
                                     case 17: return "SettingsPageNetwork.qml";
