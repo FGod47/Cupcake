@@ -231,7 +231,9 @@ Item {
                         checked: root.btRadioEnabled
                         onToggled: {
                             if (Bluetooth.defaultAdapter) {
-                                Bluetooth.defaultAdapter.enabled = checked;
+                                Bluetooth.defaultAdapter.enabled = val;
+                            } else {
+                                Quickshell.execDetached(["bluetoothctl", "power", val ? "on" : "off"]);
                             }
                         }
                     }
