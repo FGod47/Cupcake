@@ -232,9 +232,8 @@ Item {
                         onToggled: {
                             if (Bluetooth.defaultAdapter) {
                                 Bluetooth.defaultAdapter.enabled = val;
-                            } else {
-                                Quickshell.execDetached(["bluetoothctl", "power", val ? "on" : "off"]);
                             }
+                            Quickshell.execDetached(["bluetoothctl", "power", val ? "on" : "off"]);
                         }
                     }
                 }
