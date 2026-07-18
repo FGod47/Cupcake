@@ -272,9 +272,14 @@ Item {
             // RAIL
             Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 212
+                Layout.preferredWidth: sidebarHover.hovered ? 212 : 54
+                Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 color: cBg
                 clip: true
+                
+                HoverHandler {
+                    id: sidebarHover
+                }
                 
                 Rectangle {
                     anchors.right: parent.right
@@ -317,6 +322,8 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
+                            opacity: sidebarHover.hovered ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
                             Text {
                                 text: "cupcake"
                                 font.family: Theme.defaultFontFamily
@@ -347,6 +354,8 @@ Item {
                         Layout.topMargin: 14
                         Layout.bottomMargin: 6
                         Layout.leftMargin: 10
+                        opacity: sidebarHover.hovered ? 1 : 0
+                        Behavior on opacity { NumberAnimation { duration: 200 } }
                     }
                     
                     component RailItem: Rectangle {
@@ -380,6 +389,8 @@ Item {
                                 font.pixelSize: 13
                                 font.weight: Font.Medium
                                 color: parent.parent.isActive ? Theme.colOnPrimary : (ma.containsMouse ? cText : cTextDim)
+                                opacity: sidebarHover.hovered ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                             Item { Layout.fillWidth: true }
@@ -439,6 +450,8 @@ Item {
                             }
                             ColumnLayout {
                                 spacing: 0
+                                opacity: sidebarHover.hovered ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
                                 Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: cText }
                                 Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
                             }
