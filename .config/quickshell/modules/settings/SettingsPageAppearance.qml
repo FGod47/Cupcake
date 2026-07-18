@@ -11,6 +11,11 @@ Item {
     Process { id: bashProcess }
     
     // Properties simulating the backend state for this page
+    property color cText: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
+    property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+    property color cAccent: Theme.colPrimary
+    property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+
     property string uiStyle: "Liquid"
     property string accent: "Tonal Spot"
     property string colorMode: "Dark"
