@@ -300,8 +300,8 @@ Item {
                     // BRAND
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.bottomMargin: 16
-                        Layout.leftMargin: 0
+                        Layout.bottomMargin: 22
+                        Layout.leftMargin: 8
                         Layout.rightMargin: 8
                         spacing: 10
                         
@@ -365,14 +365,14 @@ Item {
                         property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3].includes(root.currentIndex))
                         
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 34
+                        Layout.preferredHeight: 36
                         radius: 10
                         color: isActive ? cAccent : (ma.containsMouse ? cSurfaceHover : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 6
+                            anchors.leftMargin: 10
                             anchors.rightMargin: 10
                             spacing: 10
                             
@@ -452,7 +452,7 @@ Item {
                                 spacing: 0
                                 opacity: sidebarHover.hovered ? 1 : 0
                                 Behavior on opacity { NumberAnimation { duration: 200 } }
-                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: cText }
+                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.SemiBold; color: cText }
                                 Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
                             }
                             Item { Layout.fillWidth: true }
