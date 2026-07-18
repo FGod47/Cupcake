@@ -37,6 +37,21 @@ if [ "$SCHEME" = "auto" ]; then
     SCHEME="tonal-spot"
 fi
 
+# Read Icon and Cursor Theme
+ICON_THEME_DARK="Papirus-Dark"
+ICON_THEME_LIGHT="Papirus-Light"
+CURSOR_THEME="Bibata-Modern-Ice"
+
+if [ -f ~/.config/cupcake/.icon_theme ]; then
+    USER_ICON=$(cat ~/.config/cupcake/.icon_theme)
+    ICON_THEME_DARK="$USER_ICON"
+    ICON_THEME_LIGHT="$USER_ICON"
+fi
+
+if [ -f ~/.config/cupcake/.cursor_theme ]; then
+    CURSOR_THEME=$(cat ~/.config/cupcake/.cursor_theme)
+fi
+
 # Set the wallpaper with awww immediately (no delay needed)
 echo "Setting wallpaper..."
 awww img "$WALLPAPER" --transition-type wipe --transition-fps 60 --transition-duration 1.5 &
@@ -69,15 +84,19 @@ hyprctl reload
     # Set GNOME color-scheme so GTK applications natively follow the light/dark mode toggle
     if [ "$MODE" = "light" ]; then
         gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-        gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Light'
+        gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME_LIGHT"
+        gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_THEME"
         gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3'
-        sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus-Light/g' ~/.config/gtk-3.0/settings.ini
+        sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=$ICON_THEME_LIGHT/g" ~/.config/gtk-3.0/settings.ini
+        sed -i "s/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=$CURSOR_THEME/g" ~/.config/gtk-3.0/settings.ini || echo "gtk-cursor-theme-name=$CURSOR_THEME" >> ~/.config/gtk-3.0/settings.ini
         sed -i 's/gtk-theme-name=.*/gtk-theme-name=adw-gtk3/g' ~/.config/gtk-3.0/settings.ini
     else
         gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-        gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+        gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME_DARK"
+        gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_THEME"
         gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
-        sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus-Dark/g' ~/.config/gtk-3.0/settings.ini
+        sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=$ICON_THEME_DARK/g" ~/.config/gtk-3.0/settings.ini
+        sed -i "s/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=$CURSOR_THEME/g" ~/.config/gtk-3.0/settings.ini || echo "gtk-cursor-theme-name=$CURSOR_THEME" >> ~/.config/gtk-3.0/settings.ini
         sed -i 's/gtk-theme-name=.*/gtk-theme-name=adw-gtk3-dark/g' ~/.config/gtk-3.0/settings.ini
     fi
 

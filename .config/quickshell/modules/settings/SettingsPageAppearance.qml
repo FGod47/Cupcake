@@ -26,6 +26,26 @@ Item {
             }
         }
     }
+
+    property string iconTheme: "Papirus-Dark"
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.icon_theme"]
+        running: true
+        onStdout: (out) => {
+            let s = out.trim();
+            if (s !== "") root.iconTheme = s;
+        }
+    }
+
+    property string cursorTheme: "Bibata-Modern-Ice"
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.cursor_theme"]
+        running: true
+        onStdout: (out) => {
+            let s = out.trim();
+            if (s !== "") root.cursorTheme = s;
+        }
+    }
     
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.color_scheme"]
@@ -395,6 +415,69 @@ Item {
                     }
                 }
 
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea74"
+                                color: cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Icon theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Select your preferred icon pack"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledComboBox {
+                        model: ["Papirus-Dark", "Papirus-Light", "Papirus", "Adwaita", "breeze", "breeze-dark"]
+                        currentText: root.iconTheme
+                        onActivated: (idx) => {
+                            let val = model[idx];
+                            root.iconTheme = val;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + val + "' > ~/.config/cupcake/.icon_theme && ~/.local/bin/set-theme"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uef3a"
+                                color: cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Cursor theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Select your preferred cursor style"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledComboBox {
+                        model: ["Bibata-Modern-Ice", "Bibata-Modern-Classic", "Bibata-Modern-Amber", "Adwaita", "breeze"]
+                        currentText: root.cursorTheme
+                        onActivated: (idx) => {
+                            let val = model[idx];
+                            root.cursorTheme = val;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + val + "' > ~/.config/cupcake/.cursor_theme && ~/.local/bin/set-theme"]);
+                        }
+                    }
+                }
 
             }
 
