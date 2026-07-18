@@ -35,7 +35,7 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 16
+        radius: 20
         border.width: 1
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
         clip: true
