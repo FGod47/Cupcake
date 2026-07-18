@@ -267,8 +267,7 @@ Item {
         
         RowLayout {
             anchors.fill: parent
-            anchors.margins: 16
-            spacing: 16
+            spacing: 0
             
             // RAIL
             Rectangle {
@@ -277,12 +276,17 @@ Item {
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 color: cBg
                 clip: true
-                radius: 12
-                border.width: 1
-                border.color: cBorderSoft
                 
                 HoverHandler {
                     id: sidebarHover
+                }
+                
+                Rectangle {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: 1
+                    color: cBorderSoft
                 }
                 
                 ColumnLayout {
