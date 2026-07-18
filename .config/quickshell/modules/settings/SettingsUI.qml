@@ -267,11 +267,26 @@ Item {
             spacing: 0
             
             // RAIL
-            Rectangle {
+            Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 212
-                color: cBg
                 clip: true
+                
+                // Main rounded background (provides left rounded corners)
+                Rectangle {
+                    anchors.fill: parent
+                    color: cBg
+                    radius: 20
+                }
+                
+                // Square off the right side
+                Rectangle {
+                    width: 20
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    color: cBg
+                }
                 
                 Rectangle {
                     anchors.right: parent.right
