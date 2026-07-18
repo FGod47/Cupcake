@@ -31,9 +31,11 @@ Item {
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.icon_theme"]
         running: true
-        onStdout: (out) => {
-            let s = out.trim();
-            if (s !== "") root.iconTheme = s;
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim();
+                if (s !== "") root.iconTheme = s;
+            }
         }
     }
 
@@ -41,9 +43,11 @@ Item {
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.cursor_theme"]
         running: true
-        onStdout: (out) => {
-            let s = out.trim();
-            if (s !== "") root.cursorTheme = s;
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim();
+                if (s !== "") root.cursorTheme = s;
+            }
         }
     }
     
@@ -438,7 +442,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         model: ["Papirus-Dark", "Papirus-Light", "Papirus", "Adwaita", "breeze", "breeze-dark"]
-                        currentText: root.iconTheme
+                        currentIndex: model.indexOf(root.iconTheme) !== -1 ? model.indexOf(root.iconTheme) : 0
                         onActivated: (idx) => {
                             let val = model[idx];
                             root.iconTheme = val;
@@ -470,7 +474,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         model: ["Bibata-Modern-Ice", "Bibata-Modern-Classic", "Bibata-Modern-Amber", "Adwaita", "breeze"]
-                        currentText: root.cursorTheme
+                        currentIndex: model.indexOf(root.cursorTheme) !== -1 ? model.indexOf(root.cursorTheme) : 0
                         onActivated: (idx) => {
                             let val = model[idx];
                             root.cursorTheme = val;
