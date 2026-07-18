@@ -509,7 +509,7 @@ Item {
                                 font.letterSpacing: -0.4
                             }
                             Text {
-                                text: "~/.config/cupcake › " + topBarRect.getPageData(root.currentIndex).title.toLowerCase()
+                                text: topBarRect.getPageData(root.currentIndex).path
                                 color: cTextFaint
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 11
