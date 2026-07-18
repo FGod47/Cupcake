@@ -41,7 +41,7 @@ Window {
         clip: true
         
         // Solid glassy background to prevent color banding (line blocks)
-        color: Qt.rgba(Theme.colBackground.r, Theme.colBackground.g, Theme.colBackground.b, settingsWindow.bgOpacity)
+        color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, settingsWindow.bgOpacity)
         
         SettingsUI {
             id: settingsUI

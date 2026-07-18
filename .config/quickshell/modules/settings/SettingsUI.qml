@@ -240,10 +240,7 @@ Item {
     Rectangle {
         id: mainWrapper
         anchors.fill: parent
-        color: cSurface
-        border.color: cBorderSoft
-        border.width: 1
-        radius: 20
+        color: "transparent"
         clip: true
         
         MouseArea {
