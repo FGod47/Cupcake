@@ -1271,7 +1271,7 @@ PanelWindow {
                 opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 0.0 : 1.0)
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Text { anchors.verticalCenter: parent.verticalCenter; text: "\uf303"; color: Theme.colOnPrimary; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: Theme.defaultFontSize + 4; font.weight: Theme.defaultFontWeight }
+                Text { anchors.verticalCenter: parent.verticalCenter; text: "\uf303"; color: Theme.colOnPrimary; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: Theme.defaultFontSize + 1; font.weight: Theme.defaultFontWeight }
                 Text { anchors.verticalCenter: parent.verticalCenter; text: "Arch"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
             }
 
