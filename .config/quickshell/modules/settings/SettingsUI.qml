@@ -547,6 +547,37 @@ Item {
                                 font.pixelSize: 11
                             }
                         }
+                        
+                        // Close button
+                        Item {
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.preferredWidth: 26
+                            Layout.preferredHeight: 26
+                            Layout.leftMargin: 4
+                            Rectangle {
+                                anchors.centerIn: parent
+                                width: 26
+                                height: 26
+                                radius: 13
+                                color: closeMa.containsMouse ? Qt.rgba(cText.r, cText.g, cText.b, 0.08) : Qt.rgba(cText.r, cText.g, cText.b, 0.04)
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uea76" // X icon
+                                    font.family: "tabler-icons"
+                                    color: closeMa.containsMouse ? cText : cTextFaint
+                                    font.pixelSize: 14
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                }
+                                MouseArea {
+                                    id: closeMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.requestClose()
+                                }
+                            }
+                        }
                     }
                 }
                 
