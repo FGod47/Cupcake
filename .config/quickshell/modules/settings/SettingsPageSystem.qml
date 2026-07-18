@@ -226,30 +226,7 @@ Item {
         Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.05) }
     }
 
-    component ToggleSwitch: Rectangle {
-        id: tog
-        property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-        Behavior on color { ColorAnimation { duration: 120 } }
-        Rectangle {
-            width: 18; height: 18
-            radius: 9
-            anchors.verticalCenter: parent.verticalCenter
-            x: tog.checked ? parent.width - width - 2 : 2
-            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
-        }
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
-        }
-    }
+
 
     component SegmentedControl: Rectangle {
         id: seg
@@ -662,7 +639,7 @@ Item {
                         RowLabel { label: "Network Manager applet" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.autostartNetworkManager
                         onToggled: (c) => { root.autostartNetworkManager = c; root.writeAutostartFlag("NETWORKMANAGER", c); }
                     }
@@ -674,7 +651,7 @@ Item {
                         RowLabel { label: "Bluetooth applet" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.autostartBluetooth
                         onToggled: (c) => { root.autostartBluetooth = c; root.writeAutostartFlag("BLUETOOTH", c); }
                     }
@@ -686,7 +663,7 @@ Item {
                         RowLabel { label: "Polkit authentication agent" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.autostartPolkit
                         onToggled: (c) => { root.autostartPolkit = c; root.writeAutostartFlag("POLKIT", c); }
                     }
@@ -698,7 +675,7 @@ Item {
                         RowLabel { label: "Clipboard history (cliphist)" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.autostartCliphist
                         onToggled: (c) => { root.autostartCliphist = c; root.writeAutostartFlag("CLIPHIST", c); }
                     }
@@ -711,7 +688,7 @@ Item {
                         RowLabel { label: "Notification daemon (mako)" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.autostartMako
                         onToggled: (c) => { root.autostartMako = c; root.writeAutostartFlag("MAKO", c); }
                     }
@@ -761,7 +738,7 @@ Item {
                         RowLabel { label: "Lock on suspend" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.lockOnSuspend
                         onToggled: (c) => {
                             root.lockOnSuspend = c;
@@ -956,7 +933,7 @@ Item {
                         RowLabel { label: "Check automatically every day" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: true
                         onToggled: (c) => {
                             Quickshell.execDetached(["bash", "-c", "echo '" + c + "' > ~/.config/cupcake/.autocheck_updates"]);
@@ -986,7 +963,7 @@ Item {
                         RowLabel { label: "Live-reload on config change" }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.liveReload
                         onToggled: (c) => {
                             root.liveReload = c;

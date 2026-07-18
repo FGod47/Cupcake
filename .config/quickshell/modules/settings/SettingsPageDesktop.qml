@@ -148,30 +148,7 @@ Item {
         }
     }
 
-    component ToggleSwitch: Rectangle {
-        id: tog
-        property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-        Behavior on color { ColorAnimation { duration: 120 } }
-        Rectangle {
-            width: 18; height: 18
-            radius: 9
-            anchors.verticalCenter: parent.verticalCenter
-            x: tog.checked ? parent.width - width - 2 : 2
-            color: tog.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
-        }
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
-        }
-    }
+
 
     // =========================================================================
     // Main layout
@@ -213,7 +190,7 @@ Item {
                         Text { text: "Widgets Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.widgetsEnabled
                         onToggled: (v) => { root.widgetsEnabled = v; }
                     }
@@ -241,7 +218,7 @@ Item {
                         Text { text: "Screen Corners Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.screenCornersEnabled
                         onToggled: (v) => { 
                             root.screenCornersEnabled = v; 
@@ -388,7 +365,7 @@ Item {
                         Text { text: "Borders Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.bordersEnabled
                         onToggled: (v) => { 
                             root.bordersEnabled = v; 
@@ -456,7 +433,7 @@ Item {
                         Text { text: "Shadows Enabled"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                     }
                     Item { Layout.fillWidth: true }
-                    ToggleSwitch {
+                    NToggle {
                         checked: root.shadowsEnabled
                         onToggled: (v) => { 
                             root.shadowsEnabled = v; 

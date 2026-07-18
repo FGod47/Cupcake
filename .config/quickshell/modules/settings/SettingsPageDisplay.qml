@@ -123,29 +123,7 @@ Item {
         opacity: 0.45
     }
 
-    component ToggleSwitch: Rectangle {
-        id: sw
-        property bool checked: false
-        signal toggled(bool checked)
-        width: 38; height: 22
-        radius: height / 2
-        color: checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-        border.width: checked ? 0 : 1
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
-        Behavior on color { ColorAnimation { duration: 120 } }
-        Rectangle {
-            width: 18; height: 18
-            radius: 9
-            anchors.verticalCenter: parent.verticalCenter
-            x: sw.checked ? parent.width - width - 2 : 2
-            color: sw.checked ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.8)
-            Behavior on x { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { sw.checked = !sw.checked; sw.toggled(sw.checked) }
-        }
-    }
+
 
     component SegmentedControl: Rectangle {
         id: seg

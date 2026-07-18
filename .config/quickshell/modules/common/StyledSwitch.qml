@@ -1,51 +1,59 @@
 import QtQuick
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import "../../theme"
 
 Switch {
     id: customSwitch
     property real scale: 0.8
-    implicitHeight: 32 * scale
-    implicitWidth: 52 * scale
+    implicitHeight: 26 * scale
+    implicitWidth: 46 * scale
 
-    // Custom track styling
     background: Rectangle {
         width: parent.width
         height: parent.height
-        radius: 9999
-        color: customSwitch.checked ? Theme.colPrimary : Theme.colSurfaceContainerHigh
-        border.width: 2 * customSwitch.scale
-        border.color: customSwitch.checked ? Theme.colPrimary : Theme.colOutline
+        radius: 13 * customSwitch.scale
+        
+        color: customSwitch.checked ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+        
+        gradient: customSwitch.checked ? onGradient : null
+        Gradient {
+            id: onGradient
+            GradientStop { position: 0.0; color: Theme.colPrimary }
+            GradientStop { position: 1.0; color: Qt.lighter(Theme.colPrimary, 1.15) }
+        }
 
-        Behavior on color { ColorAnimation { duration: 150 } }
-        Behavior on border.color { ColorAnimation { duration: 150 } }
+        border.width: 1 * customSwitch.scale
+        border.color: customSwitch.checked ? "transparent" : Qt.rgba(255/255, 255/255, 255/255, 0.04)
+
+        Behavior on color { ColorAnimation { duration: 280 } }
     }
 
-    // Custom thumb styling
     indicator: Rectangle {
-        width: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
-        height: (customSwitch.pressed || customSwitch.down) ? (28 * customSwitch.scale) : (24 * customSwitch.scale)
-        radius: 9999
-        color: customSwitch.checked ? Theme.colOnPrimary : Theme.colOutline
+        width: 20 * customSwitch.scale
+        height: 20 * customSwitch.scale
+        radius: 10 * customSwitch.scale
         
-        // Vertically center it
         y: (customSwitch.implicitHeight - height) / 2
         
-        // Calculate X based on state
-        // Gap of 4 * scale from the edge
         x: customSwitch.checked 
-            ? (customSwitch.implicitWidth - width - (4 * customSwitch.scale))
-            : (4 * customSwitch.scale)
+            ? (customSwitch.implicitWidth - width - (3 * customSwitch.scale))
+            : (3 * customSwitch.scale)
 
-        Behavior on x {
-            NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+        color: "white"
+        
+        scale: (customSwitch.pressed || customSwitch.down) ? 0.9 : 1.0
+        
+        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 200 } }
+
+        layer.enabled: true
+        layer.effect: DropShadow {
+            transparentBorder: true
+            color: Qt.rgba(0, 0, 0, 0.35)
+            radius: 4 * customSwitch.scale
+            samples: 9
+            verticalOffset: 2 * customSwitch.scale
         }
-        Behavior on width {
-            NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-        }
-        Behavior on height {
-            NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-        }
-        Behavior on color { ColorAnimation { duration: 150 } }
     }
 }
