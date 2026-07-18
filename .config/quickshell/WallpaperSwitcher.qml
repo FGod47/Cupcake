@@ -22,9 +22,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     color: "transparent"
     
-    mask: Region {
-        item: pill
-    }
+    // removed mask to allow Wayland to use the smooth alpha channel
 
     // ── Caelestia exact token values ─────────────────────────────────────
     readonly property int    wallW:       280          // wallpaperWidth
@@ -199,10 +197,16 @@ PanelWindow {
         Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
         color: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
-        topRightRadius: 36
-        bottomRightRadius: 36
-        topLeftRadius: 0
-        bottomLeftRadius: 0
+        radius: 36
+        
+        // Qt 6.6 doesn't support individual radii, so we use a square rect to cover the left rounding
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 36
+            color: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
+        }
 
         Item {
             id: contentWrapper
