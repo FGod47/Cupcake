@@ -357,7 +357,7 @@ Item {
             width: parent.width
             spacing: 20
 
-            Item { Layout.preferredHeight: 8 }
+
 
             // --- Mode section ---
 
