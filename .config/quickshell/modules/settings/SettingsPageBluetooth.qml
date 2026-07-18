@@ -229,7 +229,7 @@ Item {
 
                     NToggle {
                         checked: root.btRadioEnabled
-                        onToggled: {
+                        onToggled: (val) => {
                             if (Bluetooth.defaultAdapter) {
                                 Bluetooth.defaultAdapter.enabled = val;
                             }
