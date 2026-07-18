@@ -151,7 +151,7 @@ Item {
 
         ColumnLayout {
             width: parent.width
-            spacing: 24
+            spacing: 20
 
             // ── Cupcake (Dotfiles) Update Hero ──────────────────────────
             Rectangle {

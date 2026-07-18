@@ -179,16 +179,13 @@ Item {
     ScrollView {
         id: scrollView
         anchors.fill: parent
-        anchors.topMargin: 0
-        anchors.bottomMargin: 30
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
+        anchors.bottomMargin: 28
         contentWidth: availableWidth
         clip: true
 
         ColumnLayout {
             width: parent.width
-            spacing: 24
+            spacing: 20
 
             // --- Widgets section ---
             SettingsCard {

@@ -182,9 +182,7 @@ Item {
         RowLayout {
             id: innerLayout
             anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
+                    anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
         }

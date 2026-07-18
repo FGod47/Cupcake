@@ -205,16 +205,14 @@ Item {
 
     ScrollView {
         anchors.fill: parent
-        anchors.topMargin: 0
-        anchors.bottomMargin: 30
-        anchors.leftMargin: 0
+        anchors.bottomMargin: 28
         anchors.rightMargin: 24
         contentWidth: availableWidth
         clip: true
 
         ColumnLayout {
             width: parent.width
-            spacing: 24
+            spacing: 20
 
             SettingsCard {
                 SectionLabel { text: "Bluetooth" }
