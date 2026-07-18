@@ -374,27 +374,8 @@ Item {
             color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
             opacity: 0.6
         }
-    } }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-            cursorShape: parent.hoverable ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onContainsMouseChanged: {
-                if (parent.hoverable)
-                    parent.color = containsMouse ? Qt.rgba(1,1,1,0.03) : "transparent"
-            }
-        }
-
-        RowLayout {
-            id: innerRow
-            anchors.fill: parent
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
     }
+
 
     component IconChip: Rectangle {
         property string glyph: ""
