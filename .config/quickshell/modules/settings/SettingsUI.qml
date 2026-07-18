@@ -405,6 +405,7 @@ Item {
                     GroupLabel { label: "Machine" }
                     RailItem { icon: "\uea97"; label: "Displays"; pageIndex: 18 }
                     RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
+                    RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }
                     RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
                     RailItem { icon: "\ueba8"; label: "Power"; pageIndex: 13 }
                     
@@ -576,6 +577,7 @@ Item {
                                     case 11: return "SettingsPageUpdates.qml";
                                     case 17: return "SettingsPageNetwork.qml";
                                     case 18: return "SettingsPageDisplay.qml";
+                                    case 22: return "SettingsPageBluetooth.qml";
                                     case 23: return "SettingsPageHotspot.qml";
                                     default: return "";
                                 }
