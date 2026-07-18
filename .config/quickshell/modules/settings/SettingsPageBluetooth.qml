@@ -31,33 +31,6 @@ Item {
     // Reusable inline components
     // =====================================================================
 
-    component SettingsCard: Rectangle {
-        default property alias content: innerCol.data
-        Layout.fillWidth: true
-        Layout.leftMargin: 20
-        Layout.rightMargin: 20
-        implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
-        radius: 12
-        clip: true
-        ColumnLayout {
-            id: innerCol
-            anchors.fill: parent
-            anchors.margins: 20
-            spacing: 8
-        }
-    }
-
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
-
 
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
