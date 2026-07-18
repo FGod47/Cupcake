@@ -435,6 +435,7 @@ Item {
                     }
                 } 
                 
+                Item { Layout.preferredHeight: 8 }
 
                 }
 
