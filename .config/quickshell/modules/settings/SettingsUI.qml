@@ -519,23 +519,7 @@ Item {
                         
                         Item { Layout.fillWidth: true }
                         
-                        Rectangle {
-                            Layout.alignment: Qt.AlignVCenter
-                            color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12)
-                            border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.25)
-                            border.width: 1
-                            radius: 20
-                            height: 22
-                            width: badgeText.implicitWidth + 20
-                            Text {
-                                id: badgeText
-                                anchors.centerIn: parent
-                                text: "Liquid · Tonal Spot"
-                                color: cAccent
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 11
-                            }
-                        }
+
                         
                         // Close button
                         Item {
