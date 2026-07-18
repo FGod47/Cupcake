@@ -290,7 +290,10 @@ Item {
                 }
                 
                 ColumnLayout {
-                    anchors.fill: parent
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    width: 212
                     anchors.leftMargin: 12
                     anchors.rightMargin: 12
                     anchors.topMargin: 20
