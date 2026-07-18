@@ -286,17 +286,18 @@ Item {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     width: 212
+                    anchors.topMargin: 20
+                    anchors.bottomMargin: 20
                     anchors.leftMargin: 12
                     anchors.rightMargin: 12
-                    anchors.topMargin: 20
-                    anchors.bottomMargin: 0
                     spacing: 0
                     
                     // BRAND
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.bottomMargin: 16
-                        Layout.leftMargin: 0
+                        Layout.bottomMargin: 22
+                        Layout.topMargin: 6
+                        Layout.leftMargin: 8
                         Layout.rightMargin: 8
                         spacing: 10
                         
@@ -347,6 +348,7 @@ Item {
                         Layout.topMargin: 14
                         Layout.bottomMargin: 6
                         Layout.leftMargin: 10
+                        Layout.rightMargin: 10
                     }
                     
                     component RailItem: Rectangle {
@@ -356,14 +358,14 @@ Item {
                         property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3].includes(root.currentIndex))
                         
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 34
+                        Layout.preferredHeight: 36
                         radius: 10
                         color: isActive ? cAccent : (ma.containsMouse ? cSurfaceHover : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 6
+                            anchors.leftMargin: 10
                             anchors.rightMargin: 10
                             spacing: 10
                             
@@ -427,7 +429,7 @@ Item {
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 2
+                            anchors.leftMargin: 10
                             anchors.rightMargin: 10
                             spacing: 9
                             
