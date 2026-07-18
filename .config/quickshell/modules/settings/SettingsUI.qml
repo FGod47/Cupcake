@@ -274,6 +274,7 @@ Item {
                 
                 // Main rounded background (provides left rounded corners)
                 Rectangle {
+                    z: -1
                     anchors.fill: parent
                     color: cBg
                     radius: 20
@@ -281,6 +282,7 @@ Item {
                 
                 // Square off the right side
                 Rectangle {
+                    z: -1
                     width: 20
                     anchors.right: parent.right
                     anchors.top: parent.top
