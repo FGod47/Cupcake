@@ -165,6 +165,7 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.topMargin: 4
+                    Layout.bottomMargin: 16
                     spacing: 20
 
                     Rectangle {
