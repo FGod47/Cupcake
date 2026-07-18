@@ -207,6 +207,8 @@ Item {
         anchors.fill: parent
         anchors.bottomMargin: 28
         anchors.rightMargin: 24
+        leftPadding: 32
+        rightPadding: 32
         contentWidth: availableWidth
         clip: true
 

@@ -177,6 +177,8 @@ Item {
     ScrollView {
         anchors.fill: parent
         anchors.bottomMargin: 28
+        leftPadding: 32
+        rightPadding: 32
         contentWidth: availableWidth
         clip: true
 

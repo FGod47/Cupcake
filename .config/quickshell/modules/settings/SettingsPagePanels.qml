@@ -34,7 +34,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "effects"
                     
@@ -109,7 +111,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "control-center"
                     
@@ -210,7 +214,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "launcher"
                     
@@ -324,7 +330,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "clipboard"
                     
@@ -373,7 +381,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "wallpaper"
                     
@@ -422,7 +432,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "session-panel"
                     

@@ -32,7 +32,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "calendar"
                     
@@ -81,7 +83,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "audio"
                     
@@ -169,7 +173,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "brightness"
                     
@@ -205,7 +211,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "media"
                     

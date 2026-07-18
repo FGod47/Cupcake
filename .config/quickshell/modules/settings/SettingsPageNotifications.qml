@@ -31,7 +31,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "general"
                     
@@ -106,7 +108,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "toasts"
                     
@@ -220,7 +224,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "filtering"
                     

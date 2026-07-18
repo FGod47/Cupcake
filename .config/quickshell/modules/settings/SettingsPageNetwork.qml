@@ -332,6 +332,8 @@ Item {
 
     ScrollView {
         anchors.fill: parent
+        leftPadding: 32
+        rightPadding: 32
         contentWidth: availableWidth
         clip: true
         ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }

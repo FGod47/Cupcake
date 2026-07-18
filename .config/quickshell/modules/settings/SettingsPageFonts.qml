@@ -216,6 +216,8 @@ Item {
     ScrollView {
         id: scrollView
         anchors.fill: parent
+        leftPadding: 32
+        rightPadding: 32
         contentWidth: availableWidth
         clip: true
 

@@ -32,7 +32,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "general"
                     
@@ -133,7 +135,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "clipboard"
                     
@@ -221,7 +225,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "screenshot"
                     
@@ -335,7 +341,9 @@ Item {
 
                 ScrollView {
                     anchors.fill: parent
-                    contentWidth: availableWidth
+                    leftPadding: 32
+        rightPadding: 32
+        contentWidth: availableWidth
                     clip: true
                     visible: root.activeTab === "keybinds"
                     
