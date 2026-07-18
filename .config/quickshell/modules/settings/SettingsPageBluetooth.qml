@@ -10,7 +10,7 @@ Item {
     id: root
 
     property bool btExpanded: true
-    property bool btRadioEnabled: Bluetooth.defaultAdapter?.enabled ?? false
+    property bool btRadioEnabled: Bluetooth.defaultAdapter ? Bluetooth.defaultAdapter.enabled : false
 
     function getDeviceIcon(device) {
         let iconName = device.icon || "";
@@ -129,7 +129,7 @@ Item {
     // Background data
     // =====================================================================
 
-    property list<var> pairedDevices: {
+    property var pairedDevices: {
         let arr = Bluetooth.devices.values.filter(d => d.paired);
         arr.sort((a, b) => {
             if (a.connected !== b.connected) return a.connected ? -1 : 1;
@@ -138,7 +138,7 @@ Item {
         return arr;
     }
     
-    property list<var> availableDevices: {
+    property var availableDevices: {
         let arr = Bluetooth.devices.values.filter(d => !d.paired && d.name);
         arr.sort((a, b) => {
             const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/;
@@ -197,14 +197,14 @@ Item {
                             id: scanIcon
                             anchors.centerIn: parent
                             text: "\ueb13"
-                            color: Bluetooth.defaultAdapter?.discovering ? Theme.colPrimary : Theme.colOnSurfaceVariant
+                            color: (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.discovering) ? Theme.colPrimary : Theme.colOnSurfaceVariant
                             font.family: "tabler-icons"; font.pixelSize: 15
                             
                             RotationAnimation on rotation {
                                 loops: Animation.Infinite
                                 from: 0; to: 360
                                 duration: 1000
-                                running: Bluetooth.defaultAdapter?.discovering ?? false
+                                running: Bluetooth.defaultAdapter ? Bluetooth.defaultAdapter.discovering : false
                             }
                         }
                         MouseArea { 
