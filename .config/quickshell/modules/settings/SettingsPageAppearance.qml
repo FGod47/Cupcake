@@ -1045,339 +1045,44 @@ Item {
 
             // --- Fonts section ---
             SettingsCard {
-                sectionTitle: "Shell fonts"
+                SectionLabel { text: "Fonts" }
 
                 SettingsRow {
+                    hoverable: true
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: ""; color: cAccent; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Main font used throughout the interface"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Font settings"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Configure shell and application fonts"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: defaultFontCombo
-                        Layout.preferredWidth: 160
-                        model: ["Inter"]
-                        currentIndex: model.indexOf(Theme.defaultFontFamily) !== -1 ? model.indexOf(Theme.defaultFontFamily) : 0
-                        onActivated: (index) => {
-                            let font = model[index];
-                            Theme.defaultFontFamily = font;
-                            bashProcess.command = ["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.font_default"]; bashProcess.running = true;
-                        }
-                        
-                        Process {
-                            command: ["bash", "-c", "fc-list : family | cut -d, -f1 | sort | uniq"]
-                            running: true
-                            stdout: StdioCollector {
-                                onStreamFinished: {
-                                    if (text.trim() !== "") {
-                                        let fonts = text.trim().split("\n");
-                                        defaultFontCombo.model = fonts;
-                                        defaultFontCombo.currentIndex = defaultFontCombo.model.indexOf(Theme.defaultFontFamily) !== -1 ? defaultFontCombo.model.indexOf(Theme.defaultFontFamily) : 0;
-                                    }
-                                }
+                    
+                    Text {
+                        text: ""
+                        color: cTextDim
+                        font.family: "tabler-icons"
+                        font.pixelSize: 18
+                        opacity: 0.6
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            let p = root;
+                            while (p && !p.hasOwnProperty("currentIndex")) p = p.parent;
+                            if (p && p.currentIndex !== undefined) {
+                                p.currentIndex = 2; // Map to 2
                             }
                         }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Font used for numbers and stats display"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: monoFontCombo
-                        Layout.preferredWidth: 160
-                        model: ["JetBrainsMono Nerd Font Propo"]
-                        currentIndex: model.indexOf(Theme.monoFontFamily) !== -1 ? model.indexOf(Theme.monoFontFamily) : 0
-                        onActivated: (index) => {
-                            let font = model[index];
-                            Theme.monoFontFamily = font;
-                            bashProcess.command = ["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.font_mono"]; bashProcess.running = true;
-                        }
-                        
-                        Process {
-                            command: ["bash", "-c", "fc-list : spacing=100:family | cut -d, -f1 | sort | uniq"]
-                            running: true
-                            stdout: StdioCollector {
-                                onStreamFinished: {
-                                    if (text.trim() !== "") {
-                                        let fonts = text.trim().split("\n");
-                                        monoFontCombo.model = fonts;
-                                        monoFontCombo.currentIndex = monoFontCombo.model.indexOf(Theme.monoFontFamily) !== -1 ? monoFontCombo.model.indexOf(Theme.monoFontFamily) : 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Change the boldness of the interface text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: fontWeightCombo
-                        Layout.preferredWidth: 160
-                        model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
-                        Component.onCompleted: {
-                            if (Theme.defaultFontWeight <= 300) currentIndex = 0;
-                            else if (Theme.defaultFontWeight <= 400) currentIndex = 1;
-                            else if (Theme.defaultFontWeight <= 500) currentIndex = 2;
-                            else if (Theme.defaultFontWeight <= 600) currentIndex = 3;
-                            else if (Theme.defaultFontWeight <= 700) currentIndex = 4;
-                            else currentIndex = 5;
-                        }
-                        onActivated: (index) => {
-                            let w = 500;
-                            if (index === 0) w = 300;
-                            else if (index === 1) w = 400;
-                            else if (index === 2) w = 500;
-                            else if (index === 3) w = 600;
-                            else if (index === 4) w = 700;
-                            else if (index === 5) w = 800;
-                            Theme.defaultFontWeight = w;
-                            bashProcess.command = ["bash", "-c", "echo '" + w + "' > ~/.config/cupcake/.font_weight"]; bashProcess.running = true;
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Change the size of standard text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        Rectangle { width: 20; height: 20; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb13"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; } }
-                        }
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 8; to: 32; stepSize: 1
-                            value: Theme.defaultFontSize
-                            onValueChanged: { Theme.defaultFontSize = value; }
-                            onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; }
-                        }
-                        Text { text: Theme.defaultFontSize + "px"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Change the size of monospaced text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        Rectangle { width: 20; height: 20; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb13"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; } }
-                        }
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 50; to: 200; stepSize: 5
-                            value: Theme.monoFontScale * 100
-                            onValueChanged: { Theme.monoFontScale = value / 100.0; }
-                            onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; }
-                        }
-                        Text { text: Math.round(Theme.monoFontScale * 100) + "%"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.defaultFontWeight + 200); Layout.preferredWidth: 32 }
-                    }
-                }
-            } // end Shell fonts card
-
-            SettingsCard {
-                sectionTitle: "Application fonts"
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "App default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Main font for GTK/Qt applications"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: appDefaultFontCombo
-                        Layout.preferredWidth: 160
-                        model: ["Inter"]
-                        currentIndex: model.indexOf(Theme.appFontFamily) !== -1 ? model.indexOf(Theme.appFontFamily) : 0
-                        onActivated: (index) => {
-                            let font = model[index];
-                            Theme.appFontFamily = font;
-                            bashProcess.command = ["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.app_font_default && ~/.local/bin/apply-fonts"]; bashProcess.running = true;
-                        }
-                        
-                        Process {
-                            command: ["bash", "-c", "fc-list : family | cut -d, -f1 | sort | uniq"]
-                            running: true
-                            stdout: StdioCollector {
-                                onStreamFinished: {
-                                    if (text.trim() !== "") {
-                                        let fonts = text.trim().split("\n");
-                                        appDefaultFontCombo.model = fonts;
-                                        appDefaultFontCombo.currentIndex = appDefaultFontCombo.model.indexOf(Theme.appFontFamily) !== -1 ? appDefaultFontCombo.model.indexOf(Theme.appFontFamily) : 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "App monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Monospaced font for GTK/Qt applications"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: appMonoFontCombo
-                        Layout.preferredWidth: 160
-                        model: ["JetBrainsMono Nerd Font Propo"]
-                        currentIndex: model.indexOf(Theme.appMonoFamily) !== -1 ? model.indexOf(Theme.appMonoFamily) : 0
-                        onActivated: (index) => {
-                            let font = model[index];
-                            Theme.appMonoFamily = font;
-                            bashProcess.command = ["bash", "-c", "echo '" + font + "' > ~/.config/cupcake/.app_font_mono && ~/.local/bin/apply-fonts"]; bashProcess.running = true;
-                        }
-                        
-                        Process {
-                            command: ["bash", "-c", "fc-list : spacing=100:family | cut -d, -f1 | sort | uniq"]
-                            running: true
-                            stdout: StdioCollector {
-                                onStreamFinished: {
-                                    if (text.trim() !== "") {
-                                        let fonts = text.trim().split("\n");
-                                        appMonoFontCombo.model = fonts;
-                                        appMonoFontCombo.currentIndex = appMonoFontCombo.model.indexOf(Theme.appMonoFamily) !== -1 ? appMonoFontCombo.model.indexOf(Theme.appMonoFamily) : 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "App font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Boldness of GTK/Qt application text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox { blurSource: scrollView
-                        id: appFontWeightCombo
-                        Layout.preferredWidth: 160
-                        model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
-                        Component.onCompleted: {
-                            if (Theme.appFontWeight <= 300) currentIndex = 0;
-                            else if (Theme.appFontWeight <= 400) currentIndex = 1;
-                            else if (Theme.appFontWeight <= 500) currentIndex = 2;
-                            else if (Theme.appFontWeight <= 600) currentIndex = 3;
-                            else if (Theme.appFontWeight <= 700) currentIndex = 4;
-                            else currentIndex = 5;
-                        }
-                        onActivated: (index) => {
-                            let w = 500;
-                            if (index === 0) w = 300;
-                            else if (index === 1) w = 400;
-                            else if (index === 2) w = 500;
-                            else if (index === 3) w = 600;
-                            else if (index === 4) w = 700;
-                            else if (index === 5) w = 800;
-                            Theme.appFontWeight = w;
-                            bashProcess.command = ["bash", "-c", "echo '" + w + "' > ~/.config/cupcake/.app_font_weight && ~/.local/bin/apply-fonts"]; bashProcess.running = true;
-                        }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "App default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Size of standard GTK/Qt application text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        Rectangle { width: 20; height: 20; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb13"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
-                        }
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 8; to: 32; stepSize: 1
-                            value: Theme.appFontSize
-                            onValueChanged: { Theme.appFontSize = value; }
-                            onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]); }
-                        }
-                        Text { text: Theme.appFontSize + "px"; color: cTextDim; font.family: Theme.appFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.appFontWeight + 200); Layout.preferredWidth: 32 }
-                    }
-                }
-
-                SettingsRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "App monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Size of monospaced GTK/Qt application text"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        Rectangle { width: 20; height: 20; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb13"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appMonoScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
-                        }
-                        StyledSlider {
-                            Layout.preferredWidth: 160
-                            from: 50; to: 200; stepSize: 5
-                            value: Theme.appMonoScale * 100
-                            onValueChanged: { Theme.appMonoScale = value / 100.0; }
-                            onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; }
-                        }
-                        Text { text: Math.round(Theme.appMonoScale * 100) + "%"; color: cTextDim; font.family: Theme.appFontFamily; font.pixelSize: 12; font.weight: Math.min(900, Theme.appFontWeight + 200); Layout.preferredWidth: 32 }
                     }
                 }
             }

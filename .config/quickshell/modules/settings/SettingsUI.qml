@@ -464,6 +464,7 @@ Item {
                         switch(index) {
                             case 0: return { title: "Appearance", path: "settings › appearance › general" };
                             case 1: return { title: "Appearance", path: "settings › appearance › wallpaper" };
+                            case 2: return { title: "Appearance", path: "settings › appearance › fonts" };
                             case 3: return { title: "Appearance", path: "settings › appearance › desktop" };
                             case 4: return { title: "Appearance", path: "settings › appearance › dock" };
                             case 6: return { title: "Notifications", path: "settings › notifications" };
@@ -603,6 +604,7 @@ Item {
                                 source: {
                                     switch (root.currentIndex) {
                                         case 1: return "SettingsPageAppearance.qml";
+                                        case 2: return "SettingsPageFonts.qml";
                                         case 4: return "SettingsPageDock.qml";
                                         case 11: return "SettingsPageUpdates.qml";
                                         case 17: return "SettingsPageNetwork.qml";
