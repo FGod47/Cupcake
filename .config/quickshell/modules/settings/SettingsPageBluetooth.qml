@@ -32,6 +32,14 @@ Item {
     // =====================================================================
 
 
+    component SectionLabel: Text {
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.4
+        color: Theme.colOnSurface
+        opacity: 0.45
+    }
+
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
         Layout.fillWidth: true
@@ -54,7 +62,7 @@ Item {
     Component {
         id: deviceDelegate
         SettingsRow {
-            required property BluetoothDevice modelData
+            required property var modelData
             
             RowLayout {
                 spacing: 12
@@ -130,6 +138,7 @@ Item {
     // =====================================================================
 
     property var pairedDevices: {
+        if (!Bluetooth.devices) return [];
         let arr = Bluetooth.devices.values.filter(d => d.paired);
         arr.sort((a, b) => {
             if (a.connected !== b.connected) return a.connected ? -1 : 1;
@@ -139,6 +148,7 @@ Item {
     }
     
     property var availableDevices: {
+        if (!Bluetooth.devices) return [];
         let arr = Bluetooth.devices.values.filter(d => !d.paired && d.name);
         arr.sort((a, b) => {
             const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/;
