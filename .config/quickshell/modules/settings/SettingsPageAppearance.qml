@@ -62,6 +62,36 @@ Item {
     property real wallpaperOpacity: 0.80
     property real settingsOpacity: 0.80
 
+    // Dock state
+    property bool dockAutoHide: false
+    property bool dockReserveSpace: true
+    property bool dockShowDots: true
+    property bool dockMagnification: false
+    property real dockMagnificationScale: 1.5
+    property string dockLauncherPosition: "Start"
+
+    Process {
+        command: ["bash", "-c",
+            "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---';"
+            + "cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---';"
+            + "cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---';"
+            + "cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---';"
+            + "cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---';"
+            + "cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let parts = text.split('---');
+                if (parts[0]) root.dockAutoHide      = (parts[0].trim() === "true");
+                if (parts[1]) root.dockReserveSpace  = (parts[1].trim() === "true");
+                if (parts[2]) root.dockShowDots      = (parts[2].trim() === "true");
+                if (parts[3]) root.dockMagnification = (parts[3].trim() === "true");
+                if (parts[4] && parts[4].trim() !== "") root.dockMagnificationScale = parseFloat(parts[4].trim());
+                if (parts[5] && parts[5].trim() !== "") root.dockLauncherPosition = parts[5].trim();
+            }
+        }
+    }
+
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
         running: true
@@ -1379,6 +1409,177 @@ Item {
                     }
                 }
             }
+
+            // --- Dock section ---
+            SettingsCard {
+                SectionLabel { text: "Dock" }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uecf0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Auto hide"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Hide until cursor reaches screen edge"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.dockAutoHide
+                        onToggled: (c) => {
+                            root.dockAutoHide = c;
+                            Quickshell.execDetached(["bash", "-c",
+                                "echo '" + c + "' > ~/.config/cupcake/.dock_autohide && "
+                                + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setAutoHide " + c]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb2c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Reserve space"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Prevent windows from overlapping the dock"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.dockReserveSpace
+                        onToggled: (c) => {
+                            root.dockReserveSpace = c;
+                            Quickshell.execDetached(["bash", "-c",
+                                "echo '" + c + "' > ~/.config/cupcake/.dock_reserve_space && "
+                                + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setReserveSpace " + c]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uefb1"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Show dots"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Dot indicators for running apps"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.dockShowDots
+                        onToggled: (c) => {
+                            root.dockShowDots = c;
+                            Quickshell.execDetached(["bash", "-c",
+                                "echo '" + c + "' > ~/.config/cupcake/.dock_show_dots && "
+                                + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setShowDots " + c]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb56"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Pop up on hover"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Magnify dock icons when hovering"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    ToggleSwitch {
+                        checked: root.dockMagnification
+                        onToggled: (c) => {
+                            root.dockMagnification = c;
+                            Quickshell.execDetached(["bash", "-c",
+                                "echo '" + c + "' > ~/.config/cupcake/.dock_magnification_enabled && "
+                                + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setMagnificationEnabled " + c]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\uedba"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Launcher position"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Place the launcher button at start or end"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Start", "End"]
+                        current: root.dockLauncherPosition
+                        onSelected: (v) => {
+                            root.dockLauncherPosition = v;
+                            Quickshell.execDetached(["bash", "-c",
+                                "echo '" + v + "' > ~/.config/cupcake/.dock_launcher_position && "
+                                + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setLauncherPosition " + v]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: cBgElevated
+                            Text { anchors.centerIn: parent; text: "\ueb51"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Dock opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Transparency of the dock background"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        StyledSlider {
+                            Layout.preferredWidth: 160
+                            from: 0; to: 1; stepSize: 0.05
+                            value: root.dockOpacity
+                            onValueChanged: root.dockOpacity = value
+                            onPressedChanged: {
+                                if (!pressed) Quickshell.execDetached(["bash", "-c",
+                                    "echo '" + value.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && "
+                                    + "quickshell ipc -p ~/.config/quickshell/shell.qml call dock setOpacity " + value.toFixed(2)]);
+                            }
+                        }
+                        Text { text: Math.round(root.dockOpacity * 100) + "%"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 12; Layout.preferredWidth: 32 }
+                    }
+                }
+
+            }
+
+            Item { Layout.preferredHeight: 8 }
         }
     }
 }
