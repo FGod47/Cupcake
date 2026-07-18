@@ -305,10 +305,7 @@ Item {
                         
                         Rectangle {
                             width: 30; height: 30; radius: 9
-                            gradient: Gradient {
-                                GradientStop { position: 0.0; color: cAccent }
-                                GradientStop { position: 1.0; color: "#efe6ff" }
-                            }
+                            color: cAccent
                             Text {
                                 anchors.centerIn: parent
                                 text: "C"
