@@ -412,7 +412,7 @@ Item {
         property string glyph: ""
         property bool accented: false
         width: 32; height: 32; radius: 10
-        color: cBgElevated
+        color: cBg
         Text {
             anchors.centerIn: parent
             text: parent.glyph
@@ -425,7 +425,7 @@ Item {
     component RowLabel: ColumnLayout {
         property string label: ""
         property string desc: ""
-        spacing: 2
+        spacing: 1
         Layout.fillWidth: true
         Text {
             text: parent.label
@@ -457,7 +457,7 @@ Item {
             id: chipText
             anchors.centerIn: parent
             width: parent.width - 20
-            text: parent.parent.text
+            text: parent.text
             font.family: Theme.monoFontFamily
             font.pixelSize: 11
             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
@@ -538,13 +538,13 @@ Item {
                         radius: 20
                         color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.14)
                         implicitWidth: upToDateText.implicitWidth + 18
-                        implicitHeight: 20
+                        implicitHeight: 22
                         Text {
                             id: upToDateText
                             anchors.centerIn: parent
                             text: "up to date"
                             font.family: Theme.monoFontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: 11
                             font.weight: Font.DemiBold
                             color: cAccent
                         }
@@ -899,7 +899,7 @@ Item {
                             Text {
                                 text: modelData.name
                                 font.family: Theme.monoFontFamily
-                                font.pixelSize: 11
+                                font.pixelSize: 12
                                 color: cText
                                 Layout.fillWidth: true
                                 topPadding: 7
@@ -912,13 +912,13 @@ Item {
                                 Text {
                                     text: modelData.old + " →"
                                     font.family: Theme.monoFontFamily
-                                    font.pixelSize: 11
+                                    font.pixelSize: 12
                                     color: cTextFaint
                                 }
                                 Text {
                                     text: modelData.ver
                                     font.family: Theme.monoFontFamily
-                                    font.pixelSize: 11
+                                    font.pixelSize: 12
                                     color: cAccent
                                 }
                             }
