@@ -146,17 +146,11 @@ PanelWindow {
             Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            radius: 28
-            
-            // Qt 6.6 doesn't support individual radii, so we use a square rect to cover the bottom rounding
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 28
-                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            }
-
+            topLeftRadius: 28
+            topRightRadius: 28
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
+            // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
