@@ -193,3 +193,112 @@ if [ ! -f "$HOME/.local/share/fonts/tabler-icons.ttf" ]; then
 else
   echo -e "${GREEN}[SKIP]${RESET} Tabler Icons font already installed"
 fi
+
+# ──────────────── Initialize Cupcake State Files ────────────────
+# These dotfiles are read by QML and shell scripts at runtime.
+# Without them, quickshell throws FILE NOT FOUND warnings and
+# settings pages fail to load their saved state on first boot.
+echo -e "${YELLOW}[INFO]${RESET} Initializing Cupcake state files..."
+CUPCAKE_STATE="$HOME/.config/cupcake"
+
+_write_default() {
+  local file="$CUPCAKE_STATE/$1"
+  local value="$2"
+  if [ ! -f "$file" ]; then
+    echo "$value" > "$file"
+    echo -e "${GREEN}[INIT]${RESET} $1 = $value"
+  fi
+}
+
+_write_default ".color_mode"                    "dark"
+_write_default ".color_scheme"                  "catppuccin-frappe"
+_write_default ".borders"                       "true"
+_write_default ".shadows"                       "false"
+_write_default ".transparency"                  "true"
+_write_default ".gaps_in"                       "4"
+_write_default ".gaps_out"                      "8"
+_write_default ".bar_monitors"                  "all"
+_write_default ".dock_monitors"                 "all"
+_write_default ".dock_autohide"                 "false"
+_write_default ".dock_reserve_space"            "true"
+_write_default ".dock_shape"                    "pill"
+_write_default ".dock_show_dots"                "true"
+_write_default ".dock_magnification_enabled"    "false"
+_write_default ".dock_magnification_scale"      "1.5"
+_write_default ".dock_launcher_position"        "left"
+_write_default ".dock_pinned_apps_enabled"      "true"
+_write_default ".dock_pinned_apps"              "[]"
+
+# Write default transparency values file (key=value format expected by scripts)
+if [ ! -f "$CUPCAKE_STATE/.transparency_values" ]; then
+  printf 'OPACITY=0.90\nBLUR_SIZE=6\nBLUR_PASSES=3\n' > "$CUPCAKE_STATE/.transparency_values"
+  echo -e "${GREEN}[INIT]${RESET} .transparency_values"
+fi
+
+echo -e "${GREEN}[DONE]${RESET} Cupcake state files initialized."
+
+# ──────────────── PATH: Add ~/.local/bin ────────────────
+# Ensure ~/.local/bin is on PATH so all Cupcake scripts are accessible.
+ZSHRC="$HOME/.zshrc"
+BASHRC="$HOME/.bashrc"
+LOCAL_BIN_EXPORT='export PATH="$HOME/.local/bin:$PATH"'
+LOCAL_BIN_COMMENT='# ─── Cupcake local bin ────────────────────────────────'
+
+for rcfile in "$ZSHRC" "$BASHRC"; do
+  if [ -f "$rcfile" ] && ! grep -q '.local/bin' "$rcfile"; then
+    printf '\n%s\n%s\n' "$LOCAL_BIN_COMMENT" "$LOCAL_BIN_EXPORT" >> "$rcfile"
+    echo -e "${GREEN}[DONE]${RESET} Added ~/.local/bin to PATH in $(basename $rcfile)"
+  fi
+done
+
+# ──────────────── qt5ct Config ────────────────
+# qt5ct is needed for proper Qt app theming. Without this config
+# Qt apps fall back to an unstyled look.
+QT5CT_DIR="$HOME/.config/qt5ct"
+QT5CT_CONF="$QT5CT_DIR/qt5ct.conf"
+if [ ! -f "$QT5CT_CONF" ]; then
+  mkdir -p "$QT5CT_DIR"
+  cat > "$QT5CT_CONF" << 'QTEOF'
+[Appearance]
+color_scheme_path=
+custom_palette=false
+icon_theme=Papirus-Dark
+standard_dialogs=default
+style=gtk2
+
+[Fonts]
+fixed=@Variant(\0\0\0@\0\0\0\x12JetBrains Mono\0\0\0\0\0\0\0\0\0\xd0\0\0\0\n\0\0\0\0\0\0\0\0\0\0\0)
+general=@Variant(\0\0\0@\0\0\0\x18Adwaita Sans\0\0\0\0\0\0\0\0\0\xd6\0\0\0\n\0\0\0\0\0\0\0\0\0\0\0)
+
+[Interface]
+activate_item_on_single_click=1
+buttonbox_layout=0
+cursor_flash_time=1000
+dialog_buttons_have_icons=1
+double_click_interval=400
+gui_effects=@Variant(\0\0\0\x7f\0\0\0\x12AnimateComboBox)
+keyboard_scheme=2
+menus_have_icons=true
+show_shortcuts_in_context_menus=true
+stylesheets=@Variant(\0\0\0\x7f\0\0\0\0)
+toolbutton_style=4
+underline_shortcut=1
+wheel_scroll_lines=3
+QTEOF
+  echo -e "${GREEN}[INSTALL]${RESET} qt5ct.conf written"
+fi
+
+# ──────────────── Copy Papirus Icons Locally ────────────────
+# dynamic-icons and some scripts need Papirus-Dark in ~/.local/share/icons.
+# Without this, icon refresh on theme change fails silently.
+PAPIRUS_SRC="/usr/share/icons/Papirus-Dark"
+PAPIRUS_DEST="$HOME/.local/share/icons/Papirus-Dark"
+if [ -d "$PAPIRUS_SRC" ] && [ ! -d "$PAPIRUS_DEST" ]; then
+  echo -e "${YELLOW}[INFO]${RESET} Copying Papirus-Dark icons to ~/.local/share/icons..."
+  mkdir -p "$HOME/.local/share/icons"
+  cp -r "$PAPIRUS_SRC" "$PAPIRUS_DEST"
+  echo -e "${GREEN}[DONE]${RESET} Papirus-Dark icons copied locally"
+fi
+
+echo -e "\n${GREEN}[SUCCESS]${RESET} Cupcake configuration installed successfully!\n"
+echo -e "${YELLOW}[NOTE]${RESET} Please log out and log back in (or reboot) for all changes to take effect.\n"
