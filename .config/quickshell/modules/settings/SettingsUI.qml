@@ -267,7 +267,8 @@ Item {
         
         RowLayout {
             anchors.fill: parent
-            spacing: 0
+            anchors.margins: 16
+            spacing: 16
             
             // RAIL
             Rectangle {
@@ -276,17 +277,12 @@ Item {
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 color: cBg
                 clip: true
+                radius: 12
+                border.width: 1
+                border.color: cBorderSoft
                 
                 HoverHandler {
                     id: sidebarHover
-                }
-                
-                Rectangle {
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    width: 1
-                    color: cBorderSoft
                 }
                 
                 ColumnLayout {
@@ -304,7 +300,7 @@ Item {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.bottomMargin: 16
-                        Layout.leftMargin: 8
+                        Layout.leftMargin: 0
                         Layout.rightMargin: 8
                         spacing: 10
                         
@@ -375,7 +371,7 @@ Item {
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
+                            anchors.leftMargin: 6
                             anchors.rightMargin: 10
                             spacing: 10
                             
@@ -441,7 +437,7 @@ Item {
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
+                            anchors.leftMargin: 2
                             anchors.rightMargin: 10
                             spacing: 9
                             
