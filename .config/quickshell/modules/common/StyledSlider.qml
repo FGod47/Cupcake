@@ -17,9 +17,8 @@ Slider {
         height: implicitHeight
         radius: height / 2
         
-        color: Qt.rgba(255/255, 255/255, 255/255, 0.04)
-        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.1)
-        border.width: 1
+        color: "transparent"
+        border.width: 0
         
         // Unfilled track
         Rectangle {
