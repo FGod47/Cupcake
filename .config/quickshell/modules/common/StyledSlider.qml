@@ -44,7 +44,7 @@ Slider {
             
             Behavior on width {
                 enabled: !control.pressed
-                NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 }
+                NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 }
             }
         }
     }
@@ -58,7 +58,7 @@ Slider {
         
         Behavior on x {
             enabled: !control.pressed
-            NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 }
+            NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 }
         }
         
         // Dynamic expanding thumb
@@ -69,8 +69,8 @@ Slider {
             radius: height / 2
             color: Theme.colPrimary
             
-            Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on height { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
             
             // Subtle drop shadow
             layer.enabled: true

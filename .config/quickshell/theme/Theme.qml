@@ -135,6 +135,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showSliderThumb = false; } }
     }
 
+    property bool liquidify: true
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.liquidify"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.liquidify = false; } }
+    }
+
     property bool showCardBackground: true
     Process {
         command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_card_background"]

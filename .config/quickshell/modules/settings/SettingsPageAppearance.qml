@@ -479,11 +479,11 @@ Item {
                         property bool activeHovered: activeItem && activeItem.hovered
                         scale: activeHovered ? 1.08 : 1.0
                         
-                        Behavior on x { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                        Behavior on y { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                        Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                        Behavior on height { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                        Behavior on scale { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on y { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                     }
 
                     Flow {
@@ -547,6 +547,36 @@ Item {
 
                 SettingsCard {
                 sectionTitle: "Quick Toggles"
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            Text {
+                                anchors.centerIn: parent
+                                text: ""
+                                color: cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Liquidify"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Enable bouncy jelly animations for UI elements"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: Theme.liquidify
+                        onToggled: (v) => {
+                            Theme.liquidify = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.liquidify"]);
+                        }
+                    }
+                }
 
                 SettingsRow {
                     RowLayout {
