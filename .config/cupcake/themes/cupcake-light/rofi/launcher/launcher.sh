@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 dir="$HOME/.config/rofi/launcher/"
-theme='style'
+style=$(cat ~/.config/cupcake/.applauncher_style 2>/dev/null)
+if [ "$style" = "Hover" ]; then
+    theme='hover'
+else
+    theme='hug'
+fi
 
 ## Run
 rofi \
