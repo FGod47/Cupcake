@@ -79,6 +79,18 @@ Item {
         }
     }
 
+    property bool appLauncherStyle: false
+    
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.applauncher_style"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.appLauncherStyle = (text.trim() === "true");
+            }
+        }
+    }
+
     property string toggleStyle: "Android"
     property bool backgroundBlur: true
     property real blurStrength: 0.77
@@ -638,8 +650,44 @@ Item {
                             text: root.accentScriptPath
                             font.family: "monospace"
                             font.pixelSize: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
                             elide: Text.ElideMiddle
+                        }
+                    }
+                }
+            }
+
+            // --- UI Style section ---
+
+            SettingsCard {
+                sectionTitle: "UI Style"
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb1b"
+                                color: cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "App launcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Use full screen launcher"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.appLauncherStyle
+                        onToggled: (v) => {
+                            root.appLauncherStyle = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.applauncher_style"]);
                         }
                     }
                 }
