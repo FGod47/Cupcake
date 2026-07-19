@@ -118,11 +118,11 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        anchors.bottom: parent.bottom
+        y: Theme.appLauncherStyle === "Hover" ? (parent.height - height) / 2 : (parent.height - height)
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
-        clip: true
+        clip: Theme.appLauncherStyle === "Hug" // Only clip when hugging the bottom edge
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
@@ -142,14 +142,14 @@ PanelWindow {
             width: root.isOpen ? cardWidth : 160
             height: root.isOpen ? fullHeight : 0
 
-            Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
-            Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
             topRightRadius: 28
-            bottomLeftRadius: 0
-            bottomRightRadius: 0
+            bottomLeftRadius: Theme.appLauncherStyle === "Hover" ? 28 : 0
+            bottomRightRadius: Theme.appLauncherStyle === "Hover" ? 28 : 0
             // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }

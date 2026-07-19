@@ -149,6 +149,13 @@ Item {
         stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showCardBackground = false; } }
     }
 
+    property string appLauncherStyle: "Hover"
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.applauncher_style"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let s = text.trim(); if (s !== "") themeSingleton.appLauncherStyle = s; } }
+    }
+
     property bool showDividers: true
     Process {
         command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_dividers"]
