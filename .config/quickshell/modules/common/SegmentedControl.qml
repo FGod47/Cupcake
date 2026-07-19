@@ -22,7 +22,7 @@ Rectangle {
             y: activeItem ? activeItem.y : 0
             width: activeItem ? activeItem.width : 0
             height: activeItem ? activeItem.height : 0
-            scale: activeItem ? activeItem.scale : 1.0
+            scale: (activeItem && activeItem.hovered) ? 1.08 : 1.0
             
             color: Theme.colPrimary
             radius: 6
@@ -50,8 +50,7 @@ Rectangle {
                 radius: 6
                 color: "transparent"
                 
-                scale: ma.containsMouse ? 1.08 : 1.0
-                Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                property bool hovered: ma.containsMouse
                 
                 Text {
                     id: label
