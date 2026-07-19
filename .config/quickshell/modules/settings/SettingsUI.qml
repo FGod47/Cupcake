@@ -297,8 +297,8 @@ Item {
                         color: cAccent
                         radius: 10
                         
-                        Behavior on y { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
-                        Behavior on height { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+                        Behavior on y { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on height { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
                     }
                 }
                 
