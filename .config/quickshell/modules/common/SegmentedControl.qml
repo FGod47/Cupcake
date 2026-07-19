@@ -10,7 +10,7 @@ Rectangle {
     signal selected(string value)
     color: Qt.rgba(0, 0, 0, 0.28)
     radius: 8
-    height: 30
+    height: 28
     width: row.implicitWidth + 4
     Item {
         anchors.fill: row
@@ -22,6 +22,7 @@ Rectangle {
             y: activeItem ? activeItem.y : 0
             width: activeItem ? activeItem.width : 0
             height: activeItem ? activeItem.height : 0
+            scale: activeItem ? activeItem.scale : 1.0
             
             color: Theme.colPrimary
             radius: 6
@@ -29,6 +30,7 @@ Rectangle {
             
             Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
         }
     }
 
@@ -43,22 +45,28 @@ Rectangle {
                 id: pillDel
                 required property string modelData
                 property bool active: modelData === seg.current
-                height: 26
-                width: label.implicitWidth + 24
+                height: 24
+                width: label.implicitWidth + 18
                 radius: 6
                 color: "transparent"
+                
+                scale: ma.containsMouse ? 1.06 : 1.0
+                Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                
                 Text {
                     id: label
                     anchors.centerIn: parent
                     text: modelData
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     font.weight: Font.Medium
                     color: active ? Theme.colOnPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     Behavior on color { ColorAnimation { duration: 300 } }
                 }
                 MouseArea {
+                    id: ma
                     anchors.fill: parent
+                    hoverEnabled: true
                     onClicked: { seg.current = modelData; seg.selected(modelData) }
                 }
                 
