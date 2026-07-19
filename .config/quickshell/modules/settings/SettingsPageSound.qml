@@ -235,7 +235,7 @@ Item {
                         }
                         Text {
                             text: Math.round(volSlider.value * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                             Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -250,14 +250,14 @@ Item {
                     }
                     RowLayout {
                         spacing: 12
-                        Text { text: "L"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant }
+                        Text { text: "L"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                         StyledSlider {
                             Layout.preferredWidth: 120
                             from: -50; to: 50
                             value: root.balanceVal
                             onMoved: root.balanceVal = value
                         }
-                        Text { text: "R"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant }
+                        Text { text: "R"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                     }
                 }
 
@@ -337,7 +337,7 @@ Item {
                         }
                         Text {
                             text: Math.round(inSlider.value * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                             Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -417,13 +417,13 @@ Item {
                             StyledSlider {
                                 Layout.fillWidth: true
                                 from: 0; to: 1.0
-                                value: modelData.audio.volume
-                                onMoved: modelData.audio.volume = value
+                                value: modelData.audio ? modelData.audio.volume : 0
+                                onMoved: if (modelData.audio) modelData.audio.volume = value
                             }
                             
                             Text {
-                                text: Math.round(modelData.audio.volume * 100) + "%"
-                                font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant
+                                text: Math.round((modelData.audio ? modelData.audio.volume : 0) * 100) + "%"
+                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                                 Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
                             }
                         }
@@ -503,7 +503,7 @@ Item {
                         }
                         Text {
                             text: Math.round(root.sfxVolume * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                             Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
                         }
                     }
