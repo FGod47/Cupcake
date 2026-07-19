@@ -79,7 +79,7 @@ Item {
         }
     }
 
-    property string appLauncherStyle: "Menu"
+    property string appLauncherStyle: "Hover"
     
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.applauncher_style"]
@@ -685,7 +685,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Menu", "Fullscreen", "Hug", "Hover"]
+                        options: ["Hug", "Hover"]
                         current: root.appLauncherStyle
                         onSelected: (v) => {
                             root.appLauncherStyle = v;
