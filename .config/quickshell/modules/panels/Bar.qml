@@ -120,6 +120,25 @@ PanelWindow {
                 implicitWidth: 168 // 5 * 32px + 8px padding
                 Layout.alignment: Qt.AlignVCenter
                 
+                // Seamless slide highlight bubble
+                Rectangle {
+                    id: workspaceHighlight
+                    width: 26
+                    height: 26
+                    radius: 13
+                    color: Theme.colPrimary
+                    
+                    property int activeWs: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 1
+                    property int validIndex: Math.max(0, Math.min(activeWs - 1, 4))
+                    
+                    x: 7 + 32 * validIndex
+                    y: 4
+                    opacity: (activeWs >= 1 && activeWs <= 5) ? 1 : 0
+                    
+                    Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+                
                 Row {
                     id: workspaceRow
                     anchors.centerIn: parent
@@ -133,18 +152,6 @@ PanelWindow {
                             property int wsId: index + 1
                             property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
                             property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
-
-                            // Active Workspace Background Bubble (Large Circle)
-                            Rectangle {
-                                anchors.centerIn: parent
-                                width: isFocused ? 26 : 0
-                                height: width
-                                radius: width / 2
-                                color: Theme.colPrimary
-                                opacity: isFocused ? 1 : 0
-                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
-                            }
 
                             // Inner Dot (For focused, occupied, or empty)
                             Rectangle {
