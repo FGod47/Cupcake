@@ -52,8 +52,8 @@ Slider {
     handle: Item {
         x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
         y: control.topPadding + control.availableHeight / 2 - height / 2
-        implicitWidth: 20
-        implicitHeight: 20
+        implicitWidth: 28
+        implicitHeight: 28
         visible: Theme.showSliderThumb
         
         Behavior on x {
@@ -64,8 +64,8 @@ Slider {
         // Dynamic expanding thumb
         Rectangle {
             anchors.centerIn: parent
-            width: (control.pressed || control.hovered) ? 32 : 12
-            height: (control.pressed || control.hovered) ? 16 : 12
+            width: (control.pressed || control.hovered) ? 40 : 16
+            height: (control.pressed || control.hovered) ? 20 : 16
             radius: height / 2
             color: Theme.colPrimary
             
@@ -88,7 +88,7 @@ Slider {
                 text: Math.round(control.value * 100)
                 color: Theme.colOnPrimary
                 font.family: Theme.defaultFontFamily
-                font.pixelSize: 10
+                font.pixelSize: 13
                 font.weight: Font.Bold
                 opacity: (control.pressed || control.hovered) ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
