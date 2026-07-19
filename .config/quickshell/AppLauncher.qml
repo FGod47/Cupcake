@@ -74,11 +74,19 @@ PanelWindow {
     // 1.0 = hidden below screen, 0.0 = fully visible
     property bool isOpen: false
 
-    Component.onCompleted: {
-        Qt.callLater(function() {
+    Timer {
+        id: openTimer
+        interval: 50
+        running: false
+        repeat: false
+        onTriggered: {
             isOpen = true;
             searchField.forceActiveFocus();
-        });
+        }
+    }
+
+    Component.onCompleted: {
+        openTimer.start();
     }
 
     function filterApps(query) {
