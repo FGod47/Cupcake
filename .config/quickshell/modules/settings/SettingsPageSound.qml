@@ -23,6 +23,130 @@ Item {
     property string advBuffer: "512"
     property bool advAutoSwitch: true
 
+    component SettingsCard: Rectangle {
+        default property alias content: cardCol.data
+        property string sectionTitle: ""
+        Layout.fillWidth: true
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+        radius: 12
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
+        border.width: 1
+        clip: true
+
+        RowLayout {
+            id: cardHeader
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 16
+            visible: sectionTitle !== ""
+            spacing: 8
+
+            Text {
+                text: sectionTitle
+                color: Theme.colOnSurfaceVariant
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.8
+                font.capitalization: Font.AllUppercase
+            }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
+        }
+
+        ColumnLayout {
+            id: cardCol
+            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+            anchors.topMargin: cardHeader.visible ? 12 : 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.bottomMargin: 16
+            spacing: 0
+        }
+    }
+
+    component SettingsRow: Rectangle {
+        default property alias rowContent: innerLayout.data
+        Layout.fillWidth: true
+        implicitHeight: innerLayout.implicitHeight + 20
+        color: "transparent"
+        radius: 8
+
+        property bool hoverable: false
+        property bool hovered: hoverArea.containsMouse
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+
+        RowLayout {
+            id: innerLayout
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
+            spacing: 12
+        }
+
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
+            opacity: 0.6
+        }
+    }
+
+    component SegmentedControl: Rectangle {
+        id: seg
+        property var options: []
+        property string current: options.length > 0 ? options[0] : ""
+        signal selected(string value)
+        color: Qt.rgba(0, 0, 0, 0.28)
+        radius: 8
+        height: 30
+        width: segRow.implicitWidth + 4
+        Row {
+            id: segRow
+            anchors.centerIn: parent
+            spacing: 1
+            Repeater {
+                model: seg.options
+                delegate: Rectangle {
+                    required property string modelData
+                    property bool active: modelData === seg.current
+                    height: 26
+                    width: segLabel.implicitWidth + 24
+                    radius: 6
+                    color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
+                    Text {
+                        id: segLabel
+                        anchors.centerIn: parent
+                        text: modelData
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: { seg.current = modelData; seg.selected(modelData) }
+                    }
+                }
+            }
+        }
+    }
+
     component SoundRowIcon: Rectangle {
         property string icon: ""
         property bool accent: false
@@ -42,57 +166,18 @@ Item {
         contentWidth: availableWidth
         clip: true
         leftPadding: 32; rightPadding: 32; topPadding: 32; bottomPadding: 32
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         
         ColumnLayout {
-            width: parent.width
+            width: Math.min(parent.width, 1000)
             spacing: 20
 
-            // Header
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-                
-                Column {
-                    Text {
-                        text: "Sound"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 22
-                        font.weight: Font.ExtraBold
-                        font.letterSpacing: -0.4
-                        color: Theme.colOnSurface
-                    }
-                    Text {
-                        text: "~/.config/cupcake › sound"
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 11.5
-                        color: Theme.colOnSurfaceVariant
-                    }
-                }
-                
-                Rectangle {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: badgeText.implicitWidth + 20; height: 22
-                    radius: 11
-                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                    border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25)
-                    border.width: 1
-                    Text {
-                        id: badgeText
-                        anchors.centerIn: parent
-                        text: "PipeWire · WirePlumber"
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 11
-                        color: Theme.colPrimary
-                    }
-                }
-            }
-
             // OUTPUT
-            NCard {
+            SettingsCard {
                 sectionTitle: "Output"
 
-                NRow {
+                SettingsRow {
                     hoverable: true
                     SoundRowIcon { icon: "\uebc5"; accent: true }
                     ColumnLayout {
@@ -117,7 +202,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueb7e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -156,7 +241,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueaf4" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -176,7 +261,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueb93" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -191,10 +276,10 @@ Item {
             }
 
             // INPUT
-            NCard {
+            SettingsCard {
                 sectionTitle: "Input"
 
-                NRow {
+                SettingsRow {
                     hoverable: true
                     SoundRowIcon { icon: "\ueaef" }
                     ColumnLayout {
@@ -219,7 +304,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueaef" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -258,7 +343,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueaf1"; accent: true }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -267,7 +352,7 @@ Item {
                     NToggle { checked: root.noiseSuppression; onToggled: (val) => root.noiseSuppression = val }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uef57" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -278,7 +363,7 @@ Item {
             }
 
             // APP MIXER
-            NCard {
+            SettingsCard {
                 sectionTitle: "App Volume Mixer"
                 
                 Repeater {
@@ -352,10 +437,10 @@ Item {
             }
 
             // BLUETOOTH AUDIO
-            NCard {
+            SettingsCard {
                 sectionTitle: "Bluetooth Audio"
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uea37" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -369,7 +454,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uea4e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -380,10 +465,10 @@ Item {
             }
 
             // SOUND EFFECTS
-            NCard {
+            SettingsCard {
                 sectionTitle: "Sound Effects"
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uebc5" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -393,7 +478,7 @@ Item {
                     NToggle { checked: root.sfxInterface; onToggled: (val) => root.sfxInterface = val }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uea35" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -402,7 +487,7 @@ Item {
                     NToggle { checked: root.sfxNotification; onToggled: (val) => root.sfxNotification = val }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueb7e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -426,10 +511,10 @@ Item {
             }
 
             // ADVANCED
-            NCard {
+            SettingsCard {
                 sectionTitle: "Advanced"
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\uea16" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -442,7 +527,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueb8b" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
@@ -456,7 +541,7 @@ Item {
                     }
                 }
 
-                NRow {
+                SettingsRow {
                     SoundRowIcon { icon: "\ueb6c" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
