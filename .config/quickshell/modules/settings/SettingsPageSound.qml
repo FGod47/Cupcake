@@ -10,7 +10,6 @@ import Quickshell.Services.Pipewire
 Item {
     id: root
 
-    // Dummy states for the UI elements that don't have direct Pipewire bindings yet
     property int balanceVal: 0
     property string outProfile: "Stereo"
     property bool noiseSuppression: true
@@ -24,134 +23,7 @@ Item {
     property string advBuffer: "512"
     property bool advAutoSwitch: true
 
-    // Reusable inline components (Modern Design)
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
-
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: hoverable && hovered ? Qt.rgba(255,255,255,0.03) : "transparent"
-        radius: 8
-        property bool hoverable: false
-        property bool showBorder: true
-        property bool hovered: hoverArea.containsMouse
-        signal clicked()
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-            onClicked: parent.clicked()
-            cursorShape: parent.hoverable ? Qt.PointingHandCursor : Qt.ArrowCursor
-        }
-
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
-            visible: parent.showBorder
-        }
-    }
-
-    component SegmentedControl: Rectangle {
-        id: seg
-        property var options: []
-        property string current: options.length > 0 ? options[0] : ""
-        signal selected(string value)
-        color: Qt.rgba(0, 0, 0, 0.28)
-        radius: 8
-        height: 30
-        width: segRow.implicitWidth + 4
-        Row {
-            id: segRow
-            anchors.centerIn: parent
-            spacing: 1
-            Repeater {
-                model: seg.options
-                delegate: Rectangle {
-                    required property string modelData
-                    property bool active: modelData === seg.current
-                    height: 26
-                    width: segLabel.implicitWidth + 24
-                    radius: 6
-                    color: active ? Theme.colPrimary : "transparent"
-                    Text {
-                        id: segLabel
-                        anchors.centerIn: parent
-                        text: modelData
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Medium
-                        color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: { seg.current = modelData; seg.selected(modelData) }
-                    }
-                }
-            }
-        }
-    }
-
-    component RowIcon: Rectangle {
+    component SoundRowIcon: Rectangle {
         property string icon: ""
         property bool accent: false
         width: 32; height: 32; radius: 10
@@ -217,12 +89,12 @@ Item {
             }
 
             // OUTPUT
-            SettingsCard {
+            NCard {
                 sectionTitle: "Output"
 
-                SettingsRow {
+                NRow {
                     hoverable: true
-                    RowIcon { icon: "\uebc5"; accent: true } // device-speaker
+                    SoundRowIcon { icon: "\uebc5"; accent: true }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Output device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -245,8 +117,8 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\ueb7e" } // volume
+                NRow {
+                    SoundRowIcon { icon: "\ueb7e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -284,8 +156,8 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\ueaf4" } // adjustments-horizontal
+                NRow {
+                    SoundRowIcon { icon: "\ueaf4" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Balance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -304,9 +176,8 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    showBorder: false
-                    RowIcon { icon: "\ueb93" } // speaker
+                NRow {
+                    SoundRowIcon { icon: "\ueb93" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Output profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -314,18 +185,18 @@ Item {
                     SegmentedControl {
                         options: ["Stereo", "Surround 5.1"]
                         current: root.outProfile
-                        onSelected: root.outProfile = value
+                        onSelected: (val) => root.outProfile = val
                     }
                 }
             }
 
             // INPUT
-            SettingsCard {
+            NCard {
                 sectionTitle: "Input"
 
-                SettingsRow {
+                NRow {
                     hoverable: true
-                    RowIcon { icon: "\ueaef" } // microphone
+                    SoundRowIcon { icon: "\ueaef" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Input device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -348,8 +219,8 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\ueaef" }
+                NRow {
+                    SoundRowIcon { icon: "\ueaef" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Input volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -387,28 +258,27 @@ Item {
                     }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\ueaf1"; accent: true } // wave-sine
+                NRow {
+                    SoundRowIcon { icon: "\ueaf1"; accent: true }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Noise suppression (RNNoise)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                     }
-                    StyledSwitch { checked: root.noiseSuppression; onClicked: root.noiseSuppression = !root.noiseSuppression }
+                    NToggle { checked: root.noiseSuppression; onToggled: (val) => root.noiseSuppression = val }
                 }
 
-                SettingsRow {
-                    showBorder: false
-                    RowIcon { icon: "\uef57" } // waves
+                NRow {
+                    SoundRowIcon { icon: "\uef57" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Echo cancellation"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                     }
-                    StyledSwitch { checked: root.echoCancellation; onClicked: root.echoCancellation = !root.echoCancellation }
+                    NToggle { checked: root.echoCancellation; onToggled: (val) => root.echoCancellation = val }
                 }
             }
 
             // APP MIXER
-            SettingsCard {
+            NCard {
                 sectionTitle: "App Volume Mixer"
                 
                 Repeater {
@@ -482,11 +352,11 @@ Item {
             }
 
             // BLUETOOTH AUDIO
-            SettingsCard {
+            NCard {
                 sectionTitle: "Bluetooth Audio"
 
-                SettingsRow {
-                    RowIcon { icon: "\uea37" } // bluetooth
+                NRow {
+                    SoundRowIcon { icon: "\uea37" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Preferred codec"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -495,47 +365,45 @@ Item {
                     SegmentedControl {
                         options: ["SBC", "AAC", "aptX HD"]
                         current: root.btCodec
-                        onSelected: root.btCodec = value
+                        onSelected: (val) => root.btCodec = val
                     }
                 }
 
-                SettingsRow {
-                    showBorder: false
-                    RowIcon { icon: "\uea4e" } // battery-charging
+                NRow {
+                    SoundRowIcon { icon: "\uea4e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Prefer quality over battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                     }
-                    StyledSwitch { checked: root.btQuality; onClicked: root.btQuality = !root.btQuality }
+                    NToggle { checked: root.btQuality; onToggled: (val) => root.btQuality = val }
                 }
             }
 
             // SOUND EFFECTS
-            SettingsCard {
+            NCard {
                 sectionTitle: "Sound Effects"
 
-                SettingsRow {
-                    RowIcon { icon: "\uebc5" } // device-speaker
+                NRow {
+                    SoundRowIcon { icon: "\uebc5" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Interface sound effects"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                         Text { text: "Volume changes, connect/disconnect chimes"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                     }
-                    StyledSwitch { checked: root.sfxInterface; onClicked: root.sfxInterface = !root.sfxInterface }
+                    NToggle { checked: root.sfxInterface; onToggled: (val) => root.sfxInterface = val }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\uea35" } // bell
+                NRow {
+                    SoundRowIcon { icon: "\uea35" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Notification sound"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                     }
-                    StyledSwitch { checked: root.sfxNotification; onClicked: root.sfxNotification = !root.sfxNotification }
+                    NToggle { checked: root.sfxNotification; onToggled: (val) => root.sfxNotification = val }
                 }
 
-                SettingsRow {
-                    showBorder: false
-                    RowIcon { icon: "\ueb7e" } // volume
+                NRow {
+                    SoundRowIcon { icon: "\ueb7e" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Effects volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -558,11 +426,11 @@ Item {
             }
 
             // ADVANCED
-            SettingsCard {
+            NCard {
                 sectionTitle: "Advanced"
 
-                SettingsRow {
-                    RowIcon { icon: "\uea16" } // activity
+                NRow {
+                    SoundRowIcon { icon: "\uea16" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Sample rate"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -570,12 +438,12 @@ Item {
                     SegmentedControl {
                         options: ["44.1kHz", "48kHz", "96kHz"]
                         current: root.advSampleRate
-                        onSelected: root.advSampleRate = value
+                        onSelected: (val) => root.advSampleRate = val
                     }
                 }
 
-                SettingsRow {
-                    RowIcon { icon: "\ueb8b" } // cpu
+                NRow {
+                    SoundRowIcon { icon: "\ueb8b" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Buffer size (quantum)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -584,18 +452,17 @@ Item {
                     SegmentedControl {
                         options: ["256", "512", "1024"]
                         current: root.advBuffer
-                        onSelected: root.advBuffer = value
+                        onSelected: (val) => root.advBuffer = val
                     }
                 }
 
-                SettingsRow {
-                    showBorder: false
-                    RowIcon { icon: "\ueb6c" } // refresh
+                NRow {
+                    SoundRowIcon { icon: "\ueb6c" }
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Auto-switch to newly connected devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
                     }
-                    StyledSwitch { checked: root.advAutoSwitch; onClicked: root.advAutoSwitch = !root.advAutoSwitch }
+                    NToggle { checked: root.advAutoSwitch; onToggled: (val) => root.advAutoSwitch = val }
                 }
             }
 
