@@ -875,8 +875,8 @@ Item {
                             }
                             RowLayout {
                                 spacing: 4
-                                topPadding: 7
-                                bottomPadding: 7
+                                Layout.topMargin: 7
+                                Layout.bottomMargin: 7
                                 Text {
                                     text: modelData.old + " →"
                                     font.family: Theme.monoFontFamily
