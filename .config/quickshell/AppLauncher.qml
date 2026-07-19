@@ -410,20 +410,29 @@ PanelWindow {
             Behavior on border.color { ColorAnimation { duration: 180 } }
 
             // Search icon
-            Text {
-                id: searchIconTxt
+            Rectangle {
+                id: searchIconWrapper
                 anchors.left: parent.left
-                anchors.leftMargin: 18
+                anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
-                text: "\ueb1c" // ti-search
-                font.family: "tabler-icons"
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 17
-                color: root.colOnSurfaceVariant
+                width: 36
+                height: 36
+                radius: 18
+                color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
+
+                Text {
+                    id: searchIconTxt
+                    anchors.centerIn: parent
+                    text: "\ueb1c" // ti-search
+                    font.family: "tabler-icons"
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 18
+                    color: root.colPrimary
+                }
             }
 
             // Placeholder
             Text {
-                anchors.left: searchIconTxt.right
+                anchors.left: searchIconWrapper.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOutline
@@ -435,7 +444,7 @@ PanelWindow {
 
             TextInput {
                 id: searchField
-                anchors.left: searchIconTxt.right
+                anchors.left: searchIconWrapper.right
                 anchors.leftMargin: 10
                 anchors.right: clearBtn.left
                 anchors.rightMargin: 8
