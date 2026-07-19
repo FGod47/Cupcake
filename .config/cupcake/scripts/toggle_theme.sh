@@ -21,11 +21,7 @@ echo "$NEW" > "$STATE"
 
 # Paths
 THEME_DIR="$HOME/.config/cupcake/themes/$NEW"
-ROFI_CONFIG="$HOME/.config/rofi/theme.rasi"
 WALLPAPER_DEST="$HOME/.config/hypr/wall.jpg"
-
-# Apply new theme
-cp "$THEME_DIR/rofi/theme.rasi" "$ROFI_CONFIG"
 
 # Select the first wallpaper dynamically
 DEFAULT_WALL=$(find "$THEME_DIR/walls" -type f | head -n 1)

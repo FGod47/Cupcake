@@ -27,7 +27,7 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(apps.fileManager))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/PowerMenu.qml"))
 -- AI Panel Toggle
 hl.bind(mainMod .. " + a", hl.dsp.global("quickshell:aipanel_toggle"))
--- Rofi Launcher
+-- QuickShell App Launcher
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_app_launcher.sh"))
 -- Hotkeys cheat sheet
 hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd("~/.config/cupcake/scripts/keybinds_hint.sh"))
