@@ -33,10 +33,10 @@ Switch {
             height: 44 * customSwitch.scale
             y: -10 * customSwitch.scale
             x: (customSwitch.checked ? 10 : -10) * customSwitch.scale
-            Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on x { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
             
             scale: (customSwitch.pressed || customSwitch.down) ? 0.85 : 1.0
-            Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on scale { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
             
             Item {
                 id: thumbSrc
@@ -50,8 +50,8 @@ Switch {
                     height: 18 * customSwitch.scale; radius: height / 2
                     color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                     Behavior on color { ColorAnimation { duration: 250 } }
-                    Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
-                    Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+                    Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+                    Behavior on x { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
                 }
             }
             

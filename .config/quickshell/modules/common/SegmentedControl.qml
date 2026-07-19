@@ -30,9 +30,9 @@ Rectangle {
             radius: 6
             z: 1
             
-            Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
-            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
-            Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on x { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on scale { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
         }
     }
 
