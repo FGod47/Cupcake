@@ -6,13 +6,13 @@ import "../../theme"
 Switch {
     id: customSwitch
     property real scale: 1.0
-    implicitHeight: 20 * scale
-    implicitWidth: 36 * scale
+    implicitHeight: 24 * scale
+    implicitWidth: 44 * scale
     hoverEnabled: true
 
     indicator: Item {
-        implicitWidth: 36 * customSwitch.scale
-        implicitHeight: 20 * customSwitch.scale
+        implicitWidth: 44 * customSwitch.scale
+        implicitHeight: 24 * customSwitch.scale
         
         // Modern Flat Track
         Rectangle {
@@ -29,26 +29,29 @@ Switch {
         // Thumb Container (larger to prevent shadow clipping)
         Item {
             id: thumbContainer
-            width: 36 * customSwitch.scale
-            height: 36 * customSwitch.scale
-            y: -8 * customSwitch.scale
-            x: (customSwitch.checked ? 8 : -8) * customSwitch.scale
-            Behavior on x { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+            width: 44 * customSwitch.scale
+            height: 44 * customSwitch.scale
+            y: -10 * customSwitch.scale
+            x: (customSwitch.checked ? 10 : -10) * customSwitch.scale
+            Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             
             scale: (customSwitch.pressed || customSwitch.down) ? 0.85 : 1.0
-            Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+            Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             
             Item {
                 id: thumbSrc
                 anchors.fill: parent
                 visible: false
                 Rectangle { 
-                    anchors.centerIn: parent
-                    width: ((customSwitch.pressed || customSwitch.hovered) ? 24 : 14) * customSwitch.scale
-                    height: 14 * customSwitch.scale; radius: height / 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    property bool isExpanded: customSwitch.pressed || customSwitch.hovered
+                    x: customSwitch.checked ? ((isExpanded ? 1 : 13) * customSwitch.scale) : (13 * customSwitch.scale)
+                    width: (isExpanded ? 30 : 18) * customSwitch.scale
+                    height: 18 * customSwitch.scale; radius: height / 2
                     color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                     Behavior on color { ColorAnimation { duration: 250 } }
-                    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+                    Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
             }
             

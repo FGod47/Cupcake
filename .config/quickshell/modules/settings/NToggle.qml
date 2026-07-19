@@ -9,7 +9,7 @@ Item {
     property bool checked: false
     signal toggled(bool val)
 
-    width: 36; height: 20
+    width: 44; height: 24
     
     // Modern Flat Track
     Rectangle {
@@ -26,26 +26,29 @@ Item {
     // Thumb Container (larger to prevent shadow clipping)
     Item {
         id: thumbContainer
-        width: 36
-        height: 36
-        y: -8
-        x: tog.checked ? 8 : -8
-        Behavior on x { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+        width: 44
+        height: 44
+        y: -10
+        x: tog.checked ? 10 : -10
+        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         
         scale: ma.pressed ? 0.85 : 1.0
-        Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+        Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         
         Item {
             id: thumbSrc
             anchors.fill: parent
             visible: false
             Rectangle { 
-                anchors.centerIn: parent
-                width: (ma.pressed || ma.containsMouse) ? 24 : 14
-                height: 14; radius: 7
+                anchors.verticalCenter: parent.verticalCenter
+                property bool isExpanded: ma.pressed || ma.containsMouse
+                x: tog.checked ? (isExpanded ? 1 : 13) : 13
+                width: isExpanded ? 30 : 18
+                height: 18; radius: 9
                 color: tog.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                 Behavior on color { ColorAnimation { duration: 250 } }
-                Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             }
         }
         
