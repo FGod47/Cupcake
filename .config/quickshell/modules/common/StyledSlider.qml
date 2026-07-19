@@ -44,7 +44,7 @@ Slider {
             
             Behavior on width {
                 enabled: !control.pressed
-                NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+                NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 }
             }
         }
     }
@@ -58,7 +58,7 @@ Slider {
         
         Behavior on x {
             enabled: !control.pressed
-            NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 }
         }
         
         // Dynamic expanding thumb
@@ -69,8 +69,8 @@ Slider {
             radius: height / 2
             color: Theme.colPrimary
             
-            Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-            Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
             
             // Subtle drop shadow
             layer.enabled: true

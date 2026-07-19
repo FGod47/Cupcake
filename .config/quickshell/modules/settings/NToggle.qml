@@ -30,10 +30,10 @@ Item {
         height: 44
         y: -10
         x: tog.checked ? 10 : -10
-        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
         
         scale: ma.pressed ? 0.85 : 1.0
-        Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
         
         Item {
             id: thumbSrc
@@ -47,8 +47,8 @@ Item {
                 height: 18; radius: 9
                 color: tog.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                 Behavior on color { ColorAnimation { duration: 250 } }
-                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+                Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
             }
         }
         
