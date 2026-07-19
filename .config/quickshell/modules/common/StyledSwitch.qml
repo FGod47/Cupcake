@@ -45,8 +45,8 @@ Switch {
                 Rectangle { 
                     anchors.verticalCenter: parent.verticalCenter
                     property bool isExpanded: customSwitch.pressed || customSwitch.hovered
-                    x: customSwitch.checked ? ((isExpanded ? 1 : 13) * customSwitch.scale) : (13 * customSwitch.scale)
-                    width: (isExpanded ? 30 : 18) * customSwitch.scale
+                    x: customSwitch.checked ? ((isExpanded ? 7 : 13) * customSwitch.scale) : (13 * customSwitch.scale)
+                    width: (isExpanded ? 24 : 18) * customSwitch.scale
                     height: 18 * customSwitch.scale; radius: height / 2
                     color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                     Behavior on color { ColorAnimation { duration: 250 } }

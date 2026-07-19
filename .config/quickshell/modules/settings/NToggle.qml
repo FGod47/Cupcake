@@ -42,8 +42,8 @@ Item {
             Rectangle { 
                 anchors.verticalCenter: parent.verticalCenter
                 property bool isExpanded: ma.pressed || ma.containsMouse
-                x: tog.checked ? (isExpanded ? 1 : 13) : 13
-                width: isExpanded ? 30 : 18
+                x: tog.checked ? (isExpanded ? 7 : 13) : 13
+                width: isExpanded ? 24 : 18
                 height: 18; radius: 9
                 color: tog.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
                 Behavior on color { ColorAnimation { duration: 250 } }
