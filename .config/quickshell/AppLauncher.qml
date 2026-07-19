@@ -118,7 +118,7 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        y: Theme.appLauncherStyle === "Hover" ? (parent.height - height) / 2 : (parent.height - height)
+        y: Theme.appLauncherStyle === "Hover" ? (parent.height - height) * 0.35 : (parent.height - height)
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
@@ -139,9 +139,14 @@ PanelWindow {
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: root.isOpen ? cardWidth : 160
-            height: root.isOpen ? fullHeight : 0
+            width: Theme.appLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
+            height: Theme.appLauncherStyle === "Hover" ? fullHeight : (root.isOpen ? fullHeight : 0)
 
+            scale: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
+            opacity: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
+
+            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 700 : 350; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
 
