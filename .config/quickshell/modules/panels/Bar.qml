@@ -142,7 +142,7 @@ PanelWindow {
                                 radius: width / 2
                                 color: Theme.colPrimary
                                 opacity: isFocused ? 1 : 0
-                                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
 
@@ -154,7 +154,7 @@ PanelWindow {
                                 radius: width / 2
                                 color: isFocused ? Theme.colOnPrimary : (isOccupied ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.4))
                                 Behavior on color { ColorAnimation { duration: 150 } }
-                                Behavior on width { NumberAnimation { duration: 150 } }
+                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 150; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                             }
 
                             MouseArea {
