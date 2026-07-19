@@ -22,7 +22,36 @@ Rectangle {
             y: activeItem ? activeItem.y : 0
             width: activeItem ? activeItem.width : 0
             height: activeItem ? activeItem.height : 0
-            scale: (activeItem && activeItem.hovered) ? 1.08 : 1.0
+            
+            property bool activeHovered: activeItem && activeItem.hovered
+            scale: activeHovered ? 1.08 : 1.0
+            
+            onActiveHoveredChanged: {
+                if (activeHovered) {
+                    wiggleAnim.start()
+                } else {
+                    wiggleAnim.stop()
+                    resetRotation.start()
+                }
+            }
+            
+            SequentialAnimation {
+                id: wiggleAnim
+                loops: Animation.Infinite
+                NumberAnimation { target: segHighlight; property: "rotation"; from: 0; to: 3; duration: 80; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: segHighlight; property: "rotation"; from: 3; to: -3; duration: 160; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: segHighlight; property: "rotation"; from: -3; to: 0; duration: 80; easing.type: Easing.InOutQuad }
+                PauseAnimation { duration: 250 }
+            }
+            
+            NumberAnimation {
+                id: resetRotation
+                target: segHighlight
+                property: "rotation"
+                to: 0
+                duration: 100
+                easing.type: Easing.OutCubic
+            }
             
             color: Theme.colPrimary
             radius: 6
