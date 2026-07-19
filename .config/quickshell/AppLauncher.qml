@@ -118,7 +118,9 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        y: Theme.appLauncherStyle === "Hover" ? (parent.height - height) * 0.35 : (parent.height - height)
+        anchors.bottom: Theme.appLauncherStyle === "Hug" ? parent.bottom : undefined
+        anchors.verticalCenter: Theme.appLauncherStyle === "Hover" ? parent.verticalCenter : undefined
+        anchors.verticalCenterOffset: Theme.appLauncherStyle === "Hover" ? -(parent.height * 0.15) : 0
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
