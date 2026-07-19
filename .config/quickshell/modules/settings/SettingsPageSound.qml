@@ -179,12 +179,16 @@ Item {
 
                 SettingsRow {
                     hoverable: true
-                    SoundRowIcon { icon: "\uebc5"; accent: true }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Output device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "Playback routed here by default"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uebc5"; accent: true }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Output device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Playback routed here by default"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 8
                         Rectangle {
@@ -193,9 +197,7 @@ Item {
                                 id: chipText
                                 anchors.centerIn: parent
                                 text: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.name : "Unknown Device"
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 11
-                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                             }
                         }
                         Text { text: "\uea61"; font.family: "tabler-icons"; font.pixelSize: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.3) }
@@ -203,11 +205,15 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueb7e" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueb7e" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -228,7 +234,7 @@ Item {
                         }
                         StyledSlider {
                             id: volSlider
-                            Layout.preferredWidth: 150
+                            Layout.preferredWidth: 160
                             from: 0; to: 1.0
                             value: (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) ? Pipewire.defaultAudioSink.audio.volume : 0
                             onMoved: { if (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) Pipewire.defaultAudioSink.audio.volume = value }
@@ -242,17 +248,22 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueaf4" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Balance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "Left / right channel bias"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueaf4" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Balance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Left / right channel bias"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 12
                         Text { text: "L"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                         StyledSlider {
-                            Layout.preferredWidth: 120
+                            id: balanceSlider
+                            Layout.preferredWidth: 160
                             from: -50; to: 50
                             value: root.balanceVal
                             onMoved: root.balanceVal = value
@@ -262,11 +273,15 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueb93" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Output profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueb93" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Output profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     SegmentedControl {
                         options: ["Stereo", "Surround 5.1"]
                         current: root.outProfile
@@ -281,12 +296,16 @@ Item {
 
                 SettingsRow {
                     hoverable: true
-                    SoundRowIcon { icon: "\ueaef" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Input device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "Used for calls, recording, voice commands"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueaef" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Input device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Used for calls, recording, voice commands"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 8
                         Rectangle {
@@ -295,9 +314,7 @@ Item {
                                 id: inChipText
                                 anchors.centerIn: parent
                                 text: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource.name : "Unknown Device"
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 11
-                                color: Theme.colOnSurfaceVariant
+                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
                             }
                         }
                         Text { text: "\uea61"; font.family: "tabler-icons"; font.pixelSize: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.3) }
@@ -305,11 +322,15 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueaef" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Input volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueaef" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Input volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -330,7 +351,7 @@ Item {
                         }
                         StyledSlider {
                             id: inSlider
-                            Layout.preferredWidth: 150
+                            Layout.preferredWidth: 160
                             from: 0; to: 1.0
                             value: (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) ? Pipewire.defaultAudioSource.audio.volume : 0
                             onMoved: { if (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) Pipewire.defaultAudioSource.audio.volume = value }
@@ -344,20 +365,28 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueaf1"; accent: true }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Noise suppression (RNNoise)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueaf1"; accent: true }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Noise suppression (RNNoise)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.noiseSuppression; onToggled: (val) => root.noiseSuppression = val }
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uef57" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Echo cancellation"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uef57" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Echo cancellation"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.echoCancellation; onToggled: (val) => root.echoCancellation = val }
                 }
             }
@@ -441,12 +470,16 @@ Item {
                 sectionTitle: "Bluetooth Audio"
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uea37" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Preferred codec"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "WH-1000XM5 · connected"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uea37" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Preferred codec"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "WH-1000XM5 · connected"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     SegmentedControl {
                         options: ["SBC", "AAC", "aptX HD"]
                         current: root.btCodec
@@ -455,11 +488,15 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uea4e" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Prefer quality over battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uea4e" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Prefer quality over battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.btQuality; onToggled: (val) => root.btQuality = val }
                 }
             }
@@ -469,34 +506,47 @@ Item {
                 sectionTitle: "Sound Effects"
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uebc5" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Interface sound effects"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "Volume changes, connect/disconnect chimes"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uebc5" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Interface sound effects"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Volume changes, connect/disconnect chimes"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.sfxInterface; onToggled: (val) => root.sfxInterface = val }
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uea35" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Notification sound"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uea35" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Notification sound"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.sfxNotification; onToggled: (val) => root.sfxNotification = val }
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueb7e" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Effects volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueb7e" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Effects volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 150
+                            id: sfxSlider
+                            Layout.preferredWidth: 160
                             from: 0; to: 1.0
                             value: root.sfxVolume
                             onMoved: root.sfxVolume = value
@@ -515,11 +565,15 @@ Item {
                 sectionTitle: "Advanced"
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\uea16" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Sample rate"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\uea16" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Sample rate"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     SegmentedControl {
                         options: ["44.1kHz", "48kHz", "96kHz"]
                         current: root.advSampleRate
@@ -528,12 +582,16 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueb8b" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Buffer size (quantum)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        Text { text: "Lower reduces latency, higher reduces crackle"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueb8b" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Buffer size (quantum)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Lower reduces latency, higher reduces crackle"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     SegmentedControl {
                         options: ["256", "512", "1024"]
                         current: root.advBuffer
@@ -542,11 +600,15 @@ Item {
                 }
 
                 SettingsRow {
-                    SoundRowIcon { icon: "\ueb6c" }
-                    ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
-                        Text { text: "Auto-switch to newly connected devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                    RowLayout {
+                        spacing: 12
+                        SoundRowIcon { icon: "\ueb6c" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Auto-switch to newly connected devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
                     NToggle { checked: root.advAutoSwitch; onToggled: (val) => root.advAutoSwitch = val }
                 }
             }
