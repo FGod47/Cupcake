@@ -400,19 +400,74 @@ Item {
                     Item { Layout.fillWidth: true }
                 }
 
-                Flow {
+                Item {
                     Layout.fillWidth: true
-                    spacing: 6
+                    implicitHeight: flowLayout.implicitHeight
 
-                    Repeater {
-                        model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow", "Vibrant"]
-                        delegate: Pill {
-                            required property string modelData
-                            label: modelData
-                            active: root.accent === modelData
-                            onClicked: {
-                                root.accent = modelData;
-                                Quickshell.execDetached(["bash", "-c", "echo '" + modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                    Rectangle {
+                        id: accentHighlight
+                        property Item activeItem: null
+                        
+                        x: activeItem ? activeItem.x : 0
+                        y: activeItem ? activeItem.y : 0
+                        width: activeItem ? activeItem.width : 0
+                        height: activeItem ? activeItem.height : 0
+                        
+                        color: root.colorMode === "Light" ? "black" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92)
+                        radius: 8
+                        z: 1
+                        
+                        Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                        Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                    }
+
+                    Flow {
+                        id: flowLayout
+                        anchors.fill: parent
+                        spacing: 6
+                        z: 2
+
+                        Repeater {
+                            model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow", "Vibrant"]
+                            delegate: Rectangle {
+                                id: pillDel
+                                required property string modelData
+                                property bool active: root.accent === modelData
+                                
+                                radius: 8
+                                height: 26
+                                width: pText.implicitWidth + 24
+                                color: active ? "transparent" : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                                
+                                Text {
+                                    id: pText
+                                    anchors.centerIn: parent
+                                    text: pillDel.modelData
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 12
+                                    font.weight: Font.Medium
+                                    color: pillDel.active ? (root.colorMode === "Light" ? "white" : Theme.colSurface) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
+                                    Behavior on color { ColorAnimation { duration: 350 } }
+                                }
+                                
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        root.accent = pillDel.modelData;
+                                        Quickshell.execDetached(["bash", "-c", "echo '" + pillDel.modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                                    }
+                                }
+                                
+                                onActiveChanged: {
+                                    if (active) accentHighlight.activeItem = pillDel
+                                }
+                                
+                                Component.onCompleted: {
+                                    if (active) accentHighlight.activeItem = pillDel
+                                }
                             }
                         }
                     }

@@ -274,7 +274,7 @@ Item {
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
             font.weight: Font.Medium
-            color: active ? "white" : cTextDim
+            color: active ? Theme.colOnPrimary : cTextDim
         }
 
         MouseArea {

@@ -19,7 +19,7 @@ Item {
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}
-    property int currentIndex: 17
+    property int currentIndex: 1
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
@@ -283,7 +283,27 @@ Item {
                     color: cBorderSoft
                 }
                 
+                Item {
+                    anchors.fill: sidebarColumn
+                    Rectangle {
+                        id: sidebarHighlight
+                        property Item activeItem: null
+                        
+                        x: activeItem ? activeItem.x : 0
+                        y: activeItem ? activeItem.y : 0
+                        width: activeItem ? activeItem.width : 0
+                        height: activeItem ? activeItem.height : 0
+                        
+                        color: cAccent
+                        radius: 10
+                        
+                        Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                    }
+                }
+                
                 ColumnLayout {
+                    id: sidebarColumn
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
@@ -351,6 +371,7 @@ Item {
                     }
                     
                     component RailItem: Rectangle {
+                        id: railItemRoot
                         property string label
                         property string icon
                         property int pageIndex
@@ -359,8 +380,15 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 36
                         radius: 10
-                        color: isActive ? cAccent : (ma.containsMouse ? cSurfaceHover : "transparent")
+                        color: isActive ? "transparent" : (ma.containsMouse ? cSurfaceHover : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
+                        
+                        onIsActiveChanged: {
+                            if (isActive) sidebarHighlight.activeItem = railItemRoot
+                        }
+                        Component.onCompleted: {
+                            if (isActive) sidebarHighlight.activeItem = railItemRoot
+                        }
                         
                         RowLayout {
                             anchors.fill: parent
@@ -396,13 +424,13 @@ Item {
                     }
                     
                     GroupLabel { label: "Preferences" }
-                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
                     RailItem { icon: "\uec50"; label: "Appearance"; pageIndex: 1 }
                     RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
                     RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
                     RailItem { icon: "\uebc4"; label: "Dock"; pageIndex: 4 }
                     
                     GroupLabel { label: "Machine" }
+                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
                     RailItem { icon: "\uea97"; label: "Displays"; pageIndex: 18 }
                     RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
                     RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }

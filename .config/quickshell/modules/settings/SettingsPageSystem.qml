@@ -295,7 +295,7 @@ Item {
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
             font.weight: pill.big ? Font.SemiBold : Font.Medium
-            color: active ? "white" : (pill.danger ? cDanger : cTextDim)
+            color: active ? Theme.colOnPrimary : (pill.danger ? cDanger : cTextDim)
         }
 
         MouseArea {
