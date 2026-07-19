@@ -149,8 +149,8 @@ PanelWindow {
 
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+            Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
