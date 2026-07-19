@@ -44,16 +44,49 @@ Rectangle {
         }
     }
     
+    Item {
+        anchors.fill: layout
+        
+        Rectangle {
+            id: segHighlight
+            x: 0
+            y: 0
+            width: 0
+            height: 0
+            
+            function updatePos(item) {
+                if (item) {
+                    x = item.x
+                    y = item.y
+                    width = item.width
+                    height = item.height
+                }
+            }
+            
+            radius: root.height / 2 - 4
+            
+            color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 1.0)
+            border.width: 1
+            border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2)
+            z: 1
+            
+            Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+        }
+    }
+    
     RowLayout {
         id: layout
         anchors.fill: parent
         anchors.margins: 4
         spacing: 4
+        z: 2
         
         Repeater {
             model: root.model
             
             delegate: Rectangle {
+                id: pillDel
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumWidth: contentRow.implicitWidth + 24
@@ -62,16 +95,20 @@ Rectangle {
                 property bool isSelected: root.currentIndex === index
                 
                 color: isSelected 
-                    ? Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 1.0)
+                    ? "transparent"
                     : (mouseArea.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : "transparent")
                 
                 border.width: 1
-                border.color: isSelected 
-                    ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2) 
-                    : "transparent"
+                border.color: "transparent"
                     
                 Behavior on color { ColorAnimation { duration: 150 } }
-                Behavior on border.color { ColorAnimation { duration: 150 } }
+                
+                onIsSelectedChanged: {
+                    if (isSelected) segHighlight.updatePos(pillDel)
+                }
+                Component.onCompleted: {
+                    if (isSelected) segHighlight.updatePos(pillDel)
+                }
                 
                 RowLayout {
                     id: contentRow

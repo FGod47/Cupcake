@@ -12,19 +12,41 @@ Rectangle {
     radius: 8
     height: 30
     width: row.implicitWidth + 4
+    Item {
+        anchors.fill: row
+        Rectangle {
+            id: segHighlight
+            property Item activeItem: null
+            
+            x: activeItem ? activeItem.x : 0
+            y: activeItem ? activeItem.y : 0
+            width: activeItem ? activeItem.width : 0
+            height: activeItem ? activeItem.height : 0
+            
+            color: Theme.colPrimary
+            radius: 6
+            z: 1
+            
+            Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+        }
+    }
+
     Row {
         id: row
         anchors.centerIn: parent
         spacing: 1
+        z: 2
         Repeater {
             model: seg.options
             delegate: Rectangle {
+                id: pillDel
                 required property string modelData
                 property bool active: modelData === seg.current
                 height: 26
                 width: label.implicitWidth + 24
                 radius: 6
-                color: active ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.92) : "transparent"
+                color: "transparent"
                 Text {
                     id: label
                     anchors.centerIn: parent
@@ -32,11 +54,19 @@ Rectangle {
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 12
                     font.weight: Font.Medium
-                    color: active ? Theme.colSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                    color: active ? Theme.colOnPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
+                    Behavior on color { ColorAnimation { duration: 300 } }
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: { seg.current = modelData; seg.selected(modelData) }
+                }
+                
+                onActiveChanged: {
+                    if (active) segHighlight.activeItem = pillDel
+                }
+                Component.onCompleted: {
+                    if (active) segHighlight.activeItem = pillDel
                 }
             }
         }
