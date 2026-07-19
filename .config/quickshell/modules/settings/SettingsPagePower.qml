@@ -213,7 +213,7 @@ Item {
                             spacing: 2
                             RowLayout {
                                 spacing: 4
-                                Text { text: root.hasBattery ? root.batteryValue : "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 26; font.weight: Font.Black; letterSpacing: -0.5; color: Theme.colOnSurface }
+                                Text { text: root.hasBattery ? root.batteryValue : "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 26; font.weight: Font.Black; font.letterSpacing: -0.5; color: Theme.colOnSurface }
                                 Text { text: "%"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.colOnSurfaceVariant; Layout.alignment: Qt.AlignBottom; Layout.bottomMargin: 4 }
                             }
                             RowLayout {
@@ -242,7 +242,7 @@ Item {
                             id: statText
                             anchors.centerIn: parent
                             text: "94% of design capacity"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 10.5; font.weight: Font.DemiBold; color: Theme.colPrimary
+                            font.family: Theme.monoFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: Theme.colPrimary
                         }
                     }
                 }
@@ -308,7 +308,7 @@ Item {
                             value: root.saverThreshold
                             onMoved: root.saverThreshold = value
                         }
-                        Text { text: root.saverThreshold + "%"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.saverThreshold + "%"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
 
@@ -349,7 +349,7 @@ Item {
                             value: root.dimScreen
                             onMoved: root.dimScreen = value
                         }
-                        Text { text: root.dimScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.dimScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
 
@@ -371,7 +371,7 @@ Item {
                             value: root.offScreen
                             onMoved: root.offScreen = value
                         }
-                        Text { text: root.offScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.offScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
 
@@ -412,7 +412,7 @@ Item {
                             value: root.suspendBat
                             onMoved: root.suspendBat = value
                         }
-                        Text { text: root.suspendBat + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.suspendBat + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
 
@@ -434,7 +434,7 @@ Item {
                             value: root.suspendAc
                             onMoved: root.suspendAc = value
                         }
-                        Text { text: root.suspendAc + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.suspendAc + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
 
@@ -504,7 +504,7 @@ Item {
                             value: root.chargeLimit
                             onMoved: root.chargeLimit = value
                         }
-                        Text { text: root.chargeLimit + "%"; font.family: Theme.monoFontFamily; font.pixelSize: 11.5; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
+                        Text { text: root.chargeLimit + "%"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
                 }
             }
