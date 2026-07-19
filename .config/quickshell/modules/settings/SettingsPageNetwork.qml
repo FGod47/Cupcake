@@ -224,7 +224,7 @@ Item {
             Rectangle {
                 Layout.fillWidth: true
                 height: 80
-                radius: 14
+                radius: 40
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
                     GradientStop { position: 0.0; color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, Theme.isDark ? 0.18 : 0.12) }
