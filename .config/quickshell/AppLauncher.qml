@@ -552,7 +552,7 @@ PanelWindow {
         width: card.cardWidth
         height: card.searchH - 16
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 32
+        anchors.bottomMargin: 120
         anchors.horizontalCenter: parent.horizontalCenter
     }
 } // PanelWindow
