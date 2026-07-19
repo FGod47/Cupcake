@@ -204,8 +204,8 @@ PanelWindow {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: searchBar.top
-            anchors.bottomMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.cardPad : card.searchH
 
             // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
@@ -380,18 +380,29 @@ PanelWindow {
             }
         }
 
-        // ── Search bar — pinned to bottom of card (Caelestia layout) ──
+        // ── Search bar ────────────────────────────────────────────────
         Rectangle {
             id: searchBar
 
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.margins: card.cardPad
-            anchors.bottomMargin: 16
+            parent: localAppLauncherStyle === "Hover" ? root : innerContent
 
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 32 : 16
+            
+            anchors.horizontalCenter: localAppLauncherStyle === "Hover" ? parent.horizontalCenter : undefined
+            anchors.left: localAppLauncherStyle === "Hover" ? undefined : parent.left
+            anchors.right: localAppLauncherStyle === "Hover" ? undefined : parent.right
+            anchors.leftMargin: localAppLauncherStyle === "Hover" ? 0 : card.cardPad
+            anchors.rightMargin: localAppLauncherStyle === "Hover" ? 0 : card.cardPad
+            
+            width: localAppLauncherStyle === "Hover" ? card.cardWidth : undefined
             height: card.searchH - 16
             radius: 9999
+
+            scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
+            opacity: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
+            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
             color: Qt.lighter(root.colSurfaceContainerHigh, 1.12)
             border.color: searchField.activeFocus
