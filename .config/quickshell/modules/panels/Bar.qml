@@ -1228,13 +1228,13 @@ PanelWindow {
             width: bar.ccOpen ? 362 : (archPill.showMusicPill ? (archPill.isExpanded ? 220 : 160) : archText.implicitWidth + 32)
             height: targetHeight
             
-            Behavior on y { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
-            Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
-            Behavior on height { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
-            Behavior on radius { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+            Behavior on y { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on radius { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             
             property real morphProgress: bar.ccOpen ? 1.0 : 0.0
-            Behavior on morphProgress { NumberAnimation { duration: 600; easing.type: Easing.OutExpo } }
+            Behavior on morphProgress { NumberAnimation { duration: Theme.liquidify ? 800 : 600; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             
             // Fade out the gradient if either CC is open or the music player is expanded
             property real gradientAlpha: 1.0 - Math.max(archPill.morphProgress, archPill.expandFade)
