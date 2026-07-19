@@ -476,10 +476,14 @@ Item {
                         radius: 8
                         z: 1
                         
-                        Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                        Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                        property bool activeHovered: activeItem && activeItem.hovered
+                        scale: activeHovered ? 1.08 : 1.0
+                        
+                        Behavior on x { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on y { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on height { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        Behavior on scale { NumberAnimation { duration: 800; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.85 } }
                     }
 
                     Flow {
@@ -494,6 +498,7 @@ Item {
                                 id: pillDel
                                 required property string modelData
                                 property bool active: root.accent === modelData
+                                property bool hovered: accentMa.containsMouse
                                 
                                 radius: 8
                                 height: 26
@@ -512,7 +517,9 @@ Item {
                                 }
                                 
                                 MouseArea {
+                                    id: accentMa
                                     anchors.fill: parent
+                                    hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         root.accent = pillDel.modelData;
