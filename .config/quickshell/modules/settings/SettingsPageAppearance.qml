@@ -685,7 +685,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Menu", "Fullscreen"]
+                        options: ["Menu", "Fullscreen", "Hug", "Hover"]
                         current: root.appLauncherStyle
                         onSelected: (v) => {
                             root.appLauncherStyle = v;
