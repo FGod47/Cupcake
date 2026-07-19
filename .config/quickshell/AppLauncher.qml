@@ -145,10 +145,10 @@ PanelWindow {
             scale: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
             opacity: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
 
-            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 700 : 350; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
