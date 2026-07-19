@@ -10,8 +10,8 @@ Rectangle {
     signal selected(string value)
     color: Qt.rgba(0, 0, 0, 0.28)
     radius: 8
-    height: 34
-    width: row.implicitWidth + 8
+    height: 30
+    width: row.implicitWidth + 4
     Item {
         anchors.fill: row
         Rectangle {
@@ -45,21 +45,21 @@ Rectangle {
                 id: pillDel
                 required property string modelData
                 property bool active: modelData === seg.current
-                height: 28
-                width: label.implicitWidth + 28
+                height: 26
+                width: label.implicitWidth + 24
                 radius: 6
                 color: "transparent"
                 
-                scale: ma.containsMouse ? 1.15 : 1.0
-                Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 2.0 } }
+                scale: ma.containsMouse ? 1.08 : 1.0
+                Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 
                 Text {
                     id: label
                     anchors.centerIn: parent
                     text: modelData
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    font.weight: Font.DemiBold
+                    font.pixelSize: 12
+                    font.weight: Font.Medium
                     color: active ? Theme.colOnPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
                     Behavior on color { ColorAnimation { duration: 300 } }
                 }
