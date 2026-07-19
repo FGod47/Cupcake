@@ -241,7 +241,7 @@ Item {
 
                     // Big wifi icon
                     Rectangle {
-                        width: 48; height: 48; radius: 12
+                        width: 48; height: 48; radius: 24
                         color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15)
                         Text {
                             anchors.centerIn: parent
@@ -275,7 +275,7 @@ Item {
                     Rectangle {
                         id: rescanBtn
                         property bool scanning: false
-                        width: 36; height: 36; radius: 8
+                        width: 36; height: 36; radius: 18
                         color: rescanMa.containsMouse ? cSurfaceHover : Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.1)
                         Behavior on color { ColorAnimation { duration: 120 } }
                         visible: root.wifiRadioEnabled
