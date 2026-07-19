@@ -549,7 +549,7 @@ PanelWindow {
     // ── Hover mode search bar container ──
     Item {
         id: hoverSearchContainer
-        width: card.cardWidth
+        width: 480
         height: card.searchH - 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
