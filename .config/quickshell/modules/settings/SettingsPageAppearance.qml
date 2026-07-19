@@ -79,14 +79,15 @@ Item {
         }
     }
 
-    property bool appLauncherStyle: false
+    property string appLauncherStyle: "Menu"
     
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.applauncher_style"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                root.appLauncherStyle = (text.trim() === "true");
+                let s = text.trim();
+                if (s !== "") root.appLauncherStyle = s;
             }
         }
     }
@@ -679,15 +680,16 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App launcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Use full screen launcher"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Choose the layout style for the app launcher"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    NToggle {
-                        checked: root.appLauncherStyle
-                        onToggled: (v) => {
+                    SegmentedControl {
+                        options: ["Menu", "Fullscreen"]
+                        current: root.appLauncherStyle
+                        onSelected: (v) => {
                             root.appLauncherStyle = v;
-                            Quickshell.execDetached(["bash", "-c", "echo '" + (v ? "true" : "false") + "' > ~/.config/cupcake/.applauncher_style"]);
+                            Quickshell.execDetached(["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.applauncher_style"]);
                         }
                     }
                 }
