@@ -394,6 +394,7 @@ PanelWindow {
 
             height: card.searchH - 16
             radius: 9999
+            clip: true
 
             scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
             opacity: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
@@ -558,10 +559,22 @@ PanelWindow {
     // ── Hover mode search bar container ──
     Item {
         id: hoverSearchContainer
-        width: 480
+        width: root.isOpen ? 480 : 52
         height: card.searchH - 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
+
+        Behavior on width {
+            SequentialAnimation {
+                PauseAnimation { duration: root.isOpen ? 200 : 0 }
+                NumberAnimation {
+                    duration: Theme.liquidify ? 900 : 450
+                    easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo
+                    easing.amplitude: 0.4
+                    easing.period: 0.8
+                }
+            }
+        }
     }
 } // PanelWindow
