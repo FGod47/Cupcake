@@ -26,40 +26,13 @@ Rectangle {
             property bool activeHovered: activeItem && activeItem.hovered
             scale: activeHovered ? 1.08 : 1.0
             
-            onActiveHoveredChanged: {
-                if (activeHovered) {
-                    wiggleAnim.start()
-                } else {
-                    wiggleAnim.stop()
-                    resetRotation.start()
-                }
-            }
-            
-            SequentialAnimation {
-                id: wiggleAnim
-                loops: Animation.Infinite
-                NumberAnimation { target: segHighlight; property: "rotation"; from: 0; to: 3; duration: 80; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: segHighlight; property: "rotation"; from: 3; to: -3; duration: 160; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: segHighlight; property: "rotation"; from: -3; to: 0; duration: 80; easing.type: Easing.InOutQuad }
-                PauseAnimation { duration: 250 }
-            }
-            
-            NumberAnimation {
-                id: resetRotation
-                target: segHighlight
-                property: "rotation"
-                to: 0
-                duration: 100
-                easing.type: Easing.OutCubic
-            }
-            
             color: Theme.colPrimary
             radius: 6
             z: 1
             
-            Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+            Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
+            Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 1.2; easing.period: 0.6 } }
         }
     }
 
