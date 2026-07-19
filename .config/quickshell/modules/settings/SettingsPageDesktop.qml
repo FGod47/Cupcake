@@ -255,14 +255,7 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.screenCornerSize) + "' > ~/.config/cupcake/.corner_size && ~/.local/bin/apply-corners"]);
                         }
                     }
-                    Text {
-                        text: Math.round(root.screenCornerSize) + "px"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 12
-                        Layout.preferredWidth: 32
-                        horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
             }
 
@@ -297,14 +290,7 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.gapsIn) + "' > ~/.config/cupcake/.gaps_in && ~/.local/bin/apply-gaps"]);
                         }
                     }
-                    Text {
-                        text: Math.round(root.gapsIn) + "px"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 12
-                        Layout.preferredWidth: 32
-                        horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
 
                 SettingsRow {
@@ -334,14 +320,7 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.gapsOut) + "' > ~/.config/cupcake/.gaps_out && ~/.local/bin/apply-gaps"]);
                         }
                     }
-                    Text {
-                        text: Math.round(root.gapsOut) + "px"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 12
-                        Layout.preferredWidth: 32
-                        horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
             }
             // --- Window Borders section ---
@@ -401,14 +380,7 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.borderSize) + "' > ~/.config/cupcake/.border_size && ~/.local/bin/apply-borders"]);
                         }
                     }
-                    Text {
-                        text: Math.round(root.borderSize) + "px"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 12
-                        Layout.preferredWidth: 32
-                        horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
             }
 
@@ -469,14 +441,7 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(root.shadowSize) + "' > ~/.config/cupcake/.shadow_size && ~/.local/bin/apply-shadows"]);
                         }
                     }
-                    Text {
-                        text: Math.round(root.shadowSize) + "px"
-                        color: Theme.colOnSurfaceVariant
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 12
-                        Layout.preferredWidth: 32
-                        horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
             }
         }

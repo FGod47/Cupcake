@@ -653,7 +653,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 1.0; stepSize: 0.01
                             value: root.blurStrength
                             onValueChanged: { root.blurStrength = value; }
@@ -665,14 +665,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.blurStrength * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -701,7 +694,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.globalOpacity
                             onValueChanged: { root.globalOpacity = value; }
@@ -712,14 +705,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.globalOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -748,7 +734,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 1; to: 5; stepSize: 1
                             value: root.blurPasses
                             onValueChanged: { root.blurPasses = value; }
@@ -759,14 +745,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.blurPasses)
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
             }
@@ -830,7 +809,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.barOpacity
                             onValueChanged: { root.barOpacity = value; }
@@ -841,14 +820,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.barOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -877,7 +849,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.ccOpacity
                             onValueChanged: { root.ccOpacity = value; }
@@ -888,14 +860,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.ccOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -924,7 +889,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.dockOpacity
                             onValueChanged: { root.dockOpacity = value; }
@@ -935,14 +900,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.dockOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -971,7 +929,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.launcherOpacity
                             onValueChanged: { root.launcherOpacity = value; }
@@ -982,14 +940,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.launcherOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -1018,7 +969,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.wallpaperOpacity
                             onValueChanged: { root.wallpaperOpacity = value; }
@@ -1029,14 +980,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.wallpaperOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -1065,7 +1009,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.settingsOpacity
                             onValueChanged: { root.settingsOpacity = value; }
@@ -1076,14 +1020,7 @@ Item {
                             }
                         }
                         
-                        Text { 
-                            text: Math.round(root.settingsOpacity * 100) + "%"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 

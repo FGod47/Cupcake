@@ -602,14 +602,7 @@ Item {
                                 }
                             }
                         }
-                        Text {
-                            text: Math.round(root.swappiness)
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
             }
@@ -705,14 +698,7 @@ Item {
                                 }
                             }
                         }
-                        Text {
-                            text: Math.round(root.lockTimeout) + "m"
-                            color: cTextDim
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 32
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 

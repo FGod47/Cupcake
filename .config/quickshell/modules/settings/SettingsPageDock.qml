@@ -553,19 +553,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 16; to: 128; stepSize: 1
                             value: root.iconSize
                             onValueChanged: root.iconSize = value
                         }
-                        Text {
-                            text: root.iconSize + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -587,19 +580,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.mainAxisPadding
                             onValueChanged: root.mainAxisPadding = value
                         }
-                        Text {
-                            text: root.mainAxisPadding + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -621,19 +607,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.crossAxisPadding
                             onValueChanged: root.crossAxisPadding = value
                         }
-                        Text {
-                            text: root.crossAxisPadding + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -655,19 +634,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.itemSpacing
                             onValueChanged: root.itemSpacing = value
                         }
-                        Text {
-                            text: root.itemSpacing + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -689,19 +661,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.endsMargin
                             onValueChanged: root.endsMargin = value
                         }
-                        Text {
-                            text: root.endsMargin + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -723,19 +688,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.edgeMargin
                             onValueChanged: root.edgeMargin = value
                         }
-                        Text {
-                            text: root.edgeMargin + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
             }
@@ -762,19 +720,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.cornerRadius
                             onValueChanged: { root.cornerRadius = value; shapeDebounce.restart(); }
                         }
-                        Text {
-                            text: root.cornerRadius + "px"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
             }
@@ -801,19 +752,12 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 100; stepSize: 1
                             value: root.bgOpacity
                             onValueChanged: root.bgOpacity = value
                         }
-                        Text {
-                            text: root.bgOpacity + "%"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 12
-                            Layout.preferredWidth: 40
-                            horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 

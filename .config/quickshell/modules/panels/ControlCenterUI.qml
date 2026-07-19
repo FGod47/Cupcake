@@ -269,7 +269,7 @@ Item {
                     // Left Column (WiFi, BT, Hotspot)
                     ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 220
                         spacing: 12
 
                         // Wi-Fi
@@ -397,7 +397,7 @@ Item {
                     // Right card — reserved for future content
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 220
                         Layout.preferredHeight: 236
                         color: bgSurface0
                         radius: 20

@@ -199,7 +199,7 @@ Item {
     // Standard ComboBox styled to match the page
     component StyledComboBox: ComboBox {
         id: scb
-        Layout.preferredWidth: 160
+        Layout.preferredWidth: 260
         Layout.preferredHeight: 32
         indicator: Text {
             anchors.right: parent.right

@@ -5,65 +5,63 @@ import "../../theme"
 
 Switch {
     id: customSwitch
-    property real scale: 0.8
-    implicitHeight: 26 * scale
-    implicitWidth: 46 * scale
+    property real scale: 1.0
+    implicitHeight: 20 * scale
+    implicitWidth: 36 * scale
+    hoverEnabled: true
 
-    background: Rectangle {
-        width: parent.width
-        height: parent.height
-        radius: 13 * customSwitch.scale
+    indicator: Item {
+        implicitWidth: 36 * customSwitch.scale
+        implicitHeight: 20 * customSwitch.scale
         
-        color: customSwitch.checked ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-        
-        gradient: customSwitch.checked ? onGradient : null
-        Gradient {
-            id: onGradient
-            GradientStop { position: 0.0; color: Theme.colPrimary }
-            GradientStop { position: 1.0; color: Qt.lighter(Theme.colPrimary, 1.15) }
+        // Modern Flat Track
+        Rectangle {
+            id: track
+            anchors.fill: parent
+            radius: height / 2
+            
+            color: customSwitch.checked ? Theme.colPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.15)
+            border.color: Qt.rgba(255/255, 255/255, 255/255, 0.05)
+            border.width: 1 * customSwitch.scale
+            Behavior on color { ColorAnimation { duration: 250 } }
         }
 
-        border.width: 1 * customSwitch.scale
-        border.color: customSwitch.checked ? "transparent" : Qt.rgba(255/255, 255/255, 255/255, 0.04)
-
-        Behavior on color { ColorAnimation { duration: 280 } }
-    }
-
-    Rectangle {
-        width: 20 * customSwitch.scale
-        height: 20 * customSwitch.scale
-        radius: 10 * customSwitch.scale
-        
-        y: ((customSwitch.implicitHeight - height) / 2) + (2 * customSwitch.scale)
-        
-        x: customSwitch.checked 
-            ? (customSwitch.implicitWidth - width - (3 * customSwitch.scale))
-            : (3 * customSwitch.scale)
-
-        color: Qt.rgba(0, 0, 0, 0.25)
-        
-        scale: (customSwitch.pressed || customSwitch.down) ? 0.9 : 1.0
-        
-        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
-        Behavior on scale { NumberAnimation { duration: 200 } }
-    }
-
-    indicator: Rectangle {
-        width: 20 * customSwitch.scale
-        height: 20 * customSwitch.scale
-        radius: 10 * customSwitch.scale
-        
-        y: (customSwitch.implicitHeight - height) / 2
-        
-        x: customSwitch.checked 
-            ? (customSwitch.implicitWidth - width - (3 * customSwitch.scale))
-            : (3 * customSwitch.scale)
-
-        color: "white"
-        
-        scale: (customSwitch.pressed || customSwitch.down) ? 0.9 : 1.0
-        
-        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
-        Behavior on scale { NumberAnimation { duration: 200 } }
+        // Thumb Container (larger to prevent shadow clipping)
+        Item {
+            id: thumbContainer
+            width: 36 * customSwitch.scale
+            height: 36 * customSwitch.scale
+            y: -8 * customSwitch.scale
+            x: (customSwitch.checked ? 8 : -8) * customSwitch.scale
+            Behavior on x { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+            
+            scale: (customSwitch.pressed || customSwitch.down) ? 0.85 : 1.0
+            Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+            
+            Item {
+                id: thumbSrc
+                anchors.fill: parent
+                visible: false
+                Rectangle { 
+                    anchors.centerIn: parent
+                    width: ((customSwitch.pressed || customSwitch.hovered) ? 24 : 14) * customSwitch.scale
+                    height: 14 * customSwitch.scale; radius: height / 2
+                    color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
+                    Behavior on color { ColorAnimation { duration: 250 } }
+                    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+                }
+            }
+            
+            // Soft drop shadow for thumb depth
+            DropShadow {
+                anchors.fill: parent
+                source: thumbSrc
+                color: Qt.rgba(0, 0, 0, 0.35)
+                horizontalOffset: 0
+                verticalOffset: 2 * customSwitch.scale
+                radius: 6 * customSwitch.scale
+                samples: 13
+            }
+        }
     }
 }

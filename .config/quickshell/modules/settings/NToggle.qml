@@ -4,55 +4,67 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import "../../theme"
 
-Rectangle {
+Item {
     id: tog
     property bool checked: false
     signal toggled(bool val)
 
-    width: 46; height: 26; radius: 13
+    width: 36; height: 20
     
-    color: checked ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-    
-    gradient: checked ? onGradient : null
-    Gradient {
-        id: onGradient
-        GradientStop { position: 0.0; color: Theme.colPrimary }
-        GradientStop { position: 1.0; color: Qt.lighter(Theme.colPrimary, 1.15) }
-    }
-    
-    border.width: 1
-    border.color: checked ? "transparent" : Qt.rgba(255/255, 255/255, 255/255, 0.04)
-
-    Behavior on color { ColorAnimation { duration: 280 } }
-
+    // Modern Flat Track
     Rectangle {
-        id: shadow
-        width: 20; height: 20; radius: 10
-        anchors.verticalCenter: parent.verticalCenter
-        x: tog.checked ? parent.width - width - 3 : 3
-        anchors.verticalCenterOffset: 2
-        color: Qt.rgba(0, 0, 0, 0.25)
-        scale: ma.pressed ? 0.9 : 1.0
-        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
-        Behavior on scale { NumberAnimation { duration: 200 } }
+        id: track
+        anchors.fill: parent
+        radius: height / 2
+        
+        color: tog.checked ? Theme.colPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.15)
+        border.color: Qt.rgba(255/255, 255/255, 255/255, 0.05)
+        border.width: 1
+        Behavior on color { ColorAnimation { duration: 250 } }
     }
 
-    Rectangle {
-        id: thumb
-        width: 20; height: 20; radius: 10
-        anchors.verticalCenter: parent.verticalCenter
-        x: tog.checked ? parent.width - width - 3 : 3
-        color: "white"
+    // Thumb Container (larger to prevent shadow clipping)
+    Item {
+        id: thumbContainer
+        width: 36
+        height: 36
+        y: -8
+        x: tog.checked ? 8 : -8
+        Behavior on x { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
         
-        scale: ma.pressed ? 0.9 : 1.0
+        scale: ma.pressed ? 0.85 : 1.0
+        Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
         
-        Behavior on x { NumberAnimation { duration: 340; easing.type: Easing.OutBack } }
-        Behavior on scale { NumberAnimation { duration: 200 } }
+        Item {
+            id: thumbSrc
+            anchors.fill: parent
+            visible: false
+            Rectangle { 
+                anchors.centerIn: parent
+                width: (ma.pressed || ma.containsMouse) ? 24 : 14
+                height: 14; radius: 7
+                color: tog.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
+                Behavior on color { ColorAnimation { duration: 250 } }
+                Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 2.5 } }
+            }
+        }
+        
+        // Soft drop shadow for thumb depth
+        DropShadow {
+            anchors.fill: parent
+            source: thumbSrc
+            color: Qt.rgba(0, 0, 0, 0.35)
+            horizontalOffset: 0
+            verticalOffset: 2
+            radius: 6
+            samples: 13
+        }
     }
 
     MouseArea {
         id: ma
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: { tog.checked = !tog.checked; tog.toggled(tog.checked) }
     }

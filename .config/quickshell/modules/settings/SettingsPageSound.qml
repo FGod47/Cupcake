@@ -178,7 +178,36 @@ Item {
                 sectionTitle: "Output"
 
                 SettingsRow {
-                    hoverable: true
+                    id: outputDeviceRow
+                    property var sinksModel: []
+                    
+                    Repeater {
+                        model: Pipewire.nodes
+                        delegate: Item {
+                            visible: false
+                            Component.onCompleted: {
+                                if (typeof modelData !== "undefined" && modelData.isSink && !modelData.isStream) {
+                                    let arr = outputDeviceRow.sinksModel.slice();
+                                    arr.push({ label: modelData.description || modelData.name, node: modelData });
+                                    outputDeviceRow.sinksModel = arr;
+                                    
+                                    if (Pipewire.defaultAudioSink && modelData.id === Pipewire.defaultAudioSink.id) {
+                                        for(let i=0; i<arr.length; i++) {
+                                            if(arr[i].node.id === modelData.id) outputDeviceCombo.currentIndex = i;
+                                        }
+                                    }
+                                }
+                            }
+                            Component.onDestruction: {
+                                if (typeof modelData !== "undefined" && modelData.isSink && !modelData.isStream) {
+                                    let arr = outputDeviceRow.sinksModel.slice();
+                                    arr = arr.filter(o => o.node.id !== modelData.id);
+                                    outputDeviceRow.sinksModel = arr;
+                                }
+                            }
+                        }
+                    }
+
                     RowLayout {
                         spacing: 12
                         SoundRowIcon { icon: "\uebc5"; accent: true }
@@ -189,18 +218,41 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 8
-                        Rectangle {
-                            height: 22; width: chipText.implicitWidth + 20; radius: 6; color: Qt.rgba(0,0,0,0.28)
-                            Text {
-                                id: chipText
-                                anchors.centerIn: parent
-                                text: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.name : "Unknown Device"
-                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
+                    StyledComboBox {
+                        id: outputDeviceCombo
+                        Layout.preferredWidth: 200
+                        model: outputDeviceRow.sinksModel
+                        textRole: "label"
+                        
+                        Connections {
+                            target: Pipewire
+                            function onDefaultAudioSinkChanged() {
+                                if (Pipewire.defaultAudioSink) {
+                                    for (let i = 0; i < outputDeviceCombo.model.length; i++) {
+                                        if (outputDeviceCombo.model[i].node.id === Pipewire.defaultAudioSink.id) {
+                                            outputDeviceCombo.currentIndex = i;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
-                        Text { text: "\uea61"; font.family: "tabler-icons"; font.pixelSize: 16; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.3) }
+                        
+                        Component.onCompleted: {
+                            if (Pipewire.defaultAudioSink) {
+                                for (let i = 0; i < model.length; i++) {
+                                    if (model[i].node.id === Pipewire.defaultAudioSink.id) {
+                                        currentIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        onActivated: (index) => {
+                            let n = model[index].node;
+                            Pipewire.preferredDefaultAudioSink = n;
+                        }
                     }
                 }
 
@@ -229,21 +281,41 @@ Item {
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: { if (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted }
+                                onClicked: { 
+                                    outMuteProc.command = ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"];
+                                    outMuteProc.running = true;
+                                }
                             }
                         }
+                        
+                        Process { id: outVolProc }
+                        Process { id: outMuteProc }
+                        
+                        Process {
+                            id: initOutVol
+                            command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
+                            stdout: StdioCollector { id: initOutVolOut }
+                            onExited: {
+                                let match = initOutVolOut.text.trim().match(/Volume:\s+([\d\.]+)/);
+                                if (match && !volSlider.pressed) volSlider.value = parseFloat(match[1]);
+                            }
+                        }
+                        Timer {
+                            interval: 1000; running: true; repeat: true
+                            onTriggered: initOutVol.running = true
+                            Component.onCompleted: initOutVol.running = true
+                        }
+                        
                         StyledSlider {
                             id: volSlider
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 1.0
-                            value: (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) ? Pipewire.defaultAudioSink.audio.volume : 0
-                            onMoved: { if (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) Pipewire.defaultAudioSink.audio.volume = value }
+                            onMoved: { 
+                                outVolProc.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", value.toString()];
+                                outVolProc.running = true;
+                            }
                         }
-                        Text {
-                            text: Math.round(volSlider.value * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
-                            Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -263,7 +335,7 @@ Item {
                         Text { text: "L"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                         StyledSlider {
                             id: balanceSlider
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: -50; to: 50
                             value: root.balanceVal
                             onMoved: root.balanceVal = value
@@ -346,21 +418,41 @@ Item {
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: { if (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) Pipewire.defaultAudioSource.audio.muted = !Pipewire.defaultAudioSource.audio.muted }
+                                onClicked: { 
+                                    inMuteProc.command = ["wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle"];
+                                    inMuteProc.running = true;
+                                }
                             }
                         }
+                        
+                        Process { id: inVolProc }
+                        Process { id: inMuteProc }
+                        
+                        Process {
+                            id: initInVol
+                            command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SOURCE@"]
+                            stdout: StdioCollector { id: initInVolOut }
+                            onExited: {
+                                let match = initInVolOut.text.trim().match(/Volume:\s+([\d\.]+)/);
+                                if (match && !inSlider.pressed) inSlider.value = parseFloat(match[1]);
+                            }
+                        }
+                        Timer {
+                            interval: 1000; running: true; repeat: true
+                            onTriggered: initInVol.running = true
+                            Component.onCompleted: initInVol.running = true
+                        }
+                        
                         StyledSlider {
                             id: inSlider
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 1.0
-                            value: (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) ? Pipewire.defaultAudioSource.audio.volume : 0
-                            onMoved: { if (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) Pipewire.defaultAudioSource.audio.volume = value }
+                            onMoved: { 
+                                inVolProc.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SOURCE@", value.toString()];
+                                inVolProc.running = true;
+                            }
                         }
-                        Text {
-                            text: Math.round(inSlider.value * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
-                            Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
 
@@ -443,18 +535,32 @@ Item {
                                 Layout.preferredWidth: 100; elide: Text.ElideRight
                             }
                             
-                            StyledSlider {
-                                Layout.fillWidth: true
-                                from: 0; to: 1.0
-                                value: modelData.audio ? modelData.audio.volume : 0
-                                onMoved: if (modelData.audio) modelData.audio.volume = value
+                            Process { id: appVolProc }
+                            
+                            Process {
+                                id: initAppVol
+                                command: ["wpctl", "get-volume", modelData.id.toString()]
+                                running: true
+                                stdout: StdioCollector { id: initAppVolOut }
+                                onExited: {
+                                    let match = initAppVolOut.text.trim().match(/Volume:\s+([\d\.]+)/);
+                                    if (match && !appVolSlider.pressed) appVolSlider.value = parseFloat(match[1]);
+                                }
                             }
                             
-                            Text {
-                                text: Math.round((modelData.audio ? modelData.audio.volume : 0) * 100) + "%"
-                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
-                                Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
+                            StyledSlider {
+                                id: appVolSlider
+                                Layout.fillWidth: true
+                                from: 0; to: 1.0
+                                onMoved: {
+                                    if (modelData.audio) {
+                                        appVolProc.command = ["wpctl", "set-volume", modelData.id.toString(), value.toString()];
+                                        appVolProc.running = true;
+                                    }
+                                }
                             }
+                            
+                            
                         }
                         
                         Rectangle {
@@ -546,16 +652,12 @@ Item {
                         spacing: 12
                         StyledSlider {
                             id: sfxSlider
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 220
                             from: 0; to: 1.0
                             value: root.sfxVolume
                             onMoved: root.sfxVolume = value
                         }
-                        Text {
-                            text: Math.round(root.sfxVolume * 100) + "%"
-                            font.family: Theme.monoFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
-                            Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
-                        }
+                        
                     }
                 }
             }

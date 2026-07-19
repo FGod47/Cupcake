@@ -5,7 +5,7 @@ import "../../theme"
 
 ComboBox {
     id: control
-    Layout.preferredWidth: 160
+    Layout.preferredWidth: 220
     Layout.preferredHeight: 32
     indicator: Text {
         anchors.right: parent.right

@@ -528,7 +528,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 16; to: 128; stepSize: 1
                             value: root.iconSize
                             onValueChanged: root.iconSize = value
@@ -562,7 +562,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.mainAxisPadding
                             onValueChanged: root.mainAxisPadding = value
@@ -596,7 +596,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.crossAxisPadding
                             onValueChanged: root.crossAxisPadding = value
@@ -630,7 +630,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.itemSpacing
                             onValueChanged: root.itemSpacing = value
@@ -664,7 +664,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.endsMargin
                             onValueChanged: root.endsMargin = value
@@ -698,7 +698,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.edgeMargin
                             onValueChanged: root.edgeMargin = value
@@ -737,7 +737,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 64; stepSize: 1
                             value: root.cornerRadius
                             onValueChanged: { root.cornerRadius = value; shapeDebounce.restart(); }
@@ -776,7 +776,7 @@ Item {
                     RowLayout {
                         spacing: 16
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 100; stepSize: 1
                             value: root.bgOpacity
                             onValueChanged: root.bgOpacity = value

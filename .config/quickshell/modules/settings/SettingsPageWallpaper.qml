@@ -658,11 +658,7 @@ Item {
                             }
                         }
                     }
-                    Text {
-                        text: Math.round(root.dimOverlay * 100) + "%"
-                        color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 12
-                        Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight
-                    }
+                    
                 }
 
                 SettingsRow {

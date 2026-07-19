@@ -578,7 +578,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0; to: 1.0; stepSize: 0.01
                             value: root.blurStrength
                             onValueChanged: { root.blurStrength = value; }
@@ -626,7 +626,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.globalOpacity
                             onValueChanged: { root.globalOpacity = value; }
@@ -673,7 +673,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 1; to: 5; stepSize: 1
                             value: root.blurPasses
                             onValueChanged: { root.blurPasses = value; }
@@ -755,7 +755,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.barOpacity
                             onValueChanged: { root.barOpacity = value; }
@@ -802,7 +802,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.dockOpacity
                             onValueChanged: { root.dockOpacity = value; }
@@ -849,7 +849,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.launcherOpacity
                             onValueChanged: { root.launcherOpacity = value; }
@@ -896,7 +896,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.wallpaperOpacity
                             onValueChanged: { root.wallpaperOpacity = value; }
@@ -943,7 +943,7 @@ Item {
                         spacing: 16
                         
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.settingsOpacity
                             onValueChanged: { root.settingsOpacity = value; }
@@ -1020,7 +1020,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: defaultFontCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["Inter"]
                         currentIndex: model.indexOf(Theme.defaultFontFamily) !== -1 ? model.indexOf(Theme.defaultFontFamily) : 0
                         onActivated: (index) => {
@@ -1058,7 +1058,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: monoFontCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["JetBrainsMono Nerd Font Propo"]
                         currentIndex: model.indexOf(Theme.monoFontFamily) !== -1 ? model.indexOf(Theme.monoFontFamily) : 0
                         onActivated: (index) => {
@@ -1096,7 +1096,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: fontWeightCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                         Component.onCompleted: {
                             if (Theme.defaultFontWeight <= 300) currentIndex = 0;
@@ -1136,7 +1136,7 @@ Item {
                         Rectangle { width: 20; height: 20; radius: 10; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.defaultFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; } }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 8; to: 32; stepSize: 1
                             value: Theme.defaultFontSize
                             onValueChanged: { Theme.defaultFontSize = value; }
@@ -1162,7 +1162,7 @@ Item {
                         Rectangle { width: 20; height: 20; radius: 10; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.monoFontScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; } }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 50; to: 200; stepSize: 5
                             value: Theme.monoFontScale * 100
                             onValueChanged: { Theme.monoFontScale = value / 100.0; }
@@ -1203,7 +1203,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: appDefaultFontCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["Inter"]
                         currentIndex: model.indexOf(Theme.appFontFamily) !== -1 ? model.indexOf(Theme.appFontFamily) : 0
                         onActivated: (index) => {
@@ -1241,7 +1241,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: appMonoFontCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["JetBrainsMono Nerd Font Propo"]
                         currentIndex: model.indexOf(Theme.appMonoFamily) !== -1 ? model.indexOf(Theme.appMonoFamily) : 0
                         onActivated: (index) => {
@@ -1279,7 +1279,7 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox { blurSource: scrollView
                         id: appFontWeightCombo
-                        Layout.preferredWidth: 160
+                        Layout.preferredWidth: 260
                         model: ["Light (300)", "Regular (400)", "Medium (500)", "SemiBold (600)", "Bold (700)", "ExtraBold (800)"]
                         Component.onCompleted: {
                             if (Theme.appFontWeight <= 300) currentIndex = 0;
@@ -1319,7 +1319,7 @@ Item {
                         Rectangle { width: 20; height: 20; radius: 10; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appFontSize = 14; bashProcess.command = ["bash", "-c", "echo '14' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 8; to: 32; stepSize: 1
                             value: Theme.appFontSize
                             onValueChanged: { Theme.appFontSize = value; }
@@ -1345,7 +1345,7 @@ Item {
                         Rectangle { width: 20; height: 20; radius: 10; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05); Text { anchors.centerIn: parent; text: "\ueb13"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 9 } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Theme.appMonoScale = 1.0; bashProcess.command = ["bash", "-c", "echo '1.0' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; } }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 160
+                            Layout.preferredWidth: 260
                             from: 50; to: 200; stepSize: 5
                             value: Theme.appMonoScale * 100
                             onValueChanged: { Theme.appMonoScale = value / 100.0; }
