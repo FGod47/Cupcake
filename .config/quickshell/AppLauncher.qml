@@ -384,18 +384,14 @@ PanelWindow {
         Rectangle {
             id: searchBar
 
-            parent: localAppLauncherStyle === "Hover" ? root : innerContent
+            parent: localAppLauncherStyle === "Hover" ? hoverSearchContainer : innerContent
 
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 32 : 16
-            
-            anchors.horizontalCenter: localAppLauncherStyle === "Hover" ? parent.horizontalCenter : undefined
-            anchors.left: localAppLauncherStyle === "Hover" ? undefined : parent.left
-            anchors.right: localAppLauncherStyle === "Hover" ? undefined : parent.right
-            anchors.leftMargin: localAppLauncherStyle === "Hover" ? 0 : card.cardPad
-            anchors.rightMargin: localAppLauncherStyle === "Hover" ? 0 : card.cardPad
-            
-            width: localAppLauncherStyle === "Hover" ? card.cardWidth : undefined
+            anchors.margins: localAppLauncherStyle === "Hover" ? 0 : card.cardPad
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 0 : 16
+
             height: card.searchH - 16
             radius: 9999
 
@@ -549,4 +545,14 @@ PanelWindow {
     } // Item masterWrapper
 
 
+
+    // ── Hover mode search bar container ──
+    Item {
+        id: hoverSearchContainer
+        width: card.cardWidth
+        height: card.searchH - 16
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 32
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 } // PanelWindow
