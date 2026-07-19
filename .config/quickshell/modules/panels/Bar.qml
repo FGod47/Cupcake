@@ -546,7 +546,7 @@ PanelWindow {
                                     radius: 7
                                 }
                             }
-                            Behavior on width { NumberAnimation { duration: 500; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
                             onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
@@ -572,7 +572,7 @@ PanelWindow {
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -625,7 +625,7 @@ PanelWindow {
                                     Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
                                 }
                             }
-                            Behavior on width { NumberAnimation { duration: 500; easing.type: controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 100
                             anchors.verticalCenter: parent.verticalCenter
                             
@@ -650,7 +650,7 @@ PanelWindow {
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 500; easing.type: (controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -683,10 +683,10 @@ PanelWindow {
                     y: 0
                     radius: 18
                     height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
-                    Behavior on height { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                    Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
                     color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                    Behavior on width { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
+                    Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
                     clip: true
                     
                     property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
@@ -931,7 +931,7 @@ PanelWindow {
                         height: 34
                         width: (powerHover.containsMouse || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 500; easing.type: (powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         
                         Row {
                             id: innerContent
