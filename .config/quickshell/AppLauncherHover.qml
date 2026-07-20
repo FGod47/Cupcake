@@ -247,9 +247,91 @@ PanelWindow {
         }
     }
 
+    Timer {
+        id: fileFetchDebounce
+        interval: 100
+        repeat: false
+        property string targetQuery: ""
+        onTriggered: {
+            if (fileFetchProcess.running) {
+                pendingQuery = targetQuery;
+                fileFetchProcess.running = false;
+            } else {
+                currentFetchQuery = targetQuery;
+                fileFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_files.py", targetQuery];
+                fileFetchProcess.running = true;
+            }
+        }
+    }
+
+    Process {
+        id: fileFetchProcess
+        command: []
+        running: false
+        property string pendingQuery: ""
+        property string currentFetchQuery: ""
+        
+        stdout: StdioCollector {
+            id: fileFetchStdout
+            onStreamFinished: {
+                let txt = fileFetchStdout.text;
+                try {
+                    if (currentQuery.replace(/^f\s+|^file\s+/, "").trim().toLowerCase() !== currentFetchQuery.toLowerCase()) {
+                        return;
+                    }
+                    
+                    let lines = txt.trim().split("\n");
+                    let lastLine = lines[lines.length - 1];
+                    if (!lastLine) return;
+                    
+                    let json = JSON.parse(lastLine);
+                    
+                    let newArr = [];
+                    for (let i = 0; i < json.length; i++) {
+                        let fileObj = customResultComp.createObject(root, {
+                            name: json[i].name,
+                            comment: json[i].comment,
+                            icon: json[i].icon,
+                            command: ["xdg-open", json[i].url]
+                        });
+                        if (fileObj) {
+                            newArr.push(fileObj);
+                        }
+                    }
+                    filteredApps = newArr;
+                } catch (e) {
+                    console.log("File search error: " + e);
+                }
+            }
+        }
+        onExited: {
+            if (pendingQuery !== "") {
+                currentFetchQuery = pendingQuery;
+                fileFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_files.py", pendingQuery];
+                fileFetchProcess.running = true;
+                pendingQuery = "";
+            }
+        }
+    }
+
     function filterApps(query) {
         currentQuery = query;
         let q = query.toLowerCase().trim();
+        
+        // File Search Mode Interceptor
+        if (q.startsWith("f ") || q.startsWith("file ")) {
+            let fileQ = q.replace(/^f\s+|^file\s+/, "").trim();
+            if (fileQ.length > 0) {
+                // Trigger file search debounce
+                fileFetchDebounce.targetQuery = fileQ;
+                fileFetchDebounce.restart();
+            } else {
+                filteredApps = [];
+            }
+            appList.currentIndex = 0;
+            return; // Skip local app search completely
+        }
+        
         if (q.length === 0) {
             let arr = [];
             for (let i = 0; i < allApps.length; i++) arr.push(allApps[i]);
