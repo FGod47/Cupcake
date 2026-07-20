@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
+import "fuzzysort.js" as FuzzySort
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Io
@@ -87,12 +88,11 @@ PanelWindow {
         if (q.length === 0) {
             filteredApps = allApps;
         } else {
-            filteredApps = allApps.filter(function(app) {
-                let n = app.name        && app.name.toLowerCase().indexOf(q) !== -1;
-                let d = app.comment     && app.comment.toLowerCase().indexOf(q) !== -1;
-                let g = app.genericName && app.genericName.toLowerCase().indexOf(q) !== -1;
-                return n || d || g;
+            let results = FuzzySort.go(q, allApps, {
+                keys: ['name', 'genericName', 'comment'],
+                all: true
             });
+            filteredApps = results.map(function(r) { return r.obj; });
         }
         appList.currentIndex = 0;
     }

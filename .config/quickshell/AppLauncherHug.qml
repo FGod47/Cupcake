@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
+import "fuzzysort.js" as FuzzySort
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Io
@@ -32,6 +33,7 @@ PanelWindow {
     WlrLayershell.namespace: "cupcake-launcher"
     color: "transparent"
 
+    // ── M3 Dark Palette (Modified to match Bar.qml) ────────────────────
     property color colSurface:               Theme.colSurface
     property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
     property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
@@ -39,23 +41,15 @@ PanelWindow {
     property color colOnSurfaceVariant:      Theme.colOnSurfaceVariant
     property color colOutline:               Theme.colOutline
     property color colPrimary:               Theme.colPrimary // match bar accent
-    
-    // Derived colors for UI
-    property color inputBg:                  root.colSurfaceContainerHigh
-    property color inputBorder:              Qt.rgba(root.colOutline.r, root.colOutline.g, root.colOutline.b, 0.5)
-    property color hoverBg:                  Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08)
 
     property real bgOpacity: 0.80
-
     Process {
         id: initLauncherOpacity
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
         running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
+        stdout: StdioCollector { onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.bgOpacity = v; }
-            }
-        }
+        } }
     }
     Timer { interval: 500; running: true; repeat: true; onTriggered: initLauncherOpacity.running = true }
 
@@ -73,8 +67,7 @@ PanelWindow {
 
     // 1.0 = hidden below screen, 0.0 = fully visible
     property bool isOpen: false
-    property bool localLiquidify: Quickshell.env("LIQUIDIFY") === "true"
-    
+
     Component.onCompleted: {
         Qt.callLater(function() {
             isOpen = true;
@@ -88,12 +81,11 @@ PanelWindow {
         if (q.length === 0) {
             filteredApps = allApps;
         } else {
-            filteredApps = allApps.filter(function(app) {
-                let n = app.name        && app.name.toLowerCase().indexOf(q) !== -1;
-                let d = app.comment     && app.comment.toLowerCase().indexOf(q) !== -1;
-                let g = app.genericName && app.genericName.toLowerCase().indexOf(q) !== -1;
-                return n || d || g;
+            let results = FuzzySort.go(q, allApps, {
+                keys: ['name', 'genericName', 'comment'],
+                all: true
             });
+            filteredApps = results.map(function(r) { return r.obj; });
         }
         appList.currentIndex = 0;
     }
@@ -123,7 +115,7 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
-        clip: true // Only clip when hugging the bottom edge
+        clip: true
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
@@ -140,16 +132,11 @@ PanelWindow {
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: localLiquidify ? (root.isOpen ? cardWidth : 160) : cardWidth
+            width: root.isOpen ? cardWidth : 160
             height: root.isOpen ? fullHeight : 0
 
-            scale: 1.0
-            opacity: 1.0
-
-            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
-            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 900 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+            Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
@@ -221,24 +208,25 @@ PanelWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "\ueb1c" // ti-search
-                    font.family: "tabler-icons"
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 42
+                    text: "" // \uf002
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 42
                     color: root.colOnSurfaceVariant
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "No results"
                     color: root.colOnSurfaceVariant
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 17
-                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 17
+                    font.weight: Font.Medium
+                    font.family: "JetBrainsMono Nerd Font Propo"
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Try searching for something else"
                     color: root.colOutline
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 13
-                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 13
+                    font.family: "JetBrainsMono Nerd Font Propo"
                 }
             }
 
@@ -307,8 +295,8 @@ PanelWindow {
                     TapHandler {
                         onTapped: {
                             appList.currentIndex = delegateItem.index;
-                            let cmd = (delegateItem.modelData.execString
-                                      || delegateItem.modelData.command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
+                            let cmd = delegateItem.modelData.execString
+                                      || delegateItem.modelData.command.join(" ");
                             Quickshell.execDetached(["bash", "-c", cmd]);
                             root.dismiss();
                         }
@@ -338,8 +326,9 @@ PanelWindow {
                             Text {
                                 text: delegateItem.modelData?.name ?? ""
                                 color: root.colOnSurface
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                font.family: "JetBrainsMono Nerd Font Propo"
                                 elide: Text.ElideRight
                                 width: parent.width
                             }
@@ -348,9 +337,9 @@ PanelWindow {
                                 text: delegateItem.modelData?.comment
                                       || delegateItem.modelData?.genericName
                                       || ""
-                                color: root.colOnSurfaceVariant
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
-                                font.family: Theme.defaultFontFamily
+                                color: root.colOutline
+                                font.pixelSize: 12
+                                font.family: "JetBrainsMono Nerd Font Propo"
                                 elide: Text.ElideRight
                                 width: parent.width
                                 visible: text.length > 0
@@ -374,7 +363,7 @@ PanelWindow {
             height: card.searchH - 16
             radius: 9999
 
-            color: Qt.lighter(root.colSurfaceContainerHigh, 1.12)
+            color: Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4)
             border.color: searchField.activeFocus
                           ? Qt.rgba(root.colPrimary.r, root.colPrimary.g,
                                     root.colPrimary.b, 0.7)
@@ -389,9 +378,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                text: "\ueb1c" // ti-search
-                font.family: "tabler-icons"
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 17
+                text: "" // \uf002
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 17
                 color: root.colOnSurfaceVariant
             }
 
@@ -402,7 +391,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOutline
                 font.pixelSize: 15
-                font.family: Theme.defaultFontFamily
+                font.family: "JetBrainsMono Nerd Font Propo"
                 text: "Search applications…"
                 visible: searchField.text.length === 0
             }
@@ -415,8 +404,8 @@ PanelWindow {
                 anchors.rightMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 color: root.colOnSurface
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
-                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.family: "JetBrainsMono Nerd Font Propo"
                 clip: true
                 focus: true
 
@@ -429,7 +418,7 @@ PanelWindow {
                     if (apps.length > 0) {
                         let idx = (appList.currentIndex >= 0 && appList.currentIndex < apps.length)
                                   ? appList.currentIndex : 0;
-                        let cmd = (apps[idx].execString || apps[idx].command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
+                        let cmd = apps[idx].execString || apps[idx].command.join(" ");
                         Quickshell.execDetached(["bash", "-c", cmd]);
                         root.dismiss();
                     }
@@ -451,9 +440,8 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                text: "\ueb55" // ti-x
-                font.family: "tabler-icons"
-                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                text: "✕"
+                font.pixelSize: 15
                 color: root.colOnSurfaceVariant
                 opacity: searchField.text.length > 0 ? 1 : 0
                 visible: opacity > 0
@@ -477,9 +465,6 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
-            anchors.rightMargin: 0 // 1px overlap to prevent subpixel tearing gaps
-            opacity: root.isOpen ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
@@ -501,9 +486,6 @@ PanelWindow {
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
-            anchors.leftMargin: 0 // 1px overlap to prevent subpixel tearing gaps
-            opacity: root.isOpen ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)

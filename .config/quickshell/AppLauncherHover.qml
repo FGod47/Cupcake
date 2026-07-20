@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
+import "fuzzysort.js" as FuzzySort
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Io
@@ -106,12 +107,11 @@ PanelWindow {
         if (q.length === 0) {
             filteredApps = allApps;
         } else {
-            filteredApps = allApps.filter(function(app) {
-                let n = app.name        && app.name.toLowerCase().indexOf(q) !== -1;
-                let d = app.comment     && app.comment.toLowerCase().indexOf(q) !== -1;
-                let g = app.genericName && app.genericName.toLowerCase().indexOf(q) !== -1;
-                return n || d || g;
+            let results = FuzzySort.go(q, allApps, {
+                keys: ['name', 'genericName', 'comment'],
+                all: true
             });
+            filteredApps = results.map(function(r) { return r.obj; });
         }
         appList.currentIndex = 0;
     }
@@ -160,7 +160,7 @@ PanelWindow {
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: localLiquidify ? (localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)) : cardWidth
+            width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : searchH) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
@@ -218,6 +218,8 @@ PanelWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.searchH : card.searchH + card.cardPad
+            clip: true
+            visible: root.isOpen
 
             Rectangle {
                 id: rowHighlight
