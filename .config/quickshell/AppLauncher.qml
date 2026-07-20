@@ -136,9 +136,8 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        anchors.bottom: localAppLauncherStyle === "Hug" ? parent.bottom : undefined
-        anchors.verticalCenter: localAppLauncherStyle === "Hover" ? parent.verticalCenter : undefined
-        anchors.verticalCenterOffset: localAppLauncherStyle === "Hover" ? -(parent.height * 0.15) : 0
+        anchors.bottom: localAppLauncherStyle === "Hover" ? hoverSearchContainer.top : (localAppLauncherStyle === "Hug" ? parent.bottom : undefined)
+        anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 12 : 0
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
@@ -157,13 +156,13 @@ PanelWindow {
             readonly property int searchH: 68
             readonly property int cardPad: 24
 
-            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
+            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + (localAppLauncherStyle === "Hover" ? 0 : searchH + cardPad) + cardPad
 
             width: localAppLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
-            height: localAppLauncherStyle === "Hover" ? fullHeight : (root.isOpen ? fullHeight : 0)
+            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : 0) : (root.isOpen ? fullHeight : 0)
 
-            scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
-            opacity: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
+            scale: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 1.0 : 0.9) : 1.0
+            opacity: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 1.0 : 0.0) : 1.0
 
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
@@ -205,7 +204,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.cardPad : card.searchH
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.cardPad : card.searchH + card.cardPad
 
             // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
@@ -510,6 +509,7 @@ PanelWindow {
 
         // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
         Shape {
+            visible: localAppLauncherStyle === "Hug"
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
@@ -532,6 +532,7 @@ PanelWindow {
 
         // ── Right Fillet (Inverse bottom-right corner) ────────────────────
         Shape {
+            visible: localAppLauncherStyle === "Hug"
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
