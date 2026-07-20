@@ -73,7 +73,8 @@ PanelWindow {
 
     // 1.0 = hidden below screen, 0.0 = fully visible
     property bool isOpen: false
-
+    property bool localLiquidify: Quickshell.env("LIQUIDIFY") === "true"
+    
     Component.onCompleted: {
         Qt.callLater(function() {
             isOpen = true;
@@ -102,7 +103,7 @@ PanelWindow {
         userDismissed = true;
         isOpen = false;
         Quickshell.execDetached(["bash", "-c",
-            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.qml'"]);
+            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.*\\.qml'"]);
     }
 
     // ── Invisible Scrim (Click outside to close) ───────────────────────
@@ -118,13 +119,11 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        anchors.bottom: Theme.appLauncherStyle === "Hug" ? parent.bottom : undefined
-        anchors.verticalCenter: Theme.appLauncherStyle === "Hover" ? parent.verticalCenter : undefined
-        anchors.verticalCenterOffset: Theme.appLauncherStyle === "Hover" ? -(parent.height * 0.15) : 0
+        anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
-        clip: Theme.appLauncherStyle === "Hug" // Only clip when hugging the bottom edge
+        clip: true // Only clip when hugging the bottom edge
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
@@ -141,22 +140,22 @@ PanelWindow {
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: Theme.appLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
-            height: Theme.appLauncherStyle === "Hover" ? fullHeight : (root.isOpen ? fullHeight : 0)
+            width: localLiquidify ? (root.isOpen ? cardWidth : 160) : cardWidth
+            height: root.isOpen ? fullHeight : 0
 
-            scale: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
-            opacity: Theme.appLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
+            scale: 1.0
+            opacity: 1.0
 
-            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 900 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             topLeftRadius: 28
             topRightRadius: 28
-            bottomLeftRadius: Theme.appLauncherStyle === "Hover" ? 28 : 0
-            bottomRightRadius: Theme.appLauncherStyle === "Hover" ? 28 : 0
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
             // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }
@@ -479,6 +478,8 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.right: parent.left
             anchors.rightMargin: 0 // 1px overlap to prevent subpixel tearing gaps
+            opacity: root.isOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
@@ -501,6 +502,8 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.left: parent.right
             anchors.leftMargin: 0 // 1px overlap to prevent subpixel tearing gaps
+            opacity: root.isOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
