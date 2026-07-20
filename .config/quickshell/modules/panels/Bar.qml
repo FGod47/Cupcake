@@ -1234,7 +1234,12 @@ PanelWindow {
             Behavior on radius { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             
             property real morphProgress: bar.ccOpen ? 1.0 : 0.0
-            Behavior on morphProgress { NumberAnimation { duration: Theme.liquidify ? 800 : 600; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on morphProgress {
+                SequentialAnimation {
+                    PauseAnimation { duration: bar.ccOpen ? 150 : 0 }
+                    NumberAnimation { duration: Theme.liquidify ? 800 : 600; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 }
+                }
+            }
             
             // Fade out the gradient if either CC is open or the music player is expanded
             property real gradientAlpha: 1.0 - Math.max(archPill.morphProgress, archPill.expandFade)
