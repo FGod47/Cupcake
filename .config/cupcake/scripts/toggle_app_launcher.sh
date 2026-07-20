@@ -10,8 +10,8 @@ else
     TARGET="AppLauncherHover.qml"
 fi
 
-if pgrep -f "\[q\]uickshell.*AppLauncher.*\.qml" > /dev/null; then
-    pkill -f "\[q\]uickshell.*AppLauncher.*\.qml"
+if pgrep -f "quickshell.*AppLauncher.*\.qml" > /dev/null; then
+    pkill -f "quickshell.*AppLauncher.*\.qml"
 else
     quickshell --daemonize -p ~/.config/quickshell/$TARGET
 fi

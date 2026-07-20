@@ -60,10 +60,98 @@ PanelWindow {
     }
     Timer { interval: 500; running: true; repeat: true; onTriggered: initLauncherOpacity.running = true }
 
-    // ── State ─────────────────────────────────────────────────────────
+    Component {
+        id: customResultComp
+        QtObject {
+            property string name: ""
+            property string comment: ""
+            property string icon: ""
+            property string execString: ""
+            property string genericName: ""
+            property var command: []
+        }
+    }
+
+    Timer {
+        id: webFetchDebounce
+        interval: 500
+        repeat: false
+        property string targetQuery: ""
+        onTriggered: {
+            logDebug("TIMER FIRED FOR: " + targetQuery);
+            if (webFetchProcess.running) {
+                pendingQuery = targetQuery;
+                webFetchProcess.running = false;
+            } else {
+                currentFetchQuery = targetQuery;
+                webFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_search.py", targetQuery];
+                webFetchProcess.running = true;
+            }
+        }
+    }
+
+    Process {
+        id: webFetchProcess
+        property string currentFetchQuery: ""
+        property string pendingQuery: ""
+        stdout: StdioCollector {
+            id: webFetchStdout
+            onStreamFinished: {
+                let txt = webFetchStdout.text;
+                logDebug("Stream finished. Text length: " + txt.length);
+                try {
+                    if (currentQuery !== currentFetchQuery) {
+                        logDebug("Query mismatch: " + currentQuery + " vs " + currentFetchQuery);
+                        return;
+                    }
+                    
+                    let lines = txt.trim().split("\n");
+                    let lastLine = lines[lines.length - 1];
+                    if (!lastLine) {
+                        logDebug("Empty last line");
+                        return;
+                    }
+                    
+                    logDebug("Parsing JSON...");
+                    let json = JSON.parse(lastLine);
+                    if (json.length === 0) {
+                        logDebug("Empty JSON array");
+                        return;
+                    }
+                    
+                    let newArr = [];
+                    for(let k=0; k<filteredApps.length; k++) newArr.push(filteredApps[k]);
+                    
+                    for (let i = 0; i < json.length; i++) {
+                        let searchObj = customResultComp.createObject(root, {
+                            name: json[i].name,
+                            comment: json[i].comment,
+                            icon: "web-browser",
+                            command: ["xdg-open", json[i].url]
+                        });
+                        if (searchObj) {
+                            newArr.push(searchObj);
+                        }
+                    }
+                    filteredApps = newArr;
+                    logDebug("Successfully appended " + json.length + " items");
+                } catch (e) { logDebug("Live search error: " + e); }
+            }
+        }
+        onExited: {
+            if (pendingQuery !== "") {
+                currentFetchQuery = pendingQuery;
+                webFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_search.py", pendingQuery];
+                webFetchProcess.running = true;
+                pendingQuery = "";
+            }
+        }
+    }
+
+    // ── Math & Commands ──────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively
     property var allApps: DesktopEntries.applications.values
-    property var filteredApps: allApps   // starts populated once entries load
+    property var filteredApps: []   // strictly a JS array so ListView uses JS adapter
     property bool userDismissed: false
     property string currentQuery: ""
 
@@ -79,22 +167,137 @@ PanelWindow {
         Qt.callLater(function() {
             isOpen = true;
             searchField.forceActiveFocus();
+            filterApps("");
         });
     }
 
+    function safeEvalMath(expr) {
+        try {
+            let clean = expr.trim();
+            if (/^[0-9+\-*/().\s]+$/.test(clean) && /[+\-*/]/.test(clean)) {
+                let result = Function('"use strict";return (' + clean + ')')();
+                if (result !== undefined && !isNaN(result) && result !== Infinity && result !== clean) {
+                    return customResultComp.createObject(null, {
+                        name: String(result),
+                        comment: "= " + clean,
+                        icon: "accessories-calculator",
+                        execString: "wl-copy '" + result + "'",
+                        genericName: "Copy result"
+                    });
+                }
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    function tryConversion(expr) {
+        let match = expr.toLowerCase().match(/^([\d.]+)\s*(kg|lbs|c|f|km|mi|m|ft)$/);
+        if (match) {
+            let val = parseFloat(match[1]);
+            let unit = match[2];
+            let toBase = 0;
+            if (unit === "kg") toBase = 2.20462;
+            else if (unit === "lbs") toBase = 1/2.20462;
+            else if (unit === "c") return customResultComp.createObject(root, {
+                    name: String(Number((val * 9/5) + 32).toFixed(2)) + " °F",
+                    comment: "Conversion",
+                    icon: "accessories-calculator",
+                    execString: "wl-copy '" + String(Number((val * 9/5) + 32).toFixed(2)) + "'",
+                    genericName: "Copy result"
+                });
+            else if (unit === "f") return customResultComp.createObject(root, {
+                    name: String(Number((val - 32) * 5/9).toFixed(2)) + " °C",
+                    comment: "Conversion",
+                    icon: "accessories-calculator",
+                    execString: "wl-copy '" + String(Number((val - 32) * 5/9).toFixed(2)) + "'",
+                    genericName: "Copy result"
+                });
+            else if (unit === "km") toBase = 0.621371;
+            else if (unit === "mi") toBase = 1/0.621371;
+            else if (unit === "m") toBase = 3.28084;
+            else if (unit === "ft") toBase = 1/3.28084;
+            
+            return customResultComp.createObject(null, {
+                    name: String(Number(val * toBase).toFixed(2)) + " " + (match[2] === "km" ? "mi" : match[2] === "mi" ? "km" : match[2] === "c" ? "f" : match[2] === "f" ? "c" : match[2] === "kg" ? "lbs" : match[2] === "lbs" ? "kg" : match[2] === "m" ? "ft" : "m"),
+                    comment: "Conversion",
+                    icon: "accessories-calculator",
+                    execString: "wl-copy '" + String(Number(val * toBase).toFixed(2)) + "'",
+                    genericName: "Copy result"
+                });
+        }
+        return null;
+    }
+
+    function tryPath(expr) {
+        let clean = expr.trim();
+        if (clean.startsWith("/") || clean.startsWith("~/")) {
+            return customResultComp.createObject(null, {
+                name: "Open " + clean,
+                comment: "File Path",
+                icon: "system-file-manager",
+                execString: "xdg-open '" + clean + "'",
+                genericName: "Open Directory"
+            });
+        }
+        return null;
+    }
+
+    function logDebug(msg) {
+        Quickshell.execDetached(["bash", "-c", "echo '" + msg + "' >> /tmp/qs_debug.log"]);
+    }
+
     function filterApps(query) {
+        logDebug("--- filterApps called with: " + query);
         currentQuery = query;
         let q = query.toLowerCase().trim();
         if (q.length === 0) {
-            filteredApps = allApps;
+            let arr = [];
+            for (let i = 0; i < allApps.length; i++) arr.push(allApps[i]);
+            filteredApps = arr;
         } else {
             let results = FuzzySort.go(q, allApps, {
                 keys: ['name', 'genericName', 'comment'],
                 all: true
             });
-            filteredApps = results.map(function(r) { return r.obj; });
+            let apps = results.map(function(r) { return r.obj; });
+            logDebug("Fuzzysort found: " + apps.length);
+            
+            let mathRes = safeEvalMath(q);
+            if (mathRes) apps.unshift(mathRes);
+            
+            let convRes = tryConversion(q);
+            if (convRes) apps.unshift(convRes);
+            
+            let pathRes = tryPath(query);
+            if (pathRes) apps.unshift(pathRes);
+            
+            // Web search fallback if no strict matches
+            try {
+                if (apps.length === 0 || (results.length > 0 && results[0].score < -1000)) {
+                    let searchObj = customResultComp.createObject(null, {
+                        name: "Search Google for '" + query + "'",
+                        comment: "Web search",
+                        icon: "web-browser",
+                        command: ["xdg-open", "https://google.com/search?q=" + encodeURIComponent(query)]
+                    });
+                    if (searchObj) {
+                        apps.push(searchObj);
+                    }
+                    
+                    // Trigger live search in background (debounced)
+                    webFetchDebounce.targetQuery = query;
+                    webFetchDebounce.restart();
+                }
+            } catch (e) { logDebug("Error in fallback: " + e); }
+            
+            try {
+                filteredApps = apps;
+                logDebug("Assigned to filteredApps. Length is now: " + filteredApps.length);
+            } catch(e) { logDebug("Error assigning: " + e); }
         }
-        appList.currentIndex = 0;
+        try {
+            appList.currentIndex = 0;
+        } catch(e) {}
     }
 
     function dismiss() {
@@ -139,7 +342,7 @@ PanelWindow {
             readonly property int searchH: 68
             readonly property int cardPad: 24
 
-            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.count, maxListItems) * itemH) + searchH + cardPad * 2
 
             width: Theme.appLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
             height: Theme.appLauncherStyle === "Hover" ? fullHeight : (root.isOpen ? fullHeight : 0)
@@ -153,13 +356,13 @@ PanelWindow {
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 700; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            border.color: localAppLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-            border.width: localAppLauncherStyle === "Hover" ? 1 : 0
-            radius: localAppLauncherStyle === "Hover" ? 26 : 0
-            topLeftRadius: localAppLauncherStyle === "Hug" ? 28 : 26
-            topRightRadius: localAppLauncherStyle === "Hug" ? 28 : 26
-            bottomLeftRadius: localAppLauncherStyle === "Hover" ? 26 : 0
-            bottomRightRadius: localAppLauncherStyle === "Hover" ? 26 : 0
+            border.color: Theme.appLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+            border.width: Theme.appLauncherStyle === "Hover" ? 1 : 0
+            radius: Theme.appLauncherStyle === "Hover" ? 26 : 0
+            topLeftRadius: Theme.appLauncherStyle === "Hug" ? 28 : 26
+            topRightRadius: Theme.appLauncherStyle === "Hug" ? 28 : 26
+            bottomLeftRadius: Theme.appLauncherStyle === "Hover" ? 26 : 0
+            bottomRightRadius: Theme.appLauncherStyle === "Hover" ? 26 : 0
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -185,11 +388,12 @@ PanelWindow {
         // ── App List Area ─────────────────────────────────────────────
         Item {
             id: listArea
+            clip: true
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.searchH : card.searchH + card.cardPad
+            anchors.bottomMargin: Theme.appLauncherStyle === "Hover" ? card.searchH : card.searchH + card.cardPad
 
             // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
@@ -202,8 +406,8 @@ PanelWindow {
                    : card.cardPad
                 radius: 14
                 color: root.colOnSurface
-                opacity: filteredApps.length > 0 ? 0.09 : 0
-                visible: filteredApps.length > 0
+                opacity: appList.count > 0 ? 0.09 : 0
+                visible: appList.count > 0
 
                 Behavior on y {
                     NumberAnimation {
@@ -218,8 +422,8 @@ PanelWindow {
             Column {
                 anchors.centerIn: parent
                 spacing: 10
-                visible: filteredApps.length === 0
-                opacity: filteredApps.length === 0 ? 1 : 0
+                visible: appList.count === 0
+                opacity: appList.count === 0 ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
                 Text {
@@ -231,7 +435,7 @@ PanelWindow {
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "No results"
+                    text: "No results. Apps: " + (filteredApps ? filteredApps.length : "null") + " Count: " + appList.count + " Comp: " + (customResultComp ? "OK" : "NULL")
                     color: root.colOnSurfaceVariant
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 17
                     font.family: Theme.defaultFontFamily
@@ -375,7 +579,7 @@ PanelWindow {
             height: card.searchH
             radius: 9999
 
-            color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
+            color: Theme.appLauncherStyle === "Hover" ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
             border.width: 0
 
             // Search icon background
@@ -384,9 +588,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                width: localAppLauncherStyle === "Hover" ? 38 : 36
-                height: localAppLauncherStyle === "Hover" ? 38 : 36
-                radius: localAppLauncherStyle === "Hover" ? 19 : 18
+                width: Theme.appLauncherStyle === "Hover" ? 38 : 36
+                height: Theme.appLauncherStyle === "Hover" ? 38 : 36
+                radius: Theme.appLauncherStyle === "Hover" ? 19 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -395,7 +599,7 @@ PanelWindow {
                     text: "\ueb1c" // ti-search
                     font.family: "tabler-icons"
                     font.weight: Theme.defaultFontWeight
-                    font.pixelSize: localAppLauncherStyle === "Hover" ? 20 : 18
+                    font.pixelSize: Theme.appLauncherStyle === "Hover" ? 20 : 18
                     color: root.colOnSurface
                 }
             }
@@ -404,13 +608,13 @@ PanelWindow {
             Rectangle {
                 id: searchInputPill
                 anchors.left: searchIconWrapper.right
-                anchors.leftMargin: localAppLauncherStyle === "Hover" ? 12 : 10
+                anchors.leftMargin: Theme.appLauncherStyle === "Hover" ? 12 : 10
                 anchors.right: parent.right
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
                 height: 38
                 radius: 19
-                color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08) : "transparent"
+                color: Theme.appLauncherStyle === "Hover" ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08) : "transparent"
                 opacity: card.width > 120 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 
@@ -418,12 +622,12 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
+                    anchors.leftMargin: Theme.appLauncherStyle === "Hover" ? 16 : 0
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 15
                     font.family: Theme.defaultFontFamily
-                    text: localAppLauncherStyle === "Hover" ? "Search, calculate or run" : "Search applications…"
+                    text: Theme.appLauncherStyle === "Hover" ? "Search, calculate or run" : "Search applications…"
                     visible: searchField.text.length === 0
                     opacity: card.width > 100 ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -432,7 +636,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
+                    anchors.leftMargin: Theme.appLauncherStyle === "Hover" ? 16 : 0
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter

@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
+import QtQml
 import QtQuick.Shapes
 import "fuzzysort.js" as FuzzySort
 import Quickshell
@@ -63,7 +64,7 @@ PanelWindow {
     // ── State ─────────────────────────────────────────────────────────
     // DesktopEntries loads asynchronously — bind reactively
     property var allApps: DesktopEntries.applications.values
-    property var filteredApps: allApps   // starts populated once entries load
+    property var filteredApps: []   // starts populated once entries load
     property bool userDismissed: false
     property string currentQuery: ""
 
@@ -97,21 +98,195 @@ PanelWindow {
         onTriggered: {
             isOpen = true;
             searchField.forceActiveFocus();
+            filterApps("");
         }
     }
 
+
+    Component {
+        id: customResultComp
+        QtObject {
+            property string name: ""
+            property string comment: ""
+            property string icon: ""
+            property string execString: ""
+            property string genericName: ""
+            property var command: []
+        }
+    }
+
+    function tryPath(path) {
+        if (path.startsWith("/") || path.startsWith("~")) {
+            let expanded = path.replace(/^~/, Quickshell.env("HOME"));
+            return customResultComp.createObject(null, {
+                name: "Open Path: " + path,
+                comment: "Run in terminal",
+                icon: "utilities-terminal",
+                command: ["xdg-open", expanded]
+            });
+        }
+        return null;
+    }
+
+    function safeEvalMath(query) {
+        if (/^[0-9\+\-\*\/\%\(\)\.\s]+$/.test(query) && /[0-9]/.test(query) && /[\+\-\*\/\%]/.test(query)) {
+            try {
+                let obj = Qt.createQmlObject('import QtQml; QtObject { property real res: (' + query + ') }', root, "mathEval");
+                if (obj && obj.res !== undefined && !isNaN(obj.res)) {
+                    let res = obj.res;
+                    obj.destroy();
+                    return customResultComp.createObject(null, {
+                        name: "Result: " + res,
+                        comment: "Math calculation",
+                        icon: "accessories-calculator",
+                        command: ["wl-copy", res.toString()]
+                    });
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    function safeEvalConv(query) {
+        let match = query.match(/^([0-9.]+)\s*([a-zA-Z]+)\s+(?:in|to)\s+([a-zA-Z]+)$/);
+        if (match) {
+            let val = parseFloat(match[1]);
+            let from = match[2].toLowerCase();
+            let to = match[3].toLowerCase();
+            
+            let rates = { "kg": 1, "lbs": 2.20462, "lb": 2.20462, "c": 1, "f": 1, "m": 1, "cm": 100, "km": 0.001, "inch": 39.3701, "ft": 3.28084 };
+            if (from === "c" && to === "f") {
+                let res = (val * 9/5) + 32;
+                return customResultComp.createObject(null, { name: res.toFixed(2) + " °F", comment: "Temperature conversion", icon: "accessories-calculator", command: ["wl-copy", res.toFixed(2)] });
+            } else if (from === "f" && to === "c") {
+                let res = (val - 32) * 5/9;
+                return customResultComp.createObject(null, { name: res.toFixed(2) + " °C", comment: "Temperature conversion", icon: "accessories-calculator", command: ["wl-copy", res.toFixed(2)] });
+            } else if (rates[from] && rates[to]) {
+                let res = (val / rates[from]) * rates[to];
+                return customResultComp.createObject(null, {
+                    name: res.toFixed(2) + " " + to,
+                    comment: "Unit conversion",
+                    icon: "accessories-calculator",
+                    command: ["wl-copy", res.toFixed(2)]
+                });
+            }
+        }
+        return null;
+    }
+
+    // Live Web Search Process
+    property string currentFetchQuery: ""
+    property string pendingQuery: ""
+    Timer {
+        id: webFetchDebounce
+        interval: 500
+        repeat: false
+        property string targetQuery: ""
+        onTriggered: {
+            if (webFetchProcess.running) {
+                pendingQuery = targetQuery;
+                webFetchProcess.running = false;
+            } else {
+                currentFetchQuery = targetQuery;
+                webFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_search.py", targetQuery];
+                webFetchProcess.running = true;
+            }
+        }
+    }
+
+    Process {
+        id: webFetchProcess
+        stdout: StdioCollector {
+            id: webFetchStdout
+            onStreamFinished: {
+                let txt = webFetchStdout.text;
+                try {
+                    if (currentQuery !== currentFetchQuery) {
+                        return;
+                    }
+                    
+                    let lines = txt.trim().split("\n");
+                    let lastLine = lines[lines.length - 1];
+                    if (!lastLine) {
+                        return;
+                    }
+                    
+                    let json = JSON.parse(lastLine);
+                    if (json.length === 0) return;
+                    
+                    let newArr = [];
+                    for(let k=0; k<filteredApps.length; k++) newArr.push(filteredApps[k]);
+                    
+                    for (let i = 0; i < json.length; i++) {
+                        let searchObj = customResultComp.createObject(root, {
+                            name: json[i].name,
+                            comment: json[i].comment,
+                            icon: "web-browser",
+                            command: ["xdg-open", json[i].url]
+                        });
+                        if (searchObj) {
+                            newArr.push(searchObj);
+                        }
+                    }
+                    filteredApps = newArr;
+                } catch (e) { 
+                    console.log("Live search error: " + e);
+                }
+            }
+        }
+        onExited: {
+            if (pendingQuery !== "") {
+                currentFetchQuery = pendingQuery;
+                webFetchProcess.command = ["python3", Quickshell.env("HOME") + "/.config/cupcake/scripts/fetch_search.py", pendingQuery];
+                webFetchProcess.running = true;
+                pendingQuery = "";
+            }
+        }
+    }
 
     function filterApps(query) {
         currentQuery = query;
         let q = query.toLowerCase().trim();
         if (q.length === 0) {
-            filteredApps = allApps;
+            let arr = [];
+            for (let i = 0; i < allApps.length; i++) arr.push(allApps[i]);
+            filteredApps = arr;
         } else {
             let results = FuzzySort.go(q, allApps, {
                 keys: ['name', 'genericName', 'comment'],
                 all: true
             });
-            filteredApps = results.map(function(r) { return r.obj; });
+            let apps = results.map(function(r) { return r.obj; });
+            
+            let mathRes = safeEvalMath(q);
+            if (mathRes) apps.unshift(mathRes);
+            
+            let convRes = safeEvalConv(q);
+            if (convRes) apps.unshift(convRes);
+            
+            let pathRes = tryPath(query);
+            if (pathRes) apps.unshift(pathRes);
+            
+            // Web search fallback if no strict matches
+            try {
+                if (apps.length === 0 || (results.length > 0 && results[0].score < -1000)) {
+                    let searchObj = customResultComp.createObject(root, {
+                        name: "Search Google for '" + query + "'",
+                        comment: "Web search",
+                        icon: "web-browser",
+                        command: ["xdg-open", "https://google.com/search?q=" + encodeURIComponent(query)]
+                    });
+                    if (searchObj) {
+                        apps.push(searchObj);
+                    }
+                    
+                    // Trigger live search in background (debounced)
+                    webFetchDebounce.targetQuery = query;
+                    webFetchDebounce.restart();
+                }
+            } catch (e) {}
+
+            filteredApps = apps;
         }
         appList.currentIndex = 0;
     }
@@ -158,7 +333,7 @@ PanelWindow {
             readonly property int searchH: localAppLauncherStyle === "Hover" ? 52 : 68
             readonly property int cardPad: 24
 
-            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.count, maxListItems) * itemH) + searchH + cardPad * 2
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : searchH) : (root.isOpen ? fullHeight : 0)
@@ -231,8 +406,8 @@ PanelWindow {
                    : card.cardPad
                 radius: 14
                 color: root.colOnSurface
-                opacity: filteredApps.length > 0 ? 0.09 : 0
-                visible: filteredApps.length > 0
+                opacity: appList.count > 0 ? 0.09 : 0
+                visible: appList.count > 0
 
                 Behavior on y {
                     NumberAnimation {
@@ -246,8 +421,8 @@ PanelWindow {
             Column {
                 anchors.centerIn: parent
                 spacing: 10
-                visible: filteredApps.length === 0
-                opacity: filteredApps.length === 0 ? 1 : 0
+                visible: appList.count === 0
+                opacity: appList.count === 0 ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 
                 Text {
@@ -259,7 +434,7 @@ PanelWindow {
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "No results"
+                    text: "No results. Apps: " + (filteredApps ? filteredApps.length : "null") + " Count: " + appList.count + " Comp: " + (customResultComp ? "OK" : "NULL")
                     color: root.colOnSurfaceVariant
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 17
                     font.family: Theme.defaultFontFamily
@@ -553,5 +728,5 @@ PanelWindow {
             }
         }
         } // Rectangle card
-    } // Item masterWrapper
+    } // Item
 } // PanelWindow
