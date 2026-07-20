@@ -102,6 +102,9 @@ PanelWindow {
         }
     }
 
+    Component.onCompleted: {
+        filterApps("");
+    }
 
     Component {
         id: customResultComp
@@ -252,11 +255,17 @@ PanelWindow {
             for (let i = 0; i < allApps.length; i++) arr.push(allApps[i]);
             filteredApps = arr;
         } else {
-            let results = FuzzySort.go(q, allApps, {
-                keys: ['name', 'genericName', 'comment'],
-                all: true
-            });
-            let apps = results.map(function(r) { return r.obj; });
+            let apps = [];
+            let results = [];
+            try {
+                results = FuzzySort.go(q, allApps, {
+                    keys: ['name', 'genericName', 'comment'],
+                    all: true
+                });
+                apps = results.map(function(r) { return r.obj; });
+            } catch (e) {
+                Quickshell.execDetached(["bash", "-c", "echo 'FuzzySort ERROR: " + e + "' >> /tmp/qs_debug.log"]);
+            }
             
             let mathRes = safeEvalMath(q);
             if (mathRes) apps.unshift(mathRes);
