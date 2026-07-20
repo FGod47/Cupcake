@@ -137,7 +137,7 @@ PanelWindow {
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
         anchors.bottom: localAppLauncherStyle === "Hover" ? hoverSearchContainer.top : (localAppLauncherStyle === "Hug" ? parent.bottom : undefined)
-        anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 12 : 0
+        anchors.bottomMargin: 0
         anchors.horizontalCenter: parent.horizontalCenter
         width: root.width
         height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
@@ -150,13 +150,13 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
 
-            readonly property int cardWidth: 630
+            readonly property int cardWidth: localAppLauncherStyle === "Hover" ? 540 : 630
             readonly property int maxListItems: 8
             readonly property int itemH: 64
             readonly property int searchH: 68
             readonly property int cardPad: 24
 
-            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + (localAppLauncherStyle === "Hover" ? 0 : searchH + cardPad) + cardPad
+            readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + (localAppLauncherStyle === "Hover" ? 0 : searchH) + cardPad * 2
 
             width: localAppLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
             height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : 0) : (root.isOpen ? fullHeight : 0)
@@ -169,11 +169,13 @@ PanelWindow {
             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
-            color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            topLeftRadius: 28
-            topRightRadius: 28
-            bottomLeftRadius: localAppLauncherStyle === "Hover" ? 28 : 0
-            bottomRightRadius: localAppLauncherStyle === "Hover" ? 28 : 0
+            color: localAppLauncherStyle === "Hover" ? Qt.rgba(30/255, 30/255, 34/255, 0.72) : Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+            border.color: localAppLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+            border.width: localAppLauncherStyle === "Hover" ? 1 : 0
+            topLeftRadius: localAppLauncherStyle === "Hover" ? 16 : 28
+            topRightRadius: localAppLauncherStyle === "Hover" ? 16 : 28
+            bottomLeftRadius: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 0 : 16) : 0
+            bottomRightRadius: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 0 : 16) : 0
             // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }
@@ -204,7 +206,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.cardPad : card.searchH + card.cardPad
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 0 : card.searchH
 
             // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
@@ -392,7 +394,10 @@ PanelWindow {
             anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 0 : 16
 
             height: card.searchH - 16
-            radius: 9999
+            topLeftRadius: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 0 : 28) : 9999
+            topRightRadius: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? 0 : 28) : 9999
+            bottomLeftRadius: localAppLauncherStyle === "Hover" ? 28 : 9999
+            bottomRightRadius: localAppLauncherStyle === "Hover" ? 28 : 9999
             clip: true
 
             scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
@@ -400,12 +405,9 @@ PanelWindow {
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
-            color: Qt.lighter(root.colSurfaceContainerHigh, 1.12)
-            border.color: searchField.activeFocus
-                          ? Qt.rgba(root.colPrimary.r, root.colPrimary.g,
-                                    root.colPrimary.b, 0.7)
-                          : "transparent"
-            border.width: 2
+            color: localAppLauncherStyle === "Hover" ? Qt.rgba(30/255, 30/255, 34/255, 0.72) : Qt.lighter(root.colSurfaceContainerHigh, 1.12)
+            border.color: localAppLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : (searchField.activeFocus ? Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.7) : "transparent")
+            border.width: localAppLauncherStyle === "Hover" ? 1 : 2
 
             Behavior on border.color { ColorAnimation { duration: 180 } }
 
@@ -560,7 +562,7 @@ PanelWindow {
     // ── Hover mode search bar container ──
     Item {
         id: hoverSearchContainer
-        width: root.isOpen ? 480 : 52
+        width: root.isOpen ? card.cardWidth : 52
         height: card.searchH - 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
