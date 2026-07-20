@@ -73,6 +73,7 @@ PanelWindow {
 
     // 1.0 = hidden below screen, 0.0 = fully visible
     property bool isOpen: false
+    property bool localLiquidify: Quickshell.env("LIQUIDIFY") === "true"
 
     property string localAppLauncherStyle: "Hover"
     Process {
@@ -120,7 +121,7 @@ PanelWindow {
         userDismissed = true;
         isOpen = false;
         Quickshell.execDetached(["bash", "-c",
-            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.qml'"]);
+            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.*\\.qml'"]);
     }
 
     // ── Invisible Scrim (Click outside to close) ───────────────────────
@@ -159,7 +160,7 @@ PanelWindow {
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
+            width: localLiquidify ? (localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)) : cardWidth
             height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : searchH) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)

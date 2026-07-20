@@ -73,31 +73,14 @@ PanelWindow {
 
     // 1.0 = hidden below screen, 0.0 = fully visible
     property bool isOpen: false
-
-    property string localAppLauncherStyle: "Hover"
-    Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.applauncher_style"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let s = text.trim();
-                if (s !== "") root.localAppLauncherStyle = s;
-                openTimer.start();
-            }
-        }
-    }
-
-    Timer {
-        id: openTimer
-        interval: 50
-        running: false
-        repeat: false
-        onTriggered: {
+    property bool localLiquidify: Quickshell.env("LIQUIDIFY") === "true"
+    
+    Component.onCompleted: {
+        Qt.callLater(function() {
             isOpen = true;
             searchField.forceActiveFocus();
-        }
+        });
     }
-
 
     function filterApps(query) {
         currentQuery = query;
@@ -120,7 +103,7 @@ PanelWindow {
         userDismissed = true;
         isOpen = false;
         Quickshell.execDetached(["bash", "-c",
-            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.qml'"]);
+            "sleep 0.45 && pkill -f '[q]uickshell.*AppLauncher.*\\.qml'"]);
     }
 
     // ── Invisible Scrim (Click outside to close) ───────────────────────
@@ -136,13 +119,11 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        id: masterWrapper
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 200 : 0
         anchors.horizontalCenter: parent.horizontalCenter
-        width: card.width
-        height: card.height + 1
-        clip: localAppLauncherStyle === "Hug"
+        width: root.width
+        height: card.height + 1 // Add 1px buffer to prevent clipping the card's top anti-aliasing
+        clip: true // Only clip when hugging the bottom edge
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
@@ -151,46 +132,31 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
 
-            readonly property int cardWidth: localAppLauncherStyle === "Hover" ? 540 : 630
+            readonly property int cardWidth: 630
             readonly property int maxListItems: 8
             readonly property int itemH: 64
-            readonly property int searchH: localAppLauncherStyle === "Hover" ? 52 : 68
+            readonly property int searchH: 68
             readonly property int cardPad: 24
 
             readonly property int fullHeight: (filteredApps.length === 0 ? 160 : Math.min(filteredApps.length, maxListItems) * itemH) + searchH + cardPad * 2
 
-            width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
-            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : searchH) : (root.isOpen ? fullHeight : 0)
+            width: localLiquidify ? (root.isOpen ? cardWidth : 160) : cardWidth
+            height: root.isOpen ? fullHeight : 0
 
-            onHeightChanged: console.log("Card height:", height)
-            onWidthChanged: console.log("Card width:", width)
+            scale: 1.0
+            opacity: 1.0
 
-            scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
-            opacity: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
-
-            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+            Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-            Behavior on width {
-                SequentialAnimation {
-                    PauseAnimation { duration: (root.isOpen && searchField.text.length === 0) ? 250 : 0 }
-                    NumberAnimation {
-                        duration: Theme.liquidify ? 900 : 450
-                        easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo
-                        easing.amplitude: 0.4
-                        easing.period: 0.8
-                    }
-                }
-            }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 900 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.8 } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            border.color: localAppLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-            border.width: localAppLauncherStyle === "Hover" ? 1 : 0
-            radius: localAppLauncherStyle === "Hover" ? 26 : 0
-            topLeftRadius: localAppLauncherStyle === "Hug" ? 28 : 26
-            topRightRadius: localAppLauncherStyle === "Hug" ? 28 : 26
-            bottomLeftRadius: localAppLauncherStyle === "Hover" ? 26 : 0
-            bottomRightRadius: localAppLauncherStyle === "Hover" ? 26 : 0
+            topLeftRadius: 28
+            topRightRadius: 28
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
+            // Removed clip: true from card so it can render the fillets outside its bounds
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -200,14 +166,18 @@ PanelWindow {
                 height: card.height
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                clip: true
+                clip: true // Dynamically clips exactly to the card's current animating size
                 
                 Item {
                     id: innerContent
-                    width: card.width
-                    height: card.height
+                    width: card.cardWidth
+                    height: card.fullHeight
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
+                    
+                    opacity: root.isOpen ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: root.isOpen ? 550 : 250; easing.type: Easing.InOutQuad } }
+
 
         // ── App List Area ─────────────────────────────────────────────
         Item {
@@ -215,9 +185,10 @@ PanelWindow {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.searchH : card.searchH + card.cardPad
+            anchors.bottom: searchBar.top
+            anchors.bottomMargin: 0
 
+            // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
                 id: rowHighlight
                 x: card.cardPad
@@ -240,6 +211,7 @@ PanelWindow {
                 }
             }
 
+            // Empty state
             Column {
                 anchors.centerIn: parent
                 spacing: 10
@@ -270,6 +242,7 @@ PanelWindow {
                 }
             }
 
+            // App list
             ListView {
                 id: appList
                 anchors.fill: parent
@@ -279,6 +252,20 @@ PanelWindow {
                 currentIndex: 0
                 maximumFlickVelocity: 2500
                 model: root.filteredApps
+
+                // Animate items in/out on search
+                add: Transition {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 180; easing.type: Easing.OutCubic }
+                    NumberAnimation { property: "scale"; from: 0.96; to: 1; duration: 180; easing.type: Easing.OutCubic }
+                }
+                remove: Transition {
+                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 140 }
+                    NumberAnimation { property: "scale"; from: 1; to: 0.96; duration: 140 }
+                }
+                displaced: Transition {
+                    NumberAnimation { properties: "y"; duration: 220; easing.type: Easing.OutCubic }
+                    NumberAnimation { property: "opacity"; to: 1; duration: 220 }
+                }
 
                 ScrollBar.vertical: ScrollBar {
                     id: vScroll
@@ -301,6 +288,7 @@ PanelWindow {
                     width: appList.width
                     height: card.itemH
 
+                    // Hover state layer
                     Rectangle {
                         anchors.fill: parent
                         radius: 14
@@ -373,145 +361,125 @@ PanelWindow {
             }
         }
 
-        // ── Search bar ────────────────────────────────────────────────
+        // ── Search bar — pinned to bottom of card (Caelestia layout) ──
         Rectangle {
             id: searchBar
-            parent: innerContent
+
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.margins: card.cardPad
+            anchors.bottomMargin: 16
 
-            height: card.searchH
+            height: card.searchH - 16
             radius: 9999
 
-            color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
-            border.width: 0
+            color: Qt.lighter(root.colSurfaceContainerHigh, 1.12)
+            border.color: searchField.activeFocus
+                          ? Qt.rgba(root.colPrimary.r, root.colPrimary.g,
+                                    root.colPrimary.b, 0.7)
+                          : "transparent"
+            border.width: 2
 
-            // Search icon background
-            Rectangle {
-                id: searchIconWrapper
+            Behavior on border.color { ColorAnimation { duration: 180 } }
+
+            // Search icon
+            Text {
+                id: searchIconTxt
                 anchors.left: parent.left
-                anchors.leftMargin: 8
+                anchors.leftMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                width: localAppLauncherStyle === "Hover" ? 38 : 36
-                height: localAppLauncherStyle === "Hover" ? 38 : 36
-                radius: localAppLauncherStyle === "Hover" ? 19 : 18
-                color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
+                text: "\ueb1c" // ti-search
+                font.family: "tabler-icons"
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 17
+                color: root.colOnSurfaceVariant
+            }
 
-                Text {
-                    id: searchIconTxt
-                    anchors.centerIn: parent
-                    text: "\ueb1c" // ti-search
-                    font.family: "tabler-icons"
-                    font.weight: Theme.defaultFontWeight
-                    font.pixelSize: localAppLauncherStyle === "Hover" ? 20 : 18
-                    color: root.colOnSurface
+            // Placeholder
+            Text {
+                anchors.left: searchIconTxt.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                color: root.colOutline
+                font.pixelSize: 15
+                font.family: Theme.defaultFontFamily
+                text: "Search applications…"
+                visible: searchField.text.length === 0
+            }
+
+            TextInput {
+                id: searchField
+                anchors.left: searchIconTxt.right
+                anchors.leftMargin: 10
+                anchors.right: clearBtn.left
+                anchors.rightMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                color: root.colOnSurface
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                font.family: Theme.defaultFontFamily
+                clip: true
+                focus: true
+
+                onTextChanged: root.filterApps(text)
+
+                Keys.onEscapePressed: root.dismiss()
+
+                Keys.onReturnPressed: {
+                    let apps = root.filteredApps;
+                    if (apps.length > 0) {
+                        let idx = (appList.currentIndex >= 0 && appList.currentIndex < apps.length)
+                                  ? appList.currentIndex : 0;
+                        let cmd = (apps[idx].execString || apps[idx].command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
+                        Quickshell.execDetached(["bash", "-c", cmd]);
+                        root.dismiss();
+                    }
+                }
+
+                Keys.onDownPressed: {
+                    if (appList.currentIndex < root.filteredApps.length - 1)
+                        appList.currentIndex++;
+                }
+                Keys.onUpPressed: {
+                    if (appList.currentIndex > 0)
+                        appList.currentIndex--;
                 }
             }
 
-            // Inner Pill for Text Input
-            Rectangle {
-                id: searchInputPill
-                anchors.left: searchIconWrapper.right
-                anchors.leftMargin: localAppLauncherStyle === "Hover" ? 12 : 10
+            // Clear button
+            Text {
+                id: clearBtn
                 anchors.right: parent.right
-                anchors.rightMargin: 16
+                anchors.rightMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
-                height: 38
-                radius: 19
-                color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08) : "transparent"
-                opacity: card.width > 120 ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                
-                // Placeholder
-                Text {
-                    id: placeholderTxt
-                    anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOutline
-                    font.pixelSize: 15
-                    font.family: Theme.defaultFontFamily
-                    text: localAppLauncherStyle === "Hover" ? "Search, calculate or run" : "Search applications…"
-                    visible: searchField.text.length === 0
-                    opacity: card.width > 100 ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                }
+                text: "\ueb55" // ti-x
+                font.family: "tabler-icons"
+                font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                color: root.colOnSurfaceVariant
+                opacity: searchField.text.length > 0 ? 1 : 0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 150 } }
 
-                TextInput {
-                    id: searchField
-                    anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
-                    anchors.right: clearBtn.left
-                    anchors.rightMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOnSurface
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 15
-                    font.family: Theme.defaultFontFamily
-                    clip: true
-                    focus: true
-                    opacity: card.width > 100 ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-                    onTextChanged: root.filterApps(text)
-                    Keys.onEscapePressed: root.dismiss()
-
-                    Keys.onReturnPressed: {
-                        let apps = root.filteredApps;
-                        if (apps.length > 0) {
-                            let idx = (appList.currentIndex >= 0 && appList.currentIndex < apps.length)
-                                      ? appList.currentIndex : 0;
-                            let cmd = (apps[idx].execString || apps[idx].command.join(" ")).replace(/%[a-zA-Z]/g, "").trim();
-                            Quickshell.execDetached(["bash", "-c", cmd]);
-                            root.dismiss();
-                        }
-                    }
-
-                    Keys.onDownPressed: {
-                        if (appList.currentIndex < root.filteredApps.length - 1)
-                            appList.currentIndex++;
-                    }
-                    Keys.onUpPressed: {
-                        if (appList.currentIndex > 0)
-                            appList.currentIndex--;
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        searchField.text = "";
+                        searchField.forceActiveFocus();
                     }
                 }
+            } // Text clearBtn
+        } // Rectangle searchBar
+                } // Item innerContent
+            } // Item contentWrapper
 
-                // Clear button
-                Text {
-                    id: clearBtn
-                    anchors.right: parent.right
-                    anchors.rightMargin: 12
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "\ueb55" // ti-x
-                    font.family: "tabler-icons"
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 15
-                    color: root.colOnSurfaceVariant
-                    opacity: searchField.text.length > 0 && card.width > 100 ? 1 : 0
-                    visible: opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            searchField.text = "";
-                            searchField.forceActiveFocus();
-                        }
-                    }
-                }
-            } // searchInputPill
-
-        } // searchBar
-        } // innerContent
-    } // contentWrapper
-
+        // ── Left Fillet (Inverse bottom-left corner) ─────────────────────
         Shape {
-            visible: localAppLauncherStyle === "Hug"
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
-            anchors.rightMargin: 0
+            anchors.rightMargin: 0 // 1px overlap to prevent subpixel tearing gaps
+            opacity: root.isOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
@@ -528,12 +496,14 @@ PanelWindow {
             }
         }
 
+        // ── Right Fillet (Inverse bottom-right corner) ────────────────────
         Shape {
-            visible: localAppLauncherStyle === "Hug"
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
-            anchors.leftMargin: 0
+            anchors.leftMargin: 0 // 1px overlap to prevent subpixel tearing gaps
+            opacity: root.isOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
             ShapePath {
                 fillColor: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
@@ -549,6 +519,8 @@ PanelWindow {
                 }
             }
         }
-        } // Rectangle card
+    } // Rectangle card
     } // Item masterWrapper
+
+
 } // PanelWindow
