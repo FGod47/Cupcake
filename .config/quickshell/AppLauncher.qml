@@ -610,9 +610,13 @@ PanelWindow {
 
                         IconImage {
                             asynchronous: true
-                            source: Quickshell.iconPath(
-                                delegateItem.modelData?.icon ?? "",
-                                "application-x-executable")
+                            source: {
+                                let icn = delegateItem.modelData?.icon ?? "";
+                                if (icn.startsWith("http://") || icn.startsWith("https://")) {
+                                    return icn;
+                                }
+                                return Quickshell.iconPath(icn, "application-x-executable");
+                            }
                             width: 40
                             height: 40
                             anchors.verticalCenter: parent.verticalCenter

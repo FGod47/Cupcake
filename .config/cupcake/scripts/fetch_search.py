@@ -43,9 +43,13 @@ def fetch_duckduckgo(query):
             if url.startswith('//duckduckgo.com/l/?uddg='):
                 url = urllib.parse.unquote(url.split('uddg=')[1].split('&')[0])
                 
+            domain = urllib.parse.urlparse(url).netloc
+            icon_url = f"https://icons.duckduckgo.com/ip3/{domain}.ico" if domain else "web-browser"
+                
             results.append({
                 "name": title,
                 "comment": snippet,
+                "icon": icon_url,
                 "url": url
             })
             
