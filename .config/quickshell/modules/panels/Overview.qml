@@ -297,7 +297,9 @@ PanelWindow {
             opacity: overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
         }
 
-        opacity: globalState.overviewOpen ? 1.0 : 0.0
+        // Keep opacity slightly above 0 to prevent QtQuick from destroying layer FBOs,
+        // which completely eliminates the 2-frame skeleton delay on ScreencopyViews
+        opacity: globalState.overviewOpen ? 1.0 : 0.001
         Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
         
         scale: globalState.overviewOpen ? 1.0 : 0.9
