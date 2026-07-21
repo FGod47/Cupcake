@@ -22,8 +22,10 @@ def generate():
         x = m.get("x", 0)
         y = m.get("y", 0)
         transform = m.get("transform", 0)
+        fmt = m.get("currentFormat", "")
+        bitdepth_str = ",\n    bitdepth = 10" if "2101010" in fmt or "1010102" in fmt else ""
         
-        lua_content += f'hl.monitor({{\n    output = "{out}",\n    mode = "{w}x{h}@{hz:.3f}",\n    position = "{x}x{y}",\n    scale = {scale},\n    transform = {transform}\n}})\n\n'
+        lua_content += f'hl.monitor({{\n    output = "{out}",\n    mode = "{w}x{h}@{hz:.3f}",\n    position = "{x}x{y}",\n    scale = {scale},\n    transform = {transform}{bitdepth_str}\n}})\n\n'
 
     lua_content += 'hl.monitor({\n    output = "",\n    mode = "highrr",\n    position = "auto",\n    scale = 1\n})\n\n'
 
@@ -32,7 +34,7 @@ def generate():
         vrr_output = subprocess.check_output(['hyprctl', 'getoption', 'misc:vrr', '-j']).decode('utf-8')
         vrr_json = json.loads(vrr_output)
         vrr_val = vrr_json.get('int', 0)
-        lua_content += f'hl.misc({{\n    vrr = {vrr_val}\n}})\n'
+        lua_content += f'hl.config({{\n    misc = {{\n        vrr = {vrr_val}\n    }}\n}})\n'
     except Exception as e:
         print(f"Error reading VRR: {e}")
 
