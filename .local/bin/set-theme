@@ -78,6 +78,7 @@ killall -SIGUSR1 kitty 2>/dev/null || true
 # Reload Hyprland; Quickshell theme updates automatically via FileView watchers
 echo "Reloading Hyprland and Quickshell..."
 hyprctl reload
+~/.local/bin/apply-borders
 
 # Run slow GTK and Icon updates in the background so they don't block
 (

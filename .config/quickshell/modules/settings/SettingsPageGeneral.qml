@@ -261,8 +261,9 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     StyledSwitch {
+                        id: borderSwitch
                         checked: root.bordersEnabled
-                        onCheckedChanged: {
+                        onToggled: {
                             root.bordersEnabled = checked
                             root.applyBorder()
                         }
