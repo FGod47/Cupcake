@@ -346,11 +346,14 @@ PanelWindow {
                             // Window thumbnails — visual only, no mouse areas
                             Repeater {
                                 model: ScriptModel {
-                                    values: ToplevelManager.toplevels.values.filter(function(tl) {
-                                        var addr = "0x" + tl.HyprlandToplevel?.address
-                                        var win  = overviewWin.windowByAddr[addr]
-                                        return win && win.workspace && win.workspace.id === wsCell.wsId
-                                    })
+                                    values: {
+                                        var _ = overviewWin.windowByAddr; // Force QML to track dependency
+                                        return ToplevelManager.toplevels.values.filter(function(tl) {
+                                            var addr = "0x" + tl.HyprlandToplevel?.address
+                                            var win  = overviewWin.windowByAddr[addr]
+                                            return win && win.workspace && win.workspace.id === wsCell.wsId
+                                        })
+                                    }
                                 }
                                 delegate: Item {
                                     id: winTile
