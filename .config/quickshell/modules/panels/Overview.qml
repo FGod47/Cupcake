@@ -418,15 +418,17 @@ PanelWindow {
                                     height:  (wData?.size[1] ?? 60)  * overviewWin.hyprToQt * overviewWin.wsScale
                                     opacity: isBeingDragged ? 0.20 : 1.0
 
-                                    layer.enabled: true
-                                    layer.effect: OpacityMask {
-                                        maskSource: Rectangle { width: winTile.width; height: winTile.height; radius: 5 }
-                                    }
-
-                                    ScreencopyView {
+                                    Rectangle {
                                         anchors.fill: parent
-                                        captureSource: winTile.modelData
-                                        live: true
+                                        radius: 6
+                                        color: "transparent"
+                                        clip: true
+
+                                        ScreencopyView {
+                                            anchors.fill: parent
+                                            captureSource: winTile.modelData
+                                            live: true
+                                        }
                                     }
 
                                     // App Icon Overlay
@@ -437,21 +439,12 @@ PanelWindow {
                                         source: wData ? "image://icon/" + (wData.initialClass || wData.class || "") : ""
                                         fillMode: Image.PreserveAspectFit
                                         visible: status === Image.Ready
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 2
-                                            radius: 8
-                                            samples: 17
-                                            color: Qt.rgba(0,0,0,0.7)
-                                        }
                                     }
 
                                     // Subtle border matching Theme.colOutline
                                     Rectangle {
                                         anchors.fill: parent
-                                        radius: 5
+                                        radius: 6
                                         color: "transparent"
                                         border.color: Theme.colOutline
                                         border.width: 1
