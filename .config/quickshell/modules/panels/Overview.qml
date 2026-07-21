@@ -374,7 +374,7 @@ PanelWindow {
                                     // App Icon Overlay
                                     Image {
                                         anchors.centerIn: parent
-                                        width: Math.min(parent.width * 0.45, 64)
+                                        width: Math.min(parent.width * 0.3, parent.height * 0.3, 40)
                                         height: width
                                         source: wData ? "image://icon/" + (wData.initialClass || wData.class || "") : ""
                                         fillMode: Image.PreserveAspectFit
@@ -442,7 +442,7 @@ PanelWindow {
         
         Image {
             anchors.centerIn: parent
-            width: Math.min(parent.width * 0.45, 64)
+            width: Math.min(parent.width * 0.3, parent.height * 0.3, 40)
             height: width
             source: overviewWin.isDragging && overviewWin.draggingAddr !== "" && overviewWin.windowByAddr[overviewWin.draggingAddr] ? "image://icon/" + (overviewWin.windowByAddr[overviewWin.draggingAddr].initialClass || overviewWin.windowByAddr[overviewWin.draggingAddr].class || "") : ""
             fillMode: Image.PreserveAspectFit
