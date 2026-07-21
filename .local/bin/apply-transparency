@@ -8,6 +8,9 @@ BLUR_SIZE=${BLUR_SIZE:-11}
 BLUR_PASSES=${BLUR_PASSES:-3}
 INACTIVE_OPACITY=$OPACITY
 
+XRAY_BLUR=$(cat ~/.config/cupcake/.xray_blur 2>/dev/null || echo true)
+[ -z "$XRAY_BLUR" ] && XRAY_BLUR=true
+
 if [ "$TRANS" = "true" ]; then
     cat <<EOF > ~/.config/hypr/transparency.lua
 hl.config({
@@ -18,7 +21,7 @@ hl.config({
             enabled = true,
             size = $BLUR_SIZE,
             passes = $BLUR_PASSES,
-            xray = false,
+            xray = $XRAY_BLUR,
             popups = false,
             ignore_opacity = true
         }
@@ -62,8 +65,9 @@ if [ "$BAR_TRANS" = "true" ]; then
         IGNORE_ALPHA="0.01"
     fi
 
-    XRAY_BLUR=$(cat ~/.config/cupcake/.xray_blur 2>/dev/null || echo true)
-    [ -z "$XRAY_BLUR" ] && XRAY_BLUR=true
+    if (( $(echo "$IGNORE_ALPHA <= 0.0" | bc -l) )); then
+        IGNORE_ALPHA="0.01"
+    fi
 
     cat <<EOF >> ~/.config/hypr/transparency.lua
 hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true })
