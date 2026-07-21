@@ -7,6 +7,7 @@ import Quickshell
 Item {
     id: root
     property var monitorsData: []
+    implicitHeight: 280
     
     // Virtual workspace size calculation
     property real maxW: 1
