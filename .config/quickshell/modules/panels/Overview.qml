@@ -276,11 +276,11 @@ PanelWindow {
         color: overviewWin.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, overviewWin.ccOpacity) : Theme.colSurface
 
         opacity: globalState.overviewOpen ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutExpo } }
+        Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
         
         // Expand animation
-        scale: globalState.overviewOpen ? 1.0 : 0.0
-        Behavior on scale { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+        scale: globalState.overviewOpen ? 1.0 : 0.9
+        Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
         
         Column {
             anchors.centerIn: parent
