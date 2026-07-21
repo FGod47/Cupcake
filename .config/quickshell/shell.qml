@@ -119,42 +119,64 @@ ShellRoot {
     property real osdOpacity: 0.95
     property real ccOpacity: 0.85
 
-    function readLocalFile(path) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "file://" + root.homeDir + path, false);
-        try {
-            xhr.send(null);
-            if (xhr.status === 200 || xhr.status === 0) {
-                return xhr.responseText.trim();
-            }
-        } catch (e) {}
-        return null;
+    IpcHandler {
+        target: "opacity"
+        function setBarTransparency(val: string) { root.barTransparency = (val === "true"); }
+        function setBarOpacity(val: real) { root.barOpacity = val; }
+        function setDockOpacity(val: real) { root.dockOpacity = val; }
+        function setOsdOpacity(val: real) { root.osdOpacity = val; }
+        function setCcOpacity(val: real) { root.ccOpacity = val; }
+        function setDimOverlay(val: real) { globalState.dimOverlay = val; }
+        function setNotifOpacity(val: real) { globalState.notifPanelOpacity = val; }
     }
 
-    Timer {
-        interval: 500; running: true; repeat: true
-        onTriggered: {
-            let dimText = readLocalFile("/.config/cupcake/.dim_overlay");
-            if (dimText) { let v = parseFloat(dimText); if (!isNaN(v)) globalState.dimOverlay = v; }
+    Process {
+        id: initDimOverlay
+        command: ["cat", root.homeDir + "/.config/cupcake/.dim_overlay"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.dimOverlay = v; } } }
+    }
 
-            let notifText = readLocalFile("/.config/cupcake/.notif_opacity");
-            if (notifText) { let v = parseFloat(notifText); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
+    Process {
+        id: initNotifPanelOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.notif_panel_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; } } }
+    }
 
-            let barTransText = readLocalFile("/.config/cupcake/.bar_transparency");
-            if (barTransText) { root.barTransparency = (barTransText === "true"); }
+    Process {
+        id: initBarTransparency
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_transparency"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { root.barTransparency = (text.trim() === "true"); } } }
+    }
 
-            let barOpacityText = readLocalFile("/.config/cupcake/.bar_opacity");
-            if (barOpacityText) { let v = parseFloat(barOpacityText); if (!isNaN(v)) root.barOpacity = v; }
+    Process {
+        id: initBarOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.bar_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; } } }
+    }
 
-            let dockOpacityText = readLocalFile("/.config/cupcake/.dock_opacity");
-            if (dockOpacityText) { let v = parseFloat(dockOpacityText); if (!isNaN(v)) root.dockOpacity = v; }
+    Process {
+        id: initDockOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; } } }
+    }
 
-            let osdOpacityText = readLocalFile("/.config/cupcake/.osd_opacity");
-            if (osdOpacityText) { let v = parseFloat(osdOpacityText); if (!isNaN(v)) root.osdOpacity = v; }
+    Process {
+        id: initOsdOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.osd_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.osdOpacity = v; } } }
+    }
 
-            let ccOpacityText = readLocalFile("/.config/cupcake/.cc_opacity");
-            if (ccOpacityText) { let v = parseFloat(ccOpacityText); if (!isNaN(v)) root.ccOpacity = v; }
-        }
+    Process {
+        id: initCcOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.cc_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; } } }
     }
 
     Process {

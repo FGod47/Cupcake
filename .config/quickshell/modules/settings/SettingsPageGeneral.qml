@@ -732,7 +732,7 @@ Item {
                             onValueChanged: { root.barOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell -i opacity setBarOpacity " + root.barOpacity]);
                                 }
                             }
                         }
@@ -772,7 +772,7 @@ Item {
                             onValueChanged: { root.ccOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity && quickshell -i opacity setCcOpacity " + root.ccOpacity]);
                                 }
                             }
                         }
@@ -812,7 +812,7 @@ Item {
                             onValueChanged: { root.dockOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && quickshell -i opacity setDockOpacity " + root.dockOpacity]);
                                 }
                             }
                         }
@@ -852,7 +852,7 @@ Item {
                             onValueChanged: { root.osdOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.osdOpacity.toFixed(2) + "' > ~/.config/cupcake/.osd_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.osdOpacity.toFixed(2) + "' > ~/.config/cupcake/.osd_opacity && quickshell -i opacity setOsdOpacity " + root.osdOpacity]);
                                 }
                             }
                         }
@@ -976,7 +976,7 @@ Item {
                             }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.notifPanelOpacity.toFixed(2) + "' > ~/.config/cupcake/.notif_panel_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.notifPanelOpacity.toFixed(2) + "' > ~/.config/cupcake/.notif_panel_opacity && quickshell -i opacity setNotifOpacity " + root.notifPanelOpacity]);
                                 }
                             }
                         }

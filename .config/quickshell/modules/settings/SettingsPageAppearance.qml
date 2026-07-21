@@ -919,7 +919,7 @@ Item {
                             onValueChanged: { root.barOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell -i opacity setBarOpacity " + root.barOpacity]);
                                 }
                             }
                         }
