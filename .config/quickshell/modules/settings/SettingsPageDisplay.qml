@@ -242,53 +242,7 @@ Item {
             width: parent.width
             spacing: 20
 
-            // Pending change banner
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.leftMargin: 20
-                Layout.rightMargin: 20
-                height: 48
-                radius: 12
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3)
-                border.width: 1
-                visible: root.pendingOutput !== ""
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: 16
-                    spacing: 12
-
-                    Text {
-                        text: "\uea5b"
-                        font.family: "tabler-icons"
-                        font.pixelSize: 18
-                        color: Theme.colPrimary
-                    }
-                    Text {
-                        Layout.fillWidth: true
-                        text: "Display changed — reverts in " + root.countdown + "s"
-                        color: Theme.colOnSurface
-                        font.pixelSize: 13
-                        font.family: Theme.defaultFontFamily
-                        font.weight: Font.Medium
-                    }
-
-                    Rectangle {
-                        width: 72; height: 30; radius: 8
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-                        Text { anchors.centerIn: parent; text: "Revert"; color: cTextDim; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.revertDisplay() }
-                    }
-                    Rectangle {
-                        width: 64; height: 30; radius: 8
-                        color: Theme.colPrimary
-                        Text { anchors.centerIn: parent; text: "Keep"; color: cText; font.pixelSize: 12; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.keepDisplay() }
-                    }
-                }
-            }
 
             // 1. Monitors selector
             NCard {
@@ -928,6 +882,57 @@ Item {
             }
 
             Item { Layout.preferredHeight: 32 }
+        }
+    }
+
+    // Floating pending change banner
+    Rectangle {
+        id: pendingBanner
+        z: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 32
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 64, 400)
+        height: 56
+        radius: 16
+        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.95)
+        border.color: Theme.colPrimary
+        border.width: 1
+        visible: root.pendingOutput !== ""
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            spacing: 12
+
+            Text {
+                text: "\uea5b"
+                font.family: "tabler-icons"
+                font.pixelSize: 20
+                color: Theme.colPrimary
+            }
+            Text {
+                Layout.fillWidth: true
+                text: "Reverts in " + root.countdown + "s"
+                color: Theme.colOnSurface
+                font.pixelSize: 14
+                font.family: Theme.defaultFontFamily
+                font.weight: Font.Medium
+            }
+
+            Rectangle {
+                width: 76; height: 36; radius: 10
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                Text { anchors.centerIn: parent; text: "Revert"; color: cTextDim; font.pixelSize: 13; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.revertDisplay() }
+            }
+            Rectangle {
+                width: 76; height: 36; radius: 10
+                color: Theme.colPrimary
+                Text { anchors.centerIn: parent; text: "Keep"; color: cText; font.pixelSize: 13; font.family: Theme.defaultFontFamily; font.weight: Font.Medium }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.keepDisplay() }
+            }
         }
     }
 }
