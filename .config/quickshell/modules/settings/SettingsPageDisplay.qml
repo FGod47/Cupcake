@@ -536,12 +536,14 @@ Item {
             NCard {
                 sectionTitle: "Arrangement"
                 
-                Item {
+                Rectangle {
                     id: arrangementRoot
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 280
                     implicitHeight: 280
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
+                    color: "transparent"
                     
                     property var monitorsData: root.monitorsData
                     
@@ -582,7 +584,7 @@ Item {
                             text: "Drag and drop to arrange monitors"
                             color: Qt.rgba(255,255,255, 0.4)
                             font.pixelSize: 14
-                            visible: arrangementRoot.monitorsData.length > 0
+                            visible: arrangementRoot.monitorsData && arrangementRoot.monitorsData.length > 0
                             z: 0
                         }
                         
