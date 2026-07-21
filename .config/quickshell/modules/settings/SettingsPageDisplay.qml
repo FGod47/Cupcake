@@ -289,92 +289,12 @@ Item {
                     implicitHeight: 280
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
-                    color: "transparent"
+                    color: "red"
                     
-                    property var monitorsData: root.monitorsData
-                    
-                    property real maxW: 1
-                    property real maxH: 1
-                    property real minX: 0
-                    property real minY: 0
-                    
-                    property real scaleFactor: Math.min(width / (maxW || 1), height / (maxH || 1)) * 0.8
-                    property real offsetX: (width - (maxW * scaleFactor)) / 2 - (minX * scaleFactor)
-                    property real offsetY: (height - (maxH * scaleFactor)) / 2 - (minY * scaleFactor)
-
-                    onMonitorsDataChanged: {
-                        if (!monitorsData || monitorsData.length === 0) return;
-                        let mnX = 999999, mnY = 999999;
-                        let mxW = 0, mxH = 0;
-                        for (let i = 0; i < monitorsData.length; i++) {
-                            let m = monitorsData[i];
-                            let mw = (m.transform % 2 !== 0) ? m.height : m.width;
-                            let mh = (m.transform % 2 !== 0) ? m.width : m.height;
-                            mw = mw / m.scale; mh = mh / m.scale;
-                            if (m.x < mnX) mnX = m.x; if (m.y < mnY) mnY = m.y;
-                            if (m.x + mw > mxW) mxW = m.x + mw; if (m.y + mh > mxH) mxH = m.y + mh;
-                        }
-                        minX = mnX; minY = mnY; maxW = mxW - mnX; maxH = mxH - mnY;
-                    }
-                    
-                    Rectangle {
-                        anchors.fill: parent
-                        color: Qt.rgba(0, 0, 0, 0.2)
-                        radius: 12
-                        border.color: Qt.rgba(255,255,255, 0.1)
-                        border.width: 1
-                        clip: true
-                        
-                        Text {
-                            anchors.centerIn: parent
-                            text: "Drag and drop to arrange monitors"
-                            color: Qt.rgba(255,255,255, 0.4)
-                            font.pixelSize: 14
-                            visible: arrangementRoot.monitorsData && arrangementRoot.monitorsData.length > 0
-                            z: 0
-                        }
-                        
-                        Repeater {
-                            model: arrangementRoot.monitorsData
-                            delegate: Rectangle {
-                                id: monRect
-                                property var mon: modelData
-                                property real logicalWidth: (mon.transform % 2 !== 0 ? mon.height : mon.width) / mon.scale
-                                property real logicalHeight: (mon.transform % 2 !== 0 ? mon.width : mon.height) / mon.scale
-                                
-                                x: arrangementRoot.offsetX + (mon.x * arrangementRoot.scaleFactor)
-                                y: arrangementRoot.offsetY + (mon.y * arrangementRoot.scaleFactor)
-                                width: logicalWidth * arrangementRoot.scaleFactor
-                                height: logicalHeight * arrangementRoot.scaleFactor
-                                
-                                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, dragArea.drag.active ? 0.9 : 0.6)
-                                radius: 6
-                                border.color: Theme.colPrimary
-                                border.width: 2
-                                
-                                Text { anchors.centerIn: parent; text: mon.id !== undefined ? (mon.id + 1).toString() : "1"; font.pixelSize: 24; font.weight: Font.Bold; color: Theme.colOnPrimary }
-                                Text { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 8; text: mon.name; font.pixelSize: 11; color: Theme.colOnPrimary }
-                                
-                                MouseArea {
-                                    id: dragArea
-                                    anchors.fill: parent
-                                    cursorShape: Qt.OpenHandCursor
-                                    drag.target: monRect
-                                    onPressed: { cursorShape = Qt.ClosedHandCursor; monRect.z = 100; }
-                                    onReleased: {
-                                        cursorShape = Qt.OpenHandCursor; monRect.z = 1;
-                                        let newX = (monRect.x - arrangementRoot.offsetX) / arrangementRoot.scaleFactor;
-                                        let newY = (monRect.y - arrangementRoot.offsetY) / arrangementRoot.scaleFactor;
-                                        if (Math.abs(newX) < 100) newX = 0;
-                                        if (Math.abs(newY) < 100) newY = 0;
-                                        newX = Math.round(newX); newY = Math.round(newY);
-                                        let modeStr = mon.width + "x" + mon.height + "@" + mon.refreshRate;
-                                        Quickshell.execDetached(["hyprctl", "keyword", "monitor", mon.name + "," + modeStr + "," + newX + "x" + newY + "," + mon.scale]);
-                                        Quickshell.execDetached(["python3", root.homeDir + "/Cupcake/.local/bin/generate_monitor_lua.py"]);
-                                    }
-                                }
-                            }
-                        }
+                    Text {
+                        anchors.centerIn: parent
+                        text: "DEBUG: Drag and drop map should be here"
+                        color: "white"
                     }
                 }
 
