@@ -376,7 +376,7 @@ Item {
                         property string label
                         property string icon
                         property int pageIndex
-                        property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [0,1,3].includes(root.currentIndex))
+                        property bool isActive: root.currentIndex === pageIndex || (pageIndex === 1 && [1,3].includes(root.currentIndex))
                         
                         Layout.fillWidth: true
                         Layout.preferredHeight: 36

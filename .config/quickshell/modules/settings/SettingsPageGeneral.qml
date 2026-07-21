@@ -8,22 +8,22 @@ import Quickshell
 Item {
     id: root
 
-    // ── colours ──────────────────────────────────────────────────────────────
-    property color cText:      Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
-    property color cTextDim:   Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
-    property color cAccent:    Theme.colPrimary
-    property color cBgCard:    Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-    property color cBorder:    Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.08)
-    property color cDivider:   Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.12)
-    property color cIconBg:    Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+    // ── colours ───────────────────────────────────────────────────────────────
+    property color cText:    Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
+    property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+    property color cAccent:  Theme.colPrimary
+    property color cBgCard:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+    property color cBorder:  Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.08)
+    property color cDivider: Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.15)
+    property color cIconBg:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
     // ── state ─────────────────────────────────────────────────────────────────
-    property int gapsIn:    3
-    property int gapsOut:   8
+    property int gapsIn:     3
+    property int gapsOut:    8
     property int borderSize: 3
-    property int rounding:  10
+    property int rounding:   10
 
-    // ── load persisted values ─────────────────────────────────────────────────
+    // ── load ──────────────────────────────────────────────────────────────────
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.gaps_in"]
         running: true
@@ -53,7 +53,7 @@ Item {
         }
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
+    // ── apply helpers ─────────────────────────────────────────────────────────
     function applyGaps() {
         Quickshell.execDetached(["bash", "-c",
             "echo " + root.gapsIn  + " > ~/.config/cupcake/.gaps_in && " +
@@ -69,18 +69,17 @@ Item {
     }
     function applyRounding() {
         Quickshell.execDetached(["bash", "-c",
-            "sed -i 's/rounding = .*/rounding = " + root.rounding + ",/' ~/.config/hypr/decoration.lua && " +
+            "sed -i 's/rounding = [0-9]*/rounding = " + root.rounding + "/' ~/.config/hypr/decoration.lua && " +
             "hyprctl reload"
         ]);
     }
 
-    // ── reusable components ───────────────────────────────────────────────────
+    // ── reusable ──────────────────────────────────────────────────────────────
     component SettingsCard: Rectangle {
-        default property alias content: col.data
+        default property alias content: cardCol.data
         property string sectionTitle: ""
-
         Layout.fillWidth: true
-        implicitHeight: col.implicitHeight + (hdr.visible ? hdr.height + 28 : 32)
+        implicitHeight: cardCol.implicitHeight + (hdr.visible ? hdr.height + 28 : 32)
         color: root.cBgCard
         radius: 12
         border.color: root.cBorder
@@ -98,105 +97,37 @@ Item {
             }
             Rectangle { Layout.fillWidth: true; height: 1; color: root.cDivider }
         }
-
         ColumnLayout {
-            id: col
+            id: cardCol
             anchors { top: hdr.visible ? hdr.bottom : parent.top; topMargin: hdr.visible ? 12 : 16; left: parent.left; right: parent.right; leftMargin: 20; rightMargin: 20; bottomMargin: 16 }
             spacing: 0
         }
     }
 
-    component SettingsRow: RowLayout {
+    component SettingsRow: Rectangle {
+        default property alias rowContent: innerRow.data
         Layout.fillWidth: true
-        spacing: 12
-        Layout.topMargin: 4
-        Layout.bottomMargin: 4
-
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: root.cDivider
-            visible: false // used as divider placeholder — rows use parent spacing
-        }
-    }
-
-    component SliderRow: Item {
-        id: sliderRow
-        property string icon: ""
-        property string label: ""
-        property string description: ""
-        property real   sliderFrom:  0
-        property real   sliderTo:    100
-        property real   sliderStep:  1
-        property real   sliderValue: 0
-        property string valueSuffix: ""
-        signal moved(real v)
-
-        Layout.fillWidth: true
-        height: 64
-
+        implicitHeight: innerRow.implicitHeight + 20
+        color: "transparent"
+        radius: 8
         RowLayout {
-            anchors.fill: parent
+            id: innerRow
+            anchors { fill: parent; topMargin: 10; bottomMargin: 10 }
             spacing: 12
-
-            // icon
-            Rectangle {
-                width: 32; height: 32; radius: 10
-                color: root.cIconBg
-                Text {
-                    anchors.centerIn: parent
-                    text: sliderRow.icon
-                    color: root.cTextDim
-                    font { family: "tabler-icons"; pixelSize: 16 }
-                }
-            }
-
-            // label + description
-            ColumnLayout {
-                spacing: 1
-                Text { text: sliderRow.label;       color: root.cText;    font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
-                Text { text: sliderRow.description; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
-            }
-
-            Item { Layout.fillWidth: true }
-
-            // value badge
-            Rectangle {
-                width: 36; height: 24; radius: 6
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                Text {
-                    anchors.centerIn: parent
-                    text: Math.round(sliderRow.sliderValue) + sliderRow.valueSuffix
-                    color: root.cAccent
-                    font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold }
-                }
-            }
-
-            // slider
-            StyledSlider {
-                Layout.preferredWidth: 180
-                from:     sliderRow.sliderFrom
-                to:       sliderRow.sliderTo
-                stepSize: sliderRow.sliderStep
-                value:    sliderRow.sliderValue
-                onValueChanged: sliderRow.sliderValue = value
-                onPressedChanged: { if (!pressed) sliderRow.moved(value) }
-            }
         }
-
-        // bottom divider
         Rectangle {
             anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-            height: 1
-            color: root.cDivider
-            visible: sliderRow.visible
+            height: 1; color: root.cDivider; opacity: 0.6
         }
     }
 
-    // ── layout ────────────────────────────────────────────────────────────────
+    // ── main layout ───────────────────────────────────────────────────────────
     ScrollView {
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.fill: parent
-        anchors.margins: 24
+        anchors.bottomMargin: 28
+        leftPadding: 32; rightPadding: 32
         contentWidth: availableWidth
         clip: true
 
@@ -208,28 +139,67 @@ Item {
             SettingsCard {
                 sectionTitle: "Window Gaps"
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    SliderRow {
-                        icon: "\ueae9"
-                        label: "Inner gaps"
-                        description: "Space between tiled windows"
-                        sliderFrom: 0; sliderTo: 40; sliderStep: 1
-                        sliderValue: root.gapsIn
-                        valueSuffix: "px"
-                        onMoved: (v) => { root.gapsIn = Math.round(v); root.applyGaps(); }
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\ueae9"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Inner gaps"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
+                            Text { text: "Space between tiled windows"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: root.gapsIn + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 0; to: 40; stepSize: 1
+                            value: root.gapsIn
+                            onValueChanged: root.gapsIn = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyGaps() }
+                        }
+                    }
+                }
 
-                    SliderRow {
-                        icon: "\ueb19"
-                        label: "Outer gaps"
-                        description: "Space between windows and screen edges"
-                        sliderFrom: 0; sliderTo: 60; sliderStep: 1
-                        sliderValue: root.gapsOut
-                        valueSuffix: "px"
-                        onMoved: (v) => { root.gapsOut = Math.round(v); root.applyGaps(); }
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\ueb19"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Outer gaps"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
+                            Text { text: "Space between windows and screen edges"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: root.gapsOut + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 0; to: 60; stepSize: 1
+                            value: root.gapsOut
+                            onValueChanged: root.gapsOut = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyGaps() }
+                        }
                     }
                 }
             }
@@ -238,28 +208,67 @@ Item {
             SettingsCard {
                 sectionTitle: "Window Style"
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    SliderRow {
-                        icon: "\ueb7a"
-                        label: "Corner rounding"
-                        description: "Radius applied to window corners"
-                        sliderFrom: 0; sliderTo: 30; sliderStep: 1
-                        sliderValue: root.rounding
-                        valueSuffix: "px"
-                        onMoved: (v) => { root.rounding = Math.round(v); root.applyRounding(); }
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\ueb7a"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Corner rounding"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
+                            Text { text: "Radius applied to all window corners"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: root.rounding + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 0; to: 30; stepSize: 1
+                            value: root.rounding
+                            onValueChanged: root.rounding = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyRounding() }
+                        }
+                    }
+                }
 
-                    SliderRow {
-                        icon: "\ueb45"
-                        label: "Border size"
-                        description: "Thickness of window borders"
-                        sliderFrom: 0; sliderTo: 10; sliderStep: 1
-                        sliderValue: root.borderSize
-                        valueSuffix: "px"
-                        onMoved: (v) => { root.borderSize = Math.round(v); root.applyBorder(); }
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\ueb45"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Border size"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
+                            Text { text: "Thickness of window borders"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: root.borderSize + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 0; to: 10; stepSize: 1
+                            value: root.borderSize
+                            onValueChanged: root.borderSize = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyBorder() }
+                        }
                     }
                 }
             }
