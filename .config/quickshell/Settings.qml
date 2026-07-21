@@ -35,8 +35,9 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 0
-        border.width: 0
+        radius: 10
+        border.width: 1
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
         clip: true
         
         // Solid glassy background to prevent color banding (line blocks)

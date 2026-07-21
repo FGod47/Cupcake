@@ -271,6 +271,8 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 212
                 color: cBg
+                topLeftRadius: 10
+                bottomLeftRadius: 10
                 clip: true
                 
                 Rectangle {
