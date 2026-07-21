@@ -371,6 +371,25 @@ PanelWindow {
                                         live: true
                                     }
 
+                                    // App Icon Overlay
+                                    Image {
+                                        anchors.centerIn: parent
+                                        width: Math.min(parent.width * 0.45, 64)
+                                        height: width
+                                        source: wData ? "image://icon/" + (wData.initialClass || wData.class || "") : ""
+                                        fillMode: Image.PreserveAspectFit
+                                        visible: status === Image.Ready
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 2
+                                            radius: 8
+                                            samples: 17
+                                            color: Qt.rgba(0,0,0,0.7)
+                                        }
+                                    }
+
                                     // Subtle border matching Theme.colOutline
                                     Rectangle {
                                         anchors.fill: parent
@@ -418,6 +437,24 @@ PanelWindow {
             layer.enabled: true
             layer.effect: OpacityMask {
                 maskSource: Rectangle { width: dragGhost.width; height: dragGhost.height; radius: 6 }
+            }
+        }
+        
+        Image {
+            anchors.centerIn: parent
+            width: Math.min(parent.width * 0.45, 64)
+            height: width
+            source: overviewWin.isDragging && overviewWin.draggingAddr !== "" && overviewWin.windowByAddr[overviewWin.draggingAddr] ? "image://icon/" + (overviewWin.windowByAddr[overviewWin.draggingAddr].initialClass || overviewWin.windowByAddr[overviewWin.draggingAddr].class || "") : ""
+            fillMode: Image.PreserveAspectFit
+            visible: status === Image.Ready
+            layer.enabled: true
+            layer.effect: DropShadow {
+                transparentBorder: true
+                horizontalOffset: 0
+                verticalOffset: 2
+                radius: 8
+                samples: 17
+                color: Qt.rgba(0,0,0,0.7)
             }
         }
 
