@@ -125,7 +125,7 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: initDimOverlay.running = true }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDimOverlay.running = false; initDimOverlay.running = true; } }
 
     Process {
         id: initNotifPanelOpacity
@@ -137,7 +137,7 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: initNotifPanelOpacity.running = true }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initNotifPanelOpacity.running = false; initNotifPanelOpacity.running = true; } }
 
     Process {
         id: initBarTransparency
@@ -149,7 +149,7 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: initBarTransparency.running = true }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initBarTransparency.running = false; initBarTransparency.running = true; } }
 
     Process {
         id: initBarOpacity
@@ -161,7 +161,7 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: initBarOpacity.running = true }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { initBarOpacity.running = false; initBarOpacity.running = true; } }
 
     property real dockOpacity: 0.50
     property real osdOpacity: 0.95
@@ -198,7 +198,11 @@ ShellRoot {
             }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDockOpacity.running = true; initOsdOpacity.running = true; initCcOpacity.running = true; } }
+    Timer { interval: 500; running: true; repeat: true; onTriggered: { 
+        initDockOpacity.running = false; initDockOpacity.running = true; 
+        initOsdOpacity.running = false; initOsdOpacity.running = true; 
+        initCcOpacity.running = false; initCcOpacity.running = true; 
+    } }
 
     Process {
         id: initMonitorTargets
