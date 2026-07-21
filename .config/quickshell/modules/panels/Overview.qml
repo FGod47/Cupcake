@@ -61,6 +61,7 @@ PanelWindow {
     readonly property real cellH:     screen.height * wsScale
 
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
+    readonly property real hyprToQt: (monitor && monitor.width > 0) ? (screen.width / monitor.width) : 1.0
     readonly property int activeWsId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.id ?? 1))
     readonly property int wsGroup:    Math.floor((activeWsId - 1) / wsTotal)
 
@@ -164,8 +165,8 @@ PanelWindow {
                         var b = bb[wid]
                         if (b.count > 0) {
                             offsets[wid] = {
-                                xOff: ((screen.width - (b.maxX - b.minX)) / 2) - b.minX,
-                                yOff: ((screen.height - (b.maxY - b.minY)) / 2) - b.minY
+                                xOff: (((screen.width / overviewWin.hyprToQt) - (b.maxX - b.minX)) / 2) - b.minX,
+                                yOff: (((screen.height / overviewWin.hyprToQt) - (b.maxY - b.minY)) / 2) - b.minY
                             }
                         }
                     }
@@ -386,10 +387,10 @@ PanelWindow {
                                     property bool   isBeingDragged: overviewWin.isDragging && overviewWin.draggingAddr === wAddr
                                     property var    bounds: overviewWin.wsBounds[wsCell.wsId] || {xOff: 0, yOff: 0}
 
-                                    x:       Math.max(((wData?.at[0] ?? 0) + bounds.xOff) * overviewWin.wsScale, 0)
-                                    y:       Math.max(((wData?.at[1] ?? 0) + bounds.yOff) * overviewWin.wsScale, 0)
-                                    width:   (wData?.size[0] ?? 100) * overviewWin.wsScale
-                                    height:  (wData?.size[1] ?? 60)  * overviewWin.wsScale
+                                    x:       Math.max(((wData?.at[0] ?? 0) + bounds.xOff) * overviewWin.hyprToQt * overviewWin.wsScale, 0)
+                                    y:       Math.max(((wData?.at[1] ?? 0) + bounds.yOff) * overviewWin.hyprToQt * overviewWin.wsScale, 0)
+                                    width:   (wData?.size[0] ?? 100) * overviewWin.hyprToQt * overviewWin.wsScale
+                                    height:  (wData?.size[1] ?? 60)  * overviewWin.hyprToQt * overviewWin.wsScale
                                     opacity: isBeingDragged ? 0.20 : 1.0
                                     Behavior on opacity { NumberAnimation { duration: 100 } }
 
