@@ -855,6 +855,7 @@ Item {
                             }
                         }
                     }
+                }
             }
 
             Item { Layout.preferredHeight: 32 }
