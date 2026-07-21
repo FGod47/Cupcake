@@ -115,94 +115,47 @@ ShellRoot {
         }
     }
 
-    Process {
-        id: initDimOverlay
-        command: ["cat", root.homeDir + "/.config/cupcake/.dim_overlay"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.dimOverlay = v; }
-            }
-        }
-    }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initDimOverlay.running = false; initDimOverlay.running = true; } }
-
-    Process {
-        id: initNotifPanelOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.notif_panel_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
-            }
-        }
-    }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initNotifPanelOpacity.running = false; initNotifPanelOpacity.running = true; } }
-
-    Process {
-        id: initBarTransparency
-        command: ["cat", root.homeDir + "/.config/cupcake/.bar_transparency"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { root.barTransparency = (text.trim() === "true"); }
-            }
-        }
-    }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initBarTransparency.running = false; initBarTransparency.running = true; } }
-
-    Process {
-        id: initBarOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.bar_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
-            }
-        }
-    }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { initBarOpacity.running = false; initBarOpacity.running = true; } }
-
     property real dockOpacity: 0.50
     property real osdOpacity: 0.95
     property real ccOpacity: 0.85
-    Process {
-        id: initDockOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; }
+
+    function readLocalFile(path) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "file://" + root.homeDir + path, false);
+        try {
+            xhr.send(null);
+            if (xhr.status === 200 || xhr.status === 0) {
+                return xhr.responseText.trim();
             }
-        }
+        } catch (e) {}
+        return null;
     }
 
-    Process {
-        id: initOsdOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.osd_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.osdOpacity = v; }
-            }
-        }
-    }
+    Timer {
+        interval: 500; running: true; repeat: true
+        onTriggered: {
+            let dimText = readLocalFile("/.config/cupcake/.dim_overlay");
+            if (dimText) { let v = parseFloat(dimText); if (!isNaN(v)) globalState.dimOverlay = v; }
 
-    Process {
-        id: initCcOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.cc_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; }
-            }
+            let notifText = readLocalFile("/.config/cupcake/.notif_opacity");
+            if (notifText) { let v = parseFloat(notifText); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
+
+            let barTransText = readLocalFile("/.config/cupcake/.bar_transparency");
+            if (barTransText) { root.barTransparency = (barTransText === "true"); }
+
+            let barOpacityText = readLocalFile("/.config/cupcake/.bar_opacity");
+            if (barOpacityText) { let v = parseFloat(barOpacityText); if (!isNaN(v)) root.barOpacity = v; }
+
+            let dockOpacityText = readLocalFile("/.config/cupcake/.dock_opacity");
+            if (dockOpacityText) { let v = parseFloat(dockOpacityText); if (!isNaN(v)) root.dockOpacity = v; }
+
+            let osdOpacityText = readLocalFile("/.config/cupcake/.osd_opacity");
+            if (osdOpacityText) { let v = parseFloat(osdOpacityText); if (!isNaN(v)) root.osdOpacity = v; }
+
+            let ccOpacityText = readLocalFile("/.config/cupcake/.cc_opacity");
+            if (ccOpacityText) { let v = parseFloat(ccOpacityText); if (!isNaN(v)) root.ccOpacity = v; }
         }
     }
-    Timer { interval: 500; running: true; repeat: true; onTriggered: { 
-        initDockOpacity.running = false; initDockOpacity.running = true; 
-        initOsdOpacity.running = false; initOsdOpacity.running = true; 
-        initCcOpacity.running = false; initCcOpacity.running = true; 
-    } }
 
     Process {
         id: initMonitorTargets
