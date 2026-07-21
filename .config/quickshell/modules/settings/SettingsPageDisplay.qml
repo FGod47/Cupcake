@@ -44,22 +44,26 @@ Item {
         }
     }
 
-    // Takes the exact hyprland monitor data object + a mode string like "1920x1080@165.00" + scale number + transform
-    function applyDisplay(monData, modeStr, scaleVal, transformVal) {
+    // Takes the exact hyprland monitor data object + a mode string like "1920x1080@165.00" + scale number + transform + bitDepth10 bool
+    function applyDisplay(monData, modeStr, scaleVal, transformVal, bitDepth10) {
         if (pendingOutput !== "") return;
         let posStr = monData.x + "x" + monData.y;
+        
+        let bdStrOrig = (monData.currentFormat && (monData.currentFormat.indexOf("2101010") !== -1 || monData.currentFormat.indexOf("1010102") !== -1)) ? ", bitdepth = 10" : "";
         pendingRestoreCommand = ["hyprctl", "eval",
             "hl.monitor({ output = \"" + monData.name + "\", mode = \"" +
             monData.width + "x" + monData.height + "@" + monData.refreshRate +
             "\", position = \"" + posStr + "\", scale = " + monData.scale + 
-            ", transform = " + monData.transform + " }) return \"ok\""];
+            ", transform = " + monData.transform + bdStrOrig + " }) return \"ok\""];
+            
+        let bdStrNew = bitDepth10 ? ", bitdepth = 10" : "";
         pendingOutput = monData.name;
         countdown = 15;
         revertTimer.start();
         Quickshell.execDetached(["hyprctl", "eval",
             "hl.monitor({ output = \"" + monData.name + "\", mode = \"" +
             modeStr + "\", position = \"" + posStr + "\", scale = " + scaleVal + 
-            ", transform = " + transformVal + " }) return \"ok\""]);
+            ", transform = " + transformVal + bdStrNew + " }) return \"ok\""]);
     }
 
     function keepDisplay() {
@@ -556,6 +560,23 @@ Item {
                         }
                     }
 
+                    NRow {
+                        RowLayout {
+                            spacing: 12
+                            NIconBadge { icon: "\ueb92"; iconColor: cTextDim; bgColor: cBgElevated }
+                            ColumnLayout {
+                                spacing: 1
+                                Text { text: "10-bit color / HDR"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Enable higher color depth for smoother gradients"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            }
+                        }
+                        Item { Layout.fillWidth: true }
+                        NToggle {
+                            id: bitDepthToggle
+                            checked: monCard.modelData.currentFormat && (monCard.modelData.currentFormat.indexOf("2101010") !== -1 || monCard.modelData.currentFormat.indexOf("1010102") !== -1)
+                        }
+                    }
+
                     // Apply button row
                     RowLayout {
                         Layout.fillWidth: true
@@ -588,7 +609,7 @@ Item {
                                     // Build exact mode string: "1920x1080@165.00"
                                     let modeStr = res.w + "x" + res.h + "@" + rawHz.toFixed(2);
                                     let scale = monCard.scaleOptions[monCard.selScaleIdx];
-                                    root.applyDisplay(monCard.modelData, modeStr, scale, root.currentTransform);
+                                    root.applyDisplay(monCard.modelData, modeStr, scale, root.currentTransform, bitDepthToggle.checked);
                                 }
                             }
                         }
@@ -623,7 +644,8 @@ Item {
                             // Apply immediately
                             let mon = root.activeMonitor;
                             let modeStr = mon.width + "x" + mon.height + "@" + mon.refreshRate;
-                            root.applyDisplay(mon, modeStr, mon.scale, t);
+                            let bd = (mon.currentFormat && (mon.currentFormat.indexOf("2101010") !== -1 || mon.currentFormat.indexOf("1010102") !== -1));
+                            root.applyDisplay(mon, modeStr, mon.scale, t, bd);
                         }
                     }
                 }
