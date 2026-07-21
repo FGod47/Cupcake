@@ -76,7 +76,7 @@ hl.bind(sMod .. " + L", hl.dsp.exec_cmd("~/.local/share/quickshell-lockscreen/lo
 
 -- Cycling and focus management
 hl.bind("ALT + tab",             hl.dsp.window.cycle_next())
-hl.bind(mainMod .. " + tab",     hl.dsp.window.bring_to_top())
+hl.bind(mainMod .. " + tab",     hl.dsp.global("overview_toggle"))
 hl.bind("ALT + SHIFT + tab",     hl.dsp.window.cycle_next("prev"))
 
 -- Move focus with mainMod + h/j/k/l
