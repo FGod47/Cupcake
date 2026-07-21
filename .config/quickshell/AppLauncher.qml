@@ -483,7 +483,15 @@ PanelWindow {
                 id: rowHighlight
                 x: card.cardPad
                 width: appList.width
-                height: card.itemH
+                height: appList.currentItem ? appList.currentItem.height : card.itemH
+
+                Behavior on height {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                    }
+                }
                 y: appList.currentItem
                    ? (appList.currentItem.y - appList.contentY + card.cardPad)
                    : card.cardPad
