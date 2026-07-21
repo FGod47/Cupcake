@@ -282,8 +282,8 @@ PanelWindow {
         scale: globalState.overviewOpen ? 1.0 : 0.9
         Behavior on scale { 
             NumberAnimation { 
-                duration: (globalState.overviewOpen && Theme.liquidify) ? 1000 : 400
-                easing.type: (globalState.overviewOpen && Theme.liquidify) ? Easing.OutElastic : Easing.OutCubic
+                duration: Theme.liquidify ? 1000 : 450
+                easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic
                 easing.amplitude: 1.0
                 easing.period: 0.85 
             } 
