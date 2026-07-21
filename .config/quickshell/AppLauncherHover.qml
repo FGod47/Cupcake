@@ -224,7 +224,7 @@ PanelWindow {
                         let searchObj = customResultComp.createObject(root, {
                             name: json[i].name,
                             comment: json[i].comment,
-                            icon: "web-browser",
+                            icon: json[i].icon || "web-browser",
                             command: ["xdg-open", json[i].url]
                         });
                         if (searchObj) {
