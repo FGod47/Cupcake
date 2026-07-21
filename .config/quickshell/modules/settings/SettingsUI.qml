@@ -424,19 +424,19 @@ Item {
                     }
                     
                     GroupLabel { label: "Preferences" }
-                    RailItem { icon: "\uead3"; label: "General"; pageIndex: 0 }
                     RailItem { icon: "\uec50"; label: "Appearance"; pageIndex: 1 }
-                    RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
-                    RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
                     RailItem { icon: "\uebc4"; label: "Dock"; pageIndex: 4 }
+                    RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
+                    RailItem { icon: "\uead3"; label: "General"; pageIndex: 0 }
+                    RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
                     
                     GroupLabel { label: "Machine" }
-                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
+                    RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }
                     RailItem { icon: "\uea97"; label: "Displays"; pageIndex: 18 }
                     RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
-                    RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }
-                    RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
                     RailItem { icon: "\ueba8"; label: "Power"; pageIndex: 13 }
+                    RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
+                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
                     
                     Item { Layout.fillHeight: true } // spacer
                     
