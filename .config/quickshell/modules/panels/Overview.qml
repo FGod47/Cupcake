@@ -296,9 +296,10 @@ PanelWindow {
     property bool isPressing: false
 
     // -------------------------------------------------------
-    // Grid Content
+    // Grid Content — single Item owns ALL animation
+    // opacity and scale animate HERE, nothing inside has its own opacity
     // -------------------------------------------------------
-    Rectangle {
+    Item {
         id: gridContent
         anchors.centerIn: parent
         width: overviewWin.cardW
@@ -314,34 +315,32 @@ PanelWindow {
             }
         }
 
-        radius: 18
-        color: "transparent"
-
-        // Inner background rectangle to avoid Qt.rgba(.r, .g, .b) extraction bugs on string colors
+        // Premix ccOpacity into the background color so no child fights the parent opacity
         Rectangle {
             anchors.fill: parent
-            radius: parent.radius
+            radius: 18
             color: Theme.colSurface
             opacity: overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
         }
 
-        opacity: globalState.overviewOpen ? 1.0 : 0.001
-        scale: globalState.overviewOpen ? 1.0 : 0.9
+        // All children scale+fade as ONE unit
+        opacity: globalState.overviewOpen ? 1.0 : 0.0
+        scale: globalState.overviewOpen ? 1.0 : 0.92
 
-        Behavior on scale { 
-            NumberAnimation { 
-                duration: globalState.overviewOpen ? (Theme.liquidify ? 750 : 350) : 250
-                easing.type: globalState.overviewOpen ? (Theme.liquidify ? Easing.OutElastic : Easing.OutExpo) : Easing.OutCubic
+        Behavior on scale {
+            NumberAnimation {
+                duration: globalState.overviewOpen ? (Theme.liquidify ? 750 : 380) : 200
+                easing.type: globalState.overviewOpen ? (Theme.liquidify ? Easing.OutElastic : Easing.OutExpo) : Easing.InCubic
                 easing.amplitude: 1.0
-                easing.period: 0.85 
-            } 
+                easing.period: 0.85
+            }
         }
 
-        Behavior on opacity { 
-            NumberAnimation { 
-                duration: globalState.overviewOpen ? 350 : 250
-                easing.type: Easing.OutCubic 
-            } 
+        Behavior on opacity {
+            NumberAnimation {
+                duration: globalState.overviewOpen ? 300 : 180
+                easing.type: Easing.OutCubic
+            }
         }
         
         Column {
