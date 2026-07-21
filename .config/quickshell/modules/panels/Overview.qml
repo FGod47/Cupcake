@@ -204,14 +204,20 @@ PanelWindow {
         z: 100
 
         onPressed: function(mouse) {
+            overviewWin.isPressing = true
+            overviewWin.pressX = mouse.x
+            overviewWin.pressY = mouse.y
+            overviewWin.isDragging = false
+            overviewWin.draggingAddr = ""
+
             var win = overviewWin.windowAtPoint(mouse.x, mouse.y)
             if (win) {
                 if (mouse.button === Qt.MiddleButton) {
                     Hyprland.dispatch("hl.dsp.window.close({window = \"address:" + win.addr + "\"})")
                     mouse.accepted = true
+                    overviewWin.isPressing = false
                     return
                 }
-                overviewWin.isDragging     = true
                 overviewWin.draggingAddr   = win.addr
                 overviewWin.draggingFromWs = win.wsId
                 overviewWin.draggingToWs   = win.wsId
@@ -226,17 +232,44 @@ PanelWindow {
         }
 
         onPositionChanged: function(mouse) {
-            if (!overviewWin.isDragging) return
-            overviewWin.dragX = mouse.x - overviewWin.dragOffX
-            overviewWin.dragY = mouse.y - overviewWin.dragOffY
-            overviewWin.draggingToWs = overviewWin.wsAtPoint(
-                overviewWin.dragX + overviewWin.dragW / 2,
-                overviewWin.dragY + overviewWin.dragH / 2
-            )
+            if (!overviewWin.isPressing) return
+            var dx = mouse.x - overviewWin.pressX
+            var dy = mouse.y - overviewWin.pressY
+            if (!overviewWin.isDragging && (dx * dx + dy * dy > 64) && overviewWin.draggingAddr !== "") {
+                overviewWin.isDragging = true
+            }
+            if (overviewWin.isDragging) {
+                overviewWin.dragX = mouse.x - overviewWin.dragOffX
+                overviewWin.dragY = mouse.y - overviewWin.dragOffY
+                overviewWin.draggingToWs = overviewWin.wsAtPoint(
+                    overviewWin.dragX + overviewWin.dragW / 2,
+                    overviewWin.dragY + overviewWin.dragH / 2
+                )
+            }
         }
 
         onReleased: function(mouse) {
-            if (!overviewWin.isDragging) {
+            var wasDragging = overviewWin.isDragging
+            var addr = overviewWin.draggingAddr
+            var targetWs = overviewWin.draggingToWs
+            var fromWs = overviewWin.draggingFromWs
+
+            overviewWin.isPressing = false
+            overviewWin.isDragging = false
+            overviewWin.draggingAddr = ""
+            overviewWin.draggingFromWs = -1
+            overviewWin.draggingToWs = -1
+
+            if (wasDragging) {
+                if (targetWs !== -1 && targetWs !== fromWs && addr !== "") {
+                    Hyprland.dispatch(
+                        "hl.dsp.window.move({ workspace = " + targetWs +
+                        ", follow = false, window = \"address:" + addr + "\" })"
+                    )
+                    fetchClients.running = true
+                }
+            } else {
+                // It was a click, not a drag!
                 var win = overviewWin.windowAtPoint(mouse.x, mouse.y)
                 if (win) {
                     globalState.overviewOpen = false
@@ -249,33 +282,18 @@ PanelWindow {
                     Hyprland.dispatch("hl.dsp.focus({workspace = " + ws + "})")
                     return
                 }
+                // Clicked outside grid — close overview
                 globalState.overviewOpen = false
-                return
-            }
-            var targetWs = overviewWin.draggingToWs
-            var fromWs   = overviewWin.draggingFromWs
-            var addr     = overviewWin.draggingAddr
-            overviewWin.isDragging     = false
-            overviewWin.draggingAddr   = ""
-            overviewWin.draggingFromWs = -1
-            overviewWin.draggingToWs   = -1
-            if (targetWs !== -1 && targetWs !== fromWs && addr !== "") {
-                Hyprland.dispatch(
-                    "hl.dsp.window.move({ workspace = " + targetWs +
-                    ", follow = false, window = \"address:" + addr + "\" })"
-                )
-                fetchClients.running = true
             }
         }
     }
 
-    Keys.onPressed: function(event) {
-        if (event.key === Qt.Key_Escape) {
-            overviewWin.isDragging = false
-            globalState.overviewOpen = false
-            event.accepted = true
-        }
-    }
+    // -------------------------------------------------------
+    // Drag vs Click state
+    // -------------------------------------------------------
+    property real pressX: 0
+    property real pressY: 0
+    property bool isPressing: false
 
     // -------------------------------------------------------
     // Grid Content
@@ -286,6 +304,15 @@ PanelWindow {
         width: overviewWin.cardW
         height: overviewWin.cardH
         z: 1
+
+        focus: globalState.overviewOpen
+        Keys.onPressed: function(event) {
+            if (event.key === Qt.Key_Escape) {
+                overviewWin.isDragging = false
+                globalState.overviewOpen = false
+                event.accepted = true
+            }
+        }
 
         radius: 18
         color: "transparent"
