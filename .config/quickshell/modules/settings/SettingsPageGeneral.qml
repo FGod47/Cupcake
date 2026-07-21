@@ -17,10 +17,11 @@ Item {
     property color cDivider: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cIconBg:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
-    property int gapsIn:     3
-    property int gapsOut:    8
-    property int borderSize: 3
-    property int rounding:   10
+    property int gapsIn:       3
+    property int gapsOut:      8
+    property int borderSize:   3
+    property int rounding:     10
+    property bool bordersEnabled: true
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.gaps_in"]
@@ -44,6 +45,13 @@ Item {
         }
     }
     Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.borders"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text.trim() === "false") root.bordersEnabled = false; }
+        }
+    }
+    Process {
         command: ["bash", "-c", "hyprctl getoption decoration:rounding -j | grep -o '\"int\": [0-9]*' | grep -o '[0-9]*'"]
         running: true
         stdout: StdioCollector {
@@ -61,6 +69,7 @@ Item {
     function applyBorder() {
         Quickshell.execDetached(["bash", "-c",
             "echo " + root.borderSize + " > ~/.config/cupcake/.border_size && " +
+            "echo " + (root.bordersEnabled ? "true" : "false") + " > ~/.config/cupcake/.borders && " +
             "~/.local/bin/apply-borders"
         ])
     }
@@ -235,6 +244,30 @@ Item {
 
             SettingsCard {
                 sectionTitle: "Window Style"
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\ueb45"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Window borders"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show borders around windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSwitch {
+                        checked: root.bordersEnabled
+                        onCheckedChanged: {
+                            root.bordersEnabled = checked
+                            root.applyBorder()
+                        }
+                    }
+                }
 
                 SettingsRow {
                     RowLayout {
