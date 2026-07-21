@@ -4,11 +4,11 @@ import QtQuick.Controls
 import "../../theme"
 import Quickshell.Io
 import Quickshell
+import "../common"
 
 Item {
     id: root
 
-    // ── colours ───────────────────────────────────────────────────────────────
     property color cText:    Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
     property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
     property color cAccent:  Theme.colPrimary
@@ -17,13 +17,11 @@ Item {
     property color cDivider: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cIconBg:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
-    // ── state ─────────────────────────────────────────────────────────────────
     property int gapsIn:     3
     property int gapsOut:    8
     property int borderSize: 3
     property int rounding:   10
 
-    // ── load ──────────────────────────────────────────────────────────────────
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.gaps_in"]
         running: true
@@ -53,7 +51,6 @@ Item {
         }
     }
 
-    // ── apply helpers ─────────────────────────────────────────────────────────
     function applyGaps() {
         Quickshell.execDetached(["bash", "-c",
             "echo " + root.gapsIn  + " > ~/.config/cupcake/.gaps_in && " +
@@ -74,25 +71,25 @@ Item {
         ])
     }
 
-    // ── reusable ──────────────────────────────────────────────────────────────
+    // Copied exactly from SettingsPageAppearance.qml
     component SettingsCard: Rectangle {
         default property alias content: cardCol.data
         property string sectionTitle: ""
         Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (hdr.visible ? hdr.height + 28 : 32)
-        color: root.cBgCard
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
         radius: 12
-        border.color: root.cBorder
+        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
         border.width: 1
 
         RowLayout {
-            id: hdr
+            id: cardHeader
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: 16
             anchors.leftMargin: 20
             anchors.rightMargin: 20
+            anchors.topMargin: 16
             visible: sectionTitle !== ""
             spacing: 8
             Text {
@@ -104,12 +101,12 @@ Item {
                 font.letterSpacing: 0.8
                 font.capitalization: Font.AllUppercase
             }
-            Rectangle { Layout.fillWidth: true; height: 1; color: root.cDivider }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
         }
         ColumnLayout {
             id: cardCol
-            anchors.top: hdr.visible ? hdr.bottom : parent.top
-            anchors.topMargin: hdr.visible ? 12 : 16
+            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+            anchors.topMargin: cardHeader.visible ? 12 : 16
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: 20
@@ -119,15 +116,26 @@ Item {
         }
     }
 
+    // Copied exactly from SettingsPageAppearance.qml
     component SettingsRow: Rectangle {
-        default property alias rowContent: innerRow.data
+        default property alias rowContent: innerLayout.data
         Layout.fillWidth: true
-        implicitHeight: innerRow.implicitHeight + 20
+        implicitHeight: innerLayout.implicitHeight + 20
         color: "transparent"
         radius: 8
-        RowLayout {
-            id: innerRow
+        property bool hoverable: false
+        property bool hovered: hoverArea.containsMouse
+        Behavior on color { ColorAnimation { duration: 120 } }
+        MouseArea {
+            id: hoverArea
             anchors.fill: parent
+            hoverEnabled: parent.hoverable
+        }
+        RowLayout {
+            id: innerLayout
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
             anchors.topMargin: 10
             anchors.bottomMargin: 10
             spacing: 12
@@ -137,15 +145,15 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: root.cDivider
+            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
             opacity: 0.6
         }
     }
 
-    // ── main layout ───────────────────────────────────────────────────────────
     ScrollView {
         ScrollBar.vertical.policy: ScrollBar.AlwaysOff
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        id: scrollView
         anchors.fill: parent
         anchors.bottomMargin: 28
         leftPadding: 32
@@ -157,7 +165,6 @@ Item {
             width: parent.width
             spacing: 20
 
-            // ── Window Gaps ───────────────────────────────────────────────────
             SettingsCard {
                 sectionTitle: "Window Gaps"
 
@@ -167,30 +174,12 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueae9"
-                                color: root.cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
+                            Text { anchors.centerIn: parent; text: "\ueae9"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text {
-                                text: "Inner gaps"
-                                color: root.cText
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: Font.Medium
-                            }
-                            Text {
-                                text: "Space between tiled windows"
-                                color: root.cTextDim
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                opacity: 0.8
-                            }
+                            Text { text: "Inner gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Space between tiled windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -199,14 +188,7 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: root.gapsIn + "px"
-                                color: root.cAccent
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.DemiBold
-                            }
+                            Text { anchors.centerIn: parent; text: root.gapsIn + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -224,30 +206,12 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb19"
-                                color: root.cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
+                            Text { anchors.centerIn: parent; text: "\ueb19"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text {
-                                text: "Outer gaps"
-                                color: root.cText
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: Font.Medium
-                            }
-                            Text {
-                                text: "Space between windows and screen edges"
-                                color: root.cTextDim
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                opacity: 0.8
-                            }
+                            Text { text: "Outer gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Space between windows and screen edges"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -256,14 +220,7 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: root.gapsOut + "px"
-                                color: root.cAccent
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.DemiBold
-                            }
+                            Text { anchors.centerIn: parent; text: root.gapsOut + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -276,7 +233,6 @@ Item {
                 }
             }
 
-            // ── Window Style ──────────────────────────────────────────────────
             SettingsCard {
                 sectionTitle: "Window Style"
 
@@ -286,30 +242,12 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb7a"
-                                color: root.cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
+                            Text { anchors.centerIn: parent; text: "\ueb7a"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text {
-                                text: "Corner rounding"
-                                color: root.cText
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: Font.Medium
-                            }
-                            Text {
-                                text: "Radius applied to all window corners"
-                                color: root.cTextDim
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                opacity: 0.8
-                            }
+                            Text { text: "Corner rounding"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Radius applied to all window corners"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -318,14 +256,7 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: root.rounding + "px"
-                                color: root.cAccent
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.DemiBold
-                            }
+                            Text { anchors.centerIn: parent; text: root.rounding + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -343,30 +274,12 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb45"
-                                color: root.cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
+                            Text { anchors.centerIn: parent; text: "\ueb45"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text {
-                                text: "Border size"
-                                color: root.cText
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: Font.Medium
-                            }
-                            Text {
-                                text: "Thickness of window borders"
-                                color: root.cTextDim
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                opacity: 0.8
-                            }
+                            Text { text: "Border size"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Thickness of window borders"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -375,14 +288,7 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: root.borderSize + "px"
-                                color: root.cAccent
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.DemiBold
-                            }
+                            Text { anchors.centerIn: parent; text: root.borderSize + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
