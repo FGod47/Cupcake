@@ -285,6 +285,13 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "overview"
+        function toggle() {
+            globalState.overviewOpen = !globalState.overviewOpen;
+        }
+    }
+
+    IpcHandler {
         target: "aipanel"
         function toggle() {
             globalState.aiPanelVisible = !globalState.aiPanelVisible;
