@@ -306,8 +306,7 @@ PanelWindow {
             },
             State {
                 name: "closed"
-                // Zoom-in slightly when closed so it feels like it "drops backward" onto the screen when opened
-                PropertyChanges { target: gridContent; scale: 1.08; opacity: 0.001 }
+                PropertyChanges { target: gridContent; scale: 0.9; opacity: 0.001 }
             }
         ]
 
@@ -315,14 +314,14 @@ PanelWindow {
             Transition {
                 from: "closed"
                 to: "open"
-                NumberAnimation { target: gridContent; properties: "opacity"; duration: 300; easing.type: Easing.OutCubic }
-                NumberAnimation { target: gridContent; properties: "scale"; duration: 500; easing.type: Theme.liquidify ? Easing.OutBack : Easing.OutExpo; easing.overshoot: 1.2 }
+                NumberAnimation { target: gridContent; properties: "opacity"; duration: 450; easing.type: Easing.OutCubic }
+                NumberAnimation { target: gridContent; properties: "scale"; duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 }
             },
             Transition {
                 from: "open"
                 to: "closed"
-                NumberAnimation { target: gridContent; properties: "opacity"; duration: 250; easing.type: Easing.OutCubic }
-                NumberAnimation { target: gridContent; properties: "scale"; duration: 350; easing.type: Easing.InCubic }
+                NumberAnimation { target: gridContent; properties: "opacity"; duration: 450; easing.type: Easing.OutCubic }
+                NumberAnimation { target: gridContent; properties: "scale"; duration: 400; easing.type: Easing.OutCubic }
             }
         ]
         
