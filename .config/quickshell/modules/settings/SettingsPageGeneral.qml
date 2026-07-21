@@ -56,6 +56,7 @@ Item {
     property real globalOpacity: 0.90
     property int blurPasses: 3
     property bool barTransparency: true
+    property bool xrayBlur: true
     property real barOpacity: 0.50
     property real dockOpacity: 0.50
     property real launcherOpacity: 0.80
@@ -150,8 +151,21 @@ Item {
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
+                let text = data;
                 if (text.trim() === "false") { root.barTransparency = false; }
                 else { root.barTransparency = true; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.xray_blur"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let text = data;
+                if (text.trim() === "false") { root.xrayBlur = false; }
+                else { root.xrayBlur = true; }
             }
         }
     }
@@ -697,6 +711,36 @@ Item {
                             root.barTransparency = c;
                             Theme.quickshellTransparency = c;
                             Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 16
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea60" // Ghost icon / x-ray icon
+                                color: Theme.colOnSurfaceVariant
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "X-Ray Blur"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Blur the desktop wallpaper instead of underlying windows"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.xrayBlur
+                        onToggled: (c) => {
+                            root.xrayBlur = c;
+                            Quickshell.execDetached(["bash", "-c", "echo " + c + " > ~/.config/cupcake/.xray_blur && ~/.local/bin/apply-transparency"]);
                         }
                     }
                 }

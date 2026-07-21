@@ -62,23 +62,26 @@ if [ "$BAR_TRANS" = "true" ]; then
         IGNORE_ALPHA="0.01"
     fi
 
+    XRAY_BLUR=$(cat ~/.config/cupcake/.xray_blur 2>/dev/null || echo true)
+    [ -z "$XRAY_BLUR" ] && XRAY_BLUR=true
+
     cat <<EOF >> ~/.config/hypr/transparency.lua
 hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true })
 hl.layer_rule({ match = { namespace = 'quickshell' }, ignore_alpha = $IGNORE_ALPHA })
-hl.layer_rule({ match = { namespace = 'quickshell' }, xray = true })
+hl.layer_rule({ match = { namespace = 'quickshell' }, xray = $XRAY_BLUR })
 
 hl.layer_rule({ match = { namespace = 'quickshell:.*' }, blur = true })
 hl.layer_rule({ match = { namespace = 'quickshell:.*' }, ignore_alpha = $IGNORE_ALPHA })
-hl.layer_rule({ match = { namespace = 'quickshell:.*' }, xray = true })
+hl.layer_rule({ match = { namespace = 'quickshell:.*' }, xray = $XRAY_BLUR })
 hl.layer_rule({ match = { namespace = 'quickshell:.*' }, blur_popups = true })
 
 hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, blur = true })
 hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, ignore_alpha = $IGNORE_ALPHA })
-hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, xray = true })
+hl.layer_rule({ match = { namespace = 'cupcake-launcher' }, xray = $XRAY_BLUR })
 
 hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, blur = true })
 hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, ignore_alpha = $IGNORE_ALPHA })
-hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, xray = true })
+hl.layer_rule({ match = { namespace = 'cupcake-wallpaper' }, xray = $XRAY_BLUR })
 
 hl.window_rule({ match = { class = 'quickshell' }, opacity = '1.0 1.0' })
 hl.window_rule({ match = { class = 'quickshell' }, no_blur = false })
