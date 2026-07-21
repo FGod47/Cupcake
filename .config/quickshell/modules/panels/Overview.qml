@@ -297,33 +297,11 @@ PanelWindow {
             opacity: overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
         }
 
-        state: globalState.overviewOpen ? "open" : "closed"
-
-        states: [
-            State {
-                name: "open"
-                PropertyChanges { target: gridContent; scale: 1.0; opacity: 1.0 }
-            },
-            State {
-                name: "closed"
-                PropertyChanges { target: gridContent; scale: 0.9; opacity: 0.0 }
-            }
-        ]
-
-        transitions: [
-            Transition {
-                from: "closed"
-                to: "open"
-                NumberAnimation { target: gridContent; properties: "opacity"; duration: 450; easing.type: Easing.OutCubic }
-                NumberAnimation { target: gridContent; properties: "scale"; duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 }
-            },
-            Transition {
-                from: "open"
-                to: "closed"
-                NumberAnimation { target: gridContent; properties: "opacity"; duration: 450; easing.type: Easing.OutCubic }
-                NumberAnimation { target: gridContent; properties: "scale"; duration: 400; easing.type: Easing.OutCubic }
-            }
-        ]
+        opacity: globalState.overviewOpen ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
+        
+        scale: globalState.overviewOpen ? 1.0 : 0.9
+        Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
         
         Column {
             anchors.centerIn: parent
@@ -394,7 +372,7 @@ PanelWindow {
                                     property var    wData: overviewWin.windowByAddr["0x" + modelData.HyprlandToplevel?.address]
                                     property string wAddr: wData?.address ?? ""
                                     
-                                    visible: wData && wData.workspace && wData.workspace.id === wsCell.wsId
+                                    visible: !!(wData && wData.workspace && wData.workspace.id === wsCell.wsId)
                                     property bool   isBeingDragged: overviewWin.isDragging && overviewWin.draggingAddr === wAddr
                                     property var    bounds: overviewWin.wsBounds[wsCell.wsId] || {xOff: 0, yOff: 0}
 
