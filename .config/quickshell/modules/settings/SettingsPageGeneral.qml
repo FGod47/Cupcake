@@ -10,7 +10,6 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "black"
-        radius: 10
 
         Text {
             anchors.centerIn: parent
