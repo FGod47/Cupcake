@@ -919,7 +919,7 @@ Item {
                             onValueChanged: { root.barOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setBarOpacity " + root.barOpacity]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setBarOpacity " + root.barOpacity + " && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }
@@ -959,7 +959,7 @@ Item {
                             onValueChanged: { root.ccOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setCcOpacity " + root.ccOpacity]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setCcOpacity " + root.ccOpacity + " && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }
@@ -999,7 +999,7 @@ Item {
                             onValueChanged: { root.dockOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setDockOpacity " + root.dockOpacity]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setDockOpacity " + root.dockOpacity + " && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }
