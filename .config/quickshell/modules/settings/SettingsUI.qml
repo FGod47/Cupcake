@@ -14,6 +14,7 @@ import "../common"
 Item {
     id: root
     readonly property string homeDir: Quickshell.env("HOME")
+    property int windowRadius: 10
     width: 868
     height: 768
     signal requestClose()
@@ -271,8 +272,8 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 212
                 color: cBg
-                topLeftRadius: 10
-                bottomLeftRadius: 10
+                topLeftRadius: root.windowRadius
+                bottomLeftRadius: root.windowRadius
                 clip: true
                 
                 Rectangle {

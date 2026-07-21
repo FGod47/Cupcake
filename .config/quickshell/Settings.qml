@@ -19,7 +19,7 @@ Window {
     title: "Cupcake Settings"
     color: "transparent"
     flags: Qt.Window | Qt.FramelessWindowHint
-    
+
     property real bgOpacity: 0.75
     Process {
         id: initSettingsOpacity
@@ -33,9 +33,23 @@ Window {
     }
     Timer { interval: 500; running: true; repeat: true; onTriggered: initSettingsOpacity.running = true }
 
+    // Dynamically read Hyprland's rounding value so window corners always match
+    property int hyprRounding: 10
+    Process {
+        id: initRounding
+        command: ["bash", "-c", "hyprctl getoption decoration:rounding -j | grep -o '\"int\": [0-9]*' | grep -o '[0-9]*'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let v = parseInt(text.trim());
+                if (!isNaN(v) && v >= 0) settingsWindow.hyprRounding = v;
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
-        radius: 10
+        radius: settingsWindow.hyprRounding
         border.width: 1
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
         clip: true
@@ -46,6 +60,7 @@ Window {
         SettingsUI {
             id: settingsUI
             anchors.fill: parent
+            windowRadius: settingsWindow.hyprRounding
             
             Connections {
                 target: settingsUI
