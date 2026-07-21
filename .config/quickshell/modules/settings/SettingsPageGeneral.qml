@@ -13,8 +13,8 @@ Item {
     property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
     property color cAccent:  Theme.colPrimary
     property color cBgCard:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-    property color cBorder:  Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.08)
-    property color cDivider: Qt.rgba(Theme.colOutline.r,   Theme.colOutline.g,   Theme.colOutline.b,   0.15)
+    property color cBorder:  Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
+    property color cDivider: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cIconBg:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
     // ── state ─────────────────────────────────────────────────────────────────
@@ -59,19 +59,19 @@ Item {
             "echo " + root.gapsIn  + " > ~/.config/cupcake/.gaps_in && " +
             "echo " + root.gapsOut + " > ~/.config/cupcake/.gaps_out && " +
             "~/.local/bin/apply-gaps"
-        ]);
+        ])
     }
     function applyBorder() {
         Quickshell.execDetached(["bash", "-c",
             "echo " + root.borderSize + " > ~/.config/cupcake/.border_size && " +
             "~/.local/bin/apply-borders"
-        ]);
+        ])
     }
     function applyRounding() {
         Quickshell.execDetached(["bash", "-c",
             "sed -i 's/rounding = [0-9]*/rounding = " + root.rounding + "/' ~/.config/hypr/decoration.lua && " +
             "hyprctl reload"
-        ]);
+        ])
     }
 
     // ── reusable ──────────────────────────────────────────────────────────────
@@ -87,19 +87,34 @@ Item {
 
         RowLayout {
             id: hdr
-            anchors { top: parent.top; left: parent.left; right: parent.right; topMargin: 16; leftMargin: 20; rightMargin: 20 }
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 16
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
             visible: sectionTitle !== ""
             spacing: 8
             Text {
                 text: sectionTitle
                 color: Theme.colOnSurfaceVariant
-                font { family: Theme.defaultFontFamily; pixelSize: 11; weight: Font.DemiBold; letterSpacing: 0.8; capitalization: Font.AllUppercase }
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.8
+                font.capitalization: Font.AllUppercase
             }
             Rectangle { Layout.fillWidth: true; height: 1; color: root.cDivider }
         }
         ColumnLayout {
             id: cardCol
-            anchors { top: hdr.visible ? hdr.bottom : parent.top; topMargin: hdr.visible ? 12 : 16; left: parent.left; right: parent.right; leftMargin: 20; rightMargin: 20; bottomMargin: 16 }
+            anchors.top: hdr.visible ? hdr.bottom : parent.top
+            anchors.topMargin: hdr.visible ? 12 : 16
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.bottomMargin: 16
             spacing: 0
         }
     }
@@ -112,12 +127,18 @@ Item {
         radius: 8
         RowLayout {
             id: innerRow
-            anchors { fill: parent; topMargin: 10; bottomMargin: 10 }
+            anchors.fill: parent
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
             spacing: 12
         }
         Rectangle {
-            anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-            height: 1; color: root.cDivider; opacity: 0.6
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: root.cDivider
+            opacity: 0.6
         }
     }
 
@@ -127,7 +148,8 @@ Item {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.fill: parent
         anchors.bottomMargin: 28
-        leftPadding: 32; rightPadding: 32
+        leftPadding: 32
+        rightPadding: 32
         contentWidth: availableWidth
         clip: true
 
@@ -145,12 +167,30 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text { anchors.centerIn: parent; text: "\ueae9"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueae9"
+                                color: root.cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Inner gaps"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
-                            Text { text: "Space between tiled windows"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                            Text {
+                                text: "Inner gaps"
+                                color: root.cText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                            }
+                            Text {
+                                text: "Space between tiled windows"
+                                color: root.cTextDim
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                opacity: 0.8
+                            }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -159,7 +199,14 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: root.gapsIn + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.gapsIn + "px"
+                                color: root.cAccent
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.DemiBold
+                            }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -177,12 +224,30 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text { anchors.centerIn: parent; text: "\ueb19"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb19"
+                                color: root.cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Outer gaps"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
-                            Text { text: "Space between windows and screen edges"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                            Text {
+                                text: "Outer gaps"
+                                color: root.cText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                            }
+                            Text {
+                                text: "Space between windows and screen edges"
+                                color: root.cTextDim
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                opacity: 0.8
+                            }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -191,7 +256,14 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: root.gapsOut + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.gapsOut + "px"
+                                color: root.cAccent
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.DemiBold
+                            }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -214,12 +286,30 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text { anchors.centerIn: parent; text: "\ueb7a"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb7a"
+                                color: root.cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Corner rounding"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
-                            Text { text: "Radius applied to all window corners"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                            Text {
+                                text: "Corner rounding"
+                                color: root.cText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                            }
+                            Text {
+                                text: "Radius applied to all window corners"
+                                color: root.cTextDim
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                opacity: 0.8
+                            }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -228,7 +318,14 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: root.rounding + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.rounding + "px"
+                                color: root.cAccent
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.DemiBold
+                            }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
@@ -246,12 +343,30 @@ Item {
                         Rectangle {
                             width: 32; height: 32; radius: 10
                             color: root.cIconBg
-                            Text { anchors.centerIn: parent; text: "\ueb45"; color: root.cTextDim; font { family: "tabler-icons"; pixelSize: 16 } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb45"
+                                color: root.cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Border size"; color: root.cText; font { family: Theme.defaultFontFamily; pixelSize: 13; weight: Font.Medium } }
-                            Text { text: "Thickness of window borders"; color: root.cTextDim; font { family: Theme.defaultFontFamily; pixelSize: 11 }; opacity: 0.8 }
+                            Text {
+                                text: "Border size"
+                                color: root.cText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                            }
+                            Text {
+                                text: "Thickness of window borders"
+                                color: root.cTextDim
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                opacity: 0.8
+                            }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -260,7 +375,14 @@ Item {
                         Rectangle {
                             width: 36; height: 24; radius: 6
                             color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
-                            Text { anchors.centerIn: parent; text: root.borderSize + "px"; color: root.cAccent; font { family: Theme.defaultFontFamily; pixelSize: 12; weight: Font.DemiBold } }
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.borderSize + "px"
+                                color: root.cAccent
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.DemiBold
+                            }
                         }
                         StyledSlider {
                             Layout.preferredWidth: 180
