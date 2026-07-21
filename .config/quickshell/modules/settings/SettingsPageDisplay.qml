@@ -535,6 +535,15 @@ Item {
             // 4. Arrangement
             NCard {
                 sectionTitle: "Arrangement"
+                
+                MonitorArrangement {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 280
+                    Layout.topMargin: 10
+                    Layout.bottomMargin: 10
+                    monitorsData: root.monitorsData
+                }
+
                 NRow {
                     RowLayout {
                         spacing: 12
