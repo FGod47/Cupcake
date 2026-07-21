@@ -130,10 +130,11 @@ PanelWindow {
     property var windowByAddr: ({})
     property var wsBounds:     ({})
 
+    Component.onCompleted: fetchClients.running = true
+
     Process {
         id: fetchClients
         command: ["hyprctl", "clients", "-j"]
-        running: globalState.overviewOpen
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
