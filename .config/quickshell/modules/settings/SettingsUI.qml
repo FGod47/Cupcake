@@ -497,7 +497,7 @@ Item {
                     
                     function getPageData(index) {
                         switch(index) {
-                            case 0: return { title: "Appearance", path: "settings › appearance › general" };
+                            case 0: return { title: "General", path: "settings › general" };
                             case 1: return { title: "Appearance", path: "settings › appearance › wallpaper" };
                             case 2: return { title: "Fonts", path: "settings › fonts" };
                             case 3: return { title: "Appearance", path: "settings › appearance › desktop" };
