@@ -296,24 +296,36 @@ PanelWindow {
     property bool isPressing: false
 
     // -------------------------------------------------------
-    // Grid Content — single Item owns ALL animation
-    // opacity and scale animate HERE, nothing inside has its own opacity
+    // Grid Content — explicit open/close animations, NO Behaviors
+    // This guarantees everything fades as one unit with no ghost leftovers
     // -------------------------------------------------------
-    // Hide grid completely after close animation so ScreencopyViews don't linger
-    Timer {
-        id: hideTimer
-        interval: 200
-        onTriggered: gridContent.visible = false
+    ParallelAnimation {
+        id: openAnim
+        NumberAnimation { target: gridContent; property: "opacity"; from: 0.0; to: 1.0; duration: 300; easing.type: Easing.OutCubic }
+        NumberAnimation { target: gridContent; property: "scale";   from: 0.92; to: 1.0; duration: Theme.liquidify ? 750 : 380; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 }
+    }
+
+    SequentialAnimation {
+        id: closeAnim
+        ParallelAnimation {
+            NumberAnimation { target: gridContent; property: "opacity"; to: 0.0;  duration: 180; easing.type: Easing.InCubic }
+            NumberAnimation { target: gridContent; property: "scale";   to: 0.92; duration: 200; easing.type: Easing.InCubic }
+        }
+        ScriptAction { script: { gridContent.visible = false } }
     }
 
     Connections {
         target: globalState
         function onOverviewOpenChanged() {
             if (globalState.overviewOpen) {
-                hideTimer.stop()
+                closeAnim.stop()
+                gridContent.opacity = 0.0
+                gridContent.scale   = 0.92
                 gridContent.visible = true
+                openAnim.restart()
             } else {
-                hideTimer.restart()
+                openAnim.stop()
+                closeAnim.restart()
             }
         }
     }
@@ -324,7 +336,9 @@ PanelWindow {
         width: overviewWin.cardW
         height: overviewWin.cardH
         z: 1
-        visible: false  // controlled by hideTimer + Connections above
+        visible: false
+        opacity: 0.0
+        scale: 0.92
 
         focus: globalState.overviewOpen
         Keys.onPressed: function(event) {
@@ -335,8 +349,7 @@ PanelWindow {
             }
         }
 
-        // Background — ccOpacity baked into color alpha, NO separate opacity property
-        // so it never fades at a different rate than the children
+        // Background — ccOpacity baked into color alpha so opacity is never split
         Rectangle {
             anchors.fill: parent
             radius: 18
@@ -348,25 +361,6 @@ PanelWindow {
             )
         }
 
-        // ALL children scale+fade as ONE unit — no child has its own opacity
-        opacity: globalState.overviewOpen ? 1.0 : 0.0
-        scale: globalState.overviewOpen ? 1.0 : 0.92
-
-        Behavior on scale {
-            NumberAnimation {
-                duration: globalState.overviewOpen ? (Theme.liquidify ? 750 : 380) : 200
-                easing.type: globalState.overviewOpen ? (Theme.liquidify ? Easing.OutElastic : Easing.OutExpo) : Easing.InCubic
-                easing.amplitude: 1.0
-                easing.period: 0.85
-            }
-        }
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: globalState.overviewOpen ? 300 : 180
-                easing.type: Easing.OutCubic
-            }
-        }
         
         Column {
             anchors.centerIn: parent
