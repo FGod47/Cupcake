@@ -62,7 +62,7 @@ PanelWindow {
 
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
     readonly property real hyprToQt: (monitor && monitor.width > 0) ? (screen.width / monitor.width) : 1.0
-    readonly property int activeWsId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.id ?? 1))
+    readonly property int activeWsId: Math.max(1, Math.min(100, Hyprland.focusedWorkspace?.id ?? monitor?.activeWorkspace?.id ?? 1))
     readonly property int wsGroup:    Math.floor((activeWsId - 1) / wsTotal)
 
     readonly property real cardW: wsColumns * cellW + (wsColumns - 1) * wsSpacing + wsPadding * 2
@@ -371,28 +371,22 @@ PanelWindow {
                             width:  cellW
                             height: cellH
 
-                            // Cell background — deeper and darker to look like an indented tray
+                            // Cell background — elegant indented tray with theme tint
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
-                                color: wsCell.isDragOver ? Theme.colPrimary : Qt.rgba(0, 0, 0, 1.0)
-                                opacity: wsCell.isDragOver ? 0.15 : 0.15
-                                
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
+                                color: wsCell.isDragOver ? Theme.colPrimary : Theme.colSurfaceContainerHigh
+                                opacity: wsCell.isDragOver ? 0.35 : (wsCell.isActive ? 0.25 : 0.15)
                             }
                             
-                            // Cell border — thicker and darker
+                            // Cell border — crisp primary for active, theme outline for inactive
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
                                 color: "transparent"
-                                border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Qt.rgba(0, 0, 0, 0.3))
+                                border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Theme.colOutline)
                                 border.width: wsCell.isActive ? 3 : 2
-                                opacity: wsCell.isActive ? 1.0 : 1.0
-                                Behavior on border.color { ColorAnimation { duration: 200 } }
-                                Behavior on border.width { NumberAnimation { duration: 200 } }
-                                Behavior on opacity { NumberAnimation { duration: 200 } }
+                                opacity: wsCell.isActive ? 1.0 : 0.6
                             }
 
                             // Workspace number — matches CC's muted text style
@@ -423,7 +417,6 @@ PanelWindow {
                                     width:   (wData?.size[0] ?? 100) * overviewWin.hyprToQt * overviewWin.wsScale
                                     height:  (wData?.size[1] ?? 60)  * overviewWin.hyprToQt * overviewWin.wsScale
                                     opacity: isBeingDragged ? 0.20 : 1.0
-                                    Behavior on opacity { NumberAnimation { duration: 100 } }
 
                                     layer.enabled: true
                                     layer.effect: OpacityMask {
