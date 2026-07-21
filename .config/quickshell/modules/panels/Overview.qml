@@ -14,7 +14,7 @@ PanelWindow {
     visible: true
 
     Region { id: emptyMask }
-    mask: globalState.overviewOpen ? null : emptyMask
+    mask: gridContent.opacity > 0.0 ? null : emptyMask
 
     WlrLayershell.namespace: "quickshell:overview"
     WlrLayershell.layer:     WlrLayer.Top
@@ -280,7 +280,14 @@ PanelWindow {
         
         // Expand animation
         scale: globalState.overviewOpen ? 1.0 : 0.9
-        Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
+        Behavior on scale { 
+            NumberAnimation { 
+                duration: (globalState.overviewOpen && Theme.liquidify) ? 1000 : 400
+                easing.type: (globalState.overviewOpen && Theme.liquidify) ? Easing.OutElastic : Easing.OutCubic
+                easing.amplitude: 1.0
+                easing.period: 0.85 
+            } 
+        }
         
         Column {
             anchors.centerIn: parent
