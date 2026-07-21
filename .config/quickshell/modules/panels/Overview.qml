@@ -14,7 +14,7 @@ PanelWindow {
     visible: true
 
     Region { id: emptyMask }
-    mask: gridContent.opacity > 0.0 ? null : emptyMask
+    mask: globalState.overviewOpen ? null : emptyMask
 
     WlrLayershell.namespace: "quickshell:overview"
     WlrLayershell.layer:     WlrLayer.Top
