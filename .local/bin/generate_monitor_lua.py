@@ -25,7 +25,16 @@ def generate():
         
         lua_content += f'hl.monitor({{\n    output = "{out}",\n    mode = "{w}x{h}@{hz:.3f}",\n    position = "{x}x{y}",\n    scale = {scale},\n    transform = {transform}\n}})\n\n'
 
-    lua_content += 'hl.monitor({\n    output = "",\n    mode = "highrr",\n    position = "auto",\n    scale = 1\n})\n'
+    lua_content += 'hl.monitor({\n    output = "",\n    mode = "highrr",\n    position = "auto",\n    scale = 1\n})\n\n'
+
+    # Fetch and persist VRR
+    try:
+        vrr_output = subprocess.check_output(['hyprctl', 'getoption', 'misc:vrr', '-j']).decode('utf-8')
+        vrr_json = json.loads(vrr_output)
+        vrr_val = vrr_json.get('int', 0)
+        lua_content += f'hl.misc({{\n    vrr = {vrr_val}\n}})\n'
+    except Exception as e:
+        print(f"Error reading VRR: {e}")
 
     config_path = os.path.expanduser('~/.config/hypr/monitor.lua')
     with open(config_path, 'w') as f:

@@ -661,6 +661,47 @@ Item {
                 }
             }
 
+            // Advanced Settings
+            NCard {
+                id: advancedCard
+                sectionTitle: "Advanced"
+                
+                property int vrrState: 0
+                
+                Process {
+                    command: ["hyprctl", "getoption", "misc:vrr", "-j"]
+                    running: true
+                    stdout: StdioCollector {
+                        onStreamFinished: {
+                            try { advancedCard.vrrState = JSON.parse(text).int; } catch (e) {}
+                        }
+                    }
+                }
+                
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uebd1"; iconColor: cTextDim; bgColor: cBgElevated }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Adaptive Sync (VRR)"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Reduce screen tearing in games (FreeSync/G-Sync)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledComboBox {
+                        Layout.preferredWidth: 160
+                        model: ["Off", "On", "Fullscreen Only"]
+                        currentIndex: advancedCard.vrrState
+                        onActivated: function(idx) {
+                            advancedCard.vrrState = idx;
+                            Quickshell.execDetached(["hyprctl", "keyword", "misc:vrr", idx.toString()]);
+                            Quickshell.execDetached(["python3", Quickshell.env("HOME") + "/.local/bin/generate_monitor_lua.py"]);
+                        }
+                    }
+                }
+            }
+
             // 5. Night light
             NCard {
                 id: nightLightCard
