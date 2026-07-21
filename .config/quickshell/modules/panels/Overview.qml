@@ -299,12 +299,32 @@ PanelWindow {
     // Grid Content — single Item owns ALL animation
     // opacity and scale animate HERE, nothing inside has its own opacity
     // -------------------------------------------------------
+    // Hide grid completely after close animation so ScreencopyViews don't linger
+    Timer {
+        id: hideTimer
+        interval: 200
+        onTriggered: gridContent.visible = false
+    }
+
+    Connections {
+        target: globalState
+        function onOverviewOpenChanged() {
+            if (globalState.overviewOpen) {
+                hideTimer.stop()
+                gridContent.visible = true
+            } else {
+                hideTimer.restart()
+            }
+        }
+    }
+
     Item {
         id: gridContent
         anchors.centerIn: parent
         width: overviewWin.cardW
         height: overviewWin.cardH
         z: 1
+        visible: false  // controlled by hideTimer + Connections above
 
         focus: globalState.overviewOpen
         Keys.onPressed: function(event) {
@@ -315,15 +335,20 @@ PanelWindow {
             }
         }
 
-        // Premix ccOpacity into the background color so no child fights the parent opacity
+        // Background — ccOpacity baked into color alpha, NO separate opacity property
+        // so it never fades at a different rate than the children
         Rectangle {
             anchors.fill: parent
             radius: 18
-            color: Theme.colSurface
-            opacity: overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
+            color: Qt.rgba(
+                Theme.colSurface.r,
+                Theme.colSurface.g,
+                Theme.colSurface.b,
+                overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
+            )
         }
 
-        // All children scale+fade as ONE unit
+        // ALL children scale+fade as ONE unit — no child has its own opacity
         opacity: globalState.overviewOpen ? 1.0 : 0.0
         scale: globalState.overviewOpen ? 1.0 : 0.92
 
