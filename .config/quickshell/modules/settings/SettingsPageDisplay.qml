@@ -539,7 +539,7 @@ Item {
                 Item {
                     id: arrangementRoot
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 280
+                    implicitHeight: 280
                     Layout.topMargin: 10
                     Layout.bottomMargin: 10
                     
