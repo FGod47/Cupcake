@@ -22,6 +22,7 @@ Item {
         return activeTransforms[activeMonitor.name] !== undefined ? activeTransforms[activeMonitor.name] : (activeMonitor.transform || 0);
     }
     property string homeDir: Quickshell.env("HOME")
+    property bool globalHdrEnabled: false
 
     property color cBg: Theme.colSurface
     property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
@@ -85,7 +86,14 @@ Item {
         running: root.visible
         stdout: StdioCollector {
             onStreamFinished: {
-                try { root.monitorsData = JSON.parse(text); } catch (e) {}
+                try { 
+                    let parsed = JSON.parse(text);
+                    root.monitorsData = parsed; 
+                    let am = parsed.length > 0 && root.activeMonitorIndex < parsed.length ? parsed[root.activeMonitorIndex] : null;
+                    if (am) {
+                        root.globalHdrEnabled = am.currentFormat && (am.currentFormat.indexOf("2101010") !== -1 || am.currentFormat.indexOf("1010102") !== -1);
+                    }
+                } catch (e) {}
             }
         }
     }
@@ -560,23 +568,6 @@ Item {
                         }
                     }
 
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb92"; iconColor: cTextDim; bgColor: cBgElevated }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "10-bit color / HDR"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Enable higher color depth for smoother gradients"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        NToggle {
-                            id: bitDepthToggle
-                            checked: monCard.modelData.currentFormat && (monCard.modelData.currentFormat.indexOf("2101010") !== -1 || monCard.modelData.currentFormat.indexOf("1010102") !== -1)
-                        }
-                    }
-
                     // Apply button row
                     RowLayout {
                         Layout.fillWidth: true
@@ -609,7 +600,7 @@ Item {
                                     // Build exact mode string: "1920x1080@165.00"
                                     let modeStr = res.w + "x" + res.h + "@" + rawHz.toFixed(2);
                                     let scale = monCard.scaleOptions[monCard.selScaleIdx];
-                                    root.applyDisplay(monCard.modelData, modeStr, scale, root.currentTransform, bitDepthToggle.checked);
+                                    root.applyDisplay(monCard.modelData, modeStr, scale, root.currentTransform, root.globalHdrEnabled);
                                 }
                             }
                         }
@@ -644,7 +635,7 @@ Item {
                             // Apply immediately
                             let mon = root.activeMonitor;
                             let modeStr = mon.width + "x" + mon.height + "@" + mon.refreshRate;
-                            let bd = (mon.currentFormat && (mon.currentFormat.indexOf("2101010") !== -1 || mon.currentFormat.indexOf("1010102") !== -1));
+                            let bd = root.globalHdrEnabled;
                             root.applyDisplay(mon, modeStr, mon.scale, t, bd);
                         }
                     }
@@ -680,47 +671,6 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     NToggle { checked: false }
-                }
-            }
-
-            // Advanced Settings
-            NCard {
-                id: advancedCard
-                sectionTitle: "Advanced"
-                
-                property int vrrState: 0
-                
-                Process {
-                    command: ["hyprctl", "getoption", "misc:vrr", "-j"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: {
-                            try { advancedCard.vrrState = JSON.parse(text).int; } catch (e) {}
-                        }
-                    }
-                }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uebd1"; iconColor: cTextDim; bgColor: cBgElevated }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Adaptive Sync (VRR)"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Reduce screen tearing in games (FreeSync/G-Sync)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    StyledComboBox {
-                        Layout.preferredWidth: 160
-                        model: ["Off", "On", "Fullscreen Only"]
-                        currentIndex: advancedCard.vrrState
-                        onActivated: function(idx) {
-                            advancedCard.vrrState = idx;
-                            Quickshell.execDetached(["hyprctl", "keyword", "misc:vrr", idx.toString()]);
-                            Quickshell.execDetached(["python3", Quickshell.env("HOME") + "/.local/bin/generate_monitor_lua.py"]);
-                        }
-                    }
                 }
             }
 
@@ -896,7 +846,20 @@ Item {
 
             // 6. Advanced
             NCard {
+                id: existingAdvancedCard
                 sectionTitle: "Advanced"
+                
+                property bool vrrEnabled: false
+                Process {
+                    command: ["hyprctl", "getoption", "misc:vrr", "-j"]
+                    running: true
+                    stdout: StdioCollector {
+                        onStreamFinished: {
+                            try { existingAdvancedCard.vrrEnabled = (JSON.parse(text).int > 0); } catch (e) {}
+                        }
+                    }
+                }
+                
                 NRow {
                     RowLayout {
                         spacing: 12
@@ -908,7 +871,13 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    NToggle { checked: true }
+                    NToggle {
+                        checked: existingAdvancedCard.vrrEnabled
+                        onToggled: function(v) {
+                            Quickshell.execDetached(["hyprctl", "keyword", "misc:vrr", v ? "1" : "0"]);
+                            Quickshell.execDetached(["python3", Quickshell.env("HOME") + "/.local/bin/generate_monitor_lua.py"]);
+                        }
+                    }
                 }
                 NRow {
                     RowLayout {
@@ -921,7 +890,17 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    NToggle { checked: false }
+                    NToggle {
+                        checked: root.globalHdrEnabled
+                        onToggled: function(v) {
+                            root.globalHdrEnabled = v;
+                            if (root.activeMonitor) {
+                                let mon = root.activeMonitor;
+                                let modeStr = mon.width + "x" + mon.height + "@" + mon.refreshRate;
+                                root.applyDisplay(mon, modeStr, mon.scale, root.currentTransform, v);
+                            }
+                        }
+                    }
                 }
             }
 
