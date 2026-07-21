@@ -174,9 +174,22 @@ PanelWindow {
             }
         }
     }
+    Timer {
+        id: bgFetchTimer
+        interval: 500
+        repeat: false
+    }
+
     Connections {
         target: Hyprland
-        function onRawEvent() { if (globalState.overviewOpen) fetchClients.running = true }
+        function onRawEvent() { 
+            if (globalState.overviewOpen) {
+                fetchClients.running = true 
+            } else if (!bgFetchTimer.running) {
+                fetchClients.running = true
+                bgFetchTimer.start()
+            }
+        }
     }
 
     // -------------------------------------------------------
@@ -273,7 +286,15 @@ PanelWindow {
         z: 1
 
         radius: 18
-        color: overviewWin.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, overviewWin.ccOpacity) : Theme.colSurface
+        color: "transparent"
+
+        // Inner background rectangle to avoid Qt.rgba(.r, .g, .b) extraction bugs on string colors
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: Theme.colSurface
+            opacity: overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
+        }
 
         opacity: globalState.overviewOpen ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
@@ -320,17 +341,23 @@ PanelWindow {
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
-                                color: wsCell.isDragOver
-                                    ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
-                                    : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
-                                border.color: wsCell.isActive
-                                    ? Theme.colPrimary
-                                    : wsCell.isDragOver
-                                        ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.5)
-                                        : Theme.colOutline
+                                color: wsCell.isDragOver ? Theme.colPrimary : Theme.colOnSurface
+                                opacity: wsCell.isDragOver ? 0.15 : 0.06
+                                
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
+                            }
+                            
+                            // Cell border
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: 10
+                                color: "transparent"
+                                border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Theme.colOutline)
                                 border.width: wsCell.isActive ? 2 : 1
+                                opacity: wsCell.isActive ? 1.0 : (wsCell.isDragOver ? 0.5 : 1.0)
                                 Behavior on border.color { ColorAnimation { duration: 200 } }
-                                Behavior on color        { ColorAnimation { duration: 150 } }
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
                             }
 
                             // Workspace number — matches CC's muted text style
