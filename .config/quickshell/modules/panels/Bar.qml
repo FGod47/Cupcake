@@ -114,7 +114,7 @@ PanelWindow {
 
             // Workspaces Pill (#workspaces)
             Rectangle {
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: 168 // 5 * 32px + 8px padding
@@ -226,7 +226,7 @@ PanelWindow {
                 property bool isWifi: false
                 property bool isWired: false
                 
-                color: isWired ? Theme.colPrimary : (isWifi ? Theme.colSecondary : (root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface))
+                color: isWired ? Theme.colPrimary : (isWifi ? Theme.colSecondary : Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity))
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 32
@@ -393,7 +393,7 @@ PanelWindow {
                 id: hwPill
                 implicitWidth: hwText.implicitWidth + 32
                 Layout.alignment: Qt.AlignVCenter
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface // from custom-hw gradient
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) // from custom-hw gradient
                 Text {
                     id: hwText
                     anchors.centerIn: parent
@@ -421,7 +421,7 @@ PanelWindow {
 
             // Recording Pill
             Rectangle {
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                 radius: 18
                 implicitHeight: 34
                 id: recPill
@@ -454,7 +454,7 @@ PanelWindow {
             // Tray Pill
             Rectangle {
                 id: trayPill
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: trayRow.implicitWidth + 32
@@ -496,7 +496,7 @@ PanelWindow {
             // Controls Pill (#control)
             Rectangle {
                 id: controlsPill
-                color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                 radius: 18
                 implicitHeight: 34
                 implicitWidth: controlsRow.implicitWidth + 32
@@ -684,7 +684,7 @@ PanelWindow {
                     radius: 18
                     height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
                     Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
-                    color: root.barTransparency ? Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) : Theme.colSurface
+                    color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
                     Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
                     clip: true
@@ -1253,8 +1253,8 @@ PanelWindow {
                 Theme.colPrimary.b * (1 - expansion) + Theme.colSurface.b * expansion,
                 1.0
             )
-            property real currentAlpha: 1.0 * (1 - expansion) + (root.barTransparency ? root.ccOpacity : 1.0) * expansion
-            color: root.barTransparency ? Qt.rgba(mixColor.r, mixColor.g, mixColor.b, currentAlpha) : mixColor
+            property real currentAlpha: 1.0 * (1 - expansion) + root.ccOpacity * expansion
+            color: Qt.rgba(mixColor.r, mixColor.g, mixColor.b, currentAlpha)
             
 
             MouseArea {
