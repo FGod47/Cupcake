@@ -84,7 +84,7 @@ Slider {
             // Value text inside thumb
             Text {
                 anchors.centerIn: parent
-                text: Math.round(control.value * 100)
+                text: (control.to <= 1.0) ? Math.round(control.value * 100) + "%" : Math.round(control.value)
                 color: Theme.colOnPrimary
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 13
