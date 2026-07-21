@@ -69,6 +69,7 @@ PanelWindow {
             property string execString: ""
             property string genericName: ""
             property var command: []
+            property bool isWebResult: false
         }
     }
 
@@ -127,7 +128,8 @@ PanelWindow {
                             name: json[i].name,
                             comment: json[i].comment,
                             icon: json[i].icon || "web-browser",
-                            command: ["xdg-open", json[i].url]
+                            command: ["xdg-open", json[i].url],
+                            isWebResult: true
                         });
                         if (searchObj) {
                             newArr.push(searchObj);
@@ -423,7 +425,7 @@ PanelWindow {
             readonly property int searchH: 68
             readonly property int cardPad: 24
 
-            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.count, maxListItems) * itemH) + searchH + cardPad * 2
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + cardPad * 2
 
             width: Theme.appLauncherStyle === "Hover" ? cardWidth : (root.isOpen ? cardWidth : 160)
             height: Theme.appLauncherStyle === "Hover" ? fullHeight : (root.isOpen ? fullHeight : 0)
@@ -574,7 +576,7 @@ PanelWindow {
                     required property int index
 
                     width: appList.width
-                    height: card.itemH
+                    height: (delegateItem.modelData?.isWebResult) ? 120 : card.itemH
 
                     // Hover state layer
                     Rectangle {
@@ -603,6 +605,7 @@ PanelWindow {
                     }
 
                     Row {
+                        visible: !(delegateItem.modelData?.isWebResult ?? false)
                         anchors.fill: parent
                         anchors.leftMargin: 14
                         anchors.rightMargin: 14
@@ -647,6 +650,65 @@ PanelWindow {
                                 width: parent.width
                                 visible: text.length > 0
                             }
+                        }
+                    }
+
+                    Column {
+                        visible: delegateItem.modelData?.isWebResult ?? false
+                        anchors.fill: parent
+                        anchors.leftMargin: 18
+                        anchors.rightMargin: 18
+                        anchors.topMargin: 14
+                        anchors.bottomMargin: 14
+                        spacing: 6
+
+                        Row {
+                            spacing: 8
+                            IconImage {
+                                asynchronous: true
+                                source: delegateItem.modelData?.icon ?? ""
+                                width: 18
+                                height: 18
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            Text {
+                                text: {
+                                    let url = delegateItem.modelData?.command?.[1] ?? "";
+                                    if (url.startsWith("http")) {
+                                        let domain = url.split("/")[2] ?? "";
+                                        return domain.replace("www.", "") + " › " + url.split("/").slice(3,5).join(" › ");
+                                    }
+                                    return "";
+                                }
+                                color: root.colOnSurfaceVariant
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                anchors.verticalCenter: parent.verticalCenter
+                                elide: Text.ElideRight
+                                width: parent.parent.width - 30
+                            }
+                        }
+
+                        Text {
+                            text: delegateItem.modelData?.name ?? ""
+                            color: "#8ab4f8"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 19
+                            font.weight: Font.DemiBold
+                            elide: Text.ElideRight
+                            width: parent.width
+                        }
+
+                        Text {
+                            text: delegateItem.modelData?.comment ?? ""
+                            color: root.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 14
+                            wrapMode: Text.Wrap
+                            maximumLineCount: 2
+                            elide: Text.ElideRight
+                            width: parent.width
+                            lineHeight: 1.2
                         }
                     }
                 }
