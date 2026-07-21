@@ -1239,11 +1239,12 @@ PanelWindow {
             }
             
             // Fade out the gradient if either CC is open or the music player is expanded
-            property real gradientAlpha: 1.0 - Math.max(archPill.morphProgress, archPill.expandFade)
+            property real rawExpansion: Math.max(archPill.morphProgress, archPill.expandFade)
+            property real expansion: Math.max(0.0, Math.min(1.0, rawExpansion))
+            
+            property real gradientAlpha: Math.max(0.0, Math.min(1.0, 1.0 - rawExpansion))
             property real expandFade: archPill.isExpanded ? 1.0 : 0.0
             Behavior on expandFade { NumberAnimation { duration: 300 } }
-            
-            property real expansion: Math.max(archPill.morphProgress, archPill.expandFade)
             property color mixColor: Qt.rgba(
                 Theme.colPrimary.r * (1 - expansion) + Theme.colSurface.r * expansion,
                 Theme.colPrimary.g * (1 - expansion) + Theme.colSurface.g * expansion,
