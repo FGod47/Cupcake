@@ -346,6 +346,7 @@ Item {
 
                 Flow {
                     Layout.fillWidth: true
+                    Layout.bottomMargin: 12
                     spacing: 8
                     Repeater {
                         model: root.monitorsData
