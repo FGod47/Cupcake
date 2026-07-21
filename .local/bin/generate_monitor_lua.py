@@ -21,8 +21,9 @@ def generate():
         scale = m.get("scale", 1)
         x = m.get("x", 0)
         y = m.get("y", 0)
+        transform = m.get("transform", 0)
         
-        lua_content += f'hl.monitor({{\n    output = "{out}",\n    mode = "{w}x{h}@{hz:.3f}",\n    position = "{x}x{y}",\n    scale = {scale}\n}})\n\n'
+        lua_content += f'hl.monitor({{\n    output = "{out}",\n    mode = "{w}x{h}@{hz:.3f}",\n    position = "{x}x{y}",\n    scale = {scale},\n    transform = {transform}\n}})\n\n'
 
     lua_content += 'hl.monitor({\n    output = "",\n    mode = "highrr",\n    position = "auto",\n    scale = 1\n})\n'
 
