@@ -418,7 +418,7 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
 
-            readonly property int cardWidth: localAppLauncherStyle === "Hover" ? 540 : 630
+            readonly property int cardWidth: localAppLauncherStyle === "Hover" ? 700 : 800
             readonly property int maxListItems: 8
             readonly property int itemH: 64
             readonly property int searchH: localAppLauncherStyle === "Hover" ? 52 : 68

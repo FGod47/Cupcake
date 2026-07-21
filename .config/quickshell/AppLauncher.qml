@@ -417,7 +417,7 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
 
-            readonly property int cardWidth: 630
+            readonly property int cardWidth: 800
             readonly property int maxListItems: 8
             readonly property int itemH: 64
             readonly property int searchH: 68
