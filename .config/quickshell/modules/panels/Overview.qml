@@ -300,13 +300,16 @@ PanelWindow {
 
         opacity: globalState.overviewOpen ? 1.0 : 0.001
         Behavior on opacity { 
-            NumberAnimation { duration: 450; easing.type: Easing.OutCubic } 
+            NumberAnimation { 
+                duration: globalState.overviewOpen ? 450 : 200 
+                easing.type: Easing.OutCubic 
+            } 
         }
         
         scale: globalState.overviewOpen ? 1.0 : 0.9
         Behavior on scale { 
             NumberAnimation { 
-                duration: globalState.overviewOpen ? (Theme.liquidify ? 1000 : 450) : 400
+                duration: globalState.overviewOpen ? (Theme.liquidify ? 1000 : 450) : 250
                 easing.type: globalState.overviewOpen ? (Theme.liquidify ? Easing.OutElastic : Easing.OutExpo) : Easing.OutCubic
                 easing.amplitude: 1.0
                 easing.period: 0.85 
