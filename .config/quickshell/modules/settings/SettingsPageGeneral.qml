@@ -151,8 +151,7 @@ Item {
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                let text = data;
-                if (text.trim() === "false") { root.barTransparency = false; }
+                if (text && text.trim() === "false") { root.barTransparency = false; }
                 else { root.barTransparency = true; }
             }
         }
@@ -163,8 +162,7 @@ Item {
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                let text = data;
-                if (text.trim() === "false") { root.xrayBlur = false; }
+                if (text && text.trim() === "false") { root.xrayBlur = false; }
                 else { root.xrayBlur = true; }
             }
         }
@@ -212,20 +210,54 @@ Item {
 
 
     component SettingsCard: Rectangle {
-        default property alias content: innerCol.data
+        default property alias content: cardCol.data
+        property string sectionTitle: ""
         Layout.fillWidth: true
         Layout.leftMargin: 20
         Layout.rightMargin: 20
-        implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
         color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
         radius: 12
-        clip: true
-        ColumnLayout {
-            id: innerCol
-            anchors.fill: parent
-            anchors.margins: 20
+        border.color: Theme.showCardBackground ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08) : "transparent"
+        border.width: 1
+
+        RowLayout {
+            id: cardHeader
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 16
+            visible: sectionTitle !== ""
             spacing: 8
+
+            Text {
+                text: sectionTitle
+                color: Theme.colOnSurfaceVariant
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.8
+                font.capitalization: Font.AllUppercase
+            }
+            Item { Layout.fillWidth: true }
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1)
+            }
+        }
+
+        ColumnLayout {
+            id: cardCol
+            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: cardHeader.visible ? 12 : 16
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            spacing: 6
         }
     }
 
