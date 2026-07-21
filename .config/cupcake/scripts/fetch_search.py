@@ -1,63 +1,55 @@
 import sys
-import urllib.request
 import urllib.parse
+import urllib.request
 import json
 import re
 
-def fetch_duckduckgo(query):
-    url = 'https://lite.duckduckgo.com/lite/'
-    data = urllib.parse.urlencode({'q': query}).encode('utf-8')
+def fetch_search(query):
     req = urllib.request.Request(
-        url, 
-        data=data, 
-        headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        f"https://search.yahoo.com/search?p={urllib.parse.quote(query)}",
+        headers={'User-Agent': 'Mozilla/5.0'}
     )
-    
     try:
-        response = urllib.request.urlopen(req, timeout=3)
-        html = response.read().decode('utf-8')
+        html = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
+    except Exception:
+        print("[]")
+        return
         
-        results = []
-        
-        # lite.duckduckgo.com uses a table format.
-        # The title/URL is in <a rel="nofollow" href="..." class='result-link'>...</a>
-        # The snippet is in <td class="result-snippet">...</td>
-        
-        matches = re.finditer(r'<a[^>]+href="([^"]+)"[^>]*class=[\'"]result-link[\'"][^>]*>(.*?)</a>.*?<td class=[\'"]result-snippet[\'"]>(.*?)</td>', html, re.IGNORECASE | re.DOTALL)
-        
-        for i, match in enumerate(matches):
-            if i >= 3:
-                break
-                
-            url = match.group(1)
-            title = match.group(2).strip()
-            snippet = match.group(3)
+    results = []
+    
+    # Split by result blocks
+    blocks = html.split('class="compTitle options-toggle"')[1:]
+    
+    for block in blocks:
+        if len(results) >= 3:
+            break
             
-            # Clean up HTML tags
-            snippet = re.sub(r'<[^>]+>', '', snippet).strip()
-            
-            # Clean up URL routing from DuckDuckGo if present
-            if url.startswith('//duckduckgo.com/l/?uddg='):
-                url = urllib.parse.unquote(url.split('uddg=')[1].split('&')[0])
-                
-            domain = urllib.parse.urlparse(url).netloc
-            icon_url = f"https://icons.duckduckgo.com/ip3/{domain}.ico" if domain else "web-browser"
-                
-            results.append({
-                "name": title,
-                "comment": snippet,
-                "icon": icon_url,
-                "url": url
-            })
-            
-        print(json.dumps(results))
+        url_match = re.search(r'href="([^"]+)"', block)
+        title_match = re.search(r'<h3[^>]*>(.*?)</h3>', block, re.IGNORECASE | re.DOTALL)
+        snippet_match = re.search(r'<div class="compText[^"]*">.*?<p[^>]*>(.*?)</p>', block, re.IGNORECASE | re.DOTALL)
         
-    except Exception as e:
-        print(json.dumps([{"name": "Error", "comment": str(e), "url": "https://duckduckgo.com"}]))
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        fetch_duckduckgo(sys.argv[1])
+        if not (url_match and title_match and snippet_match):
+            continue
+            
+        url = url_match.group(1)
+        title = re.sub(r'<[^>]+>', '', title_match.group(1)).strip()
+        snippet = re.sub(r'<[^>]+>', '', snippet_match.group(1)).strip()
+        
+        if '/RU=' in url:
+            url = url.split('/RU=')[1].split('/RK=')[0]
+            url = urllib.parse.unquote(url)
+            
+        domain = urllib.parse.urlparse(url).netloc
+        icon_url = f"https://icons.duckduckgo.com/ip3/{domain}.ico" if domain else "web-browser"
+        
+        results.append({
+            "name": title,
+            "comment": snippet,
+            "icon": icon_url,
+            "url": url
+        })
+        
+    print(json.dumps(results))
+    
+if __name__ == '__main__':
+    fetch_search(sys.argv[1] if len(sys.argv) > 1 else "1 tb ssd")
