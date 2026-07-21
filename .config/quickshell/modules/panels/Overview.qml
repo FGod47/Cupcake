@@ -332,26 +332,27 @@ PanelWindow {
                             width:  cellW
                             height: cellH
 
-                            // Cell background — matches bgSurface0 inner card style from CC
+                            // Cell background — deeper and darker to look like an indented tray
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
-                                color: wsCell.isDragOver ? Theme.colPrimary : Theme.colOnSurface
-                                opacity: wsCell.isDragOver ? 0.15 : 0.06
+                                color: wsCell.isDragOver ? Theme.colPrimary : Qt.rgba(0, 0, 0, 1.0)
+                                opacity: wsCell.isDragOver ? 0.15 : 0.15
                                 
                                 Behavior on color { ColorAnimation { duration: 150 } }
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
                             
-                            // Cell border
+                            // Cell border — thicker and darker
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
                                 color: "transparent"
-                                border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Theme.colOutline)
-                                border.width: wsCell.isActive ? 2 : 1
-                                opacity: wsCell.isActive ? 1.0 : (wsCell.isDragOver ? 0.5 : 1.0)
+                                border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Qt.rgba(0, 0, 0, 0.3))
+                                border.width: wsCell.isActive ? 3 : 2
+                                opacity: wsCell.isActive ? 1.0 : 1.0
                                 Behavior on border.color { ColorAnimation { duration: 200 } }
+                                Behavior on border.width { NumberAnimation { duration: 200 } }
                                 Behavior on opacity { NumberAnimation { duration: 200 } }
                             }
 
