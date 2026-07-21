@@ -424,6 +424,7 @@ Item {
                     }
                     
                     GroupLabel { label: "Preferences" }
+                    RailItem { icon: "\uead3"; label: "General"; pageIndex: 0 }
                     RailItem { icon: "\uec50"; label: "Appearance"; pageIndex: 1 }
                     RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
                     RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
@@ -597,6 +598,7 @@ Item {
                             anchors.fill: parent
                             source: {
                                 switch (root.currentIndex) {
+                                    case 0: return "SettingsPageGeneral.qml";
                                     case 1: return "SettingsPageAppearance.qml";
                                     case 2: return "SettingsPageFonts.qml";
                                     case 4: return "SettingsPageDock.qml";
