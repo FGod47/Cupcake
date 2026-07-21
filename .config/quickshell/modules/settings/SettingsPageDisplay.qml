@@ -855,30 +855,6 @@ Item {
                             }
                         }
                     }
-                }
-                
-                NRow {
-                    Layout.topMargin: 8
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 8
-                        Text { text: "10-bit Color Test"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                        Text { text: "If 10-bit color is active and supported by the compositor, the gradient below should be perfectly smooth with minimal vertical banding."; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8; Layout.maximumWidth: existingAdvancedCard.width - 32; wrapMode: Text.WordWrap }
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 48
-                            radius: 8
-                            border.width: 1
-                            border.color: cBorderSoft
-                            gradient: Gradient {
-                                orientation: Gradient.Horizontal
-                                GradientStop { position: 0.0; color: "#181818" }
-                                GradientStop { position: 1.0; color: "#222222" }
-                            }
-                        }
-                    }
-                }
             }
 
             Item { Layout.preferredHeight: 32 }
