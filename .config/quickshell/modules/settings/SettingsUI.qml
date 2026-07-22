@@ -324,12 +324,13 @@ Item {
                         Layout.rightMargin: 8
                         spacing: 10
                         
+                        Item { Layout.fillWidth: true }
                         Image {
                             source: "file:///home/one/Downloads/LOGO/cupcake-shellsettings-light-v3.svg"
                             sourceSize.height: 50
                             fillMode: Image.PreserveAspectFit
                             Layout.preferredHeight: 50
-                            Layout.alignment: Qt.AlignVCenter
+                            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                         }
                         Item { Layout.fillWidth: true }
                     }
