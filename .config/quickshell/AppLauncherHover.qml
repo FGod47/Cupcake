@@ -740,9 +740,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
-                width: localAppLauncherStyle === "Hover" ? 38 : 36
-                height: localAppLauncherStyle === "Hover" ? 38 : 36
-                radius: localAppLauncherStyle === "Hover" ? 19 : 18
+                width: localAppLauncherStyle === "Hover" ? 32 : 36
+                height: localAppLauncherStyle === "Hover" ? 32 : 36
+                radius: localAppLauncherStyle === "Hover" ? 16 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -764,8 +764,8 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                height: 38
-                radius: 19
+                height: 32
+                radius: 16
                 color: "transparent"
                 opacity: card.width > 120 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
