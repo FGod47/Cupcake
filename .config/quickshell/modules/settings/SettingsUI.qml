@@ -324,26 +324,20 @@ Item {
                         Layout.rightMargin: 8
                         spacing: 10
                         
-                        Rectangle {
-                            width: 30; height: 30; radius: 9
-                            Layout.alignment: Qt.AlignVCenter
-                            color: cAccent
-                            Text {
-                                anchors.centerIn: parent
-                                text: "C"
-                                font.family: Theme.defaultFontFamily
-                                font.weight: Font.Black
-                                font.pixelSize: 14
-                                color: Theme.colOnPrimary
+                        ColumnLayout {
+                            spacing: 1
+                            Image {
+                                source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
+                                sourceSize.height: 28
+                                fillMode: Image.PreserveAspectFit
+                                Layout.preferredHeight: 28
                             }
-                        }
-                        Image {
-                            source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
-                            sourceSize.height: 28
-                            fillMode: Image.PreserveAspectFit
-                            Layout.preferredHeight: 28
-                            Layout.alignment: Qt.AlignVCenter
-                            transform: Translate { y: -4 }
+                            Text {
+                                text: "shell settings"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 10
+                                color: cTextFaint
+                            }
                         }
                         Item { Layout.fillWidth: true }
                     }
