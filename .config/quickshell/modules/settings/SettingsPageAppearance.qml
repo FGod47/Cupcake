@@ -388,7 +388,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: root.colorMode === "Light" ? "\ueb30" : "\ueb2e"
+                                text: root.colorMode === "Light" ? "\ueb30" : "\ueaf8" // sun / moon
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -419,7 +419,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\uea74"
+                                text: "\uedba" // layout-grid
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -451,7 +451,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\uef3a"
+                                text: "\uee6d" // cursor-text
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -611,7 +611,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb13"
+                                text: "\ueb3e" // toggle-left
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -683,7 +683,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb1b"
+                                text: "\ueacc" // layout-2 (app launcher style)
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -752,7 +752,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueaa2"
+                                text: "\uef8c" // blur strength slider
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -877,7 +877,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\uead7"
+                                text: "\uead7" // layout-navbar (quickshell blur toggle)
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -908,7 +908,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\uea60" // Ghost icon / x-ray icon
+                                text: "\uebc8" // scan (x-ray blur)
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -938,7 +938,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb00"
+                                text: "\uead7"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -978,7 +978,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb00"
+                                text: "\ueac2"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -1018,7 +1018,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb00"
+                                text: "\uea80"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -1058,7 +1058,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb00"
+                                text: "\ueb1c"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
@@ -1138,7 +1138,7 @@ Item {
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
                             Text {
                                 anchors.centerIn: parent
-                                text: "\ueb00"
+                                text: "\ueb20"
                                 color: cTextDim
                                 font.family: "tabler-icons"
                                 font.pixelSize: 16
