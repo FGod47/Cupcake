@@ -425,12 +425,14 @@ PanelWindow {
             readonly property int itemH: 64
             readonly property int searchH: localAppLauncherStyle === "Hover" ? 52 : 68
             readonly property int cardPad: 24
+            readonly property int verticalPad: 12
 
-            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + cardPad * 2
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + verticalPad * 2
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
-            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + cardPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
+            property real dynamicVMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * verticalPad : 0
+            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
             onWidthChanged: console.log("Card width:", width)
@@ -486,7 +488,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.cardPad) : card.searchH + card.cardPad
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.verticalPad) : card.searchH + card.cardPad
             clip: true
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 300 } }
@@ -727,7 +729,7 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.leftMargin: card.dynamicMargin
             anchors.rightMargin: card.dynamicMargin
-            anchors.bottomMargin: card.dynamicMargin
+            anchors.bottomMargin: card.dynamicVMargin
 
             height: card.searchH
             radius: 9999
