@@ -330,7 +330,6 @@ Item {
                             fillMode: Image.PreserveAspectFit
                             Layout.preferredHeight: 50
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.leftMargin: 20
                         }
                         Item { Layout.fillWidth: true }
                     }
