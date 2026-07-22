@@ -325,7 +325,9 @@ Item {
                         spacing: 10
                         
                         Image {
-                            source: "file:///home/one/Downloads/LOGO/cupcake-shellsettings-light-v3.svg"
+                            source: Theme.isDark 
+                                ? "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-light-v3.svg"
+                                : "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-dark.svg"
                             sourceSize.height: 50
                             fillMode: Image.PreserveAspectFit
                             Layout.preferredHeight: 50
