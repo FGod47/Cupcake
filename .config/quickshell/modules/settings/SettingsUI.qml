@@ -326,9 +326,9 @@ Item {
                         
                         Image {
                             source: "file:///home/one/Downloads/LOGO/cupcake-shellsettings-light-v3.svg"
-                            sourceSize.height: 38
+                            sourceSize.height: 50
                             fillMode: Image.PreserveAspectFit
-                            Layout.preferredHeight: 38
+                            Layout.preferredHeight: 50
                             Layout.alignment: Qt.AlignVCenter
                         }
                         Item { Layout.fillWidth: true }
