@@ -427,7 +427,7 @@ PanelWindow {
             readonly property int cardPad: 24
             readonly property int verticalPad: 12
 
-            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + verticalPad * 2
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (localAppLauncherStyle === "Hover" ? verticalPad * 3 : cardPad * 2)
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -556,7 +556,10 @@ PanelWindow {
             ListView {
                 id: appList
                 anchors.fill: parent
-                anchors.margins: card.cardPad
+                anchors.topMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
+                anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
+                anchors.leftMargin: card.cardPad
+                anchors.rightMargin: card.cardPad
                 clip: true
                 spacing: 0
                 currentIndex: 0
