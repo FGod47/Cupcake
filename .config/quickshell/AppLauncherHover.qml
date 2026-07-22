@@ -731,6 +731,7 @@ PanelWindow {
 
             height: card.searchH
             radius: 9999
+            clip: true
 
             color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
             border.width: 0
@@ -768,8 +769,8 @@ PanelWindow {
                 height: 38
                 radius: 19
                 color: "transparent"
-                opacity: card.width > 120 ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                opacity: card.width > 250 ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 100 } }
                 
                 // Placeholder
                 Text {
