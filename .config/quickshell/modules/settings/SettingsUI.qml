@@ -340,16 +340,10 @@ Item {
                             spacing: 1
                             Image {
                                 source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
-                                sourceSize.height: 20
+                                sourceSize.height: 28
                                 fillMode: Image.PreserveAspectFit
-                                Layout.preferredHeight: 20
+                                Layout.preferredHeight: 28
                                 Layout.topMargin: -2
-                            }
-                            Text {
-                                text: "shell settings"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10
-                                color: cTextFaint
                             }
                         }
                         Item { Layout.fillWidth: true }
