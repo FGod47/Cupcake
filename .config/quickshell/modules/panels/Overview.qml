@@ -1,4 +1,4 @@
-pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -23,37 +23,15 @@ PanelWindow {
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
 
-    property real ccOpacity: 0.85
-    property real barOpacity: 0.85
-    property bool barTransparency: true
 
-    Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.cc_opacity"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) overviewWin.ccOpacity = v; }
-            }
-        }
-    }
-    
-    Process {
-        command: ["cat", Quickshell.env("HOME") + "/.config/cupcake/.bar_transparency"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { overviewWin.barTransparency = (text.trim() === "true"); }
-            }
-        }
-    }
     anchors { top: true; bottom: true; left: true; right: true }
 
     // -------------------------------------------------------
     // Layout constants
     // -------------------------------------------------------
-    readonly property int  wsColumns: 6
-    readonly property int  wsRows:    1
-    readonly property int  wsTotal:   wsColumns * wsRows
+    readonly property int  wsColumns: Math.min(root.overviewTabs, 6)
+    readonly property int  wsRows:    Math.ceil(root.overviewTabs / 6)
+    readonly property int  wsTotal:   root.overviewTabs
     readonly property real wsScale:   0.14
     readonly property real wsSpacing: 6
     readonly property real wsPadding: 12
@@ -61,7 +39,6 @@ PanelWindow {
     readonly property real cellH:     screen.height * wsScale
 
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
-    readonly property real hyprToQt: (monitor && monitor.width > 0) ? (screen.width / monitor.width) : 1.0
     readonly property int activeWsId: Math.max(1, Math.min(100, Hyprland.focusedWorkspace?.id ?? monitor?.activeWorkspace?.id ?? 1))
     readonly property int wsGroup:    Math.floor((activeWsId - 1) / wsTotal)
 
@@ -165,8 +142,8 @@ PanelWindow {
                         var b = bb[wid]
                         if (b.count > 0) {
                             offsets[wid] = {
-                                xOff: (((screen.width / overviewWin.hyprToQt) - (b.maxX - b.minX)) / 2) - b.minX,
-                                yOff: (((screen.height / overviewWin.hyprToQt) - (b.maxY - b.minY)) / 2) - b.minY
+                                xOff: (((screen.width) - (b.maxX - b.minX)) / 2) - b.minX,
+                                yOff: (((screen.height) - (b.maxY - b.minY)) / 2) - b.minY
                             }
                         }
                     }
@@ -301,15 +278,15 @@ PanelWindow {
     // -------------------------------------------------------
     ParallelAnimation {
         id: openAnim
-        NumberAnimation { target: gridContent; property: "opacity"; from: 0.0; to: 1.0; duration: 300; easing.type: Easing.OutCubic }
-        NumberAnimation { target: gridContent; property: "scale";   from: 0.92; to: 1.0; duration: Theme.liquidify ? 750 : 380; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 }
+        NumberAnimation { target: gridContent; property: "opacity"; from: 0.0; to: 1.0; duration: 250; easing.type: Easing.OutExpo }
+        NumberAnimation { target: gridContent; property: "scale";   from: 0.0; to: 1.0; duration: Theme.liquidify ? 650 : 350; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 0.9; easing.period: 0.8 }
     }
 
     SequentialAnimation {
         id: closeAnim
         ParallelAnimation {
-            NumberAnimation { target: gridContent; property: "opacity"; to: 0.0;  duration: 180; easing.type: Easing.InCubic }
-            NumberAnimation { target: gridContent; property: "scale";   to: 0.92; duration: 200; easing.type: Easing.InCubic }
+            NumberAnimation { target: gridContent; property: "opacity"; to: 0.0;  duration: 180; easing.type: Easing.InExpo }
+            NumberAnimation { target: gridContent; property: "scale";   to: 0.0; duration: 250; easing.type: Easing.InBack }
         }
         ScriptAction { script: { gridContent.visible = false } }
     }
@@ -320,7 +297,7 @@ PanelWindow {
             if (globalState.overviewOpen) {
                 closeAnim.stop()
                 gridContent.opacity = 0.0
-                gridContent.scale   = 0.92
+                gridContent.scale   = 0.0
                 gridContent.visible = true
                 openAnim.restart()
             } else {
@@ -338,7 +315,8 @@ PanelWindow {
         z: 1
         visible: false
         opacity: 0.0
-        scale: 0.92
+        scale: 0.0
+        layer.enabled: true
 
         focus: globalState.overviewOpen
         Keys.onPressed: function(event) {
@@ -357,7 +335,7 @@ PanelWindow {
                 Theme.colSurface.r,
                 Theme.colSurface.g,
                 Theme.colSurface.b,
-                overviewWin.barTransparency ? overviewWin.ccOpacity : 1.0
+                root.barTransparency ? root.overviewOpacity : 1.0
             )
         }
 
@@ -388,6 +366,7 @@ PanelWindow {
 
                             width:  cellW
                             height: cellH
+                            visible: (wsRow.index * overviewWin.wsColumns + wsCell.index) < overviewWin.wsTotal
 
                             // Cell background — elegant indented tray with theme tint
                             Rectangle {
@@ -397,14 +376,14 @@ PanelWindow {
                                 opacity: wsCell.isDragOver ? 0.35 : (wsCell.isActive ? 0.25 : 0.15)
                             }
                             
-                            // Cell border — crisp primary for active, theme outline for inactive
+                            // Cell border — thicker and deeper
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 10
                                 color: "transparent"
                                 border.color: wsCell.isActive ? Theme.colPrimary : (wsCell.isDragOver ? Theme.colPrimary : Theme.colOutline)
-                                border.width: wsCell.isActive ? 3 : 2
-                                opacity: wsCell.isActive ? 1.0 : 0.6
+                                border.width: wsCell.isActive ? 5 : 3
+                                opacity: wsCell.isActive ? 1.0 : 0.9
                             }
 
                             // Workspace number — matches CC's muted text style
@@ -430,22 +409,33 @@ PanelWindow {
                                     property bool   isBeingDragged: overviewWin.isDragging && overviewWin.draggingAddr === wAddr
                                     property var    bounds: overviewWin.wsBounds[wsCell.wsId] || {xOff: 0, yOff: 0}
 
-                                    x:       Math.max(((wData?.at[0] ?? 0) + bounds.xOff) * overviewWin.hyprToQt * overviewWin.wsScale, 0)
-                                    y:       Math.max(((wData?.at[1] ?? 0) + bounds.yOff) * overviewWin.hyprToQt * overviewWin.wsScale, 0)
-                                    width:   (wData?.size[0] ?? 100) * overviewWin.hyprToQt * overviewWin.wsScale
-                                    height:  (wData?.size[1] ?? 60)  * overviewWin.hyprToQt * overviewWin.wsScale
+                                    x:       Math.max(((wData?.at[0] ?? 0) + bounds.xOff) * overviewWin.wsScale, 0)
+                                    y:       Math.max(((wData?.at[1] ?? 0) + bounds.yOff) * overviewWin.wsScale, 0)
+                                    width:   (wData?.size[0] ?? 100) * overviewWin.wsScale
+                                    height:  (wData?.size[1] ?? 60)  * overviewWin.wsScale
                                     opacity: isBeingDragged ? 0.20 : 1.0
 
                                     Rectangle {
+                                        id: scContainer
                                         anchors.fill: parent
-                                        radius: 6
-                                        color: "transparent"
+                                        radius: 10
+                                        color: (winTile.modelData && winTile.modelData.title === "Cupcake Settings") ? (Theme.isDark ? Theme.colSurfaceContainer : Theme.colBackground) : "transparent"
                                         clip: true
 
                                         ScreencopyView {
+                                            id: scView
                                             anchors.fill: parent
                                             captureSource: winTile.modelData
                                             live: true
+                                            
+                                            layer.enabled: true
+                                            layer.effect: OpacityMask {
+                                                maskSource: Rectangle {
+                                                    width: scView.width
+                                                    height: scView.height
+                                                    radius: 10
+                                                }
+                                            }
                                         }
                                     }
 
@@ -462,7 +452,7 @@ PanelWindow {
                                     // Subtle border matching Theme.colOutline
                                     Rectangle {
                                         anchors.fill: parent
-                                        radius: 6
+                                        radius: 10
                                         color: "transparent"
                                         border.color: Theme.colOutline
                                         border.width: 1
@@ -495,6 +485,7 @@ PanelWindow {
         }
 
         ScreencopyView {
+            id: dragScView
             anchors.fill: parent
             captureSource: {
                 if (!overviewWin.isDragging || overviewWin.draggingAddr === "") return null
@@ -505,7 +496,7 @@ PanelWindow {
             live: true
             layer.enabled: true
             layer.effect: OpacityMask {
-                maskSource: Rectangle { width: dragGhost.width; height: dragGhost.height; radius: 6 }
+                maskSource: Rectangle { width: dragScView.width; height: dragScView.height; radius: 10 }
             }
         }
         
@@ -530,7 +521,7 @@ PanelWindow {
         // Primary color border — same as active workspace border
         Rectangle {
             anchors.fill: parent
-            radius: 6
+            radius: 10
             color: "transparent"
             border.color: Theme.colPrimary
             border.width: 2

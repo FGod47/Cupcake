@@ -435,7 +435,7 @@ PanelWindow {
             onWidthChanged: console.log("Card width:", width)
 
             scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
-            opacity: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.0) : 1.0
+            opacity: 1.0
 
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
@@ -485,9 +485,10 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.searchH : card.searchH + card.cardPad
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.cardPad) : card.searchH + card.cardPad
             clip: true
-            visible: root.isOpen
+            opacity: root.isOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
 
             Rectangle {
                 id: rowHighlight
@@ -723,6 +724,9 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.leftMargin: card.dynamicMargin
+            anchors.rightMargin: card.dynamicMargin
+            anchors.bottomMargin: card.dynamicMargin
 
             height: card.searchH
             radius: 9999
@@ -755,14 +759,14 @@ PanelWindow {
             // Inner Pill for Text Input
             Rectangle {
                 id: searchInputPill
-                anchors.left: searchIconWrapper.right
-                anchors.leftMargin: localAppLauncherStyle === "Hover" ? 12 : 10
+                anchors.left: parent.left
+                anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
                 height: 38
                 radius: 19
-                color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.08) : "transparent"
+                color: "transparent"
                 opacity: card.width > 120 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 
@@ -770,7 +774,7 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
+                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 74 : 58
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 15
@@ -784,7 +788,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 16 : 0
+                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 74 : 58
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
