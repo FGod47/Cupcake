@@ -190,7 +190,7 @@ PanelWindow {
             var win = overviewWin.windowAtPoint(mouse.x, mouse.y)
             if (win) {
                 if (mouse.button === Qt.MiddleButton) {
-                    Hyprland.dispatch("hl.dsp.window.close({window = \"address:" + win.addr + "\"})")
+                    Hyprland.dispatch("closewindow address:" + win.addr)
                     mouse.accepted = true
                     overviewWin.isPressing = false
                     return
@@ -239,10 +239,7 @@ PanelWindow {
 
             if (wasDragging) {
                 if (targetWs !== -1 && targetWs !== fromWs && addr !== "") {
-                    Hyprland.dispatch(
-                        "hl.dsp.window.move({ workspace = " + targetWs +
-                        ", follow = false, window = \"address:" + addr + "\" })"
-                    )
+                    Hyprland.dispatch("movetoworkspacesilent " + targetWs + ",address:" + addr)
                     fetchClients.running = true
                 }
             } else {
@@ -250,13 +247,13 @@ PanelWindow {
                 var win = overviewWin.windowAtPoint(mouse.x, mouse.y)
                 if (win) {
                     globalState.overviewOpen = false
-                    Hyprland.dispatch("hl.dsp.focus({window = \"address:" + win.addr + "\"})")
+                    Hyprland.dispatch("focuswindow address:" + win.addr)
                     return
                 }
                 var ws = overviewWin.wsAtPoint(mouse.x, mouse.y)
                 if (ws !== -1) {
                     globalState.overviewOpen = false
-                    Hyprland.dispatch("hl.dsp.focus({workspace = " + ws + "})")
+                    Hyprland.dispatch("workspace " + ws)
                     return
                 }
                 // Clicked outside grid — close overview
