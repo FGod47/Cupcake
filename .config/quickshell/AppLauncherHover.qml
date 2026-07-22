@@ -485,6 +485,7 @@ PanelWindow {
         Item {
             id: listArea
             anchors.top: parent.top
+            anchors.topMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -506,9 +507,7 @@ PanelWindow {
                         easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
                     }
                 }
-                y: appList.currentItem
-                   ? (appList.currentItem.y - appList.contentY + card.cardPad)
-                   : card.cardPad
+                y: appList.y + (appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0)
                 radius: 14
                 color: root.colOnSurface
                 opacity: appList.count > 0 ? 0.09 : 0

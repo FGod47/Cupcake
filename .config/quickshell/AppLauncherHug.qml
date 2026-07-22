@@ -275,10 +275,11 @@ PanelWindow {
         Item {
             id: listArea
             anchors.top: parent.top
+            anchors.topMargin: card.cardPad
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: searchBar.top
-            anchors.bottomMargin: 0
+            anchors.bottomMargin: card.cardPad
 
             // Sliding highlight bar (exact Caelestia behavior)
             Rectangle {
@@ -286,9 +287,7 @@ PanelWindow {
                 x: card.cardPad
                 width: appList.width
                 height: card.itemH
-                y: appList.currentItem
-                   ? (appList.currentItem.y - appList.contentY + card.cardPad)
-                   : card.cardPad
+                y: appList.y + (appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0)
                 radius: 14
                 color: root.colOnSurface
                 opacity: appList.count > 0 ? 0.09 : 0
