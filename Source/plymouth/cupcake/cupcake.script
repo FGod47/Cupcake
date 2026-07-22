@@ -1,0 +1,31 @@
+Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
+Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
+
+original_image = Image("cupcake-light.png");
+
+# Scale image so it's not too big. Let's target 15% of the screen height.
+screen_ratio = Window.GetHeight() * 0.15 / original_image.GetHeight();
+
+# But if it's too wide, constrain by width instead (max 40% width)
+if (original_image.GetWidth() * screen_ratio > Window.GetWidth() * 0.4) {
+  screen_ratio = Window.GetWidth() * 0.4 / original_image.GetWidth();
+}
+
+logo_image = original_image.Scale(original_image.GetWidth() * screen_ratio, original_image.GetHeight() * screen_ratio);
+logo_sprite = Sprite(logo_image);
+
+logo_sprite.SetX(Window.GetWidth() / 2 - logo_image.GetWidth() / 2);
+logo_sprite.SetY(Window.GetHeight() / 2 - logo_image.GetHeight() / 2);
+logo_sprite.SetOpacity(0.0);
+
+# Elegant fade-in animation
+progress = 0;
+fun refresh_callback ()
+{
+  if (progress < 1.0) {
+    progress += 0.02;
+    logo_sprite.SetOpacity(progress);
+  }
+}
+
+Plymouth.SetRefreshFunction (refresh_callback);

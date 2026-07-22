@@ -130,6 +130,14 @@ if [[ "$user_input" =~ ^[Yy]$ ]]; then
         echo -e "   \033[1;33m[SKIP]\033[0m Skipping custom boot splash installation."
     fi
     
+    echo -e "\n\033[1;35m[ 󰋩 ]\033[0m \033[1mStep 6.5: Configuring Plymouth Boot Animation...\033[0m"
+    prompt_centered "\033[1;35m?\033[0m \033[1mDo you want to install the Cupcake Plymouth theme? [Y/n]: \033[0m"
+    if [[ "$user_input" =~ ^[Yy]$ ]] || [[ -z "$user_input" ]]; then
+        bash "$SCRIPT_DIR/Source/Scripts/setup_plymouth.sh"
+    else
+        echo -e "   \033[1;33m[SKIP]\033[0m Skipping Plymouth theme installation."
+    fi
+    
     echo -e "\n\033[1;34m[ 󰃠 ]\033[0m \033[1mStep 7: Configuring ddcutil (Monitor Brightness)...\033[0m"
     bash "$HOME/.config/cupcake/scripts/setup_ddcutil.sh"
     
