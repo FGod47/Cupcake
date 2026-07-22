@@ -555,9 +555,10 @@ PanelWindow {
 
             ListView {
                 id: appList
-                anchors.fill: parent
-                anchors.topMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
-                anchors.bottomMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: Math.min(contentHeight, parent.height)
                 anchors.leftMargin: card.cardPad
                 anchors.rightMargin: card.cardPad
                 clip: true

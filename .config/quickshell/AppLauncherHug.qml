@@ -338,8 +338,12 @@ PanelWindow {
             // App list
             ListView {
                 id: appList
-                anchors.fill: parent
-                anchors.margins: card.cardPad
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: Math.min(contentHeight, parent.height)
+                anchors.leftMargin: card.cardPad
+                anchors.rightMargin: card.cardPad
                 clip: true
                 spacing: 0
                 currentIndex: 0
