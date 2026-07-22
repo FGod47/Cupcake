@@ -429,7 +429,8 @@ PanelWindow {
             readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + cardPad * 2
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
-            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : searchH) : (root.isOpen ? fullHeight : 0)
+            property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
+            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + dynamicMargin * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
             onWidthChanged: console.log("Card width:", width)
@@ -740,9 +741,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
-                width: localAppLauncherStyle === "Hover" ? 32 : 36
-                height: localAppLauncherStyle === "Hover" ? 32 : 36
-                radius: localAppLauncherStyle === "Hover" ? 16 : 18
+                width: localAppLauncherStyle === "Hover" ? 38 : 36
+                height: localAppLauncherStyle === "Hover" ? 38 : 36
+                radius: localAppLauncherStyle === "Hover" ? 19 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -764,8 +765,8 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                height: 32
-                radius: 16
+                height: 38
+                radius: 19
                 color: "transparent"
                 opacity: card.width > 120 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
