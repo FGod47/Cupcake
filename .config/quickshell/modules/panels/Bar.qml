@@ -669,9 +669,9 @@ PanelWindow {
             Item {
                 id: clockWrapper
                 width: clockPill.width
-                height: clockPill.height
+                height: clockPill.hasDropdown ? Math.min(600, dropdownCol.implicitHeight + 24) : 34
                 implicitWidth: clockPill.width
-                implicitHeight: clockPill.height
+                implicitHeight: clockPill.hasDropdown ? Math.min(600, dropdownCol.implicitHeight + 24) : 34
                 
                 onHeightChanged: {
                     console.log("clockWrapper height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
