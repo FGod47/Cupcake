@@ -421,23 +421,23 @@ Item {
                     }
                     
                     GroupLabel { label: "Preferences" }
-                    RailItem { icon: "\uec50"; label: "Appearance"; pageIndex: 1 }
-                    RailItem { icon: "\uebc4"; label: "Dock"; pageIndex: 4 }
-                    RailItem { icon: "\uea12"; label: "Fonts"; pageIndex: 2 }
-                    RailItem { icon: "\uead3"; label: "General"; pageIndex: 0 }
-                    RailItem { icon: "\ueb01"; label: "Wallpaper"; pageIndex: 5 } // 5? Or something else
+                    RailItem { icon: "\ueb01"; label: "Appearance"; pageIndex: 1 }    // palette
+                    RailItem { icon: "\uf28e"; label: "Dock"; pageIndex: 4 }          // layout-navbar-expand
+                    RailItem { icon: "\uebc5"; label: "Fonts"; pageIndex: 2 }         // typography
+                    RailItem { icon: "\ueb20"; label: "General"; pageIndex: 0 }       // settings
+                    RailItem { icon: "\ueb0a"; label: "Wallpaper"; pageIndex: 5 }     // photo
                     
                     GroupLabel { label: "Machine" }
-                    RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }
-                    RailItem { icon: "\uea97"; label: "Displays"; pageIndex: 18 }
-                    RailItem { icon: "\ueaf5"; label: "Network"; pageIndex: 17 }
-                    RailItem { icon: "\ueba8"; label: "Power"; pageIndex: 13 }
-                    RailItem { icon: "\ueb4f"; label: "Sound"; pageIndex: 7 }
-                    RailItem { icon: "\ueb53"; label: "System"; pageIndex: 10 }
+                    RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }    // bluetooth
+                    RailItem { icon: "\uea89"; label: "Displays"; pageIndex: 18 }     // device-desktop
+                    RailItem { icon: "\ueb52"; label: "Network"; pageIndex: 17 }      // wifi
+                    RailItem { icon: "\uef3b"; label: "Power"; pageIndex: 13 }        // battery-charging-2
+                    RailItem { icon: "\ueb51"; label: "Sound"; pageIndex: 7 }         // volume
+                    RailItem { icon: "\uef8e"; label: "System"; pageIndex: 10 }       // cpu
                     
                     Item { Layout.fillHeight: true } // spacer
                     
-                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }
+                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }        // info-circle
                     
                     // FOOTER
                     Rectangle {
