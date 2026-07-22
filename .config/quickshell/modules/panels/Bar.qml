@@ -91,7 +91,7 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         // Make this item tall enough to encompass expanding popups instantly so Wayland mask updates reliably
-        height: clockPill.hasDropdown ? 800 : 46
+        height: 46
 
         // Inner wrapper to keep the original padding logic identical
         Item {
@@ -665,14 +665,13 @@ PanelWindow {
                     }
                 }
             }
-
             // Clock/Notif Pill (#clock-notif-pill)
             Item {
                 id: clockWrapper
                 width: clockPill.width
-                height: clockPill.hasDropdown ? 800 : 34
+                height: clockPill.height
                 implicitWidth: clockPill.width
-                implicitHeight: clockPill.hasDropdown ? 800 : 34
+                implicitHeight: clockPill.height
                 
                 onHeightChanged: {
                     console.log("clockWrapper height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
