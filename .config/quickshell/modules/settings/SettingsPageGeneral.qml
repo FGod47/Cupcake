@@ -22,6 +22,8 @@ Item {
     property int borderSize:   3
     property int rounding:     10
     property bool bordersEnabled: true
+    property int overviewTabs: 5
+    property real overviewScale: 0.14
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.gaps_in"]
@@ -56,6 +58,20 @@ Item {
         running: true
         stdout: StdioCollector {
             onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v) && v >= 0) root.rounding = v; }
+        }
+    }
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.overview_tabs"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v) && v > 0) root.overviewTabs = v; }
+        }
+    }
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.overview_scale"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v) && v > 0) root.overviewScale = v; }
         }
     }
 
@@ -330,6 +346,82 @@ Item {
                             value: root.borderSize
                             onValueChanged: root.borderSize = Math.round(value)
                             onPressedChanged: { if (!pressed) root.applyBorder() }
+                        }
+                    }
+                }
+            }
+
+            SettingsCard {
+                sectionTitle: "Overview"
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\uea41"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Workspace tabs"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Amount of workspaces to show in overview"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: root.overviewTabs; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 1; to: 20; stepSize: 1
+                            value: root.overviewTabs
+                            onValueChanged: { root.overviewTabs = Math.round(value); }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: root.cIconBg
+                            Text { anchors.centerIn: parent; text: "\uea61"; color: root.cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Tabs scale"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Adjust the size of the overview tabs"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        Rectangle {
+                            width: 36; height: 24; radius: 6
+                            color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12)
+                            Text { anchors.centerIn: parent; text: (root.overviewScale * 100).toFixed(0) + "%"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
+                        }
+                        StyledSlider {
+                            Layout.preferredWidth: 180
+                            from: 0.05; to: 0.30; stepSize: 0.01
+                            value: root.overviewScale
+                            onValueChanged: { root.overviewScale = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);
+                                }
+                            }
                         }
                     }
                 }

@@ -32,7 +32,7 @@ PanelWindow {
     readonly property int  wsColumns: Math.min(root.overviewTabs, 6)
     readonly property int  wsRows:    Math.ceil(root.overviewTabs / 6)
     readonly property int  wsTotal:   root.overviewTabs
-    readonly property real wsScale:   0.14
+    readonly property real wsScale:   root.overviewScale
     readonly property real wsSpacing: 6
     readonly property real wsPadding: 12
     readonly property real cellW:     screen.width  * wsScale

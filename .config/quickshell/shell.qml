@@ -118,6 +118,9 @@ ShellRoot {
     property real dockOpacity: 0.50
     property real osdOpacity: 0.95
     property real ccOpacity: 0.85
+    property real overviewOpacity: 0.85
+    property int overviewTabs: 5
+    property real overviewScale: 0.14
 
     IpcHandler {
         target: "opacity"
@@ -126,6 +129,9 @@ ShellRoot {
         function setDockOpacity(val: real) { root.dockOpacity = val; }
         function setOsdOpacity(val: real) { root.osdOpacity = val; }
         function setCcOpacity(val: real) { root.ccOpacity = val; }
+        function setOverviewOpacity(val: real) { root.overviewOpacity = val; }
+        function setOverviewTabs(val: int) { root.overviewTabs = val; }
+        function setOverviewScale(val: real) { root.overviewScale = val; }
         function setDimOverlay(val: real) { globalState.dimOverlay = val; }
         function setNotifOpacity(val: real) { globalState.notifPanelOpacity = val; }
     }
@@ -177,6 +183,25 @@ ShellRoot {
         command: ["cat", root.homeDir + "/.config/cupcake/.cc_opacity"]
         running: true
         stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; } } }
+    }
+
+    Process {
+        id: initOverviewOpacity
+        command: ["cat", root.homeDir + "/.config/cupcake/.overview_opacity"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.overviewOpacity = v; } } }
+    }
+
+    Process {
+        command: ["cat", root.homeDir + "/.config/cupcake/.overview_tabs"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseInt(text.trim()); if (!isNaN(v) && v > 0) root.overviewTabs = v; } } }
+    }
+    
+    Process {
+        command: ["cat", root.homeDir + "/.config/cupcake/.overview_scale"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v) && v > 0) root.overviewScale = v; } } }
     }
 
     Process {
