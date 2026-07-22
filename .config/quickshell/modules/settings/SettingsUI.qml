@@ -324,15 +324,30 @@ Item {
                         Layout.rightMargin: 8
                         spacing: 10
                         
-                        Image {
-                            source: Theme.isDark 
-                                ? "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-light.svg"
-                                : "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-dark.svg"
-                            sourceSize.height: 50
-                            fillMode: Image.PreserveAspectFit
+                        Item {
+                            Layout.preferredWidth: implicitWidth
                             Layout.preferredHeight: 50
                             Layout.alignment: Qt.AlignVCenter
                             Layout.topMargin: 10
+                            
+                            implicitWidth: Math.max(darkLogo.implicitWidth, lightLogo.implicitWidth)
+                            
+                            Image {
+                                id: lightLogo
+                                source: "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-dark.svg"
+                                sourceSize.height: 50
+                                fillMode: Image.PreserveAspectFit
+                                height: 50
+                                visible: !Theme.isDark
+                            }
+                            Image {
+                                id: darkLogo
+                                source: "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-light.svg"
+                                sourceSize.height: 50
+                                fillMode: Image.PreserveAspectFit
+                                height: 50
+                                visible: Theme.isDark
+                            }
                         }
                         Item { Layout.fillWidth: true }
                     }
