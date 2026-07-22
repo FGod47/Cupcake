@@ -427,7 +427,7 @@ PanelWindow {
             readonly property int cardPad: 24
             readonly property int verticalPad: 12
 
-            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (localAppLauncherStyle === "Hover" ? verticalPad * 2 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 160 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (localAppLauncherStyle === "Hover" ? verticalPad * 3 : cardPad * 2)
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -489,7 +489,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.verticalPad) : card.searchH + card.cardPad
+            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.verticalPad * 2) : card.searchH + card.cardPad
             clip: true
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 300 } }
