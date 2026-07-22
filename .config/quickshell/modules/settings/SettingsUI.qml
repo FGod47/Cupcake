@@ -338,13 +338,12 @@ Item {
                         }
                         ColumnLayout {
                             spacing: 1
-                            Text {
-                                text: "cupcake"
-                                font.family: Theme.defaultFontFamily
-                                font.weight: Font.Bold
-                                font.pixelSize: 14
-                                font.letterSpacing: -0.2
-                                color: cText
+                            Image {
+                                source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
+                                sourceSize.height: 20
+                                fillMode: Image.PreserveAspectFit
+                                Layout.preferredHeight: 20
+                                Layout.topMargin: -2
                             }
                             Text {
                                 text: "shell settings"
