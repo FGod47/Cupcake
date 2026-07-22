@@ -318,10 +318,7 @@ PanelWindow {
             // App list
             ListView {
                 id: appList
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: Math.min(contentHeight, parent.height)
+                anchors.fill: parent
                 anchors.leftMargin: card.cardPad
                 anchors.rightMargin: card.cardPad
                 clip: true
@@ -345,7 +342,6 @@ PanelWindow {
                     Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
                 }
 
-                Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
                 // Animate items in/out on search
                 add: Transition {
