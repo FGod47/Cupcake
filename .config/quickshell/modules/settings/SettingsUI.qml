@@ -343,6 +343,7 @@ Item {
                             fillMode: Image.PreserveAspectFit
                             Layout.preferredHeight: 28
                             Layout.alignment: Qt.AlignVCenter
+                            transform: Translate { y: -4 }
                         }
                         Item { Layout.fillWidth: true }
                     }
