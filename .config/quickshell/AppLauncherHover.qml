@@ -721,7 +721,7 @@ PanelWindow {
         // ── Search bar ────────────────────────────────────────────────
         Rectangle {
             id: searchBar
-            parent: innerContent
+            parent: card
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
