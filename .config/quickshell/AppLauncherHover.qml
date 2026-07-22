@@ -564,6 +564,7 @@ PanelWindow {
                 spacing: 0
                 currentIndex: 0
                 maximumFlickVelocity: 2500
+                verticalLayoutDirection: ListView.BottomToTop
                 model: root.filteredApps
 
                 ScrollBar.vertical: ScrollBar {
