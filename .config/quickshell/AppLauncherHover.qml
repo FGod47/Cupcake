@@ -494,33 +494,7 @@ PanelWindow {
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 300 } }
 
-            Rectangle {
-                id: rowHighlight
-                x: card.cardPad
-                width: appList.width
-                height: appList.currentItem ? appList.currentItem.height : card.itemH
 
-                Behavior on height {
-                    NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
-                    }
-                }
-                y: appList.y + (appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0)
-                radius: 14
-                color: root.colOnSurface
-                opacity: appList.count > 0 ? 0.09 : 0
-                visible: appList.count > 0
-
-                Behavior on y {
-                    NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
-                    }
-                }
-            }
 
             Column {
                 anchors.centerIn: parent
@@ -565,6 +539,21 @@ PanelWindow {
                 currentIndex: 0
                 maximumFlickVelocity: 2500
                 model: root.filteredApps
+                
+                Rectangle {
+                    id: rowHighlight
+                    x: 0
+                    width: appList.width
+                    height: appList.currentItem ? appList.currentItem.height : card.itemH
+                    y: appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0
+                    radius: 14
+                    color: root.colOnSurface
+                    opacity: appList.count > 0 ? 0.09 : 0
+                    visible: appList.count > 0
+
+                    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
+                    Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
+                }
 
                 ScrollBar.vertical: ScrollBar {
                     id: vScroll

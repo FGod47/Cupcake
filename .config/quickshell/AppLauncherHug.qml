@@ -281,26 +281,7 @@ PanelWindow {
             anchors.bottom: searchBar.top
             anchors.bottomMargin: card.cardPad
 
-            // Sliding highlight bar (exact Caelestia behavior)
-            Rectangle {
-                id: rowHighlight
-                x: card.cardPad
-                width: appList.width
-                height: card.itemH
-                y: appList.y + (appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0)
-                radius: 14
-                color: root.colOnSurface
-                opacity: appList.count > 0 ? 0.09 : 0
-                visible: appList.count > 0
 
-                Behavior on y {
-                    NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
-                    }
-                }
-            }
 
             // Empty state
             Column {
@@ -348,6 +329,21 @@ PanelWindow {
                 currentIndex: 0
                 maximumFlickVelocity: 2500
                 model: root.filteredApps
+                
+                Rectangle {
+                    id: rowHighlight
+                    x: 0
+                    width: appList.width
+                    height: appList.currentItem ? appList.currentItem.height : card.itemH
+                    y: appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0
+                    radius: 14
+                    color: root.colOnSurface
+                    opacity: appList.count > 0 ? 0.09 : 0
+                    visible: appList.count > 0
+
+                    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
+                    Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
+                }
 
                 // Animate items in/out on search
                 add: Transition {
