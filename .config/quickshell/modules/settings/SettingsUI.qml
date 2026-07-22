@@ -326,6 +326,7 @@ Item {
                         
                         Rectangle {
                             width: 30; height: 30; radius: 9
+                            Layout.alignment: Qt.AlignVCenter
                             color: cAccent
                             Text {
                                 anchors.centerIn: parent
@@ -336,15 +337,12 @@ Item {
                                 color: Theme.colOnPrimary
                             }
                         }
-                        ColumnLayout {
-                            spacing: 1
-                            Image {
-                                source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
-                                sourceSize.height: 28
-                                fillMode: Image.PreserveAspectFit
-                                Layout.preferredHeight: 28
-                                Layout.topMargin: -2
-                            }
+                        Image {
+                            source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
+                            sourceSize.height: 28
+                            fillMode: Image.PreserveAspectFit
+                            Layout.preferredHeight: 28
+                            Layout.alignment: Qt.AlignVCenter
                         }
                         Item { Layout.fillWidth: true }
                     }
