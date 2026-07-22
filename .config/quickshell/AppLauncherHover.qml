@@ -430,7 +430,7 @@ PanelWindow {
 
             width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
-            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + dynamicMargin * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
+            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + cardPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
             onWidthChanged: console.log("Card width:", width)
