@@ -327,7 +327,7 @@ Item {
                         Image {
                             source: Theme.isDark 
                                 ? "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-light.svg"
-                                : "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-light-v3.svg"
+                                : "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-shellsettings-dark.svg"
                             sourceSize.height: 50
                             fillMode: Image.PreserveAspectFit
                             Layout.preferredHeight: 50
