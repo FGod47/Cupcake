@@ -72,7 +72,7 @@ PanelWindow {
     Timer {
         id: openTimer
         interval: 50
-        running: false
+        running: true
         repeat: false
         onTriggered: {
             isOpen = true;
