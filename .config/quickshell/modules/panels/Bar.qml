@@ -90,8 +90,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        // Make this item tall enough to encompass expanding popups instantly so Wayland mask updates reliably
-        height: 46
+        height: Math.max(46, clockPill.height + 16)
 
         // Inner wrapper to keep the original padding logic identical
         Item {
@@ -669,9 +668,9 @@ PanelWindow {
             Item {
                 id: clockWrapper
                 width: clockPill.width
-                height: clockPill.hasDropdown ? 600 : 34
+                height: clockPill.height
                 implicitWidth: clockPill.width
-                implicitHeight: clockPill.hasDropdown ? 600 : 34
+                implicitHeight: clockPill.height
                 
                 onHeightChanged: {
                     console.log("clockWrapper height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
@@ -681,7 +680,7 @@ PanelWindow {
                     id: clockPill
                     y: 0
                     radius: 18
-                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.height + 16)) : 34
+                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.implicitHeight + 16)) : 34
                     Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
                     color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
                     width: hasDropdown ? 380 : clockRow.implicitWidth + 32
