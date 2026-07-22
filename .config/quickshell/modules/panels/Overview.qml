@@ -422,18 +422,16 @@ PanelWindow {
                                         color: (winTile.modelData && winTile.modelData.title === "Cupcake Settings") ? (Theme.isDark ? Theme.colSurfaceContainer : Theme.colBackground) : "transparent"
                                         clip: true
 
-                                        ScreencopyView {
-                                            id: scView
+                                        Loader {
+                                            id: scLoader
                                             anchors.fill: parent
-                                            captureSource: winTile.modelData
-                                            live: true
-                                            
-                                            layer.enabled: true
-                                            layer.effect: OpacityMask {
-                                                maskSource: Rectangle {
-                                                    width: scView.width
-                                                    height: scView.height
-                                                    radius: 10
+                                            active: gridContent.visible
+                                            sourceComponent: ScreencopyView {
+                                                captureSource: winTile.modelData
+                                                live: true
+                                                layer.enabled: true
+                                                layer.effect: OpacityMask {
+                                                    maskSource: Rectangle { width: scContainer.width; height: scContainer.height; radius: 10 }
                                                 }
                                             }
                                         }
@@ -484,19 +482,22 @@ PanelWindow {
             color: Qt.rgba(0, 0, 0, 0.35)
         }
 
-        ScreencopyView {
-            id: dragScView
+        Loader {
+            id: dragScLoader
             anchors.fill: parent
-            captureSource: {
-                if (!overviewWin.isDragging || overviewWin.draggingAddr === "") return null
-                return ToplevelManager.toplevels.values.find(function(tl) {
-                    return "0x" + tl.HyprlandToplevel?.address === overviewWin.draggingAddr
-                }) ?? null
-            }
-            live: true
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: Rectangle { width: dragScView.width; height: dragScView.height; radius: 10 }
+            active: overviewWin.isDragging
+            sourceComponent: ScreencopyView {
+                captureSource: {
+                    if (!overviewWin.isDragging || overviewWin.draggingAddr === "") return null
+                    return ToplevelManager.toplevels.values.find(function(tl) {
+                        return "0x" + tl.HyprlandToplevel?.address === overviewWin.draggingAddr
+                    }) ?? null
+                }
+                live: true
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle { width: dragGhost.width; height: dragGhost.height; radius: 10 }
+                }
             }
         }
         

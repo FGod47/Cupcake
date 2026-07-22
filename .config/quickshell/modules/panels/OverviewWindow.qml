@@ -52,23 +52,26 @@ Item {
     }
 
     // Live screencopy of the actual window
-    ScreencopyView {
+    Loader {
         anchors.fill: parent
-        captureSource: root.toplevel
-        live: true
+        active: root.visible && globalState.overviewOpen
+        sourceComponent: ScreencopyView {
+            captureSource: root.toplevel
+            live: true
 
-        // Hover / press overlay
-        Rectangle {
-            anchors.fill: parent
-            topLeftRadius:     root.topLeftRadius
-            topRightRadius:    root.topRightRadius
-            bottomRightRadius: root.bottomRightRadius
-            bottomLeftRadius:  root.bottomLeftRadius
-            color: root.pressed  ? Qt.rgba(1,1,1,0.15) :
-                   root.hovered  ? Qt.rgba(1,1,1,0.07) :
-                                   "transparent"
-            border.color: Qt.rgba(1,1,1,0.10)
-            border.width: 1
+            // Hover / press overlay
+            Rectangle {
+                anchors.fill: parent
+                topLeftRadius:     root.topLeftRadius
+                topRightRadius:    root.topRightRadius
+                bottomRightRadius: root.bottomRightRadius
+                bottomLeftRadius:  root.bottomLeftRadius
+                color: root.pressed  ? Qt.rgba(1,1,1,0.15) :
+                       root.hovered  ? Qt.rgba(1,1,1,0.07) :
+                                       "transparent"
+                border.color: Qt.rgba(1,1,1,0.10)
+                border.width: 1
+            }
         }
     }
 }
