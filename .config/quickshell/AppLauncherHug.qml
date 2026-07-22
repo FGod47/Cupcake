@@ -345,6 +345,8 @@ PanelWindow {
                     Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
                 }
 
+                Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
+
                 // Animate items in/out on search
                 add: Transition {
                     NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 180; easing.type: Easing.OutCubic }

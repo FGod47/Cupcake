@@ -555,6 +555,8 @@ PanelWindow {
                     Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.BezierSpline; easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0] } }
                 }
 
+                Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
+
                 ScrollBar.vertical: ScrollBar {
                     id: vScroll
                     policy: ScrollBar.AsNeeded
