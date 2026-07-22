@@ -324,20 +324,12 @@ Item {
                         Layout.rightMargin: 8
                         spacing: 10
                         
-                        ColumnLayout {
-                            spacing: 1
-                            Image {
-                                source: "file:///home/one/Downloads/LOGO/cupcake-alexbrush-light.svg"
-                                sourceSize.height: 28
-                                fillMode: Image.PreserveAspectFit
-                                Layout.preferredHeight: 28
-                            }
-                            Text {
-                                text: "shell settings"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10
-                                color: cTextFaint
-                            }
+                        Image {
+                            source: "file:///home/one/Downloads/LOGO/cupcake-shellsettings-light-v3.svg"
+                            sourceSize.height: 38
+                            fillMode: Image.PreserveAspectFit
+                            Layout.preferredHeight: 38
+                            Layout.alignment: Qt.AlignVCenter
                         }
                         Item { Layout.fillWidth: true }
                     }
