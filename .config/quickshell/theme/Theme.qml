@@ -10,28 +10,12 @@ Item {
 
     property bool globalTransparency: true
     
-    property bool isDark: true
-    
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.color_mode"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) {
-                    themeSingleton.isDark = (text.trim() !== "light");
-                }
-            }
-        }
-    }
-
     FileView {
+        id: colorModeFile
         path: themeSingleton.homeDir + "/.config/cupcake/.color_mode"
         watchChanges: true
-        onFileChanged: {
-            reload();
-            themeSingleton.isDark = (text.trim() !== "light");
-        }
     }
+    property bool isDark: colorModeFile.text ? (colorModeFile.text.trim() !== "light") : true
     
     Process {
         command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.transparency"]
