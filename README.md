@@ -36,10 +36,6 @@ Cupcake doesn't just skin your desktop; it owns the entire boot experience.
 - Custom Plymouth Boot animations.
 - A sleek, hyper-minimalist GRUB theme designed to match the Cupcake aesthetic flawlessly.
 
-<div align="center">
-  <img src="Source/assets/cupcake-boot-preview.gif" alt="Boot Animation Preview" width="500" style="border-radius: 12px;" />
-</div>
-
 ---
 
 ## 🏗️ Architecture
