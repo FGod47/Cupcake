@@ -3,7 +3,6 @@
   
   <p><b>A masterfully crafted, high-performance QML Wayland Shell</b></p>
   
-  [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
   [![Made with QML](https://img.shields.io/badge/Built_with-QML-pink.svg)](https://doc.qt.io/qt-6/qtqml-index.html)
   [![Window System](https://img.shields.io/badge/Wayland-Native-blue.svg)](https://wayland.freedesktop.org/)
 </div>

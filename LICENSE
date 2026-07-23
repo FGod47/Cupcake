@@ -1,0 +1,22 @@
+END-USER LICENSE AGREEMENT (EULA) for Cupcake Shell
+
+This End-User License Agreement ("EULA") is a legal agreement between you (either an individual or a single entity) and the creator ("Author") of the Cupcake Shell software ("Software").
+
+1. GRANT OF LICENSE
+The Author grants you a personal, non-exclusive, non-transferable license to use the Software for your personal, non-commercial use on devices you own or control.
+
+2. RESTRICTIONS
+- You may NOT sell, resell, rent, lease, or distribute the Software, in whole or in part, to any third party.
+- You may NOT publish or upload the Software to any public repository (e.g., GitHub, GitLab) or file-sharing network.
+- You may NOT use the Software as part of a commercial product or service without explicit written permission from the Author.
+
+3. OWNERSHIP
+The Software, including all custom assets, QML code, scripts, and designs (collectively, "Cupcake Shell"), is the intellectual property of the Author. This EULA does not grant you any rights to patents, copyrights, trade secrets, trademarks, or any other rights in respect to the Software.
+
+4. THIRD-PARTY COMPONENTS
+The Software may interact with or include components licensed under open-source licenses (such as the MIT License or OFL). Those components remain under their respective licenses. 
+
+5. NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+By installing, copying, or otherwise using the Software, you agree to be bound by the terms of this EULA.
