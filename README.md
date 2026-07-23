@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="Source/assets/cupcake-word-dark.png" alt="Cupcake Shell" width="400" />
+  <img src="Source/assets/cupcake-word-light.svg" alt="Cupcake Shell" width="400" />
   
   <p><b>A masterfully crafted, high-performance QML Wayland Shell</b></p>
   
@@ -15,10 +15,6 @@
 **Cupcake Shell** is a meticulously engineered, purely declarative Wayland desktop shell written entirely in QML (powered by Quickshell). It was built from the ground up to prioritize bleeding-edge fluidity, semantic theming, and an unapologetically premium user experience.
 
 Unlike rigid, traditional shells, Cupcake feels alive. It achieves this through bespoke mathematical animations, a dynamic Material Design 3 engine, and a completely modular component architecture.
-
-<div align="center">
-  <img src="Source/assets/cupcake-shellsettings-dark-preview.png" alt="Cupcake Settings UI" width="700" style="border-radius: 12px;"/>
-</div>
 
 ---
 
