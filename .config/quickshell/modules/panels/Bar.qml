@@ -854,45 +854,17 @@ PanelWindow {
             // Power Pill (#custom-power)
             Rectangle {
                 id: powerPill
-                radius: (actionsExpanded && showConfirmation) ? 28 : 18
-                implicitHeight: (actionsExpanded && showConfirmation) ? 290 : 34
-                implicitWidth: (actionsExpanded && showConfirmation) ? 230 : (powerRow.implicitWidth + 32)
-                color: (actionsExpanded && showConfirmation) ? Theme.colSurfaceContainerHigh : (powerHover.containsMouse ? Theme.colError : Theme.colPrimary)
+                radius: 18
+                implicitHeight: 34
+                implicitWidth: powerRow.implicitWidth + 32
+                color: powerHover.containsMouse ? Theme.colError : Theme.colPrimary
                 Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: (powerPill.actionsExpanded && powerPill.showConfirmation) ? Easing.OutBack : Easing.InOutCubic; easing.overshoot: (powerPill.actionsExpanded && powerPill.showConfirmation) ? 1.5 : 0 } }
+                Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
+                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 clip: true
                 
                 property bool actionsExpanded: false
-                property bool showConfirmation: false
-                property int countdownSeconds: 5
-                
-                Timer {
-                    id: powerTimer
-                    interval: 1000
-                    running: false
-                    repeat: true
-                    onTriggered: {
-                        powerPill.countdownSeconds--;
-                        if (powerPill.countdownSeconds <= 0) {
-                            running = false;
-                            Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                            powerPill.actionsExpanded = false;
-                            powerPill.showConfirmation = false;
-                        }
-                        countdownRing.requestPaint();
-                    }
-                }
-                
-                onShowConfirmationChanged: {
-                    if (showConfirmation) {
-                        countdownSeconds = 5;
-                        powerTimer.running = true;
-                        countdownRing.requestPaint();
-                    } else {
-                        powerTimer.running = false;
-                    }
-                }
                 
                 MouseArea {
                     id: powerHover
@@ -900,15 +872,10 @@ PanelWindow {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        if (!powerPill.actionsExpanded) {
-                            powerPill.actionsExpanded = true;
-                            powerPill.showConfirmation = false;
-                        } else if (!powerPill.showConfirmation) {
-                            powerPill.actionsExpanded = false;
-                        }
+                        powerPill.actionsExpanded = !powerPill.actionsExpanded;
                     }
                     onContainsMouseChanged: {
-                        if (!containsMouse && powerPill.actionsExpanded && !powerPill.showConfirmation) {
+                        if (!containsMouse && powerPill.actionsExpanded) {
                             powerPill.actionsExpanded = false;
                         }
                     }
@@ -919,8 +886,6 @@ PanelWindow {
                     id: powerRow
                     anchors.centerIn: parent
                     spacing: 0
-                    visible: !powerPill.showConfirmation
-                    opacity: !powerPill.showConfirmation ? 1 : 0
                     Behavior on opacity { NumberAnimation { duration: 200 } }
                     
                     // Slide-left Revealer
@@ -998,7 +963,7 @@ PanelWindow {
                                         Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.showConfirmation = true; } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.actionsExpanded = false; Quickshell.execDetached(["quickshell", "-p", "/home/one/.config/quickshell/PowerConfirmation.qml"]); } }
                                 }
                             }
                         }
@@ -1016,185 +981,7 @@ PanelWindow {
                     }
                 }
 
-                // Expanded Dynamic Island Countdown Confirmation
-                Column {
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: 0
-                    spacing: 16
-                    visible: powerPill.showConfirmation
-                    opacity: powerPill.showConfirmation ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
 
-                    // Icon & Text
-                    Column {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 6
-                        Rectangle {
-                            width: 56; height: 56; radius: 28
-                            color: Qt.rgba(220/255, 70/255, 70/255, 0.12)
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            Text {
-                                text: "\ueb0d"
-                                color: Theme.colError
-                                font.family: fontName
-                                font.pixelSize: 26
-                                anchors.centerIn: parent
-                            }
-                        }
-                        Text {
-                            text: "Shut down?"
-                            color: fg
-                            font.family: Theme.defaultFontFamily
-                            font.weight: 600
-                            font.pixelSize: 15
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                        Text {
-                            text: "This will close all apps"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-
-                    // Countdown Ring
-                    Item {
-                        width: 40; height: 40
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        Canvas {
-                            id: countdownRing
-                            anchors.fill: parent
-                            onPaint: {
-                                var ctx = getContext("2d");
-                                ctx.clearRect(0, 0, width, height);
-                                var cx = width / 2;
-                                var cy = height / 2;
-                                var r = 16;
-                                
-                                ctx.beginPath();
-                                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-                                ctx.strokeStyle = "rgba(255,255,255,0.06)";
-                                ctx.lineWidth = 3;
-                                ctx.stroke();
-                                
-                                var progress = (5 - powerPill.countdownSeconds) / 5.0;
-                                ctx.beginPath();
-                                ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * (1 - progress));
-                                ctx.strokeStyle = Theme.colError;
-                                ctx.lineWidth = 3;
-                                ctx.lineCap = "round";
-                                ctx.stroke();
-                            }
-                        }
-                        Text {
-                            text: powerPill.countdownSeconds
-                            color: Theme.colError
-                            font.family: Theme.defaultFontFamily
-                            font.weight: 600
-                            font.pixelSize: 13
-                            anchors.centerIn: parent
-                        }
-                    }
-
-                    // Main Action Buttons
-                    RowLayout {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: 190
-                        spacing: 10
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 34
-                            radius: 12
-                            color: Qt.rgba(255/255, 255/255, 255/255, 0.07)
-                            Text { text: "Cancel"; color: fg; font.family: Theme.defaultFontFamily; font.weight: 500; font.pixelSize: 13; anchors.centerIn: parent }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    powerPill.showConfirmation = false;
-                                    powerPill.actionsExpanded = false;
-                                }
-                            }
-                        }
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 34
-                            radius: 12
-                            color: "#c0392b"
-                            Text { text: "Shut down"; color: "white"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    powerTimer.running = false
-                                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
-                                }
-                            }
-                        }
-                    }
-
-                    // Extra options
-                    Row {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 18
-                        
-                        // Restart
-                        Column {
-                            spacing: 5
-                            Rectangle {
-                                width: 36; height: 36; radius: 18; color: Qt.rgba(255/255, 255/255, 255/255, 0.06)
-                                Text { text: "\ueb13"; color: "#aaa"; font.family: fontName; font.pixelSize: 16; anchors.centerIn: parent }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        powerTimer.running = false
-                                        Quickshell.execDetached(["bash", "-c", "systemctl reboot"])
-                                    }
-                                }
-                            }
-                            Text { text: "Restart"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 10; anchors.horizontalCenter: parent.horizontalCenter }
-                        }
-                        
-                        // Sleep
-                        Column {
-                            spacing: 5
-                            Rectangle {
-                                width: 36; height: 36; radius: 18; color: Qt.rgba(255/255, 255/255, 255/255, 0.06)
-                                Text { text: "\ueaf8"; color: "#aaa"; font.family: fontName; font.pixelSize: 16; anchors.centerIn: parent }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        powerTimer.running = false
-                                        powerPill.actionsExpanded = false
-                                        powerPill.showConfirmation = false
-                                        Quickshell.execDetached(["bash", "-c", "systemctl suspend"])
-                                    }
-                                }
-                            }
-                            Text { text: "Sleep"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 10; anchors.horizontalCenter: parent.horizontalCenter }
-                        }
-
-                        // Lock
-                        Column {
-                            spacing: 5
-                            Rectangle {
-                                width: 36; height: 36; radius: 18; color: Qt.rgba(255/255, 255/255, 255/255, 0.06)
-                                Text { text: "\ueae2"; color: "#aaa"; font.family: fontName; font.pixelSize: 16; anchors.centerIn: parent }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        powerTimer.running = false
-                                        powerPill.actionsExpanded = false
-                                        powerPill.showConfirmation = false
-                                        Quickshell.execDetached(["bash", "-c", "hyprlock"])
-                                    }
-                                }
-                            }
-                            Text { text: "Lock"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 10; anchors.horizontalCenter: parent.horizontalCenter }
-                        }
-                    }
-                }
             }
         }
     }
