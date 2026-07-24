@@ -883,7 +883,7 @@ PanelWindow {
             color: powerHover.containsMouse || confirmingIsland || actionsExpanded ? Theme.colError : Theme.colPrimary
             Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
             Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
-            Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
             Behavior on color { ColorAnimation { duration: 300 } }
             clip: true
             
@@ -1081,7 +1081,7 @@ PanelWindow {
                         font.pixelSize: Theme.defaultFontSize
                         clip: true
                         width: powerHover.containsMouse ? implicitWidth : 0
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
