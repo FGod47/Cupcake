@@ -242,14 +242,14 @@ PanelWindow {
             property real lastKeyTime: 0
             
             function handleKey(event, isNext) {
-                if (event.isAutoRepeat) {
-                    let now = Date.now();
-                    if (now - pv.lastKeyTime < 150) {
-                        event.accepted = true;
-                        return;
-                    }
-                    pv.lastKeyTime = now;
+                let now = Date.now();
+                // Unconditionally throttle to 150ms because Wayland key repeats sometimes lack the isAutoRepeat flag
+                if (now - pv.lastKeyTime < 150) {
+                    event.accepted = true;
+                    return;
                 }
+                pv.lastKeyTime = now;
+                
                 if (isNext) incrementCurrentIndex();
                 else decrementCurrentIndex();
                 event.accepted = true;
