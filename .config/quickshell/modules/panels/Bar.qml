@@ -862,7 +862,7 @@ PanelWindow {
             id: powerPill
             anchors.right: parent.right
             anchors.rightMargin: 18
-            y: 6
+            anchors.top: parent.top
             radius: confirmingIsland ? 28 : 18
             
             property bool actionsExpanded: false
