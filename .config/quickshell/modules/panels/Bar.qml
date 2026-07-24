@@ -1014,10 +1014,10 @@ PanelWindow {
                                 x: powerPill.confirmingDefault ? targetX : startX
                                 y: powerPill.confirmingDefault ? targetY : startY
                                 
-                                Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on x { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on y { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on width { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on height { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 Behavior on opacity { NumberAnimation { duration: powerPill.confirmingDefault ? 0 : 200 } }
                                 
                                 Text { 
@@ -1026,8 +1026,8 @@ PanelWindow {
                                     font.family: fontName
                                     font.pixelSize: powerPill.confirmingDefault ? 24 : 15
                                     anchors.centerIn: parent
-                                    Behavior on color { ColorAnimation { duration: 350; easing.type: Easing.OutBack } }
-                                    Behavior on font.pixelSize { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                    Behavior on color { ColorAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack } }
+                                    Behavior on font.pixelSize { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 }
                             }
                             
