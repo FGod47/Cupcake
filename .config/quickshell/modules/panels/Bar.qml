@@ -93,7 +93,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: Math.max(46, clockPill.height + 16)
+        height: Math.max(46, clockPill.height + 16, powerPill.height + 16)
 
         // Inner wrapper to keep the original padding logic identical
         Item {
