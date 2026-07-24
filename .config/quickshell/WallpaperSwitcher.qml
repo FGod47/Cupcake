@@ -19,7 +19,7 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "cupcake-wallpaper"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
     color: "transparent"
     
     mask: Region {

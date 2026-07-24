@@ -20,8 +20,13 @@ PanelWindow {
         right: true
     }
     WlrLayershell.namespace: "quickshell"
-    WlrLayershell.keyboardFocus: (globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || globalState.powerMenuOpen || globalState.overviewOpen) ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     exclusiveZone: 46
+
+    HyprlandFocusGrab {
+        windows: [bar]
+        active: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || globalState.powerMenuOpen
+    }
 
     // Track active player status for Dynamic Island animations
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null

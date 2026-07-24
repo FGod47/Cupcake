@@ -18,7 +18,12 @@ PanelWindow {
 
     WlrLayershell.namespace: "quickshell:overview"
     WlrLayershell.layer:     WlrLayer.Top
-    WlrLayershell.keyboardFocus: globalState.overviewOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+
+    HyprlandFocusGrab {
+        windows: [overviewWin]
+        active: globalState.overviewOpen
+    }
 
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
