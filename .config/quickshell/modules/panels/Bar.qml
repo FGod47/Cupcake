@@ -874,13 +874,13 @@ PanelWindow {
             property string pendingAction: ""
             
             property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
-            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? (state2Row.implicitWidth + 32) : 34)
+            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? (state2Row.implicitWidth + 32) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
             
             height: confirmingIsland ? 180 : 34
             width: targetWidth
             
             // For Island, we'll assign colors based on pendingAction later, default to Error for now
-            color: powerHover.containsMouse || confirmingIsland ? Theme.colError : Theme.colPrimary
+            color: powerHover.containsMouse || confirmingIsland || actionsExpanded ? Theme.colError : Theme.colPrimary
             Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
             Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
             Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
@@ -918,12 +918,7 @@ PanelWindow {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onEntered: {
-                    powerStyleProcess.running = true;
-                    if (!powerPill.confirmingDefault) {
-                        powerPill.actionsExpanded = true;
-                    }
-                }
+                onEntered: { powerStyleProcess.running = true; }
                 onClicked: {
                     if (!powerPill.confirmingDefault) {
                         powerPill.actionsExpanded = !powerPill.actionsExpanded;
@@ -1062,16 +1057,33 @@ PanelWindow {
                     }
                 }
                 
-                // Main Icon
-                Text {
-                    text: "\ueb0d"
-                    color: bg
-                    font.family: fontName
-                    font.weight: Theme.defaultFontWeight
-                    font.pixelSize: Theme.defaultFontSize
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
+                // Main Icon and Hover Text
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 8
                     visible: !powerPill.actionsExpanded
+                    
+                    Text {
+                        text: "\ueb0d"
+                        color: bg
+                        font.family: fontName
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    
+                    Text {
+                        id: powerHoverText
+                        text: "Power"
+                        color: bg
+                        font.family: Theme.defaultFontFamily
+                        font.weight: 600
+                        font.pixelSize: Theme.defaultFontSize
+                        clip: true
+                        width: powerHover.containsMouse ? implicitWidth : 0
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
             
