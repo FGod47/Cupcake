@@ -888,6 +888,8 @@ PanelWindow {
             clip: true
             
             function executeAction(action) {
+                powerPill.confirmingDefault = false;
+                powerPill.actionsExpanded = false;
                 if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
                 else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
                 else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
