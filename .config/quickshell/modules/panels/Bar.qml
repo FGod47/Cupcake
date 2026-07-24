@@ -215,9 +215,13 @@ PanelWindow {
         Row {
             id: rightModules
             anchors.right: parent.right
-            anchors.rightMargin: powerPill.baseWidth + 8
+            anchors.rightMargin: actualMargin
             anchors.top: parent.top
             spacing: 8
+            
+            property real targetRightMargin: powerPill.confirmingIsland ? (34 + 8) : (powerPill.targetWidth + 8)
+            property real actualMargin: targetRightMargin
+            Behavior on actualMargin { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
             
             visible: true
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -871,16 +875,16 @@ PanelWindow {
             property string pendingAction: ""
             
             property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
-            property real baseWidth: actionsExpanded ? (powerRow.implicitWidth + 32) : 34
+            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? (state2Row.implicitWidth + 32) : 34)
             
             height: confirmingIsland ? 180 : 34
-            width: confirmingIsland ? 220 : baseWidth
+            width: targetWidth
             
             // For Island, we'll assign colors based on pendingAction later, default to Error for now
             color: powerHover.containsMouse || confirmingIsland ? Theme.colError : Theme.colPrimary
             Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-            Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
-            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
+            Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
+            Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
             Behavior on color { ColorAnimation { duration: 300 } }
             clip: true
             
@@ -947,10 +951,6 @@ PanelWindow {
                         color: "transparent"
                         anchors.verticalCenter: parent.verticalCenter
                         clip: true
-                        
-                        Behavior on width {
-                            NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
-                        }
                         
                         // State 2 & 3 Container
                         Item {
