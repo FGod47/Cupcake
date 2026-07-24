@@ -1054,6 +1054,7 @@ PanelWindow {
                                         Rectangle {
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
+                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "sleep") ? 0 : 1
                                             Text { text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
@@ -1071,6 +1072,7 @@ PanelWindow {
                                         Rectangle {
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
+                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "logout") ? 0 : 1
                                             Text { text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
@@ -1088,6 +1090,7 @@ PanelWindow {
                                         Rectangle {
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
+                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "reboot") ? 0 : 1
                                             Text { text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
@@ -1105,6 +1108,7 @@ PanelWindow {
                                         Rectangle {
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
+                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "shutdown") ? 0 : 1
                                             Text { text: "\ueb0d"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Shutdown"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
