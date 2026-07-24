@@ -219,7 +219,7 @@ PanelWindow {
             anchors.top: parent.top
             spacing: 8
             
-            property real targetRightMargin: powerPill.confirmingIsland ? (34 + 8) : (powerPill.targetWidth + 8)
+            property real targetRightMargin: powerPill.targetWidth + 8
             property real actualMargin: targetRightMargin
             Behavior on actualMargin { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
             
