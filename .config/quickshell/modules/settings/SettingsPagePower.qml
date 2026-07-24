@@ -271,6 +271,7 @@ Item {
 
             // POWER MENU
             SettingsCard {
+                id: powerMenuCard
                 sectionTitle: "Power Menu"
                 
                 property string currentStyle: "Island"
@@ -278,7 +279,7 @@ Item {
                     id: initPowerMenu
                     command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
                     running: true
-                    stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") parent.currentStyle = text.trim() } }
+                    stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerMenuCard.currentStyle = text.trim() } }
                 }
 
                 SettingsRow {
@@ -301,15 +302,15 @@ Item {
                             anchors.fill: parent; anchors.margins: 4; spacing: 4
                             Rectangle {
                                 Layout.fillWidth: true; Layout.fillHeight: true; radius: 6
-                                color: parent.parent.parent.currentStyle === "Island" ? Theme.colPrimary : "transparent"
-                                Text { text: "Island"; color: parent.parent.parent.parent.currentStyle === "Island" ? Theme.colOnPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; anchors.centerIn: parent }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'Island' > ~/.config/cupcake/.power_confirmation_style"]); parent.parent.parent.currentStyle = "Island"; } }
+                                color: powerMenuCard.currentStyle === "Island" ? Theme.colPrimary : "transparent"
+                                Text { text: "Island"; color: powerMenuCard.currentStyle === "Island" ? Theme.colOnPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; anchors.centerIn: parent }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'Island' > ~/.config/cupcake/.power_confirmation_style"]); powerMenuCard.currentStyle = "Island"; } }
                             }
                             Rectangle {
                                 Layout.fillWidth: true; Layout.fillHeight: true; radius: 6
-                                color: parent.parent.parent.currentStyle === "Center" ? Theme.colPrimary : "transparent"
-                                Text { text: "Center"; color: parent.parent.parent.parent.currentStyle === "Center" ? Theme.colOnPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; anchors.centerIn: parent }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'Center' > ~/.config/cupcake/.power_confirmation_style"]); parent.parent.parent.currentStyle = "Center"; } }
+                                color: powerMenuCard.currentStyle === "Center" ? Theme.colPrimary : "transparent"
+                                Text { text: "Center"; color: powerMenuCard.currentStyle === "Center" ? Theme.colOnPrimary : Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 12; anchors.centerIn: parent }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "echo 'Center' > ~/.config/cupcake/.power_confirmation_style"]); powerMenuCard.currentStyle = "Center"; } }
                             }
                         }
                     }
