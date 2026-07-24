@@ -874,15 +874,16 @@ PanelWindow {
             property string pendingAction: ""
             
             property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
-            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? (state2Row.implicitWidth + 32) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
+            property real targetHeight: confirmingIsland ? 180 : (actionsExpanded ? ((powerPill.confirmingDefault ? state3Column.implicitHeight : state2Column.implicitHeight) + 32) : 34)
+            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? ((powerPill.confirmingDefault ? state3Column.implicitWidth : state2Column.implicitWidth) + 32) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
             
-            height: confirmingIsland ? 180 : 34
+            height: targetHeight
             width: targetWidth
             
             // For Island, we'll assign colors based on pendingAction later, default to Error for now
             color: powerHover.containsMouse || confirmingIsland || actionsExpanded ? Theme.colError : Theme.colPrimary
             Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-            Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
+            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
             Behavior on color { ColorAnimation { duration: 300 } }
             clip: true
@@ -948,8 +949,8 @@ PanelWindow {
                     // State 1: Expanding Actions Background
                     Rectangle {
                         visible: powerPill.actionsExpanded
-                        width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
-                        height: 34
+                        width: powerPill.actionsExpanded ? (powerPill.confirmingDefault ? state3Column.implicitWidth : state2Column.implicitWidth) : 0
+                        height: powerPill.actionsExpanded ? (powerPill.confirmingDefault ? state3Column.implicitHeight : state2Column.implicitHeight) : 0
                         color: "transparent"
                         anchors.verticalCenter: parent.verticalCenter
                         clip: true
@@ -957,15 +958,15 @@ PanelWindow {
                         // State 2 & 3 Container
                         Item {
                             id: statesContainer
-                            width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
-                            height: 34
+                            width: powerPill.actionsExpanded ? (powerPill.confirmingDefault ? state3Column.implicitWidth : state2Column.implicitWidth) : 0
+                            height: powerPill.actionsExpanded ? (powerPill.confirmingDefault ? state3Column.implicitHeight : state2Column.implicitHeight) : 0
                             anchors.verticalCenter: parent.verticalCenter
                             visible: powerPill.actionsExpanded
                             clip: true
                             
                             // State 2: Clicked Actions
-                            Row {
-                                id: state2Row
+                            Column {
+                                id: state2Column
                                 spacing: 14
                                 anchors.centerIn: parent
                                 opacity: !powerPill.confirmingDefault ? 1 : 0
@@ -1022,8 +1023,8 @@ PanelWindow {
                         }
                         
                             // State 3: Default Style Confirmation
-                            Row {
-                                id: state3Row
+                            Column {
+                                id: state3Column
                                 spacing: 14
                                 anchors.centerIn: parent
                                 opacity: powerPill.confirmingDefault ? 1 : 0
