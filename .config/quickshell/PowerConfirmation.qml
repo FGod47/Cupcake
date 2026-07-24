@@ -16,8 +16,8 @@ PanelWindow {
     
     property string activeStyle: "Island"
     
-    implicitWidth: activeStyle === "Center" ? 400 : 230
-    implicitHeight: activeStyle === "Center" ? 250 : 290
+    implicitWidth: activeStyle === "Center" ? 400 : (activeStyle === "Default" ? 340 : 230)
+    implicitHeight: activeStyle === "Center" ? 250 : (activeStyle === "Default" ? 160 : 290)
     
     anchors.top: activeStyle === "Island"
     anchors.right: activeStyle === "Island"
@@ -39,6 +39,10 @@ PanelWindow {
     
     Loader {
         anchors.fill: parent
-        source: activeStyle === "Center" ? "PowerConfirmationCenter.qml" : "PowerConfirmationIsland.qml"
+        source: {
+            if (activeStyle === "Center") return "PowerConfirmationCenter.qml";
+            if (activeStyle === "Default") return "PowerConfirmationDefault.qml";
+            return "PowerConfirmationIsland.qml";
+        }
     }
 }
