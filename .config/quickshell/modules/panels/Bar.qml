@@ -865,7 +865,6 @@ PanelWindow {
         Rectangle {
             id: powerPill
             anchors.right: parent.right
-            anchors.rightMargin: 18
             anchors.top: parent.top
             radius: confirmingIsland ? 28 : 18
             
