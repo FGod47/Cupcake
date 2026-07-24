@@ -867,6 +867,36 @@ PanelWindow {
                 property bool confirmingDefault: false
                 property string currentStyle: "Island"
                 
+                property int defaultCountdown: 5
+                property real defaultCountdownVisual: 5
+                Behavior on defaultCountdownVisual { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
+                
+                Timer {
+                    id: defaultPowerTimer
+                    interval: 1000
+                    running: powerPill.confirmingDefault
+                    repeat: true
+                    onTriggered: {
+                        powerPill.defaultCountdown--;
+                        powerPill.defaultCountdownVisual = powerPill.defaultCountdown;
+                        if (powerPill.defaultCountdown <= 0) {
+                            running = false;
+                            Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                            powerPill.confirmingDefault = false;
+                        }
+                    }
+                }
+                
+                onConfirmingDefaultChanged: {
+                    if (confirmingDefault) {
+                        powerPill.defaultCountdown = 5;
+                        powerPill.defaultCountdownVisual = 5;
+                        defaultPowerTimer.restart();
+                    } else {
+                        defaultPowerTimer.stop();
+                    }
+                }
+                
                 Process {
                     id: powerStyleProcess
                     command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
@@ -995,6 +1025,49 @@ PanelWindow {
                                 spacing: 14
                                 visible: powerPill.actionsExpanded && powerPill.confirmingDefault
                                 anchors.verticalCenter: parent.verticalCenter
+                                
+                                Item {
+                                    width: 34; height: 34
+                                    Canvas {
+                                        id: defaultCountdownRing
+                                        anchors.fill: parent
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.clearRect(0, 0, width, height);
+                                            var cx = width / 2;
+                                            var cy = height / 2;
+                                            var r = 12;
+                                            
+                                            ctx.beginPath();
+                                            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                                            ctx.strokeStyle = "rgba(255,255,255,0.1)";
+                                            ctx.lineWidth = 3;
+                                            ctx.stroke();
+                                            
+                                            var progress = (5 - powerPill.defaultCountdownVisual) / 5.0;
+                                            ctx.beginPath();
+                                            ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * (1 - progress));
+                                            ctx.strokeStyle = bg;
+                                            ctx.lineWidth = 3;
+                                            ctx.lineCap = "round";
+                                            ctx.stroke();
+                                        }
+                                    }
+                                    Text {
+                                        text: Math.ceil(powerPill.defaultCountdownVisual)
+                                        color: bg
+                                        font.family: Theme.defaultFontFamily
+                                        font.weight: 600
+                                        font.pixelSize: 12
+                                        anchors.centerIn: parent
+                                    }
+                                    Timer {
+                                        interval: 16
+                                        running: powerPill.confirmingDefault
+                                        repeat: true
+                                        onTriggered: defaultCountdownRing.requestPaint()
+                                    }
+                                }
                                 
                                 Item {
                                     width: sureIconText.implicitWidth + sureText.implicitWidth + 4; height: 34
