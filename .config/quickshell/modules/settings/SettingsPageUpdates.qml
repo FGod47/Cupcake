@@ -195,9 +195,7 @@ Item {
                             anchors.centerIn: parent
                             text: root.isCheckingCupcake ? "\ueb13" : "\ueb7d" // cup/code icon
                             font.family: "tabler-icons"
-                            font.pixelSize: 28
-                            color: root.isCheckingCupcake ? cTextDim : "#ffffff"
-                            
+                            color: root.isCheckingCupcake ? cTextDim : Theme.colOnPrimary
                             RotationAnimation on rotation {
                                 running: root.isCheckingCupcake
                                 loops: Animation.Infinite; from: 0; to: 360; duration: 1000
@@ -254,8 +252,8 @@ Item {
                             Behavior on color { ColorAnimation { duration: 120 } }
                             RowLayout {
                                 anchors.centerIn: parent; spacing: 8
-                                Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: "white" }
-                                Text { text: "Update Theme"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
+                                Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: Theme.colOnPrimary }
+                                Text { text: "Update Theme"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
                             }
                             MouseArea {
                                 id: updateCcBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -413,9 +411,7 @@ Item {
                             anchors.centerIn: parent
                             text: root.isCheckingSys ? "\ueb13" : (root.sysUpdatesAvailable ? "\uea20" : "\uea5e")
                             font.family: "tabler-icons"
-                            font.pixelSize: 28
-                            color: root.isCheckingSys ? cTextDim : "#ffffff"
-                            
+                            color: root.isCheckingSys ? cTextDim : Theme.colOnPrimary
                             RotationAnimation on rotation {
                                 running: root.isCheckingSys
                                 loops: Animation.Infinite; from: 0; to: 360; duration: 1000
@@ -472,8 +468,8 @@ Item {
                             Behavior on color { ColorAnimation { duration: 120 } }
                             RowLayout {
                                 anchors.centerIn: parent; spacing: 8
-                                Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: "white" }
-                                Text { text: "Install Packages"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
+                                Text { text: "\uea20"; font.family: "tabler-icons"; font.pixelSize: 16; color: Theme.colOnPrimary }
+                                Text { text: "Install Packages"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.SemiBold }
                             }
                             MouseArea {
                                 id: updateSysBtnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor

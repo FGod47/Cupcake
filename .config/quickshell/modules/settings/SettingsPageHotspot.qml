@@ -116,7 +116,7 @@ Item {
             width: 18; height: 18; radius: 9
             anchors.verticalCenter: parent.verticalCenter
             x: tog.checked ? parent.width - width - 3 : 3
-            color: "white"
+            color: Theme.colBackground
             Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
             layer.enabled: true
             layer.effect: null

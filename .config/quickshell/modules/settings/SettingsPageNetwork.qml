@@ -482,8 +482,8 @@ Item {
                                     property bool confirm: false
                                     visible: model.isSaved
                                     height: 26; width: forgetText.implicitWidth + 24; radius: 6
-                                    color: confirm ? "#e55a5a" : (forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
-                                    border.color: confirm ? "#e55a5a" : (forgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent")
+                                    color: confirm ? Theme.colError : (forgetMa.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
+                                    border.color: confirm ? Theme.colError : (forgetMa.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.3) : "transparent")
                                     border.width: 1
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                     
@@ -497,7 +497,7 @@ Item {
                                         id: forgetText
                                         anchors.centerIn: parent
                                         text: forgetBtnContainer.confirm ? "Sure?" : "Forget"
-                                        color: forgetBtnContainer.confirm ? "#ffffff" : (forgetMa.containsMouse ? "#ff8f8f" : cTextDim)
+                                        color: forgetBtnContainer.confirm ? Theme.colBackground : (forgetMa.containsMouse ? Theme.colError : cTextDim)
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
                                     }
                                     MouseArea {
@@ -567,7 +567,7 @@ Item {
                                 Rectangle {
                                     width: 80; height: 36; radius: 8
                                     color: cAccent
-                                    Text { anchors.centerIn: parent; text: "Connect"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                    Text { anchors.centerIn: parent; text: "Connect"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -690,8 +690,8 @@ Item {
                                     id: savedForgetBtnContainer
                                     property bool confirm: false
                                     height: 26; width: savedForgetText.implicitWidth + 24; radius: 6
-                                    color: confirm ? "#e55a5a" : (savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
-                                    border.color: confirm ? "#e55a5a" : (savedForgetMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.3) : "transparent")
+                                    color: savedForgetBtnContainer.confirm ? Theme.colError : (savedForgetMa.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.15) : Qt.rgba(cText.r, cText.g, cText.b, 0.05))
+                                    border.color: savedForgetBtnContainer.confirm ? Theme.colError : (savedForgetMa.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.3) : "transparent")
                                     border.width: 1
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                     
@@ -705,7 +705,7 @@ Item {
                                         id: savedForgetText
                                         anchors.centerIn: parent
                                         text: savedForgetBtnContainer.confirm ? "Sure?" : "Forget"
-                                        color: savedForgetBtnContainer.confirm ? "#ffffff" : (savedForgetMa.containsMouse ? "#ff8f8f" : cTextDim)
+                                        color: savedForgetBtnContainer.confirm ? Theme.colBackground : (savedForgetMa.containsMouse ? Theme.colError : cTextDim)
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
                                     }
                                     MouseArea {

@@ -48,7 +48,7 @@ PanelWindow {
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
                     text: parent.text
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
@@ -67,7 +67,7 @@ PanelWindow {
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
                     text: parent.text
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
@@ -86,7 +86,7 @@ PanelWindow {
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
                     text: parent.text
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
@@ -105,7 +105,7 @@ PanelWindow {
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
                     text: parent.text
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter
@@ -124,7 +124,7 @@ PanelWindow {
                 background: Rectangle { color: "transparent" }
                 contentItem: Text {
                     text: parent.text
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: parent.font.pixelSize
                     horizontalAlignment: Text.AlignHCenter

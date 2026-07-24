@@ -486,7 +486,7 @@ Item {
                                     anchors.centerIn: parent
                                     text: getIcon(modelData.name)
                                     font.family: Theme.defaultFontFamily; font.weight: Font.Bold; font.pixelSize: 13
-                                    color: "white"
+                                    color: Theme.colOnPrimary
                                 }
                             }
                             

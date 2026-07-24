@@ -114,7 +114,7 @@ Item {
                     height: 45
                     radius: 12
                     color: Theme.colError
-                    Text { text: "Shut down now"; color: "white"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 14; anchors.centerIn: parent }
+                    Text { text: "Shut down now"; color: Theme.colBackground; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 14; anchors.centerIn: parent }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: {

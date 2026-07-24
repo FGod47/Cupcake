@@ -43,7 +43,7 @@ PanelWindow {
                 
                 Text {
                     text: volumeSlider.value === 0 ? "\uf1c3 " : (volumeSlider.value < 50 ? "\ueb4f " : "\ueb51 ")
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: 16
                     MouseArea {
@@ -70,7 +70,7 @@ PanelWindow {
                 Text {
                     id: volumeLabel
                     text: Math.round(volumeSlider.value) + "%"
-                    color: "white"
+                    color: Theme.colOnSurface
                     Layout.minimumWidth: 40
                     horizontalAlignment: Text.AlignRight
                 }
@@ -82,7 +82,7 @@ PanelWindow {
                 
                 Text {
                     text: backlightSlider.value < 33 ? "\ueb7d " : (backlightSlider.value < 66 ? "\uea3c " : "\ueb7e ")
-                    color: "white"
+                    color: Theme.colOnSurface
                     font.family: "tabler-icons"
                     font.pixelSize: 16
                 }
@@ -118,7 +118,7 @@ PanelWindow {
                 Text {
                     id: backlightLabel
                     text: Math.round(backlightSlider.value) + "%"
-                    color: "white"
+                    color: Theme.colOnSurface
                     Layout.minimumWidth: 40
                     horizontalAlignment: Text.AlignRight
                 }

@@ -180,7 +180,7 @@ Item {
                     height: 34
                     radius: 12
                     color: root.actionColor
-                    Text { text: root.actionTitle.replace("?", ""); color: "white"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
+                    Text { text: root.actionTitle.replace("?", ""); color: Theme.colBackground; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: {

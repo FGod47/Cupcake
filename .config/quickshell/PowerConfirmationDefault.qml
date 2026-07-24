@@ -58,7 +58,7 @@ Item {
                 Rectangle {
                     width: 90; height: 32; radius: 4
                     color: Theme.colError
-                    Text { text: "Shut Down"; color: "white"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.centerIn: parent }
+                    Text { text: "Shut Down"; color: Theme.colBackground; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.centerIn: parent }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: {
