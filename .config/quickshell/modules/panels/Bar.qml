@@ -1013,7 +1013,7 @@ PanelWindow {
                             Rectangle {
                                 id: heroIcon
                                 width: 32; height: 32; radius: width / 2
-                                color: "#ffffff"
+                                color: bg
                                 z: 10
                                 opacity: 0
                                 visible: opacity > 0
@@ -1035,7 +1035,7 @@ PanelWindow {
                                 
                                 Text { 
                                     text: powerPill.getActionIcon(powerPill.pendingAction)
-                                    color: "#5a2432"
+                                    color: Theme.colError
                                     font.family: fontName
                                     font.pixelSize: parent.width * 0.5
                                     anchors.centerIn: parent
@@ -1065,9 +1065,9 @@ PanelWindow {
                                         Rectangle {
                                             id: sleepIconRect
                                             width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
+                                            color: bg
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "sleep") ? 0 : 1
-                                            Text { text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                            Text { text: "\ueaf8"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
@@ -1092,9 +1092,9 @@ PanelWindow {
                                         Rectangle {
                                             id: logoutIconRect
                                             width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
+                                            color: bg
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "logout") ? 0 : 1
-                                            Text { text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                            Text { text: "\ueba8"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
@@ -1119,9 +1119,9 @@ PanelWindow {
                                         Rectangle {
                                             id: rebootIconRect
                                             width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
+                                            color: bg
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "reboot") ? 0 : 1
-                                            Text { text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                            Text { text: "\ueb13"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
                                         Text { text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
@@ -1146,11 +1146,11 @@ PanelWindow {
                                         Rectangle {
                                             id: shutdownIconRect
                                             width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
+                                            color: bg
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "shutdown") ? 0 : 1
-                                            Text { text: "\ueb0d"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                            Text { text: "\ueb0d"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
-                                        Text { text: "Shutdown"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
+                                        Text { text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
                                     MouseArea { 
                                         id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
