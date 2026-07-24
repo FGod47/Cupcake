@@ -33,7 +33,7 @@ PanelWindow {
     color: "transparent"
     
     property bool ccOpen: false
-    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || globalState.overviewOpen) ? null : normalMask
+    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || powerPill.confirmingIsland || globalState.overviewOpen) ? null : normalMask
     
     Region {
         id: normalMask
@@ -67,7 +67,7 @@ PanelWindow {
     MouseArea {
         id: fullScreenClickAway
         anchors.fill: parent
-        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || powerPill.actionsExpanded
+        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || powerPill.actionsExpanded || powerPill.confirmingIsland
         onClicked: {
             globalState.settingsOpen = false;
             bar.ccOpen = false;
@@ -76,6 +76,9 @@ PanelWindow {
             }
             if (powerPill.actionsExpanded) {
                 powerPill.actionsExpanded = false;
+            }
+            if (powerPill.confirmingDefault) {
+                powerPill.confirmingDefault = false;
             }
         }
         z: -1
