@@ -1035,7 +1035,7 @@ PanelWindow {
                                 
                                 Text { 
                                     text: powerPill.getActionIcon(powerPill.pendingAction)
-                                    color: Theme.colError
+                                    color: "#5a2432"
                                     font.family: fontName
                                     font.pixelSize: parent.width * 0.5
                                     anchors.centerIn: parent
