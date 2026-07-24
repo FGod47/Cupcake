@@ -28,7 +28,7 @@ Slider {
             anchors.margins: 10
             height: 4
             radius: 2
-            color: Qt.rgba(255/255, 255/255, 255/255, 0.15)
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
         }
         
         // Filled track
