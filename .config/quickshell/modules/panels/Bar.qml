@@ -1063,6 +1063,7 @@ PanelWindow {
                     font.weight: Theme.defaultFontWeight
                     font.pixelSize: Theme.defaultFontSize
                     anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                     visible: !powerPill.actionsExpanded
                 }
             }
