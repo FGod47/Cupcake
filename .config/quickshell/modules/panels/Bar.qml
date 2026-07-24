@@ -866,6 +866,24 @@ PanelWindow {
                 property bool actionsExpanded: false
                 property bool confirmingDefault: false
                 property string currentStyle: "Island"
+                property string pendingAction: ""
+                
+                function executeAction(action) {
+                    if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                    else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
+                    else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
+                    else if (action === "sleep") Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+                }
+                
+                function triggerAction(action) {
+                    if (powerPill.currentStyle === "Default") {
+                        powerPill.pendingAction = action;
+                        powerPill.confirmingDefault = true;
+                    } else {
+                        powerPill.actionsExpanded = false;
+                        Quickshell.execDetached(["bash", "-c", "echo '" + action + "' > ~/.config/cupcake/.power_action && quickshell -p /home/one/.config/quickshell/PowerConfirmation.qml"]);
+                    }
+                }
                 
                 property int defaultCountdown: 5
                 property real defaultCountdownVisual: 5
@@ -881,7 +899,7 @@ PanelWindow {
                         powerPill.defaultCountdownVisual = powerPill.defaultCountdown;
                         if (powerPill.defaultCountdown <= 0) {
                             running = false;
-                            Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                            powerPill.executeAction(powerPill.pendingAction);
                             powerPill.confirmingDefault = false;
                         }
                     }
@@ -969,7 +987,7 @@ PanelWindow {
                                         Text { id: sleepIconText; text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: sleepLabelText; text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl suspend"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("sleep"); } }
                                 }
 
                                 // Logout
@@ -981,7 +999,7 @@ PanelWindow {
                                         Text { id: logoutIconText; text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: logoutLabelText; text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("logout"); } }
                                 }
 
                                 // Reboot
@@ -993,7 +1011,7 @@ PanelWindow {
                                         Text { id: rebootIconText; text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: rebootLabelText; text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "zenity --question --title 'Reboot' --text 'Are you sure you want to reboot?' --width=300 --height=150 && systemctl reboot"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("reboot"); } }
                                 }
 
                                 // Shutdown
@@ -1005,18 +1023,7 @@ PanelWindow {
                                         Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { 
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
-                                        onClicked: { 
-                                            mouse.accepted = true; 
-                                            if (powerPill.currentStyle === "Default") {
-                                                powerPill.confirmingDefault = true;
-                                            } else {
-                                                powerPill.actionsExpanded = false; 
-                                                Quickshell.execDetached(["quickshell", "-p", "/home/one/.config/quickshell/PowerConfirmation.qml"]); 
-                                            }
-                                        } 
-                                    }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("shutdown"); } }
                                 }
                             }
                             
@@ -1077,7 +1084,7 @@ PanelWindow {
                                         Text { id: sureIconText; text: "\uea5e"; color: bg; font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: sureText; text: "Sure"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
                                 }
                                 
                                 Item {
