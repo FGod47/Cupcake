@@ -859,24 +859,36 @@ PanelWindow {
                 implicitWidth: powerRow.implicitWidth + 32
                 color: powerHover.containsMouse ? Theme.colError : Theme.colPrimary
                 Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-                Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
                 Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 clip: true
                 
                 property bool actionsExpanded: false
+                property bool confirmingDefault: false
+                property string currentStyle: "Island"
+                
+                Process {
+                    id: powerStyleProcess
+                    command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
+                    running: true
+                    stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
+                }
                 
                 MouseArea {
                     id: powerHover
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    onEntered: { powerStyleProcess.running = true; }
                     onClicked: {
-                        powerPill.actionsExpanded = !powerPill.actionsExpanded;
+                        if (!powerPill.confirmingDefault) {
+                            powerPill.actionsExpanded = !powerPill.actionsExpanded;
+                        }
                     }
                     onContainsMouseChanged: {
                         if (!containsMouse && powerPill.actionsExpanded) {
                             powerPill.actionsExpanded = false;
+                            powerPill.confirmingDefault = false;
                         }
                     }
                 }
@@ -915,7 +927,7 @@ PanelWindow {
                             // State 2: Clicked Actions
                             Row {
                                 spacing: 14
-                                visible: powerPill.actionsExpanded
+                                visible: powerPill.actionsExpanded && !powerPill.confirmingDefault
                                 anchors.verticalCenter: parent.verticalCenter
 
                                 // Sleep
@@ -963,7 +975,37 @@ PanelWindow {
                                         Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                         Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                     }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.actionsExpanded = false; Quickshell.execDetached(["quickshell", "-p", "/home/one/.config/quickshell/PowerConfirmation.qml"]); } }
+                                    MouseArea { 
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor; 
+                                        onClicked: { 
+                                            mouse.accepted = true; 
+                                            if (powerPill.currentStyle === "Default") {
+                                                powerPill.confirmingDefault = true;
+                                            } else {
+                                                powerPill.actionsExpanded = false; 
+                                                Quickshell.execDetached(["quickshell", "-p", "/home/one/.config/quickshell/PowerConfirmation.qml"]); 
+                                            }
+                                        } 
+                                    }
+                                }
+                            }
+                            
+                            // State 3: Default Style Confirmation
+                            Row {
+                                spacing: 14
+                                visible: powerPill.actionsExpanded && powerPill.confirmingDefault
+                                anchors.verticalCenter: parent.verticalCenter
+                                
+                                Item {
+                                    width: sureText.implicitWidth; height: 34
+                                    Text { id: sureText; text: "Sure"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
+                                }
+                                
+                                Item {
+                                    width: nopeText.implicitWidth; height: 34
+                                    Text { id: nopeText; text: "Nope"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                                 }
                             }
                         }
