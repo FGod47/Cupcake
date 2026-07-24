@@ -20,7 +20,7 @@ PanelWindow {
         right: true
     }
     WlrLayershell.namespace: "quickshell"
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    WlrLayershell.keyboardFocus: (globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || globalState.powerMenuOpen || globalState.overviewOpen) ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
     exclusiveZone: 46
 
     // Track active player status for Dynamic Island animations
@@ -872,6 +872,74 @@ PanelWindow {
             property bool confirmingDefault: false
             property string pendingAction: ""
             
+            property int selectedIndex: 0
+            property int confirmIndex: 1
+            property bool keyboardNavigating: false
+            
+            onActionsExpandedChanged: {
+                if (actionsExpanded) {
+                    selectedIndex = 0;
+                    confirmIndex = 1;
+                    keyboardNavigating = true;
+                    powerPill.forceActiveFocus();
+                } else {
+                    keyboardNavigating = false;
+                }
+            }
+            
+            focus: globalState.powerMenuOpen
+            Keys.onUpPressed: function(event) {
+                if (powerPill.confirmingDefault) return;
+                powerPill.keyboardNavigating = true;
+                powerPill.selectedIndex = (powerPill.selectedIndex - 1 + 4) % 4;
+                event.accepted = true;
+            }
+            Keys.onDownPressed: function(event) {
+                if (powerPill.confirmingDefault) return;
+                powerPill.keyboardNavigating = true;
+                powerPill.selectedIndex = (powerPill.selectedIndex + 1) % 4;
+                event.accepted = true;
+            }
+            Keys.onLeftPressed: function(event) {
+                if (!powerPill.confirmingDefault) return;
+                powerPill.keyboardNavigating = true;
+                powerPill.confirmIndex = (powerPill.confirmIndex - 1 + 2) % 2;
+                event.accepted = true;
+            }
+            Keys.onRightPressed: function(event) {
+                if (!powerPill.confirmingDefault) return;
+                powerPill.keyboardNavigating = true;
+                powerPill.confirmIndex = (powerPill.confirmIndex + 1) % 2;
+                event.accepted = true;
+            }
+            Keys.onEscapePressed: function(event) {
+                powerPill.keyboardNavigating = true;
+                if (powerPill.confirmingDefault) {
+                    powerPill.confirmingDefault = false;
+                } else {
+                    globalState.powerMenuOpen = false;
+                }
+                event.accepted = true;
+            }
+            Keys.onReturnPressed: function(event) {
+                powerPill.keyboardNavigating = true;
+                if (!powerPill.confirmingDefault) {
+                    if (powerPill.selectedIndex === 0) { powerPill.pendingAction = "sleep"; powerPill.launchHeroFrom(sleepIconRect); }
+                    else if (powerPill.selectedIndex === 1) { powerPill.pendingAction = "logout"; powerPill.launchHeroFrom(logoutIconRect); }
+                    else if (powerPill.selectedIndex === 2) { powerPill.pendingAction = "reboot"; powerPill.launchHeroFrom(rebootIconRect); }
+                    else if (powerPill.selectedIndex === 3) { powerPill.pendingAction = "shutdown"; powerPill.launchHeroFrom(shutdownIconRect); }
+                    powerPill.confirmIndex = 1;
+                    powerPill.confirmingDefault = true;
+                } else {
+                    if (powerPill.confirmIndex === 1) {
+                        powerPill.executeAction(powerPill.pendingAction);
+                    } else {
+                        powerPill.confirmingDefault = false;
+                    }
+                }
+                event.accepted = true;
+            }
+            
             property real targetHeight: actionsExpanded ? (state2Column.implicitHeight + 24) : 34
             property real targetWidth: actionsExpanded ? (state2Column.implicitWidth + 24) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34)
             
@@ -1058,7 +1126,9 @@ PanelWindow {
                                 // Sleep
                                 Rectangle {
                                     width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, sleepArea.containsMouse ? 0.62 : 0.38)
+                                    color: Qt.rgba(255, 255, 255, sleepArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 0) ? 0.62 : 0.38)
+                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 0) ? 2 : 0
+                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
                                     Row {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
@@ -1073,6 +1143,7 @@ PanelWindow {
                                     }
                                     MouseArea { 
                                         id: sleepArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
                                         onClicked: { 
                                             mouse.accepted = true
                                             powerPill.pendingAction = "sleep"
@@ -1085,7 +1156,9 @@ PanelWindow {
                                 // Logout
                                 Rectangle {
                                     width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, logoutArea.containsMouse ? 0.62 : 0.38)
+                                    color: Qt.rgba(255, 255, 255, logoutArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 1) ? 0.62 : 0.38)
+                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 1) ? 2 : 0
+                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
                                     Row {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
@@ -1100,6 +1173,7 @@ PanelWindow {
                                     }
                                     MouseArea { 
                                         id: logoutArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
                                         onClicked: { 
                                             mouse.accepted = true
                                             powerPill.pendingAction = "logout"
@@ -1112,7 +1186,9 @@ PanelWindow {
                                 // Reboot
                                 Rectangle {
                                     width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, rebootArea.containsMouse ? 0.62 : 0.38)
+                                    color: Qt.rgba(255, 255, 255, rebootArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 2) ? 0.62 : 0.38)
+                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 2) ? 2 : 0
+                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
                                     Row {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
@@ -1127,6 +1203,7 @@ PanelWindow {
                                     }
                                     MouseArea { 
                                         id: rebootArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
                                         onClicked: { 
                                             mouse.accepted = true
                                             powerPill.pendingAction = "reboot"
@@ -1139,7 +1216,9 @@ PanelWindow {
                                 // Shutdown
                                 Rectangle {
                                     width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, shutdownArea.containsMouse ? 0.62 : 0.38)
+                                    color: Qt.rgba(255, 255, 255, shutdownArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 3) ? 0.62 : 0.38)
+                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 3) ? 2 : 0
+                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
                                     Row {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
@@ -1154,6 +1233,7 @@ PanelWindow {
                                     }
                                     MouseArea { 
                                         id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
                                         onClicked: { 
                                             mouse.accepted = true
                                             powerPill.pendingAction = "shutdown"
@@ -1212,16 +1292,20 @@ PanelWindow {
                                     
                                     Rectangle {
                                         width: (parent.width - 6) / 2; height: 32; radius: 16
-                                        color: Qt.rgba(255, 255, 255, nopeArea.containsMouse ? 0.62 : 0.4)
+                                        color: Qt.rgba(255, 255, 255, nopeArea.containsMouse || (powerPill.focus && powerPill.confirmIndex === 0) ? 0.62 : 0.4)
+                                        border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.confirmIndex === 0) ? 2 : 0
+                                        border.color: Theme.isDark ? "#5a2432" : "#ffffff"
                                         Text { text: "Cancel"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
-                                        MouseArea { id: nopeArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
+                                        MouseArea { id: nopeArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: { powerPill.keyboardNavigating = false; } onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                                     }
                                     
                                     Rectangle {
                                         width: (parent.width - 6) / 2; height: 32; radius: 16
-                                        color: sureArea.containsMouse ? "#6c2b3c" : "#5a2432"
+                                        color: sureArea.containsMouse || (powerPill.focus && powerPill.confirmIndex === 1) ? "#6c2b3c" : "#5a2432"
+                                        border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.confirmIndex === 1) ? 2 : 0
+                                        border.color: "#fbdfe4"
                                         Text { text: "Confirm"; color: "#fbdfe4"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
-                                        MouseArea { id: sureArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
+                                        MouseArea { id: sureArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: { powerPill.keyboardNavigating = false; } onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
                                     }
                                 }
                             }
