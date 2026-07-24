@@ -972,11 +972,23 @@ PanelWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             
-                            // State 2: Clicked Actions
-                            Row {
-                                spacing: 14
-                                visible: powerPill.actionsExpanded && !powerPill.confirmingDefault
+                            // State 2 & 3 Container
+                            Item {
+                                id: statesContainer
+                                width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
+                                height: 34
                                 anchors.verticalCenter: parent.verticalCenter
+                                visible: powerPill.actionsExpanded
+                                clip: true
+                                
+                                // State 2: Clicked Actions
+                                Row {
+                                    id: state2Row
+                                    spacing: 14
+                                    anchors.centerIn: parent
+                                    opacity: !powerPill.confirmingDefault ? 1 : 0
+                                    visible: opacity > 0
+                                    Behavior on opacity { NumberAnimation { duration: 200 } }
 
                                 // Sleep
                                 Item {
@@ -1027,11 +1039,14 @@ PanelWindow {
                                 }
                             }
                             
-                            // State 3: Default Style Confirmation
-                            Row {
-                                spacing: 14
-                                visible: powerPill.actionsExpanded && powerPill.confirmingDefault
-                                anchors.verticalCenter: parent.verticalCenter
+                                // State 3: Default Style Confirmation
+                                Row {
+                                    id: state3Row
+                                    spacing: 14
+                                    anchors.centerIn: parent
+                                    opacity: powerPill.confirmingDefault ? 1 : 0
+                                    visible: opacity > 0
+                                    Behavior on opacity { NumberAnimation { duration: 200 } }
                                 
                                 Item {
                                     width: 34; height: 34
@@ -1097,6 +1112,8 @@ PanelWindow {
                                     }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                                 }
+                            }
+                            // End of statesContainer
                             }
                         }
                     }
