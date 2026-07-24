@@ -918,7 +918,12 @@ PanelWindow {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onEntered: { powerStyleProcess.running = true; }
+                onEntered: {
+                    powerStyleProcess.running = true;
+                    if (!powerPill.confirmingDefault) {
+                        powerPill.actionsExpanded = true;
+                    }
+                }
                 onClicked: {
                     if (!powerPill.confirmingDefault) {
                         powerPill.actionsExpanded = !powerPill.actionsExpanded;
