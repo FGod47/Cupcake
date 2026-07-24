@@ -907,6 +907,33 @@ PanelWindow {
                 }
             }
             
+            // Stored click-time coordinates for the flying icon animation
+            property real heroStartX: 0
+            property real heroStartY: 0
+            
+            function launchHeroFrom(iconRect) {
+                // Map the clicked icon's top-left into statesContainer's coordinate space
+                var pos = iconRect.mapToItem(statesContainer, 0, 0);
+                heroIcon.x = pos.x;
+                heroIcon.y = pos.y;
+                heroIcon.width = 32;
+                heroIcon.height = 32;
+                heroIcon.opacity = 1;
+                // Now animate to center
+                heroXAnim.from = pos.x;
+                heroXAnim.to = statesContainer.width / 2 - 24;
+                heroYAnim.from = pos.y;
+                heroYAnim.to = statesContainer.height / 2 - 24;
+                heroWAnim.from = 32;
+                heroWAnim.to = 48;
+                heroHAnim.from = 32;
+                heroHAnim.to = 48;
+                heroXAnim.restart();
+                heroYAnim.restart();
+                heroWAnim.restart();
+                heroHAnim.restart();
+            }
+            
             function getActionLabel(action) {
                 if (action === "sleep") return "Sleep now?";
                 if (action === "logout") return "Logout now?";
@@ -988,46 +1015,35 @@ PanelWindow {
                             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             
-                            // Floating Hero Icon Animation
+                            // Floating Hero Icon — driven imperatively from launchHeroFrom()
                             Rectangle {
                                 id: heroIcon
-                                width: powerPill.confirmingDefault ? 48 : 32
-                                height: powerPill.confirmingDefault ? 48 : 32
-                                radius: width / 2
+                                width: 32; height: 32; radius: width / 2
                                 color: "#ffffff"
                                 z: 10
-                                opacity: powerPill.confirmingDefault ? 1 : 0
+                                opacity: 0
                                 visible: opacity > 0
                                 
-                                property real targetX: 74
-                                property real targetY: 30.5
+                                NumberAnimation on x { id: heroXAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
+                                NumberAnimation on y { id: heroYAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
+                                NumberAnimation on width  { id: heroWAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false; onFinished: heroIcon.radius = heroIcon.width / 2 }
+                                NumberAnimation on height { id: heroHAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
                                 
-                                property real startX: 8
-                                property real startY: {
-                                    if (powerPill.pendingAction === "sleep") return 5;
-                                    if (powerPill.pendingAction === "logout") return 53;
-                                    if (powerPill.pendingAction === "reboot") return 101;
-                                    if (powerPill.pendingAction === "shutdown") return 149;
-                                    return 5;
+                                Connections {
+                                    target: powerPill
+                                    function onConfirmingDefaultChanged() {
+                                        if (!powerPill.confirmingDefault) {
+                                            heroIcon.opacity = 0;
+                                        }
+                                    }
                                 }
-                                
-                                x: powerPill.confirmingDefault ? targetX : startX
-                                y: powerPill.confirmingDefault ? targetY : startY
-                                
-                                Behavior on x { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on y { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on width { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on height { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on opacity { NumberAnimation { duration: powerPill.confirmingDefault ? 0 : 200 } }
                                 
                                 Text { 
                                     text: powerPill.getActionIcon(powerPill.pendingAction)
-                                    color: powerPill.confirmingDefault ? "#5a2432" : (powerPill.pendingAction === "shutdown" ? "#5a2432" : bg)
+                                    color: "#5a2432"
                                     font.family: fontName
-                                    font.pixelSize: powerPill.confirmingDefault ? 24 : 15
+                                    font.pixelSize: parent.width * 0.5
                                     anchors.centerIn: parent
-                                    Behavior on color { ColorAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack } }
-                                    Behavior on font.pixelSize { NumberAnimation { duration: powerPill.confirmingDefault ? 350 : 0; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 }
                             }
                             
@@ -1052,6 +1068,7 @@ PanelWindow {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
                                         Rectangle {
+                                            id: sleepIconRect
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "sleep") ? 0 : 1
@@ -1059,7 +1076,15 @@ PanelWindow {
                                         }
                                         Text { text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
-                                    MouseArea { id: sleepArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("sleep"); } }
+                                    MouseArea { 
+                                        id: sleepArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { 
+                                            mouse.accepted = true
+                                            powerPill.pendingAction = "sleep"
+                                            powerPill.launchHeroFrom(sleepIconRect)
+                                            powerPill.confirmingDefault = true
+                                        }
+                                    }
                                 }
 
                                 // Logout
@@ -1070,6 +1095,7 @@ PanelWindow {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
                                         Rectangle {
+                                            id: logoutIconRect
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "logout") ? 0 : 1
@@ -1077,7 +1103,15 @@ PanelWindow {
                                         }
                                         Text { text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
-                                    MouseArea { id: logoutArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("logout"); } }
+                                    MouseArea { 
+                                        id: logoutArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { 
+                                            mouse.accepted = true
+                                            powerPill.pendingAction = "logout"
+                                            powerPill.launchHeroFrom(logoutIconRect)
+                                            powerPill.confirmingDefault = true
+                                        }
+                                    }
                                 }
 
                                 // Reboot
@@ -1088,6 +1122,7 @@ PanelWindow {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
                                         Rectangle {
+                                            id: rebootIconRect
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "reboot") ? 0 : 1
@@ -1095,7 +1130,15 @@ PanelWindow {
                                         }
                                         Text { text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
-                                    MouseArea { id: rebootArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("reboot"); } }
+                                    MouseArea { 
+                                        id: rebootArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { 
+                                            mouse.accepted = true
+                                            powerPill.pendingAction = "reboot"
+                                            powerPill.launchHeroFrom(rebootIconRect)
+                                            powerPill.confirmingDefault = true
+                                        }
+                                    }
                                 }
 
                                 // Shutdown
@@ -1106,6 +1149,7 @@ PanelWindow {
                                         anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                         spacing: 10
                                         Rectangle {
+                                            id: shutdownIconRect
                                             width: 32; height: 32; radius: 16
                                             color: "#ffffff"
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "shutdown") ? 0 : 1
@@ -1113,7 +1157,15 @@ PanelWindow {
                                         }
                                         Text { text: "Shutdown"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
-                                    MouseArea { id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("shutdown"); } }
+                                    MouseArea { 
+                                        id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { 
+                                            mouse.accepted = true
+                                            powerPill.pendingAction = "shutdown"
+                                            powerPill.launchHeroFrom(shutdownIconRect)
+                                            powerPill.confirmingDefault = true
+                                        }
+                                    }
                                 }
                             }
                             
