@@ -997,14 +997,24 @@ PanelWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                                 
                                 Item {
-                                    width: sureText.implicitWidth; height: 34
-                                    Text { id: sureText; text: "Sure"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    width: sureIconText.implicitWidth + sureText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: sureIconText; text: "\uea5e"; color: Theme.colError; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: sureText; text: "Sure"; color: Theme.colError; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]); } }
                                 }
                                 
                                 Item {
-                                    width: nopeText.implicitWidth; height: 34
-                                    Text { id: nopeText; text: "Nope"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    width: nopeIconText.implicitWidth + nopeText.implicitWidth + 4; height: 34
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Text { id: nopeIconText; text: "\ueb55"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                        Text { id: nopeText; text: "Nope"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    }
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                                 }
                             }
