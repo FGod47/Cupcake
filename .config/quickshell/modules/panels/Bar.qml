@@ -988,6 +988,39 @@ PanelWindow {
                             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             
+                            // Floating Hero Icon Animation
+                            Rectangle {
+                                id: heroIcon
+                                width: 48; height: 48; radius: 24
+                                color: "#ffffff"
+                                z: 10
+                                opacity: powerPill.confirmingDefault ? 1 : 0
+                                visible: opacity > 0
+                                
+                                property real targetX: 74
+                                property real targetY: 30.5
+                                
+                                property real startX: 55
+                                property real startY: {
+                                    if (powerPill.pendingAction === "sleep") return -3;
+                                    if (powerPill.pendingAction === "hibernate") return 45;
+                                    if (powerPill.pendingAction === "reboot") return 93;
+                                    if (powerPill.pendingAction === "shutdown") return 141;
+                                    return 0;
+                                }
+                                
+                                x: powerPill.confirmingDefault ? targetX : startX
+                                y: powerPill.confirmingDefault ? targetY : startY
+                                scale: powerPill.confirmingDefault ? 1.0 : 0.5
+                                
+                                Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                                
+                                Text { text: powerPill.getActionIcon(powerPill.pendingAction); color: "#5a2432"; font.family: fontName; font.pixelSize: 24; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                            }
+                            
                             // State 2: Clicked Actions
                             Column {
                                 id: state2Column
@@ -1096,12 +1129,7 @@ PanelWindow {
                                         
                                         Item {
                                             width: parent.width; height: 48
-                                            Rectangle {
-                                                anchors.centerIn: parent
-                                                width: 48; height: 48; radius: 24
-                                                color: "#ffffff"
-                                                Text { text: powerPill.getActionIcon(powerPill.pendingAction); color: "#5a2432"; font.family: fontName; font.pixelSize: 24; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                                            }
+                                            // Icon is now handled by the flying heroIcon above
                                         }
                                         
                                         Column {
