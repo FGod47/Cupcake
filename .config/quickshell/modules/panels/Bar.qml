@@ -955,7 +955,7 @@ PanelWindow {
             Item {
                 id: innerContent
                 anchors.fill: parent
-                opacity: powerPill.confirmingIsland ? 0.0 : 1.0
+                opacity: (powerPill.actionsExpanded && !powerPill.confirmingIsland) ? 1.0 : 0.0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 300 } }
                 
@@ -981,6 +981,8 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             visible: powerPill.actionsExpanded
                             clip: true
+                            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             
                             // State 2: Clicked Actions
                             Column {
@@ -1064,11 +1066,12 @@ PanelWindow {
                             }
                             
                             // State 3: Default Style Confirmation
-                            Column {
+                            Item {
                                 id: state3Column
-                                spacing: 12
                                 width: 196
-                                anchors.centerIn: parent
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.horizontalCenterOffset: powerPill.confirmingDefault ? 0 : 12
                                 opacity: powerPill.confirmingDefault ? 1 : 0
                                 visible: opacity > 0
@@ -1076,23 +1079,39 @@ PanelWindow {
                                 Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
                                 
                                 Item {
-                                    width: parent.width; height: 48
-                                    Rectangle {
+                                    anchors.top: parent.top
+                                    anchors.bottom: buttonsRow.top
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    
+                                    Column {
                                         anchors.centerIn: parent
-                                        width: 48; height: 48; radius: 24
-                                        color: "#ffffff"
-                                        Text { text: powerPill.getActionIcon(powerPill.pendingAction); color: "#5a2432"; font.family: fontName; font.pixelSize: 24; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                        width: parent.width
+                                        spacing: 12
+                                        
+                                        Item {
+                                            width: parent.width; height: 48
+                                            Rectangle {
+                                                anchors.centerIn: parent
+                                                width: 48; height: 48; radius: 24
+                                                color: "#ffffff"
+                                                Text { text: powerPill.getActionIcon(powerPill.pendingAction); color: "#5a2432"; font.family: fontName; font.pixelSize: 24; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                            }
+                                        }
+                                        
+                                        Column {
+                                            width: parent.width
+                                            spacing: 0
+                                            Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
+                                            Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: bg; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
+                                        }
                                     }
                                 }
                                 
-                                Column {
-                                    width: parent.width
-                                    spacing: 0
-                                    Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
-                                    Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: bg; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
-                                }
-                                
                                 Row {
+                                    id: buttonsRow
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 8
                                     width: parent.width
                                     spacing: 6
                                     
@@ -1115,26 +1134,17 @@ PanelWindow {
                         }
                     }
                 }
-                
-                // Main Icon and Hover Text
-                Row {
-                    anchors.right: parent.right
-                    anchors.rightMargin: (34 - powerIconText.implicitWidth) / 2
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
-                    visible: !powerPill.actionsExpanded
-                    layoutDirection: Qt.RightToLeft
-                    
-                    Text {
-                        id: powerIconText
-                        text: "\ueb0d"
-                        color: bg
-                        font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: Theme.defaultFontSize
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    
+            }
+            
+            // Main Icon and Hover Text
+            Row {
+                anchors.right: parent.right
+                anchors.rightMargin: (34 - powerIconText.implicitWidth) / 2
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
+                opacity: (!powerPill.actionsExpanded && !powerPill.confirmingDefault) ? 1.0 : 0.0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 300 } }
                     Text {
                         id: powerHoverText
                         text: "Power"
@@ -1147,9 +1157,17 @@ PanelWindow {
                         Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         anchors.verticalCenter: parent.verticalCenter
                     }
+                    
+                    Text {
+                        id: powerIconText
+                        text: "\ueb0d"
+                        color: bg
+                        font.family: fontName
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
-            }
-            
             // Island Content
             Item {
                 id: islandContent
