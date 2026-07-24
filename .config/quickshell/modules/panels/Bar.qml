@@ -74,8 +74,8 @@ PanelWindow {
             if (archPill.isExpanded) {
                 archPill.isExpanded = false;
             }
-            if (powerPill.actionsExpanded) {
-                powerPill.actionsExpanded = false;
+            if (globalState.powerMenuOpen) {
+                globalState.powerMenuOpen = false;
             }
             if (powerPill.confirmingDefault) {
                 powerPill.confirmingDefault = false;
@@ -868,7 +868,7 @@ PanelWindow {
             anchors.top: parent.top
             radius: 18
             
-            property bool actionsExpanded: false
+            property bool actionsExpanded: globalState.powerMenuOpen
             property bool confirmingDefault: false
             property string pendingAction: ""
             
@@ -887,7 +887,7 @@ PanelWindow {
             
             function executeAction(action) {
                 powerPill.confirmingDefault = false;
-                powerPill.actionsExpanded = false;
+                globalState.powerMenuOpen = false;
                 if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
                 else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
                 else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
@@ -967,7 +967,7 @@ PanelWindow {
                 hoverEnabled: true
                 onClicked: {
                     if (!powerPill.confirmingDefault) {
-                        powerPill.actionsExpanded = !powerPill.actionsExpanded;
+                        globalState.powerMenuOpen = !globalState.powerMenuOpen;
                     }
                 }
             }

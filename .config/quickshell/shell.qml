@@ -86,6 +86,7 @@ ShellRoot {
         property var dockRadius: 20
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
+        property bool powerMenuOpen: false
         property var notifications: notifServer.trackedNotifications
         property var popups: []
         property var activePopup: null
@@ -341,6 +342,13 @@ ShellRoot {
         name: "aipanel_toggle"
         onPressed: {
             globalState.aiPanelVisible = !globalState.aiPanelVisible;
+        }
+    }
+
+    GlobalShortcut {
+        name: "powermenu_toggle"
+        onPressed: {
+            globalState.powerMenuOpen = !globalState.powerMenuOpen;
         }
     }
 
