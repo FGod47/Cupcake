@@ -239,22 +239,26 @@ PanelWindow {
 
             focus: true
             
-            Keys.onUpPressed: function(event) {
-                if (event.isAutoRepeat && pv.moving) return;
-                decrementCurrentIndex();
+            property real lastKeyTime: 0
+            
+            function handleKey(event, isNext) {
+                if (event.isAutoRepeat) {
+                    let now = Date.now();
+                    if (now - pv.lastKeyTime < 150) {
+                        event.accepted = true;
+                        return;
+                    }
+                    pv.lastKeyTime = now;
+                }
+                if (isNext) incrementCurrentIndex();
+                else decrementCurrentIndex();
+                event.accepted = true;
             }
-            Keys.onDownPressed: function(event) {
-                if (event.isAutoRepeat && pv.moving) return;
-                incrementCurrentIndex();
-            }
-            Keys.onLeftPressed: function(event) {
-                if (event.isAutoRepeat && pv.moving) return;
-                decrementCurrentIndex();
-            }
-            Keys.onRightPressed: function(event) {
-                if (event.isAutoRepeat && pv.moving) return;
-                incrementCurrentIndex();
-            }
+
+            Keys.onUpPressed: function(event) { handleKey(event, false); }
+            Keys.onDownPressed: function(event) { handleKey(event, true); }
+            Keys.onLeftPressed: function(event) { handleKey(event, false); }
+            Keys.onRightPressed: function(event) { handleKey(event, true); }
             Keys.onEscapePressed: root.dismiss()
             Keys.onReturnPressed: {
                 if (pv.currentItem) {
