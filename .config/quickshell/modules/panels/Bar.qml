@@ -885,82 +885,11 @@ PanelWindow {
                     }
                 }
                 
-                property int defaultCountdown: 5
-                property real defaultCountdownVisual: 5
-                Behavior on defaultCountdownVisual { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
-                
-                Timer {
-                    id: defaultPowerTimer
-                    interval: 1000
-                    running: powerPill.confirmingDefault
-                    repeat: true
-                    onTriggered: {
-                        powerPill.defaultCountdown--;
-                        powerPill.defaultCountdownVisual = powerPill.defaultCountdown;
-                        if (powerPill.defaultCountdown <= 0) {
-                            running = false;
-                            powerPill.executeAction(powerPill.pendingAction);
-                            powerPill.confirmingDefault = false;
-                        }
-                    }
-                }
-                
-                onConfirmingDefaultChanged: {
-                    if (confirmingDefault) {
-                        powerPill.defaultCountdown = 5;
-                        powerPill.defaultCountdownVisual = 5;
-                        defaultPowerTimer.restart();
-                    } else {
-                        defaultPowerTimer.stop();
-                    }
-                }
-                
                 Process {
                     id: powerStyleProcess
                     command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
                     running: true
                     stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
-                }
-                
-                Canvas {
-                    id: pillCountdownRing
-                    anchors.fill: parent
-                    visible: powerPill.confirmingDefault
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        ctx.clearRect(0, 0, width, height);
-                        
-                        var r = height / 2;
-                        var w = width;
-                        var h = height;
-                        
-                        var straightLength = w - h;
-                        var circleLength = Math.PI * h;
-                        var totalLength = 2 * straightLength + circleLength;
-                        
-                        var progress = (5 - powerPill.defaultCountdownVisual) / 5.0;
-                        var drawLength = totalLength * progress;
-                        
-                        ctx.beginPath();
-                        ctx.moveTo(w / 2, 0);
-                        ctx.lineTo(w - r, 0);
-                        ctx.arc(w - r, r, r, -Math.PI/2, Math.PI/2, false);
-                        ctx.lineTo(r, h);
-                        ctx.arc(r, r, r, Math.PI/2, -Math.PI/2, false);
-                        ctx.lineTo(w / 2, 0);
-                        
-                        ctx.strokeStyle = bg;
-                        ctx.lineWidth = 3;
-                        ctx.setLineDash([drawLength, totalLength]);
-                        ctx.stroke();
-                    }
-                }
-                
-                Timer {
-                    interval: 16
-                    running: powerPill.confirmingDefault
-                    repeat: true
-                    onTriggered: pillCountdownRing.requestPaint()
                 }
                 
                 MouseArea {
