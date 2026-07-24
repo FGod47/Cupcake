@@ -1069,7 +1069,7 @@ PanelWindow {
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "sleep") ? 0 : 1
                                             Text { text: "\ueaf8"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
-                                        Text { text: "Sleep"; color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
+                                        Text { text: "Sleep"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
                                     MouseArea { 
                                         id: sleepArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -1096,7 +1096,7 @@ PanelWindow {
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "logout") ? 0 : 1
                                             Text { text: "\ueba8"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
-                                        Text { text: "Logout"; color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
+                                        Text { text: "Logout"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
                                     MouseArea { 
                                         id: logoutArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -1123,7 +1123,7 @@ PanelWindow {
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "reboot") ? 0 : 1
                                             Text { text: "\ueb13"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
-                                        Text { text: "Reboot"; color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
+                                        Text { text: "Reboot"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
                                     MouseArea { 
                                         id: rebootArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -1150,7 +1150,7 @@ PanelWindow {
                                             opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "shutdown") ? 0 : 1
                                             Text { text: "\ueb0d"; color: Theme.colError; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
                                         }
-                                        Text { text: "Shutdown"; color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
+                                        Text { text: "Shutdown"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
                                     }
                                     MouseArea { 
                                         id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -1197,8 +1197,8 @@ PanelWindow {
                                         Column {
                                             width: parent.width
                                             spacing: 2
-                                            Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
-                                            Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: "#ffffff"; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
+                                            Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
+                                            Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: "#5a2432"; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
                                         }
                                     }
                                 }
@@ -1213,7 +1213,7 @@ PanelWindow {
                                     Rectangle {
                                         width: (parent.width - 6) / 2; height: 32; radius: 16
                                         color: Qt.rgba(255, 255, 255, nopeArea.containsMouse ? 0.62 : 0.4)
-                                        Text { text: "Cancel"; color: "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
+                                        Text { text: "Cancel"; color: "#5a2432"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
                                         MouseArea { id: nopeArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                                     }
                                     
@@ -1243,7 +1243,7 @@ PanelWindow {
                     Text {
                         id: powerHoverText
                         text: "Power"
-                        color: "#ffffff"
+                        color: Theme.colOnPrimary
                         font.family: Theme.defaultFontFamily
                         font.weight: 600
                         font.pixelSize: Theme.defaultFontSize
