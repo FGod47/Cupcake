@@ -20,8 +20,8 @@ Switch {
             anchors.fill: parent
             radius: height / 2
             
-            color: customSwitch.checked ? Theme.colPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.15)
-            border.color: Qt.rgba(255/255, 255/255, 255/255, 0.05)
+            color: customSwitch.checked ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+            border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
             border.width: 1 * customSwitch.scale
             Behavior on color { ColorAnimation { duration: 250 } }
         }
@@ -48,7 +48,7 @@ Switch {
                     x: customSwitch.checked ? ((isExpanded ? 7 : 13) * customSwitch.scale) : (13 * customSwitch.scale)
                     width: (isExpanded ? 24 : 18) * customSwitch.scale
                     height: 18 * customSwitch.scale; radius: height / 2
-                    color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(255/255, 255/255, 255/255, 0.9)
+                    color: customSwitch.checked ? Theme.colOnPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.9)
                     Behavior on color { ColorAnimation { duration: 250 } }
                     Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                     Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
@@ -59,7 +59,7 @@ Switch {
             DropShadow {
                 anchors.fill: parent
                 source: thumbSrc
-                color: Qt.rgba(0, 0, 0, 0.35)
+                color: Qt.rgba(0, 0, 0, 0.15)
                 horizontalOffset: 0
                 verticalOffset: 2 * customSwitch.scale
                 radius: 6 * customSwitch.scale
