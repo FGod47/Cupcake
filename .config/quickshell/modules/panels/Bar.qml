@@ -961,7 +961,10 @@ PanelWindow {
                 
                 Row {
                     id: powerRow
-                    anchors.centerIn: parent
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    layoutDirection: Qt.RightToLeft
                     spacing: 14
                     
                     // State 1: Expanding Actions Background
