@@ -922,6 +922,47 @@ PanelWindow {
                     stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
                 }
                 
+                Canvas {
+                    id: pillCountdownRing
+                    anchors.fill: parent
+                    visible: powerPill.confirmingDefault
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.clearRect(0, 0, width, height);
+                        
+                        var r = height / 2;
+                        var w = width;
+                        var h = height;
+                        
+                        var straightLength = w - h;
+                        var circleLength = Math.PI * h;
+                        var totalLength = 2 * straightLength + circleLength;
+                        
+                        var progress = (5 - powerPill.defaultCountdownVisual) / 5.0;
+                        var drawLength = totalLength * progress;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(w / 2, 0);
+                        ctx.lineTo(w - r, 0);
+                        ctx.arc(w - r, r, r, -Math.PI/2, Math.PI/2, false);
+                        ctx.lineTo(r, h);
+                        ctx.arc(r, r, r, Math.PI/2, -Math.PI/2, false);
+                        ctx.lineTo(w / 2, 0);
+                        
+                        ctx.strokeStyle = bg;
+                        ctx.lineWidth = 3;
+                        ctx.setLineDash([drawLength, totalLength]);
+                        ctx.stroke();
+                    }
+                }
+                
+                Timer {
+                    interval: 16
+                    running: powerPill.confirmingDefault
+                    repeat: true
+                    onTriggered: pillCountdownRing.requestPaint()
+                }
+                
                 MouseArea {
                     id: powerHover
                     anchors.fill: parent
@@ -1047,49 +1088,6 @@ PanelWindow {
                                     opacity: powerPill.confirmingDefault ? 1 : 0
                                     visible: opacity > 0
                                     Behavior on opacity { NumberAnimation { duration: 200 } }
-                                
-                                Item {
-                                    width: 34; height: 34
-                                    Canvas {
-                                        id: defaultCountdownRing
-                                        anchors.fill: parent
-                                        onPaint: {
-                                            var ctx = getContext("2d");
-                                            ctx.clearRect(0, 0, width, height);
-                                            var cx = width / 2;
-                                            var cy = height / 2;
-                                            var r = 12;
-                                            
-                                            ctx.beginPath();
-                                            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-                                            ctx.strokeStyle = "rgba(255,255,255,0.1)";
-                                            ctx.lineWidth = 3;
-                                            ctx.stroke();
-                                            
-                                            var progress = (5 - powerPill.defaultCountdownVisual) / 5.0;
-                                            ctx.beginPath();
-                                            ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * (1 - progress));
-                                            ctx.strokeStyle = bg;
-                                            ctx.lineWidth = 3;
-                                            ctx.lineCap = "round";
-                                            ctx.stroke();
-                                        }
-                                    }
-                                    Text {
-                                        text: Math.ceil(powerPill.defaultCountdownVisual)
-                                        color: bg
-                                        font.family: Theme.defaultFontFamily
-                                        font.weight: 600
-                                        font.pixelSize: 12
-                                        anchors.centerIn: parent
-                                    }
-                                    Timer {
-                                        interval: 16
-                                        running: powerPill.confirmingDefault
-                                        repeat: true
-                                        onTriggered: defaultCountdownRing.requestPaint()
-                                    }
-                                }
                                 
                                 Item {
                                     width: sureIconText.implicitWidth + sureText.implicitWidth + 4; height: 34
