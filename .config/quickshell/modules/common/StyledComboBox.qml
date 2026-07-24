@@ -11,7 +11,7 @@ ComboBox {
     background: Rectangle {
         implicitWidth: 160
         implicitHeight: 34
-        color: customComboBox.hovered ? Qt.rgba(0, 0, 0, 0.35) : Qt.rgba(0, 0, 0, 0.25)
+        color: customComboBox.hovered ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.2) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
         radius: 8
     }
     
@@ -67,7 +67,7 @@ ComboBox {
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 12
                 background: Rectangle {
-                    color: Qt.rgba(0, 0, 0, 0.25)
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
                     radius: 4
                 }
                 onTextEdited: customComboBox.searchText = text.toLowerCase()
@@ -140,7 +140,7 @@ ComboBox {
         }
 
         background: Rectangle {
-            color: Qt.rgba(0.06, 0.06, 0.08, 0.98)
+            color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.98)
             radius: 10
         }
     }
