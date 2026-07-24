@@ -992,7 +992,7 @@ PanelWindow {
                             Rectangle {
                                 id: heroIcon
                                 width: 48; height: 48; radius: 24
-                                color: "#ffffff"
+                                color: powerPill.confirmingDefault ? "#ffffff" : "transparent"
                                 z: 10
                                 opacity: powerPill.confirmingDefault ? 1 : 0
                                 visible: opacity > 0
@@ -1000,7 +1000,7 @@ PanelWindow {
                                 property real targetX: 74
                                 property real targetY: 30.5
                                 
-                                property real startX: 55
+                                property real startX: 38
                                 property real startY: {
                                     if (powerPill.pendingAction === "sleep") return -3;
                                     if (powerPill.pendingAction === "hibernate") return 45;
@@ -1011,14 +1011,21 @@ PanelWindow {
                                 
                                 x: powerPill.confirmingDefault ? targetX : startX
                                 y: powerPill.confirmingDefault ? targetY : startY
-                                scale: powerPill.confirmingDefault ? 1.0 : 0.5
                                 
                                 Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                                Behavior on color { ColorAnimation { duration: 350; easing.type: Easing.OutBack } }
+                                Behavior on opacity { NumberAnimation { duration: powerPill.confirmingDefault ? 0 : 200 } }
                                 
-                                Text { text: powerPill.getActionIcon(powerPill.pendingAction); color: "#5a2432"; font.family: fontName; font.pixelSize: 24; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                Text { 
+                                    text: powerPill.getActionIcon(powerPill.pendingAction)
+                                    color: powerPill.confirmingDefault ? "#5a2432" : "#fbdfe4"
+                                    font.family: fontName
+                                    font.pixelSize: powerPill.confirmingDefault ? 24 : 18
+                                    anchors.centerIn: parent
+                                    Behavior on color { ColorAnimation { duration: 350; easing.type: Easing.OutBack } }
+                                    Behavior on font.pixelSize { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                }
                             }
                             
                             // State 2: Clicked Actions
