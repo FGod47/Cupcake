@@ -243,8 +243,8 @@ PanelWindow {
             
             function handleKey(event, isNext) {
                 let now = Date.now();
-                // Unconditionally throttle to 150ms because Wayland key repeats sometimes lack the isAutoRepeat flag
-                if (now - pv.lastKeyTime < 150) {
+                // Throttle exactly to the animation duration to prevent movement queueing
+                if (now - pv.lastKeyTime < root.moveDuration) {
                     event.accepted = true;
                     return;
                 }
