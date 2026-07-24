@@ -9,7 +9,47 @@ Item {
     id: root
     anchors.fill: parent
     
+    property string actionType: "shutdown"
+    property string actionIcon: "\ueb0d"
+    property string actionTitle: "Shut down?"
+    property string actionDesc: "This will close all apps"
+    property string actionCommand: "systemctl poweroff"
+    property color actionColor: Theme.colError
+    
+    Process {
+        id: actionReader
+        command: ["bash", "-c", "cat ~/.config/cupcake/.power_action 2>/dev/null || echo 'shutdown'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var act = text.trim();
+                root.actionType = act;
+                if (act === "reboot") {
+                    root.actionIcon = "\ueb13";
+                    root.actionTitle = "Reboot?";
+                    root.actionDesc = "The system will restart";
+                    root.actionCommand = "systemctl reboot";
+                    root.actionColor = "#e67e22";
+                } else if (act === "logout") {
+                    root.actionIcon = "\ueba8";
+                    root.actionTitle = "Log out?";
+                    root.actionDesc = "You will be signed out";
+                    root.actionCommand = "loginctl kill-session $XDG_SESSION_ID";
+                    root.actionColor = "#3498db";
+                } else if (act === "sleep") {
+                    root.actionIcon = "\ueaf8";
+                    root.actionTitle = "Sleep?";
+                    root.actionDesc = "Suspend to RAM";
+                    root.actionCommand = "systemctl suspend";
+                    root.actionColor = "#9b59b6";
+                }
+            }
+        }
+    }
+    
     property int countdownSeconds: 5
+    property real countdownVisual: 5
+    Behavior on countdownVisual { NumberAnimation { duration: 1000; easing.type: Easing.Linear } }
     
     Timer {
         id: powerTimer
@@ -18,12 +58,12 @@ Item {
         repeat: true
         onTriggered: {
             root.countdownSeconds--;
+            root.countdownVisual = root.countdownSeconds;
             if (root.countdownSeconds <= 0) {
                 running = false;
-                Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                Quickshell.execDetached(["bash", "-c", root.actionCommand]);
                 Qt.quit();
             }
-            countdownRing.requestPaint();
         }
     }
     
@@ -44,18 +84,18 @@ Item {
                 spacing: 6
                 Rectangle {
                     width: 56; height: 56; radius: 28
-                    color: Qt.rgba(220/255, 70/255, 70/255, 0.12)
+                    color: Qt.rgba(root.actionColor.r, root.actionColor.g, root.actionColor.b, 0.12)
                     anchors.horizontalCenter: parent.horizontalCenter
                     Text {
-                        text: "\ueb0d"
-                        color: Theme.colError
+                        text: root.actionIcon
+                        color: root.actionColor
                         font.family: "tabler-icons"
                         font.pixelSize: 26
                         anchors.centerIn: parent
                     }
                 }
                 Text {
-                    text: "Shut down?"
+                    text: root.actionTitle
                     color: Theme.colOnSurface
                     font.family: Theme.defaultFontFamily
                     font.weight: 600
@@ -63,7 +103,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
                 Text {
-                    text: "This will close all apps"
+                    text: root.actionDesc
                     color: Theme.colOnSurfaceVariant
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 11
@@ -91,18 +131,18 @@ Item {
                         ctx.lineWidth = 3;
                         ctx.stroke();
                         
-                        var progress = (5 - root.countdownSeconds) / 5.0;
+                        var progress = (5 - root.countdownVisual) / 5.0;
                         ctx.beginPath();
                         ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * (1 - progress));
-                        ctx.strokeStyle = Theme.colError;
+                        ctx.strokeStyle = root.actionColor;
                         ctx.lineWidth = 3;
                         ctx.lineCap = "round";
                         ctx.stroke();
                     }
                 }
                 Text {
-                    text: root.countdownSeconds
-                    color: Theme.colError
+                    text: Math.ceil(root.countdownVisual)
+                    color: root.actionColor
                     font.family: Theme.defaultFontFamily
                     font.weight: 600
                     font.pixelSize: 13
@@ -139,13 +179,13 @@ Item {
                     Layout.fillWidth: true
                     height: 34
                     radius: 12
-                    color: "#c0392b"
-                    Text { text: "Shut down"; color: "white"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
+                    color: root.actionColor
+                    Text { text: root.actionTitle.replace("?", ""); color: "white"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             powerTimer.running = false
-                            Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
+                            Quickshell.execDetached(["bash", "-c", root.actionCommand])
                             Qt.quit()
                         }
                     }
