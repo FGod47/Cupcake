@@ -1059,11 +1059,15 @@ PanelWindow {
                 
                 // Main Icon and Hover Text
                 Row {
-                    anchors.centerIn: parent
+                    anchors.right: parent.right
+                    anchors.rightMargin: (34 - powerIconText.implicitWidth) / 2
+                    anchors.verticalCenter: parent.verticalCenter
                     spacing: 8
                     visible: !powerPill.actionsExpanded
+                    layoutDirection: Qt.RightToLeft
                     
                     Text {
+                        id: powerIconText
                         text: "\ueb0d"
                         color: bg
                         font.family: fontName
