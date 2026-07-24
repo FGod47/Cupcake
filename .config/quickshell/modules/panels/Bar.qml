@@ -875,7 +875,7 @@ PanelWindow {
             
             property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
             property real targetHeight: confirmingIsland ? 180 : (actionsExpanded ? ((powerPill.confirmingDefault ? state3Column.implicitHeight : state2Column.implicitHeight) + 32) : 34)
-            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? ((powerPill.confirmingDefault ? state3Column.implicitWidth : state2Column.implicitWidth) + 32) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
+            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? ((powerPill.confirmingDefault ? state3Column.implicitWidth : state2Column.implicitWidth) + 64) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
             
             height: targetHeight
             width: targetWidth
