@@ -65,7 +65,7 @@ Item {
             if (notifCategory === "error") return Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.3);
             if (notifCategory === "battery") return Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3);
             if (notifCategory === "update") return Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.2);
-            return Qt.rgba(1, 1, 1, 0.05);
+            return Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15);
         }
         border.width: 1
 
@@ -263,7 +263,7 @@ Item {
                         width: inlineActionText.implicitWidth + 24
                         height: 28
                         radius: isPill ? 14 : 8
-                        color: inlineActionMouse.containsMouse ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.2) : Qt.rgba(1,1,1,0.05)
+                        color: inlineActionMouse.containsMouse ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.2) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                         border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3)
                         border.width: 1
                         anchors.verticalCenter: parent.verticalCenter
@@ -293,7 +293,7 @@ Item {
                         Rectangle {
                             anchors.fill: parent
                             radius: 6
-                            color: expandMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05)
+                            color: expandMouse.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                             Behavior on color { ColorAnimation { duration: 150 } }
                         }
 
@@ -326,7 +326,7 @@ Item {
                         Rectangle {
                             anchors.fill: parent
                             radius: isPill ? 13 : 6
-                            color: closeMouse.containsMouse ? Qt.rgba(1, 0.2, 0.2, 0.2) : Qt.rgba(1, 1, 1, 0.05)
+                            color: closeMouse.containsMouse ? Qt.rgba(1, 0.2, 0.2, 0.2) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                             Behavior on color { ColorAnimation { duration: 150 } }
                         }
 
@@ -360,7 +360,7 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     radius: 2
-                    color: Qt.rgba(1,1,1,0.1)
+                    color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                     Rectangle {
                         width: parent.width * 0.6 // Mock progress 60%
                         height: parent.height
@@ -383,9 +383,9 @@ Item {
                         color: {
                             if (isFirst && notifCategory === "update") return ah.hovered ? Qt.lighter(Theme.colSuccess, 1.1) : Theme.colSuccess;
                             if (isFirst) return ah.hovered ? Qt.lighter(Theme.colPrimary, 1.1) : Theme.colPrimary;
-                            return ah.hovered ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05);
+                            return ah.hovered ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05);
                         }
-                        border.color: isFirst ? "transparent" : Qt.rgba(1, 1, 1, 0.1)
+                        border.color: isFirst ? "transparent" : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                         border.width: isFirst ? 0 : 1
                         radius: 8
                         width: Math.max(100, al.implicitWidth + 24)
