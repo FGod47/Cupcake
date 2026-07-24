@@ -212,6 +212,7 @@ PanelWindow {
         Row {
             id: rightModules
             anchors.right: parent.right
+            anchors.rightMargin: powerPill.baseWidth + 8
             anchors.top: parent.top
             spacing: 8
             
@@ -851,214 +852,305 @@ PanelWindow {
                     }
                 }
             }
-            // Power Pill (#custom-power)
-            Rectangle {
-                id: powerPill
-                radius: 18
-                implicitHeight: 34
-                implicitWidth: powerRow.implicitWidth + 32
-                color: powerHover.containsMouse ? Theme.colError : Theme.colPrimary
-                Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-                Behavior on implicitHeight { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
-                Behavior on color { ColorAnimation { duration: 300 } }
-                clip: true
-                
-                property bool actionsExpanded: false
-                property bool confirmingDefault: false
-                property string currentStyle: "Island"
-                property string pendingAction: ""
-                
-                function executeAction(action) {
-                    if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                    else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
-                    else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
-                    else if (action === "sleep") Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+        }
+        
+        // Power Pill (#custom-power)
+        Rectangle {
+            id: powerPill
+            anchors.right: parent.right
+            anchors.rightMargin: 18
+            y: 6
+            radius: confirmingIsland ? 28 : 18
+            
+            property bool actionsExpanded: false
+            property bool confirmingDefault: false
+            property string currentStyle: "Island"
+            property string pendingAction: ""
+            
+            property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
+            property real baseWidth: actionsExpanded ? (powerRow.implicitWidth + 32) : 34
+            
+            height: confirmingIsland ? 180 : 34
+            width: confirmingIsland ? 220 : baseWidth
+            
+            // For Island, we'll assign colors based on pendingAction later, default to Error for now
+            color: powerHover.containsMouse || confirmingIsland ? Theme.colError : Theme.colPrimary
+            Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
+            Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
+            Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.InOutCubic } }
+            Behavior on color { ColorAnimation { duration: 300 } }
+            clip: true
+            
+            function executeAction(action) {
+                if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
+                else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
+                else if (action === "sleep") Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+            }
+            
+            function triggerAction(action) {
+                powerPill.pendingAction = action;
+                if (powerPill.currentStyle === "Default") {
+                    powerPill.confirmingDefault = true;
+                } else {
+                    powerPill.actionsExpanded = false;
+                    powerPill.confirmingDefault = true;
                 }
-                
-                function triggerAction(action) {
-                    if (powerPill.currentStyle === "Default") {
-                        powerPill.pendingAction = action;
-                        powerPill.confirmingDefault = true;
-                    } else {
+            }
+            
+            Process {
+                id: powerStyleProcess
+                command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
+                running: true
+                stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
+            }
+            
+            MouseArea {
+                id: powerHover
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: { powerStyleProcess.running = true; }
+                onClicked: {
+                    if (!powerPill.confirmingDefault) {
+                        powerPill.actionsExpanded = !powerPill.actionsExpanded;
+                    }
+                }
+                onContainsMouseChanged: {
+                    if (!containsMouse && powerPill.actionsExpanded) {
                         powerPill.actionsExpanded = false;
-                        Quickshell.execDetached(["bash", "-c", "echo '" + action + "' > ~/.config/cupcake/.power_action && quickshell -p /home/one/.config/quickshell/PowerConfirmation.qml"]);
+                        powerPill.confirmingDefault = false;
                     }
                 }
+            }
+            
+            // Expanded Actions Inner Row
+            Item {
+                id: innerContent
+                anchors.fill: parent
+                opacity: powerPill.confirmingIsland ? 0.0 : 1.0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 300 } }
                 
-                Process {
-                    id: powerStyleProcess
-                    command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
-                    running: true
-                    stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
-                }
-                
-                MouseArea {
-                    id: powerHover
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: { powerStyleProcess.running = true; }
-                    onClicked: {
-                        if (!powerPill.confirmingDefault) {
-                            powerPill.actionsExpanded = !powerPill.actionsExpanded;
-                        }
-                    }
-                    onContainsMouseChanged: {
-                        if (!containsMouse && powerPill.actionsExpanded) {
-                            powerPill.actionsExpanded = false;
-                            powerPill.confirmingDefault = false;
-                        }
-                    }
-                }
-
-                // Collapsed and horizontal options content (Original Behavior)
                 Row {
                     id: powerRow
                     anchors.centerIn: parent
-                    spacing: 0
-                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                    spacing: 14
                     
-                    // Slide-left Revealer
-                    Item {
-                        id: powerRevealer
+                    // State 1: Expanding Actions Background
+                    Rectangle {
+                        width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
                         height: 34
-                        width: (powerHover.containsMouse || powerPill.actionsExpanded) ? innerContent.implicitWidth : 0
+                        color: "transparent"
+                        anchors.verticalCenter: parent.verticalCenter
                         clip: true
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         
-                        Row {
-                            id: innerContent
-                            anchors.right: parent.right
+                        Behavior on width {
+                            NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+                        }
+                        
+                        // State 2 & 3 Container
+                        Item {
+                            id: statesContainer
+                            width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
+                            height: 34
                             anchors.verticalCenter: parent.verticalCenter
+                            visible: powerPill.actionsExpanded
+                            clip: true
                             
-                            // State 1: Hover Text
-                            Text {
-                                text: "Power "
-                                color: bg
-                                font.family: Theme.defaultFontFamily
-                                font.weight: Theme.defaultFontWeight
-                                font.pixelSize: Theme.defaultFontSize
-                                visible: !powerPill.actionsExpanded
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-                            
-                            // State 2 & 3 Container
+                            // State 2: Clicked Actions
+                            Row {
+                                id: state2Row
+                                spacing: 14
+                                anchors.centerIn: parent
+                                opacity: !powerPill.confirmingDefault ? 1 : 0
+                                visible: opacity > 0
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                            // Sleep
                             Item {
-                                id: statesContainer
-                                width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
-                                height: 34
-                                anchors.verticalCenter: parent.verticalCenter
-                                visible: powerPill.actionsExpanded
-                                clip: true
-                                
-                                // State 2: Clicked Actions
+                                width: sleepIconText.implicitWidth + sleepLabelText.implicitWidth + 4; height: 34
                                 Row {
-                                    id: state2Row
-                                    spacing: 14
                                     anchors.centerIn: parent
-                                    opacity: !powerPill.confirmingDefault ? 1 : 0
-                                    visible: opacity > 0
-                                    Behavior on opacity { NumberAnimation { duration: 200 } }
-
-                                // Sleep
-                                Item {
-                                    width: sleepIconText.implicitWidth + sleepLabelText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: sleepIconText; text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: sleepLabelText; text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("sleep"); } }
+                                    spacing: 4
+                                    Text { id: sleepIconText; text: "\ueaf8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: sleepLabelText; text: "Sleep"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("sleep"); } }
+                            }
 
-                                // Logout
-                                Item {
-                                    width: logoutIconText.implicitWidth + logoutLabelText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: logoutIconText; text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: logoutLabelText; text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("logout"); } }
+                            // Logout
+                            Item {
+                                width: logoutIconText.implicitWidth + logoutLabelText.implicitWidth + 4; height: 34
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text { id: logoutIconText; text: "\ueba8"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: logoutLabelText; text: "Logout"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("logout"); } }
+                            }
 
-                                // Reboot
-                                Item {
-                                    width: rebootIconText.implicitWidth + rebootLabelText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: rebootIconText; text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: rebootLabelText; text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("reboot"); } }
+                            // Reboot
+                            Item {
+                                width: rebootIconText.implicitWidth + rebootLabelText.implicitWidth + 4; height: 34
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text { id: rebootIconText; text: "\ueb13"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: rebootLabelText; text: "Reboot"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("reboot"); } }
+                            }
 
-                                // Shutdown
-                                Item {
-                                    width: shutdownIconText.implicitWidth + shutdownLabelText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("shutdown"); } }
+                            // Shutdown
+                            Item {
+                                width: shutdownIconText.implicitWidth + shutdownLabelText.implicitWidth + 4; height: 34
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text { id: shutdownIconText; text: "\ueb0d"; color: bg; font.family: fontName; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: shutdownLabelText; text: "Shutdown"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.triggerAction("shutdown"); } }
+                            }
+                        }
+                        
+                            // State 3: Default Style Confirmation
+                            Row {
+                                id: state3Row
+                                spacing: 14
+                                anchors.centerIn: parent
+                                opacity: powerPill.confirmingDefault ? 1 : 0
+                                visible: opacity > 0
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
+                            
+                            Item {
+                                width: sureIconText.implicitWidth + sureText.implicitWidth + 4; height: 34
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text { id: sureIconText; text: "\uea5e"; color: bg; font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: sureText; text: "Sure"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
                             }
                             
-                                // State 3: Default Style Confirmation
+                            Item {
+                                width: nopeIconText.implicitWidth + nopeText.implicitWidth + 4; height: 34
                                 Row {
-                                    id: state3Row
-                                    spacing: 14
                                     anchors.centerIn: parent
-                                    opacity: powerPill.confirmingDefault ? 1 : 0
-                                    visible: opacity > 0
-                                    Behavior on opacity { NumberAnimation { duration: 200 } }
-                                
-                                Item {
-                                    width: sureIconText.implicitWidth + sureText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: sureIconText; text: "\uea5e"; color: bg; font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: sureText; text: "Sure"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
+                                    spacing: 4
+                                    Text { id: nopeIconText; text: "\ueb55"; color: bg; font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
+                                    Text { id: nopeText; text: "Nope"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
                                 }
-                                
-                                Item {
-                                    width: nopeIconText.implicitWidth + nopeText.implicitWidth + 4; height: 34
-                                    Row {
-                                        anchors.centerIn: parent
-                                        spacing: 4
-                                        Text { id: nopeIconText; text: "\ueb55"; color: bg; font.family: "tabler-icons"; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                        Text { id: nopeText; text: "Nope"; color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: 600; height: 34; verticalAlignment: Text.AlignVCenter }
-                                    }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
-                                }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
                             }
-                            // End of statesContainer
+                        }
+                        // End of statesContainer
+                        }
+                    }
+                }
+                
+                // Main Icon
+                Text {
+                    text: "\ueb0d"
+                    color: bg
+                    font.family: fontName
+                    font.weight: Theme.defaultFontWeight
+                    font.pixelSize: Theme.defaultFontSize
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: !powerPill.actionsExpanded
+                }
+            }
+            
+            // Island Content
+            Item {
+                id: islandContent
+                anchors.fill: parent
+                opacity: powerPill.confirmingIsland ? 1.0 : 0.0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                
+                property string actionIcon: {
+                    if (powerPill.pendingAction === "shutdown") return "\ueb0d";
+                    if (powerPill.pendingAction === "reboot") return "\ueb13";
+                    if (powerPill.pendingAction === "logout") return "\ueba8";
+                    if (powerPill.pendingAction === "sleep") return "\ueaf8";
+                    return "";
+                }
+                property string actionTitle: {
+                    if (powerPill.pendingAction === "shutdown") return "Shut down";
+                    if (powerPill.pendingAction === "reboot") return "Reboot";
+                    if (powerPill.pendingAction === "logout") return "Log out";
+                    if (powerPill.pendingAction === "sleep") return "Sleep";
+                    return "";
+                }
+                
+                Column {
+                    anchors.centerIn: parent
+                    spacing: 16
+                    
+                    // Icon & Text
+                    Column {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 6
+                        Rectangle {
+                            width: 56; height: 56; radius: 28
+                            color: Qt.rgba(255/255, 255/255, 255/255, 0.12)
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Text {
+                                text: islandContent.actionIcon
+                                color: "white"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 26
+                                anchors.centerIn: parent
                             }
+                        }
+                        Text {
+                            text: islandContent.actionTitle + "?"
+                            color: "white"
+                            font.family: Theme.defaultFontFamily
+                            font.weight: 600
+                            font.pixelSize: 15
+                            anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
                     
-                    // Main Icon
-                    Text {
-                        text: "\ueb0d"
-                        color: bg
-                        font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: Theme.defaultFontSize
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: !powerPill.actionsExpanded
+                    // Buttons
+                    RowLayout {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 190
+                        spacing: 10
+                        
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 34
+                            radius: 12
+                            color: Qt.rgba(255/255, 255/255, 255/255, 0.07)
+                            Text { text: "Cancel"; color: "white"; font.family: Theme.defaultFontFamily; font.weight: 500; font.pixelSize: 13; anchors.centerIn: parent }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: { powerPill.confirmingDefault = false; }
+                            }
+                        }
+                        
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 34
+                            radius: 12
+                            color: "white"
+                            Text { text: islandContent.actionTitle; color: "black"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: { powerPill.executeAction(powerPill.pendingAction); }
+                            }
+                        }
                     }
                 }
-
-
             }
+
+
         }
     }
 
