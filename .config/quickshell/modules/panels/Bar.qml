@@ -981,6 +981,7 @@ PanelWindow {
                             id: statesContainer
                             width: powerPill.actionsExpanded ? state2Column.implicitWidth : 0
                             height: powerPill.actionsExpanded ? state2Column.implicitHeight : 0
+                            anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             visible: powerPill.actionsExpanded
                             clip: true
@@ -992,12 +993,13 @@ PanelWindow {
                                 id: state2Column
                                 spacing: 6
                                 width: 196
-                                anchors.centerIn: parent
-                                anchors.horizontalCenterOffset: !powerPill.confirmingDefault ? 0 : -12
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.leftMargin: !powerPill.confirmingDefault ? 0 : -12
                                 opacity: !powerPill.confirmingDefault ? 1 : 0
                                 visible: opacity > 0
                                 Behavior on opacity { NumberAnimation { duration: 180 } }
-                                Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                                Behavior on anchors.leftMargin { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
                                 // Sleep
                                 Rectangle {
@@ -1074,12 +1076,12 @@ PanelWindow {
                                 width: 196
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.horizontalCenterOffset: powerPill.confirmingDefault ? 0 : 12
+                                anchors.left: parent.left
+                                anchors.leftMargin: powerPill.confirmingDefault ? 0 : 12
                                 opacity: powerPill.confirmingDefault ? 1 : 0
                                 visible: opacity > 0
                                 Behavior on opacity { NumberAnimation { duration: 180 } }
-                                Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                                Behavior on anchors.leftMargin { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
                                 
                                 Item {
                                     anchors.top: parent.top
