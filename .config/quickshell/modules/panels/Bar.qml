@@ -33,7 +33,7 @@ PanelWindow {
     color: "transparent"
     
     property bool ccOpen: false
-    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || powerPill.confirmingIsland || globalState.overviewOpen) ? null : normalMask
+    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || globalState.overviewOpen) ? null : normalMask
     
     Region {
         id: normalMask
@@ -67,7 +67,7 @@ PanelWindow {
     MouseArea {
         id: fullScreenClickAway
         anchors.fill: parent
-        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || powerPill.actionsExpanded || powerPill.confirmingIsland
+        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || powerPill.actionsExpanded
         onClicked: {
             globalState.settingsOpen = false;
             bar.ccOpen = false;
@@ -866,22 +866,19 @@ PanelWindow {
             id: powerPill
             anchors.right: parent.right
             anchors.top: parent.top
-            radius: confirmingIsland ? 28 : 18
+            radius: 18
             
             property bool actionsExpanded: false
             property bool confirmingDefault: false
-            property string currentStyle: "Island"
             property string pendingAction: ""
             
-            property bool confirmingIsland: currentStyle === "Island" && confirmingDefault
-            property real targetHeight: confirmingIsland ? 180 : (actionsExpanded ? (state2Column.implicitHeight + 24) : 34)
-            property real targetWidth: confirmingIsland ? 220 : (actionsExpanded ? (state2Column.implicitWidth + 24) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34))
+            property real targetHeight: actionsExpanded ? (state2Column.implicitHeight + 24) : 34
+            property real targetWidth: actionsExpanded ? (state2Column.implicitWidth + 24) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34)
             
             height: targetHeight
             width: targetWidth
             
-            // For Island, we'll assign colors based on pendingAction later, default to Error for now
-            color: powerHover.containsMouse || confirmingIsland || actionsExpanded ? Theme.colError : Theme.colPrimary
+            color: powerHover.containsMouse || actionsExpanded ? Theme.colError : Theme.colPrimary
             Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
@@ -899,12 +896,7 @@ PanelWindow {
             
             function triggerAction(action) {
                 powerPill.pendingAction = action;
-                if (powerPill.currentStyle === "Default") {
-                    powerPill.confirmingDefault = true;
-                } else {
-                    powerPill.actionsExpanded = false;
-                    powerPill.confirmingDefault = true;
-                }
+                powerPill.confirmingDefault = true;
             }
             
             // Stored click-time coordinates for the flying icon animation
@@ -968,19 +960,11 @@ PanelWindow {
                 return "";
             }
             
-            Process {
-                id: powerStyleProcess
-                command: ["bash", "-c", "cat ~/.config/cupcake/.power_confirmation_style 2>/dev/null || echo 'Island'"]
-                running: true
-                stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") powerPill.currentStyle = text.trim() } }
-            }
-            
             MouseArea {
                 id: powerHover
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onEntered: { powerStyleProcess.running = true; }
                 onClicked: {
                     if (!powerPill.confirmingDefault) {
                         powerPill.actionsExpanded = !powerPill.actionsExpanded;
@@ -992,7 +976,7 @@ PanelWindow {
             Item {
                 id: innerContent
                 anchors.fill: parent
-                opacity: (powerPill.actionsExpanded && !powerPill.confirmingIsland) ? 1.0 : 0.0
+                opacity: (powerPill.actionsExpanded) ? 1.0 : 0.0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 300 } }
                 
@@ -1279,91 +1263,7 @@ PanelWindow {
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
-            // Island Content
-            Item {
-                id: islandContent
-                anchors.fill: parent
-                opacity: powerPill.confirmingIsland ? 1.0 : 0.0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                
-                property string actionIcon: {
-                    if (powerPill.pendingAction === "shutdown") return "\ueb0d";
-                    if (powerPill.pendingAction === "reboot") return "\ueb13";
-                    if (powerPill.pendingAction === "logout") return "\ueba8";
-                    if (powerPill.pendingAction === "sleep") return "\ueaf8";
-                    return "";
-                }
-                property string actionTitle: {
-                    if (powerPill.pendingAction === "shutdown") return "Shut down";
-                    if (powerPill.pendingAction === "reboot") return "Reboot";
-                    if (powerPill.pendingAction === "logout") return "Log out";
-                    if (powerPill.pendingAction === "sleep") return "Sleep";
-                    return "";
-                }
-                
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 16
-                    
-                    // Icon & Text
-                    Column {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 6
-                        Rectangle {
-                            width: 56; height: 56; radius: 28
-                            color: Qt.rgba(255/255, 255/255, 255/255, 0.12)
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            Text {
-                                text: islandContent.actionIcon
-                                color: "white"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 26
-                                anchors.centerIn: parent
-                            }
-                        }
-                        Text {
-                            text: islandContent.actionTitle + "?"
-                            color: "white"
-                            font.family: Theme.defaultFontFamily
-                            font.weight: 600
-                            font.pixelSize: 15
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                    
-                    // Buttons
-                    RowLayout {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: 190
-                        spacing: 10
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 34
-                            radius: 12
-                            color: Qt.rgba(255/255, 255/255, 255/255, 0.07)
-                            Text { text: "Cancel"; color: "white"; font.family: Theme.defaultFontFamily; font.weight: 500; font.pixelSize: 13; anchors.centerIn: parent }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: { powerPill.confirmingDefault = false; }
-                            }
-                        }
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 34
-                            radius: 12
-                            color: "white"
-                            Text { text: islandContent.actionTitle; color: "black"; font.family: Theme.defaultFontFamily; font.weight: 600; font.pixelSize: 13; anchors.centerIn: parent }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: { powerPill.executeAction(powerPill.pendingAction); }
-                            }
-                        }
-                    }
-                }
-            }
+
 
 
         }
