@@ -913,25 +913,35 @@ PanelWindow {
             
             function launchHeroFrom(iconRect) {
                 // Map the clicked icon's top-left into statesContainer's coordinate space
-                var pos = iconRect.mapToItem(statesContainer, 0, 0);
-                heroIcon.x = pos.x;
-                heroIcon.y = pos.y;
+                var startPos = iconRect.mapToItem(statesContainer, 0, 0);
+                // Map the center of the confirmation placeholder as the landing target
+                var centerPos = confirmIconPlaceholder.mapToItem(statesContainer,
+                    confirmIconPlaceholder.width / 2,
+                    confirmIconPlaceholder.height / 2);
+                heroIcon.x = startPos.x;
+                heroIcon.y = startPos.y;
                 heroIcon.width = 32;
                 heroIcon.height = 32;
+                heroIcon.radius = 16;
                 heroIcon.opacity = 1;
-                // Now animate to center
-                heroXAnim.from = pos.x;
-                heroXAnim.to = statesContainer.width / 2 - 24;
-                heroYAnim.from = pos.y;
-                heroYAnim.to = statesContainer.height / 2 - 24;
+                // Now animate to center of placeholder (offset by half of final 48px size)
+                // We also subtract 12 from the X target because state3Column starts with a +12 leftMargin 
+                // but animates to 0, so its final position will be 12px further to the left.
+                heroXAnim.from = startPos.x;
+                heroXAnim.to = centerPos.x - 12 - 24;
+                heroYAnim.from = startPos.y;
+                heroYAnim.to = centerPos.y - 24;
                 heroWAnim.from = 32;
                 heroWAnim.to = 48;
                 heroHAnim.from = 32;
                 heroHAnim.to = 48;
+                heroRAnim.from = 16;
+                heroRAnim.to = 24;
                 heroXAnim.restart();
                 heroYAnim.restart();
                 heroWAnim.restart();
                 heroHAnim.restart();
+                heroRAnim.restart();
             }
             
             function getActionLabel(action) {
@@ -1026,8 +1036,9 @@ PanelWindow {
                                 
                                 NumberAnimation on x { id: heroXAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
                                 NumberAnimation on y { id: heroYAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                NumberAnimation on width  { id: heroWAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false; onFinished: heroIcon.radius = heroIcon.width / 2 }
+                                NumberAnimation on width  { id: heroWAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
                                 NumberAnimation on height { id: heroHAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
+                                NumberAnimation on radius { id: heroRAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
                                 
                                 Connections {
                                     target: powerPill
@@ -1191,16 +1202,17 @@ PanelWindow {
                                     Column {
                                         anchors.centerIn: parent
                                         width: parent.width
-                                        spacing: 12
+                                        spacing: 8
                                         
                                         Item {
-                                            width: parent.width; height: 48
-                                            // Icon is now handled by the flying heroIcon above
+                                            id: confirmIconPlaceholder
+                                            width: 48; height: 48
+                                            anchors.horizontalCenter: parent.horizontalCenter
                                         }
                                         
                                         Column {
                                             width: parent.width
-                                            spacing: 0
+                                            spacing: 2
                                             Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: bg; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
                                             Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: bg; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
                                         }
