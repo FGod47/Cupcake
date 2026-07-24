@@ -945,6 +945,7 @@ PanelWindow {
                     
                     // State 1: Expanding Actions Background
                     Rectangle {
+                        visible: powerPill.actionsExpanded
                         width: powerPill.actionsExpanded ? state2Row.implicitWidth : 0
                         height: 34
                         color: "transparent"
