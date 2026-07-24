@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Bluetooth
 import "../../theme"
 import "../common"
+import Quickshell.Services.UPower
 
 Item {
     id: ccUi
@@ -394,13 +395,84 @@ Item {
                         }
                     }
 
-                    // Right card — reserved for future content
+                    // Right card — Power Profile
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 220
                         Layout.preferredHeight: 236
                         color: bgSurface0
                         radius: 20
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 8
+
+                            Item { Layout.fillHeight: true }
+
+                            Text {
+                                text: "Power Profile"
+                                color: textText
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 15
+                                font.weight: 700
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+
+                            Item { Layout.fillHeight: true }
+
+                            Rectangle {
+                                Layout.alignment: Qt.AlignHCenter
+                                width: 80; height: 80; radius: 40
+                                color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreenDim : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: switch(PowerProfiles.profile) {
+                                        case PowerProfile.PowerSaver: return "\ueb07"
+                                        case PowerProfile.Balanced: return "\ueb39"
+                                        case PowerProfile.Performance: return "\ueaab"
+                                    }
+                                    color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreen : textSubtext0
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 40
+                                }
+                            }
+
+                            Item { Layout.fillHeight: true }
+
+                            Text {
+                                Layout.alignment: Qt.AlignHCenter
+                                text: switch(PowerProfiles.profile) {
+                                    case PowerProfile.PowerSaver: return "Power Saver"
+                                    case PowerProfile.Balanced: return "Balanced"
+                                    case PowerProfile.Performance: return "Performance"
+                                    default: return "Unknown"
+                                }
+                                color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreen : textSubtext0
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13
+                                font.weight: 600
+                            }
+                            
+                            Item { Layout.fillHeight: true }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (PowerProfiles.hasPerformanceProfile) {
+                                    switch(PowerProfiles.profile) {
+                                        case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced; break;
+                                        case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance; break;
+                                        case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver; break;
+                                    }
+                                } else {
+                                    PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced;
+                                }
+                            }
+                        }
                     }
                 }
 
