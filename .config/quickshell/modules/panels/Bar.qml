@@ -991,8 +991,10 @@ PanelWindow {
                             // Floating Hero Icon Animation
                             Rectangle {
                                 id: heroIcon
-                                width: 48; height: 48; radius: 24
-                                color: powerPill.confirmingDefault ? "#ffffff" : "transparent"
+                                width: powerPill.confirmingDefault ? 48 : 32
+                                height: powerPill.confirmingDefault ? 48 : 32
+                                radius: width / 2
+                                color: "#ffffff"
                                 z: 10
                                 opacity: powerPill.confirmingDefault ? 1 : 0
                                 visible: opacity > 0
@@ -1000,13 +1002,13 @@ PanelWindow {
                                 property real targetX: 74
                                 property real targetY: 30.5
                                 
-                                property real startX: 38
+                                property real startX: 8
                                 property real startY: {
-                                    if (powerPill.pendingAction === "sleep") return -3;
-                                    if (powerPill.pendingAction === "hibernate") return 45;
-                                    if (powerPill.pendingAction === "reboot") return 93;
-                                    if (powerPill.pendingAction === "shutdown") return 141;
-                                    return 0;
+                                    if (powerPill.pendingAction === "sleep") return 5;
+                                    if (powerPill.pendingAction === "logout") return 53;
+                                    if (powerPill.pendingAction === "reboot") return 101;
+                                    if (powerPill.pendingAction === "shutdown") return 149;
+                                    return 5;
                                 }
                                 
                                 x: powerPill.confirmingDefault ? targetX : startX
@@ -1014,14 +1016,15 @@ PanelWindow {
                                 
                                 Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on color { ColorAnimation { duration: 350; easing.type: Easing.OutBack } }
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 Behavior on opacity { NumberAnimation { duration: powerPill.confirmingDefault ? 0 : 200 } }
                                 
                                 Text { 
                                     text: powerPill.getActionIcon(powerPill.pendingAction)
-                                    color: powerPill.confirmingDefault ? "#5a2432" : "#fbdfe4"
+                                    color: powerPill.confirmingDefault ? "#5a2432" : (powerPill.pendingAction === "shutdown" ? "#5a2432" : bg)
                                     font.family: fontName
-                                    font.pixelSize: powerPill.confirmingDefault ? 24 : 18
+                                    font.pixelSize: powerPill.confirmingDefault ? 24 : 15
                                     anchors.centerIn: parent
                                     Behavior on color { ColorAnimation { duration: 350; easing.type: Easing.OutBack } }
                                     Behavior on font.pixelSize { NumberAnimation { duration: 350; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
