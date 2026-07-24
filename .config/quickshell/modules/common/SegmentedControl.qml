@@ -8,7 +8,7 @@ Rectangle {
     property var options: []
     property string current: options.length > 0 ? options[0] : ""
     signal selected(string value)
-    color: Qt.rgba(0, 0, 0, 0.28)
+    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
     radius: 8
     height: 30
     width: row.implicitWidth + 4
