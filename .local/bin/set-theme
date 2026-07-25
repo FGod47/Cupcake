@@ -54,7 +54,7 @@ fi
 
 # Set the wallpaper with awww immediately (no delay needed)
 echo "Setting wallpaper..."
-awww img "$WALLPAPER" --transition-type wipe --transition-fps 60 --transition-duration 1.5 &
+awww img "$WALLPAPER" --transition-type center --transition-fps 60 --transition-duration 1.5 &
 
 # Run matugen to generate themes
 # Use ffmpeg to downscale to 400x400 for fast color extraction
