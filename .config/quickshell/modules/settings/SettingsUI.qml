@@ -592,7 +592,14 @@ Item {
                         clip: true
                         
                         Loader {
+                            id: contentLoader
                             anchors.fill: parent
+                            
+                            transform: Translate {
+                                id: loaderTranslate
+                                y: 0
+                            }
+                            
                             source: {
                                 switch (root.currentIndex) {
                                     case 0: return "SettingsPageGeneral.qml";
@@ -611,6 +618,23 @@ Item {
                                     default: return "";
                                 }
                             }
+                            
+                            onLoaded: {
+                                if (contentLoader.item) {
+                                    contentLoader.item.opacity = 0
+                                    contentLoader.scale = 0.97
+                                    loaderTranslate.y = 15
+                                    enterAnim.restart()
+                                }
+                            }
+                            
+                            ParallelAnimation {
+                                id: enterAnim
+                                NumberAnimation { target: contentLoader.item; property: "opacity"; to: 1; duration: 250; easing.type: Easing.OutCubic }
+                                NumberAnimation { target: contentLoader; property: "scale"; to: 1; duration: 350; easing.type: Easing.OutQuart }
+                                NumberAnimation { target: loaderTranslate; property: "y"; to: 0; duration: 350; easing.type: Easing.OutQuart }
+                            }
+
                             onStatusChanged: {
                                 if (status === Loader.Error) {
                                     console.log("LOADER ERROR:", source, sourceComponent ? sourceComponent.errorString() : "unknown error");
