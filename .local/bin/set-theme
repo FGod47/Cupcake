@@ -53,8 +53,9 @@ if [ -f ~/.config/cupcake/.cursor_theme ]; then
 fi
 
 # Set the wallpaper with awww immediately (no delay needed)
-echo "Setting wallpaper..."
-awww img "$WALLPAPER" --transition-type center --transition-fps 60 --transition-duration 1.5 &
+TRANSITION="${2:-wipe}"
+echo "Setting wallpaper with transition: $TRANSITION..."
+awww img "$WALLPAPER" --transition-type "$TRANSITION" --transition-fps 60 --transition-duration 1.5 &
 
 # Run matugen to generate themes
 # Use ffmpeg to downscale to 400x400 for fast color extraction

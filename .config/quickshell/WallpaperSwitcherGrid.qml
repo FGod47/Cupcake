@@ -25,7 +25,7 @@ Item {
                 const path = root.wallDir + "/" + fileName
                 root.currentWall = path
                 Quickshell.execDetached([
-                    root.homeDir + "/.local/bin/set-theme", path
+                    root.homeDir + "/.local/bin/set-theme", path, "center"
                 ])
             }
         }
@@ -252,7 +252,7 @@ Item {
                                 const path = root.wallDir + "/" + del.fileName
                                 root.currentWall = path
                                 Quickshell.execDetached([
-                                    root.homeDir + "/.local/bin/set-theme", path
+                                    root.homeDir + "/.local/bin/set-theme", path, "center"
                                 ])
                             }
                         }
