@@ -471,6 +471,14 @@ Item {
                                 } else {
                                     PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced;
                                 }
+                                // Notify after switching
+                                let name = PowerProfiles.profile === PowerProfile.PowerSaver ? "Power Saver"
+                                         : PowerProfiles.profile === PowerProfile.Performance ? "Performance"
+                                         : "Balanced";
+                                let icon = PowerProfiles.profile === PowerProfile.PowerSaver ? "battery-low"
+                                         : PowerProfiles.profile === PowerProfile.Performance ? "utilities-system-monitor"
+                                         : "battery-good";
+                                Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", icon, "-t", "2500", "Power Profile", "Switched to " + name]);
                             }
                         }
                     }
