@@ -168,6 +168,14 @@ Item {
         stdout: StdioCollector { onStreamFinished: { let s = text.trim(); if (s !== "") themeSingleton.appLauncherStyle = s; } }
     }
 
+    property string wallpaperSwitcherStyle: "Carousel"
+    Process {
+        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.wallpaper_switcher_style"]
+        running: true
+        stdout: StdioCollector { onStreamFinished: { let s = text.trim(); if (s !== "") themeSingleton.wallpaperSwitcherStyle = s; } }
+    }
+
+
     property bool showDividers: true
     Process {
         command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_dividers"]

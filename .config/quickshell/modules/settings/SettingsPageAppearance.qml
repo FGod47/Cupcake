@@ -105,8 +105,18 @@ Item {
     property real wallpaperOpacity: 0.80
     property real settingsOpacity: 0.80
     property real ccOpacity: 0.85
+    property string wallpaperSwitcherStyle: "Carousel"
 
-
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.wallpaper_switcher_style"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim();
+                if (s !== "") root.wallpaperSwitcherStyle = s;
+            }
+        }
+    }
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_opacity"]
@@ -702,6 +712,37 @@ Item {
                         onSelected: (v) => {
                             root.appLauncherStyle = v;
                             Quickshell.execDetached(["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.applauncher_style"]);
+                        }
+                    }
+                }
+
+                SettingsRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle {
+                            width: 32; height: 32; radius: 10
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueeb0" // layout-cards or similar
+                                color: cTextDim
+                                font.family: "tabler-icons"
+                                font.pixelSize: 16
+                            }
+                        }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Wallpaper switcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Choose the layout style for the wallpaper switcher"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Carousel", "Grid"]
+                        current: root.wallpaperSwitcherStyle
+                        onSelected: (v) => {
+                            root.wallpaperSwitcherStyle = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.wallpaper_switcher_style"]);
                         }
                     }
                 }
