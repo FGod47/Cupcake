@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import Quickshell.Services.UPower
 import "../../theme"
 import "../common"
 
@@ -15,8 +16,15 @@ Item {
     property int batteryValue: 0
     property bool hasBattery: false
     
-    // Mock settings
-    property string powerMode: "Balanced"
+    // Real Power Profile State
+    property string powerMode: {
+        switch(PowerProfiles.profile) {
+            case PowerProfile.PowerSaver: return "Power Saver"
+            case PowerProfile.Balanced: return "Balanced"
+            case PowerProfile.Performance: return "Performance"
+            default: return "Balanced"
+        }
+    }
     property int saverThreshold: 20
     property bool cpuBoost: true
     property int dimScreen: 3
@@ -285,9 +293,17 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Saver", "Balanced", "Performance"]
+                        options: ["Power Saver", "Balanced", "Performance"]
                         current: root.powerMode
-                        onSelected: (val) => root.powerMode = val
+                        onSelected: (val) => {
+                            if (val === "Power Saver") PowerProfiles.profile = PowerProfile.PowerSaver;
+                            else if (val === "Balanced") PowerProfiles.profile = PowerProfile.Balanced;
+                            else if (val === "Performance") PowerProfiles.profile = PowerProfile.Performance;
+                            let icon = val === "Power Saver" ? "battery-low"
+                                     : val === "Performance" ? "utilities-system-monitor"
+                                     : "battery-good";
+                            Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", icon, "-t", "2500", "Power Profile", "Switched to " + val]);
+                        }
                     }
                 }
 
