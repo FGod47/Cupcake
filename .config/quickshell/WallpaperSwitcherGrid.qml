@@ -301,8 +301,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 130
-        height: 32
+        width: 180
+        height: 44
         fillMode: Image.PreserveAspectFit
         source: root.homeDir + "/Cupcake/Source/assets/cupcake-word-light.svg"
         opacity: 0.5
