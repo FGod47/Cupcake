@@ -1,56 +1,24 @@
+//@ pragma UseQApplication
 import QtQuick
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Io
 import "theme"
 import "modules/panels"
 import "modules/settings"
 import "modules/common"
 
-PanelWindow {
+Window {
     id: settingsWindow
-    anchors { left: true; top: true; bottom: true; right: true }
-    exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "cupcake-settings"
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    visible: true
+    width: 900
+    height: 800
+    minimumWidth: 800
+    minimumHeight: 600
+    maximumWidth: 1200
+    maximumHeight: 900
+    title: "Cupcake Settings"
     color: "transparent"
-
-    mask: Region {
-        item: bgRect
-    }
-    
-    // ── Click outside to close ──────────────────────────────────────────
-    MouseArea {
-        anchors.fill: parent
-        onClicked: settingsWindow.dismiss()
-    }
-
-    readonly property int fullWidth: 900
-    readonly property int fullHeight: 800
-
-
-    property bool isOpen: false
-    property bool userDismissed: false
-    
-    Component.onCompleted: {
-        Qt.callLater(() => {
-            settingsWindow.isOpen = true;
-        });
-    }
-    
-    function dismiss() {
-        if (userDismissed) return;
-        userDismissed = true;
-        settingsWindow.isOpen = false;
-        closeTimer.start();
-    }
-    
-    Timer {
-        id: closeTimer
-        interval: 550
-        onTriggered: Qt.quit()
-    }
+    flags: Qt.Window | Qt.FramelessWindowHint
 
     property real bgOpacity: 0.75
     Process {
@@ -80,14 +48,7 @@ PanelWindow {
     }
 
     Rectangle {
-        id: bgRect
-        anchors.centerIn: parent
-        width: settingsWindow.isOpen ? settingsWindow.fullWidth : 0
-        height: settingsWindow.isOpen ? settingsWindow.fullHeight : 160
-        
-        Behavior on width { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
-        Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
-
+        anchors.fill: parent
         radius: settingsWindow.hyprRounding
         border.width: 1
         border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
@@ -96,30 +57,15 @@ PanelWindow {
         // Solid glassy background to prevent color banding (line blocks)
         color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, settingsWindow.bgOpacity)
         
-        Item {
-            id: contentWrapper
+        SettingsUI {
+            id: settingsUI
             anchors.fill: parent
-            clip: true
+            windowRadius: settingsWindow.hyprRounding
             
-            Item {
-                id: innerContent
-                width: settingsWindow.fullWidth
-                height: settingsWindow.fullHeight
-                anchors.centerIn: parent
-                opacity: settingsWindow.isOpen ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
-
-                SettingsUI {
-                    id: settingsUI
-                    anchors.fill: parent
-                    windowRadius: settingsWindow.hyprRounding
-                    
-                    Connections {
-                        target: settingsUI
-                        function onRequestClose() {
-                            settingsWindow.dismiss();
-                        }
-                    }
+            Connections {
+                target: settingsUI
+                function onRequestClose() {
+                    Qt.quit();
                 }
             }
         }
