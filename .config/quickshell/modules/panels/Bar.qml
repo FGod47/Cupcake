@@ -748,6 +748,29 @@ PanelWindow {
 
 
                             Text {
+                                id: notifBellIcon
+                                text: "\uea35"
+                                color: (globalState.notifications && Object.keys(globalState.notifications.values).length > 0) ? Theme.colPrimary : fg
+                                font.family: "tabler-icons"
+                                font.pixelSize: Theme.defaultFontSize + 2
+                                anchors.verticalCenter: parent.verticalCenter
+                                
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
+                                }
+                            }
+                            
+                            Rectangle {
+                                width: 1
+                                height: 16
+                                color: fg
+                                opacity: 0.3
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Text {
                                 id: customClockText
                                 text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
                                 color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
