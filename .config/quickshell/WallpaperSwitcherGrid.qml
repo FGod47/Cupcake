@@ -4,33 +4,43 @@ import Quickshell
 import Quickshell.Widgets
 import "modules/common"
 
-GridView {
+Item {
     id: gv
 
     required property var root
+    property var model
 
     anchors.centerIn: parent
-    width: root.wallW * 2 + 40
-    height: Math.min(Math.ceil(count / 2) * (root.wallH + 20), root.height * 0.8)
-    cellWidth: root.wallW + 20
-    cellHeight: root.wallH + 20
+    width: root.wallW + 80
+    height: root.wallH * 2.6
+
+    property int currentIndex: 0
+    readonly property int count: rep.count
 
     Keys.onEscapePressed: root.dismiss()
     Keys.onReturnPressed: {
-        if (gv.currentItem) {
-            const path = root.wallDir + "/" + gv.currentItem.fileName
-            root.currentWall = path
-            Quickshell.execDetached([
-                root.homeDir + "/.local/bin/set-theme", path
-            ])
-            root.dismiss()
+        if (count > 0 && currentIndex >= 0 && currentIndex < count) {
+            const fileName = gv.model.get(currentIndex, "fileName")
+            if (fileName) {
+                const path = root.wallDir + "/" + fileName
+                root.currentWall = path
+                Quickshell.execDetached([
+                    root.homeDir + "/.local/bin/set-theme", path
+                ])
+                root.dismiss()
+            }
         }
     }
     
+    Keys.onUpPressed: { if (currentIndex > 0) currentIndex-- }
+    Keys.onDownPressed: { if (currentIndex < count - 1) currentIndex++ }
+    Keys.onLeftPressed: { if (currentIndex > 0) currentIndex-- }
+    Keys.onRightPressed: { if (currentIndex < count - 1) currentIndex++ }
+
     onVisibleChanged: {
         if (visible && root.currentWall !== "") {
             for (let i = 0; i < count; i++) {
-                const entryFileName = model.get(i, "fileName")
+                const entryFileName = gv.model.get(i, "fileName")
                 if (entryFileName && root.wallDir + "/" + entryFileName === root.currentWall) {
                     currentIndex = i
                     return
@@ -39,63 +49,186 @@ GridView {
         }
     }
 
-    delegate: Item {
-        id: delGv
-        width: gv.cellWidth
-        height: gv.cellHeight
+    MouseArea {
+        anchors.fill: parent
+        onWheel: (wheel) => {
+            if (wheel.angleDelta.y > 0) {
+                if (gv.currentIndex > 0) gv.currentIndex--
+            } else {
+                if (gv.currentIndex < gv.count - 1) gv.currentIndex++
+            }
+        }
+    }
 
-        required property string fileName
-        required property url    fileUrl
-        required property int    index
-        
-        readonly property bool isCurrent: GridView.isCurrentItem
+    Item {
+        id: stage
+        anchors.centerIn: parent
+        width: root.wallW
+        height: root.wallH
 
-        // ── Thumbnail ──────────────────────────────────────────────
-        ClippingRectangle {
-            id: imgClipGv
-            anchors.centerIn: parent
-            width:  root.wallW
-            height: root.wallH
-            radius: root.cornerR
-            color:  root.colSub
+        Repeater {
+            id: rep
+            model: gv.model
 
-            Image {
-                anchors.fill:  parent
-                source:        delGv.fileUrl
-                fillMode:      Image.PreserveAspectCrop
-                asynchronous:  true
-                cache:         true
-                sourceSize:    Qt.size(root.wallW * 2, root.wallH * 2)
-                opacity:       status === Image.Ready ? 1.0 : 0.0
-                Behavior on opacity {
-                    NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
+            delegate: Item {
+                id: del
+                width: root.wallW
+                height: root.wallH
+                anchors.centerIn: parent
+
+                required property string fileName
+                required property url    fileUrl
+                required property int    index
+
+                // The math from HTML:
+                readonly property int offset: index - gv.currentIndex
+                readonly property int absOffset: Math.abs(offset)
+                readonly property bool isActive: offset === 0
+
+                // HTML uses 80px shift for card height 150px (ratio 0.533).
+                readonly property real yShiftBase: root.wallH * (80.0 / 150.0)
+                readonly property real yShiftFar: root.wallH * (90.0 / 150.0)
+
+                z: 100 - absOffset
+                
+                // If abs > 1, translateY(offset*90) scale(0.7), opacity 0
+                // If abs <= 1, translateY(offset*80) scale(1 - abs*0.15), opacity Math.max(...)
+                property real targetY: absOffset > 1 ? offset * yShiftFar : offset * yShiftBase
+                property real targetScale: absOffset > 1 ? 0.7 : (1.0 - absOffset * 0.15)
+                property real targetOpacity: absOffset > 1 ? 0.0 : Math.max(1.0 - absOffset * 0.42, 0.18)
+                property real targetBrightness: isActive ? 1.0 : (1.0 - absOffset * 0.18)
+
+                transform: Translate { y: del.targetY }
+                scale: targetScale
+                opacity: targetOpacity
+
+                Behavior on targetY { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
+                Behavior on scale { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
+
+                // ── Thumbnail ──────────────────────────────────────────────
+                ClippingRectangle {
+                    id: imgClip
+                    anchors.fill: parent
+                    radius: root.cornerR
+                    color: root.colSub
+
+                    // Emulate the filter: brightness(...) via an overlay rectangle
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        opacity: 1.0 - del.targetBrightness
+                        z: 10
+                        Behavior on opacity { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
+                    }
+
+                    Image {
+                        anchors.fill: parent
+                        source: del.fileUrl
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        cache: true
+                        sourceSize: Qt.size(root.wallW * 2, root.wallH * 2)
+                        opacity: status === Image.Ready ? 1.0 : 0.0
+                        Behavior on opacity {
+                            NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
+                        }
+                    }
+                }
+
+                // ── Inactive border ────────────────────────────────────────
+                Rectangle {
+                    anchors.fill: imgClip
+                    color: "transparent"
+                    border.color: Qt.rgba(1, 1, 1, 0.10)
+                    border.width: 1
+                    radius: root.cornerR
+                }
+
+                // ── Label ──────────────────────────────────────────────────
+                Rectangle {
+                    id: labelBg
+                    anchors.left: imgClip.left
+                    anchors.bottom: imgClip.bottom
+                    anchors.leftMargin: 12
+                    anchors.bottomMargin: 11
+                    width: labelText.width + 18
+                    height: labelText.height + 8
+                    radius: 20
+                    color: Qt.rgba(0, 0, 0, 0.4)
+                    opacity: del.isActive ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                    Text {
+                        id: labelText
+                        anchors.centerIn: parent
+                        text: del.fileName
+                        color: "#ffffff"
+                        font.family: "JetBrains Mono"
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                    }
+                }
+
+                // ── Active border ──────────────────────────────────────────
+                Rectangle {
+                    anchors.fill: imgClip
+                    anchors.margins: -4
+                    color: "transparent"
+                    border.color: root.colPrimary
+                    border.width: 3
+                    radius: root.cornerR + 4
+                    opacity: del.isActive ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 250 } }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: del.absOffset <= 1
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (!del.isActive) {
+                            gv.currentIndex = index
+                        } else {
+                            const path = root.wallDir + "/" + del.fileName
+                            root.currentWall = path
+                            Quickshell.execDetached([
+                                root.homeDir + "/.local/bin/set-theme", path
+                            ])
+                            root.dismiss()
+                        }
+                    }
                 }
             }
         }
+    }
 
-        // ── Active border ──────────────────────────────────────────
-        Rectangle {
-            anchors.fill: imgClipGv
-            anchors.margins: -4
-            color: "transparent"
-            border.color: root.colPrimary
-            border.width: 3
-            radius: root.cornerR + 4
-            opacity: delGv.isCurrent ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 200 } }
-        }
+    // ── Dots Pagination ──────────────────────────────────────────────────
+    Column {
+        anchors.left: stage.right
+        anchors.leftMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 6
 
-        MouseArea {
-            anchors.fill: parent
-            cursorShape:  Qt.PointingHandCursor
-            onClicked: {
-                gv.currentIndex = index
-                const path = root.wallDir + "/" + delGv.fileName
-                root.currentWall = path
-                Quickshell.execDetached([
-                    root.homeDir + "/.local/bin/set-theme", path
-                ])
-                root.dismiss()
+        Repeater {
+            model: gv.model
+            delegate: Rectangle {
+                width: 6
+                height: isCurrent ? 16 : 6
+                radius: isCurrent ? 4 : 3
+                color: isCurrent ? root.colPrimary : Qt.rgba(root.colFgDim.r, root.colFgDim.g, root.colFgDim.b, 0.3)
+                
+                readonly property bool isCurrent: index === gv.currentIndex
+
+                Behavior on height { NumberAnimation { duration: 200 } }
+                Behavior on color { ColorAnimation { duration: 200 } }
+
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.margins: -4
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: gv.currentIndex = index
+                }
             }
         }
     }
