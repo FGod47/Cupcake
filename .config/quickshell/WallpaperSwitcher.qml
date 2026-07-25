@@ -118,6 +118,7 @@ PanelWindow {
                     for (let i = 0; i < wallModel.count; i++) {
                         if (wallModel.get(i, "fileName") === fileName) {
                             pv.currentIndex = i
+                            gv.currentIndex = i
                             break
                         }
                     }
@@ -142,6 +143,7 @@ PanelWindow {
                     for (let i = 0; i < wallModel.count; i++) {
                         if (wallModel.get(i, "fileName") === currentFileName) {
                             pv.currentIndex = i
+                            gv.currentIndex = i
                             break
                         }
                     }
@@ -175,9 +177,9 @@ PanelWindow {
 
     // ── Master Vertical Clipping Wrapper ──────────────────────────
     Item {
-        anchors.left: parent.left
+        x: Theme.wallpaperSwitcherStyle === "Grid" ? (parent.width - width) / 2 : 0
         anchors.verticalCenter: parent.verticalCenter
-        width: pill.width + 1
+        width: pill.width + (Theme.wallpaperSwitcherStyle === "Grid" ? 0 : 1)
         height: root.height
         clip: true
 
@@ -189,8 +191,8 @@ PanelWindow {
         anchors.verticalCenter:   parent.verticalCenter
         anchors.leftMargin:       0
 
-        readonly property int fullWidth: Theme.wallpaperSwitcherStyle === "Grid" ? root.wallW * 2 + 100 : root.wallW + root.padH * 2
-        readonly property int fullHeight: Theme.wallpaperSwitcherStyle === "Grid" ? gv.height + root.padV * 2 : pv.height + root.padV * 2 // approximation for label metrics height
+        readonly property int fullWidth: Theme.wallpaperSwitcherStyle === "Grid" ? gv.width + root.padH * 2 : root.wallW + root.padH * 2
+        readonly property int fullHeight: Theme.wallpaperSwitcherStyle === "Grid" ? gv.height + root.padV * 2 : pv.height + root.padV * 2
 
 
         width: root.isOpen ? fullWidth : 0
@@ -200,10 +202,12 @@ PanelWindow {
         Behavior on height { NumberAnimation { duration: 550; easing.type: Easing.InOutExpo } }
 
         color: Qt.rgba(root.colBg.r, root.colBg.g, root.colBg.b, root.bgOpacity)
+        border.color: Theme.wallpaperSwitcherStyle === "Grid" ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+        border.width: Theme.wallpaperSwitcherStyle === "Grid" ? 1 : 0
         topRightRadius: 36
         bottomRightRadius: 36
-        topLeftRadius: 0
-        bottomLeftRadius: 0
+        topLeftRadius: Theme.wallpaperSwitcherStyle === "Grid" ? 36 : 0
+        bottomLeftRadius: Theme.wallpaperSwitcherStyle === "Grid" ? 36 : 0
 
         // We place the inner content in a separate Item
         // and fade it out so it doesn't squish during the width animation
@@ -244,6 +248,7 @@ PanelWindow {
 
         // ── Top Fillet (Inverse top-left corner) ─────────────────────
         Shape {
+            visible: Theme.wallpaperSwitcherStyle !== "Grid"
             width: 36; height: 36
             anchors.bottom: parent.top
             anchors.bottomMargin: 0
@@ -265,6 +270,7 @@ PanelWindow {
 
         // ── Bottom Fillet (Inverse bottom-left corner) ─────────────────────
         Shape {
+            visible: Theme.wallpaperSwitcherStyle !== "Grid"
             width: 36; height: 36
             anchors.top: parent.bottom
             anchors.topMargin: 0
