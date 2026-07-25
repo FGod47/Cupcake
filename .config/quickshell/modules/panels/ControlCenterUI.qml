@@ -399,7 +399,7 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 220
-                        Layout.preferredHeight: 236
+                        Layout.preferredHeight: 248
                         color: bgSurface0
                         radius: 20
 
@@ -407,8 +407,6 @@ Item {
                             anchors.fill: parent
                             anchors.margins: 14
                             spacing: 8
-
-                            Item { Layout.fillHeight: true }
 
                             Text {
                                 text: "Power Profile"
@@ -418,73 +416,72 @@ Item {
                                 font.weight: 700
                                 Layout.alignment: Qt.AlignHCenter
                             }
-
-                            Item { Layout.fillHeight: true }
-
-                            Rectangle {
-                                Layout.alignment: Qt.AlignHCenter
-                                width: 80; height: 80; radius: 40
-                                color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreenDim : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: switch(PowerProfiles.profile) {
-                                        case PowerProfile.PowerSaver: return "\ueb07"
-                                        case PowerProfile.Balanced: return "\ueb39"
-                                        case PowerProfile.Performance: return "\ueaab"
-                                    }
-                                    color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreen : textSubtext0
-                                    font.family: "tabler-icons"
-                                    font.pixelSize: 40
-                                }
-                            }
-
-                            Item { Layout.fillHeight: true }
-
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: switch(PowerProfiles.profile) {
-                                    case PowerProfile.PowerSaver: return "Power Saver"
-                                    case PowerProfile.Balanced: return "Balanced"
-                                    case PowerProfile.Performance: return "Performance"
-                                    default: return "Unknown"
-                                }
-                                color: PowerProfiles.profile !== PowerProfile.Balanced ? colGreen : textSubtext0
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: 600
-                            }
                             
                             Item { Layout.fillHeight: true }
-                        }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (PowerProfiles.hasPerformanceProfile) {
-                                    switch(PowerProfiles.profile) {
-                                        case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced; break;
-                                        case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance; break;
-                                        case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver; break;
+                            Repeater {
+                                model: [
+                                    { name: "Power Saver", type: PowerProfile.PowerSaver, icon: "\ueb07", sysIcon: "battery-low" },
+                                    { name: "Balanced", type: PowerProfile.Balanced, icon: "\ueb39", sysIcon: "battery-good" },
+                                    { name: "Performance", type: PowerProfile.Performance, icon: "\ueaab", sysIcon: "utilities-system-monitor" }
+                                ]
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 52
+                                    radius: 12
+                                    color: PowerProfiles.profile === modelData.type ? colGreenDim : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.05)
+                                    
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 12
+                                        spacing: 12
+                                        
+                                        Rectangle {
+                                            width: 28; height: 28; radius: 14
+                                            color: PowerProfiles.profile === modelData.type ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : "transparent"
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: modelData.icon
+                                                font.family: "tabler-icons"
+                                                font.pixelSize: 16
+                                                color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
+                                            }
+                                        }
+                                        Text {
+                                            text: modelData.name
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 13
+                                            font.weight: 600
+                                            color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
+                                            Layout.fillWidth: true
+                                        }
                                     }
-                                } else {
-                                    PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced;
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            if (modelData.type === PowerProfile.Performance && !PowerProfiles.hasPerformanceProfile) {
+                                                Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", "dialog-warning", "-t", "2500", "Power Profile", "Performance profile is not supported on this system."]);
+                                                return;
+                                            }
+                                            PowerProfiles.profile = modelData.type;
+                                            Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", modelData.sysIcon, "-t", "2500", "Power Profile", "Switched to " + modelData.name]);
+                                        }
+                                    }
                                 }
-                                // Notify after switching
-                                let name = PowerProfiles.profile === PowerProfile.PowerSaver ? "Power Saver"
-                                         : PowerProfiles.profile === PowerProfile.Performance ? "Performance"
-                                         : "Balanced";
-                                let icon = PowerProfiles.profile === PowerProfile.PowerSaver ? "battery-low"
-                                         : PowerProfiles.profile === PowerProfile.Performance ? "utilities-system-monitor"
-                                         : "battery-good";
-                                Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", icon, "-t", "2500", "Power Profile", "Switched to " + name]);
                             }
                         }
                     }
                 }
-
-                MusicWidget {}
+                
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 170
+                    radius: 20
+                    color: Qt.rgba(0, 0, 0, 0.3)
+                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                    border.width: 1
+                }
 
                 // Bottom Row of 5 Quick Toggles
                 RowLayout {
