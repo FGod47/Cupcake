@@ -205,22 +205,40 @@ PanelWindow {
         topLeftRadius: 0
         bottomLeftRadius: 0
 
-        WallpaperSwitcherCarousel {
-            id: pv
-            root: root
-            model: wallModel
-            visible: Theme.wallpaperSwitcherStyle !== "Grid"
-            focus: visible
-        }
-        
-        // GridView layout
-        WallpaperSwitcherGrid {
-            id: gv
-            root: root
-            model: wallModel
-            visible: Theme.wallpaperSwitcherStyle === "Grid"
-            focus: visible
-        }
+        // We place the inner content in a separate Item
+        // and fade it out so it doesn't squish during the width animation
+        Item {
+            id: contentWrapper
+            width: pill.width
+            height: pill.height
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            clip: true
+            
+            Item {
+                id: innerContent
+                anchors.fill: parent
+                opacity: root.isOpen && root.isInitialized ? 1.0 : 0.0
+                Behavior on opacity {
+                    NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
+                }
+
+                WallpaperSwitcherCarousel {
+                    id: pv
+                    root: root
+                    model: wallModel
+                    visible: Theme.wallpaperSwitcherStyle !== "Grid"
+                    focus: visible
+                }
+                
+                // GridView layout
+                WallpaperSwitcherGrid {
+                    id: gv
+                    root: root
+                    model: wallModel
+                    visible: Theme.wallpaperSwitcherStyle === "Grid"
+                    focus: visible
+                }
             } // Item innerContent
         } // Item contentWrapper
 
