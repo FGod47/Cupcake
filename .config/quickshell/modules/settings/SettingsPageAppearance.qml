@@ -738,7 +738,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Carousel", "Grid"]
+                        options: ["Carousel", "Showcase"]
                         current: root.wallpaperSwitcherStyle
                         onSelected: (v) => {
                             root.wallpaperSwitcherStyle = v;
