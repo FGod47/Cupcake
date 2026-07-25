@@ -10,6 +10,11 @@ Item {
     id: root
     Process { id: bashProcess }
 
+    property color cText:       Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
+    property color cTextDim:    Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+    property color cAccent:     Theme.colPrimary
+    property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+
 // =====================================================================
     // Reusable inline components
     // =====================================================================
@@ -163,7 +168,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -201,7 +206,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -239,7 +244,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -276,7 +281,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -302,7 +307,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -333,7 +338,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -371,7 +376,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -409,7 +414,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -446,7 +451,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -472,7 +477,7 @@ Item {
                 SettingsRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 16; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
