@@ -296,54 +296,17 @@ Item {
         }
     }
 
-    // ── Apply Button ─────────────────────────────────────────────────────
-    Rectangle {
-        id: applyBtn
+    // ── Cupcake Logo ─────────────────────────────────────────────────────
+    Image {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 20
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 40
-        height: 44
-        radius: 12
-        color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
-        border.color: root.colPrimary
-        border.width: 1
-        
-        Row {
-            anchors.centerIn: parent
-            spacing: 8
-            Text {
-                text: "\uea5e"
-                color: root.colPrimary
-                font.family: "tabler-icons"
-                font.pixelSize: 16
-                font.weight: Font.Bold
-            }
-            Text {
-                text: "Set as wallpaper"
-                color: root.colPrimary
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 13
-                font.weight: Font.DemiBold
-            }
-        }
-        
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                if (gv.count > 0 && gv.currentIndex >= 0 && gv.currentIndex < gv.count) {
-                    const fileName = gv.model.get(gv.currentIndex, "fileName")
-                    if (fileName) {
-                        const path = root.wallDir + "/" + fileName
-                        root.currentWall = path
-                        Quickshell.execDetached([
-                            root.homeDir + "/.local/bin/set-theme", path
-                        ])
-                        root.dismiss()
-                    }
-                }
-            }
-        }
+        width: 130
+        height: 32
+        fillMode: Image.PreserveAspectFit
+        source: root.homeDir + "/Cupcake/Source/assets/cupcake-word-light.svg"
+        opacity: 0.5
+        smooth: true
+        antialiasing: true
     }
 }
