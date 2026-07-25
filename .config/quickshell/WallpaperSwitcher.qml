@@ -27,7 +27,7 @@ PanelWindow {
     }
 
     // ── Caelestia exact token values ─────────────────────────────────────
-    readonly property int    wallW:       Theme.wallpaperSwitcherStyle === "Grid" ? 200 : 280          // wallpaperWidth
+    readonly property int    wallW:       Theme.wallpaperSwitcherStyle === "Grid" ? 240 : 280          // wallpaperWidth
     readonly property int    wallH:       Math.round(wallW / 16 * 9)
     readonly property int    itemW:       180          // Spacing distance for stacking effect
     readonly property int    itemH:       170          // Vertical spacing distance
