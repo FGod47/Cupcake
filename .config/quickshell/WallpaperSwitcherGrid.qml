@@ -27,7 +27,6 @@ Item {
                 Quickshell.execDetached([
                     root.homeDir + "/.local/bin/set-theme", path
                 ])
-                root.dismiss()
             }
         }
     }
@@ -255,7 +254,6 @@ Item {
                                 Quickshell.execDetached([
                                     root.homeDir + "/.local/bin/set-theme", path
                                 ])
-                                root.dismiss()
                             }
                         }
                     }
