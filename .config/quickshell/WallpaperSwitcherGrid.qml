@@ -82,14 +82,11 @@ Item {
         width: root.wallW + 40
         height: root.wallH * 2.6
 
-        Row {
+        Item {
+            id: stage
             anchors.centerIn: parent
-            spacing: 20
-
-            Item {
-                id: stage
-                width: root.wallW
-                height: root.wallH
+            width: root.wallW
+            height: root.wallH
 
             Repeater {
                 id: rep
@@ -268,6 +265,8 @@ Item {
 
             // ── Dots Pagination ──────────────────────────────────────────────────
             Column {
+                anchors.left: stage.right
+                anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 6
 
@@ -293,7 +292,6 @@ Item {
                     }
                 }
             }
-        }
     }
 
     // ── Cupcake Logo ─────────────────────────────────────────────────────
