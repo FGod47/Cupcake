@@ -169,6 +169,7 @@ Item {
                             Component.onCompleted: initOutVol.running = true
                         }
                         
+                        Item { Layout.fillWidth: true }
                         StyledSlider {
                             id: volSlider
                             Layout.preferredWidth: 220
@@ -306,6 +307,7 @@ Item {
                             Component.onCompleted: initInVol.running = true
                         }
                         
+                        Item { Layout.fillWidth: true }
                         StyledSlider {
                             id: inSlider
                             Layout.preferredWidth: 220
@@ -402,9 +404,10 @@ Item {
                                 }
                             }
                             
-                            StyledSlider {
+                            Item { Layout.fillWidth: true }
+                                StyledSlider {
                                 id: appVolSlider
-                                Layout.fillWidth: true
+                                Layout.preferredWidth: 220
                                 from: 0; to: 1.0
                                 onMoved: {
                                     if (modelData.audio) {

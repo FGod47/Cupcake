@@ -223,7 +223,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 140
+                            Layout.preferredWidth: 220
                             from: 5; to: 50
                             value: root.saverThreshold
                             onMoved: root.saverThreshold = value
@@ -264,7 +264,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 130
+                            Layout.preferredWidth: 220
                             from: 1; to: 15
                             value: root.dimScreen
                             onMoved: root.dimScreen = value
@@ -286,7 +286,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 130
+                            Layout.preferredWidth: 220
                             from: 1; to: 30
                             value: root.offScreen
                             onMoved: root.offScreen = value
@@ -327,7 +327,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 130
+                            Layout.preferredWidth: 220
                             from: 5; to: 60
                             value: root.suspendBat
                             onMoved: root.suspendBat = value
@@ -349,7 +349,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 130
+                            Layout.preferredWidth: 220
                             from: 5; to: 120
                             value: root.suspendAc
                             onMoved: root.suspendAc = value
@@ -419,7 +419,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 140
+                            Layout.preferredWidth: 220
                             from: 50; to: 100
                             value: root.chargeLimit
                             onMoved: root.chargeLimit = value

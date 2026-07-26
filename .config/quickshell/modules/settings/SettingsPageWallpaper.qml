@@ -552,7 +552,7 @@ Item {
                     StyledSlider {
                         id: dimSlider
                         from: 0; to: 1; value: root.dimOverlay
-                        implicitWidth: 110
+                        implicitWidth: 220
                         
                         Timer {
                             id: dimDebounce

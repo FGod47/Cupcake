@@ -739,11 +739,11 @@ Item {
                             id: tempSlider
                             from: 1000; to: 6500; stepSize: 100
                             value: nightLightCard.nightTemp
-                            Layout.preferredWidth: 130
+                            Layout.preferredWidth: 220
                             
                             background: Rectangle {
                                 x: tempSlider.leftPadding; y: tempSlider.topPadding + tempSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 130; implicitHeight: 24 // Fix: Give the slider a height so the MouseArea works!
+                                implicitWidth: 220; implicitHeight: 24 // Fix: Give the slider a height so the MouseArea works!
                                 width: tempSlider.availableWidth; height: 6; radius: 3
                                 gradient: Gradient {
                                     orientation: Gradient.Horizontal

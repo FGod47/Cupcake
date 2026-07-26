@@ -137,7 +137,7 @@ Item {
                             Text { anchors.centerIn: parent; text: root.gapsIn + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 0; to: 40; stepSize: 1
                             value: root.gapsIn
                             onValueChanged: root.gapsIn = Math.round(value)
@@ -165,7 +165,7 @@ Item {
                             Text { anchors.centerIn: parent; text: root.gapsOut + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 0; to: 60; stepSize: 1
                             value: root.gapsOut
                             onValueChanged: root.gapsOut = Math.round(value)
@@ -218,7 +218,7 @@ Item {
                             Text { anchors.centerIn: parent; text: root.rounding + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 0; to: 30; stepSize: 1
                             value: root.rounding
                             onValueChanged: root.rounding = Math.round(value)
@@ -246,7 +246,7 @@ Item {
                             Text { anchors.centerIn: parent; text: root.borderSize + "px"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 0; to: 10; stepSize: 1
                             value: root.borderSize
                             onValueChanged: root.borderSize = Math.round(value)
@@ -278,7 +278,7 @@ Item {
                             Text { anchors.centerIn: parent; text: root.overviewTabs; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 1; to: 20; stepSize: 1
                             value: root.overviewTabs
                             onValueChanged: { root.overviewTabs = Math.round(value); }
@@ -310,7 +310,7 @@ Item {
                             Text { anchors.centerIn: parent; text: (root.overviewScale * 100).toFixed(0) + "%"; color: root.cAccent; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
                         }
                         StyledSlider {
-                            Layout.preferredWidth: 180
+                            Layout.preferredWidth: 220
                             from: 0.05; to: 0.30; stepSize: 0.01
                             value: root.overviewScale
                             onValueChanged: { root.overviewScale = value; }

@@ -457,7 +457,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 150
+                            Layout.preferredWidth: 220
                             from: 0; to: 100; stepSize: 1
                             value: root.swappiness
                             onValueChanged: { root.swappiness = value; }
@@ -552,7 +552,7 @@ Item {
                     RowLayout {
                         spacing: 12
                         StyledSlider {
-                            Layout.preferredWidth: 150
+                            Layout.preferredWidth: 220
                             from: 1; to: 30; stepSize: 1
                             value: root.lockTimeout
                             onValueChanged: { root.lockTimeout = value; }
