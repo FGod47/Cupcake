@@ -445,18 +445,20 @@ Item {
                             
                             Rectangle {
                                 id: activeProfileIndicator
-                                width: powerProfileContainer.width / 3
-                                height: parent.height
-                                y: 0
+                                property int margin: 3
+                                width: (powerProfileContainer.width / 3) - (margin * 2)
+                                height: parent.height - (margin * 2)
+                                y: margin
                                 
                                 x: {
-                                    if (PowerProfiles.profile === PowerProfile.PowerSaver) return 0;
-                                    if (PowerProfiles.profile === PowerProfile.Balanced) return width;
-                                    if (PowerProfiles.profile === PowerProfile.Performance) return width * 2;
-                                    return width;
+                                    let step = powerProfileContainer.width / 3;
+                                    if (PowerProfiles.profile === PowerProfile.PowerSaver) return margin;
+                                    if (PowerProfiles.profile === PowerProfile.Balanced) return step + margin;
+                                    if (PowerProfiles.profile === PowerProfile.Performance) return (step * 2) + margin;
+                                    return step + margin;
                                 }
                                 
-                                radius: 17
+                                radius: height / 2
                                 color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
                                 border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
                                 border.width: 1
