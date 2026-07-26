@@ -659,22 +659,31 @@ Item {
                     clip: true
                     contentWidth: availableWidth
 
-                    ColumnLayout {
+                    Rectangle {
                         width: parent.width
-                        spacing: 8
+                        implicitHeight: wifiListCol.implicitHeight
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        radius: 16
+                        clip: true
 
-                        // Network List Repeater
-                        Repeater {
+                        ColumnLayout {
+                            id: wifiListCol
+                            anchors.fill: parent
+                            spacing: 0
+
+                            // Network List Repeater
+                            Repeater {
                             model: wifiModel
                             delegate: ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 4
+                                spacing: 0
 
                                 Rectangle {
                                     Layout.fillWidth: true
                                     height: 52
-                                    color: model.inUse ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                                    radius: 12
+                                    color: model.inUse ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : "transparent"
+                                    
+                                    Rectangle { anchors.fill: parent; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); visible: wifiMa.containsMouse && !model.inUse && !model.expanded }
 
 
                                     RowLayout {
@@ -728,7 +737,9 @@ Item {
                                     }
 
                                     MouseArea {
+                                        id: wifiMa
                                         anchors.fill: parent
+                                        hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         enabled: !model.inUse && !model.expanded
                                         onClicked: {
@@ -748,6 +759,8 @@ Item {
                                     Layout.fillWidth: true
                                     Layout.leftMargin: 8
                                     Layout.rightMargin: 8
+                                    Layout.topMargin: 8
+                                    Layout.bottomMargin: 12
                                     spacing: 8
                                     visible: model.expanded
 
@@ -800,8 +813,16 @@ Item {
                                         }
                                     }
                                 }
+                                
+                                // Divider
+                                Rectangle {
+                                    Layout.fillWidth: true; height: 1
+                                    color: Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                    visible: index < wifiModel.count - 1
+                                }
                             }
                         }
+                    }
                     }
                 }
             }
@@ -929,13 +950,24 @@ Item {
                         }
 
                         // Paired Devices List
-                        Repeater {
-                            model: pairedDevices
-                            delegate: Rectangle {
-                                Layout.fillWidth: true
-                                height: 44
-                                color: modelData.connected ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                                radius: 12
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: pairedListCol.implicitHeight
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            radius: 16
+                            clip: true
+                            visible: pairedDevices.length > 0
+                            ColumnLayout {
+                                id: pairedListCol
+                                anchors.fill: parent
+                                spacing: 0
+                                Repeater {
+                                    model: pairedDevices
+                                    delegate: Rectangle {
+                                        Layout.fillWidth: true
+                                        height: 44
+                                        color: modelData.connected ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.12) : "transparent"
+                                        Rectangle { anchors.fill: parent; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); visible: btMa.containsMouse }
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -981,6 +1013,8 @@ Item {
                                             font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium
                                         }
                                         MouseArea {
+                                            id: btMa
+                                            hoverEnabled: true
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 if (modelData.connected) modelData.disconnect()
@@ -988,8 +1022,17 @@ Item {
                                             }
                                         }
                                     }
+                                    
+                                    // Divider
+                                    Rectangle {
+                                        Layout.fillWidth: true; height: 1
+                                        color: Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                        visible: index < pairedDevices.length - 1
+                                    }
                                 }
                             }
+                        }
+                        }
                         }
 
                         Item { Layout.fillWidth: true; height: 4; visible: pairedDevices.length > 0 && availableDevices.length > 0 }
@@ -1006,13 +1049,24 @@ Item {
                         }
 
                         // Available Devices List
-                        Repeater {
-                            model: availableDevices
-                            delegate: Rectangle {
-                                Layout.fillWidth: true
-                                height: 44
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                                radius: 12
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: availListCol.implicitHeight
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            radius: 16
+                            clip: true
+                            visible: availableDevices.length > 0
+                            ColumnLayout {
+                                id: availListCol
+                                anchors.fill: parent
+                                spacing: 0
+                                Repeater {
+                                    model: availableDevices
+                                    delegate: Rectangle {
+                                        Layout.fillWidth: true
+                                        height: 44
+                                        color: "transparent"
+                                        Rectangle { anchors.fill: parent; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04); visible: btAvailMa.containsMouse }
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -1058,14 +1112,25 @@ Item {
                                             font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Medium
                                         }
                                         MouseArea {
+                                            id: btAvailMa
+                                            hoverEnabled: true
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 modelData.connect()
                                             }
                                         }
                                     }
+                                    
+                                    // Divider
+                                    Rectangle {
+                                        Layout.fillWidth: true; height: 1
+                                        color: Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                        visible: index < availableDevices.length - 1
+                                    }
                                 }
                             }
+                        }
+                        }
                         }
                     }
                 }
