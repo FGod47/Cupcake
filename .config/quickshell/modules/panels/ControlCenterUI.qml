@@ -416,7 +416,7 @@ Item {
                             Layout.fillWidth: true; Layout.fillHeight: true; radius: 12
                             color: hotspotActive ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
                             border.color: hotspotActive ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3) : "transparent"; border.width: 1
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"]); ccUi.requestClose() } }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { if (!wifiRadioEnabled) { ccUi.showWarning = true; warningTimer.restart(); return; } if (hotspotActive) { Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]) } else { Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"]) } hotspotActive = !hotspotActive; hotspotQueryTimer.restart() } }
                             Text { anchors.centerIn: parent; text: "\ued1b"; color: hotspotActive ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
                         }
                     }
