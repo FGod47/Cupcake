@@ -15,7 +15,7 @@ Item {
     property int animatedExtraHeight: extraHeight
     Behavior on animatedExtraHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     
-    property int connectionsHeight: volSliderBg.isExpanded ? 0 : 180
+    property int connectionsHeight: volSliderBg.isExpanded ? 64 : 180
     Behavior on connectionsHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     
     height: 615 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
@@ -261,13 +261,13 @@ Item {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: ccUi.connectionsHeight
-                    opacity: ccUi.connectionsHeight / 180
-                    visible: ccUi.connectionsHeight > 0
                     clip: true
                     radius: 20
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
                     Column {
+                        opacity: (ccUi.connectionsHeight - 64) / 116
+                        visible: opacity > 0
                         anchors.fill: parent
                         
                         // Wi-Fi
