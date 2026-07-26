@@ -214,7 +214,7 @@ Item {
                         Rectangle {
                             Layout.alignment: Qt.AlignRight
                             width: 34; height: 34; radius: 17
-                            color: Theme.colSurface
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb20"; font.family: "tabler-icons"; font.pixelSize: 16; color: textSubtext0 }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -227,7 +227,7 @@ Item {
                             Layout.alignment: Qt.AlignRight
                             height: 24; width: uptimeText.width + 24
                             radius: 12
-                            color: Theme.colSurface
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 id: uptimeText
                                 anchors.centerIn: parent
@@ -245,7 +245,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 180
                     radius: 20
-                    color: Theme.colSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
                     Column {
                         anchors.fill: parent
@@ -410,7 +410,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 76
                     radius: 20
-                    color: Theme.colSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
                     ColumnLayout {
                         anchors.fill: parent; anchors.margins: 14; spacing: 8
@@ -460,7 +460,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 96
                     radius: 20
-                    color: Theme.colSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
                     Column {
                         anchors.fill: parent
