@@ -229,22 +229,6 @@ Item {
                                 onClicked: { Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"]); ccUi.requestClose() }
                             }
                         }
-                        
-                        // Uptime pill
-                        Rectangle {
-                            Layout.alignment: Qt.AlignRight
-                            height: 24; width: uptimeText.width + 24
-                            radius: 12
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                id: uptimeText
-                                anchors.centerIn: parent
-                                text: uptimeStr.replace("Up ", "")
-                                font.family: "monospace"
-                                font.pixelSize: 10
-                                color: textSubtext0
-                            }
-                        }
                     }
                 }
 
