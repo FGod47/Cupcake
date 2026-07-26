@@ -493,12 +493,12 @@ Item {
                                     
                                     Timer {
                                         id: ccDdcTimer
-                                        interval: 50; repeat: false
+                                        interval: 150; repeat: false
                                         property int targetVal: 100
-                                        onTriggered: Quickshell.execDetached(["brightnessctl", "set", Math.round(targetVal) + "%"])
+                                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetVal).toString(), "--noverify"])
                                     }
                                     onMoved: { ccDdcTimer.targetVal = value; ccDdcTimer.restart(); backlightLabel.text = Math.round(value) + "%" }
-                                    onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["brightnessctl", "set", Math.round(value) + "%"]); backlightLabel.text = Math.round(value) + "%" } }
+                                    onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]); backlightLabel.text = Math.round(value) + "%" } }
                                 }
                                 Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
@@ -1340,13 +1340,14 @@ Item {
 
     Process {
         id: updateBrightness
-        command: ["bash", "-c", "brightnessctl -m | awk -F, '{print $4}' | tr -d '%' | head -n 1"]
+        command: ["ddcutil", "getvcp", "10", "--terse"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
             if (typeof backlightSlider !== "undefined" && backlightSlider && !backlightSlider.pressed) {
-                let text = (updateBrightnessStdout.text || "").trim();
-                if (text !== "") {
-                    let bright = parseInt(text);
+                let text = (updateBrightnessStdout.text || "");
+                let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                if (match && match[1]) {
+                    let bright = parseInt(match[1]);
                     if (!isNaN(bright)) {
                         backlightSlider.value = bright
                         backlightLabel.text = bright + "%"
