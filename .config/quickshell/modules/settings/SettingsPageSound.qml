@@ -24,7 +24,7 @@ Item {
     property bool advAutoSwitch: true
 
 
-        ScrollView {
+    ScrollView {
         anchors.fill: parent
         contentWidth: availableWidth
         clip: true
@@ -122,7 +122,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb7e"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueb7e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -185,7 +185,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueaf4"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueaf4" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Balance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -210,7 +210,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb93"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueb93" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Output profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -233,7 +233,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueaef"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueaef" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Input device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -259,7 +259,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueaef"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueaef" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Input volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -335,7 +335,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uef57"; iconColor: cTextDim }
+                        NIconBadge { icon: "\uef57" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Echo cancellation"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -381,7 +381,63 @@ Item {
                             anchors.bottomMargin: 10
                             spacing: 12
                             
-                            NIconBadge { icon: "Preferred codec" }
+                            NIconBadge { icon: getIcon(modelData.name); iconColor: Theme.colOnPrimary}
+                            
+                            Text {
+                                text: modelData.name
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface
+                                Layout.preferredWidth: 100; elide: Text.ElideRight
+                            }
+                            
+                            Process { id: appVolProc }
+                            
+                            Process {
+                                id: initAppVol
+                                command: ["wpctl", "get-volume", modelData.id.toString()]
+                                running: true
+                                stdout: StdioCollector { id: initAppVolOut }
+                                onExited: {
+                                    let match = initAppVolOut.text.trim().match(/Volume:\s+([\d\.]+)/);
+                                    if (match && !appVolSlider.pressed) appVolSlider.value = parseFloat(match[1]);
+                                }
+                            }
+                            
+                            StyledSlider {
+                                id: appVolSlider
+                                Layout.fillWidth: true
+                                from: 0; to: 1.0
+                                onMoved: {
+                                    if (modelData.audio) {
+                                        appVolProc.command = ["wpctl", "set-volume", modelData.id.toString(), value.toString()];
+                                        appVolProc.running = true;
+                                    }
+                                }
+                            }
+                            
+                            
+                        }
+                        
+                        Rectangle {
+                            anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
+                            height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15); opacity: 0.6
+                        }
+                    }
+                }
+            }
+
+            // BLUETOOTH AUDIO
+            NCard {
+                sectionTitle: "Bluetooth Audio"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea37" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Preferred codec"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "WH-1000XM5 · connected"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                        }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
@@ -394,7 +450,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea4e"; iconColor: cTextDim }
+                        NIconBadge { icon: "\uea4e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Prefer quality over battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -412,7 +468,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebc5"; iconColor: cTextDim }
+                        NIconBadge { icon: "\uebc5" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Interface sound effects"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -426,7 +482,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea35"; iconColor: cTextDim }
+                        NIconBadge { icon: "\uea35" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Notification sound"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -439,7 +495,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb7e"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueb7e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Effects volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -467,7 +523,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea16"; iconColor: cTextDim }
+                        NIconBadge { icon: "\uea16" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Sample rate"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -484,7 +540,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb8b"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueb8b" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Buffer size (quantum)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -502,7 +558,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb6c"; iconColor: cTextDim }
+                        NIconBadge { icon: "\ueb6c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Auto-switch to newly connected devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
