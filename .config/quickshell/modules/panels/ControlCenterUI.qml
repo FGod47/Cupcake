@@ -394,7 +394,7 @@ Item {
                             Rectangle {
                                 anchors.centerIn: parent
                                 width: 50; height: 50; radius: 25
-                                color: modelData.active ? colGreen : Theme.colSurface
+                                color: modelData.active ? colGreen : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                                 
                                 Text { anchors.centerIn: parent; text: modelData.icon; color: modelData.active ? Theme.colBackground : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.action() }
