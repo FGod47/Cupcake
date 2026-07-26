@@ -193,7 +193,7 @@ Item {
                     Layout.fillWidth: true
                     
                     ColumnLayout {
-                        spacing: 2
+                        spacing: -8
                         Layout.leftMargin: 12
                         Layout.topMargin: -8
                         Text {
