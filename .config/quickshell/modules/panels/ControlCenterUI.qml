@@ -17,6 +17,7 @@ Item {
 
     property bool wifiPageOpen: false
     property bool btPageOpen: false
+    property bool audioPageOpen: false
     property bool showWarning: false
 
     property bool nightActive: false
@@ -174,7 +175,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             visible: opacity > 0.0
-            opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
+            opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen || ccUi.audioPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             Image {
@@ -594,7 +595,7 @@ Item {
                                         hoverEnabled: true
                                         onEntered: parent.color = Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
                                         onExited: parent.color = "transparent"
-                                        onClicked: { Quickshell.execDetached(["pavucontrol", "-t", "3"]); ccUi.requestClose() }
+                                        onClicked: { ccUi.audioPageOpen = true; }
                                     }
                                 }
                             }
@@ -1228,6 +1229,160 @@ Item {
         }
     }
 
+        // =====================================================================
+        // PAGE 3: Audio Sources Manager Page
+        // =====================================================================
+        Rectangle {
+            id: audioCcPage
+            anchors.top: parent.top
+            anchors.topMargin: 14
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.right: parent.right
+            anchors.rightMargin: 14
+            height: 572
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+            radius: 16
+            clip: true
+            visible: opacity > 0.0
+            opacity: ccUi.audioPageOpen ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+
+            ListModel { id: audioListModel }
+
+            Process {
+                id: audioLoadProc
+                command: ["bash", "-c", "pactl --format=json list sinks | jq -c 'map({name: .name, description: .description, index: .index})'"]
+                stdout: StdioCollector {
+                    id: audioLoadOut
+                }
+                onExited: {
+                    audioListModel.clear();
+                    try {
+                        let sinks = JSON.parse(audioLoadOut.text.trim());
+                        for (let i = 0; i < sinks.length; i++) {
+                            audioListModel.append(sinks[i]);
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            Process {
+                id: audioDefaultProc
+                command: ["bash", "-c", "pactl --format=json info | jq -r '.default_sink_name'"]
+                stdout: StdioCollector {
+                    id: audioDefaultOut
+                }
+                onExited: {
+                    audioCcPage.defaultSink = audioDefaultOut.text.trim();
+                }
+            }
+            
+            property string defaultSink: ""
+            
+            onVisibleChanged: {
+                if (visible) {
+                    audioLoadProc.running = true;
+                    audioDefaultProc.running = true;
+                }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 16
+                spacing: 12
+
+                // Header Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Back Button
+                    Rectangle {
+                        width: 28; height: 28; radius: 14
+                        color: audioBackMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\uea60"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 18
+                            color: textText
+                        }
+                        
+                        MouseArea {
+                            id: audioBackMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: ccUi.audioPageOpen = false
+                        }
+                    }
+
+                    Text {
+                        text: "Audio Devices"
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Font.Bold
+                        color: textText
+                        font.pixelSize: 14
+                        Layout.fillWidth: true
+                    }
+                }
+                
+                // List of Devices
+                ScrollView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    contentWidth: width
+                    clip: true
+                    
+                    ColumnLayout {
+                        width: parent.width
+                        spacing: 8
+                        
+                        Repeater {
+                            model: audioListModel
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 52
+                                radius: 12
+                                color: (audioCcPage.defaultSink === model.name) ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                                border.color: (audioCcPage.defaultSink === model.name) ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4) : "transparent"
+                                border.width: (audioCcPage.defaultSink === model.name) ? 1 : 0
+                                
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.margins: 12
+                                    spacing: 12
+                                    
+                                    Rectangle {
+                                        width: 28; height: 28; radius: 14
+                                        color: (audioCcPage.defaultSink === model.name) ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                                        Text { anchors.centerIn: parent; text: "\ueb51"; font.family: "tabler-icons"; font.pixelSize: 14; color: (audioCcPage.defaultSink === model.name) ? Theme.colOnPrimary : textSubtext0 }
+                                    }
+                                    
+                                    ColumnLayout {
+                                        Layout.fillWidth: true
+                                        spacing: 2
+                                        Text { text: model.description; color: textText; font.family: Theme.defaultFontFamily; font.weight: Font.DemiBold; font.pixelSize: 12; Layout.fillWidth: true; elide: Text.ElideRight }
+                                        Text { text: (audioCcPage.defaultSink === model.name) ? "Connected" : ""; color: (audioCcPage.defaultSink === model.name) ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 10; visible: (audioCcPage.defaultSink === model.name) }
+                                    }
+                                }
+                                
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["pactl", "set-default-sink", model.name]);
+                                        audioCcPage.defaultSink = model.name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     // WiFi scanner model & processes
     ListModel { id: wifiModel }
 
