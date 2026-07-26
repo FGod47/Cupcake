@@ -8,7 +8,7 @@ Rectangle {
     property string sectionTitle: ""
     Layout.fillWidth: true
     implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
     radius: 20
     border.width: 0
     clip: true
