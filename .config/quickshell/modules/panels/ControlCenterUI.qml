@@ -267,14 +267,17 @@ Item {
                                 }
                                 // Soft switch
                                 Rectangle {
-                                    width: 38; height: 22; radius: 11
-                                    color: wifiRadioEnabled ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    width: 44; height: 24; radius: 12
+                                    color: wifiRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                    border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 18; height: 18; radius: 9
+                                        width: 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: wifiRadioEnabled ? 18 : 2
-                                        color: Theme.colBackground
+                                        x: wifiRadioEnabled ? 24 : 6
+                                        color: wifiRadioEnabled ? Theme.colOnPrimary : Theme.colBackground
                                         Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                        Behavior on color { ColorAnimation { duration: 250 } }
                                     }
                                 }
                             }
@@ -298,14 +301,17 @@ Item {
                                     Text { text: btConnectedDeviceName !== "" ? btConnectedDeviceName : (btRadioEnabled ? "Enabled" : "Disabled"); color: btRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                                 }
                                 Rectangle {
-                                    width: 38; height: 22; radius: 11
-                                    color: btRadioEnabled ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    width: 44; height: 24; radius: 12
+                                    color: btRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                    border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 18; height: 18; radius: 9
+                                        width: 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: btRadioEnabled ? 18 : 2
-                                        color: Theme.colBackground
+                                        x: btRadioEnabled ? 24 : 6
+                                        color: btRadioEnabled ? Theme.colOnPrimary : Theme.colBackground
                                         Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                        Behavior on color { ColorAnimation { duration: 250 } }
                                     }
                                 }
                             }
@@ -329,14 +335,17 @@ Item {
                                     Text { text: hotspotActive ? "Active" : "Disabled"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                                 }
                                 Rectangle {
-                                    width: 38; height: 22; radius: 11
-                                    color: hotspotActive ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    width: 44; height: 24; radius: 12
+                                    color: hotspotActive ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                    border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 18; height: 18; radius: 9
+                                        width: 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: hotspotActive ? 18 : 2
-                                        color: Theme.colBackground
+                                        x: hotspotActive ? 24 : 6
+                                        color: hotspotActive ? Theme.colOnPrimary : Theme.colBackground
                                         Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                        Behavior on color { ColorAnimation { duration: 250 } }
                                     }
                                 }
                             }
