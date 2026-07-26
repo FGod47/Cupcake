@@ -203,7 +203,21 @@ Item {
                         }
                     }
 
-                    Item { Layout.fillWidth: true }
+                    Item { 
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        
+                        Image {
+                            anchors.right: parent.right
+                            anchors.rightMargin: 12
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-shellsettings-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                            sourceSize.height: 30
+                            height: 30
+                            fillMode: Image.PreserveAspectFit
+                            opacity: 0.85
+                        }
+                    }
 
                     ColumnLayout {
                         spacing: 8
