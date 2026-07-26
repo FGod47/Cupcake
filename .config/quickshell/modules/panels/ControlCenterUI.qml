@@ -222,16 +222,16 @@ Item {
                         // Uptime pill
                         Rectangle {
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredHeight: 24
-                            Layout.preferredWidth: uptimeText.width + 24
-                            radius: 12
+                            Layout.preferredHeight: 30
+                            Layout.preferredWidth: uptimeText.width + 30
+                            radius: 15
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 id: uptimeText
                                 anchors.centerIn: parent
                                 text: uptimeStr.replace("Up ", "")
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
+                                font.pixelSize: 13
                                 font.weight: Font.DemiBold
                                 color: textSubtext0
                             }
