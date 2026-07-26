@@ -11,7 +11,10 @@ import Quickshell.Services.UPower
 Item {
     id: ccUi
     width: 362
-    height: 615 + Math.max(0, volSliderBg.height - 52)
+    property int extraHeight: volSliderBg.isExpanded ? (12 + audioListModel.count * 44) : 0
+    property int animatedExtraHeight: extraHeight
+    Behavior on animatedExtraHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+    height: 615 + animatedExtraHeight
 
     signal requestClose()
 
@@ -546,8 +549,7 @@ Item {
                 Rectangle {
                     id: volSliderBg
                     Layout.fillWidth: true
-                    Layout.preferredHeight: isExpanded ? (52 + 12 + (audioListModel.count * 44)) : 52
-                    Behavior on Layout.preferredHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    Layout.preferredHeight: 52 + ccUi.animatedExtraHeight
                     radius: 26
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     clip: true
