@@ -253,6 +253,7 @@ Item {
                         // Wi-Fi
                         Item {
                             width: parent.width; height: 60
+                            MouseArea { id: wifiRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.wifiPageOpen = true }
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Rectangle {
@@ -271,6 +272,7 @@ Item {
                                     color: wifiRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(wifiRadioEnabled ? "nmcli radio wifi off" : "nmcli radio wifi on") }
                                     Rectangle {
                                         property bool isExpanded: wifiRowMa.pressed || wifiRowMa.containsMouse
                                         width: isExpanded ? 20 : 14; height: 14; radius: 7
@@ -283,13 +285,14 @@ Item {
                                     }
                                 }
                             }
-                            MouseArea { id: wifiRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.wifiPageOpen = true }
+                            // MouseArea moved to top
                             Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
                         // Bluetooth
                         Item {
                             width: parent.width; height: 60
+                            MouseArea { id: btRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.btPageOpen = true }
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Rectangle {
@@ -307,6 +310,7 @@ Item {
                                     color: btRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(btRadioEnabled ? "rfkill block bluetooth" : "rfkill unblock bluetooth") }
                                     Rectangle {
                                         property bool isExpanded: btRowMa.pressed || btRowMa.containsMouse
                                         width: isExpanded ? 20 : 14; height: 14; radius: 7
@@ -319,7 +323,7 @@ Item {
                                     }
                                 }
                             }
-                            MouseArea { id: btRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.btPageOpen = true }
+                            // MouseArea moved to top
                             Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
