@@ -483,7 +483,11 @@ Item {
                                         color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
                                         Rectangle { width: backlightSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 7 }
                                     }
-                                    handle: Item {}
+                                    handle: Item {
+                                        x: backlightSlider.leftPadding + backlightSlider.visualPosition * (backlightSlider.availableWidth - width)
+                                        y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
+                                        width: 14; height: 14
+                                    }
                                     
                                     Timer {
                                         id: ccDdcTimer
@@ -520,7 +524,11 @@ Item {
                                         color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
                                         Rectangle { width: volumeSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 7 }
                                     }
-                                    handle: Item {}
+                                    handle: Item {
+                                        x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
+                                        y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                        width: 14; height: 14
+                                    }
                                     
                                     onMoved: { Quickshell.execDetached(`wpctl set-volume @DEFAULT_AUDIO_SINK@ ${Math.round(value)}%`); volumeLabel.text = Math.round(value) + "%" }
                                 }
