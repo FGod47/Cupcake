@@ -581,6 +581,22 @@ Item {
                                     onMoved: { ccVolTimer.targetVal = value; ccVolTimer.restart(); volumeLabel.text = Math.round(value) + "%" }
                                 }
                                 Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
+                                
+                                Rectangle {
+                                    Layout.alignment: Qt.AlignVCenter
+                                    width: 24; height: 24; radius: 12
+                                    color: "transparent"
+                                    
+                                    Text { anchors.centerIn: parent; text: "\uea5f"; font.family: "tabler-icons"; font.pixelSize: 16; color: textSubtext0 }
+                                    
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        hoverEnabled: true
+                                        onEntered: parent.color = Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                                        onExited: parent.color = "transparent"
+                                        onClicked: { Quickshell.execDetached(["pavucontrol", "-t", "3"]); ccUi.requestClose() }
+                                    }
+                                }
                             }
                 }
 
