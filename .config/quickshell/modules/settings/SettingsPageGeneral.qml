@@ -189,7 +189,7 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    StyledSwitch {
+                    NToggle {
                         id: borderSwitch
                         checked: root.bordersEnabled
                         onToggled: {
