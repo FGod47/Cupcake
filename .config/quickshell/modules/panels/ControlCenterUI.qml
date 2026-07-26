@@ -710,7 +710,7 @@ Item {
 
             Image {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: -12
+                anchors.bottomMargin: -4
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
                 sourceSize.height: 32
