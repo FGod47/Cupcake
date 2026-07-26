@@ -14,7 +14,11 @@ Item {
     property int extraHeight: volSliderBg.isExpanded ? (12 + audioListModel.count * 44) : 0
     property int animatedExtraHeight: extraHeight
     Behavior on animatedExtraHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-    height: 615 + animatedExtraHeight
+    
+    property int connectionsHeight: volSliderBg.isExpanded ? 0 : 180
+    Behavior on connectionsHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+    
+    height: 615 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
 
     signal requestClose()
 
@@ -256,7 +260,10 @@ Item {
                 // Connections Card
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 180
+                    Layout.preferredHeight: ccUi.connectionsHeight
+                    opacity: ccUi.connectionsHeight / 180
+                    visible: ccUi.connectionsHeight > 0
+                    clip: true
                     radius: 20
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
