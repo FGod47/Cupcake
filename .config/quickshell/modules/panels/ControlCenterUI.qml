@@ -461,20 +461,14 @@ Item {
 
 
 
-                // Sliders
+                // Brightness Slider
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 96
-                    radius: 20
+                    Layout.preferredHeight: 52
+                    radius: 26
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
-                    Column {
-                        anchors.fill: parent
-                        
-                        // Brightness
-                        Item {
-                            width: parent.width; height: 48
-                            RowLayout {
+                    RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Text { text: backlightSlider.value < 33 ? "\ueb7d" : (backlightSlider.value < 66 ? "\uea3c" : "\ueb7e"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
                                 
@@ -507,12 +501,16 @@ Item {
                                 }
                                 Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
-                        }
-                        
-                        // Volume
-                        Item {
-                            width: parent.width; height: 48
-                            RowLayout {
+                }
+                
+                // Volume Slider
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 52
+                    radius: 26
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                    
+                    RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Text { text: volumeSlider.value === 0 ? "\uf1c3" : (volumeSlider.value < 50 ? "\ueb4f" : "\ueb51"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
                                 
@@ -538,8 +536,6 @@ Item {
                                 }
                                 Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
-                        }
-                    }
                 }
 
                 Item { Layout.fillHeight: true }
