@@ -437,10 +437,32 @@ Item {
                         Text { text: "POWER PROFILE"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; font.letterSpacing: 0.6 }
                         
                         Rectangle {
+                            id: powerProfileContainer
                             Layout.fillWidth: true
                             Layout.preferredHeight: 34
                             radius: 17
                             color: Qt.rgba(0, 0, 0, 0.25)
+                            
+                            Rectangle {
+                                id: activeProfileIndicator
+                                width: powerProfileContainer.width / 3
+                                height: parent.height
+                                y: 0
+                                
+                                x: {
+                                    if (PowerProfiles.profile === PowerProfile.PowerSaver) return 0;
+                                    if (PowerProfiles.profile === PowerProfile.Balanced) return width;
+                                    if (PowerProfiles.profile === PowerProfile.Performance) return width * 2;
+                                    return width;
+                                }
+                                
+                                radius: 17
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+                                border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3)
+                                border.width: 1
+                                
+                                Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                            }
                             
                             RowLayout {
                                 anchors.fill: parent
@@ -456,21 +478,13 @@ Item {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         
-                                        Rectangle {
-                                            anchors.fill: parent
-                                            radius: 17
-                                            color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15) : "transparent"
-                                            border.color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3) : "transparent"
-                                            border.width: PowerProfiles.profile === modelData.type ? 1 : 0
-                                            
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: modelData.name
-                                                color: PowerProfiles.profile === modelData.type ? textText : textSubtext0
-                                                font.family: Theme.defaultFontFamily
-                                                font.pixelSize: 12
-                                                font.weight: PowerProfiles.profile === modelData.type ? Font.Bold : Font.DemiBold
-                                            }
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: modelData.name
+                                            color: PowerProfiles.profile === modelData.type ? textText : textSubtext0
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 12
+                                            font.weight: PowerProfiles.profile === modelData.type ? Font.Bold : Font.DemiBold
                                         }
                                         
                                         MouseArea {
