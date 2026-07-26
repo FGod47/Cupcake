@@ -415,7 +415,7 @@ Item {
                             { icon: "\ueaf8", active: nightActive, title: "Night Light", action: function(){ nightActive = !nightActive; ccUi.applyNightLightQuick(nightActive); } },
                             { icon: "\uec2c", active: firewallActive, title: "Firewall", action: function(){ firewallActive = !firewallActive; } },
                             { icon: "\uf6d7", active: eeActive, title: "Effects", action: function(){ Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon"); } },
-                            { icon: "\uea2e", active: antiflashActive, title: "Anti-flash", action: function(){ antiflashActive = !antiflashActive; } },
+                            { icon: Theme.isDark ? "\ueaf8" : "\ueb17", active: Theme.isDark, title: "Theme", action: function(){ Quickshell.execDetached(["bash", "-c", "echo '" + (Theme.isDark ? "light" : "dark") + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]); } },
                             { icon: "\ueb6f", active: airplaneActive, title: "Airplane Mode", action: function(){ airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all"); } }
                         ]
                         delegate: Item {
