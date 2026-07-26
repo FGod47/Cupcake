@@ -1667,7 +1667,7 @@ PanelWindow {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: 362
-                    height: parent.height
+                    height: 615
                     source: "ControlCenterUI.qml"
                     active: true
                     
