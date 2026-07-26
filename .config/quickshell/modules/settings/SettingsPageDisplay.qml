@@ -263,7 +263,6 @@ Item {
                         radius: 20
         border.width: 0
         clip: true
-                        clip: true
                         
                         Text {
                             anchors.centerIn: parent
