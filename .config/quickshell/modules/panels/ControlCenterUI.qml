@@ -428,44 +428,55 @@ Item {
                 // Power Profile
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 76
+                    Layout.preferredHeight: 84
                     radius: 20
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
                     ColumnLayout {
-                        anchors.fill: parent; anchors.margins: 14; spacing: 8
-                        Text { text: "Power Profile"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; font.letterSpacing: 0.6 }
+                        anchors.fill: parent; anchors.margins: 14; spacing: 10
+                        Text { text: "POWER PROFILE"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; font.letterSpacing: 0.6 }
                         
-                        RowLayout {
+                        Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 30
-                            spacing: 3
+                            Layout.preferredHeight: 34
+                            radius: 17
+                            color: Qt.rgba(0, 0, 0, 0.25)
                             
-                            Repeater {
-                                model: [
-                                    { name: "Saver", type: PowerProfile.PowerSaver },
-                                    { name: "Balanced", type: PowerProfile.Balanced },
-                                    { name: "Performance", type: PowerProfile.Performance }
-                                ]
-                                delegate: Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    radius: 9
-                                    color: PowerProfiles.profile === modelData.type ? Theme.colBackground : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
-                                    border.color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) : "transparent"
-                                    border.width: PowerProfiles.profile === modelData.type ? 1 : 0
-                                    
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: modelData.name
-                                        color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: Font.DemiBold
-                                    }
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: { PowerProfiles.profile = modelData.type }
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 0
+                                
+                                Repeater {
+                                    model: [
+                                        { name: "Saver", type: PowerProfile.PowerSaver },
+                                        { name: "Balanced", type: PowerProfile.Balanced },
+                                        { name: "Performance", type: PowerProfile.Performance }
+                                    ]
+                                    delegate: Item {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            radius: 17
+                                            color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15) : "transparent"
+                                            border.color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.3) : "transparent"
+                                            border.width: PowerProfiles.profile === modelData.type ? 1 : 0
+                                            
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: modelData.name
+                                                color: PowerProfiles.profile === modelData.type ? textText : textSubtext0
+                                                font.family: Theme.defaultFontFamily
+                                                font.pixelSize: 12
+                                                font.weight: PowerProfiles.profile === modelData.type ? Font.Bold : Font.DemiBold
+                                            }
+                                        }
+                                        
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: { PowerProfiles.profile = modelData.type }
+                                        }
                                     }
                                 }
                             }
