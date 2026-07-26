@@ -357,6 +357,7 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
+                    Layout.maximumHeight: 50
                     spacing: 0
                     
                     Repeater {
@@ -516,6 +517,7 @@ Item {
                     }
                 }
 
+                Item { Layout.fillHeight: true }
             }
         }
         // =====================================================================
