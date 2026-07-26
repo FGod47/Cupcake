@@ -11,7 +11,7 @@ import Quickshell.Services.UPower
 Item {
     id: ccUi
     width: 362
-    height: 615
+    height: 615 + Math.max(0, volSliderBg.height - 52)
 
     signal requestClose()
 

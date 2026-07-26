@@ -1410,7 +1410,7 @@ PanelWindow {
                 }
             }
             
-            property int targetHeight: bar.ccOpen ? 615 : (archPill.showMusicPill ? (archPill.isExpanded ? 340 : 34) : 34)
+            property int targetHeight: bar.ccOpen ? (ccLoader.item ? ccLoader.item.height : 615) : (archPill.showMusicPill ? (archPill.isExpanded ? 340 : 34) : 34)
             
             y: 10
             anchors.horizontalCenter: parent.horizontalCenter
@@ -1677,7 +1677,7 @@ PanelWindow {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: 362
-                    height: 615
+                    height: ccLoader.item ? ccLoader.item.height : 615
                     source: "ControlCenterUI.qml"
                     active: true
                     
