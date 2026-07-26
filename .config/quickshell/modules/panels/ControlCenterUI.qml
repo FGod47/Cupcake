@@ -272,7 +272,7 @@ Item {
                                     color: wifiRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(wifiRadioEnabled ? "nmcli radio wifi off" : "nmcli radio wifi on") }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["nmcli", "radio", "wifi", wifiRadioEnabled ? "off" : "on"]); wifiRadioEnabled = !wifiRadioEnabled } }
                                     Rectangle {
                                         property bool isExpanded: wifiRowMa.pressed || wifiRowMa.containsMouse
                                         width: isExpanded ? 20 : 14; height: 14; radius: 7
@@ -310,7 +310,7 @@ Item {
                                     color: btRadioEnabled ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Quickshell.execDetached(btRadioEnabled ? "rfkill block bluetooth" : "rfkill unblock bluetooth") }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["rfkill", btRadioEnabled ? "block" : "unblock", "bluetooth"]); btRadioEnabled = !btRadioEnabled } }
                                     Rectangle {
                                         property bool isExpanded: btRowMa.pressed || btRowMa.containsMouse
                                         width: isExpanded ? 20 : 14; height: 14; radius: 7
