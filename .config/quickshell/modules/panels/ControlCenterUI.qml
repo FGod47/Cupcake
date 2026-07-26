@@ -184,17 +184,6 @@ Item {
             opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
-            Image {
-                anchors.top: parent.top
-                anchors.topMargin: 8
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                sourceSize.height: 20
-                height: 20
-                fillMode: Image.PreserveAspectFit
-                opacity: 0.6
-            }
-
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 12
