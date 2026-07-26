@@ -272,16 +272,18 @@ Item {
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 14; height: 14; radius: 7
+                                        property bool isExpanded: wifiRowMa.pressed || wifiRowMa.containsMouse
+                                        width: isExpanded ? 20 : 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: wifiRadioEnabled ? 24 : 6
+                                        x: wifiRadioEnabled ? (isExpanded ? 18 : 24) : 6
                                         color: wifiRadioEnabled ? Theme.colOnPrimary : Theme.colBackground
-                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                         Behavior on color { ColorAnimation { duration: 250 } }
+                                        Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                                     }
                                 }
                             }
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.wifiPageOpen = true }
+                            MouseArea { id: wifiRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.wifiPageOpen = true }
                             Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
@@ -306,16 +308,18 @@ Item {
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 14; height: 14; radius: 7
+                                        property bool isExpanded: btRowMa.pressed || btRowMa.containsMouse
+                                        width: isExpanded ? 20 : 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: btRadioEnabled ? 24 : 6
+                                        x: btRadioEnabled ? (isExpanded ? 18 : 24) : 6
                                         color: btRadioEnabled ? Theme.colOnPrimary : Theme.colBackground
-                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                         Behavior on color { ColorAnimation { duration: 250 } }
+                                        Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                                     }
                                 }
                             }
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.btPageOpen = true }
+                            MouseArea { id: btRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.btPageOpen = true }
                             Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
@@ -340,17 +344,19 @@ Item {
                                     border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                                     Behavior on color { ColorAnimation { duration: 250 } }
                                     Rectangle {
-                                        width: 14; height: 14; radius: 7
+                                        property bool isExpanded: hotspotRowMa.pressed || hotspotRowMa.containsMouse
+                                        width: isExpanded ? 20 : 14; height: 14; radius: 7
                                         anchors.verticalCenter: parent.verticalCenter
-                                        x: hotspotActive ? 24 : 6
+                                        x: hotspotActive ? (isExpanded ? 18 : 24) : 6
                                         color: hotspotActive ? Theme.colOnPrimary : Theme.colBackground
-                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                         Behavior on color { ColorAnimation { duration: 250 } }
+                                        Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
                                     }
                                 }
                             }
                             MouseArea { 
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                id: hotspotRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     if (!wifiRadioEnabled) { ccUi.showWarning = true; warningTimer.restart(); return; }
                                     if (hotspotActive) { Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]) }
