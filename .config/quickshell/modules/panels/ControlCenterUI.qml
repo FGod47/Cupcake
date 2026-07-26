@@ -494,7 +494,7 @@ Item {
                                     onMoved: { ccDdcTimer.targetVal = value; ccDdcTimer.restart(); backlightLabel.text = Math.round(value) + "%" }
                                     onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]); backlightLabel.text = Math.round(value) + "%" } }
                                 }
-                                Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
+                                Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
                 }
                 
@@ -524,7 +524,7 @@ Item {
                                     
                                     onMoved: { Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`); volumeLabel.text = Math.round(value) + "%" }
                                 }
-                                Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
+                                Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
                 }
 
