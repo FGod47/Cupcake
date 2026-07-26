@@ -203,21 +203,7 @@ Item {
                         }
                     }
 
-                    Item { 
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        
-                        Image {
-                            anchors.right: parent.right
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
-                            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                            sourceSize.height: 30
-                            height: 30
-                            fillMode: Image.PreserveAspectFit
-                            opacity: 0.85
-                        }
-                    }
+                    Item { Layout.fillWidth: true }
 
                     ColumnLayout {
                         spacing: 8
@@ -588,6 +574,16 @@ Item {
                 }
 
                 Item { Layout.fillHeight: true }
+                
+                Image {
+                    Layout.alignment: Qt.AlignHCenter
+                    source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                    sourceSize.height: 18
+                    height: 18
+                    fillMode: Image.PreserveAspectFit
+                    opacity: 0.35
+                    Layout.bottomMargin: 2
+                }
             }
         }
         // =====================================================================
