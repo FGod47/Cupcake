@@ -561,16 +561,20 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
-                            onMoved: { Quickshell.execDetached(["pamixer", "--set-volume", Math.round(value).toString()]) }
+                            onMoved: { Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(value).toString() + "%"]) }
                             
                             Process {
                                 id: audioProc
-                                command: ["pamixer", "--get-volume"]
+                                command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
                                 running: true
                                 stdout: StdioCollector { id: audioStdout }
                                 onExited: {
-                                    let val = parseInt((audioStdout.text || "").trim());
-                                    if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
+                                    let text = (audioStdout.text || "").trim();
+                                    let match = text.match(/Volume:\s+([\d\.]+)/);
+                                    if (match && match[1]) {
+                                        let val = Math.round(parseFloat(match[1]) * 100);
+                                        if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
+                                    }
                                 }
                             }
                             Timer {
@@ -622,10 +626,10 @@ PanelWindow {
                             }
                             Timer {
                                 id: ddcTimer
-                                interval: 150
+                                interval: 50
                                 repeat: false
                                 property int targetValue: 100
-                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                                onTriggered: Quickshell.execDetached(["brightnessctl", "set", Math.round(targetValue).toString() + "%"])
                             }
                             onMoved: { 
                                 ddcTimer.targetValue = value;
@@ -634,7 +638,7 @@ PanelWindow {
                             onPressedChanged: {
                                 if (!pressed) {
                                     ddcTimer.stop();
-                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
+                                    Quickshell.execDetached(["brightnessctl", "set", Math.round(value).toString() + "%"]);
                                 }
                             }
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
@@ -643,14 +647,13 @@ PanelWindow {
                             
                             Process {
                                 id: lightProc
-                                command: ["ddcutil", "getvcp", "10", "--terse"]
+                                command: ["bash", "-c", "brightnessctl -m | awk -F, '{print $4}' | tr -d '%' | head -n 1"]
                                 running: true
                                 stdout: StdioCollector { id: lightStdout }
                                 onExited: {
-                                    let text = (lightStdout.text || "");
-                                    let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                                    if (match && match[1]) {
-                                        let val = parseInt(match[1]);
+                                    let text = (lightStdout.text || "").trim();
+                                    if (text !== "") {
+                                        let val = parseInt(text);
                                         if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
                                     }
                                 }
