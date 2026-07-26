@@ -479,16 +479,11 @@ Item {
                                     
                                     background: Rectangle {
                                         x: backlightSlider.leftPadding; y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
-                                        width: backlightSlider.availableWidth; height: 6; radius: 3
+                                        width: backlightSlider.availableWidth; height: 14; radius: 7
                                         color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
-                                        Rectangle { width: backlightSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 3 }
+                                        Rectangle { width: backlightSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 7 }
                                     }
-                                    handle: Rectangle {
-                                        x: backlightSlider.leftPadding + backlightSlider.visualPosition * (backlightSlider.availableWidth - width)
-                                        y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
-                                        width: 15; height: 15; radius: 7.5; color: Theme.colBackground
-                                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2); border.width: 1
-                                    }
+                                    handle: Item {}
                                     
                                     Timer {
                                         id: ccDdcTimer
@@ -521,16 +516,11 @@ Item {
                                     
                                     background: Rectangle {
                                         x: volumeSlider.leftPadding; y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                        width: volumeSlider.availableWidth; height: 6; radius: 3
+                                        width: volumeSlider.availableWidth; height: 14; radius: 7
                                         color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
-                                        Rectangle { width: volumeSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 3 }
+                                        Rectangle { width: volumeSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 7 }
                                     }
-                                    handle: Rectangle {
-                                        x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
-                                        y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                        width: 15; height: 15; radius: 7.5; color: Theme.colBackground
-                                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2); border.width: 1
-                                    }
+                                    handle: Item {}
                                     
                                     onMoved: { Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`); volumeLabel.text = Math.round(value) + "%" }
                                 }
