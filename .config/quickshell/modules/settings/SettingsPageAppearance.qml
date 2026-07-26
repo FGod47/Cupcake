@@ -301,7 +301,12 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "Color Mode" }
+                        NIconBadge { icon: root.colorMode === "Light" ? "\ueb30" : "\ueaf8" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Color Mode"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Switch between light and dark theme"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
