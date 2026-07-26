@@ -353,6 +353,38 @@ Item {
                     }
                 }
 
+                // Quick Toggles
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 50
+                    spacing: 0
+                    
+                    Repeater {
+                        model: [
+                            { icon: "\ueaf8", active: nightActive, title: "Night Light", action: function(){ nightActive = !nightActive; ccUi.applyNightLightQuick(nightActive); } },
+                            { icon: "\uec2c", active: firewallActive, title: "Firewall", action: function(){ firewallActive = !firewallActive; } },
+                            { icon: "\uf6d7", active: eeActive, title: "Effects", action: function(){ Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon"); } },
+                            { icon: "\uea2e", active: antiflashActive, title: "Anti-flash", action: function(){ antiflashActive = !antiflashActive; } },
+                            { icon: "\ueb6f", active: airplaneActive, title: "Airplane Mode", action: function(){ airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all"); } }
+                        ]
+                        delegate: Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            
+                            Rectangle {
+                                anchors.centerIn: parent
+                                width: 50; height: 50; radius: 25
+                                color: modelData.active ? colGreen : Theme.colSurface
+                                
+                                Text { anchors.centerIn: parent; text: modelData.icon; color: modelData.active ? Theme.colBackground : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.action() }
+                            }
+                        }
+                    }
+                }
+
+
+
                 // Power Profile
                 Rectangle {
                     Layout.fillWidth: true
@@ -400,6 +432,8 @@ Item {
                         }
                     }
                 }
+
+
 
                 // Sliders
                 Rectangle {
@@ -482,44 +516,6 @@ Item {
                     }
                 }
 
-                // Gold Rule
-                Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 1
-                    color: Theme.colPrimary
-                    opacity: 0.4
-                    Layout.topMargin: -2
-                    Layout.bottomMargin: -2
-                }
-
-                // Quick Toggles
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 50
-                    spacing: 0
-                    
-                    Repeater {
-                        model: [
-                            { icon: "\ueaf8", active: nightActive, title: "Night Light", action: function(){ nightActive = !nightActive; ccUi.applyNightLightQuick(nightActive); } },
-                            { icon: "\uec2c", active: firewallActive, title: "Firewall", action: function(){ firewallActive = !firewallActive; } },
-                            { icon: "\uf6d7", active: eeActive, title: "Effects", action: function(){ Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon"); } },
-                            { icon: "\uea2e", active: antiflashActive, title: "Anti-flash", action: function(){ antiflashActive = !antiflashActive; } },
-                            { icon: "\ueb6f", active: airplaneActive, title: "Airplane Mode", action: function(){ airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all"); } }
-                        ]
-                        delegate: Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            
-                            Rectangle {
-                                anchors.centerIn: parent
-                                width: 50; height: 50; radius: 25
-                                color: modelData.active ? colGreen : Theme.colSurface
-                                
-                                Text { anchors.centerIn: parent; text: modelData.icon; color: modelData.active ? Theme.colBackground : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.action() }
-                            }
-                        }
-                    }
-                }
             }
         }
         // =====================================================================
