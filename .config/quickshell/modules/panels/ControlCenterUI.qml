@@ -389,6 +389,37 @@ Item {
                                 }
                             }
                         }
+                        }
+                    }
+                    
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 12
+                        opacity: (180 - ccUi.connectionsHeight) / 116
+                        visible: opacity > 0
+                        
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.fillHeight: true; radius: 12
+                            color: wifiRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                            border.color: wifiRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3) : "transparent"; border.width: 1
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["nmcli", "radio", "wifi", wifiRadioEnabled ? "off" : "on"]); wifiRadioEnabled = !wifiRadioEnabled } }
+                            Text { anchors.centerIn: parent; text: "\ueb52"; color: wifiRadioEnabled ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.fillHeight: true; radius: 12
+                            color: btRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                            border.color: btRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3) : "transparent"; border.width: 1
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["rfkill", btRadioEnabled ? "block" : "unblock", "bluetooth"]); btRadioEnabled = !btRadioEnabled } }
+                            Text { anchors.centerIn: parent; text: "\uea37"; color: btRadioEnabled ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.fillHeight: true; radius: 12
+                            color: hotspotActive ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                            border.color: hotspotActive ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3) : "transparent"; border.width: 1
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"]); ccUi.requestClose() } }
+                            Text { anchors.centerIn: parent; text: "\ued1b"; color: hotspotActive ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
+                        }
                     }
                 }
 
