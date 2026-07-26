@@ -705,18 +705,17 @@ Item {
                         }
                     }
                 }
+                Item { Layout.fillHeight: true; Layout.preferredHeight: 40 }
+            }
 
-                Image {
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 4
-                    source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                    sourceSize.height: 32
-                    height: 32
-                    fillMode: Image.PreserveAspectFit
-                    opacity: 0.6
-                }
-                
-                Item { Layout.fillHeight: true }
+            Image {
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                sourceSize.height: 32
+                height: 32
+                fillMode: Image.PreserveAspectFit
+                opacity: 0.6
             }
         }
         // =====================================================================
