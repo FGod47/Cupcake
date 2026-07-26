@@ -441,7 +441,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 34
                             radius: 17
-                            color: Qt.rgba(0, 0, 0, 0.25)
+                            color: Qt.rgba(0, 0, 0, 0.12)
                             
                             Rectangle {
                                 id: activeProfileIndicator
