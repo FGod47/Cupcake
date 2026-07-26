@@ -241,61 +241,6 @@ Item {
     // =====================================================================
 
 
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
-
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
-
 
 
 
@@ -327,43 +272,6 @@ Item {
         }
     }
 
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: "transparent"
-        radius: 8
-
-        property bool hoverable: false
-        property bool hovered: hoverArea.containsMouse
-        Behavior on color { ColorAnimation { duration: 120 } }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-        }
-
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
-        }
-    }
-
     // =====================================================================
     // Main layout
     // =====================================================================
@@ -387,15 +295,15 @@ Item {
 
             // --- Mode section ---
 
-                SettingsCard {
+                NCard {
                 sectionTitle: "Mode"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: root.colorMode === "Light" ? "\ueb30" : "\ueaf8" // sun / moon
@@ -421,12 +329,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uedba" // layout-grid
@@ -453,12 +361,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uee6d" // cursor-text
@@ -488,7 +396,7 @@ Item {
             }
 
             // --- Accent section ---
-                SettingsCard {
+                NCard {
                 sectionTitle: "Accent"
                 Item { Layout.preferredHeight: 8 }
 
@@ -580,15 +488,15 @@ Item {
 
             // --- Quick Toggles section ---
 
-                SettingsCard {
+                NCard {
                 sectionTitle: "Quick Toggles"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
@@ -613,12 +521,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb3e" // toggle-left
@@ -641,12 +549,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
@@ -682,15 +590,15 @@ Item {
 
             // --- UI Style section ---
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "UI Style"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueacc" // layout-2 (app launcher style)
@@ -716,12 +624,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueeb0" // layout-cards or similar
@@ -750,15 +658,15 @@ Item {
 
             // --- Blur section ---
 
-                SettingsCard {
+                NCard {
                 sectionTitle: "Transparency & Blur"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb13"
@@ -785,12 +693,12 @@ Item {
                 }
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uef8c" // blur strength slider
@@ -826,12 +734,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -866,12 +774,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb00"
@@ -907,15 +815,15 @@ Item {
                 }
             }
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Quickshell Opacity"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uead7" // layout-navbar (quickshell blur toggle)
@@ -941,12 +849,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uebc8" // scan (x-ray blur)
@@ -971,12 +879,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uead7"
@@ -1011,12 +919,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueac2"
@@ -1051,12 +959,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\uea80"
@@ -1091,12 +999,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb1c"
@@ -1131,12 +1039,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueacb"
@@ -1171,12 +1079,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
                                 anchors.centerIn: parent
                                 text: "\ueb20"
@@ -1211,7 +1119,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     Item { Layout.fillWidth: true }
                     Pill {
                         label: "Sync all opacities to Top Bar"

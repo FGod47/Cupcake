@@ -109,32 +109,6 @@ Item {
     // Shared inline components
     // =========================================================
 
-    component SettingsCard: Rectangle {
-        default property alias content: innerCol.data
-        Layout.fillWidth: true
-        Layout.leftMargin: 20
-        Layout.rightMargin: 20
-        implicitHeight: innerCol.implicitHeight + 40
-        Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-        color: Theme.showCardBackground ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03) : "transparent"
-        radius: 12
-        clip: true
-        ColumnLayout {
-            id: innerCol
-            anchors.fill: parent
-            anchors.margins: 20
-            spacing: 8
-        }
-    }
-
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
 
 
 
@@ -286,9 +260,9 @@ Item {
                     Rectangle {
                         anchors.fill: parent
                         color: Qt.rgba(0, 0, 0, 0.2)
-                        radius: 12
-                        border.color: Qt.rgba(255,255,255, 0.1)
-                        border.width: 1
+                        radius: 20
+        border.width: 0
+        clip: true
                         clip: true
                         
                         Text {

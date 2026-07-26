@@ -121,96 +121,6 @@ Item {
     // =====================================================================
     // Reusable inline components (Modern Design)
     // =====================================================================
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
-
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: "transparent"
-        radius: 8
-
-        property bool hoverable: false
-        property bool hovered: hoverArea.containsMouse
-        Behavior on color { ColorAnimation { duration: 120 } }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-        }
-
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
-        }
-    }
 
 
 
@@ -263,15 +173,15 @@ Item {
             spacing: 20
 
             // 1. GENERAL CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "General"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uea9a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -291,12 +201,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uebd3"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -312,12 +222,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ufa59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -335,15 +245,15 @@ Item {
             }
 
             // 2. BEHAVIOR CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "Behavior"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uecf0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -363,12 +273,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb2c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -390,12 +300,12 @@ Item {
 
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uefb1"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -415,12 +325,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uf554"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -436,12 +346,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uedba"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -464,12 +374,12 @@ Item {
 
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb56"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -491,17 +401,17 @@ Item {
             }
 
             // 3. LAYOUT CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "Layout"
 
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueecf"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -523,12 +433,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -550,12 +460,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb5b"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -577,12 +487,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uedb0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -604,12 +514,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uea0e"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -631,12 +541,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uec89"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -660,15 +570,15 @@ Item {
             }
 
             // 4. SHAPE CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "Shape"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb7c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -692,15 +602,15 @@ Item {
             }
 
             // 5. EFFECTS CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "Effects"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uea97"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -722,12 +632,12 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueed8"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -746,15 +656,15 @@ Item {
 
 
             // 7. PINNED APPS CARD
-            SettingsCard {
+            NCard {
                 sectionTitle: "Pinned apps"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
                             width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uec9c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
                         }
                         ColumnLayout {
@@ -774,7 +684,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     Flow {
                         Layout.fillWidth: true
                         Layout.topMargin: 4

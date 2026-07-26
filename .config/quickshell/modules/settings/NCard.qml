@@ -8,10 +8,10 @@ Rectangle {
     property string sectionTitle: ""
     Layout.fillWidth: true
     implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-    radius: 12
-    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-    border.width: 1
+    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+    radius: 20
+    border.width: 0
+    clip: true
 
     RowLayout {
         id: cardHeader
@@ -33,7 +33,6 @@ Rectangle {
             font.letterSpacing: 0.8
             font.capitalization: Font.AllUppercase
         }
-        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
     }
 
     ColumnLayout {

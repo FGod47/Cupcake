@@ -736,7 +736,7 @@ Item {
                 visible: !root.wifiRadioEnabled
                 Rectangle {
                     Layout.fillWidth: true; height: 64; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     ColumnLayout {
                         anchors.centerIn: parent; spacing: 4
                         Text { Layout.alignment: Qt.AlignHCenter; text: "\uecfa"; font.family: "tabler-icons"; font.pixelSize: 22; color: cTextFaint }

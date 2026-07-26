@@ -97,83 +97,8 @@ Item {
     }
 
     // Copied exactly from SettingsPageAppearance.qml
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
 
     // Copied exactly from SettingsPageAppearance.qml
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: "transparent"
-        radius: 8
-        property bool hoverable: false
-        property bool hovered: hoverArea.containsMouse
-        Behavior on color { ColorAnimation { duration: 120 } }
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-        }
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
-        }
-    }
 
     ScrollView {
         ScrollBar.vertical.policy: ScrollBar.AlwaysOff
@@ -190,10 +115,10 @@ Item {
             width: parent.width
             spacing: 20
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Window Gaps"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -225,7 +150,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -258,10 +183,10 @@ Item {
                 }
             }
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Window Style"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -286,7 +211,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -318,7 +243,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -351,10 +276,10 @@ Item {
                 }
             }
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Overview"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -390,7 +315,7 @@ Item {
                     }
                 }
                 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {

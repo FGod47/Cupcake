@@ -15,9 +15,9 @@ Item {
         Layout.fillWidth: true
         implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
         color: cBgElevated
-        radius: 12
-        border.color: cBorderSoft
-        border.width: 1
+        radius: 20
+        border.width: 0
+        clip: true
 
         RowLayout {
             id: cardHeader
@@ -418,7 +418,7 @@ Item {
                     delegate: NRow {
                         Rectangle {
                             width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\uea8a"; font.pixelSize: 14; color: cTextDim }
                         }
                         ColumnLayout {

@@ -71,15 +71,6 @@ Item {
     // =====================================================================
 
 
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
-
 
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
@@ -120,7 +111,7 @@ Item {
             spacing: 20
 
             // ── Current wallpaper card ─────────────────────────────────────
-            SettingsCard {
+            NCard {
                 sectionTitle: "Current wallpaper"
 
                 RowLayout {
@@ -223,7 +214,7 @@ Item {
             }
 
             // ── Wallpaper library ──────────────────────────────────────────
-            SettingsCard {
+            NCard {
                 sectionTitle: "Wallpaper library"
 
                 GridLayout {
@@ -377,7 +368,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -417,11 +408,11 @@ Item {
             }
 
             // ── Fit & display ──────────────────────────────────────────────
-            SettingsCard {
+            NCard {
                 sectionTitle: "Fit & display"
 
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -439,7 +430,7 @@ Item {
                     NToggle { checked: root.perMonitor; onToggled: root.perMonitor = checked }
                 }
 
-                SettingsRow {
+                NRow {
                     visible: root.perMonitor
                     RowLayout {
                         spacing: 12
@@ -495,10 +486,10 @@ Item {
             }
 
             // ── Slideshow ──────────────────────────────────────────────────
-            SettingsCard {
+            NCard {
                 sectionTitle: "Slideshow"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -516,7 +507,7 @@ Item {
                     NToggle { checked: root.slideshow; onToggled: root.slideshow = checked }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -554,7 +545,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -574,10 +565,10 @@ Item {
             }
 
             // ── Effects ────────────────────────────────────────────────────
-            SettingsCard {
+            NCard {
                 sectionTitle: "Effects"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
@@ -622,7 +613,7 @@ Item {
                     
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {

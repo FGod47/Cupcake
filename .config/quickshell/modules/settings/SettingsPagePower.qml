@@ -69,90 +69,6 @@ Item {
         onTriggered: batCommand.running = true
     }
 
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-        clip: true
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
-
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: "transparent"
-        radius: 8
-
-        property bool hoverable: false
-        property bool hovered: hoverArea.containsMouse
-        Behavior on color { ColorAnimation { duration: 120 } }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-        }
-
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
-        }
-    }
-
     component PowerRowIcon: Rectangle {
         property string icon: ""
         property bool accent: false
@@ -180,10 +96,10 @@ Item {
             spacing: 20
 
             // BATTERY
-            SettingsCard {
+            NCard {
                 sectionTitle: "Battery"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 20
                         // Battery Shell
@@ -234,7 +150,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uebd1" } // activity-heartbeat
@@ -256,7 +172,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea4d" } // bolt
@@ -279,10 +195,10 @@ Item {
             }
 
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Power Profile"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uebe4"; accent: true } // leaf
@@ -307,7 +223,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueafc" } // battery-2
@@ -329,7 +245,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea74" } // cpu
@@ -345,10 +261,10 @@ Item {
             }
 
             // SCREEN & DISPLAY
-            SettingsCard {
+            NCard {
                 sectionTitle: "Screen & Display"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea4f" } // brightness-down
@@ -370,7 +286,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea8d" } // device-desktop
@@ -392,7 +308,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueb18" } // refresh
@@ -408,10 +324,10 @@ Item {
             }
 
             // SUSPEND & SLEEP
-            SettingsCard {
+            NCard {
                 sectionTitle: "Suspend & Sleep"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueafd" } // battery-3
@@ -433,7 +349,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueb51" } // plug
@@ -455,7 +371,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea89" } // device-laptop
@@ -468,7 +384,7 @@ Item {
                     NToggle { checked: root.wakeLid; onToggled: (val) => root.wakeLid = val }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueafa" } // battery-off
@@ -487,10 +403,10 @@ Item {
             }
 
             // CHARGING
-            SettingsCard {
+            NCard {
                 sectionTitle: "Charging"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueb51"; accent: true } // plug
@@ -503,7 +419,7 @@ Item {
                     NToggle { checked: root.limitCharge; onToggled: (val) => root.limitCharge = val }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea4c" } // battery-charging
@@ -527,10 +443,10 @@ Item {
             }
 
             // ADVANCED
-            SettingsCard {
+            NCard {
                 sectionTitle: "Advanced"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueb39" } // usb
@@ -544,7 +460,7 @@ Item {
                     NToggle { checked: root.usbAutosuspend; onToggled: (val) => root.usbAutosuspend = val }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\uea74" } // cpu
@@ -561,7 +477,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         PowerRowIcon { icon: "\ueb18" } // server / refresh

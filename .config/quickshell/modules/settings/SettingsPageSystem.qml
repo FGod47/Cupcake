@@ -170,52 +170,6 @@ Item {
     // Reusable inline components (mirrors SettingsPageAppearance.qml)
     // =====================================================================
 
-    component SettingsCard: Rectangle {
-        default property alias content: cardCol.data
-        property string sectionTitle: ""
-        Layout.fillWidth: true
-        implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
-        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-        radius: 12
-        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.08)
-        border.width: 1
-
-        RowLayout {
-            id: cardHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.topMargin: 16
-            visible: sectionTitle !== ""
-            spacing: 8
-
-            Text {
-                text: sectionTitle
-                color: Theme.colOnSurfaceVariant
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 11
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.8
-                font.capitalization: Font.AllUppercase
-            }
-            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15) }
-        }
-
-        ColumnLayout {
-            id: cardCol
-            anchors.top: cardHeader.visible ? cardHeader.bottom : parent.top
-            anchors.topMargin: cardHeader.visible ? 12 : 16
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 16
-            spacing: 0
-        }
-    }
-
     component SectionLabel: RowLayout {
         property string text: ""
         Layout.fillWidth: true
@@ -304,43 +258,6 @@ Item {
             height: 1
             color: cBorderSoft
             // This is placed as a bottom border via parent's bottom anchor in usage
-        }
-    }
-
-    component SettingsRow: Rectangle {
-        default property alias rowContent: innerLayout.data
-        Layout.fillWidth: true
-        implicitHeight: innerLayout.implicitHeight + 20
-        color: "transparent"
-        radius: 8
-
-        property bool hoverable: false
-        property bool hovered: hoverArea.containsMouse
-        Behavior on color { ColorAnimation { duration: 120 } }
-
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: parent.hoverable
-        }
-
-        RowLayout {
-            id: innerLayout
-            anchors.fill: parent
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            anchors.topMargin: 10
-            anchors.bottomMargin: 10
-            spacing: 12
-        }
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
-            color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-            opacity: 0.6
         }
     }
 
@@ -434,10 +351,10 @@ Item {
             Item { Layout.preferredHeight: 14 }
 
             // --- Device section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Device"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb00" }
@@ -458,7 +375,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uecf5" }
@@ -468,7 +385,7 @@ Item {
                     MonoChip { text: "rolling" }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uebd4" }
@@ -492,7 +409,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -504,10 +421,10 @@ Item {
             }
 
             // --- Performance section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Performance"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb1b"; accented: true }
@@ -525,7 +442,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb1a"; accented: true }
@@ -543,7 +460,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uead7" }
@@ -569,10 +486,10 @@ Item {
             }
 
             // --- Startup applications section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Startup Applications"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb1e" }
@@ -584,7 +501,7 @@ Item {
                         onToggled: (c) => { root.autostartNetworkManager = c; root.writeAutostartFlag("NETWORKMANAGER", c); }
                     }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueca6" }
@@ -596,7 +513,7 @@ Item {
                         onToggled: (c) => { root.autostartBluetooth = c; root.writeAutostartFlag("BLUETOOTH", c); }
                     }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uead4" }
@@ -608,7 +525,7 @@ Item {
                         onToggled: (c) => { root.autostartPolkit = c; root.writeAutostartFlag("POLKIT", c); }
                     }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb0f" }
@@ -620,7 +537,7 @@ Item {
                         onToggled: (c) => { root.autostartCliphist = c; root.writeAutostartFlag("CLIPHIST", c); }
                     }
                 }
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb4b" }
@@ -635,10 +552,10 @@ Item {
             }
 
             // --- Session & power section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Session & Power"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb37" }
@@ -663,7 +580,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb37" }
@@ -679,7 +596,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLabel { label: "Session actions" }
                     Item { Layout.fillWidth: true }
                     RowLayout {
@@ -693,10 +610,10 @@ Item {
             }
 
             // --- Default applications section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Default Applications"
 
-                SettingsRow {
+                NRow {
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -716,7 +633,7 @@ Item {
                         }
                     }
                 }
-                SettingsRow {
+                NRow {
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -736,7 +653,7 @@ Item {
                         }
                     }
                 }
-                SettingsRow {
+                NRow {
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -756,7 +673,7 @@ Item {
                         }
                     }
                 }
-                SettingsRow {
+                NRow {
                     hoverable: true
                     RowLayout {
                         spacing: 12
@@ -779,10 +696,10 @@ Item {
             }
 
             // --- System updates section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "System Updates"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb1d"; accented: true }
@@ -855,7 +772,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb42" }
@@ -872,10 +789,10 @@ Item {
             }
 
             // --- Quickshell section ---
-            SettingsCard {
+            NCard {
                 sectionTitle: "Quickshell"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\uead9" }
@@ -885,7 +802,7 @@ Item {
                     MonoChip { text: root.ipcSocketPath }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         IconChip { glyph: "\ueb1d" }
@@ -901,7 +818,7 @@ Item {
                     }
                 }
 
-                SettingsRow {
+                NRow {
                     RowLabel { label: "Shell process"; desc: "Restart the quickshell daemon" }
                     Item { Layout.fillWidth: true }
                     Pill {

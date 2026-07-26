@@ -31,15 +31,6 @@ Item {
     // Reusable inline components
     // =====================================================================
 
-
-    component SectionLabel: Text {
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        font.letterSpacing: 0.4
-        color: Theme.colOnSurface
-        opacity: 0.45
-    }
-
     component SettingsRow: ColumnLayout {
         default property alias content: innerRow.data
         Layout.fillWidth: true
@@ -61,7 +52,7 @@ Item {
 
     Component {
         id: deviceDelegate
-        SettingsRow {
+        NRow {
             required property var modelData
             
             RowLayout {
@@ -179,10 +170,10 @@ Item {
             width: parent.width
             spacing: 20
 
-            SettingsCard {
+            NCard {
                 sectionTitle: "Bluetooth"
 
-                SettingsRow {
+                NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle {
