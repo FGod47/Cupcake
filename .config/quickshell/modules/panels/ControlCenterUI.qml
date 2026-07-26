@@ -524,7 +524,12 @@ Item {
                                         
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                            onClicked: { PowerProfiles.profile = modelData.type }
+                                            onClicked: { 
+                                                PowerProfiles.profile = modelData.type;
+                                                let icon = modelData.name === "Saver" ? "battery-low" : modelData.name === "Performance" ? "utilities-system-monitor" : "battery-good";
+                                                let label = modelData.name === "Saver" ? "Power Saver" : modelData.name;
+                                                Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", icon, "-t", "2500", "Power Profile", "Switched to " + label]);
+                                            }
                                         }
                                     }
                                 }
