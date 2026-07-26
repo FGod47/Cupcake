@@ -36,8 +36,20 @@ Item {
     Keys.onLeftPressed: { gv.currentIndex = (gv.currentIndex > 0) ? gv.currentIndex - 1 : count - 1 }
     Keys.onRightPressed: { gv.currentIndex = (gv.currentIndex < count - 1) ? gv.currentIndex + 1 : 0 }
 
+    onCountChanged: {
+        if (count > 0 && root.currentWall !== "") {
+            for (let i = 0; i < count; i++) {
+                const entryFileName = gv.model.get(i, "fileName")
+                if (entryFileName && root.wallDir + "/" + entryFileName === root.currentWall) {
+                    currentIndex = i
+                    return
+                }
+            }
+        }
+    }
+
     onVisibleChanged: {
-        if (visible && root.currentWall !== "") {
+        if (visible && root.currentWall !== "" && count > 0) {
             for (let i = 0; i < count; i++) {
                 const entryFileName = gv.model.get(i, "fileName")
                 if (entryFileName && root.wallDir + "/" + entryFileName === root.currentWall) {
