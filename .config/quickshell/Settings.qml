@@ -10,8 +10,8 @@ import "modules/common"
 Window {
     id: settingsWindow
     visible: true
-    width: 900
-    height: 800
+    width: 977
+    height: 806
     minimumWidth: 800
     minimumHeight: 600
     maximumWidth: 1200
