@@ -57,10 +57,10 @@ Item {
             
             RowLayout {
                 spacing: 12
-                Rectangle {
-                    width: 32; height: 32; radius: 16
-                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                    Text { anchors.centerIn: parent; text: root.getDeviceIcon(modelData); color: modelData.connected ? Theme.colPrimary : Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                NIconBadge {
+                    icon: root.getDeviceIcon(modelData)
+                    iconColor: modelData.connected ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                    bgColor: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
                 }
                 ColumnLayout {
                     spacing: 1
@@ -176,10 +176,8 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea37"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
+                        NIconBadge {
+                            icon: "\uea37"
                         }
                         ColumnLayout {
                             spacing: 1

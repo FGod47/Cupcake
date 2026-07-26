@@ -415,10 +415,8 @@ Item {
                 Repeater {
                     model: clientsModel
                     delegate: NRow {
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uea8a"; font.pixelSize: 14; color: cTextDim }
+                        NIconBadge {
+                            icon: "\uea8a"
                         }
                         ColumnLayout {
                             spacing: 2

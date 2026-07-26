@@ -371,17 +371,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uea7c"
-                                color: Theme.colOnSurfaceVariant
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uea7c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wallpaper directory"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -415,11 +405,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uead6"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\uead6" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Per-monitor wallpapers"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -434,11 +420,7 @@ Item {
                     visible: root.perMonitor
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea4e"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\uea4e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Select Display"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -492,11 +474,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb37"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\ueb37" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Slideshow"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -510,11 +488,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\uea24"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\uea24" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Change every"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -548,11 +522,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb4c"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\ueb4c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Shuffle order"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -571,11 +541,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb79"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\ueb79" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Dim overlay"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -616,11 +582,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 16
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-                            Text { anchors.centerIn: parent; text: "\ueb04"; color: Theme.colOnSurfaceVariant; font.family: "tabler-icons"; font.pixelSize: 16 }
-                        }
+                        NIconBadge { icon: "\ueb04" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

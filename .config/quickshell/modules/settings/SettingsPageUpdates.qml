@@ -323,24 +323,7 @@ Item {
                             anchors.fill: parent
                             spacing: 12
 
-                            Rectangle {
-                                width: 32; height: 32; radius: 8
-                                color: cBgElevated
-                                Text { anchors.centerIn: parent; text: "\uea4e"; font.family: "tabler-icons"; font.pixelSize: 16; color: cTextDim } // git-commit icon
-                            }
-
-                            Rectangle {
-                                height: 24; radius: 6
-                                width: hashText.implicitWidth + 16
-                                color: cBgElevated; border.color: cBorder; border.width: 1
-                                Text {
-                                    id: hashText
-                                    anchors.centerIn: parent
-                                    text: model.hash
-                                    color: cAccent
-                                    font.family: Theme.monoFontFamily; font.pixelSize: 11
-                                }
-                            }
+                            NIconBadge { icon: "\uea4e" }
 
                             Text {
                                 text: model.subject
@@ -540,11 +523,7 @@ Item {
                             anchors.fill: parent
                             spacing: 12
 
-                            Rectangle {
-                                width: 32; height: 32; radius: 8
-                                color: cBgElevated
-                                Text { anchors.centerIn: parent; text: "\ueb10"; font.family: "tabler-icons"; font.pixelSize: 16; color: cTextDim }
-                            }
+                            NIconBadge { icon: "\ueb10" }
 
                             Text {
                                 text: model.name

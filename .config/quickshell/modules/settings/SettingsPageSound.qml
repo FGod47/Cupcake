@@ -24,21 +24,7 @@ Item {
     property bool advAutoSwitch: true
 
 
-    component SoundRowIcon: Rectangle {
-        property string icon: ""
-        property bool accent: false
-        width: 32; height: 32; radius: 10
-        color: Theme.colSurface
-        Text {
-            anchors.centerIn: parent
-            text: parent.icon
-            font.family: "tabler-icons"
-            font.pixelSize: 16
-            color: parent.accent ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.5)
-        }
-    }
-
-    ScrollView {
+        ScrollView {
         anchors.fill: parent
         contentWidth: availableWidth
         clip: true
@@ -87,7 +73,7 @@ Item {
 
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uebc5"; accent: true }
+                        NIconBadge { icon: "\uebc5"; iconColor: Theme.colPrimary }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Output device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -136,7 +122,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueb7e" }
+                        NIconBadge { icon: "\ueb7e"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -199,7 +185,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueaf4" }
+                        NIconBadge { icon: "\ueaf4"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Balance"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -224,7 +210,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueb93" }
+                        NIconBadge { icon: "\ueb93"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Output profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -247,7 +233,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueaef" }
+                        NIconBadge { icon: "\ueaef"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Input device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -273,7 +259,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueaef" }
+                        NIconBadge { icon: "\ueaef"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Input volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -336,7 +322,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueaf1"; accent: true }
+                        NIconBadge { icon: "\ueaf1"; iconColor: Theme.colPrimary }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Noise suppression (RNNoise)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -349,7 +335,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uef57" }
+                        NIconBadge { icon: "\uef57"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Echo cancellation"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -408,7 +394,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uea4e" }
+                        NIconBadge { icon: "\uea4e"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Prefer quality over battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -426,7 +412,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uebc5" }
+                        NIconBadge { icon: "\uebc5"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Interface sound effects"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -440,7 +426,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uea35" }
+                        NIconBadge { icon: "\uea35"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Notification sound"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -453,7 +439,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueb7e" }
+                        NIconBadge { icon: "\ueb7e"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Effects volume"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -481,7 +467,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\uea16" }
+                        NIconBadge { icon: "\uea16"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Sample rate"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -498,7 +484,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueb8b" }
+                        NIconBadge { icon: "\ueb8b"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Buffer size (quantum)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -516,7 +502,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        SoundRowIcon { icon: "\ueb6c" }
+                        NIconBadge { icon: "\ueb6c"; iconColor: cTextDim }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Auto-switch to newly connected devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
