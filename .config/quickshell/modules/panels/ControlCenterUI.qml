@@ -542,7 +542,7 @@ Item {
         // =====================================================================
         // PAGE 1: Wi-Fi Manager Page
         // =====================================================================
-        Item {
+        Rectangle {
             id: wifiCcPage
             anchors.top: parent.top
             anchors.topMargin: 14
@@ -551,12 +551,16 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 14
             height: 572
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+            radius: 16
+            clip: true
             visible: opacity > 0.0
             opacity: ccUi.wifiPageOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             ColumnLayout {
                 anchors.fill: parent
+                anchors.margins: 16
                 spacing: 12
 
                 // Header Row
@@ -831,7 +835,7 @@ Item {
         // =====================================================================
         // PAGE 2: Bluetooth Manager Page
         // =====================================================================
-        Item {
+        Rectangle {
             id: btCcPage
             anchors.top: parent.top
             anchors.topMargin: 14
@@ -840,12 +844,16 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 14
             height: 572
+            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+            radius: 16
+            clip: true
             visible: opacity > 0.0
             opacity: ccUi.btPageOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             ColumnLayout {
                 anchors.fill: parent
+                anchors.margins: 16
                 spacing: 12
 
                 // Header Row
