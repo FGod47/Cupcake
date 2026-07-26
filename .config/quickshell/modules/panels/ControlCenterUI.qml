@@ -214,14 +214,30 @@ Item {
 
                     Item { Layout.fillWidth: true }
 
-                    ColumnLayout {
+                    RowLayout {
                         spacing: 8
                         Layout.alignment: Qt.AlignRight | Qt.AlignTop
                         Layout.topMargin: 12
                         
+                        // Uptime pill
+                        Rectangle {
+                            Layout.alignment: Qt.AlignVCenter
+                            height: 24; width: uptimeText.width + 24
+                            radius: 12
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            Text {
+                                id: uptimeText
+                                anchors.centerIn: parent
+                                text: uptimeStr.replace("Up ", "")
+                                font.family: "monospace"
+                                font.pixelSize: 10
+                                color: textSubtext0
+                            }
+                        }
+                        
                         // Settings icon
                         Rectangle {
-                            Layout.alignment: Qt.AlignRight
+                            Layout.alignment: Qt.AlignVCenter
                             width: 34; height: 34; radius: 17
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb20"; font.family: "tabler-icons"; font.pixelSize: 16; color: textSubtext0 }
