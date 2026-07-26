@@ -76,7 +76,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\uec50"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -114,7 +114,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\uec50"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -152,7 +152,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueb5a"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -189,7 +189,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueaf2"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -215,7 +215,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueaf2"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -246,7 +246,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\uec50"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App default font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -284,7 +284,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\uec50"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\uec50"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App monospaced font"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -322,7 +322,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueb5a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueb5a"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App font weight"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -359,7 +359,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueaf2"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App default font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -385,7 +385,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle { width: 32; height: 32; radius: 10; color: cBgElevated; Text { anchors.centerIn: parent; text: "\ueaf2"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 16 } }
+                        NIconBadge { icon: "\ueaf2"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App monospaced font size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

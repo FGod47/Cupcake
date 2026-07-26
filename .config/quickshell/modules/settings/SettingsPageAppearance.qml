@@ -301,22 +301,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: root.colorMode === "Light" ? "\ueb30" : "\ueaf8" // sun / moon
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Color Mode"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Switch between light and dark theme"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
+                        NIconBadge { icon: "Color Mode"; iconColor: cTextDim; bgColor: cBgElevated }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
@@ -332,17 +317,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uedba" // layout-grid
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uedba"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Icon theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -364,17 +339,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uee6d" // cursor-text
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uee6d"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Cursor theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -494,17 +459,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: ""
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: ""; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Liquidify"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -524,17 +479,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb3e" // toggle-left
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb3e"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Toggle style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -552,17 +497,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: ""
-                                color: cTextDim
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: ""; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Accent script"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -596,17 +531,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueacc" // layout-2 (app launcher style)
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueacc"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App launcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -627,17 +552,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueeb0" // layout-cards or similar
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueeb0"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wallpaper switcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -664,17 +579,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb13"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb13"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Background blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -696,17 +601,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uef8c" // blur strength slider
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uef8c"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Strength"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -737,17 +632,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb00"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb00"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -777,17 +662,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb00"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb00"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Passes"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -821,17 +696,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uead7" // layout-navbar (quickshell blur toggle)
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uead7"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Quickshell blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -852,17 +717,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uebc8" // scan (x-ray blur)
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uebc8"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "X-Ray Blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -882,17 +737,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uead7"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uead7"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Top Bar opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -922,17 +767,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueac2"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueac2"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Control Centre opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -962,17 +797,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uea80"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\uea80"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Dock opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -1002,17 +827,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb1c"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb1c"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App Launcher opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -1042,17 +857,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueacb"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueacb"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wall Switcher opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -1082,17 +887,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 32; height: 32; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb20"
-                                color: cTextDim
-                                font.family: "tabler-icons"
-                                font.pixelSize: 16
-                            }
-                        }
+                        NIconBadge { icon: "\ueb20"; iconColor: cTextDim; bgColor: cBgElevated }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Settings app opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

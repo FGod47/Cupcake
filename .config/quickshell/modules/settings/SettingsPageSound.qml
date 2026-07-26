@@ -395,72 +395,7 @@ Item {
                             anchors.bottomMargin: 10
                             spacing: 12
                             
-                            Rectangle {
-                                width: 32; height: 32; radius: 10
-                                color: getColor(modelData.name)
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: getIcon(modelData.name)
-                                    font.family: Theme.defaultFontFamily; font.weight: Font.Bold; font.pixelSize: 13
-                                    color: Theme.colOnPrimary
-                                }
-                            }
-                            
-                            Text {
-                                text: modelData.name
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface
-                                Layout.preferredWidth: 100; elide: Text.ElideRight
-                            }
-                            
-                            Process { id: appVolProc }
-                            
-                            Process {
-                                id: initAppVol
-                                command: ["wpctl", "get-volume", modelData.id.toString()]
-                                running: true
-                                stdout: StdioCollector { id: initAppVolOut }
-                                onExited: {
-                                    let match = initAppVolOut.text.trim().match(/Volume:\s+([\d\.]+)/);
-                                    if (match && !appVolSlider.pressed) appVolSlider.value = parseFloat(match[1]);
-                                }
-                            }
-                            
-                            StyledSlider {
-                                id: appVolSlider
-                                Layout.fillWidth: true
-                                from: 0; to: 1.0
-                                onMoved: {
-                                    if (modelData.audio) {
-                                        appVolProc.command = ["wpctl", "set-volume", modelData.id.toString(), value.toString()];
-                                        appVolProc.running = true;
-                                    }
-                                }
-                            }
-                            
-                            
-                        }
-                        
-                        Rectangle {
-                            anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
-                            height: 1; color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15); opacity: 0.6
-                        }
-                    }
-                }
-            }
-
-            // BLUETOOTH AUDIO
-            NCard {
-                sectionTitle: "Bluetooth Audio"
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        SoundRowIcon { icon: "\uea37" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Preferred codec"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                            Text { text: "WH-1000XM5 · connected"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
-                        }
+                            NIconBadge { icon: "Preferred codec"; iconColor: cTextDim; bgColor: cBgElevated }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
