@@ -211,7 +211,7 @@ Item {
                             anchors.right: parent.right
                             anchors.rightMargin: 12
                             anchors.verticalCenter: parent.verticalCenter
-                            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-shellsettings-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
                             sourceSize.height: 30
                             height: 30
                             fillMode: Image.PreserveAspectFit
