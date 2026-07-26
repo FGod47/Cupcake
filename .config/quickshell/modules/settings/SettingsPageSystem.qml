@@ -414,7 +414,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1b"; iconColor: Theme.colPrimary; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1b"; iconColor: Theme.colPrimary}
                         RowLabel { label: "CPU governor"; desc: "Scheduling policy applied on boot" }
                     }
                     Item { Layout.fillWidth: true }
@@ -432,7 +432,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1a"; iconColor: Theme.colPrimary; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1a"; iconColor: Theme.colPrimary}
                         RowLabel { label: "Power profile" }
                     }
                     Item { Layout.fillWidth: true }
@@ -689,7 +689,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1d"; iconColor: Theme.colPrimary; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1d"; iconColor: Theme.colPrimary}
                         RowLabel {
                             label: root.updateCount + " packages can be updated"
                             desc: root.aurUpdateCount + " from the AUR · mirrorlist synced 2h ago"

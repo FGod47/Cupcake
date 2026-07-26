@@ -356,7 +356,6 @@ Item {
                     NIconBadge {
                         icon: "\ued1b"
                         iconColor: root.hotspotEnabled ? cAccent : cTextDim
-                        bgColor: root.hotspotEnabled ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cBgElevated
                     }
                     ColumnLayout {
                         spacing: 2

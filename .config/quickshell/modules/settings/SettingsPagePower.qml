@@ -188,7 +188,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebe4"; iconColor: Theme.colPrimary; bgColor: cBgElevated } // leaf
+                        NIconBadge { icon: "\uebe4"; iconColor: Theme.colPrimary} // leaf
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Active profile"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -396,7 +396,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb51"; iconColor: Theme.colPrimary; bgColor: cBgElevated } // plug
+                        NIconBadge { icon: "\ueb51"; iconColor: Theme.colPrimary} // plug
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Limit charging to extend battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }

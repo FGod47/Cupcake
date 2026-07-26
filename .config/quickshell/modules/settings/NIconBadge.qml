@@ -5,8 +5,8 @@ import "../../theme"
 
 Rectangle {
     property string icon: ""
-    property color iconColor: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
-    property color bgColor: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+    property color iconColor: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+    property color bgColor: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
     width: 32; height: 32; radius: 10
     color: bgColor
     Text {

@@ -361,7 +361,6 @@ Item {
                             NIconBadge {
                                 icon: "\ueb52"
                                 iconColor: cAccent
-                                bgColor: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15)
                             }
 
                             ColumnLayout {
@@ -468,8 +467,6 @@ Item {
 
                                 NIconBadge {
                                     icon: model.signal > 75 ? "\ueb52" : (model.signal > 40 ? "\ueba5" : (model.signal > 10 ? "\ueba4" : "\ueba3"))
-                                    iconColor: cTextDim
-                                    bgColor: cBgElevated
                                 }
                                 ColumnLayout {
                                     spacing: 2
@@ -677,8 +674,6 @@ Item {
 
                                 NIconBadge {
                                     icon: "\ueba3"
-                                    iconColor: cTextFaint
-                                    bgColor: cBgElevated
                                 }
                                 ColumnLayout {
                                     spacing: 2
@@ -758,7 +753,6 @@ Item {
                         NIconBadge {
                             icon: "\uebd9"
                             iconColor: root.ethernetEnabled ? cAccent : cTextDim
-                            bgColor: root.ethernetEnabled ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cBgElevated
                         }
                         ColumnLayout {
                             spacing: 2
@@ -788,7 +782,6 @@ Item {
                         NIconBadge {
                             icon: "\ued1b"
                             iconColor: root.hotspotEnabled ? cAccent : cTextDim
-                            bgColor: root.hotspotEnabled ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.12) : cBgElevated
                         }
                         ColumnLayout {
                             spacing: 2
