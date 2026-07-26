@@ -217,6 +217,7 @@ Item {
                     ColumnLayout {
                         spacing: 8
                         Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                        Layout.topMargin: 12
                         
                         // Settings icon
                         Rectangle {
