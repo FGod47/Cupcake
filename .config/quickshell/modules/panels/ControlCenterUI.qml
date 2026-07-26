@@ -468,6 +468,7 @@ Item {
                     radius: 26
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
+                    MouseArea { anchors.fill: parent }
                     RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Text { text: backlightSlider.value < 33 ? "\ueb7d" : (backlightSlider.value < 66 ? "\uea3c" : "\ueb7e"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
@@ -475,6 +476,7 @@ Item {
                                 Slider {
                                     id: backlightSlider
                                     Layout.fillWidth: true
+                                    Layout.fillHeight: true
                                     from: 0; to: 100; value: 0
                                     
                                     background: Rectangle {
@@ -509,6 +511,7 @@ Item {
                     radius: 26
                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     
+                    MouseArea { anchors.fill: parent }
                     RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Text { text: volumeSlider.value === 0 ? "\uf1c3" : (volumeSlider.value < 50 ? "\ueb4f" : "\ueb51"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
@@ -516,6 +519,7 @@ Item {
                                 Slider {
                                     id: volumeSlider
                                     Layout.fillWidth: true
+                                    Layout.fillHeight: true
                                     from: 0; to: 100; value: 0
                                     
                                     background: Rectangle {
