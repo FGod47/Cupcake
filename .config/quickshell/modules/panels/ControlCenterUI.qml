@@ -18,7 +18,7 @@ Item {
     property int connectionsHeight: volSliderBg.isExpanded ? 64 : 180
     Behavior on connectionsHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     
-    height: 615 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
+    height: 645 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
 
     signal requestClose()
 
