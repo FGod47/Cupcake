@@ -372,11 +372,17 @@ Item {
                 }
 
                 // Quick Toggles
-                RowLayout {
+                Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 50
-                    Layout.maximumHeight: 50
-                    spacing: 0
+                    Layout.preferredHeight: 76
+                    radius: 20
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                    
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 0
                     
                     Repeater {
                         model: [
@@ -400,6 +406,7 @@ Item {
                             }
                         }
                     }
+                }
                 }
 
 
