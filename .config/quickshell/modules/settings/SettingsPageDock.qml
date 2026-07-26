@@ -179,11 +179,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uea9a"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uea9a" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Enabled"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -204,11 +200,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uebd3"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uebd3" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Active monitor only"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -225,11 +217,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ufa59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ufa59" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Monitors"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -251,11 +239,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uecf0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uecf0" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Auto hide"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -276,11 +260,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb2c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueb2c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Reserve space"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -303,11 +283,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uefb1"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uefb1" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Show dots"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -328,11 +304,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uf554"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uf554" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Show instance count"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -349,11 +321,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uedba"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uedba" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Launcher position"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -377,11 +345,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb56"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueb56" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Pop up"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -409,11 +373,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueecf"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueecf" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Icon size"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -436,11 +396,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb59"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueb59" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Main axis padding"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -463,11 +419,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb5b"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueb5b" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Cross axis padding"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -490,11 +442,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uedb0"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uedb0" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Item spacing"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -517,11 +465,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uea0e"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uea0e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Ends margin"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -544,11 +488,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uec89"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uec89" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Edge margin"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -576,11 +516,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueb7c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueb7c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Corner radius"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -608,11 +544,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uea97"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uea97" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Background opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -635,11 +567,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\ueed8"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\ueed8" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Shadow"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -662,11 +590,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        Rectangle {
-                            width: 36; height: 36; radius: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
-                            Text { anchors.centerIn: parent; text: "\uec9c"; color: cTextDim; font.family: "tabler-icons"; font.pixelSize: 18 }
-                        }
+                        NIconBadge { icon: "\uec9c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Pinned apps"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
