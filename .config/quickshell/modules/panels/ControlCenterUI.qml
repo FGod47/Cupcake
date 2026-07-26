@@ -18,7 +18,7 @@ Item {
     property int connectionsHeight: volSliderBg.isExpanded ? 64 : 180
     Behavior on connectionsHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     
-    height: 660 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
+    height: 640 + Math.max(0, animatedExtraHeight - (180 - connectionsHeight))
 
     signal requestClose()
 
@@ -706,16 +706,17 @@ Item {
                     }
                 }
 
-                Item { Layout.fillHeight: true }
-
                 Image {
                     Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: 4
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
                     sourceSize.height: 32
                     height: 32
                     fillMode: Image.PreserveAspectFit
                     opacity: 0.6
                 }
+                
+                Item { Layout.fillHeight: true }
             }
         }
         // =====================================================================
