@@ -487,12 +487,12 @@ Item {
                                     
                                     Timer {
                                         id: ccDdcTimer
-                                        interval: 150; repeat: false
+                                        interval: 50; repeat: false
                                         property int targetVal: 100
-                                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetVal).toString(), "--noverify"])
+                                        onTriggered: Quickshell.execDetached(["brightnessctl", "set", Math.round(targetVal) + "%"])
                                     }
                                     onMoved: { ccDdcTimer.targetVal = value; ccDdcTimer.restart(); backlightLabel.text = Math.round(value) + "%" }
-                                    onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]); backlightLabel.text = Math.round(value) + "%" } }
+                                    onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["brightnessctl", "set", Math.round(value) + "%"]); backlightLabel.text = Math.round(value) + "%" } }
                                 }
                                 Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
@@ -522,7 +522,7 @@ Item {
                                     }
                                     handle: Item {}
                                     
-                                    onMoved: { Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`); volumeLabel.text = Math.round(value) + "%" }
+                                    onMoved: { Quickshell.execDetached(`wpctl set-volume @DEFAULT_AUDIO_SINK@ ${Math.round(value)}%`); volumeLabel.text = Math.round(value) + "%" }
                                 }
                                 Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
@@ -1303,14 +1303,18 @@ Item {
 
     Process {
         id: updateVolume
-        command: ["pamixer", "--get-volume"]
+        command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
         stdout: StdioCollector { id: updateVolumeStdout }
         onExited: {
             if (typeof volumeSlider !== "undefined" && volumeSlider && !volumeSlider.pressed) {
-                var vol = parseInt((updateVolumeStdout.text || "").trim())
-                if (!isNaN(vol)) {
-                    volumeSlider.value = vol
-                    volumeLabel.text = vol + "%"
+                let text = (updateVolumeStdout.text || "").trim();
+                let match = text.match(/Volume:\s+([\d\.]+)/);
+                if (match && match[1]) {
+                    var vol = Math.round(parseFloat(match[1]) * 100);
+                    if (!isNaN(vol)) {
+                        volumeSlider.value = vol
+                        volumeLabel.text = vol + "%"
+                    }
                 }
             }
         }
@@ -1318,14 +1322,13 @@ Item {
 
     Process {
         id: updateBrightness
-        command: ["ddcutil", "getvcp", "10", "--terse"]
+        command: ["bash", "-c", "brightnessctl -m | awk -F, '{print $4}' | tr -d '%' | head -n 1"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
             if (typeof backlightSlider !== "undefined" && backlightSlider && !backlightSlider.pressed) {
-                let text = (updateBrightnessStdout.text || "");
-                let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                if (match && match[1]) {
-                    let bright = parseInt(match[1]);
+                let text = (updateBrightnessStdout.text || "").trim();
+                if (text !== "") {
+                    let bright = parseInt(text);
                     if (!isNaN(bright)) {
                         backlightSlider.value = bright
                         backlightLabel.text = bright + "%"
