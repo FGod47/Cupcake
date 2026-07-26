@@ -230,8 +230,9 @@ Item {
                                 id: uptimeText
                                 anchors.centerIn: parent
                                 text: uptimeStr.replace("Up ", "")
-                                font.family: "monospace"
-                                font.pixelSize: 10
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
                                 color: textSubtext0
                             }
                         }
