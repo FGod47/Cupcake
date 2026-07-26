@@ -561,7 +561,13 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                             from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
-                            onMoved: { Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(value).toString() + "%"]) }
+                            Timer {
+                                id: audioVolTimer
+                                interval: 50; repeat: false
+                                property int targetVal: 100
+                                onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
+                            }
+                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart() }
                             
                             Process {
                                 id: audioProc

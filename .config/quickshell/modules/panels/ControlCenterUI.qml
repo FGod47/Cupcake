@@ -534,7 +534,13 @@ Item {
                                         width: 14; height: 14
                                     }
                                     
-                                    onMoved: { Quickshell.execDetached(`wpctl set-volume @DEFAULT_AUDIO_SINK@ ${Math.round(value)}%`); volumeLabel.text = Math.round(value) + "%" }
+                                    Timer {
+                                        id: ccVolTimer
+                                        interval: 50; repeat: false
+                                        property int targetVal: 100
+                                        onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
+                                    }
+                                    onMoved: { ccVolTimer.targetVal = value; ccVolTimer.restart(); volumeLabel.text = Math.round(value) + "%" }
                                 }
                                 Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: 11; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
                             }
