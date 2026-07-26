@@ -569,12 +569,21 @@ Item {
                     spacing: 12
 
                     // Back Button
-                    Text {
-                        text: "\uea60"
-                        font.family: "tabler-icons"
-                        color: textSubtext0
-                        font.pixelSize: 18
+                    Rectangle {
+                        width: 28; height: 28; radius: 14
+                        color: wifiBackMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\uea60"
+                            font.family: "tabler-icons"
+                            color: textSubtext0
+                            font.pixelSize: 18
+                        }
+                        
                         MouseArea {
+                            id: wifiBackMa
+                            hoverEnabled: true
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: ccUi.wifiPageOpen = false
                         }
@@ -862,12 +871,21 @@ Item {
                     spacing: 12
 
                     // Back Button
-                    Text {
-                        text: "\uea60"
-                        font.family: "tabler-icons"
-                        color: textSubtext0
-                        font.pixelSize: 18
+                    Rectangle {
+                        width: 28; height: 28; radius: 14
+                        color: btBackMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\uea60"
+                            font.family: "tabler-icons"
+                            color: textSubtext0
+                            font.pixelSize: 18
+                        }
+                        
                         MouseArea {
+                            id: btBackMa
+                            hoverEnabled: true
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: ccUi.btPageOpen = false
                         }
