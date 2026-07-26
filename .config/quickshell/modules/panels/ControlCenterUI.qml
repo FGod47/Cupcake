@@ -195,6 +195,7 @@ Item {
                     ColumnLayout {
                         spacing: 2
                         Layout.leftMargin: 12
+                        Layout.topMargin: -8
                         Text {
                             text: Qt.formatDateTime(new Date(), "hh:mm")
                             font.family: Theme.defaultFontFamily
