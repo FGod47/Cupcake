@@ -222,7 +222,8 @@ Item {
                         // Uptime pill
                         Rectangle {
                             Layout.alignment: Qt.AlignVCenter
-                            height: 24; width: uptimeText.width + 24
+                            Layout.preferredHeight: 24
+                            Layout.preferredWidth: uptimeText.width + 24
                             radius: 12
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text {
@@ -238,7 +239,9 @@ Item {
                         // Settings icon
                         Rectangle {
                             Layout.alignment: Qt.AlignVCenter
-                            width: 34; height: 34; radius: 17
+                            Layout.preferredWidth: 34
+                            Layout.preferredHeight: 34
+                            radius: 17
                             color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             Text { anchors.centerIn: parent; text: "\ueb20"; font.family: "tabler-icons"; font.pixelSize: 16; color: textSubtext0 }
                             MouseArea {
