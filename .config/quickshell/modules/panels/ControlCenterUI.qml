@@ -189,9 +189,8 @@ Item {
                         spacing: 2
                         Text {
                             text: Qt.formatDateTime(new Date(), "hh:mm")
-                            font.family: "serif"
+                            font.family: Theme.defaultFontFamily
                             font.pixelSize: 46
-                            font.italic: true
                             font.weight: Font.Medium
                             color: textText
                         }
