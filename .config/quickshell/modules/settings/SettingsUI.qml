@@ -609,7 +609,7 @@ Item {
                                     case 5: return "SettingsPageWallpaper.qml";
                                     case 7: return "SettingsPageSound.qml";
                                     case 10: return "SettingsPageSystem.qml";
-                                    case 11: return "SettingsPageUpdates.qml";
+
                                     case 13: return "SettingsPagePower.qml";
                                     case 17: return "SettingsPageNetwork.qml";
                                     case 18: return "SettingsPageDisplay.qml";
