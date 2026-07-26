@@ -395,7 +395,7 @@ Item {
                             anchors.bottomMargin: 10
                             spacing: 12
                             
-                            NIconBadge { icon: "Preferred codec"; iconColor: cTextDim; bgColor: cBgElevated }
+                            NIconBadge { icon: "Preferred codec" }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {

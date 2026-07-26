@@ -301,7 +301,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "Color Mode"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "Color Mode" }
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
@@ -317,7 +317,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uedba"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uedba" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Icon theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -339,7 +339,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uee6d"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uee6d" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Cursor theme"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -459,7 +459,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: ""; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Liquidify"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -479,7 +479,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb3e"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb3e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Toggle style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -497,7 +497,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: ""; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Accent script"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -531,7 +531,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueacc"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueacc" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App launcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -552,7 +552,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueeb0"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueeb0" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wallpaper switcher style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -579,7 +579,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb13"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb13" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Background blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -601,7 +601,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uef8c"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uef8c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Strength"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -632,7 +632,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb00"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb00" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -662,7 +662,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb00"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb00" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Passes"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -696,7 +696,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uead7"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uead7" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Quickshell blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -717,7 +717,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebc8"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uebc8" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "X-Ray Blur"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -737,7 +737,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uead7"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uead7" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Top Bar opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -767,7 +767,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueac2"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueac2" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Control Centre opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -797,7 +797,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea80"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea80" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Dock opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -827,7 +827,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1c"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1c" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "App Launcher opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -857,7 +857,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueacb"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueacb" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wall Switcher opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -887,7 +887,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb20"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb20" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Settings app opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

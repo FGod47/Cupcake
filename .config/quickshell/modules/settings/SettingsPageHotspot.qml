@@ -148,7 +148,7 @@ Item {
         
         property bool editing: false
         
-        NIconBadge { icon: iconStr; iconColor: cTextDim; bgColor: cBgElevated }
+        NIconBadge { icon: iconStr }
         Text { text: labelText; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
         Item { Layout.fillWidth: true }
         
@@ -404,7 +404,7 @@ Item {
                 visible: root.hotspotEnabled
 
                 NRow {
-                    NIconBadge { icon: "\uebd9"; iconColor: cTextDim; bgColor: cBgElevated }
+                    NIconBadge { icon: "\uebd9" }
                     ColumnLayout {
                         spacing: 2
                         Text { text: "Clients"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

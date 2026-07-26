@@ -140,7 +140,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebd1"; iconColor: cTextDim; bgColor: cBgElevated } // activity-heartbeat
+                        NIconBadge { icon: "\uebd1" } // activity-heartbeat
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Battery health"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -162,7 +162,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea4d"; iconColor: cTextDim; bgColor: cBgElevated } // bolt
+                        NIconBadge { icon: "\uea4d" } // bolt
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Power draw"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -213,7 +213,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueafc"; iconColor: cTextDim; bgColor: cBgElevated } // battery-2
+                        NIconBadge { icon: "\ueafc" } // battery-2
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Automatically enable Saver below"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -235,7 +235,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea74"; iconColor: cTextDim; bgColor: cBgElevated } // cpu
+                        NIconBadge { icon: "\uea74" } // cpu
                         ColumnLayout {
                             spacing: 1
                             Text { text: "CPU boost"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -254,7 +254,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea4f"; iconColor: cTextDim; bgColor: cBgElevated } // brightness-down
+                        NIconBadge { icon: "\uea4f" } // brightness-down
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Dim screen after idle"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -276,7 +276,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea8d"; iconColor: cTextDim; bgColor: cBgElevated } // device-desktop
+                        NIconBadge { icon: "\uea8d" } // device-desktop
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Turn off screen after idle"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -298,7 +298,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb18"; iconColor: cTextDim; bgColor: cBgElevated } // refresh
+                        NIconBadge { icon: "\ueb18" } // refresh
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Lower refresh rate on battery"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -317,7 +317,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueafd"; iconColor: cTextDim; bgColor: cBgElevated } // battery-3
+                        NIconBadge { icon: "\ueafd" } // battery-3
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Suspend after idle, on battery"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -339,7 +339,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb51"; iconColor: cTextDim; bgColor: cBgElevated } // plug
+                        NIconBadge { icon: "\ueb51" } // plug
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Suspend after idle, on AC"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -361,7 +361,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea89"; iconColor: cTextDim; bgColor: cBgElevated } // device-laptop
+                        NIconBadge { icon: "\uea89" } // device-laptop
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wake on lid open"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -374,7 +374,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueafa"; iconColor: cTextDim; bgColor: cBgElevated } // battery-off
+                        NIconBadge { icon: "\ueafa" } // battery-off
                         ColumnLayout {
                             spacing: 1
                             Text { text: "On critical battery"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -409,7 +409,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea4c"; iconColor: cTextDim; bgColor: cBgElevated } // battery-charging
+                        NIconBadge { icon: "\uea4c" } // battery-charging
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Charge limit"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -436,7 +436,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb39"; iconColor: cTextDim; bgColor: cBgElevated } // usb
+                        NIconBadge { icon: "\ueb39" } // usb
                         ColumnLayout {
                             spacing: 1
                             Text { text: "USB autosuspend"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -450,7 +450,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea74"; iconColor: cTextDim; bgColor: cBgElevated } // cpu
+                        NIconBadge { icon: "\uea74" } // cpu
                         ColumnLayout {
                             spacing: 1
                             Text { text: "PCIe power management (ASPM)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -467,7 +467,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb18"; iconColor: cTextDim; bgColor: cBgElevated } // server / refresh
+                        NIconBadge { icon: "\ueb18" } // server / refresh
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Power management backend"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }

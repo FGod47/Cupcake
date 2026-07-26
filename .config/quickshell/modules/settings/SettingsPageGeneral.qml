@@ -121,7 +121,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueae9"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueae9" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Inner gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -149,7 +149,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb19"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb19" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Outer gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -181,7 +181,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb45"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb45" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Window borders"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -202,7 +202,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb7a"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb7a" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Corner rounding"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -230,7 +230,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb45"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb45" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Border size"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -262,7 +262,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea41"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea41" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Workspace tabs"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -294,7 +294,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea61"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea61" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Tabs scale"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

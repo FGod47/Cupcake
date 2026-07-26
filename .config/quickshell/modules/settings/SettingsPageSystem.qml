@@ -344,7 +344,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb00"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb00" }
                         RowLabel { label: "Hostname"; desc: "Shown on the network and in shell prompts" }
                     }
                     Item { Layout.fillWidth: true }
@@ -365,7 +365,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uecf5"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uecf5" }
                         RowLabel { label: "Operating system"; desc: root.osName }
                     }
                     Item { Layout.fillWidth: true }
@@ -375,7 +375,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebd4"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uebd4" }
                         RowLabel { label: "Kernel"; desc: root.kernel }
                     }
                     Item { Layout.fillWidth: true }
@@ -399,7 +399,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb42"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb42" }
                         RowLabel { label: "Uptime" }
                     }
                     Item { Layout.fillWidth: true }
@@ -450,7 +450,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uead7"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uead7" }
                         RowLabel { label: "Swappiness"; desc: "Kernel preference for swapping over reclaim" }
                     }
                     Item { Layout.fillWidth: true }
@@ -479,7 +479,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1e"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1e" }
                         RowLabel { label: "Network Manager applet" }
                     }
                     Item { Layout.fillWidth: true }
@@ -491,7 +491,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueca6"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueca6" }
                         RowLabel { label: "Bluetooth applet" }
                     }
                     Item { Layout.fillWidth: true }
@@ -503,7 +503,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uead4"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uead4" }
                         RowLabel { label: "Polkit authentication agent" }
                     }
                     Item { Layout.fillWidth: true }
@@ -515,7 +515,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb0f"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb0f" }
                         RowLabel { label: "Clipboard history (cliphist)" }
                     }
                     Item { Layout.fillWidth: true }
@@ -527,7 +527,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb4b"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb4b" }
                         RowLabel { label: "Notification daemon (mako)" }
                     }
                     Item { Layout.fillWidth: true }
@@ -545,7 +545,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb37"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb37" }
                         RowLabel { label: "Lock after idle" }
                     }
                     Item { Layout.fillWidth: true }
@@ -570,7 +570,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb37"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb37" }
                         RowLabel { label: "Lock on suspend" }
                     }
                     Item { Layout.fillWidth: true }
@@ -604,7 +604,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebd4"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uebd4" }
                         RowLabel { label: "Terminal" }
                     }
                     Item { Layout.fillWidth: true }
@@ -624,7 +624,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb45"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb45" }
                         RowLabel { label: "File manager" }
                     }
                     Item { Layout.fillWidth: true }
@@ -644,7 +644,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb35"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb35" }
                         RowLabel { label: "Web browser" }
                     }
                     Item { Layout.fillWidth: true }
@@ -664,7 +664,7 @@ Item {
                     hoverable: true
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb44"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb44" }
                         RowLabel { label: "Text editor" }
                     }
                     Item { Layout.fillWidth: true }
@@ -762,7 +762,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb42"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb42" }
                         RowLabel { label: "Check automatically every day" }
                     }
                     Item { Layout.fillWidth: true }
@@ -782,7 +782,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uead9"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uead9" }
                         RowLabel { label: "IPC socket"; desc: "Used by the quickshell CLI and this settings app" }
                     }
                     Item { Layout.fillWidth: true }
@@ -792,7 +792,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb1d"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb1d" }
                         RowLabel { label: "Live-reload on config change" }
                     }
                     Item { Layout.fillWidth: true }

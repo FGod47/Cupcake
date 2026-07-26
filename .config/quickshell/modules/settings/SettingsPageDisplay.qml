@@ -444,7 +444,7 @@ Item {
                     NRow {
                         RowLayout {
                             spacing: 12
-                            NIconBadge { icon: "\uea27"; iconColor: cTextDim; bgColor: cBgElevated }
+                            NIconBadge { icon: "\uea27" }
                             ColumnLayout {
                                 spacing: 1
                                 Text { text: "Resolution"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -462,7 +462,7 @@ Item {
                     NRow {
                         RowLayout {
                             spacing: 12
-                            NIconBadge { icon: "\ueb13"; iconColor: cTextDim; bgColor: cBgElevated }
+                            NIconBadge { icon: "\ueb13" }
                             ColumnLayout {
                                 spacing: 1
                                 Text { text: "Refresh rate"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -481,7 +481,7 @@ Item {
                     NRow {
                         RowLayout {
                             spacing: 12
-                            NIconBadge { icon: "\ueb56"; iconColor: cTextDim; bgColor: cBgElevated }
+                            NIconBadge { icon: "\ueb56" }
                             ColumnLayout {
                                 spacing: 1
                                 Text { text: "Scale"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -542,7 +542,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb16"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb16" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Orientation"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -577,7 +577,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueb2e"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb2e" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Primary display"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -590,7 +590,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea7a"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea7a" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Mirror displays"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -645,7 +645,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueaf8"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueaf8" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Night light"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -665,7 +665,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea70"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea70" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Schedule"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -689,7 +689,7 @@ Item {
                     visible: nightLightCard.nlSchedule === "custom"
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea60"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uea60" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Custom schedule times"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -717,7 +717,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uef67"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\uef67" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Color temperature"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -791,7 +791,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ued23"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ued23" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Variable refresh rate"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -810,7 +810,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueff3"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueff3" }
                         ColumnLayout {
                             spacing: 1
                             Text { text: "HDR"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }

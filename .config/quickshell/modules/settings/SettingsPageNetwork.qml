@@ -605,7 +605,7 @@ Item {
                         anchors.left: parent.left; anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 12
-                        NIconBadge { icon: "\ueb92"; iconColor: cTextDim; bgColor: cBgElevated }
+                        NIconBadge { icon: "\ueb92" }
                         ColumnLayout {
                             spacing: 2
                             Text { text: "Disable MAC Randomization"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -841,7 +841,7 @@ Item {
                 sectionTitle: "VPN"
 
                 NRow {
-                    NIconBadge { icon: "\ued58"; iconColor: cTextDim; bgColor: cBgElevated }
+                    NIconBadge { icon: "\ued58" }
                     ColumnLayout {
                         spacing: 2
                         Text { text: "No VPN configured"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -865,7 +865,7 @@ Item {
 
                 // Proxy
                 NRow {
-                    NIconBadge { icon: "\ueab9"; iconColor: cTextDim; bgColor: cBgElevated }
+                    NIconBadge { icon: "\ueab9" }
                     ColumnLayout {
                         spacing: 2
                         Text { text: "Proxy"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -886,7 +886,7 @@ Item {
 
                 // DNS
                 NRow {
-                    NIconBadge { icon: "\ueab9"; iconColor: cTextDim; bgColor: cBgElevated }
+                    NIconBadge { icon: "\ueab9" }
                     ColumnLayout {
                         spacing: 2
                         Text { text: "DNS Server"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
@@ -919,7 +919,7 @@ Item {
 
                 // Airplane mode
                 NRow {
-                    NIconBadge { icon: "\ueb6f"; iconColor: cTextDim; bgColor: cBgElevated }
+                    NIconBadge { icon: "\ueb6f" }
                     ColumnLayout {
                         spacing: 2
                         Text { text: "Airplane Mode"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
