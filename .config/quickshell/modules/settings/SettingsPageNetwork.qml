@@ -360,7 +360,6 @@ Item {
 
                             NIconBadge {
                                 icon: "\ueb52"
-                                iconColor: cAccent
                             }
 
                             ColumnLayout {
@@ -752,7 +751,6 @@ Item {
                     NRow {
                         NIconBadge {
                             icon: "\uebd9"
-                            iconColor: root.ethernetEnabled ? cAccent : cTextDim
                         }
                         ColumnLayout {
                             spacing: 2
@@ -781,7 +779,6 @@ Item {
                     NRow {
                         NIconBadge {
                             icon: "\ued1b"
-                            iconColor: root.hotspotEnabled ? cAccent : cTextDim
                         }
                         ColumnLayout {
                             spacing: 2

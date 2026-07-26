@@ -59,8 +59,6 @@ Item {
                 spacing: 12
                 NIconBadge {
                     icon: root.getDeviceIcon(modelData)
-                    iconColor: modelData.connected ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
-                    bgColor: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
                 }
                 ColumnLayout {
                     spacing: 1

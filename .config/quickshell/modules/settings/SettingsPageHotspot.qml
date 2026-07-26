@@ -355,7 +355,6 @@ Item {
                 NRow {
                     NIconBadge {
                         icon: "\ued1b"
-                        iconColor: root.hotspotEnabled ? cAccent : cTextDim
                     }
                     ColumnLayout {
                         spacing: 2

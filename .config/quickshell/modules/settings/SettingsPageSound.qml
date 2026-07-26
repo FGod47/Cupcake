@@ -73,7 +73,7 @@ Item {
 
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uebc5"; iconColor: Theme.colPrimary }
+                        NIconBadge { icon: "\uebc5"}
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Output device"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -322,7 +322,7 @@ Item {
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\ueaf1"; iconColor: Theme.colPrimary }
+                        NIconBadge { icon: "\ueaf1"}
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Noise suppression (RNNoise)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
@@ -381,7 +381,7 @@ Item {
                             anchors.bottomMargin: 10
                             spacing: 12
                             
-                            NIconBadge { icon: getIcon(modelData.name); iconColor: Theme.colOnPrimary}
+                            NIconBadge { icon: getIcon(modelData.name)}
                             
                             Text {
                                 text: modelData.name
