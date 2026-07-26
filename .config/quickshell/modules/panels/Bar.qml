@@ -632,7 +632,7 @@ PanelWindow {
                             }
                             Timer {
                                 id: ddcTimer
-                                interval: 150
+                                interval: 500
                                 repeat: false
                                 property int targetValue: 100
                                 onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])

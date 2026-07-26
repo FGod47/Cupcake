@@ -493,7 +493,7 @@ Item {
                                     
                                     Timer {
                                         id: ccDdcTimer
-                                        interval: 150; repeat: false
+                                        interval: 500; repeat: false
                                         property int targetVal: 100
                                         onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetVal).toString(), "--noverify"])
                                     }
@@ -1315,7 +1315,6 @@ Item {
         triggeredOnStart: true
         onTriggered: {
             updateVolume.running = true
-            updateBrightness.running = true
         }
     }
 
@@ -1340,6 +1339,7 @@ Item {
 
     Process {
         id: updateBrightness
+        running: true
         command: ["ddcutil", "getvcp", "10", "--terse"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {
