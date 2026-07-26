@@ -160,16 +160,19 @@ Item {
         // =====================================================================
         // PAGE 0: Main Control Center
         // =====================================================================
+        // =====================================================================
+        // PAGE 0: Main Control Center
+        // =====================================================================
         Item {
             id: mainCcPage
             anchors.top: parent.top
-            anchors.topMargin: 14
+            anchors.topMargin: 20
             anchors.left: parent.left
-            anchors.leftMargin: 14
+            anchors.leftMargin: 22
             anchors.right: parent.right
-            anchors.rightMargin: 14
+            anchors.rightMargin: 22
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 14
+            anchors.bottomMargin: 20
             visible: opacity > 0.0
             opacity: (ccUi.wifiPageOpen || ccUi.btPageOpen) ? 0.0 : 1.0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -178,436 +181,347 @@ Item {
                 anchors.fill: parent
                 spacing: 12
 
-                // Header Row
+                // Header
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 8
-
-                    Item { width: 4 } // Left spacing before clock
-
-                    // Clock + date (top left)
+                    
                     ColumnLayout {
                         spacing: 2
-
                         Text {
                             text: Qt.formatDateTime(new Date(), "hh:mm")
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 42
-                            font.weight: Font.Bold
+                            font.family: "serif"
+                            font.pixelSize: 46
+                            font.italic: true
+                            font.weight: Font.Medium
                             color: textText
                         }
                         Text {
-                            text: Qt.formatDateTime(new Date(), "dddd · MMM d")
+                            text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 12
+                            font.weight: Font.DemiBold
                             color: textSubtext0
                         }
                     }
 
-                    // Spacer to push uptime and settings to the far right corner
-                    Item {
-                        Layout.fillWidth: true
-                    }
+                    Item { Layout.fillWidth: true }
 
-                    // Uptime pill
-                    Rectangle {
-                        visible: true
-                        Layout.preferredHeight: 28
-                        Layout.preferredWidth: uptimePillText.contentWidth + 24
-                        Layout.alignment: Qt.AlignTop
-                        radius: 14
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-                        Text {
-                            id: uptimePillText
-                            anchors.centerIn: parent
-                            text: "\uea70  " + uptimeStr.replace("Up ", "Uptime ")
-                            font.family: "tabler-icons, " + Theme.defaultFontFamily
-                            color: textSubtext0
-                            font.pixelSize: 12
-                        }
-                    }
-
-                    Item { width: 4 }
-
-                    // Settings Launcher
-                    Rectangle {
-                        Layout.preferredWidth: 28
-                        Layout.preferredHeight: 28
-                        radius: 14
-                        Layout.alignment: Qt.AlignTop
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueb20"
-                            font.family: "tabler-icons"
-                            color: textSubtext0
-                            font.pixelSize: 15
-                        }
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"])
-                                ccUi.requestClose()
-                            }
-                        }
-                    }
-                }
-
-                // Clock timer to update every minute
-                Timer {
-                    interval: 1000
-                    running: true
-                    repeat: true
-                    onTriggered: {} // binding on Qt.formatDateTime auto-updates
-                }
-
-                // Columns Row (Left: WiFi/BT/Hotspot, Right: Brightness/Volume)
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 12
-
-                    // Left Column (WiFi, BT, Hotspot)
                     ColumnLayout {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 220
-                        spacing: 12
-
-                        // Wi-Fi
+                        spacing: 8
+                        Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                        
+                        // Settings icon
                         Rectangle {
-                            id: wifiToggle
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 96
-                            color: wifiRadioEnabled ? colGreenDim : bgSurface0
-                            radius: 20
-
-                            clip: true
-
-
-
-                            Column {
-                                anchors.fill: parent
-                                anchors.margins: 14
-                                spacing: 4
-                                Text { text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
-                                Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700 }
-                                Text { text: wifiActive ? wifiSSID : (wifiRadioEnabled ? "Disconnected" : "Disabled"); color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width - 16 }
-                            }
-
+                            Layout.alignment: Qt.AlignRight
+                            width: 34; height: 34; radius: 17
+                            color: Theme.colSurface
+                            Text { anchors.centerIn: parent; text: "\ueb20"; font.family: "tabler-icons"; font.pixelSize: 16; color: textSubtext0 }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: ccUi.wifiPageOpen = true
+                                onClicked: { Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/Settings.qml"]); ccUi.requestClose() }
                             }
+                        }
+                        
+                        // Uptime pill
+                        Rectangle {
+                            Layout.alignment: Qt.AlignRight
+                            height: 24; width: uptimeText.width + 24
+                            radius: 12
+                            color: Theme.colSurface
+                            Text {
+                                id: uptimeText
+                                anchors.centerIn: parent
+                                text: uptimeStr.replace("Up ", "")
+                                font.family: "monospace"
+                                font.pixelSize: 10
+                                color: textSubtext0
+                            }
+                        }
+                    }
+                }
+
+                // Connections Card
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 180
+                    radius: 20
+                    color: Theme.colSurface
+                    
+                    Column {
+                        anchors.fill: parent
+                        
+                        // Wi-Fi
+                        Item {
+                            width: parent.width; height: 60
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
+                                Rectangle {
+                                    width: 32; height: 32; radius: 10
+                                    color: wifiRadioEnabled ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.1) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                    Text { anchors.centerIn: parent; text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 15 }
+                                }
+                                ColumnLayout {
+                                    Layout.fillWidth: true; spacing: 2
+                                    Text { text: "Wi-Fi"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                                    Text { text: wifiActive ? wifiSSID : (wifiRadioEnabled ? "Disconnected" : "Disabled"); color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
+                                }
+                                // Soft switch
+                                Rectangle {
+                                    width: 38; height: 22; radius: 11
+                                    color: wifiRadioEnabled ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    Rectangle {
+                                        width: 18; height: 18; radius: 9
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        x: wifiRadioEnabled ? 18 : 2
+                                        color: Theme.colBackground
+                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                    }
+                                }
+                            }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.wifiPageOpen = true }
+                            Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
                         // Bluetooth
-                        Rectangle {
-                            id: btToggle
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 64
-                            color: btRadioEnabled ? colGreenDim : bgSurface0
-                            radius: 20
-
-
+                        Item {
+                            width: parent.width; height: 60
                             RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 10
-                                spacing: 10
-
+                                anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Rectangle {
-                                    width: 36; height: 36; radius: 18
-                                    color: btRadioEnabled ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "\uea37"
-                                        color: btRadioEnabled ? colGreen : textSubtext0
-                                        font.family: "tabler-icons"
-                                        font.pixelSize: 16
-                                    }
+                                    width: 32; height: 32; radius: 10
+                                    color: btRadioEnabled ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.1) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                    Text { anchors.centerIn: parent; text: "\uea37"; color: btRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 15 }
                                 }
-
                                 ColumnLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 1
-                                    Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
+                                    Layout.fillWidth: true; spacing: 2
+                                    Text { text: "Bluetooth"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
                                     Text { text: btConnectedDeviceName !== "" ? btConnectedDeviceName : (btRadioEnabled ? "Enabled" : "Disabled"); color: btRadioEnabled ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                                 }
+                                Rectangle {
+                                    width: 38; height: 22; radius: 11
+                                    color: btRadioEnabled ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    Rectangle {
+                                        width: 18; height: 18; radius: 9
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        x: btRadioEnabled ? 18 : 2
+                                        color: Theme.colBackground
+                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                    }
+                                }
                             }
-
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: ccUi.btPageOpen = true
-                            }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ccUi.btPageOpen = true }
+                            Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: Qt.rgba(textText.r, textText.g, textText.b, 0.06) }
                         }
 
                         // Hotspot
-                        Rectangle {
-                            id: hotspotToggle
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 64
-                            color: hotspotActive ? colGreenDim : bgSurface0
-                            radius: 20
-
-
+                        Item {
+                            width: parent.width; height: 60
                             RowLayout {
-                                anchors.fill: parent
-                                anchors.margins: 10
-                                spacing: 10
-
+                                anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
                                 Rectangle {
-                                    width: 36; height: 36; radius: 18
-                                    color: hotspotActive ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.1)
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "\ued1b"
-                                        color: hotspotActive ? colGreen : textSubtext0
-                                        font.family: "tabler-icons"
-                                        font.pixelSize: 16
-                                    }
+                                    width: 32; height: 32; radius: 10
+                                    color: hotspotActive ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.1) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                    Text { anchors.centerIn: parent; text: "\ued1b"; color: hotspotActive ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 15 }
                                 }
-
                                 ColumnLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 1
-                                    Text { text: "Hotspot"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700 }
-                                    Text { text: hotspotActive ? "Active" : "Off"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
+                                    Layout.fillWidth: true; spacing: 2
+                                    Text { text: "Hotspot"; color: textText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                                    Text { text: hotspotActive ? "Active" : "Disabled"; color: hotspotActive ? colGreen : textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
+                                }
+                                Rectangle {
+                                    width: 38; height: 22; radius: 11
+                                    color: hotspotActive ? colGreen : Qt.rgba(textText.r, textText.g, textText.b, 0.1)
+                                    Rectangle {
+                                        width: 18; height: 18; radius: 9
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        x: hotspotActive ? 18 : 2
+                                        color: Theme.colBackground
+                                        Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                    }
                                 }
                             }
-
-                            MouseArea {
+                            MouseArea { 
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    if (!wifiRadioEnabled) {
-                                        ccUi.showWarning = true
-                                        warningTimer.restart()
-                                        return
-                                    }
-
-                                    if (hotspotActive) {
-                                        Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"])
-                                    } else {
-                                        Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"])
-                                    }
-                                    hotspotActive = !hotspotActive
-                                    hotspotQueryTimer.restart()
+                                    if (!wifiRadioEnabled) { ccUi.showWarning = true; warningTimer.restart(); return; }
+                                    if (hotspotActive) { Quickshell.execDetached(["bash", "-c", "nmcli connection down Hotspot || nmcli connection down hotspot"]) }
+                                    else { Quickshell.execDetached(["bash", "-c", "nmcli connection up Hotspot || nmcli connection up hotspot"]) }
+                                    hotspotActive = !hotspotActive; hotspotQueryTimer.restart()
                                 }
                             }
                         }
                     }
+                }
 
-                    // Right card — Power Profile
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 220
-                        Layout.preferredHeight: 248
-                        color: bgSurface0
-                        radius: 20
-
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 14
-                            spacing: 8
-
-                            Text {
-                                text: "Power Profile"
-                                color: textText
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 15
-                                font.weight: 700
-                                Layout.alignment: Qt.AlignHCenter
-                            }
+                // Power Profile
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 76
+                    radius: 20
+                    color: Theme.colSurface
+                    
+                    ColumnLayout {
+                        anchors.fill: parent; anchors.margins: 14; spacing: 8
+                        Text { text: "Power Profile"; color: textSubtext0; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; font.letterSpacing: 0.6 }
+                        
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 30
+                            spacing: 3
                             
-                            Item { Layout.fillHeight: true }
-
                             Repeater {
                                 model: [
-                                    { name: "Power Saver", type: PowerProfile.PowerSaver, icon: "\ueb07", sysIcon: "battery-low" },
-                                    { name: "Balanced", type: PowerProfile.Balanced, icon: "\ueb39", sysIcon: "battery-good" },
-                                    { name: "Performance", type: PowerProfile.Performance, icon: "\ueaab", sysIcon: "utilities-system-monitor" }
+                                    { name: "Saver", type: PowerProfile.PowerSaver },
+                                    { name: "Balanced", type: PowerProfile.Balanced },
+                                    { name: "Performance", type: PowerProfile.Performance }
                                 ]
                                 delegate: Rectangle {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 52
-                                    radius: 12
-                                    color: PowerProfiles.profile === modelData.type ? colGreenDim : Qt.rgba(textSubtext0.r, textSubtext0.g, textSubtext0.b, 0.05)
+                                    Layout.fillHeight: true
+                                    radius: 9
+                                    color: PowerProfiles.profile === modelData.type ? Theme.colBackground : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
+                                    border.color: PowerProfiles.profile === modelData.type ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.1) : "transparent"
+                                    border.width: PowerProfiles.profile === modelData.type ? 1 : 0
                                     
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        anchors.margins: 12
-                                        spacing: 12
-                                        
-                                        Rectangle {
-                                            width: 28; height: 28; radius: 14
-                                            color: PowerProfiles.profile === modelData.type ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.2) : "transparent"
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: modelData.icon
-                                                font.family: "tabler-icons"
-                                                font.pixelSize: 16
-                                                color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
-                                            }
-                                        }
-                                        Text {
-                                            text: modelData.name
-                                            font.family: Theme.defaultFontFamily
-                                            font.pixelSize: 13
-                                            font.weight: 600
-                                            color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
-                                            Layout.fillWidth: true
-                                        }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.name
+                                        color: PowerProfiles.profile === modelData.type ? colGreen : textSubtext0
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        font.weight: Font.DemiBold
                                     }
                                     MouseArea {
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            if (modelData.type === PowerProfile.Performance && !PowerProfiles.hasPerformanceProfile) {
-                                                Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", "dialog-warning", "-t", "2500", "Power Profile", "Performance profile is not supported on this system."]);
-                                                return;
-                                            }
-                                            PowerProfiles.profile = modelData.type;
-                                            Quickshell.execDetached(["notify-send", "-a", "Power Manager", "-i", modelData.sysIcon, "-t", "2500", "Power Profile", "Switched to " + modelData.name]);
-                                        }
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { PowerProfiles.profile = modelData.type }
                                     }
                                 }
                             }
                         }
                     }
                 }
-                
+
+                // Sliders
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 170
+                    Layout.preferredHeight: 96
                     radius: 20
-                    color: Qt.rgba(0, 0, 0, 0.3)
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
-                    border.width: 1
+                    color: Theme.colSurface
+                    
+                    Column {
+                        anchors.fill: parent
+                        
+                        // Brightness
+                        Item {
+                            width: parent.width; height: 48
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
+                                Text { text: backlightSlider.value < 33 ? "\ueb7d" : (backlightSlider.value < 66 ? "\uea3c" : "\ueb7e"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                
+                                Slider {
+                                    id: backlightSlider
+                                    Layout.fillWidth: true
+                                    from: 0; to: 100; value: 0
+                                    
+                                    background: Rectangle {
+                                        x: backlightSlider.leftPadding; y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
+                                        width: backlightSlider.availableWidth; height: 6; radius: 3
+                                        color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
+                                        Rectangle { width: backlightSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 3 }
+                                    }
+                                    handle: Rectangle {
+                                        x: backlightSlider.leftPadding + backlightSlider.visualPosition * (backlightSlider.availableWidth - width)
+                                        y: backlightSlider.topPadding + backlightSlider.availableHeight / 2 - height / 2
+                                        width: 15; height: 15; radius: 7.5; color: Theme.colBackground
+                                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2); border.width: 1
+                                    }
+                                    
+                                    Timer {
+                                        id: ccDdcTimer
+                                        interval: 150; repeat: false
+                                        property int targetVal: 100
+                                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetVal).toString(), "--noverify"])
+                                    }
+                                    onMoved: { ccDdcTimer.targetVal = value; ccDdcTimer.restart(); backlightLabel.text = Math.round(value) + "%" }
+                                    onPressedChanged: { if (!pressed) { ccDdcTimer.stop(); Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]); backlightLabel.text = Math.round(value) + "%" } }
+                                }
+                                Text { id: backlightLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
+                            }
+                        }
+                        
+                        // Volume
+                        Item {
+                            width: parent.width; height: 48
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 12
+                                Text { text: volumeSlider.value === 0 ? "\uf1c3" : (volumeSlider.value < 50 ? "\ueb4f" : "\ueb51"); color: textSubtext0; font.family: "tabler-icons"; font.pixelSize: 16 }
+                                
+                                Slider {
+                                    id: volumeSlider
+                                    Layout.fillWidth: true
+                                    from: 0; to: 100; value: 0
+                                    
+                                    background: Rectangle {
+                                        x: volumeSlider.leftPadding; y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                        width: volumeSlider.availableWidth; height: 6; radius: 3
+                                        color: Qt.rgba(textText.r, textText.g, textText.b, 0.09)
+                                        Rectangle { width: volumeSlider.visualPosition * parent.width; height: parent.height; color: colGreen; radius: 3 }
+                                    }
+                                    handle: Rectangle {
+                                        x: volumeSlider.leftPadding + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
+                                        y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                        width: 15; height: 15; radius: 7.5; color: Theme.colBackground
+                                        border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2); border.width: 1
+                                    }
+                                    
+                                    onMoved: { Quickshell.execDetached(`pamixer --set-volume ${Math.round(value)}`); volumeLabel.text = Math.round(value) + "%" }
+                                }
+                                Text { id: volumeLabel; text: "0%"; color: textSubtext0; font.family: "monospace"; font.pixelSize: 10; Layout.minimumWidth: 28; horizontalAlignment: Text.AlignRight }
+                            }
+                        }
+                    }
                 }
 
-                // Bottom Row of 5 Quick Toggles
+                // Gold Rule
+                Rectangle {
+                    Layout.fillWidth: true; Layout.preferredHeight: 1
+                    color: Theme.colPrimary
+                    opacity: 0.4
+                    Layout.topMargin: -2
+                    Layout.bottomMargin: -2
+                }
+
+                // Quick Toggles
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 8
-
-                    // Night Light
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 56; height: 56; radius: 28
-                            color: nightActive ? colGreenDim : bgSurface0
-
-                            Text {
+                    Layout.preferredHeight: 50
+                    spacing: 0
+                    
+                    Repeater {
+                        model: [
+                            { icon: "\ueaf8", active: nightActive, title: "Night Light", action: function(){ nightActive = !nightActive; ccUi.applyNightLightQuick(nightActive); } },
+                            { icon: "\uec2c", active: firewallActive, title: "Firewall", action: function(){ firewallActive = !firewallActive; } },
+                            { icon: "\uf6d7", active: eeActive, title: "Effects", action: function(){ Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon"); } },
+                            { icon: "\uea2e", active: antiflashActive, title: "Anti-flash", action: function(){ antiflashActive = !antiflashActive; } },
+                            { icon: "\ueb6f", active: airplaneActive, title: "Airplane Mode", action: function(){ airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all"); } }
+                        ]
+                        delegate: Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            
+                            Rectangle {
                                 anchors.centerIn: parent
-                                text: "\ueaf8"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: nightActive ? colGreen : textSubtext0
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    nightActive = !nightActive;
-                                    ccUi.applyNightLightQuick(nightActive);
-                                }
+                                width: 50; height: 50; radius: 25
+                                color: modelData.active ? colGreen : Theme.colSurface
+                                
+                                Text { anchors.centerIn: parent; text: modelData.icon; color: modelData.active ? Theme.colBackground : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 18 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: modelData.action() }
                             }
                         }
                     }
-
-                    // Firewall
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 56; height: 56; radius: 28
-                            color: firewallActive ? colGreenDim : bgSurface0
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uec2c"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: firewallActive ? colGreen : textSubtext0
-                            }
-                            MouseArea { anchors.fill: parent; onClicked: firewallActive = !firewallActive }
-                        }
-                    }
-
-                    // Effects
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 56; height: 56; radius: 28
-                            color: eeActive ? colGreenDim : bgSurface0
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uf6d7"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: eeActive ? colGreen : textSubtext0
-                            }
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(eeActive ? "pkill easyeffects" : "easyeffects --daemon") }
-                        }
-                    }
-
-                    // Anti-flash
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 56; height: 56; radius: 28
-                            color: antiflashActive ? colGreenDim : bgSurface0
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uea2e"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: antiflashActive ? colGreen : textSubtext0
-                            }
-                            MouseArea { anchors.fill: parent; onClicked: antiflashActive = !antiflashActive }
-                        }
-                    }
-
-                    // Airplane
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: 56; height: 56; radius: 28
-                            color: airplaneActive ? colGreenDim : bgSurface0
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb6f"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 24
-                                color: airplaneActive ? colGreen : textSubtext0
-                            }
-                            MouseArea { anchors.fill: parent; onClicked: { airplaneActive = !airplaneActive; Quickshell.execDetached(airplaneActive ? "rfkill block all" : "rfkill unblock all") } }
-                        }
-                    }
-                }
-
-                // Spacing at the bottom of the card
-                Item {
-                    Layout.preferredHeight: 12
-                    Layout.fillWidth: true
                 }
             }
         }
-
         // =====================================================================
         // PAGE 1: Wi-Fi Manager Page
         // =====================================================================
@@ -1270,6 +1184,52 @@ Item {
                     eeActive = true;
                     eeStatus = "Active";
                     break;
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: fastSliderTimer
+        interval: 1000
+        running: ccUi.ccActive
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            updateVolume.running = true
+            updateBrightness.running = true
+        }
+    }
+
+    Process {
+        id: updateVolume
+        command: ["pamixer", "--get-volume"]
+        stdout: StdioCollector { id: updateVolumeStdout }
+        onExited: {
+            if (typeof volumeSlider !== "undefined" && volumeSlider && !volumeSlider.pressed) {
+                var vol = parseInt((updateVolumeStdout.text || "").trim())
+                if (!isNaN(vol)) {
+                    volumeSlider.value = vol
+                    volumeLabel.text = vol + "%"
+                }
+            }
+        }
+    }
+
+    Process {
+        id: updateBrightness
+        command: ["ddcutil", "getvcp", "10", "--terse"]
+        stdout: StdioCollector { id: updateBrightnessStdout }
+        onExited: {
+            if (typeof backlightSlider !== "undefined" && backlightSlider && !backlightSlider.pressed) {
+                let text = (updateBrightnessStdout.text || "");
+                let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                if (match && match[1]) {
+                    let bright = parseInt(match[1]);
+                    if (!isNaN(bright)) {
+                        backlightSlider.value = bright
+                        backlightLabel.text = bright + "%"
+                    }
                 }
             }
         }
