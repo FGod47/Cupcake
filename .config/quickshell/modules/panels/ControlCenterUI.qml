@@ -686,6 +686,15 @@ Item {
                 }
 
                 Item { Layout.fillHeight: true }
+
+                Image {
+                    Layout.alignment: Qt.AlignHCenter
+                    source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                    sourceSize.height: 20
+                    height: 20
+                    fillMode: Image.PreserveAspectFit
+                    opacity: 0.6
+                }
             }
         }
         // =====================================================================
