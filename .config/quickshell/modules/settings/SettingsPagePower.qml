@@ -32,7 +32,7 @@ Item {
     property bool lowerRefresh: true
     property int suspendBat: 15
     property int suspendAc: 45
-    property bool wakeLid: true
+    property string lidAction: "Sleep"
     property string criticalBat: "Hibernate"
     property bool limitCharge: true
     property int chargeLimit: 80
@@ -372,11 +372,19 @@ Item {
                         NIconBadge { icon: "\uea89" } // device-laptop
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Wake on lid open"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Lid close action"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
+                            Text { text: "Run 'sudo sed -i s/^#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g /etc/systemd/logind.conf' to enable Display Off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    NToggle { checked: root.wakeLid; onToggled: (val) => root.wakeLid = val }
+                    SegmentedControl {
+                        options: ["Sleep", "Display Off"]
+                        current: root.lidAction
+                        onSelected: (val) => { 
+                            root.lidAction = val; 
+                            Quickshell.execDetached(["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/update-lid-action.sh", val])
+                        }
+                    }
                 }
 
                 NRow {
