@@ -434,6 +434,7 @@ Item {
                     RailItem { icon: "\uef3b"; label: "Power"; pageIndex: 13 }        // battery-charging-2
                     RailItem { icon: "\ueb51"; label: "Sound"; pageIndex: 7 }         // volume
                     RailItem { icon: "\uef8e"; label: "System"; pageIndex: 10 }       // cpu
+                    RailItem { icon: "\ueb1d"; label: "Updates"; pageIndex: 11 }      // download
                     
                     Item { Layout.fillHeight: true } // spacer
                     
@@ -609,6 +610,7 @@ Item {
                                     case 5: return "SettingsPageWallpaper.qml";
                                     case 7: return "SettingsPageSound.qml";
                                     case 10: return "SettingsPageSystem.qml";
+                                    case 11: return "SettingsPageUpdates.qml";
 
                                     case 13: return "SettingsPagePower.qml";
                                     case 17: return "SettingsPageNetwork.qml";
