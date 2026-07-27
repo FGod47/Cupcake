@@ -270,7 +270,9 @@ Item {
                                     if (root.ignoredPackages.length > 0)
                                         cmd += " --ignore " + root.ignoredPackages.join(",");
                                     
-                                    updateProc.command = ["bash", "-c", "stdbuf -oL " + cmd];
+                                    let wrapperCmd = "if ! sudo -n true 2>/dev/null; then SUDO_ASKPASS=~/.config/quickshell/modules/settings/zenity_askpass.sh sudo -A -v || exit 1; fi; script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                                    
+                                    updateProc.command = ["bash", "-c", wrapperCmd];
                                     updateProc.running = true;
                                 }
                             }
