@@ -44,6 +44,67 @@ Item {
         }
     }
 
+    property color cBgHover: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+    property color cDanger: "#ff4d4d"
+
+    component Pill: Rectangle {
+        id: pill
+        property string label: ""
+        property bool active: false
+        property bool danger: false
+        property bool big: false
+        signal clicked()
+
+        radius: 8
+        height: big ? 34 : 26
+        width: pillText.implicitWidth + (big ? 32 : 24)
+        color: active ? cAccent : cBgElevated
+
+        Text {
+            id: pillText
+            anchors.centerIn: parent
+            text: pill.label
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 12
+            font.weight: pill.big ? Font.SemiBold : Font.Medium
+            color: active ? Theme.colOnPrimary : (pill.danger ? cDanger : cTextDim)
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: pill.clicked()
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onEntered: pill.color = pill.active ? cAccent : cBgHover
+            onExited: pill.color = pill.active ? cAccent : cBgElevated
+        }
+    }
+
+    component RowLabel: ColumnLayout {
+        property string label: ""
+        property string desc: ""
+        spacing: 1
+        Layout.fillWidth: true
+        Text {
+            text: parent.label
+            color: cText
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 13
+            font.weight: Font.Medium
+        }
+        Text {
+            text: parent.desc
+            color: cTextDim
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 11
+            font.weight: Font.Normal
+            opacity: 0.85
+            visible: text !== ""
+            wrapMode: Text.NoWrap
+            elide: Text.ElideRight
+        }
+    }
+
     Flickable {
         anchors.fill: parent
         contentHeight: contentCol.implicitHeight + 60
