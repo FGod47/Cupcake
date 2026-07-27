@@ -44,7 +44,6 @@ Item {
         id: updateProc
         property string pwdToFeed: ""
         environment: pwdToFeed !== "" ? { "QS_SUDO_PWD": pwdToFeed } : {}
-        onExited: pwdToFeed = "" // clear when done
         stdout: SplitParser {
             onRead: data => {
                 let line = data.trim();
@@ -72,6 +71,7 @@ Item {
             }
         }
         onExited: (code) => {
+            updateProc.pwdToFeed = ""; // clear when done
             if (code === 0) {
                 root.progressMsg = "Update complete";
                 root.progressPct = "100%";
