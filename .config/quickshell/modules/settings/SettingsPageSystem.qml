@@ -145,6 +145,7 @@ Item {
     property int aurUpdateCount: 0
     property string mirrorSynced: "—"
     property var updatePackages: []
+    property var ignoredPackages: []
     property bool isCheckingUpdates: true
 
     Process {
@@ -718,7 +719,13 @@ Item {
                         label: "Update now"
                         active: true
                         big: true
-                        onClicked: Quickshell.execDetached(["bash", "-c", "kitty -e sh -c 'yay -Syu; read -p \"Press enter to close\"'"])
+                        onClicked: {
+                            let cmd = "yay -Syu";
+                            if (root.ignoredPackages.length > 0) {
+                                cmd += " --ignore " + root.ignoredPackages.join(",");
+                            }
+                            Quickshell.execDetached(["bash", "-c", "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
+                        }
                     }
                 }
 
@@ -761,6 +768,22 @@ Item {
                                     font.family: Theme.monoFontFamily
                                     font.pixelSize: 12
                                     color: cAccent
+                                }
+                                Item { Layout.preferredWidth: 8 }
+                                NToggle {
+                                    scale: 0.7
+                                    checked: !root.ignoredPackages.includes(modelData.name)
+                                    onToggled: (val) => {
+                                        let name = modelData.name;
+                                        let arr = root.ignoredPackages.slice();
+                                        if (val) {
+                                            let idx = arr.indexOf(name);
+                                            if (idx !== -1) arr.splice(idx, 1);
+                                        } else {
+                                            if (!arr.includes(name)) arr.push(name);
+                                        }
+                                        root.ignoredPackages = arr;
+                                    }
                                 }
                             }
 
