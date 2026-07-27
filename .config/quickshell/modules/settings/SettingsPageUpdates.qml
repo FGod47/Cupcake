@@ -86,7 +86,7 @@ Item {
                 if (root.ignoredPackages.length > 0)
                     cmd += " --ignore " + root.ignoredPackages.join(",");
                 
-                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | stdbuf -o0 tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
                 updateProc.command = ["bash", "-c", wrapperCmd];
                 updateProc.running = true;
             } else {
@@ -115,7 +115,7 @@ Item {
                 if (root.ignoredPackages.length > 0)
                     cmd += " --ignore " + root.ignoredPackages.join(",");
                 
-                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | stdbuf -o0 tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
                 updateProc.command = ["bash", "-c", wrapperCmd];
                 updateProc.running = true;
             } else {
