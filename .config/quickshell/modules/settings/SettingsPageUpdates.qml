@@ -42,6 +42,13 @@ Item {
     // ─── Backend processes ───────────────────────────────────────────────────
     Process {
         id: updateProc
+        property string pwdToFeed: ""
+        stdinEnabled: true
+        onStarted: {
+            if (pwdToFeed !== "") {
+                pwdTimer.start();
+            }
+        }
         stdout: SplitParser {
             onRead: data => {
                 let line = data.trim();
@@ -52,9 +59,14 @@ Item {
                 if (lines.length > 15) lines.shift();
                 root.updateLogLines = lines.join("\n");
                 
-                if (line.includes("Verifying package")) root.progressMsg = "Verifying packages...";
-                else if (line.includes("Installing")) root.progressMsg = "Installing packages...";
-                else if (line.includes("Updating system database") || line.includes("mkinitcpio")) root.progressMsg = "Finishing setup...";
+                if (line.includes("transaction")) root.progressMsg = "Preparing transaction...";
+                if (line.includes("resolving")) root.progressMsg = "Resolving dependencies...";
+                if (line.includes("conflicting")) root.progressMsg = "Checking conflicts...";
+                if (line.includes("keys")) root.progressMsg = "Checking keyrings...";
+                if (line.includes("Downloading")) root.progressMsg = "Downloading packages...";
+                if (line.includes("Installing")) root.progressMsg = "Installing packages...";
+                if (line.includes("Upgrading")) root.progressMsg = "Upgrading packages...";
+                if (line.includes("Running")) root.progressMsg = "Running post-transaction hooks...";
                 
                 let match = line.match(/\((\d+)\/(\d+)\)/);
                 if (match) {
@@ -63,21 +75,30 @@ Item {
                 }
             }
         }
-        onExited: {
-            root.progressMsg = "Update complete";
-            root.progressPct = "100%";
-            root.progressVal = 1.0;
-            root.updateLogLines += "\n✓ All packages updated successfully";
-            root.isUpdating = false;
-            // Refresh list
-            root.isChecking = true;
-            checkProc.running = true;
+        onExited: (code) => {
+            if (code === 0) {
+                root.progressMsg = "Update complete";
+                root.progressPct = "100%";
+                root.progressVal = 1.0;
+                root.updateLogLines += "\n✓ All packages updated successfully";
+                root.isUpdating = false;
+                root.isChecking = true;
+                checkProc.running = true;
+            } else {
+                if (root.progressMsg === "Authenticating...") {
+                    root.authFailed = true;
+                    root.isAwaitingPassword = true;
+                    root.progressMsg = "Authentication required";
+                } else {
+                    root.progressMsg = "Update failed (Exit code: " + code + ")";
+                }
+            }
         }
     }
 
     Process {
         id: checkSudoProc
-        command: ["sudo", "-n", "true"]
+        command: ["bash", "-c", "script -qec 'sudo -n true 2>/dev/null' /dev/null"]
         onExited: (code) => {
             if (code === 0) {
                 root.isAwaitingPassword = false;
@@ -88,6 +109,7 @@ Item {
                 
                 let wrapperCmd = "script -qec '" + cmd + "' /dev/null | stdbuf -o0 tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
                 updateProc.command = ["bash", "-c", wrapperCmd];
+                updateProc.pwdToFeed = "";
                 updateProc.running = true;
             } else {
                 root.isAwaitingPassword = true;
@@ -96,31 +118,14 @@ Item {
         }
     }
 
-    Process {
-        id: authProc
-        property string pwd: ""
-        command: ["sudo", "-S", "-v"]
-        stdinEnabled: true
-        onStarted: {
-            write(pwd + "\n");
-            // Clear password immediately from memory
-            pwd = "";
-        }
-        onExited: (code) => {
-            pwdInput.text = "";
-            if (code === 0) {
-                root.isAwaitingPassword = false;
-                root.progressMsg = "Preparing transaction...";
-                let cmd = "yay -Syu --noconfirm";
-                if (root.ignoredPackages.length > 0)
-                    cmd += " --ignore " + root.ignoredPackages.join(",");
-                
-                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | stdbuf -o0 tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
-                updateProc.command = ["bash", "-c", wrapperCmd];
-                updateProc.running = true;
-            } else {
-                root.progressMsg = "Authentication failed. Try again.";
-                root.authFailed = true;
+    Timer {
+        id: pwdTimer
+        interval: 200
+        repeat: false
+        onTriggered: {
+            if (updateProc.pwdToFeed !== "") {
+                updateProc.write(updateProc.pwdToFeed + "\n");
+                updateProc.pwdToFeed = "";
             }
         }
     }
@@ -397,9 +402,20 @@ Item {
                                 onAccepted: {
                                     if (pwdInput.text !== "") {
                                         root.authFailed = false;
-                                        authProc.pwd = pwdInput.text;
-                                        authProc.running = true;
+                                        let pwd = pwdInput.text;
+                                        pwdInput.text = "";
+                                        root.isAwaitingPassword = false;
                                         root.progressMsg = "Authenticating...";
+                                        
+                                        let cmd = "stty -echo; sudo -S -v 2>/dev/null || exit 1; stty echo; yay -Syu --noconfirm";
+                                        if (root.ignoredPackages.length > 0)
+                                            cmd += " --ignore " + root.ignoredPackages.join(",");
+                                        
+                                        let wrapperCmd = "script -qec '" + cmd + "' /dev/null | stdbuf -o0 tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                                        
+                                        updateProc.command = ["bash", "-c", wrapperCmd];
+                                        updateProc.pwdToFeed = pwd;
+                                        updateProc.running = true;
                                     }
                                 }
                             }
