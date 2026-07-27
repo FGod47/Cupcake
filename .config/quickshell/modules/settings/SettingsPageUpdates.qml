@@ -153,293 +153,308 @@ Item {
             }
 
             // ── CARD 1: UPDATES ──────────────────────────────────────────
-            Rectangle {
-                Layout.fillWidth: true; radius: 16
-                color: cCard; border.color: cBorder; border.width: 1
-                clip: true
-                implicitHeight: _updCardCol.implicitHeight
+            NCard {
+                sectionTitle: ""
+                // Summary row
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.margins: 14; spacing: 12
 
-                ColumnLayout {
-                    id: _updCardCol
-                    anchors { top: parent.top; left: parent.left; right: parent.right }
-                    spacing: 0
-
-                    // Summary row
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.margins: 14; spacing: 12
-
-                        // Icon
-                        Rectangle {
-                            width: 36; height: 36; radius: 11; color: cAccentDim
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uebd7"; font.family: "tabler-icons"
-                                font.pixelSize: 17; color: cAccent
-                            }
+                    // Icon
+                    Rectangle {
+                        width: 36; height: 36; radius: 11; color: cAccentDim
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\uebd7"; font.family: "tabler-icons"
+                            font.pixelSize: 17; color: cAccent
                         }
+                    }
 
-                        // Counts
-                        ColumnLayout {
-                            Layout.fillWidth: true; spacing: 1
-                            Text {
-                                text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 14
-                                font.weight: 700; color: cText
-                            }
-                            Text {
-                                text: root.officialPackages.length + " official · " + root.aurPackages.length + " from the AUR"
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
-                            }
+                    // Counts
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 1
+                        Text {
+                            text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 14
+                            font.weight: 700; color: cText
                         }
-
-                        // Refresh ghost button
-                        Rectangle {
-                            implicitWidth: _rfLbl.implicitWidth + 24; implicitHeight: 32; radius: 8
-                            color: _rfMa.containsMouse ? cCardHover : "transparent"
-                            border.color: cBorder; border.width: 1
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            Text {
-                                id: _rfLbl; anchors.centerIn: parent
-                                text: root.isChecking ? "Checking…" : "Refresh"
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 13
-                                font.weight: 600; color: cText
-                            }
-                            MouseArea {
-                                id: _rfMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                onClicked: { root.isChecking = true; checkProc.running = true; }
-                            }
+                        Text {
+                            text: root.officialPackages.length + " official · " + root.aurPackages.length + " from the AUR"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
                         }
+                    }
 
-                        // Update Now primary button
-                        Rectangle {
-                            implicitWidth: _updLbl.implicitWidth + 24; implicitHeight: 32; radius: 8
-                            color: ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking)
-                                   ? cAccent : Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.4)
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            Text {
-                                id: _updLbl; anchors.centerIn: parent
-                                text: root.isChecking ? "Checking…" : "Update Now"
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 13
-                                font.weight: 700; color: cAccentOn
-                            }
-                            MouseArea {
-                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking) {
-                                        let cmd = "yay -Syu";
-                                        if (root.ignoredPackages.length > 0)
-                                            cmd += " --ignore " + root.ignoredPackages.join(",");
-                                        Quickshell.execDetached(["bash", "-c",
-                                            "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
-                                    }
+                    // Refresh ghost button
+                    Rectangle {
+                        width: _rfLbl.implicitWidth + 24; height: 32; radius: 8
+                        color: _rfMa.containsMouse ? cCardHover : "transparent"
+                        border.color: cBorder; border.width: 1
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Text {
+                            id: _rfLbl; anchors.centerIn: parent
+                            text: root.isChecking ? "Checking…" : "Refresh"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                            font.weight: 600; color: cText
+                        }
+                        MouseArea {
+                            id: _rfMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                            onClicked: { root.isChecking = true; checkProc.running = true; }
+                        }
+                    }
+
+                    // Update Now primary button
+                    Rectangle {
+                        width: _updLbl.implicitWidth + 24; height: 32; radius: 8
+                        color: ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking)
+                               ? cAccent : Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.4)
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Text {
+                            id: _updLbl; anchors.centerIn: parent
+                            text: root.isChecking ? "Checking…" : "Update Now"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                            font.weight: 700; color: cAccentOn
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking) {
+                                    let cmd = "yay -Syu";
+                                    if (root.ignoredPackages.length > 0)
+                                        cmd += " --ignore " + root.ignoredPackages.join(",");
+                                    Quickshell.execDetached(["bash", "-c",
+                                        "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
                                 }
                             }
                         }
                     }
-
-                    // Loading state
-                    Rectangle {
-                        Layout.fillWidth: true; implicitHeight: 56; color: "transparent"
-                        visible: root.isChecking
-                        Text {
-                            anchors.centerIn: parent
-                            text: "Checking for updates…"
-                            font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextFaint
-                        }
-                    }
-
-                    // Empty / up-to-date state
-                    Rectangle {
-                        Layout.fillWidth: true; implicitHeight: 56; color: "transparent"
-                        visible: !root.isChecking && root.updateCount === 0
-                        Text {
-                            anchors.centerIn: parent
-                            text: "✓  System is up to date"
-                            font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextDim
-                        }
-                    }
-
-                    // ── Official group ─────────────────────────────────
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 16; Layout.rightMargin: 16
-                        Layout.topMargin: 10; Layout.bottomMargin: 4
-                        visible: root.officialPackages.length > 0
-                        spacing: 8
-                        Text {
-                            text: "Official Repositories"
-                            font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                            font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
-                        }
-                        Rectangle {
-                            color: Qt.rgba(1,1,1,0.06); radius: 20
-                            width: _offCnt.implicitWidth + 14; height: 18
-                            Text {
-                                id: _offCnt; anchors.centerIn: parent
-                                text: root.officialPackages.length
-                                font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
-                            }
-                        }
-                    }
-
-                    Repeater {
-                        model: root.officialPackages
-                        delegate: PkgRowItem {
-                            required property var modelData
-                            pkg: modelData; pkgTag: "core"; Layout.fillWidth: true
-                        }
-                    }
-
-                    // ── AUR group ──────────────────────────────────────
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 16; Layout.rightMargin: 16
-                        Layout.topMargin: 12; Layout.bottomMargin: 4
-                        visible: root.aurPackages.length > 0
-                        spacing: 8
-                        Text {
-                            text: "AUR"
-                            font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                            font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
-                        }
-                        Rectangle {
-                            color: Qt.rgba(1,1,1,0.06); radius: 20
-                            width: _aurCnt.implicitWidth + 14; height: 18
-                            Text {
-                                id: _aurCnt; anchors.centerIn: parent
-                                text: root.aurPackages.length
-                                font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
-                            }
-                        }
-                    }
-
-                    Repeater {
-                        model: root.aurPackages
-                        delegate: PkgRowItem {
-                            required property var modelData
-                            pkg: modelData; pkgTag: "AUR"; Layout.fillWidth: true
-                        }
-                    }
-
-                    Item { Layout.preferredHeight: 8 }
                 }
-            }
 
+                // Loading state
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: 56; color: "transparent"
+                    visible: root.isChecking
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Checking for updates…"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextFaint
+                    }
+                }
+
+                // Empty / up-to-date state
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: 56; color: "transparent"
+                    visible: !root.isChecking && root.updateCount === 0
+                    Text {
+                        anchors.centerIn: parent
+                        text: "✓  System is up to date"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextDim
+                    }
+                }
+
+                // ── Official group ─────────────────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 16; Layout.rightMargin: 16
+                    Layout.topMargin: 10; Layout.bottomMargin: 4
+                    visible: root.officialPackages.length > 0
+                    spacing: 8
+                    Text {
+                        text: "Official Repositories"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                        font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
+                    }
+                    Rectangle {
+                        color: Qt.rgba(1,1,1,0.06); radius: 20
+                        width: _offCnt.implicitWidth + 14; height: 18
+                        Text {
+                            id: _offCnt; anchors.centerIn: parent
+                            text: root.officialPackages.length
+                            font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: root.officialPackages
+                    delegate: PkgRowItem {
+                        required property var modelData
+                        pkg: modelData; pkgTag: "core"; Layout.fillWidth: true
+                    }
+                }
+
+                // ── AUR group ──────────────────────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 16; Layout.rightMargin: 16
+                    Layout.topMargin: 12; Layout.bottomMargin: 4
+                    visible: root.aurPackages.length > 0
+                    spacing: 8
+                    Text {
+                        text: "AUR"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                        font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
+                    }
+                    Rectangle {
+                        color: Qt.rgba(1,1,1,0.06); radius: 20
+                        width: _aurCnt.implicitWidth + 14; height: 18
+                        Text {
+                            id: _aurCnt; anchors.centerIn: parent
+                            text: root.aurPackages.length
+                            font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: root.aurPackages
+                    delegate: PkgRowItem {
+                        required property var modelData
+                        pkg: modelData; pkgTag: "AUR"; Layout.fillWidth: true
+                    }
+                }
+
+                Item { Layout.preferredHeight: 8 }
+            }
             // ── CARD 2: AUTOMATION ────────────────────────────────────────
-            Rectangle {
-                Layout.fillWidth: true; radius: 16
-                color: cCard; border.color: cBorder; border.width: 1; clip: true
-                implicitHeight: _autoCol.implicitHeight
+            NCard {
+                sectionTitle: "Automation"
 
-                ColumnLayout {
-                    id: _autoCol
-                    anchors { top: parent.top; left: parent.left; right: parent.right }
-                    spacing: 0
-
-                    // Section title
-                    Text {
-                        Layout.leftMargin: 16; Layout.topMargin: 14; Layout.bottomMargin: 4
-                        text: "AUTOMATION"
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                        font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
-                    }
-
-                    // Row: Check frequency
-                    SettingsRow {
-                        icon: "\uebd1"
-                        label: "Check for updates automatically"
-                        SegControl { options: ["Hourly", "Daily", "Weekly"]; activeIdx: 1 }
-                    }
-
-                    // Row: Notify
-                    SettingsRow {
-                        icon: "\uea35"
-                        label: "Notify when updates are available"
-                        TogSwitch { isOn: true }
-                    }
-
-                    // Row: Background download
-                    SettingsRow {
-                        icon: "\ueb1d"
-                        label: "Download updates in the background"
-                        TogSwitch { isOn: false }
-                    }
-
-                    Item { Layout.preferredHeight: 4 }
-                }
-            }
-
-            // ── CARD 3: MIRRORS ───────────────────────────────────────────
-            Rectangle {
-                Layout.fillWidth: true; radius: 16
-                color: cCard; border.color: cBorder; border.width: 1; clip: true
-                implicitHeight: _mirrorCol.implicitHeight
-
-                ColumnLayout {
-                    id: _mirrorCol
-                    anchors { top: parent.top; left: parent.left; right: parent.right }
-                    spacing: 0
-
-                    Text {
-                        Layout.leftMargin: 16; Layout.topMargin: 14; Layout.bottomMargin: 4
-                        text: "MIRRORS"
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                        font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
-                    }
-
-                    SettingsRow {
-                        icon: "\uef76"
-                        label: "Mirrorlist"
-                        desc: "Last optimized 2 hours ago · reflector"
-                        Rectangle {
-                            width: _optLbl.implicitWidth + 24; height: 32; radius: 8
-                            color: _optMa.containsMouse ? cCardHover : "transparent"
-                            border.color: cBorder; border.width: 1
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            Text {
-                                id: _optLbl; anchors.centerIn: parent
-                                text: "Optimize Now"
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 13
-                                font.weight: 600; color: cText
-                            }
-                            MouseArea { id: _optMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uebd1" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Check for updates automatically"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
                         }
                     }
-
-                    SettingsRow {
-                        icon: "\uebd7"
-                        label: "Auto-refresh mirrors weekly"
-                        TogSwitch { isOn: true }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Hourly", "Daily", "Weekly"]
+                        current: "Daily"
+                        onSelected: (v) => {}
                     }
+                }
 
-                    Item { Layout.preferredHeight: 4 }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea35" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Notify when updates are available"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: true
+                        onToggled: (v) => {}
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb1d" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Download updates in the background"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: false
+                        onToggled: (v) => {}
+                    }
                 }
             }
+            // ── CARD 3: MIRRORS ───────────────────────────────────────────
+            NCard {
+                sectionTitle: "Mirrors"
 
-            // ── CARD 4: HISTORY ───────────────────────────────────────────
-            Rectangle {
-                Layout.fillWidth: true; radius: 16
-                color: cCard; border.color: cBorder; border.width: 1; clip: true
-                implicitHeight: _histCol.implicitHeight
-
-                ColumnLayout {
-                    id: _histCol
-                    anchors { top: parent.top; left: parent.left; right: parent.right }
-                    spacing: 0
-
-                    Text {
-                        Layout.leftMargin: 16; Layout.topMargin: 14; Layout.bottomMargin: 4
-                        text: "HISTORY"
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 11
-                        font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uef76" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Mirrorlist"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Last optimized 2 hours ago · reflector"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
                     }
+                    Item { Layout.fillWidth: true }
+                    Rectangle {
+                        width: _optLbl.implicitWidth + 24; height: 32; radius: 8
+                        color: _optMa.containsMouse ? cCardHover : "transparent"
+                        border.color: cBorder; border.width: 1
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Text {
+                            id: _optLbl; anchors.centerIn: parent
+                            text: "Optimize Now"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                            font.weight: 600; color: cText
+                        }
+                        MouseArea { id: _optMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
+                    }
+                }
 
-                    HistRow { histLabel: "Updated <b>9 packages</b>";               histTime: "2 days ago" }
-                    HistRow { histLabel: "Updated <b>1 package</b> (linux-firmware)"; histTime: "6 days ago" }
-                    HistRow { histLabel: "Updated <b>23 packages</b>";               histTime: "14 days ago" }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uebd7" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Auto-refresh mirrors weekly"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: true
+                        onToggled: (v) => {}
+                    }
+                }
+            }
+            // ── CARD 4: HISTORY ───────────────────────────────────────────
+            NCard {
+                sectionTitle: "History"
 
-                    Item { Layout.preferredHeight: 4 }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle { width: 8; height: 8; radius: 4; color: cSuccess }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Updated <b>9 packages</b>"; textFormat: Text.RichText; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text { text: "2 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle { width: 8; height: 8; radius: 4; color: cSuccess }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Updated <b>1 package</b> (linux-firmware)"; textFormat: Text.RichText; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text { text: "6 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        Rectangle { width: 8; height: 8; radius: 4; color: cSuccess }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Updated <b>23 packages</b>"; textFormat: Text.RichText; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text { text: "14 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 }
             }
 
@@ -448,10 +463,9 @@ Item {
     }
 
     // ────────────────────────────────────────────────────────────────────────
-    //  INLINE COMPONENTS  (defined at Item level — access root props directly)
+    //  INLINE COMPONENTS
     // ────────────────────────────────────────────────────────────────────────
 
-    // Package row
     component PkgRowItem: Rectangle {
         property var    pkg
         property string pkgTag: "core"
@@ -533,129 +547,4 @@ Item {
     }
 
     // Settings row (icon + label + right control)
-    component SettingsRow: Rectangle {
-        id: rootRow
-        default property alias rowControl: _ctrlSlot.data
-        property string icon:  ""
-        property string label: ""
-        property string desc:  ""
-
-        Layout.fillWidth: true
-        implicitHeight: _srl.implicitHeight + 24
-        color: "transparent"
-
-        // top separator
-        Rectangle { width: parent.width; height: 1; color: cBorder; anchors.top: parent.top }
-
-        RowLayout {
-            id: _srl
-            anchors { left: parent.left; right: parent.right; top: parent.top; leftMargin: 16; rightMargin: 16; topMargin: 12 }
-            spacing: 12
-
-            // Icon badge
-            Rectangle {
-                width: 30; height: 30; radius: 9; color: cIconBg
-                Text {
-                    anchors.centerIn: parent; text: rootRow.icon
-                    font.family: "tabler-icons"; font.pixelSize: 15; color: cTextDim
-                }
-            }
-
-            // Label column
-            ColumnLayout {
-                Layout.fillWidth: true; spacing: 2
-                Text {
-                    text: rootRow.label
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText
-                }
-                Text {
-                    text: rootRow.desc
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextDim
-                    visible: rootRow.desc !== ""
-                }
-            }
-
-            // Right-side control slot
-            Item {
-                id: _ctrlSlot
-                implicitWidth: childrenRect.width
-                implicitHeight: childrenRect.height
-            }
-        }
-    }
-
-    // Toggle switch
-    component TogSwitch: Rectangle {
-        property bool isOn: false
-        width: 38; height: 22; radius: 11
-        color: isOn ? cAccent : Qt.rgba(1,1,1,0.10)
-        Behavior on color { ColorAnimation { duration: 200 } }
-        Rectangle {
-            x: parent.isOn ? 16 : 2; y: 2; width: 18; height: 18; radius: 9
-            color: parent.isOn ? cAccentOn : "white"
-            Behavior on x     { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation  { duration: 200 } }
-        }
-        MouseArea {
-            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-            onClicked: parent.isOn = !parent.isOn
-        }
-    }
-
-    // Segmented control
-    component SegControl: Rectangle {
-        id: rootSeg
-        property var options:   []
-        property int activeIdx: 1
-        color: Qt.rgba(1,1,1,0.06); radius: 8
-        height: 30; width: 210
-
-        RowLayout {
-            anchors { fill: parent; margins: 2 }
-            spacing: 2
-            Repeater {
-                model: rootSeg.options
-                delegate: Rectangle {
-                    required property int   index
-                    required property string modelData
-                    Layout.fillWidth: true; Layout.fillHeight: true; radius: 6
-                    property bool active: index === rootSeg.activeIdx
-                    color: active ? cAccent : "transparent"
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                    Text {
-                        anchors.centerIn: parent; text: modelData
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600
-                        color: parent.active ? cAccentOn : cTextDim
-                        Behavior on color { ColorAnimation { duration: 150 } }
-                    }
-                    MouseArea {
-                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                        onClicked: rootSeg.activeIdx = index
-                    }
-                }
-            }
-        }
-    }
-
-    // History row
-    component HistRow: Rectangle {
-        property string histLabel: ""
-        property string histTime:  ""
-        Layout.fillWidth: true; implicitHeight: 44; color: "transparent"
-        Rectangle { width: parent.width; height: 1; color: cBorder; anchors.top: parent.top }
-        RowLayout {
-            anchors { fill: parent; leftMargin: 16; rightMargin: 16 }
-            spacing: 12
-            Rectangle { width: 7; height: 7; radius: 4; color: cSuccess }
-            Text {
-                Layout.fillWidth: true; text: histLabel
-                font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cText
-                textFormat: Text.RichText
-            }
-            Text {
-                text: histTime
-                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint
-            }
-        }
-    }
 }
