@@ -30,6 +30,46 @@ Item {
     property var    ignoredPackages:  []
     property bool   isChecking:       true
     property string searchQuery:      ""
+    property bool   showProgress:     false
+    property string updateLogLines:   ""
+    property string progressMsg:      "Preparing transaction..."
+    property string progressPct:      "0%"
+    property real   progressVal:      0.0
+
+    // ─── Backend processes ───────────────────────────────────────────────────
+    Process {
+        id: updateProc
+        stdout: SplitParser {
+            onRead: data => {
+                let line = data.trim();
+                if (!line) return;
+                
+                let lines = root.updateLogLines.split("\n").filter(l => l !== "");
+                lines.push("$ " + line);
+                if (lines.length > 15) lines.shift();
+                root.updateLogLines = lines.join("\n");
+                
+                if (line.includes("Verifying package")) root.progressMsg = "Verifying packages...";
+                else if (line.includes("Installing")) root.progressMsg = "Installing packages...";
+                else if (line.includes("Updating system database") || line.includes("mkinitcpio")) root.progressMsg = "Finishing setup...";
+                
+                let match = line.match(/\((\d+)\/(\d+)\)/);
+                if (match) {
+                    root.progressVal = parseInt(match[1]) / parseInt(match[2]);
+                    root.progressPct = Math.round(root.progressVal * 100) + "%";
+                }
+            }
+        }
+        onExited: {
+            root.progressMsg = "Update complete";
+            root.progressPct = "100%";
+            root.progressVal = 1.0;
+            root.updateLogLines += "\n✓ All packages updated successfully";
+            // Refresh list
+            root.isChecking = true;
+            checkProc.running = true;
+        }
+    }
 
     // ─── Backend process ─────────────────────────────────────────────────────
     Process {
@@ -212,19 +252,26 @@ Item {
                         Behavior on color { ColorAnimation { duration: 120 } }
                         Text {
                             id: _updLbl; anchors.centerIn: parent
-                            text: root.isChecking ? "Checking…" : "Update Now"
+                            text: root.isChecking ? "Checking…" : (root.updateCount === 0 ? "Up to date" : (root.showProgress ? "Updating…" : "Update Now"))
                             font.family: Theme.defaultFontFamily; font.pixelSize: 13
                             font.weight: 700; color: cAccentOn
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                if ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking) {
-                                    let cmd = "yay -Syu";
+                                if ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking && !root.showProgress) {
+                                    root.showProgress = true;
+                                    root.updateLogLines = "";
+                                    root.progressMsg = "Preparing transaction...";
+                                    root.progressPct = "0%";
+                                    root.progressVal = 0.0;
+                                    
+                                    let cmd = "yay -Syu --noconfirm";
                                     if (root.ignoredPackages.length > 0)
                                         cmd += " --ignore " + root.ignoredPackages.join(",");
-                                    Quickshell.execDetached(["bash", "-c",
-                                        "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
+                                    
+                                    updateProc.command = ["bash", "-c", "stdbuf -oL " + cmd];
+                                    updateProc.running = true;
                                 }
                             }
                         }
@@ -245,11 +292,63 @@ Item {
                 // Empty / up-to-date state
                 Rectangle {
                     Layout.fillWidth: true; implicitHeight: 56; color: "transparent"
-                    visible: !root.isChecking && root.updateCount === 0
+                    visible: !root.isChecking && root.updateCount === 0 && !root.showProgress
                     Text {
                         anchors.centerIn: parent
                         text: "✓  System is up to date"
                         font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextDim
+                    }
+                }
+
+                // Progress panel
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: _progCol.implicitHeight + 30
+                    color: "transparent"
+                    visible: root.showProgress
+                    
+                    ColumnLayout {
+                        id: _progCol
+                        anchors { fill: parent; leftMargin: 16; rightMargin: 16; topMargin: 10 }
+                        spacing: 12
+                        
+                        // Top text
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text {
+                                text: root.progressMsg; font.family: Theme.defaultFontFamily
+                                font.pixelSize: 13; font.weight: 700; color: cText
+                            }
+                            Item { Layout.fillWidth: true }
+                            Text {
+                                text: root.progressPct; font.family: Theme.monoFontFamily
+                                font.pixelSize: 12; color: cTextDim
+                            }
+                        }
+                        
+                        // Progress bar
+                        Rectangle {
+                            Layout.fillWidth: true; height: 4; radius: 2; color: cCard
+                            Rectangle {
+                                height: 4; radius: 2; color: cAccent
+                                width: parent.width * root.progressVal
+                                Behavior on width { NumberAnimation { duration: 300 } }
+                            }
+                        }
+                        
+                        // Log box
+                        Rectangle {
+                            Layout.fillWidth: true; implicitHeight: 140
+                            color: Qt.rgba(0,0,0,0.2); radius: 8
+                            border.color: cBorder; border.width: 1
+                            clip: true
+                            Text {
+                                anchors { fill: parent; margins: 12 }
+                                text: root.updateLogLines
+                                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextDim
+                                lineHeight: 1.4
+                                verticalAlignment: Text.AlignBottom
+                            }
+                        }
                     }
                 }
 
