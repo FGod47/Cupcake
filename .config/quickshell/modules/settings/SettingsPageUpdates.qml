@@ -172,7 +172,7 @@ Item {
 
                     // Counts
                     ColumnLayout {
-                        Layout.fillWidth: true; spacing: 1
+                        spacing: 1
                         Text {
                             text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
                             font.family: Theme.defaultFontFamily; font.pixelSize: 14
@@ -183,6 +183,8 @@ Item {
                             font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
                         }
                     }
+
+                    Item { Layout.fillWidth: true }
 
                     // Refresh ghost button
                     Rectangle {
@@ -530,6 +532,8 @@ Item {
             // Version old → new
             RowLayout {
                 spacing: 4
+                Layout.preferredWidth: 300
+                Item { Layout.fillWidth: true }
                 Text { text: pkg && pkg.old ? pkg.old : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 Text { text: "→"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 Text { text: pkg && pkg.ver ? pkg.ver : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: 600 }
