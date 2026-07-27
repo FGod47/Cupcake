@@ -373,7 +373,12 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Lid close action"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                            Text { text: "Run 'sudo sed -i s/^#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g /etc/systemd/logind.conf' to enable Display Off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
+                            Text { 
+                                text: "Run 'sudo sed -i s/^#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g /etc/systemd/logind.conf' to enable Display Off"
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant
+                                Layout.maximumWidth: 350
+                                wrapMode: Text.WordWrap
+                            }
                         }
                     }
                     Item { Layout.fillWidth: true }
