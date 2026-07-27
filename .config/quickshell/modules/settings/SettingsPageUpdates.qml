@@ -43,12 +43,8 @@ Item {
     Process {
         id: updateProc
         property string pwdToFeed: ""
-        stdinEnabled: true
-        onStarted: {
-            if (pwdToFeed !== "") {
-                pwdTimer.start();
-            }
-        }
+        environment: pwdToFeed !== "" ? { "QS_SUDO_PWD": pwdToFeed } : {}
+        onExited: pwdToFeed = "" // clear when done
         stdout: SplitParser {
             onRead: data => {
                 let line = data.trim();
@@ -118,17 +114,7 @@ Item {
         }
     }
 
-    Timer {
-        id: pwdTimer
-        interval: 200
-        repeat: false
-        onTriggered: {
-            if (updateProc.pwdToFeed !== "") {
-                updateProc.write(updateProc.pwdToFeed + "\n");
-                updateProc.pwdToFeed = "";
-            }
-        }
-    }
+
 
     // ─── Backend process ─────────────────────────────────────────────────────
     Process {
@@ -407,7 +393,7 @@ Item {
                                         root.isAwaitingPassword = false;
                                         root.progressMsg = "Authenticating...";
                                         
-                                        let cmd = "stty -echo; sudo -S -v 2>/dev/null || exit 1; stty echo; yay -Syu --noconfirm";
+                                        let cmd = "SUDO_ASKPASS=~/.config/quickshell/modules/settings/env_askpass.sh sudo -A -v 2>/dev/null || exit 1; yay -Syu --noconfirm";
                                         if (root.ignoredPackages.length > 0)
                                             cmd += " --ignore " + root.ignoredPackages.join(",");
                                         
