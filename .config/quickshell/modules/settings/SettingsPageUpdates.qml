@@ -79,7 +79,7 @@ Item {
             text: pill.label
             font.family: Theme.defaultFontFamily
             font.pixelSize: 12
-            font.weight: pill.big ? Font.SemiBold : Font.Medium
+            font.weight: pill.big ? 600 : 500
             color: active ? Theme.colOnPrimary : (pill.danger ? cDanger : cTextDim)
         }
         MouseArea {
@@ -102,14 +102,14 @@ Item {
             color: cText
             font.family: Theme.defaultFontFamily
             font.pixelSize: 13
-            font.weight: Font.Medium
+            font.weight: 500
         }
         Text {
             text: parent.desc
             color: cTextDim
             font.family: Theme.defaultFontFamily
             font.pixelSize: 11
-            font.weight: Font.Normal
+            font.weight: 400
             opacity: 0.85
             visible: text !== ""
             wrapMode: Text.NoWrap
@@ -145,7 +145,7 @@ Item {
         property var modelData
         property string tag
         
-        visible: modelData.name.toLowerCase().includes(root.searchQuery.toLowerCase())
+        visible: (modelData && modelData.name) ? modelData.name.toLowerCase().includes(root.searchQuery.toLowerCase()) : false
         Layout.fillWidth: true
         height: visible ? 38 : 0
         color: ma.containsMouse ? Qt.rgba(1,1,1,0.025) : "transparent"
@@ -159,8 +159,9 @@ Item {
             spacing: 12
             
             PkgCheck {
-                checked: !root.ignoredPackages.includes(modelData.name)
+                checked: modelData && modelData.name ? !root.ignoredPackages.includes(modelData.name) : false
                 onClicked: {
+                    if (!modelData || !modelData.name) return;
                     let name = modelData.name;
                     let arr = root.ignoredPackages.slice();
                     let idx = arr.indexOf(name);
@@ -174,7 +175,7 @@ Item {
                 spacing: 8
                 Layout.fillWidth: true
                 Text {
-                    text: modelData.name
+                    text: modelData && modelData.name ? modelData.name : ""
                     font.family: Theme.monoFontFamily
                     font.pixelSize: 12
                     color: cText
@@ -190,7 +191,7 @@ Item {
                         text: tag
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 9
-                        font.weight: Font.Bold
+                        font.weight: 700
                         font.letterSpacing: 0.5
                         color: modelData.aur ? cAccent : cTextFaint
                     }
@@ -199,9 +200,9 @@ Item {
             
             RowLayout {
                 spacing: 4
-                Text { text: modelData.old; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                Text { text: modelData && modelData.old ? modelData.old : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 Text { text: "→"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
-                Text { text: modelData.ver; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: Font.DemiBold }
+                Text { text: modelData && modelData.ver ? modelData.ver : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: 600 }
             }
         }
         MouseArea {
@@ -234,7 +235,7 @@ Item {
                     text: "System Updates"
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 28
-                    font.weight: Font.ExtraBold
+                    font.weight: 800
                     font.letterSpacing: -0.6
                     color: cText
                 }
@@ -244,7 +245,7 @@ Item {
                         text: (root.updateCount + " updates available")
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
-                        font.weight: Font.SemiBold
+                        font.weight: 600
                         color: cText
                     }
                     Text { text: "·"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextFaint }
@@ -252,7 +253,7 @@ Item {
                         text: "Checked recently"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
-                        font.weight: Font.SemiBold
+                        font.weight: 600
                         color: cText
                     }
                 }
@@ -286,13 +287,13 @@ Item {
                             Layout.fillWidth: true
                             color: cText
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 12.5
+                            font.pixelSize: 13
                             verticalAlignment: TextInput.AlignVCenter
                             Text {
                                 text: "Filter packages..."
                                 color: cTextFaint
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12.5
+                                font.pixelSize: 13
                                 visible: parent.text === ""
                                 anchors.verticalCenter: parent.verticalCenter
                             }
@@ -314,7 +315,7 @@ Item {
                         text: root.ignoredPackages.length > 0 ? "Select all" : "Deselect all"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
-                        font.weight: Font.SemiBold
+                        font.weight: 600
                         color: selAllMa.containsMouse ? cText : cTextDim
                     }
                     MouseArea {
@@ -367,13 +368,13 @@ Item {
                             text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 14
-                            font.weight: Font.Bold
+                            font.weight: 700
                             color: cText
                         }
                         Text {
                             text: root.officialPackages.length + " official · " + root.aurPackages.length + " from the AUR"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11.5
+                            font.pixelSize: 12
                             color: cTextDim
                         }
                     }
@@ -420,8 +421,8 @@ Item {
                         Text {
                             text: "OFFICIAL REPOSITORIES"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10.5
-                            font.weight: Font.Bold
+                            font.pixelSize: 11
+                            font.weight: 700
                             font.letterSpacing: 0.8
                             color: cTextFaint
                         }
@@ -461,8 +462,8 @@ Item {
                         Text {
                             text: "AUR"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10.5
-                            font.weight: Font.Bold
+                            font.pixelSize: 11
+                            font.weight: 700
                             font.letterSpacing: 0.8
                             color: cTextFaint
                         }
@@ -514,15 +515,15 @@ Item {
                             spacing: 2
                             Rectangle {
                                 Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: "transparent"
-                                Text { anchors.centerIn: parent; text: "Hourly"; font.family: Theme.defaultFontFamily; font.pixelSize: 11.5; font.weight: Font.SemiBold; color: cTextDim }
+                                Text { anchors.centerIn: parent; text: "Hourly"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cTextDim }
                             }
                             Rectangle {
                                 Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: cAccent
-                                Text { anchors.centerIn: parent; text: "Daily"; font.family: Theme.defaultFontFamily; font.pixelSize: 11.5; font.weight: Font.SemiBold; color: cAccentOn }
+                                Text { anchors.centerIn: parent; text: "Daily"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cAccentOn }
                             }
                             Rectangle {
                                 Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: "transparent"
-                                Text { anchors.centerIn: parent; text: "Weekly"; font.family: Theme.defaultFontFamily; font.pixelSize: 11.5; font.weight: Font.SemiBold; color: cTextDim }
+                                Text { anchors.centerIn: parent; text: "Weekly"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cTextDim }
                             }
                         }
                     }
@@ -582,30 +583,30 @@ Item {
                     RowLayout {
                         spacing: 12
                         Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 9 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 12.5; font.weight: Font.SemiBold; color: cText }
+                        Text { text: "Updated 9 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
                     }
                     Item { Layout.fillWidth: true }
-                    Text { text: "2 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 10.5; color: cTextFaint }
+                    Text { text: "2 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 }
                 
                 NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 1 package (linux-firmware)"; font.family: Theme.defaultFontFamily; font.pixelSize: 12.5; font.weight: Font.SemiBold; color: cText }
+                        Text { text: "Updated 1 package (linux-firmware)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
                     }
                     Item { Layout.fillWidth: true }
-                    Text { text: "6 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 10.5; color: cTextFaint }
+                    Text { text: "6 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 }
                 
                 NRow {
                     RowLayout {
                         spacing: 12
                         Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 23 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 12.5; font.weight: Font.SemiBold; color: cText }
+                        Text { text: "Updated 23 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
                     }
                     Item { Layout.fillWidth: true }
-                    Text { text: "14 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 10.5; color: cTextFaint }
+                    Text { text: "14 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 }
             }
 
