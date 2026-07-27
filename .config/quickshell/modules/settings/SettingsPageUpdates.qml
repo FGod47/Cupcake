@@ -9,29 +9,33 @@ import "../common"
 Item {
     id: root
 
-    property color cText: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
-    property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
-    property color cTextFaint: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
-    property color cAccent: Theme.colPrimary
-    property color cAccentOn: Theme.colOnPrimary
-    property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-    property color cBorderSoft: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
-    property color cBgHover: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-    property color cSuccess: "#8fce9c"
-    property color cDanger: "#e08a82"
+    // ── Colours (mapped to theme tokens) ──────────────────────────────────
+    property color cText:        Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
+    property color cTextDim:     Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
+    property color cTextFaint:   Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+    property color cAccent:      Theme.colPrimary
+    property color cAccentOn:    Theme.colOnPrimary
+    property color cCard:        Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.045)
+    property color cCardHover:   Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07)
+    property color cBorder:      Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.09)
+    property color cAccentDim:   Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.16)
+    property color cSuccess:     "#8fce9c"
+    property color cDanger:      "#e08a82"
+    property color cBgElevated:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
 
-    // Updates state
-    property int updateCount: 0
-    property int aurUpdateCount: 0
-    property var updatePackages: []
-    property var officialPackages: []
-    property var aurPackages: []
-    property var ignoredPackages: []
-    property bool isCheckingUpdates: true
-    property string searchQuery: ""
+    // ── Update state ──────────────────────────────────────────────────────
+    property int    updateCount:      0
+    property int    aurUpdateCount:   0
+    property var    updatePackages:   []
+    property var    officialPackages: []
+    property var    aurPackages:      []
+    property var    ignoredPackages:  []
+    property bool   isChecking:       true
+    property string searchQuery:      ""
 
+    // ── Fetch updates ─────────────────────────────────────────────────────
     Process {
-        id: checkUpdatesProcess
+        id: checkProc
         command: ["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/check-updates.sh"]
         running: true
         stdout: StdioCollector {
@@ -40,677 +44,582 @@ Item {
                     let txt = text.trim();
                     if (txt) {
                         let data = JSON.parse(txt);
-                        root.updateCount = data.total;
+                        root.updateCount    = data.total;
                         root.aurUpdateCount = data.aur;
                         root.updatePackages = data.packages;
-                        
-                        let off = [];
-                        let au = [];
+                        let off = [], au = [];
                         for (let i = 0; i < data.packages.length; i++) {
                             if (data.packages[i].aur) au.push(data.packages[i]);
-                            else off.push(data.packages[i]);
+                            else                      off.push(data.packages[i]);
                         }
                         root.officialPackages = off;
-                        root.aurPackages = au;
+                        root.aurPackages      = au;
                     }
                 } catch(e) { console.log("Update parse error:", e); }
-                root.isCheckingUpdates = false;
+                root.isChecking = false;
             }
         }
     }
 
-    // Components
-    component Pill: Rectangle {
-        id: pill
-        property string label: ""
-        property bool active: false
-        property bool danger: false
-        property bool big: false
-        signal clicked()
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    //  LOCAL COMPONENTS
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        radius: 8
-        height: big ? 34 : 26
-        width: Math.max(pillText.implicitWidth + (big ? 32 : 24), 30)
-        color: active ? cAccent : cBgElevated
-
-        Text {
-            id: pillText
-            anchors.centerIn: parent
-            text: pill.label
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 12
-            font.weight: pill.big ? 600 : 500
-            color: active ? Theme.colOnPrimary : (pill.danger ? cDanger : cTextDim)
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: pill.clicked()
-            cursorShape: Qt.PointingHandCursor
-            hoverEnabled: true
-            onEntered: pill.color = pill.active ? Qt.tint(cAccent, Qt.rgba(1,1,1,0.1)) : cBgHover
-            onExited: pill.color = pill.active ? cAccent : cBgElevated
-        }
-    }
-
-    component RowLabel: ColumnLayout {
-        property string label: ""
-        property string desc: ""
-        spacing: 1
+    // --- Card shell ---
+    component Card: Rectangle {
+        default property alias content: inner.data
+        property string sectionTitle: ""
         Layout.fillWidth: true
-        Text {
-            text: parent.label
-            color: cText
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 13
-            font.weight: 500
+        color: cCard
+        border.color: cBorder
+        border.width: 1
+        radius: 16
+        clip: true
+        implicitHeight: inner.implicitHeight + (sectionTitle !== "" ? hdr.height + 10 : 0) + 24
+
+        RowLayout {
+            id: hdr
+            visible: sectionTitle !== ""
+            anchors { top: parent.top; left: parent.left; right: parent.right
+                      topMargin: 14; leftMargin: 16; rightMargin: 16 }
+            Text {
+                text: sectionTitle.toUpperCase()
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11; font.weight: 700; font.letterSpacing: 0.8
+                color: cTextFaint
+            }
         }
-        Text {
-            text: parent.desc
-            color: cTextDim
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: 400
-            opacity: 0.85
-            visible: text !== ""
-            wrapMode: Text.NoWrap
-            elide: Text.ElideRight
+
+        ColumnLayout {
+            id: inner
+            anchors {
+                top: sectionTitle !== "" ? hdr.bottom : parent.top
+                left: parent.left; right: parent.right
+                topMargin: sectionTitle !== "" ? 4 : 0
+            }
+            spacing: 0
         }
     }
 
-    component PkgCheck: Rectangle {
-        property bool checked: false
-        signal clicked()
-        width: 16
-        height: 16
-        radius: 4
-        color: checked ? cAccent : "transparent"
-        border.color: checked ? cAccent : cTextDim
-        border.width: checked ? 0 : 1.5
+    // --- Row item (with top separator) ---
+    component Row: Rectangle {
+        default property alias content: rlay.data
+        Layout.fillWidth: true
+        implicitHeight: rlay.implicitHeight
+        color: "transparent"
+        Rectangle { width: parent.width; height: 1; color: cBorder; anchors.top: parent.top }
+        RowLayout {
+            id: rlay
+            anchors { fill: parent; leftMargin: 16; rightMargin: 16; topMargin: 12; bottomMargin: 12 }
+            spacing: 12
+        }
+    }
+
+    // --- Row icon badge ---
+    component RowIcon: Rectangle {
+        property string icon: ""
+        width: 30; height: 30; radius: 9
+        color: cBgElevated
         Text {
             anchors.centerIn: parent
-            text: "\uea5e" // check icon
-            font.family: "tabler-icons"
-            font.pixelSize: 11
-            font.weight: 700
-            color: cAccentOn
-            visible: parent.checked
+            text: parent.icon; font.family: "tabler-icons"; font.pixelSize: 15; color: cTextDim
+        }
+    }
+
+    // --- Toggle ---
+    component Tog: Rectangle {
+        property bool on: false
+        signal toggled()
+        width: 38; height: 22; radius: 11
+        color: on ? cAccent : Qt.rgba(1,1,1,0.10)
+        Behavior on color { ColorAnimation { duration: 200 } }
+        Rectangle {
+            x: parent.on ? 16 : 2; y: 2; width: 18; height: 18; radius: 9
+            color: parent.on ? cAccentOn : "white"
+            Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+            Behavior on color { ColorAnimation { duration: 200 } }
         }
         MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+            onClicked: { parent.on = !parent.on; parent.toggled() }
+        }
+    }
+
+    // --- Segmented control ---
+    component Segmented: Rectangle {
+        property var options: []
+        property int selected: 1
+        color: Qt.rgba(1,1,1,0.06); radius: 8
+        implicitHeight: 30
+        implicitWidth: 210
+        RowLayout {
+            anchors { fill: parent; margins: 2 }
+            spacing: 2
+            Repeater {
+                model: parent.parent.options
+                Rectangle {
+                    Layout.fillWidth: true; Layout.fillHeight: true; radius: 6
+                    color: index === parent.parent.parent.selected ? cAccent : "transparent"
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Text {
+                        anchors.centerIn: parent
+                        text: modelData
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600
+                        color: index === parent.parent.parent.selected ? cAccentOn : cTextDim
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                    }
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: parent.parent.parent.parent.selected = index
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Btn (ghost) ---
+    component Btn: Rectangle {
+        property string label: ""
+        signal clicked()
+        implicitHeight: 34
+        implicitWidth: btnLbl.implicitWidth + 28
+        color: btnMa.containsMouse ? cCardHover : cCard
+        border.color: cBorder; border.width: 1; radius: 9
+        Behavior on color { ColorAnimation { duration: 120 } }
+        Text {
+            id: btnLbl; anchors.centerIn: parent
+            text: parent.label
+            font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText
+        }
+        MouseArea {
+            id: btnMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
             onClicked: parent.clicked()
         }
     }
-    
-    component PkgRow: Rectangle {
-        property var modelData
-        property string tag
-        
-        visible: (modelData && modelData.name) ? modelData.name.toLowerCase().includes(root.searchQuery.toLowerCase()) : false
-        Layout.fillWidth: true
-        height: visible ? 38 : 0
-        color: ma.containsMouse ? Qt.rgba(1,1,1,0.025) : "transparent"
-        
-        Rectangle { width: parent.width; height: 1; color: cBorderSoft; anchors.top: parent.top }
-        
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
-            spacing: 12
-            
-            PkgCheck {
-                checked: modelData && modelData.name ? !root.ignoredPackages.includes(modelData.name) : false
-                onClicked: {
-                    if (!modelData || !modelData.name) return;
-                    let name = modelData.name;
-                    let arr = root.ignoredPackages.slice();
-                    let idx = arr.indexOf(name);
-                    if (idx !== -1) arr.splice(idx, 1);
-                    else arr.push(name);
-                    root.ignoredPackages = arr;
-                }
-            }
-            
-            RowLayout {
-                spacing: 8
-                Layout.fillWidth: true
-                Text {
-                    text: modelData && modelData.name ? modelData.name : ""
-                    font.family: Theme.monoFontFamily
-                    font.pixelSize: 12
-                    color: cText
-                }
-                Rectangle {
-                    color: modelData.aur ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15) : Qt.rgba(1,1,1,0.07)
-                    radius: 5
-                    width: tagText.implicitWidth + 12
-                    height: 16
-                    Text {
-                        id: tagText
-                        anchors.centerIn: parent
-                        text: tag
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 9
-                        font.weight: 700
-                        font.letterSpacing: 0.5
-                        color: modelData.aur ? cAccent : cTextFaint
-                    }
-                }
-            }
-            
-            RowLayout {
-                spacing: 4
-                Text { text: modelData && modelData.old ? modelData.old : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
-                Text { text: "→"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
-                Text { text: modelData && modelData.ver ? modelData.ver : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: 600 }
-            }
-            
-            Text {
-                text: "12 MB"
-                font.family: Theme.monoFontFamily
-                font.pixelSize: 11
-                color: cTextFaint
-                Layout.alignment: Qt.AlignRight
-                Layout.preferredWidth: 48
-                horizontalAlignment: Text.AlignRight
-            }
+
+    // --- BtnPrimary ---
+    component BtnPrimary: Rectangle {
+        property string label: ""
+        property bool enabled: true
+        signal clicked()
+        implicitHeight: 34
+        implicitWidth: pLbl.implicitWidth + 28
+        radius: 9
+        color: enabled ? cAccent : Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.45)
+        Behavior on color { ColorAnimation { duration: 120 } }
+        Text {
+            id: pLbl; anchors.centerIn: parent
+            text: parent.label
+            font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 700; color: cAccentOn
         }
         MouseArea {
-            id: ma
-            anchors.fill: parent
+            anchors.fill: parent; cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             hoverEnabled: true
-            acceptedButtons: Qt.NoButton
+            onClicked: if (parent.enabled) parent.clicked()
         }
     }
 
+    // --- Package checkbox ---
+    component PkgCheck: Rectangle {
+        property bool checked: false
+        signal toggled()
+        width: 16; height: 16; radius: 5
+        color: checked ? cAccent : "transparent"
+        border.color: checked ? cAccent : cTextFaint; border.width: 1.5
+        Behavior on color { ColorAnimation { duration: 150 } }
+        Text {
+            anchors.centerIn: parent; text: "\uea5e"; font.family: "tabler-icons"
+            font.pixelSize: 11; font.weight: 700; color: cAccentOn; visible: parent.checked
+        }
+        MouseArea {
+            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+            onClicked: parent.toggled()
+        }
+    }
+
+    // --- Package row ---
+    component PkgRow: Rectangle {
+        property var pkg
+        property string tag: "core"
+
+        Layout.fillWidth: true
+        implicitHeight: visible ? 40 : 0
+        visible: pkg && pkg.name ? pkg.name.toLowerCase().includes(root.searchQuery.toLowerCase()) : false
+        color: pkgMa.containsMouse ? Qt.rgba(1,1,1,0.025) : "transparent"
+        Behavior on color { ColorAnimation { duration: 120 } }
+
+        Rectangle { width: parent.width; height: 1; color: cBorder; anchors.top: parent.top }
+
+        RowLayout {
+            anchors { fill: parent; leftMargin: 16; rightMargin: 16 }
+            spacing: 12
+
+            PkgCheck {
+                checked: pkg && pkg.name ? !root.ignoredPackages.includes(pkg.name) : false
+                onToggled: {
+                    if (!pkg || !pkg.name) return;
+                    let arr = root.ignoredPackages.slice();
+                    let idx = arr.indexOf(pkg.name);
+                    if (idx !== -1) arr.splice(idx, 1); else arr.push(pkg.name);
+                    root.ignoredPackages = arr;
+                }
+            }
+
+            // Name + tag
+            RowLayout {
+                Layout.fillWidth: true; spacing: 8
+                Text {
+                    text: pkg && pkg.name ? pkg.name : ""
+                    font.family: Theme.monoFontFamily; font.pixelSize: 12; color: cText
+                }
+                Rectangle {
+                    color: (tag === "AUR") ? Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.15)
+                                           : Qt.rgba(1,1,1,0.07)
+                    radius: 5; width: tagTxt.implicitWidth + 12; height: 16
+                    Text {
+                        id: tagTxt; anchors.centerIn: parent
+                        text: tag
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: 700
+                        font.letterSpacing: 0.5
+                        color: (tag === "AUR") ? cAccent : cTextFaint
+                    }
+                }
+            }
+
+            // Version old → new
+            RowLayout {
+                spacing: 4
+                Text { text: pkg && pkg.old ? pkg.old : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                Text { text: "→"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                Text { text: pkg && pkg.ver ? pkg.ver : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: 600 }
+            }
+
+            // Size placeholder
+            Text {
+                text: pkg && pkg.size ? pkg.size : "—"
+                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint
+                horizontalAlignment: Text.AlignRight
+                Layout.preferredWidth: 52
+            }
+        }
+
+        MouseArea { id: pkgMa; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    //  MAIN LAYOUT
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
     Flickable {
         anchors.fill: parent
-        contentHeight: contentCol.implicitHeight + 60
+        contentHeight: mainCol.implicitHeight + 60
         clip: true
         boundsBehavior: Flickable.StopAtBounds
 
         ColumnLayout {
-            id: contentCol
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 30
-            spacing: 24
+            id: mainCol
+            anchors { top: parent.top; left: parent.left; right: parent.right; margins: 26 }
+            spacing: 16
 
-            // Page Head
+            // ── Page Head ──────────────────────────────────────────────────
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 6
+                spacing: 6; Layout.topMargin: 4
+
                 Text {
                     text: "System Updates"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 28
-                    font.weight: 800
-                    font.letterSpacing: -0.6
-                    color: cText
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 28; font.weight: 800
+                    font.letterSpacing: -0.6; color: cText
                 }
+
                 RowLayout {
-                    spacing: 12
+                    spacing: 0
                     Text {
-                        text: (root.updateCount + " updates available")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: 600
-                        color: cText
+                        text: "<b>" + root.updateCount + "</b> updates available"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
+                        textFormat: Text.RichText
                     }
-                    Text { text: "·"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextFaint }
+                    Text { text: "  ·  "; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextFaint }
                     Text {
-                        text: "Checked recently"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: 600
-                        color: cText
+                        text: "Checked <b>recently</b>"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
+                        textFormat: Text.RichText
                     }
                 }
             }
 
-            // Toolbar
+            // ── Toolbar: search + select all ───────────────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 10
-                
-                // Search box
+
+                // Search
                 Rectangle {
-                    Layout.fillWidth: true
-                    height: 36
-                    radius: 11
-                    color: cBgElevated
-                    border.color: cBorderSoft
-                    
+                    Layout.fillWidth: true; height: 36; radius: 11
+                    color: cCard; border.color: cBorder; border.width: 1
                     RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
+                        anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
                         spacing: 8
-                        Text {
-                            text: "\ueb10" // search icon
-                            font.family: "tabler-icons"
-                            font.pixelSize: 15
-                            color: cTextFaint
-                        }
+                        Text { text: "\ueb10"; font.family: "tabler-icons"; font.pixelSize: 15; color: cTextFaint }
                         TextInput {
                             Layout.fillWidth: true
-                            color: cText
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
+                            color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13
                             verticalAlignment: TextInput.AlignVCenter
                             Text {
-                                text: "Filter packages..."
-                                color: cTextFaint
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                visible: parent.text === ""
                                 anchors.verticalCenter: parent.verticalCenter
+                                text: "Filter packages…"; color: cTextFaint
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                                visible: parent.text === ""
                             }
                             onTextChanged: root.searchQuery = text
                         }
                     }
                 }
-                
-                // Select all btn
+
+                // Select all
                 Rectangle {
-                    Layout.preferredWidth: selAllText.implicitWidth + 28
-                    Layout.preferredHeight: 36
-                    radius: 11
-                    color: selAllMa.containsMouse ? cBgHover : cBgElevated
-                    border.color: cBorderSoft
+                    implicitWidth: selTxt.implicitWidth + 28; height: 36; radius: 11
+                    color: selMa.containsMouse ? cCardHover : cCard
+                    border.color: cBorder; border.width: 1
+                    Behavior on color { ColorAnimation { duration: 120 } }
                     Text {
-                        id: selAllText
-                        anchors.centerIn: parent
+                        id: selTxt; anchors.centerIn: parent
                         text: root.ignoredPackages.length > 0 ? "Select all" : "Deselect all"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: 600
-                        color: selAllMa.containsMouse ? cText : cTextDim
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600
+                        color: selMa.containsMouse ? cText : cTextDim
                     }
                     MouseArea {
-                        id: selAllMa
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
+                        id: selMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             if (root.ignoredPackages.length > 0) {
-                                root.ignoredPackages = []; // select all
+                                root.ignoredPackages = [];
                             } else {
                                 let all = [];
                                 for (let i = 0; i < root.updatePackages.length; i++) all.push(root.updatePackages[i].name);
-                                root.ignoredPackages = all; // deselect all
+                                root.ignoredPackages = all;
                             }
                         }
                     }
                 }
             }
 
-            // Updates Card
-            NCard {
+            // ── Card 1: Updates ────────────────────────────────────────────
+            Card {
                 Layout.fillWidth: true
-                sectionTitle: "" // Removed text title, using custom summary row instead
-                
-                // Custom Header/Summary Row
+
+                // Summary row
                 RowLayout {
-                    Layout.fillWidth: true
-                    Layout.margins: 16
-                    spacing: 16
-                    
+                    Layout.fillWidth: true; Layout.margins: 14; Layout.bottomMargin: 10
+                    spacing: 12
+
+                    // Icon
                     Rectangle {
-                        width: 44
-                        height: 44
-                        radius: 12
-                        color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.1)
-                        border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.2)
-                        border.width: 1
+                        width: 36; height: 36; radius: 11; color: cAccentDim
                         Text {
                             anchors.centerIn: parent
-                            text: "\uebd7" // reload icon
-                            font.family: "tabler-icons"
-                            font.pixelSize: 22
-                            color: cAccent
+                            text: "\uebd7"; font.family: "tabler-icons"; font.pixelSize: 17; color: cAccent
                         }
                     }
-                    
+
+                    // Title + sub
                     ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
+                        Layout.fillWidth: true; spacing: 1
                         Text {
                             text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 15
-                            font.weight: 700
-                            color: cText
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; color: cText
                         }
                         Text {
                             text: root.officialPackages.length + " official · " + root.aurPackages.length + " from the AUR"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 12
-                            color: cTextDim
-                        }
-                    }
-                    
-                    Rectangle {
-                        Layout.preferredHeight: 34
-                        Layout.preferredWidth: refreshContent.implicitWidth + 24
-                        radius: 8
-                        color: refreshMa.containsMouse ? cBgHover : "transparent"
-                        border.color: cBorderSoft
-                        border.width: 1
-                        RowLayout {
-                            id: refreshContent
-                            anchors.centerIn: parent
-                            spacing: 6
-                            Text { text: "\uebd7"; font.family: "tabler-icons"; font.pixelSize: 14; color: cText }
-                            Text { text: "Refresh"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
-                        }
-                        MouseArea {
-                            id: refreshMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                root.isCheckingUpdates = true;
-                                checkUpdatesProcess.running = true;
-                            }
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: cTextDim
                         }
                     }
 
-                    Pill {
-                        label: root.isCheckingUpdates ? "Checking..." : "Update Now"
-                        active: (root.updateCount - root.ignoredPackages.length) > 0 && !root.isCheckingUpdates
-                        big: true
+                    // Refresh button
+                    Btn {
+                        label: root.isChecking ? "Checking…" : "Refresh"
                         onClicked: {
-                            if (active) {
+                            root.isChecking = true;
+                            checkProc.running = true;
+                        }
+                    }
+
+                    // Update Now button
+                    BtnPrimary {
+                        label: root.isChecking ? "Checking…" : "Update Now"
+                        enabled: (root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking
+                        onClicked: {
+                            if (enabled) {
                                 let cmd = "yay -Syu";
-                                if (root.ignoredPackages.length > 0) {
+                                if (root.ignoredPackages.length > 0)
                                     cmd += " --ignore " + root.ignoredPackages.join(",");
-                                }
-                                Quickshell.execDetached(["bash", "-c", "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
+                                Quickshell.execDetached(["bash", "-c",
+                                    "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
                             }
                         }
                     }
                 }
-                
-                // Category Tabs
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.margins: 16
-                    Layout.topMargin: 0
-                    Layout.bottomMargin: 0
-                    height: 36
-                    radius: 8
-                    color: Qt.rgba(1,1,1,0.04)
-                    
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 4
-                        spacing: 4
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            radius: 6
-                            color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.7) // dimmed a bit as per screenshot
-                            RowLayout {
-                                anchors.centerIn: parent
-                                spacing: 4
-                                Text { text: "All"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cAccentOn }
-                                Text { text: root.updateCount; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(cAccentOn.r, cAccentOn.g, cAccentOn.b, 0.7) }
-                            }
-                        }
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            radius: 6
-                            color: "transparent"
-                            RowLayout {
-                                anchors.centerIn: parent
-                                spacing: 4
-                                Text { text: "System"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
-                                Text { text: root.officialPackages.length; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
-                            }
-                        }
-                        
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            radius: 6
-                            color: "transparent"
-                            RowLayout {
-                                anchors.centerIn: parent
-                                spacing: 4
-                                Text { text: "Quickshell"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
-                                Text { text: "0"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
-                            }
-                        }
 
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            radius: 6
-                            color: "transparent"
-                            RowLayout {
-                                anchors.centerIn: parent
-                                spacing: 4
-                                Text { text: "Hyprland"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
-                                Text { text: "0"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
-                            }
-                        }
+                // Official group
+                RowLayout {
+                    Layout.fillWidth: true; Layout.leftMargin: 16; Layout.rightMargin: 16
+                    Layout.topMargin: 4; Layout.bottomMargin: 4
+                    visible: root.officialPackages.length > 0
+                    spacing: 8
+                    Text {
+                        text: "Official Repositories"; font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11; font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
                     }
-                }
-                
-                // Packages list
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-                    visible: root.updateCount > 0
-                    
-                    // Official label
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 16
-                        Layout.rightMargin: 16
-                        Layout.topMargin: 12
-                        Layout.bottomMargin: 4
-                        visible: root.officialPackages.length > 0
-                        spacing: 8
-                        Text {
-                            text: "OFFICIAL REPOSITORIES"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: 700
-                            font.letterSpacing: 0.8
-                            color: cTextFaint
-                        }
-                        Rectangle {
-                            width: offCountText.implicitWidth + 14
-                            height: 18
-                            radius: 9
-                            color: Qt.rgba(1,1,1,0.06)
-                            Text {
-                                id: offCountText
-                                anchors.centerIn: parent
-                                text: root.officialPackages.length
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 10
-                                color: cTextFaint
-                            }
-                        }
-                    }
-                    
-                    Repeater {
-                        model: root.officialPackages
-                        delegate: PkgRow {
-                            modelData: model
-                            tag: "core"
-                        }
-                    }
-                    
-                    // AUR label
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 16
-                        Layout.rightMargin: 16
-                        Layout.topMargin: 12
-                        Layout.bottomMargin: 4
-                        visible: root.aurPackages.length > 0
-                        spacing: 8
-                        Text {
-                            text: "AUR"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: 700
-                            font.letterSpacing: 0.8
-                            color: cTextFaint
-                        }
-                        Rectangle {
-                            width: aurCountText.implicitWidth + 14
-                            height: 18
-                            radius: 9
-                            color: Qt.rgba(1,1,1,0.06)
-                            Text {
-                                id: aurCountText
-                                anchors.centerIn: parent
-                                text: root.aurPackages.length
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 10
-                                color: cTextFaint
-                            }
-                        }
-                    }
-                    
-                    Repeater {
-                        model: root.aurPackages
-                        delegate: PkgRow {
-                            modelData: model
-                            tag: "AUR"
-                        }
-                    }
-                }
-            }
-
-            // Automation Card
-            NCard {
-                sectionTitle: "Automation"
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uebd1" } // clock icon
-                        RowLabel { label: "Check for updates automatically"; desc: "" }
-                    }
-                    Item { Layout.fillWidth: true }
                     Rectangle {
-                        Layout.preferredHeight: 30
-                        Layout.preferredWidth: 200
-                        radius: 8
-                        color: Qt.rgba(1,1,1,0.06)
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 2
-                            spacing: 2
-                            Rectangle {
-                                Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: "transparent"
-                                Text { anchors.centerIn: parent; text: "Hourly"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cTextDim }
-                            }
-                            Rectangle {
-                                Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: cAccent
-                                Text { anchors.centerIn: parent; text: "Daily"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cAccentOn }
-                            }
-                            Rectangle {
-                                Layout.fillWidth: true; Layout.fillHeight: true; radius: 6; color: "transparent"
-                                Text { anchors.centerIn: parent; text: "Weekly"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 600; color: cTextDim }
-                            }
+                        color: Qt.rgba(1,1,1,0.06); radius: 20
+                        width: offCnt.implicitWidth + 14; height: 18
+                        Text {
+                            id: offCnt; anchors.centerIn: parent
+                            text: root.officialPackages.length
+                            font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
                         }
                     }
                 }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea35" } // bell icon
-                        RowLabel { label: "Notify when updates are available"; desc: "" }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: true }
+
+                Repeater {
+                    model: root.officialPackages
+                    delegate: PkgRow { pkg: modelData; tag: "core"; Layout.fillWidth: true }
                 }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb1d" } // download icon
-                        RowLabel { label: "Download updates in the background"; desc: "" }
+
+                // AUR group
+                RowLayout {
+                    Layout.fillWidth: true; Layout.leftMargin: 16; Layout.rightMargin: 16
+                    Layout.topMargin: 12; Layout.bottomMargin: 4
+                    visible: root.aurPackages.length > 0
+                    spacing: 8
+                    Text {
+                        text: "AUR"; font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11; font.weight: 700; font.letterSpacing: 0.8; color: cTextFaint
                     }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: false }
+                    Rectangle {
+                        color: Qt.rgba(1,1,1,0.06); radius: 20
+                        width: aurCnt.implicitWidth + 14; height: 18
+                        Text {
+                            id: aurCnt; anchors.centerIn: parent
+                            text: root.aurPackages.length
+                            font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: root.aurPackages
+                    delegate: PkgRow { pkg: modelData; tag: "AUR"; Layout.fillWidth: true }
+                }
+
+                // Empty state
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: 60
+                    color: "transparent"
+                    visible: root.updateCount === 0 && !root.isChecking
+                    Text {
+                        anchors.centerIn: parent
+                        text: "✓  System is up to date"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextDim
+                    }
+                }
+
+                // Loading state
+                Rectangle {
+                    Layout.fillWidth: true; implicitHeight: 60
+                    color: "transparent"
+                    visible: root.isChecking
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Checking for updates…"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cTextFaint
+                    }
+                }
+
+                Item { Layout.preferredHeight: 6 }
+            }
+
+            // ── Card 2: Automation ─────────────────────────────────────────
+            Card { sectionTitle: "Automation"
+
+                Row {
+                    RowIcon { icon: "\uebd1" }
+                    ColumnLayout { Layout.fillWidth: true; spacing: 1
+                        Text { text: "Check for updates automatically"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
+                    }
+                    Segmented { options: ["Hourly", "Daily", "Weekly"]; selected: 1 }
+                }
+
+                Row {
+                    RowIcon { icon: "\uea35" }
+                    ColumnLayout { Layout.fillWidth: true; spacing: 1
+                        Text { text: "Notify when updates are available"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
+                    }
+                    Tog { on: true }
+                }
+
+                Row {
+                    RowIcon { icon: "\ueb1d" }
+                    ColumnLayout { Layout.fillWidth: true; spacing: 1
+                        Text { text: "Download updates in the background"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
+                    }
+                    Tog { on: false }
                 }
             }
 
-            // Mirrors Card
-            NCard {
-                sectionTitle: "Mirrors"
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uef76" } // server icon
-                        RowLabel { label: "Mirrorlist"; desc: "Last optimized 2 hours ago · reflector" }
+            // ── Card 3: Mirrors ────────────────────────────────────────────
+            Card { sectionTitle: "Mirrors"
+
+                Row {
+                    RowIcon { icon: "\uef76" }
+                    ColumnLayout { Layout.fillWidth: true; spacing: 2
+                        Text { text: "Mirrorlist"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
+                        Text { text: "Last optimized 2 hours ago · reflector"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextDim }
                     }
-                    Item { Layout.fillWidth: true }
-                    Pill { label: "Optimize Now"; active: false }
+                    Btn { label: "Optimize Now" }
                 }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb1d" } // refresh icon 
-                        RowLabel { label: "Auto-refresh mirrors weekly"; desc: "" }
+
+                Row {
+                    RowIcon { icon: "\uebd7" }
+                    ColumnLayout { Layout.fillWidth: true; spacing: 1
+                        Text { text: "Auto-refresh mirrors weekly"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
                     }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: true }
-                }
-            }
-            
-            // History Card
-            NCard {
-                sectionTitle: "History"
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 9 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "2 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
-                }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 1 package (linux-firmware)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "6 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
-                }
-                
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        Rectangle { width: 7; height: 7; radius: 3.5; color: cSuccess }
-                        Text { text: "Updated 23 packages"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text { text: "14 days ago"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
+                    Tog { on: true }
                 }
             }
 
-            Item { Layout.preferredHeight: 28 }
+            // ── Card 4: History ────────────────────────────────────────────
+            Card { sectionTitle: "History"
+
+                HistoryEntry { dotColor: cSuccess; label: "Updated <b>9 packages</b>"; time: "2 days ago" }
+                HistoryEntry { dotColor: cSuccess; label: "Updated <b>1 package</b> (linux-firmware)"; time: "6 days ago" }
+                HistoryEntry { dotColor: cSuccess; label: "Updated <b>23 packages</b>"; time: "14 days ago" }
+            }
+
+            Item { Layout.preferredHeight: 30 }
+        }
+    }
+
+    // ── History entry sub-component ────────────────────────────────────────
+    component HistoryEntry: Rectangle {
+        property color dotColor: cSuccess
+        property string label: ""
+        property string time: ""
+        Layout.fillWidth: true; implicitHeight: 44; color: "transparent"
+        Rectangle { width: parent.width; height: 1; color: cBorder; anchors.top: parent.top }
+        RowLayout {
+            anchors { fill: parent; leftMargin: 16; rightMargin: 16 }
+            spacing: 12
+            Rectangle { width: 7; height: 7; radius: 4; color: parent.parent.dotColor }
+            Text {
+                Layout.fillWidth: true
+                text: parent.parent.label
+                font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cText
+                textFormat: Text.RichText
+            }
+            Text {
+                text: parent.parent.time
+                font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint
+            }
         }
     }
 }
