@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get official repo updates
-PACMAN_UPDATES=$(checkupdates 2>/dev/null)
+PACMAN_UPDATES=$(yay -Qu --repo 2>/dev/null)
 # Get AUR updates
 AUR_UPDATES=$(yay -Qu --aur 2>/dev/null)
 
