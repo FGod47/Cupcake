@@ -39,7 +39,7 @@ echo
 
 # ──────────────── Variables ────────────────
 SRC="$SCRIPT_DIR/../custom-splash-1080p.bmp"
-DEST="/usr/share/systemd/bootctl/splash-arch.bmp"
+DEST="/usr/share/cupcake/splash.bmp"
 
 # ──────────────── Copy Splash Image ────────────────
 if [ ! -f "$SRC" ]; then
@@ -49,7 +49,9 @@ fi
 
 echo -e "${YELLOW}[INFO]${RESET} Setting up custom boot splash..."
 (
+    sudo mkdir -p "$(dirname "$DEST")"
     sudo cp "$SRC" "$DEST"
+    sudo sed -i "s|--splash [^\"]*|--splash $DEST|" /etc/mkinitcpio.d/linux.preset
 ) & spinner "Injecting custom splash image"
 echo -e "${GREEN}[DONE]${RESET} Splash image installed"
 
