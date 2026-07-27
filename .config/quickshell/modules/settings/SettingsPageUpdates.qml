@@ -4,7 +4,7 @@ import QtQuick.Controls
 import "../../theme"
 import Quickshell.Io
 import Quickshell
-import "../common"
+import "/home/one/.config/quickshell/modules/common"
 
 Item {
     id: root
@@ -37,7 +37,7 @@ Item {
         command: ["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/check-updates.sh"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: text => {
+            onStreamFinished: {
                 try {
                     let d = JSON.parse(text.trim());
                     root.updateCount    = d.total;
