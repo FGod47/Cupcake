@@ -37,7 +37,7 @@ Item {
         command: ["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/check-updates.sh"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: {
+            onStreamFinished: text => {
                 try {
                     let d = JSON.parse(text.trim());
                     root.updateCount    = d.total;
@@ -111,7 +111,7 @@ Item {
                         spacing: 8
                         Text { text: "\ueb10"; font.family: "tabler-icons"; font.pixelSize: 15; color: cTextFaint }
                         TextInput {
-                            Layout.fillWidth: true; color: cText
+                            Layout.fillWidth: true; color: cText; clip: true
                             font.family: Theme.defaultFontFamily; font.pixelSize: 13
                             verticalAlignment: TextInput.AlignVCenter
                             onTextChanged: root.searchQuery = text
@@ -393,7 +393,7 @@ Item {
                         label: "Mirrorlist"
                         desc: "Last optimized 2 hours ago · reflector"
                         Rectangle {
-                            implicitWidth: _optLbl.implicitWidth + 24; implicitHeight: 32; radius: 8
+                            width: _optLbl.implicitWidth + 24; height: 32; radius: 8
                             color: _optMa.containsMouse ? cCardHover : "transparent"
                             border.color: cBorder; border.width: 1
                             Behavior on color { ColorAnimation { duration: 120 } }
@@ -534,6 +534,7 @@ Item {
 
     // Settings row (icon + label + right control)
     component SettingsRow: Rectangle {
+        id: rootRow
         default property alias rowControl: _ctrlSlot.data
         property string icon:  ""
         property string label: ""
@@ -548,14 +549,14 @@ Item {
 
         RowLayout {
             id: _srl
-            anchors { fill: parent; leftMargin: 16; rightMargin: 16; topMargin: 12; bottomMargin: 12 }
+            anchors { left: parent.left; right: parent.right; top: parent.top; leftMargin: 16; rightMargin: 16; topMargin: 12 }
             spacing: 12
 
             // Icon badge
             Rectangle {
                 width: 30; height: 30; radius: 9; color: cIconBg
                 Text {
-                    anchors.centerIn: parent; text: parent.parent.parent.icon
+                    anchors.centerIn: parent; text: rootRow.icon
                     font.family: "tabler-icons"; font.pixelSize: 15; color: cTextDim
                 }
             }
@@ -564,13 +565,13 @@ Item {
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 2
                 Text {
-                    text: parent.parent.parent.label
+                    text: rootRow.label
                     font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText
                 }
                 Text {
-                    text: parent.parent.parent.desc
+                    text: rootRow.desc
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextDim
-                    visible: parent.parent.parent.desc !== ""
+                    visible: rootRow.desc !== ""
                 }
             }
 
@@ -603,21 +604,22 @@ Item {
 
     // Segmented control
     component SegControl: Rectangle {
+        id: rootSeg
         property var options:   []
         property int activeIdx: 1
         color: Qt.rgba(1,1,1,0.06); radius: 8
-        implicitHeight: 30; implicitWidth: 210
+        height: 30; width: 210
 
         RowLayout {
             anchors { fill: parent; margins: 2 }
             spacing: 2
             Repeater {
-                model: parent.parent.options
+                model: rootSeg.options
                 delegate: Rectangle {
                     required property int   index
                     required property string modelData
                     Layout.fillWidth: true; Layout.fillHeight: true; radius: 6
-                    property bool active: index === parent.parent.parent.activeIdx
+                    property bool active: index === rootSeg.activeIdx
                     color: active ? cAccent : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
                     Text {
@@ -628,7 +630,7 @@ Item {
                     }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                        onClicked: parent.parent.parent.parent.activeIdx = parent.index
+                        onClicked: rootSeg.activeIdx = index
                     }
                 }
             }
