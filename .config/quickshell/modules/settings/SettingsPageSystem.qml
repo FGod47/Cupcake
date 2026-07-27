@@ -144,17 +144,27 @@ Item {
     property int updateCount: 0
     property int aurUpdateCount: 0
     property string mirrorSynced: "—"
+    property var updatePackages: []
+    property bool isCheckingUpdates: true
 
     Process {
         id: checkUpdatesProcess
-        command: ["bash", "-c", "checkupdates 2>/dev/null | wc -l"]
+        command: ["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/check-updates.sh"]
         running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) root.updateCount = v; } }
-    }
-    Process {
-        command: ["bash", "-c", "command -v yay >/dev/null && yay -Qua 2>/dev/null | wc -l || echo 0"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) root.aurUpdateCount = v; } }
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let txt = text.trim();
+                    if (txt) {
+                        let data = JSON.parse(txt);
+                        root.updateCount = data.total;
+                        root.aurUpdateCount = data.aur;
+                        root.updatePackages = data.packages;
+                    }
+                } catch(e) { console.log("Update parse error:", e); }
+                root.isCheckingUpdates = false;
+            }
+        }
     }
 
     // Quickshell
@@ -691,16 +701,24 @@ Item {
                         spacing: 12
                         NIconBadge { icon: "\ueb1d"}
                         RowLabel {
-                            label: root.updateCount + " packages can be updated"
-                            desc: root.aurUpdateCount + " from the AUR · mirrorlist synced 2h ago"
+                            label: root.isCheckingUpdates ? "Checking for updates..." : (root.updateCount + " packages can be updated")
+                            desc: root.isCheckingUpdates ? "Please wait" : (root.aurUpdateCount + " from the AUR")
                         }
                     }
                     Item { Layout.fillWidth: true }
                     Pill {
+                        label: "Refresh"
+                        active: false
+                        onClicked: {
+                            root.isCheckingUpdates = true;
+                            checkUpdatesProcess.running = true;
+                        }
+                    }
+                    Pill {
                         label: "Update now"
                         active: true
                         big: true
-                        onClicked: Quickshell.execDetached(["bash", "-c", "kitty -e sh -c 'sudo pacman -Syu; read -p \"Press enter to close\"'"])
+                        onClicked: Quickshell.execDetached(["bash", "-c", "kitty -e sh -c 'yay -Syu; read -p \"Press enter to close\"'"])
                     }
                 }
 
@@ -710,20 +728,17 @@ Item {
                     Layout.leftMargin: 0
                     Layout.rightMargin: 0
                     spacing: 0
+                    visible: !root.isCheckingUpdates && root.updateCount > 0
 
                     Repeater {
-                        model: [
-                            { name: "linux",           old: "6.10.2", ver: "6.10.3" },
-                            { name: "mesa",            old: "24.1.4", ver: "24.1.5" },
-                            { name: "quickshell-git",  old: "r412",   ver: "r418"   }
-                        ]
+                        model: root.updatePackages
                         delegate: RowLayout {
                             required property var modelData
                             Layout.fillWidth: true
                             spacing: 0
 
                             Text {
-                                text: modelData.name
+                                text: modelData.name + (modelData.aur ? " (AUR)" : "")
                                 font.family: Theme.monoFontFamily
                                 font.pixelSize: 12
                                 color: cText
