@@ -21,6 +21,15 @@ while true; do
     STATUS=$(cat /sys/class/power_supply/$BATTERY/status)
 
     if [ "$STATUS" = "Discharging" ]; then
+        # automatic battery savings: lower refresh rate immediately
+        if [ "$REFRESH_DROPPED" != "true" ] && [ ! -f "$HOME/.config/cupcake/disable_lower_refresh" ]; then
+            for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
+                # use 60Hz mode by default
+                hyprctl keyword monitor "$monitor,preferred,auto,1,transform,0,bitdepth,8"
+            done
+            REFRESH_DROPPED="true"
+        fi
+
         if [ -f "$HOME/.config/cupcake/disable_battery_warnings" ]; then
             # Do nothing if warnings are disabled
             :
@@ -43,6 +52,14 @@ while true; do
             WARNING_20=false
             WARNING_10=false
             WARNING_5=false
+            
+            # Restore max refresh rate
+            if [ "$REFRESH_DROPPED" = "true" ]; then
+                for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
+                    hyprctl keyword monitor "$monitor,highrr,auto,1"
+                done
+                REFRESH_DROPPED="false"
+            fi
         fi
     fi
 

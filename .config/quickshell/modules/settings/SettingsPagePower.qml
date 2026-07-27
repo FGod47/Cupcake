@@ -40,6 +40,10 @@ Item {
     property string aspm: "Powersave"
     property string powerBackend: "power-profiles-daemon"
 
+    function applyHypridle() {
+        Quickshell.execDetached(["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/update-hypridle.sh", root.dimScreen.toString(), root.offScreen.toString(), root.suspendBat.toString(), root.suspendAc.toString()])
+    }
+
     Process {
         id: batCommand
         command: ["bash", "-c", "bat=$(ls /sys/class/power_supply | grep -i bat | head -n 1); if [ -n \"$bat\" ]; then echo \"$(cat /sys/class/power_supply/$bat/capacity)|$(cat /sys/class/power_supply/$bat/status)\"; else echo 'No Battery'; fi"]
@@ -268,6 +272,7 @@ Item {
                             from: 1; to: 15
                             value: root.dimScreen
                             onMoved: root.dimScreen = value
+                            onPressedChanged: if(!pressed) root.applyHypridle()
                         }
                         Text { text: root.dimScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
@@ -290,6 +295,7 @@ Item {
                             from: 1; to: 30
                             value: root.offScreen
                             onMoved: root.offScreen = value
+                            onPressedChanged: if(!pressed) root.applyHypridle()
                         }
                         Text { text: root.offScreen + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
@@ -331,6 +337,7 @@ Item {
                             from: 5; to: 60
                             value: root.suspendBat
                             onMoved: root.suspendBat = value
+                            onPressedChanged: if(!pressed) root.applyHypridle()
                         }
                         Text { text: root.suspendBat + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
@@ -353,6 +360,7 @@ Item {
                             from: 5; to: 120
                             value: root.suspendAc
                             onMoved: root.suspendAc = value
+                            onPressedChanged: if(!pressed) root.applyHypridle()
                         }
                         Text { text: root.suspendAc + "m"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
                     }
