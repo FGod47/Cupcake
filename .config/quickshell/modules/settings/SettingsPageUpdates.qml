@@ -4,7 +4,7 @@ import QtQuick.Controls
 import "../../theme"
 import Quickshell.Io
 import Quickshell
-import "/home/one/.config/quickshell/modules/common"
+import "../common"
 
 Item {
     id: root
