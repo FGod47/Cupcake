@@ -31,6 +31,9 @@ Item {
     property bool   isChecking:       true
     property string searchQuery:      ""
     property bool   showProgress:     false
+    property bool   isAwaitingPassword:false
+    property bool   authFailed:       false
+    property bool   isUpdating:       false
     property string updateLogLines:   ""
     property string progressMsg:      "Preparing transaction..."
     property string progressPct:      "0%"
@@ -65,9 +68,60 @@ Item {
             root.progressPct = "100%";
             root.progressVal = 1.0;
             root.updateLogLines += "\n✓ All packages updated successfully";
+            root.isUpdating = false;
             // Refresh list
             root.isChecking = true;
             checkProc.running = true;
+        }
+    }
+
+    Process {
+        id: checkSudoProc
+        command: ["sudo", "-n", "true"]
+        onExited: (code) => {
+            if (code === 0) {
+                root.isAwaitingPassword = false;
+                root.progressMsg = "Preparing transaction...";
+                let cmd = "yay -Syu --noconfirm";
+                if (root.ignoredPackages.length > 0)
+                    cmd += " --ignore " + root.ignoredPackages.join(",");
+                
+                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                updateProc.command = ["bash", "-c", wrapperCmd];
+                updateProc.running = true;
+            } else {
+                root.isAwaitingPassword = true;
+                root.progressMsg = "Authentication required";
+            }
+        }
+    }
+
+    Process {
+        id: authProc
+        property string pwd: ""
+        command: ["sudo", "-S", "-v"]
+        stdinEnabled: true
+        onStarted: {
+            write(pwd + "\n");
+            // Clear password immediately from memory
+            pwd = "";
+        }
+        onExited: (code) => {
+            pwdInput.text = "";
+            if (code === 0) {
+                root.isAwaitingPassword = false;
+                root.progressMsg = "Preparing transaction...";
+                let cmd = "yay -Syu --noconfirm";
+                if (root.ignoredPackages.length > 0)
+                    cmd += " --ignore " + root.ignoredPackages.join(",");
+                
+                let wrapperCmd = "script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
+                updateProc.command = ["bash", "-c", wrapperCmd];
+                updateProc.running = true;
+            } else {
+                root.progressMsg = "Authentication failed. Try again.";
+                root.authFailed = true;
+            }
         }
     }
 
@@ -261,19 +315,15 @@ Item {
                             onClicked: {
                                 if ((root.updateCount - root.ignoredPackages.length) > 0 && !root.isChecking && !root.showProgress) {
                                     root.showProgress = true;
+                                    root.isUpdating = true;
+                                    root.isAwaitingPassword = false;
+                                    root.authFailed = false;
                                     root.updateLogLines = "";
-                                    root.progressMsg = "Preparing transaction...";
+                                    root.progressMsg = "Checking authentication...";
                                     root.progressPct = "0%";
                                     root.progressVal = 0.0;
                                     
-                                    let cmd = "yay -Syu --noconfirm";
-                                    if (root.ignoredPackages.length > 0)
-                                        cmd += " --ignore " + root.ignoredPackages.join(",");
-                                    
-                                    let wrapperCmd = "if ! sudo -n true 2>/dev/null; then SUDO_ASKPASS=~/.config/quickshell/modules/settings/zenity_askpass.sh sudo -A -v || exit 1; fi; script -qec '" + cmd + "' /dev/null | tr '\\r' '\\n' | sed -u $'s/\x1b\\[[0-9;]*[a-zA-Z]//g'";
-                                    
-                                    updateProc.command = ["bash", "-c", wrapperCmd];
-                                    updateProc.running = true;
+                                    checkSudoProc.running = true;
                                 }
                             }
                         }
@@ -327,9 +377,43 @@ Item {
                             }
                         }
                         
+                        // Password Input
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            visible: root.isAwaitingPassword
+                            spacing: 8
+                            Text {
+                                text: "Authentication required to update system packages:"
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 13; color: cText
+                            }
+                            TextField {
+                                id: pwdInput
+                                Layout.fillWidth: true; Layout.preferredHeight: 36
+                                echoMode: TextInput.Password
+                                placeholderText: "Enter sudo password..."
+                                color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13
+                                background: Rectangle { color: Qt.rgba(0,0,0,0.2); radius: 6; border.color: pwdInput.activeFocus ? cAccent : cBorder; border.width: 1 }
+                                onVisibleChanged: { if (visible) { forceActiveFocus(); } }
+                                onAccepted: {
+                                    if (pwdInput.text !== "") {
+                                        root.authFailed = false;
+                                        authProc.pwd = pwdInput.text;
+                                        authProc.running = true;
+                                        root.progressMsg = "Authenticating...";
+                                    }
+                                }
+                            }
+                            Text {
+                                visible: root.authFailed
+                                text: "Authentication failed. Please try again."
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: "#ff5555"
+                            }
+                        }
+                        
                         // Progress bar
                         Rectangle {
                             Layout.fillWidth: true; height: 4; radius: 2; color: cCard
+                            visible: !root.isAwaitingPassword
                             Rectangle {
                                 height: 4; radius: 2; color: cAccent
                                 width: parent.width * root.progressVal
@@ -340,6 +424,7 @@ Item {
                         // Log box
                         Rectangle {
                             Layout.fillWidth: true; implicitHeight: 140
+                            visible: !root.isAwaitingPassword
                             color: Qt.rgba(0,0,0,0.2); radius: 8
                             border.color: cBorder; border.width: 1
                             clip: true
