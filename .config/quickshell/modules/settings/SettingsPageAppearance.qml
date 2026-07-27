@@ -8,8 +8,7 @@ import "../common"
 
 Item {
     id: root
-    Process { id: bashProcess }
-    
+
     // Properties simulating the backend state for this page
     property color cText: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
     property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
@@ -106,6 +105,7 @@ Item {
     property real settingsOpacity: 0.80
     property real ccOpacity: 0.85
     property string wallpaperSwitcherStyle: "Carousel"
+    property real   osdOpacity: 0.85
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.wallpaper_switcher_style"]
@@ -234,7 +234,7 @@ Item {
         }
     }
 
-    property string accentScriptPath: "#!/config/quickshell-glasscract-accent.sh"
+    property string accentScriptPath: Quickshell.env("HOME") + "/.config/cupcake/scripts/set-accent.sh"
 
     // =====================================================================
     // Reusable inline components
@@ -682,7 +682,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 1; to: 5; stepSize: 1
                             value: root.blurPasses
-                            onValueChanged: { root.blurPasses = value; }
+                            onValueChanged: { root.blurPasses = Math.round(value); }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "sed -i 's/^BLUR_PASSES=.*/BLUR_PASSES=" + Math.round(root.blurPasses) + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);

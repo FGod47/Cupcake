@@ -7,7 +7,7 @@ Rectangle {
     default property alias content: cardCol.data
     property string sectionTitle: ""
     Layout.fillWidth: true
-    implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 28 : 32)
+    implicitHeight: cardCol.implicitHeight + (cardHeader.visible ? cardHeader.height + 44 : 32)
     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
     radius: 20
     border.width: 0
