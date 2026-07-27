@@ -58,15 +58,20 @@ Item {
     // ────────────────────────────────────────────────────────────────────────
     //  MAIN SCROLL AREA
     // ────────────────────────────────────────────────────────────────────────
-    Flickable {
+    ScrollView {
+        id: scrollView
         anchors.fill: parent
-        contentHeight: mainCol.implicitHeight + 40
+        anchors.bottomMargin: 28
+        leftPadding: 26
+        rightPadding: 26
+        contentWidth: availableWidth
         clip: true
-        boundsBehavior: Flickable.StopAtBounds
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ColumnLayout {
             id: mainCol
-            anchors { top: parent.top; left: parent.left; right: parent.right; margins: 26 }
+            width: parent.width
             spacing: 14
 
             // ── PAGE HEAD ─────────────────────────────────────────────────
