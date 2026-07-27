@@ -26,19 +26,12 @@ Item {
         }
     }
     property int saverThreshold: 20
-    property bool cpuBoost: true
     property int dimScreen: 3
     property int offScreen: 8
     property bool lowerRefresh: true
     property int suspendBat: 15
     property int suspendAc: 45
     property string lidAction: "Sleep"
-    property string criticalBat: "Hibernate"
-    property bool limitCharge: true
-    property int chargeLimit: 80
-    property bool usbAutosuspend: true
-    property string aspm: "Powersave"
-    property string powerBackend: "power-profiles-daemon"
 
     function applyHypridle() {
         Quickshell.execDetached(["bash", Quickshell.env("HOME") + "/.config/cupcake/scripts/update-hypridle.sh", root.dimScreen.toString(), root.offScreen.toString(), root.suspendBat.toString(), root.suspendAc.toString()])
@@ -236,19 +229,6 @@ Item {
                     }
                 }
 
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea74" } // cpu
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "CPU boost"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                            Text { text: "Allow short bursts above base clock"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: root.cpuBoost; onToggled: (val) => root.cpuBoost = val }
-                }
             }
 
             // SCREEN & DISPLAY
@@ -392,116 +372,8 @@ Item {
                     }
                 }
 
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueafa" } // battery-off
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "On critical battery"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    SegmentedControl {
-                        options: ["Suspend", "Hibernate", "Shut Down"]
-                        current: root.criticalBat
-                        onSelected: (val) => root.criticalBat = val
-                    }
-                }
             }
 
-            // CHARGING
-            NCard {
-                sectionTitle: "Charging"
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb51"} // plug
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Limit charging to extend battery life"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: root.limitCharge; onToggled: (val) => root.limitCharge = val }
-                }
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea4c" } // battery-charging
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Charge limit"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 12
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 50; to: 100
-                            value: root.chargeLimit
-                            onMoved: root.chargeLimit = value
-                        }
-                        Text { text: root.chargeLimit + "%"; font.family: Theme.monoFontFamily; font.pixelSize: 12; color: Theme.colOnSurfaceVariant; Layout.preferredWidth: 34; horizontalAlignment: Text.AlignRight }
-                    }
-                }
-            }
-
-            // ADVANCED
-            NCard {
-                sectionTitle: "Advanced"
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb39" } // usb
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "USB autosuspend"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                            Text { text: "Power down idle USB devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Theme.colOnSurfaceVariant }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle { checked: root.usbAutosuspend; onToggled: (val) => root.usbAutosuspend = val }
-                }
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea74" } // cpu
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "PCIe power management (ASPM)"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    SegmentedControl {
-                        options: ["Default", "Powersave", "Performance"]
-                        current: root.aspm
-                        onSelected: (val) => root.aspm = val
-                    }
-                }
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb18" } // server / refresh
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Power management backend"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.colOnSurface }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    SegmentedControl {
-                        options: ["power-profiles-daemon", "TLP"]
-                        current: root.powerBackend
-                        onSelected: (val) => root.powerBackend = val
-                    }
-                }
-            }
 
         }
     }
