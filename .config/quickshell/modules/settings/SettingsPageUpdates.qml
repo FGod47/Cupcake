@@ -122,15 +122,16 @@ Item {
         signal clicked()
         width: 16
         height: 16
-        radius: 5
+        radius: 4
         color: checked ? cAccent : "transparent"
-        border.color: checked ? cAccent : cTextFaint
+        border.color: checked ? cAccent : cTextDim
         border.width: checked ? 0 : 1.5
         Text {
             anchors.centerIn: parent
             text: "\uea5e" // check icon
             font.family: "tabler-icons"
             font.pixelSize: 11
+            font.weight: 700
             color: cAccentOn
             visible: parent.checked
         }
@@ -203,6 +204,16 @@ Item {
                 Text { text: modelData && modelData.old ? modelData.old : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 Text { text: "→"; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cTextFaint }
                 Text { text: modelData && modelData.ver ? modelData.ver : ""; font.family: Theme.monoFontFamily; font.pixelSize: 11; color: cAccent; font.weight: 600 }
+            }
+            
+            Text {
+                text: "12 MB"
+                font.family: Theme.monoFontFamily
+                font.pixelSize: 11
+                color: cTextFaint
+                Layout.alignment: Qt.AlignRight
+                Layout.preferredWidth: 48
+                horizontalAlignment: Text.AlignRight
             }
         }
         MouseArea {
@@ -345,18 +356,20 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.margins: 16
-                    spacing: 12
+                    spacing: 16
                     
                     Rectangle {
-                        width: 36
-                        height: 36
-                        radius: 11
-                        color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.16)
+                        width: 44
+                        height: 44
+                        radius: 12
+                        color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.1)
+                        border.color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.2)
+                        border.width: 1
                         Text {
                             anchors.centerIn: parent
-                            text: "\ueb1d" // download icon
+                            text: "\uebd7" // reload icon
                             font.family: "tabler-icons"
-                            font.pixelSize: 17
+                            font.pixelSize: 22
                             color: cAccent
                         }
                     }
@@ -367,7 +380,7 @@ Item {
                         Text {
                             text: (root.updateCount - root.ignoredPackages.length) + " packages selected"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 14
+                            font.pixelSize: 15
                             font.weight: 700
                             color: cText
                         }
@@ -379,14 +392,32 @@ Item {
                         }
                     }
                     
-                    Pill {
-                        label: "Refresh"
-                        active: false
-                        onClicked: {
-                            root.isCheckingUpdates = true;
-                            checkUpdatesProcess.running = true;
+                    Rectangle {
+                        Layout.preferredHeight: 34
+                        Layout.preferredWidth: refreshContent.implicitWidth + 24
+                        radius: 8
+                        color: refreshMa.containsMouse ? cBgHover : "transparent"
+                        border.color: cBorderSoft
+                        border.width: 1
+                        RowLayout {
+                            id: refreshContent
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Text { text: "\uebd7"; font.family: "tabler-icons"; font.pixelSize: 14; color: cText }
+                            Text { text: "Refresh"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cText }
+                        }
+                        MouseArea {
+                            id: refreshMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.isCheckingUpdates = true;
+                                checkUpdatesProcess.running = true;
+                            }
                         }
                     }
+
                     Pill {
                         label: root.isCheckingUpdates ? "Checking..." : "Update Now"
                         active: (root.updateCount - root.ignoredPackages.length) > 0 && !root.isCheckingUpdates
@@ -398,6 +429,75 @@ Item {
                                     cmd += " --ignore " + root.ignoredPackages.join(",");
                                 }
                                 Quickshell.execDetached(["bash", "-c", "kitty -e sh -c '" + cmd + "; read -p \"Press enter to close\"'"]);
+                            }
+                        }
+                    }
+                }
+                
+                // Category Tabs
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.margins: 16
+                    Layout.topMargin: 0
+                    Layout.bottomMargin: 0
+                    height: 36
+                    radius: 8
+                    color: Qt.rgba(1,1,1,0.04)
+                    
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        spacing: 4
+                        
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 6
+                            color: Qt.rgba(cAccent.r, cAccent.g, cAccent.b, 0.7) // dimmed a bit as per screenshot
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                Text { text: "All"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cAccentOn }
+                                Text { text: root.updateCount; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(cAccentOn.r, cAccentOn.g, cAccentOn.b, 0.7) }
+                            }
+                        }
+                        
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 6
+                            color: "transparent"
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                Text { text: "System"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
+                                Text { text: root.officialPackages.length; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
+                            }
+                        }
+                        
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 6
+                            color: "transparent"
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                Text { text: "Quickshell"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
+                                Text { text: "0"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 6
+                            color: "transparent"
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                Text { text: "Hyprland"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; color: cTextDim }
+                                Text { text: "0"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: cTextFaint }
                             }
                         }
                     }
