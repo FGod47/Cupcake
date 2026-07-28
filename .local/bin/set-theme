@@ -74,7 +74,7 @@ if command -v ffmpeg &>/dev/null; then
 else
     cp "$WALLPAPER" /tmp/matugen_input.png
 fi
-matugen image "/tmp/matugen_input.png" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --prefer saturation
 
 # Apply KDE colors dynamically
 ~/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant "scheme-$SCHEME" || true
