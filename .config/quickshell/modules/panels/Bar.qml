@@ -287,15 +287,16 @@ PanelWindow {
 
                     // Compact Hotspot Badge (Icon by default, expands text on hover)
                     Row {
-                        spacing: 3
+                        spacing: 4
                         visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
-                            width: 1
-                            height: 12
+                            width: 3
+                            height: 3
+                            radius: 1.5
                             color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
-                            opacity: 0.35
+                            opacity: 0.5
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -318,15 +319,16 @@ PanelWindow {
 
                     // Compact Bluetooth Badge (Icon by default, expands device name on hover)
                     Row {
-                        spacing: 3
+                        spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
-                            width: 1
-                            height: 12
+                            width: 3
+                            height: 3
+                            radius: 1.5
                             color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
-                            opacity: 0.35
+                            opacity: 0.5
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -347,12 +349,13 @@ PanelWindow {
                         }
                     }
                     
-                    // Separator before speed
+                    // Dot separator before speed
                     Rectangle {
-                        width: 1
-                        height: 12
+                        width: 3
+                        height: 3
+                        radius: 1.5
                         color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
-                        opacity: 0.35
+                        opacity: 0.5
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
