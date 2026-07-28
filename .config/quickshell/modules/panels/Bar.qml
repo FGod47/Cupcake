@@ -356,15 +356,16 @@ PanelWindow {
                         }
                     }
 
-                    // 3b. Disconnected Badge (no wifi, no wired)
+                    // 3b. Disconnected Wi-Fi Badge (wifi adapter present but not connected)
                     Text {
                         text: "\uecfa"
-                        color: Qt.rgba(Theme.colOnPrimary.r, Theme.colOnPrimary.g, Theme.colOnPrimary.b, 0.5)
+                        color: Theme.colOnPrimary
+                        opacity: 0.5
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight
                         font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: !networkPill.isWifi && !networkPill.isWired && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: !networkPill.isWifi && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
                     // 4. Wired Badge
