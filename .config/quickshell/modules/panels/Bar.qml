@@ -231,7 +231,7 @@ PanelWindow {
             visible: true
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
-            // Network Pil            // Network Pill — Frosted Onyx Glass Design
+            // Network Pill
             Rectangle {
                 id: networkPill
                 
@@ -240,30 +240,15 @@ PanelWindow {
                 property bool hotspotActive: false
                 property bool btPowered: false
                 property string btConnectedDevice: ""
-                property int signalPct: 78
-                property string ipAddress: "192.168.1.1"
                 property bool isHovered: netHoverArea.containsMouse
-                property bool isPinned: false
-                property color iceColor: "#bcd8ff"
-                property color warnColor: "#e8c07a"
-                property color glassFill: Qt.rgba(255, 255, 255, 0.035)
-                property color glassFillHover: Qt.rgba(255, 255, 255, 0.075)
-                property color hairColor: Qt.rgba(255, 255, 255, 0.12)
-                property color inkBright: Qt.rgba(236, 238, 241, 0.95)
-                property color inkMid: Qt.rgba(232, 234, 238, 0.65)
-                property color inkDim: Qt.rgba(232, 234, 238, 0.45)
                 
-                color: isHovered ? glassFillHover : glassFill
-                radius: 19
-                implicitHeight: 38
-                implicitWidth: (isHovered || isPinned) ? networkRow.implicitWidth + 30 : 38
+                color: isWired ? Theme.colPrimary : (isWifi ? Theme.colSecondary : Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity))
+                radius: 18
+                implicitHeight: 34
+                implicitWidth: networkRow.implicitWidth + 24
                 Layout.alignment: Qt.AlignVCenter
-
-                border.width: 1
-                border.color: isHovered ? Qt.rgba(255, 255, 255, 0.20) : hairColor
-
-                Behavior on implicitWidth { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                Behavior on color { ColorAnimation { duration: 250 } }
+                Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                Behavior on color { ColorAnimation { duration: 300 } }
                 property real lastRx: 0
                 property real lastTx: 0
 
@@ -272,146 +257,144 @@ PanelWindow {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: networkPill.isPinned = !networkPill.isPinned
                 }
                 
                 Row {
                     id: networkRow
                     anchors.centerIn: parent
-                    spacing: 8
+                    spacing: 6
 
                     // Main Network Icon
                     Text {
                         id: networkIcon
                         text: "\ueb52"
-                        color: (networkPill.isWifi || networkPill.isWired || networkPill.hotspotActive) ? networkPill.iceColor : networkPill.inkDim
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                         font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: 15
+                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    // 4-Bar Wi-Fi Signal Strength Indicator
-                    Row {
-                        spacing: 2
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWifi && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-
-                        Rectangle { width: 2.5; height: 4; radius: 1; color: networkPill.signalPct >= 25 ? networkPill.iceColor : networkPill.inkDim; opacity: networkPill.signalPct >= 25 ? 1 : 0.3 }
-                        Rectangle { width: 2.5; height: 6; radius: 1; color: networkPill.signalPct >= 50 ? networkPill.iceColor : networkPill.inkDim; opacity: networkPill.signalPct >= 50 ? 1 : 0.3 }
-                        Rectangle { width: 2.5; height: 8.5; radius: 1; color: networkPill.signalPct >= 75 ? networkPill.iceColor : networkPill.inkDim; opacity: networkPill.signalPct >= 75 ? 1 : 0.3 }
-                        Rectangle { width: 2.5; height: 11; radius: 1; color: networkPill.signalPct >= 90 ? networkPill.iceColor : networkPill.inkDim; opacity: networkPill.signalPct >= 90 ? 1 : 0.3 }
-                    }
-
-                    // Network SSID / Label
+                    // Main Network Name (shows on hover or when single active)
                     Text {
                         id: networkText
                         text: ""
-                        color: (networkPill.isWifi || networkPill.isWired || networkPill.hotspotActive) ? networkPill.inkBright : networkPill.inkDim
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                         font.family: Theme.defaultFontFamily
-                        font.weight: Font.Medium; font.pixelSize: 12
+                        font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== "" && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: text !== "" && (networkPill.isHovered || (!networkPill.hotspotActive && !networkPill.btPowered)) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // Compact Hotspot Badge
+                    // Compact Hotspot Badge (Icon by default, expands text on hover)
                     Row {
                         spacing: 4
-                        visible: networkPill.hotspotActive && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
-                            width: 3; height: 3; radius: 1.5
-                            color: networkPill.iceColor; opacity: 0.6
+                            width: 3
+                            height: 3
+                            radius: 1.5
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            opacity: 0.5
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Text {
                             text: "\ued1b"
-                            color: networkPill.iceColor
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                             font.family: fontName
-                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
                             text: "Hotspot"
-                            color: networkPill.inkMid
+                            visible: networkPill.isHovered
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11
+                            font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
-                    // Compact Bluetooth Badge
+                    // Compact Bluetooth Badge (Icon by default, expands device name on hover)
                     Row {
                         spacing: 4
-                        visible: networkPill.btPowered && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
 
                         Rectangle {
-                            width: 3; height: 3; radius: 1.5
-                            color: networkPill.iceColor; opacity: 0.6
+                            width: 3
+                            height: 3
+                            radius: 1.5
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            opacity: 0.5
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Text {
                             text: networkPill.btConnectedDevice !== "" ? "\ueb68" : "\ueb5f"
-                            color: networkPill.btConnectedDevice !== "" ? networkPill.iceColor : networkPill.inkMid
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                             font.family: fontName
-                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
                             text: networkPill.btConnectedDevice !== "" ? networkPill.btConnectedDevice : "BT"
-                            color: networkPill.inkMid
+                            visible: networkPill.isHovered
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11
+                            font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
                     
-                    // Glass hair divider
+                    // Dot separator before speed
                     Rectangle {
-                        width: 1; height: 14
-                        color: networkPill.hairColor
+                        width: 3
+                        height: 3
+                        radius: 1.5
+                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                        opacity: 0.5
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
                     
-                    // Live Throughput Speed Badges
+                    // Compact Speed Badges
                     Row {
-                        spacing: 3
+                        spacing: 2
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
 
                         Text {
                             text: "\uea16"
-                            color: networkPill.inkMid
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                             font.family: fontName
-                            font.pixelSize: 11
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 3
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
                             id: rxSpeedText
                             text: "0K"
-                            color: networkPill.inkBright
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
+                        Item { width: 2; height: 1 }
                         Text {
                             text: "\uea25"
-                            color: networkPill.inkMid
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                             font.family: fontName
-                            font.pixelSize: 11
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 3
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
                             id: txSpeedText
                             text: "0K"
-                            color: networkPill.inkBright
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -419,7 +402,7 @@ PanelWindow {
                 
                 Process {
                     id: networkProc
-                    command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d; echo '---'; nmcli -t -f ACTIVE,SIGNAL,SSID dev wifi | grep '^yes'"]
+                    command: ["nmcli", "-t", "-f", "TYPE,STATE,CONNECTION", "d"]
                     stdout: StdioCollector {
                         onStreamFinished: () => {
                             if (!text) {
@@ -427,8 +410,7 @@ PanelWindow {
                                 networkText.text = "Disconnected"
                                 return;
                             }
-                            const sections = text.trim().split("---");
-                            const lines = sections[0].trim().split("\n");
+                            const lines = text.trim().split("\n");
                             let activeWifi = "";
                             let activeEthernet = false;
                             let hotspotActive = false;
@@ -439,20 +421,13 @@ PanelWindow {
                                     if (parts[0] === "wifi" && parts[1] === "connected") {
                                         const connName = parts.slice(2).join(":");
                                         if (connName.toLowerCase() === "hotspot") {
-                                            hotspotActive = true;
+                                            hotspotActive = true; // Our own hotspot — don't show as Wi-Fi
                                         } else {
                                             activeWifi = connName;
                                         }
                                     } else if (parts[0] === "ethernet" && parts[1] === "connected") {
                                         activeEthernet = true;
                                     }
-                                }
-                            }
-
-                            if (sections.length > 1 && sections[1].trim() !== "") {
-                                const sigParts = sections[1].trim().split(":");
-                                if (sigParts.length >= 2) {
-                                    networkPill.signalPct = parseInt(sigParts[1]) || 75;
                                 }
                             }
 
@@ -471,7 +446,7 @@ PanelWindow {
                             } else if (hotspotActive) {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
-                                networkIcon.text = "\ued1b";
+                                networkIcon.text = "\ued1b"; // hotspot icon
                                 networkText.text = "Hotspot";
                             } else {
                                 networkPill.isWifi = false;
@@ -484,7 +459,7 @@ PanelWindow {
                 }
                 
                 Timer {
-                    interval: 2500; running: true; repeat: true
+                    interval: 2000; running: true; repeat: true
                     onTriggered: networkProc.running = true
                 }
 
@@ -557,6 +532,7 @@ PanelWindow {
                     interval: 1000; running: true; repeat: true
                     onTriggered: speedProc.running = true
                 }
+
             }
 
             // Hardware Pill
