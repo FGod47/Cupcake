@@ -288,6 +288,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
+                            visible: networkPill.isHovered
                         }
                     }
 
@@ -314,7 +315,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: networkPill.btConnectedDevice !== ""
+                            visible: networkPill.isHovered && networkPill.btConnectedDevice !== ""
                         }
                     }
 
@@ -346,7 +347,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: text !== ""
+                            visible: networkPill.isHovered && text !== ""
                         }
                     }
 
@@ -372,6 +373,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
+                            visible: networkPill.isHovered
                         }
                     }
 
@@ -382,14 +384,14 @@ PanelWindow {
                         color: Theme.colOnPrimary
                         opacity: 0.3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
                     // Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
 
                         Text {
                             id: rxSpeedText
