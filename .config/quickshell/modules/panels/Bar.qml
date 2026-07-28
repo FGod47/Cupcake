@@ -237,6 +237,8 @@ PanelWindow {
                 
                 property bool isWifi: false
                 property bool isWired: false
+                property bool hotspotActive: false
+                property string activeWifiName: ""
                 property bool btPowered: false
                 property string btConnectedDevice: ""
                 property int signalPct: 78
@@ -263,6 +265,31 @@ PanelWindow {
                     id: networkRow
                     anchors.centerIn: parent
                     spacing: 6
+
+                    // 1. Hotspot Badge
+                    Row {
+                        spacing: 4
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Text {
+                            text: "\ued1b"
+                            color: Theme.colOnPrimary
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        
+                        Text {
+                            text: "Hotspot"
+                            color: Theme.colOnPrimary
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold
+                            font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
 
 
                     // 2. Bluetooth Badge
@@ -291,23 +318,19 @@ PanelWindow {
                         }
                     }
 
-                    // 3. Primary Network Badge (Wi-Fi/LAN)
+                    // 3. Wi-Fi Badge
                     Row {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
+                        visible: networkPill.isWifi && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         
                         Text {
-                            id: networkIcon
                             text: {
-                                if (networkPill.isWired) return "\uebd9";
-                                if (networkPill.isWifi) {
-                                    let pct = networkPill.signalPct;
-                                    if (pct >= 75) return "\ueb52";      // wifi
-                                    if (pct >= 50) return "\ueba5";      // wifi-2
-                                    if (pct >= 25) return "\ueba4";      // wifi-1
-                                    return "\ueba3";                     // wifi-0
-                                }
-                                return "\uecfa";                         // disconnected / wifi-off
+                                let pct = networkPill.signalPct;
+                                if (pct >= 75) return "\ueb52";      // wifi
+                                if (pct >= 50) return "\ueba5";      // wifi-2
+                                if (pct >= 25) return "\ueba4";      // wifi-1
+                                return "\ueba3";                     // wifi-0
                             }
                             color: Theme.colOnPrimary
                             font.family: fontName
@@ -317,14 +340,38 @@ PanelWindow {
                         }
 
                         Text {
-                            id: networkText
-                            text: ""
+                            text: networkPill.activeWifiName
                             color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                            visible: text !== ""
+                        }
+                    }
+
+                    // 4. Wired Badge
+                    Row {
+                        spacing: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkPill.isWired && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        
+                        Text {
+                            text: "\uebd9"
+                            color: Theme.colOnPrimary
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: "Wired"
+                            color: Theme.colOnPrimary
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold
+                            font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -335,14 +382,14 @@ PanelWindow {
                         color: Theme.colOnPrimary
                         opacity: 0.3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
                     // Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
 
                         Text {
                             id: rxSpeedText
@@ -365,7 +412,7 @@ PanelWindow {
                             if (!text) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
-                                networkText.text = "Disconnected";
+                                networkPill.activeWifiName = "";
                                 return;
                             }
                             const sections = text.trim().split("---");
@@ -391,19 +438,10 @@ PanelWindow {
                                 }
                             }
 
-                            if (activeWifi !== "") {
-                                networkPill.isWifi = true;
-                                networkPill.isWired = false;
-                                networkText.text = activeWifi;
-                            } else if (activeEthernet) {
-                                networkPill.isWifi = false;
-                                networkPill.isWired = true;
-                                networkText.text = "Wired";
-                            } else {
-                                networkPill.isWifi = false;
-                                networkPill.isWired = false;
-                                networkText.text = "Disconnected";
-                            }
+                            networkPill.isWifi = (activeWifi !== "");
+                            networkPill.isWired = activeEthernet;
+                            networkPill.activeWifiName = activeWifi;
+                            networkPill.hotspotActive = (activeWifi.toLowerCase().includes("hotspot"));
                         }
                     }
                 }
