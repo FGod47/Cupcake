@@ -305,12 +305,6 @@ PanelWindow {
                         visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
 
-                        Rectangle {
-                            width: 3; height: 3; radius: 1.5
-                            color: Theme.colPrimary
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
                         Text {
                             text: "\ued1b"
                             color: Theme.colPrimary
@@ -326,12 +320,6 @@ PanelWindow {
                         spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
-
-                        Rectangle {
-                            width: 3; height: 3; radius: 1.5
-                            color: Theme.colPrimary
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
 
                         Text {
                             text: networkPill.btConnectedDevice !== "" ? "\uea38" : "\uea37"
@@ -358,16 +346,6 @@ PanelWindow {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-
-                        Text {
-                            text: "•"
-                            color: Theme.colOnSurfaceVariant
-                            opacity: 0.7
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize - 2
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
 
                         Text {
                             id: rxSpeedText
