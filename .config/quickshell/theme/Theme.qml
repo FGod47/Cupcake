@@ -231,6 +231,8 @@ Item {
         watchChanges: true
         onFileChanged: {
             reload();
+        }
+        onTextChanged: {
             themeSingleton.readColorsImmediately();
         }
         onLoadedChanged: {
