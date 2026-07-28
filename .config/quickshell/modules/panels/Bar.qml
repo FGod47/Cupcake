@@ -711,25 +711,6 @@ PanelWindow {
                                 onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
                             }
                             onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart() }
-                            
-                            Process {
-                                id: audioProc
-                                command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
-                                running: true
-                                stdout: StdioCollector { id: audioStdout }
-                                onExited: {
-                                    let text = (audioStdout.text || "").trim();
-                                    let match = text.match(/Volume:\s+([\d\.]+)/);
-                                    if (match && match[1]) {
-                                        let val = Math.round(parseFloat(match[1]) * 100);
-                                        if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
-                                    }
-                                }
-                            }
-                            Timer {
-                                interval: 3000; running: true; repeat: true
-                                onTriggered: audioProc.running = true
-                            }
                         }
                         Text {
                             leftPadding: 8
@@ -791,28 +772,8 @@ PanelWindow {
                                 }
                             }
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            from: 0; to: 100; value: 100
+                            from: 0; to: 100; value: 50
                             anchors.verticalCenter: parent.verticalCenter
-                            
-                            Process {
-                                id: lightProc
-                                command: ["ddcutil", "getvcp", "10", "--terse"]
-                                stdout: StdioCollector { id: lightStdout }
-                                onExited: {
-                                    let text = (lightStdout.text || "");
-                                    let match = text.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                                    if (match && match[1]) {
-                                        let val = parseInt(match[1]);
-                                        if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
-                                    }
-                                }
-                            }
-                            Timer {
-                                interval: 600
-                                running: true
-                                repeat: false
-                                onTriggered: lightProc.running = true
-                            }
                         }
                         Text {
                             leftPadding: 8
@@ -832,6 +793,47 @@ PanelWindow {
                         if (!hovered && controlsPill.actionsExpanded) {
                             controlsPill.actionsExpanded = false;
                         }
+                    }
+                }
+
+                // Audio fetch process — at pill level like ControlCenterUI pattern
+                Process {
+                    id: audioProc
+                    command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
+                    stdout: StdioCollector { id: audioProcOut }
+                    onExited: {
+                        let t = (audioProcOut.text || "").trim();
+                        let match = t.match(/Volume:\s+([\d\.]+)/);
+                        if (match && match[1]) {
+                            let val = Math.round(parseFloat(match[1]) * 100);
+                            if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
+                        }
+                    }
+                }
+                // Brightness fetch process — at pill level like ControlCenterUI pattern
+                Process {
+                    id: lightProc
+                    command: ["ddcutil", "getvcp", "10", "--terse"]
+                    stdout: StdioCollector { id: lightProcOut }
+                    onExited: {
+                        let t = (lightProcOut.text || "");
+                        let match = t.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
+                        if (match && match[1]) {
+                            let val = parseInt(match[1]);
+                            if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
+                        }
+                    }
+                }
+                // Poll sliders when expanded — triggeredOnStart fires immediately on open
+                Timer {
+                    id: controlsSliderTimer
+                    interval: 2000
+                    running: controlsPill.actionsExpanded
+                    repeat: true
+                    triggeredOnStart: true
+                    onTriggered: {
+                        audioProc.running = true;
+                        lightProc.running = true;
                     }
                 }
             }
