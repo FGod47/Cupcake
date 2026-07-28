@@ -465,7 +465,7 @@ Item {
                                 spacing: 12
 
                                 NIconBadge {
-                                    icon: model.signal > 75 ? "\ueb52" : (model.signal > 40 ? "\ueba5" : (model.signal > 10 ? "\ueba4" : "\ueba3"))
+                                    icon: model.signal >= 75 ? "\ueb52" : (model.signal >= 50 ? "\uf625" : (model.signal >= 25 ? "\uf624" : "\uf623"))
                                 }
                                 ColumnLayout {
                                     spacing: 2

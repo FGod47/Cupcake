@@ -275,7 +275,7 @@ Item {
                                 Rectangle {
                                     width: 32; height: 32; radius: 10
                                     color: wifiRadioEnabled ? Qt.rgba(colGreen.r, colGreen.g, colGreen.b, 0.1) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
-                                    Text { anchors.centerIn: parent; text: "\ueb52"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 15 }
+                                    Text { anchors.centerIn: parent; text: wifiRadioEnabled ? "\ueb52" : "\ueb53"; color: wifiRadioEnabled ? colGreen : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 15 }
                                 }
                                 ColumnLayout {
                                     Layout.fillWidth: true; spacing: 2
@@ -399,7 +399,7 @@ Item {
                             color: wifiRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(textText.r, textText.g, textText.b, 0.05)
                             border.color: wifiRadioEnabled ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3) : "transparent"; border.width: 1
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["nmcli", "radio", "wifi", wifiRadioEnabled ? "off" : "on"]); wifiRadioEnabled = !wifiRadioEnabled } }
-                            Text { anchors.centerIn: parent; text: "\ueb52"; color: wifiRadioEnabled ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
+                            Text { anchors.centerIn: parent; text: wifiRadioEnabled ? "\ueb52" : "\ueb53"; color: wifiRadioEnabled ? Theme.colPrimary : textSubtext0; font.family: "tabler-icons"; font.pixelSize: 20 }
                         }
                         Rectangle {
                             Layout.fillWidth: true; Layout.fillHeight: true; radius: 12
@@ -896,7 +896,7 @@ Item {
                                             color: model.inUse ? colGreen : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
                                             Text {
                                                 anchors.centerIn: parent
-                                                text: model.inUse ? "\ueb52" : (model.signal > 66 ? "\ueb52" : (model.signal > 33 ? "\ueba5" : "\uecfa"))
+                                                text: model.signal >= 75 ? "\ueb52" : (model.signal >= 50 ? "\uf625" : (model.signal >= 25 ? "\uf624" : "\uf623"))
                                                 color: model.inUse ? Theme.colSurface : textText
                                                 font.family: "tabler-icons"
                                                 font.pixelSize: 16
