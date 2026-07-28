@@ -45,9 +45,32 @@ if command -v yay &>/dev/null; then
     AUR_HELPER="yay"
 elif command -v paru &>/dev/null; then
     AUR_HELPER="paru"
+elif command -v yay-cachyos &>/dev/null; then
+    AUR_HELPER="yay-cachyos"
+elif command -v paru-cachyos &>/dev/null; then
+    AUR_HELPER="paru-cachyos"
 else
     echo -e "${RED}[ERROR]${RESET} No AUR helper found. Please run install_aur.sh first."
     exit 1
+fi
+
+# ──────────────── Dynamic Kernel Headers & Hardware Detection ────────────────
+KERNEL_UNAME="$(uname -r)"
+if [[ "$KERNEL_UNAME" == *"-cachyos"* ]]; then
+    KERNEL_HEADERS_PKG="linux-cachyos-headers"
+elif [[ "$KERNEL_UNAME" == *"-zen"* ]]; then
+    KERNEL_HEADERS_PKG="linux-zen-headers"
+elif [[ "$KERNEL_UNAME" == *"-lts"* ]]; then
+    KERNEL_HEADERS_PKG="linux-lts-headers"
+elif [[ "$KERNEL_UNAME" == *"-hardened"* ]]; then
+    KERNEL_HEADERS_PKG="linux-hardened-headers"
+else
+    KERNEL_HEADERS_PKG="linux-headers"
+fi
+
+NVIDIA_PACKAGES=()
+if lspci 2>/dev/null | grep -iq "nvidia" || [ -d "/proc/driver/nvidia" ]; then
+    NVIDIA_PACKAGES=("nvidia-dkms" "libva-nvidia-driver")
 fi
 
 # ──────────────── Handle Pacman Packages ────────────────
@@ -99,7 +122,8 @@ packages=(
     wget pamixer pavucontrol telegram-desktop bat
     libnotify udiskie udisks2 polkit-gnome gnome-disk-utility
     gvfs-mtp gvfs-gphoto2 gvfs-afc mtpfs libmtp repo os-prober cpio 7zip
-    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe libva-nvidia-driver nvidia-dkms linux-headers brightnessctl
+    python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe brightnessctl
+    "$KERNEL_HEADERS_PKG" ${NVIDIA_PACKAGES[@]}
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
     hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian
     atuin fzf awww starship zip unzip
