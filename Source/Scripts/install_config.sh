@@ -303,5 +303,10 @@ if [ -d "$PAPIRUS_SRC" ] && [ ! -d "$PAPIRUS_DEST" ]; then
   echo -e "${GREEN}[DONE]${RESET} Papirus-Dark icons copied locally"
 fi
 
+# ──────────────── Setup Hotspot Firewall Rules ────────────────
+if [ -f "$SCRIPT_DIR/setup_hotspot_firewall.sh" ]; then
+  bash "$SCRIPT_DIR/setup_hotspot_firewall.sh" || true
+fi
+
 echo -e "\n${GREEN}[SUCCESS]${RESET} Cupcake configuration installed successfully!\n"
 echo -e "${YELLOW}[NOTE]${RESET} Please log out and log back in (or reboot) for all changes to take effect.\n"
