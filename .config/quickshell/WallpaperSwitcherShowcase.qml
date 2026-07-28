@@ -313,7 +313,7 @@ Item {
         width: 180
         height: 44
         fillMode: Image.PreserveAspectFit
-        source: root.homeDir + "/Cupcake/Source/assets/cupcake-word-light.svg"
+        source: "file://" + root.homeDir + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
         opacity: 0.5
         smooth: true
         antialiasing: true
