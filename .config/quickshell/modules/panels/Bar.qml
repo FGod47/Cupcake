@@ -315,7 +315,23 @@ PanelWindow {
                         }
                     }
 
-                    // 4. Thin Vertical Hairline Separator
+                    // 4. Hotspot Badge (Icon Only right after Bluetooth)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Text {
+                            text: "\ued1b"
+                            color: Theme.colPrimary
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // 5. Thin Vertical Hairline Separator
                     Rectangle {
                         width: 1
                         height: 13
@@ -325,7 +341,7 @@ PanelWindow {
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 5. Network Speed Traffic Badge
+                    // 6. Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
@@ -338,22 +354,6 @@ PanelWindow {
                             font.family: Theme.defaultFontFamily
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-
-                    // 6. Hotspot Badge (Icon Only at the last position)
-                    Row {
-                        spacing: 4
-                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: "\ued1b"
-                            color: Theme.colPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
