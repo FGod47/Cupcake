@@ -1,0 +1,6 @@
+[Unit]
+Description=Automated Cupcake Backup to ~codeBlack Drive
+
+[Service]
+Type=oneshot
+ExecStart=/home/code/.local/bin/backup-cupcake

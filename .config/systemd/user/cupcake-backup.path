@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for ~codeBlack drive mount to backup Cupcake
+
+[Path]
+PathExists=/run/media/code/~codeBlack/Prjt Cupcake
+Unit=cupcake-backup.service
+
+[Install]
+WantedBy=default.target
