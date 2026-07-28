@@ -1515,7 +1515,6 @@ Item {
 
     Process {
         id: updateBrightness
-        running: true
         command: ["ddcutil", "getvcp", "10", "--terse"]
         stdout: StdioCollector { id: updateBrightnessStdout }
         onExited: {

@@ -775,7 +775,6 @@ PanelWindow {
                             Process {
                                 id: lightProc
                                 command: ["ddcutil", "getvcp", "10", "--terse"]
-                                running: true
                                 stdout: StdioCollector { id: lightStdout }
                                 onExited: {
                                     let text = (lightStdout.text || "");
@@ -785,6 +784,12 @@ PanelWindow {
                                         if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
                                     }
                                 }
+                            }
+                            Timer {
+                                interval: 600
+                                running: true
+                                repeat: false
+                                onTriggered: lightProc.running = true
                             }
                         }
                         Text {
