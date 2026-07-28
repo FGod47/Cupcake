@@ -238,6 +238,7 @@ PanelWindow {
                 property bool isWifi: false
                 property bool isWired: false
                 property bool hotspotActive: false
+                property string hotspotName: ""
                 property string activeWifiName: ""
                 property bool btPowered: false
                 property string btConnectedDevice: ""
@@ -281,7 +282,7 @@ PanelWindow {
                         }
                         
                         Text {
-                            text: "Hotspot"
+                            text: networkPill.hotspotName
                             color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
                             font.weight: Font.DemiBold
@@ -453,6 +454,7 @@ PanelWindow {
 
                             const isHotspot = activeWifi.toLowerCase().includes("hotspot");
                             networkPill.hotspotActive = isHotspot;
+                            networkPill.hotspotName = isHotspot ? activeWifi : "";
                             networkPill.isWifi = (activeWifi !== "" && !isHotspot);
                             networkPill.isWired = activeEthernet;
                             networkPill.activeWifiName = isHotspot ? "" : activeWifi;
