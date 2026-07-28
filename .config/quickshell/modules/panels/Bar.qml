@@ -287,19 +287,7 @@ PanelWindow {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    // 3. Network Name / SSID
-                    Text {
-                        id: networkText
-                        text: ""
-                        color: fg
-                        font.family: Theme.defaultFontFamily
-                        font.weight: Font.DemiBold
-                        font.pixelSize: Theme.defaultFontSize - 1
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                    }
-
-                    // 3. Bluetooth Badge (Icon Only)
+                    // 2. Bluetooth Badge (Icon Only)
                     Row {
                         spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -315,7 +303,7 @@ PanelWindow {
                         }
                     }
 
-                    // 4. Hotspot Badge (Icon Only right after Bluetooth)
+                    // 3. Hotspot Badge (Icon Only)
                     Row {
                         spacing: 4
                         visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -329,6 +317,18 @@ PanelWindow {
                             font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
                         }
+                    }
+
+                    // 4. Network Name / SSID
+                    Text {
+                        id: networkText
+                        text: ""
+                        color: fg
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Font.DemiBold
+                        font.pixelSize: Theme.defaultFontSize - 1
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
                     // 5. Thin Vertical Hairline Separator
