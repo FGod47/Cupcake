@@ -778,12 +778,27 @@ Item {
                 sectionTitle: "Advanced"
                 
                 property bool vrrEnabled: false
+                property bool allowTearingEnabled: false
+
                 Process {
                     command: ["hyprctl", "getoption", "misc:vrr", "-j"]
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: {
                             try { existingAdvancedCard.vrrEnabled = (JSON.parse(text).int > 0); } catch (e) {}
+                        }
+                    }
+                }
+
+                Process {
+                    command: ["hyprctl", "getoption", "general:allow_tearing", "-j"]
+                    running: true
+                    stdout: StdioCollector {
+                        onStreamFinished: {
+                            try { 
+                                let parsed = JSON.parse(text);
+                                existingAdvancedCard.allowTearingEnabled = parsed.bool || (parsed.int > 0);
+                            } catch (e) {}
                         }
                     }
                 }
@@ -795,14 +810,36 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Variable refresh rate"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Reduce screen tearing by matching the GPU frame rate"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Match display refresh rate to GPU frame rate (VRR)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
                     NToggle {
                         checked: existingAdvancedCard.vrrEnabled
                         onToggled: function(v) {
+                            existingAdvancedCard.vrrEnabled = v;
                             Quickshell.execDetached(["hyprctl", "keyword", "misc:vrr", v ? "1" : "0"]);
+                            Quickshell.execDetached(["python3", Quickshell.env("HOME") + "/.local/bin/generate_monitor_lua.py"]);
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uef1a" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Allow screen tearing"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Enable immediate page flipping for lowest latency in fullscreen games"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: existingAdvancedCard.allowTearingEnabled
+                        onToggled: function(v) {
+                            existingAdvancedCard.allowTearingEnabled = v;
+                            Quickshell.execDetached(["hyprctl", "keyword", "general:allow_tearing", v ? "true" : "false"]);
                             Quickshell.execDetached(["python3", Quickshell.env("HOME") + "/.local/bin/generate_monitor_lua.py"]);
                         }
                     }

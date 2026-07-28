@@ -38,6 +38,15 @@ def generate():
     except Exception as e:
         print(f"Error reading VRR: {e}")
 
+    # Fetch and persist Tearing
+    try:
+        tearing_output = subprocess.check_output(['hyprctl', 'getoption', 'general:allow_tearing', '-j']).decode('utf-8')
+        tearing_json = json.loads(tearing_output)
+        tearing_val = "true" if tearing_json.get('bool', False) or tearing_json.get('int', 0) == 1 else "false"
+        lua_content += f'hl.config({{\n    general = {{\n        allow_tearing = {tearing_val}\n    }}\n}})\n'
+    except Exception as e:
+        print(f"Error reading Tearing option: {e}")
+
     config_path = os.path.expanduser('~/.config/hypr/monitor.lua')
     with open(config_path, 'w') as f:
         f.write(lua_content)
