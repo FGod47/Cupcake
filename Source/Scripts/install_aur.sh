@@ -31,6 +31,10 @@ if command -v yay &>/dev/null; then
     aur_helper="yay"
 elif command -v paru &>/dev/null; then
     aur_helper="paru"
+elif command -v yay-cachyos &>/dev/null; then
+    aur_helper="yay-cachyos"
+elif command -v paru-cachyos &>/dev/null; then
+    aur_helper="paru-cachyos"
 fi
 
 # ──────────────── Prompt Install If Not Found ────────────────
