@@ -13,13 +13,35 @@ Item {
     property bool isDark: true
     
     Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.color_mode"]
+        id: initThemeConfigs
+        command: ["bash", "-c", "cat ~/.config/cupcake/.color_mode 2>/dev/null; echo '---'; cat ~/.config/cupcake/.transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.slider_thickness 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_slider_thumb 2>/dev/null; echo '---'; cat ~/.config/cupcake/.liquidify 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_card_background 2>/dev/null; echo '---'; cat ~/.config/cupcake/.applauncher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.wallpaper_switcher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_dividers 2>/dev/null; echo '---'; cat ~/.config/cupcake/.row_spacing 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                if (text) {
-                    themeSingleton.isDark = (text.trim() !== "light");
-                }
+                if (!text) return;
+                let p = text.trim().split('---');
+                if (p[0] && p[0].trim() !== "") themeSingleton.isDark = (p[0].trim() !== "light");
+                if (p[1] && p[1].trim() === "false") themeSingleton.globalTransparency = false;
+                if (p[2] && p[2].trim() === "false") themeSingleton.quickshellTransparency = false;
+                if (p[3] && p[3].trim() !== "") themeSingleton.defaultFontFamily = p[3].trim();
+                if (p[4] && p[4].trim() !== "") themeSingleton.monoFontFamily = p[4].trim();
+                if (p[5]) { let v = parseFloat(p[5].trim()); if (!isNaN(v)) themeSingleton.defaultFontScale = v; }
+                if (p[6]) { let v = parseFloat(p[6].trim()); if (!isNaN(v)) themeSingleton.monoFontScale = v; }
+                if (p[7]) { let v = parseInt(p[7].trim()); if (!isNaN(v)) themeSingleton.defaultFontSize = v; }
+                if (p[8]) { let v = parseInt(p[8].trim()); if (!isNaN(v)) themeSingleton.defaultFontWeight = v; }
+                if (p[9] && p[9].trim() !== "") themeSingleton.appFontFamily = p[9].trim();
+                if (p[10] && p[10].trim() !== "") themeSingleton.appMonoFamily = p[10].trim();
+                if (p[11]) { let v = parseFloat(p[11].trim()); if (!isNaN(v)) themeSingleton.appMonoScale = v; }
+                if (p[12]) { let v = parseInt(p[12].trim()); if (!isNaN(v)) themeSingleton.appFontSize = v; }
+                if (p[13]) { let v = parseInt(p[13].trim()); if (!isNaN(v)) themeSingleton.appFontWeight = v; }
+                if (p[14]) { let v = parseFloat(p[14].trim()); if (!isNaN(v)) themeSingleton.sliderThickness = v; }
+                if (p[15] && p[15].trim() === "false") themeSingleton.showSliderThumb = false;
+                if (p[16] && p[16].trim() === "false") themeSingleton.liquidify = false;
+                if (p[17] && p[17].trim() === "false") themeSingleton.showCardBackground = false;
+                if (p[18] && p[18].trim() !== "") themeSingleton.appLauncherStyle = p[18].trim();
+                if (p[19] && p[19].trim() !== "") themeSingleton.wallpaperSwitcherStyle = p[19].trim();
+                if (p[20] && p[20].trim() === "false") themeSingleton.showDividers = false;
+                if (p[21]) { let v = parseFloat(p[21].trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; }
             }
         }
     }
@@ -31,32 +53,9 @@ Item {
             themeSingleton.isDark = (text.trim() !== "light");
         }
     }
-    
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.transparency"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() === "false") {
-                    themeSingleton.globalTransparency = false;
-                }
-            }
-        }
-    }
 
     property bool quickshellTransparency: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.bar_transparency"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.trim() === "false") {
-                    themeSingleton.quickshellTransparency = false;
-                }
-            }
-        }
-    }
-    
+
     property real bgAlpha: quickshellTransparency ? 0.85 : 1.0
 
     // Fonts
@@ -65,40 +64,8 @@ Item {
     property real defaultFontScale: 1.0
     property real monoFontScale: 1.0
 
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_default"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.defaultFontFamily = text.trim(); } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_mono"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.monoFontFamily = text.trim(); } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_default_scale"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontScale = v; } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_mono_scale"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.monoFontScale = v; } }
-    }
-
     property int defaultFontSize: 14
     property int defaultFontWeight: 500
-
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_size"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontSize = v; } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.font_weight"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.defaultFontWeight = v; } }
-    }
 
     // App Fonts
     property string appFontFamily: "Inter"
@@ -107,91 +74,21 @@ Item {
     property int appFontSize: 14
     property int appFontWeight: 500
 
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.app_font_default"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.appFontFamily = text.trim(); } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.app_font_mono"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() !== "") themeSingleton.appMonoFamily = text.trim(); } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.app_font_mono_scale"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.appMonoScale = v; } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.app_font_size"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.appFontSize = v; } }
-    }
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.app_font_weight"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseInt(text.trim()); if (!isNaN(v)) themeSingleton.appFontWeight = v; } }
-    }
-
     property real sliderThickness: 2.0
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.slider_thickness"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.sliderThickness = v; } }
-    }
 
     property bool showSliderThumb: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_slider_thumb"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showSliderThumb = false; } }
-    }
 
     property bool liquidify: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.liquidify"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.liquidify = false; } }
-    }
 
     property bool showCardBackground: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_card_background"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showCardBackground = false; } }
-    }
 
     property string appLauncherStyle: "Hover"
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.applauncher_style"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let s = text.trim(); if (s !== "") themeSingleton.appLauncherStyle = s; } }
-    }
 
     property string wallpaperSwitcherStyle: "Carousel"
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.wallpaper_switcher_style"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let s = text.trim(); if (s !== "") themeSingleton.wallpaperSwitcherStyle = s; } }
-    }
-
 
     property bool showDividers: true
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.show_dividers"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text.trim() === "false") themeSingleton.showDividers = false; } }
-    }
 
     property real rowSpacing: 4.0
-    Process {
-        command: ["cat", themeSingleton.homeDir + "/.config/cupcake/.row_spacing"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text.trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; } }
-    }
-
-
-
 
     // helper function to parse hex string into color with alpha
     function transparentize(hexStr, alpha) {
