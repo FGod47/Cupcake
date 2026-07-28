@@ -328,11 +328,11 @@ PanelWindow {
                                 if (networkPill.isWifi) {
                                     let pct = networkPill.signalPct;
                                     if (pct >= 75) return "\ueb52";      // wifi
-                                    if (pct >= 50) return "\uf625";      // wifi-2
-                                    if (pct >= 25) return "\uf624";      // wifi-1
-                                    return "\uf623";                     // wifi-0
+                                    if (pct >= 50) return "\ueba5";      // wifi-2
+                                    if (pct >= 25) return "\ueba4";      // wifi-1
+                                    return "\ueba3";                     // wifi-0
                                 }
-                                return "\ueb53";                         // disconnected / wifi-off
+                                return "\uecfa";                         // disconnected / wifi-off
                             }
                             color: Theme.colPrimary
                             font.family: fontName
