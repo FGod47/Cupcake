@@ -249,7 +249,7 @@ PanelWindow {
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 24
                 Layout.alignment: Qt.AlignVCenter
-                Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                Behavior on implicitWidth { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 property real lastRx: 0
                 property real lastTx: 0
