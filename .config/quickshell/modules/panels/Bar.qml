@@ -1670,8 +1670,8 @@ PanelWindow {
                         id: playBtnSmall
                         anchors.right: parent.right; anchors.rightMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
-                        text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\uF04C" : "\uF04B"
-                        font.family: "Symbols Nerd Font"; font.pixelSize: 15; color: Theme.colOnPrimary
+                        text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ued45" : "\ued46"
+                        font.family: "tabler-icons"; font.pixelSize: 15; color: Theme.colOnPrimary
                         
                         MouseArea {
                             anchors.fill: parent
@@ -1774,16 +1774,16 @@ PanelWindow {
                             anchors.horizontalCenter: parent.horizontalCenter
                             spacing: 22
                             Text { 
-                                text: "\uF048"; font.family: "Symbols Nerd Font"; font.pixelSize: 18; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
+                                text: "\ued48"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
                                 MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.previous() }
                             }
                             Rectangle {
                                 width: 44; height: 44; radius: 22; color: Theme.colOnSurface
-                                Text { anchors.centerIn: parent; text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\uF04C" : "\uF04B"; font.family: "Symbols Nerd Font"; font.pixelSize: 20; color: Theme.colSurface }
+                                Text { anchors.centerIn: parent; text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ued45" : "\ued46"; font.family: "tabler-icons"; font.pixelSize: 22; color: Theme.colSurface }
                                 MouseArea { anchors.fill: parent; onClicked: if (bar.activePlayer) bar.activePlayer.isPlaying = !bar.activePlayer.isPlaying }
                             }
                             Text { 
-                                text: "\uF051"; font.family: "Symbols Nerd Font"; font.pixelSize: 18; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
+                                text: "\ued49"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
                                 MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.next() }
                             }
                         }
