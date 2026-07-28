@@ -22,7 +22,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: Bar {
-            visible: !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
+            visible: globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
 
@@ -68,6 +68,7 @@ ShellRoot {
 
     Scope {
         id: globalState
+        property bool barVisible: true
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
         property bool dockAutoHide: false
@@ -261,6 +262,26 @@ ShellRoot {
         target: "wallpaper"
         function setDimOverlay(val: real) {
             globalState.dimOverlay = val;
+        }
+    }
+
+    IpcHandler {
+        target: "bar"
+        function toggle() {
+            globalState.barVisible = !globalState.barVisible;
+        }
+        function show() {
+            globalState.barVisible = true;
+        }
+        function hide() {
+            globalState.barVisible = false;
+        }
+    }
+
+    GlobalShortcut {
+        name: "bar_toggle"
+        onPressed: {
+            globalState.barVisible = !globalState.barVisible;
         }
     }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
-if ! pgrep -f "[q]uickshell.*shell.qml" > /dev/null; then
-    quickshell -p ~/.config/quickshell/shell.qml &
+if pgrep -f "[q]uickshell.*shell.qml" > /dev/null; then
+    quickshell ipc call bar toggle 2>/dev/null
 else
-    pkill -f "[q]uickshell.*shell.qml"
+    quickshell -p ~/.config/quickshell/shell.qml &
 fi
