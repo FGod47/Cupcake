@@ -356,17 +356,6 @@ PanelWindow {
                         }
                     }
 
-                    // 3b. Disconnected Wi-Fi Badge (wifi adapter present but not connected)
-                    Text {
-                        text: "\uecfa"
-                        color: Theme.colOnPrimary
-                        opacity: 0.5
-                        font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: Theme.defaultFontSize
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: !networkPill.isWifi
-                    }
 
                     // 4. Wired Badge
                     Row {
