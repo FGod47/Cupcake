@@ -138,71 +138,25 @@ ShellRoot {
     }
 
     Process {
-        id: initDimOverlay
-        command: ["cat", root.homeDir + "/.config/cupcake/.dim_overlay"]
+        id: initShellConfigs
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dim_overlay 2>/dev/null; echo '---'; cat ~/.config/cupcake/.notif_panel_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.osd_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.cc_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_tabs 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_scale 2>/dev/null"]
         running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.dimOverlay = v; } } }
-    }
-
-    Process {
-        id: initNotifPanelOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.notif_panel_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; } } }
-    }
-
-    Process {
-        id: initBarTransparency
-        command: ["cat", root.homeDir + "/.config/cupcake/.bar_transparency"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { root.barTransparency = (text.trim() === "true"); } } }
-    }
-
-    Process {
-        id: initBarOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.bar_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; } } }
-    }
-
-    Process {
-        id: initDockOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.dock_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dockOpacity = v; } } }
-    }
-
-    Process {
-        id: initOsdOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.osd_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.osdOpacity = v; } } }
-    }
-
-    Process {
-        id: initCcOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.cc_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.ccOpacity = v; } } }
-    }
-
-    Process {
-        id: initOverviewOpacity
-        command: ["cat", root.homeDir + "/.config/cupcake/.overview_opacity"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.overviewOpacity = v; } } }
-    }
-
-    Process {
-        command: ["cat", root.homeDir + "/.config/cupcake/.overview_tabs"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseInt(text.trim()); if (!isNaN(v) && v > 0) root.overviewTabs = v; } } }
-    }
-    
-    Process {
-        command: ["cat", root.homeDir + "/.config/cupcake/.overview_scale"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: { if (text) { let v = parseFloat(text.trim()); if (!isNaN(v) && v > 0) root.overviewScale = v; } } }
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let parts = text.trim().split('---');
+                if (parts[0]) { let v = parseFloat(parts[0].trim()); if (!isNaN(v)) globalState.dimOverlay = v; }
+                if (parts[1]) { let v = parseFloat(parts[1].trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
+                if (parts[2]) { root.barTransparency = (parts[2].trim() === "true"); }
+                if (parts[3]) { let v = parseFloat(parts[3].trim()); if (!isNaN(v)) root.barOpacity = v; }
+                if (parts[4]) { let v = parseFloat(parts[4].trim()); if (!isNaN(v)) root.dockOpacity = v; }
+                if (parts[5]) { let v = parseFloat(parts[5].trim()); if (!isNaN(v)) root.osdOpacity = v; }
+                if (parts[6]) { let v = parseFloat(parts[6].trim()); if (!isNaN(v)) root.ccOpacity = v; }
+                if (parts[7]) { let v = parseFloat(parts[7].trim()); if (!isNaN(v)) root.overviewOpacity = v; }
+                if (parts[8]) { let v = parseInt(parts[8].trim()); if (!isNaN(v) && v > 0) root.overviewTabs = v; }
+                if (parts[9]) { let v = parseFloat(parts[9].trim()); if (!isNaN(v) && v > 0) root.overviewScale = v; }
+            }
+        }
     }
 
     Process {

@@ -384,6 +384,7 @@ PanelWindow {
                 Process {
                     id: networkProc
                     command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null; echo '---'; nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | grep '^\\*'"]
+                    running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
                             if (!text) {
@@ -475,6 +476,7 @@ PanelWindow {
                 Process {
                     id: speedProc
                     command: ["cat", "/proc/net/dev"]
+                    running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
                             if (!text) return;
@@ -534,6 +536,7 @@ PanelWindow {
                 Process {
                     id: hwProc
                     command: ["sh", "-c", "~/.config/cupcake/scripts/hw_toggle_display.sh"]
+                    running: true
                     stdout: StdioCollector {
                         onStreamFinished: (data) => {
                             try { hwText.text = JSON.parse(data).text || "" } catch(e) { hwText.text = data || "" }
@@ -567,6 +570,7 @@ PanelWindow {
                 Process {
                     id: recProc
                     command: ["sh", "-c", "~/.config/cupcake/scripts/rec-status.sh"]
+                    running: true
                     stdout: StdioCollector {
                         onStreamFinished: (data) => {
                             try { recText.text = JSON.parse(data).text || "" } catch(e) { recText.text = data || "" }
