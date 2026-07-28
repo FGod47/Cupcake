@@ -356,6 +356,17 @@ PanelWindow {
                         }
                     }
 
+                    // 3b. Disconnected Badge (no wifi, no wired)
+                    Text {
+                        text: "\uecfa"
+                        color: Qt.rgba(Theme.colOnPrimary.r, Theme.colOnPrimary.g, Theme.colOnPrimary.b, 0.5)
+                        font.family: fontName
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: Theme.defaultFontSize
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: !networkPill.isWifi && !networkPill.isWired && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                    }
+
                     // 4. Wired Badge
                     Row {
                         spacing: 4
