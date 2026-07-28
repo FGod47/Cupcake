@@ -893,6 +893,7 @@ Item {
                                         // Signal Icon
                                         Rectangle {
                                             width: 32; height: 32; radius: 16
+                                            Layout.alignment: Qt.AlignVCenter
                                             color: model.inUse ? colGreen : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
                                             Text {
                                                 anchors.centerIn: parent
@@ -906,6 +907,7 @@ Item {
                                         ColumnLayout {
                                             spacing: 2
                                             Layout.fillWidth: true
+                                            Layout.alignment: Qt.AlignVCenter
                                             Text {
                                                 text: model.ssid
                                                 color: textText
@@ -913,6 +915,7 @@ Item {
                                                 font.pixelSize: 14
                                                 font.weight: Font.Medium
                                                 elide: Text.ElideRight
+                                                Layout.fillWidth: true
                                             }
                                             Text {
                                                 text: model.inUse ? "Connected" : (model.isSecure ? "Secured" : "Open")
@@ -920,6 +923,7 @@ Item {
                                                 font.family: Theme.defaultFontFamily
                                                 font.pixelSize: 11
                                                 opacity: 0.8
+                                                Layout.fillWidth: true
                                             }
                                         }
 
@@ -931,6 +935,7 @@ Item {
                                             font.family: "tabler-icons"
                                             font.pixelSize: 14
                                             opacity: 0.5
+                                            Layout.alignment: Qt.AlignVCenter
                                         }
                                     }
 
