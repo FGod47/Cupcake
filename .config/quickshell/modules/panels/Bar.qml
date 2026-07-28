@@ -265,62 +265,26 @@ PanelWindow {
                     anchors.centerIn: parent
                     spacing: 6
 
-                    // 1. Primary Network Icon (Dynamic Wi-Fi signal level: wifi-0, wifi-1, wifi-2, wifi)
-                    Text {
-                        id: networkIcon
-                        text: {
-                            if (networkPill.isWired) return "\uebd9";
-                            if (networkPill.hotspotActive) return "\ued1b";
-                            if (networkPill.isWifi) {
-                                let pct = networkPill.signalPct;
-                                if (pct >= 75) return "\ueb52";      // wifi
-                                if (pct >= 50) return "\uf625";      // wifi-2
-                                if (pct >= 25) return "\uf624";      // wifi-1
-                                return "\uf623";                     // wifi-0
-                            }
-                            return "\ueb53";                         // disconnected / wifi-off
-                        }
-                        color: Theme.colPrimary
-                        font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: Theme.defaultFontSize
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    // Network Name / SSID
-                    Text {
-                        id: networkText
-                        text: ""
-                        color: fg
-                        font.family: Theme.defaultFontFamily
-                        font.weight: Font.DemiBold
-                        font.pixelSize: Theme.defaultFontSize - 1
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                    }
-
-                    // Thin Vertical Hairline Separator
-                    Rectangle {
-                        width: 1
-                        height: 13
-                        color: Theme.colOnSurfaceVariant
-                        opacity: 0.3
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                    }
-
-                    // Network Speed Traffic Badge
+                    // 1. Hotspot Badge
                     Row {
-                        spacing: 3
+                        spacing: 4
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
 
                         Text {
-                            id: rxSpeedText
-                            text: "0 KB/s"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.defaultFontFamily
+                            text: "\ued1b"
+                            color: Theme.colPrimary
+                            font.family: fontName
                             font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        
+                        Text {
+                            text: "Hotspot"
+                            color: fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -352,18 +316,66 @@ PanelWindow {
                         }
                     }
 
-                    // 3. Hotspot Badge (Icon Only)
+                    // 3. Primary Network Badge (Wi-Fi/LAN)
                     Row {
                         spacing: 4
-                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
-
+                        
                         Text {
-                            text: "\ued1b"
+                            id: networkIcon
+                            text: {
+                                if (networkPill.isWired) return "\uebd9";
+                                if (networkPill.isWifi) {
+                                    let pct = networkPill.signalPct;
+                                    if (pct >= 75) return "\ueb52";      // wifi
+                                    if (pct >= 50) return "\uf625";      // wifi-2
+                                    if (pct >= 25) return "\uf624";      // wifi-1
+                                    return "\uf623";                     // wifi-0
+                                }
+                                return "\ueb53";                         // disconnected / wifi-off
+                            }
                             color: Theme.colPrimary
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            id: networkText
+                            text: ""
+                            color: fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold
+                            font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        }
+                    }
+
+                    // Thin Vertical Hairline Separator
+                    Rectangle {
+                        width: 1
+                        height: 13
+                        color: Theme.colOnSurfaceVariant
+                        opacity: 0.3
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                    }
+
+                    // Network Speed Traffic Badge
+                    Row {
+                        spacing: 3
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+
+                        Text {
+                            id: rxSpeedText
+                            text: "0 KB/s"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -419,10 +431,6 @@ PanelWindow {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
                                 networkText.text = activeWifi;
-                            } else if (hotspotActive) {
-                                networkPill.isWifi = true;
-                                networkPill.isWired = false;
-                                networkText.text = "Hotspot";
                             } else {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
