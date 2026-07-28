@@ -237,6 +237,9 @@ PanelWindow {
                 
                 property bool isWifi: false
                 property bool isWired: false
+                property bool hotspotActive: false
+                property bool btPowered: false
+                property string btConnectedDevice: ""
                 
                 color: isWired ? Theme.colPrimary : (isWifi ? Theme.colSecondary : Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity))
                 radius: 18
@@ -268,6 +271,66 @@ PanelWindow {
                         font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
                         visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                    }
+
+                    // Hotspot Indicator (when Hotspot is active alongside Wired)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.hotspotActive && networkPill.isWired && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Rectangle {
+                            width: 1
+                            height: 14
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            opacity: 0.4
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: "\ued1b"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "Hotspot"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // Bluetooth Indicator (when Bluetooth is powered on or connected)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Rectangle {
+                            width: 1
+                            height: 14
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            opacity: 0.4
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: networkPill.btConnectedDevice !== "" ? "\ueb68" : "\ueb5f"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: networkPill.btConnectedDevice !== "" ? networkPill.btConnectedDevice : "BT"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold; font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
                     
                     Rectangle {
@@ -349,6 +412,8 @@ PanelWindow {
                                 }
                             }
 
+                            networkPill.hotspotActive = hotspotActive;
+
                             if (activeEthernet) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = true;
@@ -377,6 +442,33 @@ PanelWindow {
                 Timer {
                     interval: 2000; running: true; repeat: true
                     onTriggered: networkProc.running = true
+                }
+
+                Process {
+                    id: btProc
+                    command: ["bash", "-c", "bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && echo 'powered' || exit 0; bluetoothctl devices Connected 2>/dev/null | head -n1 | cut -d' ' -f3-"]
+                    running: true
+                    stdout: StdioCollector {
+                        onStreamFinished: () => {
+                            if (!text) {
+                                networkPill.btPowered = false;
+                                networkPill.btConnectedDevice = "";
+                                return;
+                            }
+                            const lines = text.trim().split("\n");
+                            networkPill.btPowered = lines.length > 0 && lines[0] === "powered";
+                            if (lines.length > 1 && lines[1] !== "") {
+                                networkPill.btConnectedDevice = lines[1];
+                            } else {
+                                networkPill.btConnectedDevice = "";
+                            }
+                        }
+                    }
+                }
+
+                Timer {
+                    interval: 3000; running: true; repeat: true
+                    onTriggered: btProc.running = true
                 }
                 
                 Process {
