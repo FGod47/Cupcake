@@ -237,7 +237,6 @@ PanelWindow {
                 
                 property bool isWifi: false
                 property bool isWired: false
-                property bool hotspotActive: false
                 property bool btPowered: false
                 property string btConnectedDevice: ""
                 property int signalPct: 78
@@ -265,30 +264,6 @@ PanelWindow {
                     anchors.centerIn: parent
                     spacing: 6
 
-                    // 1. Hotspot Badge
-                    Row {
-                        spacing: 4
-                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: "\ued1b"
-                            color: Theme.colOnPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        
-                        Text {
-                            text: "Hotspot"
-                            color: Theme.colOnPrimary
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.DemiBold
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
 
                     // 2. Bluetooth Badge
                     Row {
@@ -397,18 +372,12 @@ PanelWindow {
                             const lines = sections[0].trim().split("\n");
                             let activeWifi = "";
                             let activeEthernet = false;
-                            let hotspotActive = false;
 
                             for (let i = 0; i < lines.length; i++) {
                                 const parts = lines[i].split(":");
                                 if (parts.length >= 3) {
                                     if (parts[0] === "wifi" && parts[1] === "connected") {
-                                        const connName = parts.slice(2).join(":");
-                                        if (connName.toLowerCase() === "hotspot") {
-                                            hotspotActive = true;
-                                        } else {
-                                            activeWifi = connName;
-                                        }
+                                        activeWifi = parts.slice(2).join(":");
                                     } else if (parts[0] === "ethernet" && parts[1] === "connected") {
                                         activeEthernet = true;
                                     }
@@ -422,16 +391,14 @@ PanelWindow {
                                 }
                             }
 
-                            networkPill.hotspotActive = hotspotActive;
-
-                            if (activeEthernet) {
-                                networkPill.isWifi = false;
-                                networkPill.isWired = true;
-                                networkText.text = "Wired";
-                            } else if (activeWifi !== "") {
+                            if (activeWifi !== "") {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
                                 networkText.text = activeWifi;
+                            } else if (activeEthernet) {
+                                networkPill.isWifi = false;
+                                networkPill.isWired = true;
+                                networkText.text = "Wired";
                             } else {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
