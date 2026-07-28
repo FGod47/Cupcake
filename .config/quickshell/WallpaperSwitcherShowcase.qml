@@ -3,6 +3,7 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Widgets
 import "modules/common"
+import "theme"
 
 Item {
     id: gv
