@@ -263,7 +263,7 @@ PanelWindow {
                 Row {
                     id: networkRow
                     anchors.centerIn: parent
-                    spacing: 7
+                    spacing: 6
 
                     // 1. Primary Network Icon (Vibrant Theme Accent Color)
                     Text {
@@ -300,17 +300,65 @@ PanelWindow {
                         visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 4. Glowing Accent Dot (indicates active Bluetooth or Hotspot)
-                    Rectangle {
-                        width: 5
-                        height: 5
-                        radius: 2.5
-                        color: Theme.colPrimary
+                    // 4. Hotspot Badge (Icon & Label)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: (networkPill.btPowered || networkPill.hotspotActive) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+
+                        Rectangle {
+                            width: 3; height: 3; radius: 1.5
+                            color: Theme.colPrimary
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: "\ued1b"
+                            color: Theme.colPrimary
+                            font.family: fontName
+                            font.pixelSize: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "Hotspot"
+                            color: fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.Medium
+                            font.pixelSize: 11
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
 
-                    // 5. Thin Vertical Hairline Separator
+                    // 5. Bluetooth Badge (Icon & Device Name / BT)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Rectangle {
+                            width: 3; height: 3; radius: 1.5
+                            color: Theme.colPrimary
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            text: networkPill.btConnectedDevice !== "" ? "\ueb68" : "\ueb5f"
+                            color: Theme.colPrimary
+                            font.family: fontName
+                            font.pixelSize: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: networkPill.btConnectedDevice !== "" ? networkPill.btConnectedDevice : "BT"
+                            color: fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.Medium
+                            font.pixelSize: 11
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // 6. Thin Vertical Hairline Separator
                     Rectangle {
                         width: 1
                         height: 13
@@ -320,7 +368,7 @@ PanelWindow {
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 6. Network Speed Traffic Badge
+                    // 7. Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
