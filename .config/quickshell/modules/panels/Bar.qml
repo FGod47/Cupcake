@@ -326,7 +326,7 @@ PanelWindow {
                     Row {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWifi && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.isWifi
                         
                         Text {
                             text: {
@@ -350,7 +350,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            width: text !== "" ? implicitWidth : 0
+                            width: (text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
@@ -365,14 +365,14 @@ PanelWindow {
                         font.weight: Theme.defaultFontWeight
                         font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: !networkPill.isWifi && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: !networkPill.isWifi
                     }
 
                     // 4. Wired Badge
                     Row {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWired && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        visible: networkPill.isWired
                         
                         Text {
                             text: "\uebd9"
@@ -390,7 +390,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            width: implicitWidth
+                            width: (!powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
