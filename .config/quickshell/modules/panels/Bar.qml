@@ -309,7 +309,7 @@ PanelWindow {
                         text: ""
                         color: (networkPill.isWifi || networkPill.isWired || networkPill.hotspotActive) ? networkPill.inkBright : networkPill.inkDim
                         font.family: Theme.defaultFontFamily
-                        font.weight: Font.Medium; font.pixelSize: 12.5
+                        font.weight: Font.Medium; font.pixelSize: 12
                         anchors.verticalCenter: parent.verticalCenter
                         visible: text !== "" && (networkPill.isHovered || networkPill.isPinned) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
@@ -337,7 +337,7 @@ PanelWindow {
                             text: "Hotspot"
                             color: networkPill.inkMid
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11.5
+                            font.weight: Font.Medium; font.pixelSize: 11
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -365,7 +365,7 @@ PanelWindow {
                             text: networkPill.btConnectedDevice !== "" ? networkPill.btConnectedDevice : "BT"
                             color: networkPill.inkMid
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11.5
+                            font.weight: Font.Medium; font.pixelSize: 11
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -396,7 +396,7 @@ PanelWindow {
                             text: "0K"
                             color: networkPill.inkBright
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11.5
+                            font.weight: Font.Medium; font.pixelSize: 11
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
@@ -411,7 +411,7 @@ PanelWindow {
                             text: "0K"
                             color: networkPill.inkBright
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium; font.pixelSize: 11.5
+                            font.weight: Font.Medium; font.pixelSize: 11
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
