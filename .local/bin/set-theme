@@ -15,8 +15,16 @@ fi
 echo "run: $WALLPAPER at $(date)" >> /tmp/wallpaper.log
 
 if [ ! -f "$WALLPAPER" ]; then
-    echo "Error: File not found: $WALLPAPER"
-    exit 1
+    echo "Warning: Wallpaper file not found: $WALLPAPER. Searching for fallback..."
+    FALLBACK_WALL=$(find "$HOME/.config/cupcake/walls" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1)
+    if [ -n "$FALLBACK_WALL" ] && [ -f "$FALLBACK_WALL" ]; then
+        WALLPAPER="$FALLBACK_WALL"
+        echo "$WALLPAPER" > ~/.cache/current_wallpaper
+        echo "Using fallback wallpaper: $WALLPAPER"
+    else
+        echo "Error: File not found: $WALLPAPER and no fallback wallpapers in ~/.config/cupcake/walls"
+        exit 1
+    fi
 fi
 
 export PATH=$PATH:$HOME/.local/bin:$HOME/.cargo/bin
