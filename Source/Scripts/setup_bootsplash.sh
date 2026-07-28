@@ -51,7 +51,11 @@ echo -e "${YELLOW}[INFO]${RESET} Setting up custom boot splash..."
 (
     sudo mkdir -p "$(dirname "$DEST")"
     sudo cp "$SRC" "$DEST"
-    sudo sed -i "s|--splash [^\"]*|--splash $DEST|" /etc/mkinitcpio.d/linux.preset
+    if [ -d "/etc/mkinitcpio.d" ]; then
+        for preset in /etc/mkinitcpio.d/*.preset; do
+            [ -f "$preset" ] && sudo sed -i "s|--splash [^\"]*|--splash $DEST|" "$preset"
+        done
+    fi
 ) & spinner "Injecting custom splash image"
 echo -e "${GREEN}[DONE]${RESET} Splash image installed"
 
