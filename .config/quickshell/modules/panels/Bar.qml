@@ -279,14 +279,42 @@ PanelWindow {
                         visible: networkText.text !== "Disconnected" && networkSpeedText.text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
                     
-                    Text {
-                        id: networkSpeedText
-                        text: "\uea16 0 KB/s  \uea25 0 KB/s"
-                        color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
-                        font.family: Theme.defaultFontFamily
-                        font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                    Row {
+                        spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+
+                        Text {
+                            text: "\uea16"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            id: rxSpeedText
+                            text: "0 KB/s"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Item { width: 4; height: 1 }
+                        Text {
+                            text: "\uea25"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            id: txSpeedText
+                            text: "0 KB/s"
+                            color: (networkPill.isWifi || networkPill.isWired) ? Theme.colBackground : Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 2
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
                     }
                 }
                 
@@ -378,12 +406,11 @@ PanelWindow {
                                     return (bytes / 1024).toFixed(0) + " KB/s";
                                 }
                                 
-                                let rxText = formatSpeed(rxDiff);
-                                let txText = formatSpeed(txDiff);
-                                
-                                networkSpeedText.text = "\uea16 " + rxText + "  \uea25 " + txText;
+                                rxSpeedText.text = rxText;
+                                txSpeedText.text = txText;
                             } else {
-                                networkSpeedText.text = "\uea16 0 KB/s  \uea25 0 KB/s";
+                                rxSpeedText.text = "0 KB/s";
+                                txSpeedText.text = "0 KB/s";
                             }
                             networkPill.lastRx = totalRx;
                             networkPill.lastTx = totalTx;
