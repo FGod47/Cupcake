@@ -265,27 +265,26 @@ PanelWindow {
                     anchors.centerIn: parent
                     spacing: 6
 
-                    // 1. Primary Network Icon (Vibrant Theme Accent Color)
+                    // 1. Primary Network Icon (Dynamic Wi-Fi signal level: wifi-0, wifi-1, wifi-2, wifi)
                     Text {
                         id: networkIcon
-                        text: "\ueb52"
+                        text: {
+                            if (networkPill.isWired) return "\uebd9";
+                            if (networkPill.hotspotActive) return "\ued1b";
+                            if (networkPill.isWifi) {
+                                let pct = networkPill.signalPct;
+                                if (pct >= 75) return "\ueb52";      // wifi
+                                if (pct >= 50) return "\uf625";      // wifi-2
+                                if (pct >= 25) return "\uf624";      // wifi-1
+                                return "\uf623";                     // wifi-0
+                            }
+                            return "\ueb53";                         // disconnected / wifi-off
+                        }
                         color: Theme.colPrimary
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight
                         font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    // 2. 4-Bar Wi-Fi Signal Strength Indicator
-                    Row {
-                        spacing: 2
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWifi && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-
-                        Rectangle { width: 2.5; height: 4; radius: 1; color: Theme.colPrimary; opacity: networkPill.signalPct >= 25 ? 1.0 : 0.25 }
-                        Rectangle { width: 2.5; height: 6; radius: 1; color: Theme.colPrimary; opacity: networkPill.signalPct >= 50 ? 1.0 : 0.25 }
-                        Rectangle { width: 2.5; height: 8.5; radius: 1; color: Theme.colPrimary; opacity: networkPill.signalPct >= 75 ? 1.0 : 0.25 }
-                        Rectangle { width: 2.5; height: 11; radius: 1; color: Theme.colPrimary; opacity: networkPill.signalPct >= 90 ? 1.0 : 0.25 }
                     }
 
                     // 3. Network Name / SSID
@@ -384,15 +383,17 @@ PanelWindow {
                 
                 Process {
                     id: networkProc
-                    command: ["nmcli", "-t", "-f", "TYPE,STATE,CONNECTION", "d"]
+                    command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null; echo '---'; nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | grep '^\\*'"]
                     stdout: StdioCollector {
                         onStreamFinished: () => {
                             if (!text) {
-                                networkIcon.text = ""
-                                networkText.text = "Disconnected"
+                                networkPill.isWifi = false;
+                                networkPill.isWired = false;
+                                networkText.text = "Disconnected";
                                 return;
                             }
-                            const lines = text.trim().split("\n");
+                            const sections = text.trim().split("---");
+                            const lines = sections[0].trim().split("\n");
                             let activeWifi = "";
                             let activeEthernet = false;
                             let hotspotActive = false;
@@ -403,7 +404,7 @@ PanelWindow {
                                     if (parts[0] === "wifi" && parts[1] === "connected") {
                                         const connName = parts.slice(2).join(":");
                                         if (connName.toLowerCase() === "hotspot") {
-                                            hotspotActive = true; // Our own hotspot — don't show as Wi-Fi
+                                            hotspotActive = true;
                                         } else {
                                             activeWifi = connName;
                                         }
@@ -413,27 +414,30 @@ PanelWindow {
                                 }
                             }
 
+                            if (sections.length > 1 && sections[1].trim() !== "") {
+                                const sigParts = sections[1].trim().split(":");
+                                if (sigParts.length >= 2) {
+                                    networkPill.signalPct = parseInt(sigParts[1]) || 75;
+                                }
+                            }
+
                             networkPill.hotspotActive = hotspotActive;
 
                             if (activeEthernet) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = true;
-                                networkIcon.text = "\uebd9";
                                 networkText.text = "Wired";
                             } else if (activeWifi !== "") {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
-                                networkIcon.text = "\ueb52";
                                 networkText.text = activeWifi;
                             } else if (hotspotActive) {
                                 networkPill.isWifi = true;
                                 networkPill.isWired = false;
-                                networkIcon.text = "\ued1b"; // hotspot icon
                                 networkText.text = "Hotspot";
                             } else {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
-                                networkIcon.text = "\ueb53";
                                 networkText.text = "Disconnected";
                             }
                         }
