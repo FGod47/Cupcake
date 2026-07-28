@@ -306,7 +306,7 @@ PanelWindow {
                         anchors.verticalCenter: parent.verticalCenter
 
                         Text {
-                            text: networkPill.btConnectedDevice !== "" ? "\uea38" : "\uea37"
+                            text: networkPill.btConnectedDevice !== "" ? "\uecea" : "\uea37"
                             color: Theme.colPrimary
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
