@@ -342,7 +342,7 @@ PanelWindow {
                         }
 
                         Text {
-                            text: networkPill.btConnectedDevice !== "" ? "\ueb68" : "\ueb5f"
+                            text: networkPill.btConnectedDevice !== "" ? "\uea38" : "\uea37"
                             color: Theme.colPrimary
                             font.family: fontName
                             font.pixelSize: 13
