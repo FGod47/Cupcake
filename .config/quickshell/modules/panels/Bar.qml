@@ -249,7 +249,6 @@ PanelWindow {
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 24
                 Layout.alignment: Qt.AlignVCenter
-                Behavior on implicitWidth { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                 Behavior on color { ColorAnimation { duration: 300 } }
                 property real lastRx: 0
                 property real lastTx: 0
@@ -288,7 +287,9 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: networkPill.isHovered
+                            width: networkPill.isHovered ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
                     }
 
@@ -315,7 +316,9 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: networkPill.isHovered && networkPill.btConnectedDevice !== ""
+                            width: (networkPill.isHovered && networkPill.btConnectedDevice !== "") ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
                     }
 
@@ -347,7 +350,9 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: networkPill.isHovered && text !== ""
+                            width: (networkPill.isHovered && text !== "") ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
                     }
 
@@ -373,25 +378,30 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: networkPill.isHovered
+                            width: networkPill.isHovered ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
                     }
 
                     // Thin Vertical Hairline Separator
                     Rectangle {
-                        width: 1
+                        width: (networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? 1 : 0
                         height: 13
                         color: Theme.colOnPrimary
                         opacity: 0.3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                     }
 
                     // Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        width: (networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
 
                         Text {
                             id: rxSpeedText
