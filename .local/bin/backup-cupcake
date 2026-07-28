@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Backup Script for Cupcake Shell & AI Lessons
+DEST_BASE="/run/media/code/~codeBlack/Prjt Cupcake"
+SRC_REPO="/home/code/Cupcake"
+SRC_LESSONS="/home/code/.ai_notes/cupcake_lessons.md"
+SRC_CONFIG="$HOME/.config/cupcake"
+SRC_QUICKSHELL="$HOME/.config/quickshell"
+
+if [ ! -d "$DEST_BASE" ]; then
+    echo "[$(date)] Backup target directory '$DEST_BASE' is not mounted. Skipping backup."
+    exit 0
+fi
+
+echo "[$(date)] Starting Cupcake backup to $DEST_BASE..."
+
+# Ensure target directories exist
+mkdir -p "$DEST_BASE/Cupcake"
+mkdir -p "$DEST_BASE/.ai_notes"
+mkdir -p "$DEST_BASE/live_config_backup"
+
+# 1. Sync repository code
+if command -v rsync &>/dev/null; then
+    rsync -a --delete "$SRC_REPO/" "$DEST_BASE/Cupcake/"
+else
+    cp -ru "$SRC_REPO/"* "$DEST_BASE/Cupcake/"
+fi
+
+# 2. Sync AI lessons
+if [ -f "$SRC_LESSONS" ]; then
+    cp -f "$SRC_LESSONS" "$DEST_BASE/cupcake_lessons.md"
+    cp -f "$SRC_LESSONS" "$DEST_BASE/.ai_notes/cupcake_lessons.md"
+fi
+
+# 3. Sync live user configs
+if [ -d "$SRC_CONFIG" ]; then
+    rsync -a --delete "$SRC_CONFIG/" "$DEST_BASE/live_config_backup/cupcake/" 2>/dev/null || cp -r "$SRC_CONFIG" "$DEST_BASE/live_config_backup/"
+fi
+if [ -d "$SRC_QUICKSHELL" ]; then
+    rsync -a --delete "$SRC_QUICKSHELL/" "$DEST_BASE/live_config_backup/quickshell/" 2>/dev/null || cp -r "$SRC_QUICKSHELL" "$DEST_BASE/live_config_backup/"
+fi
+
+echo "[$(date)] SUCCESS: Cupcake backup completed to $DEST_BASE" | tee -a "$DEST_BASE/backup_log.txt"
