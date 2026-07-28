@@ -243,7 +243,7 @@ PanelWindow {
                 property int signalPct: 78
                 property bool isHovered: netHoverArea.containsMouse
                 
-                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
+                color: Theme.colPrimary
                 radius: 17
                 implicitHeight: 34
                 implicitWidth: networkRow.implicitWidth + 24
@@ -273,7 +273,7 @@ PanelWindow {
 
                         Text {
                             text: "\ued1b"
-                            color: Theme.colPrimary
+                            color: Theme.colOnPrimary
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
@@ -282,7 +282,7 @@ PanelWindow {
                         
                         Text {
                             text: "Hotspot"
-                            color: fg
+                            color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
@@ -298,7 +298,7 @@ PanelWindow {
 
                         Text {
                             text: networkPill.btConnectedDevice !== "" ? "\uecea" : "\uea37"
-                            color: Theme.colPrimary
+                            color: Theme.colOnPrimary
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
@@ -307,7 +307,7 @@ PanelWindow {
                         
                         Text {
                             text: networkPill.btConnectedDevice
-                            color: fg
+                            color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
@@ -334,7 +334,7 @@ PanelWindow {
                                 }
                                 return "\uecfa";                         // disconnected / wifi-off
                             }
-                            color: Theme.colPrimary
+                            color: Theme.colOnPrimary
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
@@ -344,7 +344,7 @@ PanelWindow {
                         Text {
                             id: networkText
                             text: ""
-                            color: fg
+                            color: Theme.colOnPrimary
                             font.family: Theme.defaultFontFamily
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
@@ -357,7 +357,7 @@ PanelWindow {
                     Rectangle {
                         width: 1
                         height: 13
-                        color: Theme.colOnSurfaceVariant
+                        color: Theme.colOnPrimary
                         opacity: 0.3
                         anchors.verticalCenter: parent.verticalCenter
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -372,7 +372,7 @@ PanelWindow {
                         Text {
                             id: rxSpeedText
                             text: "0 KB/s"
-                            color: Theme.colOnSurfaceVariant
+                            color: Qt.rgba(Theme.colOnPrimary.r, Theme.colOnPrimary.g, Theme.colOnPrimary.b, 0.8)
                             font.family: Theme.defaultFontFamily
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize - 1
