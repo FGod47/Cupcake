@@ -350,7 +350,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            width: (networkPill.isHovered && text !== "") ? implicitWidth : 0
+                            width: text !== "" ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
@@ -378,7 +378,7 @@ PanelWindow {
                             font.weight: Font.DemiBold
                             font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
-                            width: networkPill.isHovered ? implicitWidth : 0
+                            width: implicitWidth
                             clip: true
                             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         }
@@ -386,7 +386,7 @@ PanelWindow {
 
                     // Thin Vertical Hairline Separator
                     Rectangle {
-                        width: (networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? 1 : 0
+                        width: ((networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? 1 : 0
                         height: 13
                         color: Theme.colOnPrimary
                         opacity: 0.3
@@ -399,7 +399,7 @@ PanelWindow {
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
-                        width: (networkPill.isHovered && (networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
+                        width: ((networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
 
