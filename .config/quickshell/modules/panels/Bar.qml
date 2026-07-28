@@ -287,7 +287,46 @@ PanelWindow {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    // 2. Bluetooth Badge (Icon Only)
+                    // Network Name / SSID
+                    Text {
+                        id: networkText
+                        text: ""
+                        color: fg
+                        font.family: Theme.defaultFontFamily
+                        font.weight: Font.DemiBold
+                        font.pixelSize: Theme.defaultFontSize - 1
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                    }
+
+                    // Thin Vertical Hairline Separator
+                    Rectangle {
+                        width: 1
+                        height: 13
+                        color: Theme.colOnSurfaceVariant
+                        opacity: 0.3
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                    }
+
+                    // Network Speed Traffic Badge
+                    Row {
+                        spacing: 3
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+
+                        Text {
+                            id: rxSpeedText
+                            text: "0 KB/s"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // 2. Bluetooth Badge
                     Row {
                         spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -300,6 +339,16 @@ PanelWindow {
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
+                        }
+                        
+                        Text {
+                            text: networkPill.btConnectedDevice
+                            color: fg
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Font.DemiBold
+                            font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: networkPill.btConnectedDevice !== ""
                         }
                     }
 
@@ -315,45 +364,6 @@ PanelWindow {
                             font.family: fontName
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-
-                    // 4. Network Name / SSID
-                    Text {
-                        id: networkText
-                        text: ""
-                        color: fg
-                        font.family: Theme.defaultFontFamily
-                        font.weight: Font.DemiBold
-                        font.pixelSize: Theme.defaultFontSize - 1
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                    }
-
-                    // 5. Thin Vertical Hairline Separator
-                    Rectangle {
-                        width: 1
-                        height: 13
-                        color: Theme.colOnSurfaceVariant
-                        opacity: 0.3
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                    }
-
-                    // 6. Network Speed Traffic Badge
-                    Row {
-                        spacing: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-
-                        Text {
-                            id: rxSpeedText
-                            text: "0 KB/s"
-                            color: Theme.colOnSurfaceVariant
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
