@@ -33,9 +33,14 @@ if [ -f ~/.config/cupcake/.color_scheme ]; then
     SCHEME=$(echo "$SCHEME_RAW" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 fi
 
-if [ "$SCHEME" = "auto" ]; then
-    SCHEME="tonal-spot"
-fi
+# Validate matugen scheme type against supported Material 3 schemes
+case "$SCHEME" in
+    content|expressive|fidelity|fruit-salad|monochrome|neutral|rainbow|tonal-spot|vibrant)
+        ;;
+    *)
+        SCHEME="tonal-spot"
+        ;;
+esac
 
 # Read Icon and Cursor Theme
 ICON_THEME_DARK="Papirus-Dark"
@@ -58,6 +63,9 @@ echo "Setting wallpaper with transition: $TRANSITION..."
 awww img "$WALLPAPER" --transition-type "$TRANSITION" --transition-fps 60 --transition-duration 1.5 &
 
 # Run matugen to generate themes
+# Ensure target directories for templates exist
+mkdir -p ~/.local/state/quickshell/user/generated ~/.cache ~/.config/gtk-3.0 ~/.config/gtk-4.0 ~/.config/kitty ~/.config/hypr
+
 # Use ffmpeg to downscale to 400x400 for fast color extraction
 echo "Generating color palettes with matugen in $MODE mode using scheme-$SCHEME..."
 if command -v ffmpeg &>/dev/null; then
