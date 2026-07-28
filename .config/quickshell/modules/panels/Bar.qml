@@ -419,7 +419,7 @@ PanelWindow {
                 
                 Process {
                     id: networkProc
-                    command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null; echo '---'; nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | grep '^\\*'"]
+                    command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null; echo '---'; nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | grep '^\\*'; echo '---'; nmcli -g 802-11-wireless.ssid con show \"$(nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null | grep '^wifi:connected:' | cut -d: -f3-)\" 2>/dev/null || true"]
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
@@ -453,8 +453,9 @@ PanelWindow {
                             }
 
                             const isHotspot = activeWifi.toLowerCase().includes("hotspot");
+                            const realSsid = (sections.length > 2) ? sections[2].trim() : "";
                             networkPill.hotspotActive = isHotspot;
-                            networkPill.hotspotName = isHotspot ? activeWifi : "";
+                            networkPill.hotspotName = isHotspot ? (realSsid || activeWifi) : "";
                             networkPill.isWifi = (activeWifi !== "" && !isHotspot);
                             networkPill.isWired = activeEthernet;
                             networkPill.activeWifiName = isHotspot ? "" : activeWifi;
