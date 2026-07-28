@@ -272,7 +272,7 @@ PanelWindow {
                         color: Theme.colPrimary
                         font.family: fontName
                         font.weight: Theme.defaultFontWeight
-                        font.pixelSize: 14
+                        font.pixelSize: Theme.defaultFontSize
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -295,7 +295,7 @@ PanelWindow {
                         color: fg
                         font.family: Theme.defaultFontFamily
                         font.weight: Font.DemiBold
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.defaultFontSize - 1
                         anchors.verticalCenter: parent.verticalCenter
                         visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
@@ -316,7 +316,8 @@ PanelWindow {
                             text: "\ued1b"
                             color: Theme.colPrimary
                             font.family: fontName
-                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -337,7 +338,8 @@ PanelWindow {
                             text: networkPill.btConnectedDevice !== "" ? "\uea38" : "\uea37"
                             color: Theme.colPrimary
                             font.family: fontName
-                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -362,7 +364,9 @@ PanelWindow {
                             text: "•"
                             color: Theme.colOnSurfaceVariant
                             opacity: 0.7
-                            font.pixelSize: 10
+                            font.family: Theme.defaultFontFamily
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize - 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
@@ -371,8 +375,8 @@ PanelWindow {
                             text: "0 KB/s"
                             color: Theme.colOnSurfaceVariant
                             font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium
-                            font.pixelSize: 11
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize - 1
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
