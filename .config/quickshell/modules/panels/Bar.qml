@@ -299,23 +299,7 @@ PanelWindow {
                         visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 4. Hotspot Badge (Icon Only)
-                    Row {
-                        spacing: 4
-                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: "\ued1b"
-                            color: Theme.colPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-
-                    // 5. Bluetooth Badge (Icon Only)
+                    // 3. Bluetooth Badge (Icon Only)
                     Row {
                         spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -331,7 +315,7 @@ PanelWindow {
                         }
                     }
 
-                    // 6. Thin Vertical Hairline Separator
+                    // 4. Thin Vertical Hairline Separator
                     Rectangle {
                         width: 1
                         height: 13
@@ -341,7 +325,7 @@ PanelWindow {
                         visible: networkText.text !== "Disconnected" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 7. Network Speed Traffic Badge
+                    // 5. Network Speed Traffic Badge
                     Row {
                         spacing: 3
                         anchors.verticalCenter: parent.verticalCenter
@@ -354,6 +338,22 @@ PanelWindow {
                             font.family: Theme.defaultFontFamily
                             font.weight: Theme.defaultFontWeight
                             font.pixelSize: Theme.defaultFontSize - 1
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // 6. Hotspot Badge (Icon Only at the last position)
+                    Row {
+                        spacing: 4
+                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Text {
+                            text: "\ued1b"
+                            color: Theme.colPrimary
+                            font.family: fontName
+                            font.weight: Theme.defaultFontWeight
+                            font.pixelSize: Theme.defaultFontSize
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
