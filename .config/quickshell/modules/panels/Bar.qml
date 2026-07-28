@@ -300,7 +300,7 @@ PanelWindow {
                         visible: text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
                     }
 
-                    // 4. Hotspot Badge (Icon & Label)
+                    // 4. Hotspot Badge (Icon Only)
                     Row {
                         spacing: 4
                         visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -319,17 +319,9 @@ PanelWindow {
                             font.pixelSize: 13
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text {
-                            text: "Hotspot"
-                            color: fg
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium
-                            font.pixelSize: 11
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
                     }
 
-                    // 5. Bluetooth Badge (Icon & Device Name / BT)
+                    // 5. Bluetooth Badge (Icon Only)
                     Row {
                         spacing: 4
                         visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
@@ -346,14 +338,6 @@ PanelWindow {
                             color: Theme.colPrimary
                             font.family: fontName
                             font.pixelSize: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            text: networkPill.btConnectedDevice !== "" ? networkPill.btConnectedDevice : "BT"
-                            color: fg
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.Medium
-                            font.pixelSize: 11
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
