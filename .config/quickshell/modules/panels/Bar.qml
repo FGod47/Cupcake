@@ -451,10 +451,11 @@ PanelWindow {
                                 }
                             }
 
-                            networkPill.isWifi = (activeWifi !== "");
+                            const isHotspot = activeWifi.toLowerCase().includes("hotspot");
+                            networkPill.hotspotActive = isHotspot;
+                            networkPill.isWifi = (activeWifi !== "" && !isHotspot);
                             networkPill.isWired = activeEthernet;
-                            networkPill.activeWifiName = activeWifi;
-                            networkPill.hotspotActive = (activeWifi.toLowerCase().includes("hotspot"));
+                            networkPill.activeWifiName = isHotspot ? "" : activeWifi;
                         }
                     }
                 }
