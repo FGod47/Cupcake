@@ -199,32 +199,30 @@ Item {
         return Qt.rgba(c.r, c.g, c.b, alpha);
     }
 
-    Timer {
-        id: delayedColorRead
-        interval: 100
-        repeat: false
-        running: false
-        onTriggered: {
-            var text = colorsFileView.text();
-            if (text && text.trim().length > 0) {
-                try {
-                    var c = JSON.parse(text.trim());
-                    themeSingleton.colBackground = themeSingleton.transparentize(c.background, themeSingleton.bgAlpha);
-                    themeSingleton.colOnBackground = c.onBackground;
-                    themeSingleton.colSurface = themeSingleton.transparentize(c.surfaceContainerHighest, themeSingleton.bgAlpha);
-                    themeSingleton.colSurfaceContainer = themeSingleton.transparentize(c.surfaceContainer, themeSingleton.bgAlpha);
-                    themeSingleton.colSurfaceContainerHigh = themeSingleton.transparentize(c.surfaceContainerHigh, themeSingleton.bgAlpha);
-                    themeSingleton.colSurfaceVariant = themeSingleton.transparentize(c.surfaceVariant, themeSingleton.bgAlpha);
-                    themeSingleton.colOnSurface = c.onSurface;
-                    themeSingleton.colOnSurfaceVariant = c.onSurfaceVariant;
-                    themeSingleton.colOutline = c.outline;
-                    themeSingleton.colPrimary = c.primary;
-                    themeSingleton.colOnPrimary = c.onPrimary;
-                    themeSingleton.colSecondary = c.secondary;
-                    themeSingleton.colError = c.error;
-                } catch (e) {}
-            }
+    function readColorsImmediately() {
+        var text = colorsFileView.text();
+        if (text && text.trim().length > 0) {
+            try {
+                var c = JSON.parse(text.trim());
+                if (c.background) themeSingleton.colBackground = themeSingleton.transparentize(c.background, themeSingleton.bgAlpha);
+                if (c.onBackground) themeSingleton.colOnBackground = c.onBackground;
+                if (c.surfaceContainerHighest) themeSingleton.colSurface = themeSingleton.transparentize(c.surfaceContainerHighest, themeSingleton.bgAlpha);
+                if (c.surfaceContainer) themeSingleton.colSurfaceContainer = themeSingleton.transparentize(c.surfaceContainer, themeSingleton.bgAlpha);
+                if (c.surfaceContainerHigh) themeSingleton.colSurfaceContainerHigh = themeSingleton.transparentize(c.surfaceContainerHigh, themeSingleton.bgAlpha);
+                if (c.surfaceVariant) themeSingleton.colSurfaceVariant = themeSingleton.transparentize(c.surfaceVariant, themeSingleton.bgAlpha);
+                if (c.onSurface) themeSingleton.colOnSurface = c.onSurface;
+                if (c.onSurfaceVariant) themeSingleton.colOnSurfaceVariant = c.onSurfaceVariant;
+                if (c.outline) themeSingleton.colOutline = c.outline;
+                if (c.primary) themeSingleton.colPrimary = c.primary;
+                if (c.onPrimary) themeSingleton.colOnPrimary = c.onPrimary;
+                if (c.secondary) themeSingleton.colSecondary = c.secondary;
+                if (c.error) themeSingleton.colError = c.error;
+            } catch (e) {}
         }
+    }
+
+    Component.onCompleted: {
+        readColorsImmediately();
     }
 
     FileView {
@@ -233,10 +231,10 @@ Item {
         watchChanges: true
         onFileChanged: {
             reload();
-            delayedColorRead.start();
+            themeSingleton.readColorsImmediately();
         }
         onLoadedChanged: {
-            delayedColorRead.start();
+            themeSingleton.readColorsImmediately();
         }
     }
 
