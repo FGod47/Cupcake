@@ -52,6 +52,9 @@ done
 
 echo -e "\n${GREEN}[DONE]${RESET} Config backup completed.\n"
 
+# Ensure state and cache directories for Matugen templates exist
+mkdir -p "$HOME/.local/state/quickshell/user/generated" "$HOME/.cache"
+
 # ──────────────── Install Configs ────────────────
 print_banner CONFIG_INSTALLING_BANNER
 echo -e "${YELLOW}[INFO]${RESET} Installing configs from: ${SOURCE_DIR}"
