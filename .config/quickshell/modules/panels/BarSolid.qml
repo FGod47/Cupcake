@@ -117,7 +117,7 @@ PanelWindow {
                     model: 5
                     delegate: Item {
                         width: isFocused ? 22 : 12
-                        height: 16
+                        height: 30
                         property int wsId: index + 1
                         property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
                         property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
@@ -137,7 +137,6 @@ PanelWindow {
                         MouseArea { 
                             id: wsMouse
                             anchors.fill: parent
-                            anchors.margins: -4 // Generous click target
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: Hyprland.dispatch("workspace " + wsId) 
