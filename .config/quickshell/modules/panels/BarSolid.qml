@@ -154,6 +154,36 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
             
+            // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
+            Row {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                spacing: 8
+                
+                Text {
+                    text: "\ueb30" // tabler icon for sun (brightness)
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+
+                Text {
+                    text: "\ueb51" // tabler icon for volume
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+            }
+
+            // ── RIGHT: Vertical Separator ────────
+            Rectangle {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                width: 1
+                height: 16
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+            }
+            
             // ── RIGHT: Network Icons ────────
             Row {
                 Layout.alignment: Qt.AlignVCenter
