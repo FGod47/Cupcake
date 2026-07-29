@@ -29,9 +29,8 @@ PanelWindow {
         width: 800 // Fixed smaller width for the bar
         height: 30 // Smaller height
         
-        // Transparent black background
-        // Bound to Theme.barOpacity to ensure Hyprland blurls activates
-        color: Qt.rgba(0, 0, 0, Theme.barOpacity)
+        // Background color matching the clock pill
+        color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, Theme.barOpacity)
         radius: 15
         
         border.color: Qt.rgba(1, 1, 1, 0.2)
