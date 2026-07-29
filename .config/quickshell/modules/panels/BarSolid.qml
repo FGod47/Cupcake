@@ -162,7 +162,7 @@ PanelWindow {
             // ── RIGHT: Power Icon ────────
             Rectangle {
                 Layout.alignment: Qt.AlignVCenter
-                width: 26; height: 26; radius: 6
+                width: 26; height: 26; radius: 13
                 color: Qt.rgba(fg.r, fg.g, fg.b, pMouse.containsMouse ? 0.15 : 0.0)
                 Behavior on color { ColorAnimation { duration: 150 } }
 
