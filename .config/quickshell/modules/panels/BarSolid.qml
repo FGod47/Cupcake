@@ -14,6 +14,12 @@ import Quickshell.Services.Mpris
 
 PanelWindow {
     id: bar
+    property string cpuTextVal: "33"
+    property string ramTextVal: "3.0"
+    property string tempTextVal: "53"
+    property string volTextVal: "70"
+    property string briTextVal: "50"
+    property string batTextVal: "100"
     property bool isDestroying: false
     Component.onDestruction: isDestroying = true
     anchors {
@@ -143,7 +149,7 @@ PanelWindow {
                 RowLayout {
                     spacing: 4
                     Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
-                    Text { id: tempVal; text: "53"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: tempVal; text: bar.tempTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "°C"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
                 
@@ -151,7 +157,7 @@ PanelWindow {
                 RowLayout {
                     spacing: 4
                     Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
-                    Text { id: ramVal; text: "3.0"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: ramVal; text: bar.ramTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "GiB"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
                 
@@ -159,7 +165,7 @@ PanelWindow {
                 RowLayout {
                     spacing: 4
                     Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
-                    Text { id: cpuVal; text: "33"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: cpuVal; text: bar.cpuTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
             }
@@ -186,7 +192,7 @@ PanelWindow {
                 RowLayout {
                     spacing: 4
                     Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
-                    Text { id: volVal; text: "70"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: volVal; text: bar.volTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
                 
@@ -194,7 +200,7 @@ PanelWindow {
                 RowLayout {
                     spacing: 4
                     Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
-                    Text { id: briVal; text: "50"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: briVal; text: bar.briTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
                 
@@ -224,7 +230,7 @@ PanelWindow {
                             }
                         }
                     }
-                    Text { id: batVal; text: "100"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { id: batVal; text: bar.batTextVal; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
                     Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
                 }
             }
@@ -289,7 +295,7 @@ PanelWindow {
                 if (bar.isDestroying) return;
                 if (text && text.trim() !== "") {
                     let val = parseFloat(text.trim());
-                    cpuVal.text = isNaN(val) ? "0" : Math.round(val).toString();
+                    bar.cpuTextVal = isNaN(val) ? "0" : Math.round(val).toString();
                 }
             }
         }
@@ -302,7 +308,7 @@ PanelWindow {
         command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.1f\", $3/1024}'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (!bar.isDestroying && text) ramVal.text = text.trim() }
+            onStreamFinished: { if (text) bar.ramTextVal = text.trim() }
         }
     }
     Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProc.running = true }
@@ -317,7 +323,7 @@ PanelWindow {
                 if (bar.isDestroying) return;
                 if (text && text.trim() !== "") {
                     let val = parseFloat(text.trim());
-                    tempVal.text = isNaN(val) ? "0" : Math.round(val).toString();
+                    bar.tempTextVal = isNaN(val) ? "0" : Math.round(val).toString();
                 }
             }
         }
@@ -330,7 +336,7 @@ PanelWindow {
         command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2 * 100)}'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (!bar.isDestroying && text) volVal.text = text.trim() }
+            onStreamFinished: { if (text) bar.volTextVal = text.trim() }
         }
     }
     Timer { interval: 2000; running: true; repeat: true; onTriggered: volProc.running = true }
@@ -341,7 +347,7 @@ PanelWindow {
         command: ["bash", "-c", "ddcutil getvcp 10 --bus 5 2>/dev/null | awk -F'current value = ' '{print $2}' | awk '{print $1}' | tr -d ','"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (!bar.isDestroying && text) briVal.text = text.trim() }
+            onStreamFinished: { if (text) bar.briTextVal = text.trim() }
         }
     }
     Timer { interval: 60000; running: true; repeat: true; onTriggered: briProc.running = true }
@@ -352,7 +358,7 @@ PanelWindow {
         command: ["bash", "-c", "upower -i $(upower -e | grep BAT) 2>/dev/null | grep percentage | awk '{print $2}' | tr -d '%'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (bar.isDestroying) return; if (text && text.trim() !== "") batVal.text = text.trim(); else batVal.text = "100" }
+            onStreamFinished: { if (text && text.trim() !== "") bar.batTextVal = text.trim(); else bar.batTextVal = "100" }
         }
     }
     Timer { interval: 10000; running: true; repeat: true; onTriggered: batProc.running = true }

@@ -14,6 +14,12 @@ import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: bar
+    property string rxSpeedStr: "0 KB/s"
+    property string hwStr: ""
+    property string recStr: ""
+    property string clockStr: ""
+    property int audioVal: 50
+    property int lightVal: 50
     property bool isDestroying: false
     Component.onDestruction: isDestroying = true
     anchors {
@@ -409,7 +415,7 @@ PanelWindow {
 
                         Text {
                             id: rxSpeedText
-                            text: "0 KB/s"
+                            text: bar.rxSpeedStr
                             color: Qt.rgba(Theme.colOnPrimary.r, Theme.colOnPrimary.g, Theme.colOnPrimary.b, 0.8)
                             font.family: Theme.defaultFontFamily
                             font.weight: Theme.defaultFontWeight
@@ -526,10 +532,9 @@ PanelWindow {
                                     if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
                                     return (bytes / 1024).toFixed(0) + " KB/s";
                                 }
-                                
-                                rxSpeedText.text = formatSpeed(rxDiff + txDiff);
+                                bar.rxSpeedStr = formatSpeed(rxDiff + txDiff);
                             } else {
-                                rxSpeedText.text = "0 KB/s";
+                                bar.rxSpeedStr = "0 KB/s";
                             }
                             networkPill.lastRx = totalRx;
                             networkPill.lastTx = totalTx;
@@ -555,7 +560,7 @@ PanelWindow {
                 Text {
                     id: hwText
                     anchors.centerIn: parent
-                    text: "HW"
+                    text: bar.hwStr
                     color: Theme.colOnSurfaceVariant
                     font.family: fontName
                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
@@ -568,8 +573,8 @@ PanelWindow {
                         onStreamFinished: () => {
                             if (bar.isDestroying) return;
                             let data = text;
-                            try { hwText.text = JSON.parse(data).text || "" } catch(e) { hwText.text = data || "" }
-                            hwPill.visible = hwText.text !== ""
+                            try { bar.hwStr = JSON.parse(data).text || "" } catch(e) { bar.hwStr = data || "" }
+                            hwPill.visible = bar.hwStr !== ""
                         }
                     }
                 }
@@ -591,7 +596,7 @@ PanelWindow {
                 Text {
                     id: recText
                     anchors.centerIn: parent
-                    text: ""
+                    text: bar.recStr
                     color: fg
                     font.family: fontName
                     font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
@@ -604,8 +609,8 @@ PanelWindow {
                         onStreamFinished: () => {
                             if (bar.isDestroying) return;
                             let data = text;
-                            try { recText.text = JSON.parse(data).text || "" } catch(e) { recText.text = data || "" }
-                            recPill.visible = recText.text !== ""
+                            try { bar.recStr = JSON.parse(data).text || "" } catch(e) { bar.recStr = data || "" }
+                            recPill.visible = bar.recStr !== ""
                         }
                     }
                 }
@@ -719,11 +724,11 @@ PanelWindow {
                                 property int targetVal: 100
                                 onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
                             }
-                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart() }
+                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart(); bar.audioVal = Math.round(value) }
                         }
                         Text {
                             leftPadding: 8
-                            text: Math.round(audioSlider.value) + "%"
+                            text: bar.audioVal + "%"
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
@@ -786,7 +791,7 @@ PanelWindow {
                         }
                         Text {
                             leftPadding: 8
-                            text: Math.round(lightSlider.value) + "%"
+                            text: bar.lightVal + "%"
                             color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                             width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
                             clip: true
@@ -816,7 +821,10 @@ PanelWindow {
                         let match = t.match(/Volume:\s+([\d\.]+)/);
                         if (match && match[1]) {
                             let val = Math.round(parseFloat(match[1]) * 100);
-                            if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
+                            if (!isNaN(val) && !audioSlider.pressed) {
+                                bar.audioVal = val;
+                                try { audioSlider.value = val; } catch(e) {}
+                            }
                         }
                     }
                 }
@@ -831,7 +839,10 @@ PanelWindow {
                         let match = t.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
                         if (match && match[1]) {
                             let val = parseInt(match[1]);
-                            if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
+                            if (!isNaN(val) && !lightSlider.pressed) {
+                                bar.lightVal = val;
+                                try { lightSlider.value = val; } catch(e) {}
+                            }
                         }
                     }
                 }
@@ -956,7 +967,7 @@ PanelWindow {
 
                             Text {
                                 id: customClockText
-                                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
+                                text: bar.clockStr !== "" ? bar.clockStr : Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
                                 color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
                                 onTextChanged: globalState.clockString = customClockText.text
                                 Component.onCompleted: globalState.clockString = customClockText.text
@@ -984,7 +995,7 @@ PanelWindow {
                             Process {
                                 id: clockProc
                                 command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                                stdout: StdioCollector { onStreamFinished: () => { if (bar.isDestroying) return; let data = text; try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
+                                stdout: StdioCollector { onStreamFinished: () => { if (bar.isDestroying) return; let data = text; try { bar.clockStr = JSON.parse(data).text || bar.clockStr } catch(e) { if(data) bar.clockStr = data } } }
                             }
                             Timer { interval: 5000; running: true; repeat: true; onTriggered: clockProc.running = true }
                         }
