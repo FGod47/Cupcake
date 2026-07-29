@@ -19,19 +19,16 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     exclusiveZone: 46
 
-    height: 46
-    color: "transparent"
+    height: 34 // Solid bar usually matches its internal height
 
     // The single combined solid bar
     Rectangle {
         id: solidBarBackground
-        anchors.centerIn: parent
-        width: parent.width - 24 // Give it some outer margins (12px on each side)
-        height: 34               // A standard bar height
+        anchors.fill: parent // Make it perfectly flush with the edges
         
         // Solid dark premium background with rounding
         color: Qt.rgba(0.05, 0.05, 0.05, 0.85) // Dark translucent background
-        radius: 17 // Perfectly rounded edges
+        radius: 0 // Solid bars typically don't have rounded corners if they are flush
         
         border.color: Qt.rgba(1, 1, 1, 0.05)
         border.width: 1
