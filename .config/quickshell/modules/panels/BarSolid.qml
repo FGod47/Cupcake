@@ -30,7 +30,7 @@ PanelWindow {
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
     property string fontName: "tabler-icons"
-    property real barOpacity: Theme.barOpacity
+    property real barOpacity: root.barOpacity
 
     // Hardware data states
     property string cpuStr: "0"
@@ -59,7 +59,7 @@ PanelWindow {
         width: parent.width - 16   // small 8px margin each side
         height: 34
         radius: 17
-        color: Qt.rgba(bg.r, bg.g, bg.b, barOpacity)
+        color: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
         // Thin glass top-edge highlight
         Rectangle {
