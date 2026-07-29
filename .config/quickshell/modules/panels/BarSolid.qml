@@ -29,12 +29,26 @@ PanelWindow {
         width: 800 // Fixed smaller width for the bar
         height: 30 // Smaller height
         
-        // Solid dark premium background with rounding
-        color: Qt.rgba(0.05, 0.05, 0.05, 0.85) // Dark translucent background
-        radius: 15 // Rounded corners for a floating look
+        // Glassmorphism background (glass sheet)
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.08) }
+            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.03) }
+            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.08) }
+        }
+        radius: 15
         
-        border.color: Qt.rgba(1, 1, 1, 0.05)
+        border.color: Qt.rgba(1, 1, 1, 0.2)
         border.width: 1
+
+        layer.enabled: true
+        layer.effect: DropShadow {
+            transparentBorder: true
+            color: Qt.rgba(0, 0, 0, 0.4)
+            radius: 12
+            samples: 25
+            verticalOffset: 4
+        }
 
         // Container for future items
         RowLayout {
