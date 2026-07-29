@@ -166,7 +166,7 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
-                Layout.maximumWidth: bar.barW * 0.35 // prevent it from eating the center space
+                Layout.maximumWidth: bar.barW * 0.15 // middle length
                 elide: Text.ElideRight
                 visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
                 text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
