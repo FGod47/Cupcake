@@ -195,7 +195,7 @@ Item {
                     Text {
                         id: summaryText
                         width: parent.width
-                        text: wrapper.notificationData ? wrapper.notificationData.summary : ""
+                        text: wrapper.notificationData ? wrapper.notificationData.summary.replace(/📸\s*/g, "") : ""
                         color: Theme.colOnSurface
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
