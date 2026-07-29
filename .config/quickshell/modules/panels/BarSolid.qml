@@ -43,16 +43,18 @@ PanelWindow {
 
     readonly property real barW: bar.width > 0 ? bar.width - 16 : 1164
     readonly property real barX: 8
+    readonly property real startW: 160
+    readonly property real startX: (bar.width > 0 ? bar.width : 1180) / 2 - 80
     readonly property real midY: 6
 
     // ─────────────────────────────────────────────────────
-    //  MORPHING BAR (Starts as left Arch pill, stretches to full bar)
+    //  MORPHING BAR (Starts centered like archPill, expands outward into full bar)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: bar.barX
-        width: 160 // Starts at the size of the left Arch/workspace pill
+        x: bar.startX
+        width: bar.startW
         height: 34
         radius: 17
         color: pillColor
@@ -66,7 +68,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.12)
         }
 
-        // Inner contents (fades in as expansion completes)
+        // Inner contents (fades in as center expansion completes)
         RowLayout {
             id: contentLayout
             anchors.fill: parent
@@ -169,20 +171,30 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  EXPANSION ANIMATION (Pill morphs/expands to full solid bar)
+    //  EXPANSION ANIMATION (Center archPill expands horizontally outward)
     // ─────────────────────────────────────────────────────
     SequentialAnimation {
         id: expandAnim
         running: false
 
-        // Step 1: Smoothly expand pill width across the top screen
-        NumberAnimation {
-            target: solidBar
-            property: "width"
-            from: 160
-            to: bar.barW
-            duration: 520
-            easing.type: Easing.InOutCubic
+        // Step 1: Smoothly expand pill outward from center (x: startX -> barX, width: 160 -> barW)
+        ParallelAnimation {
+            NumberAnimation {
+                target: solidBar
+                property: "x"
+                from: bar.startX
+                to: bar.barX
+                duration: 520
+                easing.type: Easing.OutExpo
+            }
+            NumberAnimation {
+                target: solidBar
+                property: "width"
+                from: bar.startW
+                to: bar.barW
+                duration: 520
+                easing.type: Easing.OutExpo
+            }
         }
 
         // Step 2: Fade in the bar content elements
@@ -198,7 +210,8 @@ PanelWindow {
 
     onVisibleChanged: {
         if (visible) {
-            solidBar.width = 160;
+            solidBar.x = bar.startX;
+            solidBar.width = bar.startW;
             contentLayout.opacity = 0;
             expandAnim.restart();
         }
@@ -206,7 +219,8 @@ PanelWindow {
 
     Component.onCompleted: {
         if (visible) {
-            solidBar.width = 160;
+            solidBar.x = bar.startX;
+            solidBar.width = bar.startW;
             contentLayout.opacity = 0;
             expandAnim.start();
         }
