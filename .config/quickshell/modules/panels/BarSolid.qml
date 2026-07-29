@@ -190,7 +190,8 @@ PanelWindow {
                 Item {
                     id: bItem
                     width: childrenRect.width
-                    height: childrenRect.height
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
                     
                     HoverHandler {
                         id: bHover
@@ -198,6 +199,7 @@ PanelWindow {
                     }
                     
                     Row {
+                        height: 20
                         spacing: bHover.hovered ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
@@ -212,16 +214,17 @@ PanelWindow {
                             id: bSlider
                             anchors.verticalCenter: parent.verticalCenter
                             width: bHover.hovered ? 80 : 0
+                            height: 20
                             clip: true
                             handle: Rectangle {
                                 x: bSlider.leftPadding + bSlider.visualPosition * (bSlider.availableWidth - width)
-                                y: bSlider.topPadding + bSlider.availableHeight / 2 - height / 2
+                                y: bSlider.height / 2 - height / 2
                                 width: 12; height: 12; radius: 6
                                 color: Theme.colPrimary
                             }
                             background: Rectangle {
                                 x: bSlider.leftPadding
-                                y: bSlider.topPadding + bSlider.availableHeight / 2 - height / 2
+                                y: bSlider.height / 2 - height / 2
                                 implicitWidth: 80
                                 implicitHeight: 4
                                 width: bSlider.availableWidth
@@ -271,11 +274,13 @@ PanelWindow {
                 Item {
                     id: vItem
                     width: childrenRect.width
-                    height: childrenRect.height
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
                     
                     HoverHandler { id: vHover }
                     
                     Row {
+                        height: 20
                         spacing: vHover.hovered ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
@@ -290,16 +295,17 @@ PanelWindow {
                             id: vSlider
                             anchors.verticalCenter: parent.verticalCenter
                             width: vHover.hovered ? 80 : 0
+                            height: 20
                             clip: true
                             handle: Rectangle {
                                 x: vSlider.leftPadding + vSlider.visualPosition * (vSlider.availableWidth - width)
-                                y: vSlider.topPadding + vSlider.availableHeight / 2 - height / 2
+                                y: vSlider.height / 2 - height / 2
                                 width: 12; height: 12; radius: 6
                                 color: Theme.colPrimary
                             }
                             background: Rectangle {
                                 x: vSlider.leftPadding
-                                y: vSlider.topPadding + vSlider.availableHeight / 2 - height / 2
+                                y: vSlider.height / 2 - height / 2
                                 implicitWidth: 80
                                 implicitHeight: 4
                                 width: vSlider.availableWidth
