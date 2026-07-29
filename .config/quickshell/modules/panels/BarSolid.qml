@@ -160,7 +160,7 @@ PanelWindow {
                     text: "\ueb0d" // tabler icon for power
                     font.family: fontName
                     font.pixelSize: 15
-                    color: Theme.colPrimary
+                    color: fg
                 }
 
                 MouseArea {
