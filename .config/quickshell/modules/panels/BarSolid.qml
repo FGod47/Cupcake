@@ -22,6 +22,9 @@ PanelWindow {
     height: 46
     color: "transparent"
 
+    // Revert animation state flag
+    property bool isCollapsing: false
+
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
@@ -48,7 +51,7 @@ PanelWindow {
     readonly property real midY: 6
 
     // ─────────────────────────────────────────────────────
-    //  SPRINGY MORPHING BAR (Expands seamlessly with continuous spring curve)
+    //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
@@ -94,7 +97,7 @@ PanelWindow {
             }
         }
 
-        // 2. Solid Bar Modules (smoothly crossfades in parallel with spring expansion)
+        // 2. Solid Bar Modules (fades in as expansion completes)
         RowLayout {
             id: contentLayout
             anchors.fill: parent
@@ -197,19 +200,18 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  CONTINUOUS PARALLEL SPRING MORPH ANIMATION
+    //  1. FORWARD EXPANSION ANIMATION (Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
     ParallelAnimation {
         id: expandAnim
         running: false
 
-        // 1. Springy horizontal geometry expansion
         NumberAnimation {
             target: solidBar
             property: "x"
             from: bar.startX
             to: bar.barX
-            duration: 560
+            duration: 540
             easing.type: Easing.OutBack
             easing.overshoot: 0.5
         }
@@ -218,22 +220,18 @@ PanelWindow {
             property: "width"
             from: bar.startW
             to: bar.barW
-            duration: 560
+            duration: 540
             easing.type: Easing.OutBack
             easing.overshoot: 0.5
         }
-
-        // 2. Smooth color transition from accent primary to surface pill
         ColorAnimation {
             target: solidBar
             property: "color"
             from: Theme.colPrimary
             to: bar.pillColor
-            duration: 460
+            duration: 440
             easing.type: Easing.OutCubic
         }
-
-        // 3. Fade out Arch logo header as expansion begins
         NumberAnimation {
             target: archHeader
             property: "opacity"
@@ -242,19 +240,66 @@ PanelWindow {
             duration: 220
             easing.type: Easing.OutQuad
         }
-
-        // 4. Smoothly blend in new bar contents in parallel during the spring motion
         NumberAnimation {
             target: contentLayout
             property: "opacity"
             from: 0.0
             to: 1.0
-            duration: 440
+            duration: 420
             easing.type: Easing.InOutCubic
         }
     }
 
+    // ─────────────────────────────────────────────────────
+    //  2. REVERSE COLLAPSE ANIMATION (Solid Bar -> Pill)
+    // ─────────────────────────────────────────────────────
+    ParallelAnimation {
+        id: collapseAnim
+        running: false
+
+        NumberAnimation {
+            target: solidBar
+            property: "x"
+            to: bar.startX
+            duration: 480
+            easing.type: Easing.InOutCubic
+        }
+        NumberAnimation {
+            target: solidBar
+            property: "width"
+            to: bar.startW
+            duration: 480
+            easing.type: Easing.InOutCubic
+        }
+        ColorAnimation {
+            target: solidBar
+            property: "color"
+            to: Theme.colPrimary
+            duration: 420
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: archHeader
+            property: "opacity"
+            to: 1.0
+            duration: 250
+            easing.type: Easing.InQuad
+        }
+        NumberAnimation {
+            target: contentLayout
+            property: "opacity"
+            to: 0.0
+            duration: 200
+            easing.type: Easing.InQuad
+        }
+
+        onFinished: {
+            bar.isCollapsing = false;
+        }
+    }
+
     function resetToArchPill() {
+        collapseAnim.stop();
         expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
@@ -263,15 +308,25 @@ PanelWindow {
         contentLayout.opacity = 0.0;
     }
 
-    onVisibleChanged: {
-        if (visible) {
-            resetToArchPill();
-            expandAnim.restart();
+    Connections {
+        target: globalState
+        function onBarStyleChanged() {
+            if (globalState.barStyle === "solid") {
+                bar.isCollapsing = false;
+                resetToArchPill();
+                expandAnim.restart();
+            } else {
+                if (solidBar.width > bar.startW + 10) {
+                    bar.isCollapsing = true;
+                    expandAnim.stop();
+                    collapseAnim.restart();
+                }
+            }
         }
     }
 
     Component.onCompleted: {
-        if (visible) {
+        if (globalState.barStyle === "solid") {
             resetToArchPill();
             expandAnim.start();
         }
