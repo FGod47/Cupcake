@@ -139,7 +139,7 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()])
+                            onClicked: Hyprland.dispatch("workspace " + wsId)
                         }
                     }
                 }
