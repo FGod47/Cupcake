@@ -44,6 +44,42 @@ PanelWindow {
     // and to allow the Settings menu to animate to the center of the screen
     implicitHeight: modelData.height
     color: "transparent"
+
+    ParallelAnimation {
+        id: pillEntranceAnim
+        running: false
+
+        NumberAnimation {
+            target: leftModules
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 380
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: rightModules
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 380
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: clockWrapper
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 380
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            pillEntranceAnim.restart();
+        }
+    }
     
     property bool ccOpen: false
     mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || globalState.overviewOpen) ? null : normalMask

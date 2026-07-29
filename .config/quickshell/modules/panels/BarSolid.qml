@@ -45,7 +45,7 @@ PanelWindow {
     readonly property real barX: 8
     readonly property real startW: 160
     readonly property real startX: (bar.width > 0 ? bar.width : 1180) / 2 - 80
-    readonly property real midY: 6
+    readonly property real midY: 10
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
@@ -56,7 +56,7 @@ PanelWindow {
         x: bar.startX
         width: bar.startW
         height: 34
-        radius: 17
+        radius: 18
         color: Theme.colPrimary
         clip: true
 
