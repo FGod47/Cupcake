@@ -90,14 +90,7 @@ PanelWindow {
             RowLayout {
                 spacing: 6
                 
-                // Arch Icon
-                Text {
-                    text: ""
-                    font.family: "JetBrains Mono Nerd Font"
-                    font.pixelSize: 14
-                    color: Qt.rgba(1,1,1,0.94)
-                    Layout.alignment: Qt.AlignVCenter
-                }
+
                 
                 // Clock
                 Text {
