@@ -151,6 +151,20 @@ PanelWindow {
                 }
             }
             
+            // ── LEFT: Window Title ────────
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 12
+                Layout.maximumWidth: bar.barW * 0.35 // prevent it from eating the center space
+                elide: Text.ElideRight
+                visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
+                text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 13
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.6)
+            }
+
             // Spacer
             Item { Layout.fillWidth: true }
             
