@@ -48,7 +48,7 @@ PanelWindow {
     readonly property real midY: 6
 
     // ─────────────────────────────────────────────────────
-    //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
+    //  SPRINGY MORPHING BAR (Expands seamlessly with continuous spring curve)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
@@ -94,7 +94,7 @@ PanelWindow {
             }
         }
 
-        // 2. Solid Bar Modules (fades in as expansion completes)
+        // 2. Solid Bar Modules (smoothly crossfades in parallel with spring expansion)
         RowLayout {
             id: contentLayout
             anchors.fill: parent
@@ -197,59 +197,65 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  ARCH PILL TO SOLID BAR TRANSFORM ANIMATION
+    //  CONTINUOUS PARALLEL SPRING MORPH ANIMATION
     // ─────────────────────────────────────────────────────
-    SequentialAnimation {
+    ParallelAnimation {
         id: expandAnim
         running: false
 
-        // Step 1: archPill expands outwards while morphing color and fading header
-        ParallelAnimation {
-            NumberAnimation {
-                target: solidBar
-                property: "x"
-                from: bar.startX
-                to: bar.barX
-                duration: 520
-                easing.type: Easing.OutExpo
-            }
-            NumberAnimation {
-                target: solidBar
-                property: "width"
-                from: bar.startW
-                to: bar.barW
-                duration: 520
-                easing.type: Easing.OutExpo
-            }
-            ColorAnimation {
-                target: solidBar
-                property: "color"
-                from: Theme.colPrimary
-                to: bar.pillColor
-                duration: 480
-            }
-            NumberAnimation {
-                target: archHeader
-                property: "opacity"
-                from: 1.0
-                to: 0.0
-                duration: 300
-                easing.type: Easing.OutCubic
-            }
+        // 1. Springy horizontal geometry expansion
+        NumberAnimation {
+            target: solidBar
+            property: "x"
+            from: bar.startX
+            to: bar.barX
+            duration: 560
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.5
+        }
+        NumberAnimation {
+            target: solidBar
+            property: "width"
+            from: bar.startW
+            to: bar.barW
+            duration: 560
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.5
         }
 
-        // Step 2: Fade in the bar content elements
+        // 2. Smooth color transition from accent primary to surface pill
+        ColorAnimation {
+            target: solidBar
+            property: "color"
+            from: Theme.colPrimary
+            to: bar.pillColor
+            duration: 460
+            easing.type: Easing.OutCubic
+        }
+
+        // 3. Fade out Arch logo header as expansion begins
+        NumberAnimation {
+            target: archHeader
+            property: "opacity"
+            from: 1.0
+            to: 0.0
+            duration: 220
+            easing.type: Easing.OutQuad
+        }
+
+        // 4. Smoothly blend in new bar contents in parallel during the spring motion
         NumberAnimation {
             target: contentLayout
             property: "opacity"
             from: 0.0
             to: 1.0
-            duration: 250
-            easing.type: Easing.OutCubic
+            duration: 440
+            easing.type: Easing.InOutCubic
         }
     }
 
     function resetToArchPill() {
+        expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
         solidBar.color = Theme.colPrimary;
