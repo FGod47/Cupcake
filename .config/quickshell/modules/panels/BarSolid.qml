@@ -221,6 +221,10 @@ PanelWindow {
             duration: 420
             easing.type: Easing.InOutCubic
         }
+        
+        onFinished: {
+            solidBar.color = Qt.binding(function() { return bar.pillColor; });
+        }
     }
 
     // ─────────────────────────────────────────────────────
