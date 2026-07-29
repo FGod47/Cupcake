@@ -35,6 +35,7 @@ PanelWindow {
     property string ramStr: "0"
     property string tempStr: "0"
     property string volStr: "0"
+    property string brightStr: "0"
     property string batStr: "100"
     property string netStr: "0 KB/s"
     property bool isWifi: false
@@ -183,20 +184,69 @@ PanelWindow {
             Row {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.rightMargin: 12
-                spacing: 8
+                spacing: 12
                 
-                Text {
-                    text: "\ueb30" // tabler icon for sun (brightness)
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
+                // Brightness
+                Row {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: bMouse.containsMouse ? 4 : 0
+                    Behavior on spacing { NumberAnimation { duration: 200 } }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "\ueb30" // tabler icon for sun (brightness)
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: bar.brightStr + "%"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 13
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        width: bMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                    }
+                    MouseArea {
+                        id: bMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                    }
                 }
 
-                Text {
-                    text: "\ueb51" // tabler icon for volume
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
+                // Volume
+                Row {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: vMouse.containsMouse ? 4 : 0
+                    Behavior on spacing { NumberAnimation { duration: 200 } }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "\ueb51" // tabler icon for volume
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: bar.volStr + "%"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 13
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        width: vMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                    }
+                    MouseArea {
+                        id: vMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                    }
                 }
             }
 
@@ -525,9 +575,15 @@ PanelWindow {
     Process {
         id: volProc; running: true
         command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2 * 100)}'"]
-        stdout: StdioCollector { onStreamFinished: { if (text) bar.volStr = text.trim() } }
+        stdout: StdioCollector { onStreamFinished: { if (text) bar.volStr = text.trim().split('\n').pop() } }
     }
     Timer { interval: 2000; running: true; repeat: true; onTriggered: volProc.running = true }
+
+    Process {
+        id: lightProc; running: false
+        command: ["bash", "-c", "ddcutil getvcp 10 --terse 2>/dev/null | awk '{print $4}'"]
+        stdout: StdioCollector { onStreamFinished: { if (text) bar.brightStr = text.trim().split('\n').pop() } }
+    }
 
     Process {
         id: batProc; running: true
