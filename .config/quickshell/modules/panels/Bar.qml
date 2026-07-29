@@ -29,7 +29,7 @@ PanelWindow {
     }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    exclusiveZone: 46
+    exclusiveZone: 40
 
     HyprlandFocusGrab {
         windows: [bar]
@@ -166,7 +166,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: Math.max(46, clockPill.height + 16, powerPill.height + 16)
+        height: Math.max(40, clockPill.height + 16, powerPill.height + 16)
 
         // Inner wrapper to keep the original padding logic identical
         Item {

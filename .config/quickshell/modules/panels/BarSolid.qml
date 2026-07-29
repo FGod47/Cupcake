@@ -18,8 +18,8 @@ PanelWindow {
     anchors { top: true; left: true; right: true }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-    exclusiveZone: 46
-    height: 46
+    exclusiveZone: 40
+    height: 40
     color: "transparent"
 
     // Shared styling
@@ -42,11 +42,15 @@ PanelWindow {
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
-    readonly property real barW: bar.screenW - 20
-    readonly property real barX: 10
+    readonly property real barW: bar.screenW - 200
+    readonly property real barX: 100
     readonly property real startW: 160
     readonly property real startX: (bar.screenW - bar.startW) / 2
     readonly property real midY: 10
+    readonly property real startHeight: 34
+    readonly property real barHeight: 30
+    readonly property real startRadius: 18
+    readonly property real barRadius: 15
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
@@ -56,8 +60,8 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: bar.startW
-        height: 34
-        radius: 18
+        height: bar.startHeight
+        radius: bar.startRadius
         color: Theme.colPrimary
         clip: true
 
@@ -99,101 +103,53 @@ PanelWindow {
         RowLayout {
             id: contentLayout
             anchors.fill: parent
-            anchors.leftMargin: 14; anchors.rightMargin: 14
+            anchors.leftMargin: 16; anchors.rightMargin: 16
             spacing: 0
             opacity: 0
 
-            // ── LEFT: Workspaces + Window title ────────
+            // ── LEFT: Workspaces ────────
             Row {
                 spacing: 8
                 Layout.alignment: Qt.AlignVCenter
 
-                Item {
-                    width: 5 * 26; height: 34
-                    Rectangle {
-                        width: 20; height: 20; radius: 10
-                        color: Theme.colPrimary
-                        property int activeWs: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 1
-                        property int validIndex: Math.max(0, Math.min(activeWs - 1, 4))
-                        x: 3 + 26 * validIndex; y: 7
-                        Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                    }
-                    Row {
-                        anchors.verticalCenter: parent.verticalCenter
-                        Repeater {
-                            model: 5
-                            delegate: Item {
-                                width: 26; height: 34
-                                property int wsId: index + 1
-                                property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-                                property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: isFocused ? 5 : (isOccupied ? 7 : 5); height: width; radius: width / 2
-                                    color: isFocused ? Theme.colOnPrimary : (isOccupied ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.35))
-                                    Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Hyprland.dispatch("workspace " + wsId) }
-                            }
+                Repeater {
+                    model: 5
+                    delegate: Item {
+                        width: isFocused ? 24 : 10
+                        height: 10
+                        property int wsId: index + 1
+                        property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
+                        property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
+                        
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 5
+                            color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.4) : Qt.rgba(fg.r, fg.g, fg.b, 0.15))
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                        }
+
+                        MouseArea { 
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Hyprland.dispatch("workspace " + wsId) 
                         }
                     }
                 }
-
-                Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter; visible: windowTitle.visible }
-
-                Text {
-                    id: windowTitle
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.75)
-                    font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                    elide: Text.ElideRight; maximumLineCount: 1; width: Math.min(implicitWidth, 220)
-                    visible: text !== ""
-                }
             }
-
-            // ── CENTER: Clock ───────────────────────────
-            Item {
-                Layout.fillWidth: true; height: 34
-                Text {
-                    anchors.centerIn: parent
-                    text: Qt.formatDateTime(timeClock.date, "MMM dd  •  h:mm ap")
-                    color: fg; font.family: Theme.defaultFontFamily; font.weight: Font.Medium; font.pixelSize: Theme.defaultFontSize
-                }
-            }
-
-            // ── RIGHT: System stats ─────────────────────
-            Row {
-                spacing: 12; Layout.alignment: Qt.AlignVCenter
-
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter; visible: isWifi || isWired
-                    Text { text: isWifi ? "\ueb52" : "\uebd9"; font.family: fontName; font.pixelSize: 13; color: fg; anchors.verticalCenter: parent.verticalCenter }
-                    Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8); anchors.verticalCenter: parent.verticalCenter }
-                }
-                Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: "\ueaf8"; font.family: fontName; font.pixelSize: 13; color: fg }
-                    Text { text: tempStr + "°"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
-                }
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: "\ueba8"; font.family: fontName; font.pixelSize: 13; color: fg }
-                    Text { text: ramStr + "G"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
-                }
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: "\ueb0d"; font.family: fontName; font.pixelSize: 13; color: fg }
-                    Text { text: cpuStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
-                }
-                Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: parseInt(volStr) === 0 ? "\uea9c" : (parseInt(volStr) < 50 ? "\uea9d" : "\uea9e"); font.family: fontName; font.pixelSize: 13; color: fg }
-                    Text { text: volStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
-                }
-                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: "\uea38"; font.family: fontName; font.pixelSize: 13; color: fg }
-                    Text { text: batStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
-                }
-            }
+            
+            // Spacer
+            Item { Layout.fillWidth: true }
+        }
+        
+        Image {
+            id: cupcakeLogo
+            anchors.centerIn: parent
+            source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
+            sourceSize.height: 24
+            fillMode: Image.PreserveAspectFit
+            opacity: contentLayout.opacity
         }
     }
 
@@ -218,6 +174,24 @@ PanelWindow {
             property: "width"
             from: bar.startW
             to: bar.barW
+            duration: 540
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.5
+        }
+        NumberAnimation {
+            target: solidBar
+            property: "height"
+            from: bar.startHeight
+            to: bar.barHeight
+            duration: 540
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.5
+        }
+        NumberAnimation {
+            target: solidBar
+            property: "radius"
+            from: bar.startRadius
+            to: bar.barRadius
             duration: 540
             easing.type: Easing.OutBack
             easing.overshoot: 0.5
@@ -269,6 +243,20 @@ PanelWindow {
             duration: 480
             easing.type: Easing.InOutCubic
         }
+        NumberAnimation {
+            target: solidBar
+            property: "height"
+            to: bar.startHeight
+            duration: 480
+            easing.type: Easing.InOutCubic
+        }
+        NumberAnimation {
+            target: solidBar
+            property: "radius"
+            to: bar.startRadius
+            duration: 480
+            easing.type: Easing.InOutCubic
+        }
         ColorAnimation {
             target: solidBar
             property: "color"
@@ -303,6 +291,8 @@ PanelWindow {
         expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
+        solidBar.height = bar.startHeight;
+        solidBar.radius = bar.startRadius;
         solidBar.color = Theme.colPrimary;
         archHeader.opacity = 1.0;
         contentLayout.opacity = 0.0;
