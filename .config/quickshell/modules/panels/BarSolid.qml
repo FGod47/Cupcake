@@ -39,6 +39,9 @@ PanelWindow {
     property string netStr: "0 KB/s"
     property bool isWifi: false
     property bool isWired: false
+    property bool isBluetooth: false
+    property bool isHotspot: false
+
 
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
@@ -157,6 +160,22 @@ PanelWindow {
                 spacing: 8
                 
                 Text {
+                    visible: isHotspot
+                    text: "\ued1b" // tabler icon for hotspot
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+
+                Text {
+                    visible: isBluetooth
+                    text: "\uea37" // tabler icon for bluetooth
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+
+                Text {
                     visible: isWired
                     text: "\uebd9" // tabler icon for wired
                     font.family: fontName
@@ -165,7 +184,7 @@ PanelWindow {
                 }
 
                 Text {
-                    visible: isWifi && !isWired
+                    visible: isWifi && !isWired && !isHotspot
                     text: "\ueb52" // tabler icon for wifi
                     font.family: fontName
                     font.pixelSize: 15
@@ -477,9 +496,15 @@ PanelWindow {
 
     Process {
         id: netTypeProc; running: true
-        command: ["bash", "-c", "nmcli -t -f TYPE,STATE d | grep 'connected'"]
+        command: ["bash", "-c", "echo '---nmcli---'; nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl show"]
         stdout: StdioCollector {
-            onStreamFinished: { bar.isWifi = text.includes("wifi"); bar.isWired = text.includes("ethernet") }
+            onStreamFinished: { 
+                let t = text.toLowerCase();
+                bar.isWifi = t.includes("802-11-wireless") && !t.includes("hotspot");
+                bar.isWired = t.includes("802-3-ethernet");
+                bar.isHotspot = t.includes("hotspot");
+                bar.isBluetooth = t.includes("powered: yes");
+            }
         }
     }
     Timer { interval: 5000; running: true; repeat: true; onTriggered: netTypeProc.running = true }
