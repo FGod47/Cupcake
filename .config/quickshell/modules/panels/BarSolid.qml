@@ -188,19 +188,16 @@ PanelWindow {
                 
                 // Brightness
                 Row {
-                    anchors.verticalCenter: parent.verticalCenter
                     spacing: bMouse.containsMouse ? 4 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
 
                     Text {
-                        anchors.verticalCenter: parent.verticalCenter
                         text: "\ueb30" // tabler icon for sun (brightness)
                         font.family: fontName
                         font.pixelSize: 15
                         color: fg
                     }
                     Text {
-                        anchors.verticalCenter: parent.verticalCenter
                         text: bar.brightStr + "%"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
@@ -220,19 +217,16 @@ PanelWindow {
 
                 // Volume
                 Row {
-                    anchors.verticalCenter: parent.verticalCenter
                     spacing: vMouse.containsMouse ? 4 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
 
                     Text {
-                        anchors.verticalCenter: parent.verticalCenter
                         text: "\ueb51" // tabler icon for volume
                         font.family: fontName
                         font.pixelSize: 15
                         color: fg
                     }
                     Text {
-                        anchors.verticalCenter: parent.verticalCenter
                         text: bar.volStr + "%"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
