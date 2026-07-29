@@ -116,7 +116,7 @@ PanelWindow {
                 Repeater {
                     model: 5
                     delegate: Item {
-                        width: isFocused ? 28 : 12
+                        width: isFocused ? 22 : 12
                         height: 16
                         property int wsId: index + 1
                         property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
