@@ -140,10 +140,9 @@ Item {
                     id: iconRect
                     width: isPill ? 40 : 36
                     height: isPill ? 40 : 36
-                    radius: isPill ? width / 2 : 10
-                    color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.15)
-                    border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.3)
-                    border.width: 1
+                    radius: width / 2
+                    clip: true
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                     anchors.left: parent.left
                     anchors.top: parent.top
 
@@ -153,8 +152,8 @@ Item {
                         anchors.margins: isPill ? 10 : 8
                         source: {
                             if (!wrapper.notificationData) return "";
-                            if (notifCategory === "screenshot") return "";
-                            if (wrapper.notificationData.image) return wrapper.notificationData.image;
+                            // For screenshots skip the thumbnail, but still use appIcon
+                            if (notifCategory !== "screenshot" && wrapper.notificationData.image) return wrapper.notificationData.image;
                             if (wrapper.notificationData.appIcon) {
                                 if (wrapper.notificationData.appIcon.startsWith("/")) return "file://" + wrapper.notificationData.appIcon;
                                 return "image://icon/" + wrapper.notificationData.appIcon;
@@ -164,18 +163,18 @@ Item {
                         sourceSize: Qt.size(24, 24)
                         fillMode: Image.PreserveAspectFit
                         asynchronous: true
-                        visible: status === Image.Ready && notifCategory !== "screenshot"
+                        visible: status === Image.Ready
                     }
                     Text {
                         text: {
-                            if (notifCategory === "screenshot") return ""; // camera
+                            if (notifCategory === "screenshot") return "\uf201"; // screenshot (tabler-icons)
                             if (notifCategory === "music") return ""; // music
                             if (notifCategory === "update") return ""; // refresh
                             if (notifCategory === "battery") return ""; // battery
-                            if (notifCategory === "error") return ""; // bluetooth-off (as example) or alert
+                            if (notifCategory === "error") return ""; // alert
                             return ""; // bell
                         }
-                        color: accentColor
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
                         font.family: "tabler-icons"
                         font.pixelSize: 20
                         anchors.centerIn: parent
