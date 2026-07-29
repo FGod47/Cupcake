@@ -150,6 +150,38 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
             
+            // ── RIGHT: Network Icons ────────
+            Row {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                spacing: 8
+                
+                Text {
+                    visible: isWired
+                    text: "\uebd9" // tabler icon for wired
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+
+                Text {
+                    visible: isWifi && !isWired
+                    text: "\ueb52" // tabler icon for wifi
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                }
+            }
+
+            // ── RIGHT: Vertical Separator ────────
+            Rectangle {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                width: 1
+                height: 16
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+            }
+            
             // ── RIGHT: Clock ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
