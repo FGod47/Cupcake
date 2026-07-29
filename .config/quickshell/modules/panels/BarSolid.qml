@@ -41,35 +41,40 @@ PanelWindow {
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
+    readonly property real barW: parent.width - 16
+    readonly property real barX: 8
+    readonly property real midY: 6 // top 8px - padding offset
+
     // ─────────────────────────────────────────────────────
-    //  THE ACTUAL UNIFIED BAR  (hidden until merge complete)
+    //  THE FULL SOLID BAR (Crossfades in after pills merge)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
-        anchors.centerIn: parent
-        width: parent.width - 16
+        y: bar.midY
+        x: bar.barX
+        width: bar.barW
         height: 34
         radius: 17
         color: pillColor
         opacity: 0
         clip: true
 
-        // Top glass highlight
+        // Top glass highlight line
         Rectangle {
             anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
             anchors.leftMargin: 4; anchors.rightMargin: 4
             height: 1; radius: 1
-            color: Qt.rgba(1, 1, 1, 0.10)
+            color: Qt.rgba(1, 1, 1, 0.12)
         }
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 12; anchors.rightMargin: 12
+            anchors.leftMargin: 14; anchors.rightMargin: 14
             spacing: 0
 
             // ── LEFT: Workspaces + Window title ────────
             Row {
-                spacing: 6
+                spacing: 8
                 Layout.alignment: Qt.AlignVCenter
 
                 Item {
@@ -104,7 +109,7 @@ PanelWindow {
                     }
                 }
 
-                Rectangle { width: 1; height: 16; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter; visible: windowTitle.visible }
+                Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter; visible: windowTitle.visible }
 
                 Text {
                     id: windowTitle
@@ -112,7 +117,7 @@ PanelWindow {
                     text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
                     color: Qt.rgba(fg.r, fg.g, fg.b, 0.75)
                     font.family: Theme.defaultFontFamily; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                    elide: Text.ElideRight; maximumLineCount: 1; width: Math.min(implicitWidth, 200)
+                    elide: Text.ElideRight; maximumLineCount: 1; width: Math.min(implicitWidth, 220)
                     visible: text !== ""
                 }
             }
@@ -129,31 +134,31 @@ PanelWindow {
 
             // ── RIGHT: System stats ─────────────────────
             Row {
-                spacing: 10; Layout.alignment: Qt.AlignVCenter
+                spacing: 12; Layout.alignment: Qt.AlignVCenter
 
-                Row { spacing: 4; anchors.verticalCenter: parent.verticalCenter; visible: isWifi || isWired
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter; visible: isWifi || isWired
                     Text { text: isWifi ? "" : ""; font.family: fontName; font.pixelSize: 13; color: fg; anchors.verticalCenter: parent.verticalCenter }
                     Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8); anchors.verticalCenter: parent.verticalCenter }
                 }
                 Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
-                Row { spacing: 3; anchors.verticalCenter: parent.verticalCenter
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
                     Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: tempStr + "°"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
-                Row { spacing: 3; anchors.verticalCenter: parent.verticalCenter
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
                     Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: ramStr + "G"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
-                Row { spacing: 3; anchors.verticalCenter: parent.verticalCenter
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
                     Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: cpuStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
                 Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
-                Row { spacing: 3; anchors.verticalCenter: parent.verticalCenter
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
                     Text { text: parseInt(volStr) < 50 ? "" : ""; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: volStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
-                Row { spacing: 3; anchors.verticalCenter: parent.verticalCenter
+                Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
                     Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: batStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
@@ -162,106 +167,111 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  THREE PILL SHAPES  — appear then merge into the bar
+    //  5 GHOST PILLS FOR THE MERGE ANIMATION
+    //  Matching bar-merge-transition.html exactly
     // ─────────────────────────────────────────────────────
-    readonly property real barW: parent.width - 16   // == solidBar.width
-    readonly property real barX: 8                   // == solidBar.x
-    readonly property real midY: (bar.height - 34) / 2
 
-    // LEFT pill  (workspaces area)
+    // 1. Workspace Pill
     Rectangle {
-        id: segLeft
+        id: pWorkspace
         y: bar.midY
-        x: bar.barX
-        width: Math.max(160, bar.barW * 0.17)
+        x: 8
+        width: 160
         height: 34; radius: 17
         color: bar.pillColor
-        opacity: 0
     }
 
-    // CENTER pill  (clock)
+    // 2. Network Pill
     Rectangle {
-        id: segCenter
+        id: pNetwork
         y: bar.midY
-        width: 178; height: 34; radius: 17
-        color: bar.pillColor
-        x: (bar.width - width) / 2
-        opacity: 0
-    }
-
-    // RIGHT pill  (stats + controls)
-    Rectangle {
-        id: segRight
-        y: bar.midY
+        x: 184
+        width: 100
         height: 34; radius: 17
         color: bar.pillColor
-        property real rw: Math.max(300, bar.barW * 0.26)
-        width: rw
-        x: bar.barX + bar.barW - rw
-        opacity: 0
+    }
+
+    // 3. Hardware Stats Pill
+    Rectangle {
+        id: pHw
+        y: bar.midY
+        x: 300
+        width: 190
+        height: 34; radius: 17
+        color: bar.pillColor
+    }
+
+    // 4. Clock Pill
+    Rectangle {
+        id: pClock
+        y: bar.midY
+        x: (bar.width - 190) / 2
+        width: 190
+        height: 34; radius: 17
+        color: bar.pillColor
+    }
+
+    // 5. Controls Pill
+    Rectangle {
+        id: pControls
+        y: bar.midY
+        x: bar.width - 8 - 140
+        width: 140
+        height: 34; radius: 17
+        color: bar.pillColor
     }
 
     // ─────────────────────────────────────────────────────
-    //  MERGE ANIMATION SEQUENCE
-    //  1. Pills pop in
-    //  2. Brief pause so user sees them
-    //  3. All three morph / slide together into one bar
-    //  4. Content bar cross-fades in, pill overlays fade out
+    //  MERGE TRANSITION ANIMATION SEQUENCE (from HTML spec)
+    //  Timing:
+    //  1. 80ms pause
+    //  2. 480ms parallel stretch/slide to left: 8, width: barW (cubic-bezier(.4,0,.2,1))
+    //  3. 220ms crossfade into solidBar
     // ─────────────────────────────────────────────────────
     SequentialAnimation {
         id: mergeAnim
         running: false
 
-        // Step 1 — pills appear with a little scale-up pop
-        ParallelAnimation {
-            NumberAnimation { target: segLeft;   property: "opacity"; from: 0; to: 1; duration: 160; easing.type: Easing.OutCubic }
-            NumberAnimation { target: segCenter; property: "opacity"; from: 0; to: 1; duration: 160; easing.type: Easing.OutCubic }
-            NumberAnimation { target: segRight;  property: "opacity"; from: 0; to: 1; duration: 160; easing.type: Easing.OutCubic }
-        }
-
-        // Step 2 — tiny hold so user perceives pills
         PauseAnimation { duration: 80 }
 
-        // Step 3 — pills merge: stretch width, slide x to 8
+        // Parallel stretch and slide of all 5 pills to cover full bar geometry
         ParallelAnimation {
-            // LEFT just stretches rightward (x stays at 8)
-            NumberAnimation {
-                target: segLeft; property: "width"
-                to: bar.barW; duration: 480; easing.type: Easing.InOutCubic
-            }
-            // CENTER slides left AND stretches
-            NumberAnimation {
-                target: segCenter; property: "x"
-                to: bar.barX; duration: 480; easing.type: Easing.InOutCubic
-            }
-            NumberAnimation {
-                target: segCenter; property: "width"
-                to: bar.barW; duration: 480; easing.type: Easing.InOutCubic
-            }
-            // RIGHT slides left AND stretches
-            NumberAnimation {
-                target: segRight; property: "x"
-                to: bar.barX; duration: 480; easing.type: Easing.InOutCubic
-            }
-            NumberAnimation {
-                target: segRight; property: "width"
-                to: bar.barW; duration: 480; easing.type: Easing.InOutCubic
-            }
+            // pWorkspace
+            NumberAnimation { target: pWorkspace; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: pWorkspace; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
+
+            // pNetwork
+            NumberAnimation { target: pNetwork; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: pNetwork; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
+
+            // pHw
+            NumberAnimation { target: pHw; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: pHw; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
+
+            // pClock
+            NumberAnimation { target: pClock; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: pClock; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
+
+            // pControls
+            NumberAnimation { target: pControls; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
+            NumberAnimation { target: pControls; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
         }
 
-        // Step 4 — reveal content, dissolve pill overlays
+        // Crossfade solid bar in, pills out (220ms)
         ParallelAnimation {
-            NumberAnimation { target: solidBar;  property: "opacity"; to: 1; duration: 220; easing.type: Easing.OutCubic }
-            NumberAnimation { target: segLeft;   property: "opacity"; to: 0; duration: 220 }
-            NumberAnimation { target: segCenter; property: "opacity"; to: 0; duration: 220 }
-            NumberAnimation { target: segRight;  property: "opacity"; to: 0; duration: 220 }
+            NumberAnimation { target: solidBar; property: "opacity"; to: 1.0; duration: 220; easing.type: Easing.OutCubic }
+            NumberAnimation { target: pWorkspace; property: "opacity"; to: 0.0; duration: 220 }
+            NumberAnimation { target: pNetwork; property: "opacity"; to: 0.0; duration: 220 }
+            NumberAnimation { target: pHw; property: "opacity"; to: 0.0; duration: 220 }
+            NumberAnimation { target: pClock; property: "opacity"; to: 0.0; duration: 220 }
+            NumberAnimation { target: pControls; property: "opacity"; to: 0.0; duration: 220 }
         }
     }
 
     Component.onCompleted: mergeAnim.start()
 
     // ─────────────────────────────────────────────────────
-    //  DATA POLLING
+    //  BACKGROUND DATA POLLING
     // ─────────────────────────────────────────────────────
     Process {
         id: cpuProc; running: true
