@@ -48,7 +48,7 @@ PanelWindow {
     readonly property real midY: 6
 
     // ─────────────────────────────────────────────────────
-    //  MORPHING BAR (Starts centered like archPill, expands outward into full bar)
+    //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
@@ -57,7 +57,7 @@ PanelWindow {
         width: bar.startW
         height: 34
         radius: 17
-        color: pillColor
+        color: Theme.colPrimary
         clip: true
 
         // Top glass highlight line
@@ -68,7 +68,33 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.12)
         }
 
-        // Inner contents (fades in as center expansion completes)
+        // 1. Initial Arch Pill Label (Arch Logo + Name)
+        Row {
+            id: archHeader
+            anchors.centerIn: parent
+            spacing: 8
+            opacity: 1.0
+            visible: opacity > 0
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "\uf303"
+                color: Theme.colOnPrimary
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: Theme.defaultFontSize + 1
+                font.weight: Theme.defaultFontWeight
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Arch"
+                color: Theme.colOnPrimary
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+            }
+        }
+
+        // 2. Solid Bar Modules (fades in as expansion completes)
         RowLayout {
             id: contentLayout
             anchors.fill: parent
@@ -171,13 +197,13 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  EXPANSION ANIMATION (Center archPill expands horizontally outward)
+    //  ARCH PILL TO SOLID BAR TRANSFORM ANIMATION
     // ─────────────────────────────────────────────────────
     SequentialAnimation {
         id: expandAnim
         running: false
 
-        // Step 1: Smoothly expand pill outward from center (x: startX -> barX, width: 160 -> barW)
+        // Step 1: archPill expands outwards while morphing color and fading header
         ParallelAnimation {
             NumberAnimation {
                 target: solidBar
@@ -195,6 +221,21 @@ PanelWindow {
                 duration: 520
                 easing.type: Easing.OutExpo
             }
+            ColorAnimation {
+                target: solidBar
+                property: "color"
+                from: Theme.colPrimary
+                to: bar.pillColor
+                duration: 480
+            }
+            NumberAnimation {
+                target: archHeader
+                property: "opacity"
+                from: 1.0
+                to: 0.0
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
         }
 
         // Step 2: Fade in the bar content elements
@@ -208,20 +249,24 @@ PanelWindow {
         }
     }
 
+    function resetToArchPill() {
+        solidBar.x = bar.startX;
+        solidBar.width = bar.startW;
+        solidBar.color = Theme.colPrimary;
+        archHeader.opacity = 1.0;
+        contentLayout.opacity = 0.0;
+    }
+
     onVisibleChanged: {
         if (visible) {
-            solidBar.x = bar.startX;
-            solidBar.width = bar.startW;
-            contentLayout.opacity = 0;
+            resetToArchPill();
             expandAnim.restart();
         }
     }
 
     Component.onCompleted: {
         if (visible) {
-            solidBar.x = bar.startX;
-            solidBar.width = bar.startW;
-            contentLayout.opacity = 0;
+            resetToArchPill();
             expandAnim.start();
         }
     }
