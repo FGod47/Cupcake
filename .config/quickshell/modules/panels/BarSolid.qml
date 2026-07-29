@@ -196,7 +196,21 @@ PanelWindow {
         }
     }
 
-    Component.onCompleted: expandAnim.start()
+    onVisibleChanged: {
+        if (visible) {
+            solidBar.width = 160;
+            contentLayout.opacity = 0;
+            expandAnim.restart();
+        }
+    }
+
+    Component.onCompleted: {
+        if (visible) {
+            solidBar.width = 160;
+            contentLayout.opacity = 0;
+            expandAnim.start();
+        }
+    }
 
     // ─────────────────────────────────────────────────────
     //  BACKGROUND DATA POLLING
