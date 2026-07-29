@@ -142,6 +142,12 @@ PanelWindow {
             
             // Spacer
             Item { Layout.fillWidth: true }
+            
+            // ── RIGHT: Power Menu ────────
+            PowerPill {
+                id: powerPill
+                Layout.alignment: Qt.AlignVCenter
+            }
         }
         
         Image {
