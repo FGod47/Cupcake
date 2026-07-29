@@ -40,6 +40,7 @@ PanelWindow {
     property bool isWifi: false
     property bool isWired: false
     property bool isBluetooth: false
+    property bool isBluetoothConnected: false
     property bool isHotspot: false
 
 
@@ -169,7 +170,7 @@ PanelWindow {
 
                 Text {
                     visible: isBluetooth
-                    text: "\uea37" // tabler icon for bluetooth
+                    text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
                     font.family: fontName
                     font.pixelSize: 15
                     color: fg
@@ -496,7 +497,7 @@ PanelWindow {
 
     Process {
         id: netTypeProc; running: true
-        command: ["bash", "-c", "echo '---nmcli---'; nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl show"]
+        command: ["bash", "-c", "echo '---nmcli---'; nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl show; echo '---bt-conn---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: { 
                 let t = text.toLowerCase();
@@ -504,6 +505,7 @@ PanelWindow {
                 bar.isWired = t.includes("802-3-ethernet");
                 bar.isHotspot = t.includes("hotspot");
                 bar.isBluetooth = t.includes("powered: yes");
+                bar.isBluetoothConnected = t.includes("---bt-conn---\ndevice");
             }
         }
     }
