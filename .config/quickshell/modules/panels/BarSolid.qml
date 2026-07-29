@@ -143,10 +143,30 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
             
-            // ── RIGHT: Power Menu ────────
-            PowerPill {
-                id: powerPill
+            // ── RIGHT: Power Icon ────────
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
+                width: 26; height: 26; radius: 6
+                color: Qt.rgba(fg.r, fg.g, fg.b, pMouse.containsMouse ? 0.15 : 0.0)
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "\ueb0d" // tabler icon for power
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: Theme.colPrimary
+                }
+
+                MouseArea {
+                    id: pMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    // Just toggling the global state in case the user installs a separate listener later,
+                    // or explicitly spawning wlogout if they install it.
+                    onClicked: Quickshell.execDetached(["bash", "-c", "wlogout -b 5 || systemctl poweroff"])
+                }
             }
         }
         
