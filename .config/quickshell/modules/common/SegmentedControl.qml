@@ -10,8 +10,8 @@ Rectangle {
     signal selected(string value)
     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
     radius: 8
-    height: 30
-    width: row.implicitWidth + 4
+    implicitHeight: 30
+    implicitWidth: row.implicitWidth + 4
     Item {
         anchors.fill: row
         Rectangle {
