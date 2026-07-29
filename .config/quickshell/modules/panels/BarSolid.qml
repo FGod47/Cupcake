@@ -41,22 +41,21 @@ PanelWindow {
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
-    readonly property real barW: bar.width - 16
+    readonly property real barW: bar.width > 0 ? bar.width - 16 : 1164
     readonly property real barX: 8
-    readonly property real midY: 6 // top 8px - padding offset
+    readonly property real midY: 6
 
     // ─────────────────────────────────────────────────────
-    //  THE FULL SOLID BAR (Crossfades in after pills merge)
+    //  MORPHING BAR (Starts as left Arch pill, stretches to full bar)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
         y: bar.midY
         x: bar.barX
-        width: bar.barW
+        width: 160 // Starts at the size of the left Arch/workspace pill
         height: 34
         radius: 17
         color: pillColor
-        opacity: 0
         clip: true
 
         // Top glass highlight line
@@ -67,10 +66,13 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.12)
         }
 
+        // Inner contents (fades in as expansion completes)
         RowLayout {
+            id: contentLayout
             anchors.fill: parent
             anchors.leftMargin: 14; anchors.rightMargin: 14
             spacing: 0
+            opacity: 0
 
             // ── LEFT: Workspaces + Window title ────────
             Row {
@@ -167,108 +169,34 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  5 GHOST PILLS FOR THE MERGE ANIMATION
-    //  Matching bar-merge-transition.html exactly
-    // ─────────────────────────────────────────────────────
-
-    // 1. Workspace Pill
-    Rectangle {
-        id: pWorkspace
-        y: bar.midY
-        x: 8
-        width: 160
-        height: 34; radius: 17
-        color: bar.pillColor
-    }
-
-    // 2. Network Pill
-    Rectangle {
-        id: pNetwork
-        y: bar.midY
-        x: 184
-        width: 100
-        height: 34; radius: 17
-        color: bar.pillColor
-    }
-
-    // 3. Hardware Stats Pill
-    Rectangle {
-        id: pHw
-        y: bar.midY
-        x: 300
-        width: 190
-        height: 34; radius: 17
-        color: bar.pillColor
-    }
-
-    // 4. Clock Pill
-    Rectangle {
-        id: pClock
-        y: bar.midY
-        x: (bar.width - 190) / 2
-        width: 190
-        height: 34; radius: 17
-        color: bar.pillColor
-    }
-
-    // 5. Controls Pill
-    Rectangle {
-        id: pControls
-        y: bar.midY
-        x: bar.width - 8 - 140
-        width: 140
-        height: 34; radius: 17
-        color: bar.pillColor
-    }
-
-    // ─────────────────────────────────────────────────────
-    //  MERGE TRANSITION ANIMATION SEQUENCE (from HTML spec)
-    //  Timing:
-    //  1. 80ms pause
-    //  2. 480ms parallel stretch/slide to left: 8, width: barW (cubic-bezier(.4,0,.2,1))
-    //  3. 220ms crossfade into solidBar
+    //  EXPANSION ANIMATION (Pill morphs/expands to full solid bar)
     // ─────────────────────────────────────────────────────
     SequentialAnimation {
-        id: mergeAnim
+        id: expandAnim
         running: false
 
-        PauseAnimation { duration: 80 }
-
-        // Parallel stretch and slide of all 5 pills to cover full bar geometry
-        ParallelAnimation {
-            // pWorkspace
-            NumberAnimation { target: pWorkspace; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
-            NumberAnimation { target: pWorkspace; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
-
-            // pNetwork
-            NumberAnimation { target: pNetwork; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
-            NumberAnimation { target: pNetwork; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
-
-            // pHw
-            NumberAnimation { target: pHw; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
-            NumberAnimation { target: pHw; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
-
-            // pClock
-            NumberAnimation { target: pClock; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
-            NumberAnimation { target: pClock; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
-
-            // pControls
-            NumberAnimation { target: pControls; property: "x"; to: bar.barX; duration: 480; easing.type: Easing.InOutCubic }
-            NumberAnimation { target: pControls; property: "width"; to: bar.barW; duration: 480; easing.type: Easing.InOutCubic }
+        // Step 1: Smoothly expand pill width across the top screen
+        NumberAnimation {
+            target: solidBar
+            property: "width"
+            from: 160
+            to: bar.barW
+            duration: 520
+            easing.type: Easing.InOutCubic
         }
 
-        // Crossfade solid bar in, pills out (220ms)
-        ParallelAnimation {
-            NumberAnimation { target: solidBar; property: "opacity"; to: 1.0; duration: 220; easing.type: Easing.OutCubic }
-            NumberAnimation { target: pWorkspace; property: "opacity"; to: 0.0; duration: 220 }
-            NumberAnimation { target: pNetwork; property: "opacity"; to: 0.0; duration: 220 }
-            NumberAnimation { target: pHw; property: "opacity"; to: 0.0; duration: 220 }
-            NumberAnimation { target: pClock; property: "opacity"; to: 0.0; duration: 220 }
-            NumberAnimation { target: pControls; property: "opacity"; to: 0.0; duration: 220 }
+        // Step 2: Fade in the bar content elements
+        NumberAnimation {
+            target: contentLayout
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 250
+            easing.type: Easing.OutCubic
         }
     }
 
-    Component.onCompleted: mergeAnim.start()
+    Component.onCompleted: expandAnim.start()
 
     // ─────────────────────────────────────────────────────
     //  BACKGROUND DATA POLLING
