@@ -155,6 +155,17 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
+                visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+            }
+
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 12
                 Layout.maximumWidth: bar.barW * 0.35 // prevent it from eating the center space
                 elide: Text.ElideRight
                 visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
