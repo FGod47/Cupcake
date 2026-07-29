@@ -29,15 +29,9 @@ PanelWindow {
         width: 800 // Fixed smaller width for the bar
         height: 30 // Smaller height
         
-        // Glassmorphism background (glass sheet)
-        // Must use Theme.barOpacity to pass Hyprland's ignore_alpha threshold
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, Theme.barOpacity) }
-            GradientStop { position: 0.3; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, Theme.barOpacity) }
-            GradientStop { position: 0.7; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, Theme.barOpacity) }
-            GradientStop { position: 1.0; color: Qt.rgba(Theme.colSecondary.r, Theme.colSecondary.g, Theme.colSecondary.b, Theme.barOpacity) }
-        }
+        // Transparent black background
+        // Bound to Theme.barOpacity to ensure Hyprland blurls activates
+        color: Qt.rgba(0, 0, 0, Theme.barOpacity)
         radius: 15
         
         border.color: Qt.rgba(1, 1, 1, 0.2)
