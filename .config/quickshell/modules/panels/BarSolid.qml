@@ -9,6 +9,7 @@ import QtQuick.Controls
 import "../../theme"
 import "../common"
 import Quickshell.Services.Mpris
+import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: bar
@@ -160,18 +161,35 @@ PanelWindow {
             }
 
             // ── RIGHT: Power Icon ────────
-            Rectangle {
+            Item {
                 Layout.alignment: Qt.AlignVCenter
-                width: 26; height: 26; radius: 13
-                color: Qt.rgba(fg.r, fg.g, fg.b, pMouse.containsMouse ? 0.15 : 0.0)
-                Behavior on color { ColorAnimation { duration: 150 } }
+                width: 26; height: 26
+                
+                RectangularGlow {
+                    anchors.fill: pbg
+                    glowRadius: pMouse.containsMouse ? 12 : 0
+                    spread: 0.1
+                    color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, pMouse.containsMouse ? 0.5 : 0.0)
+                    cornerRadius: pbg.radius + glowRadius
+                    Behavior on glowRadius { NumberAnimation { duration: 150 } }
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                Rectangle {
+                    id: pbg
+                    anchors.fill: parent
+                    radius: 13
+                    color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, pMouse.containsMouse ? 0.25 : 0.0)
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
 
                 Text {
                     anchors.centerIn: parent
                     text: "\ueb0d" // tabler icon for power
                     font.family: fontName
                     font.pixelSize: 15
-                    color: fg
+                    color: pMouse.containsMouse ? Theme.colError : fg
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
 
                 MouseArea {
@@ -179,8 +197,6 @@ PanelWindow {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    // Just toggling the global state in case the user installs a separate listener later,
-                    // or explicitly spawning wlogout if they install it.
                     onClicked: Quickshell.execDetached(["bash", "-c", "wlogout -b 5 || systemctl poweroff"])
                 }
             }
