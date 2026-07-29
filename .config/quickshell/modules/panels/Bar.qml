@@ -560,7 +560,8 @@ PanelWindow {
                     command: ["sh", "-c", "~/.config/cupcake/scripts/hw_toggle_display.sh"]
                     running: true
                     stdout: StdioCollector {
-                        onStreamFinished: (data) => {
+                        onStreamFinished: () => {
+                            let data = text;
                             try { hwText.text = JSON.parse(data).text || "" } catch(e) { hwText.text = data || "" }
                             hwPill.visible = hwText.text !== ""
                         }
@@ -594,7 +595,8 @@ PanelWindow {
                     command: ["sh", "-c", "~/.config/cupcake/scripts/rec-status.sh"]
                     running: true
                     stdout: StdioCollector {
-                        onStreamFinished: (data) => {
+                        onStreamFinished: () => {
+                            let data = text;
                             try { recText.text = JSON.parse(data).text || "" } catch(e) { recText.text = data || "" }
                             recPill.visible = recText.text !== ""
                         }
@@ -973,7 +975,7 @@ PanelWindow {
                             Process {
                                 id: clockProc
                                 command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                                stdout: StdioCollector { onStreamFinished: (data) => { try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
+                                stdout: StdioCollector { onStreamFinished: () => { let data = text; try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
                             }
                             Timer { interval: 5000; running: true; repeat: true; onTriggered: clockProc.running = true }
                         }
