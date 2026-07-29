@@ -6,11 +6,11 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Services.SystemTray
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import "../../theme"
 import "../common"
 import "../settings"
 import Quickshell.Services.Mpris
-import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: bar
@@ -23,1836 +23,330 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     exclusiveZone: 46
 
-    HyprlandFocusGrab {
-        windows: [bar]
-        active: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || globalState.powerMenuOpen
-    }
-
-    // Track active player status for Dynamic Island animations
-    property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
-    property bool hasPlayer: activePlayer !== null
-    property bool isMusicPlaying: hasPlayer && activePlayer.isPlaying
-
-    // and to allow the Settings menu to animate to the center of the screen
-    implicitHeight: modelData.height
-    color: "transparent"
-    
-    property bool ccOpen: false
-    mask: (globalState.settingsOpen || ccOpen || archPill.isExpanded || powerPill.actionsExpanded || globalState.overviewOpen) ? null : normalMask
-    
-    Region {
-        id: normalMask
-        Region { item: solidBarBackground }
-        Region { item: archPill }
-        Region { item: clockWrapper }
-        Region { item: powerPill }
-        Region { item: controlsPill }
-    }
-
     property var modelData
     screen: modelData
     
+    color: "transparent"
+    implicitHeight: 46
 
-
-    SystemClock {
-        id: timeClock
-        precision: SystemClock.Minutes 
+    HyprlandFocusGrab {
+        windows: [bar]
+        active: globalState.settingsOpen || globalState.powerMenuOpen
     }
 
-    // Shared style definitions based on user's style.css
-    property color bg: Theme.colSurface
-    property color fg: Theme.colOnSurface
-    property string fontName: "tabler-icons"
-    property int fontSize: Theme.defaultFontSize
-
-    MouseArea {
-        id: fullScreenClickAway
-        anchors.fill: parent
-        enabled: globalState.settingsOpen || bar.ccOpen || archPill.isExpanded || powerPill.actionsExpanded
-        onClicked: {
-            globalState.settingsOpen = false;
-            bar.ccOpen = false;
-            if (archPill.isExpanded) {
-                archPill.isExpanded = false;
-            }
-            if (globalState.powerMenuOpen) {
-                globalState.powerMenuOpen = false;
-            }
-            if (powerPill.confirmingDefault) {
-                powerPill.confirmingDefault = false;
-            }
-        }
-        z: -1
+    SystemClock { id: timeClock; precision: SystemClock.Minutes }
+    
+    // Ambient blur mask
+    mask: normalMask
+    Region {
+        id: normalMask
+        Region { item: auroraBar }
     }
 
-    // padding 0 16px translates to implicitWidth = contentItem.width + 32
-    // margin: 8px 4px 0 4px is handled by Layout properties or anchors
-
+    // ==========================================
+    // AURORA BAR
+    // ==========================================
     Rectangle {
-        id: solidBarBackground
-        z: 1
+        id: auroraBar
         anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: Math.max(38, clockPill.height + 4, powerPill.height + 4)
-        color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
-        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) }
+        anchors.topMargin: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: 34
+        width: rowContainer.implicitWidth + 12
+        radius: 17
+        
+        // Solid fallback
+        color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, 0.4)
 
-        // Inner wrapper to keep the original padding logic identical
-        Item {
+        // Linear gradient background
+        LinearGradient {
             anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-
-        // =======================
-        // LEFT MODULES
-        // =======================
-        Row {
-            id: leftModules
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 12
-            
-            visible: true
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-            // Workspaces Pill (#workspaces)
-            Rectangle {
-                color: "transparent"
-                implicitHeight: 34
-                implicitWidth: 168 // 5 * 32px + 8px padding
-                Layout.alignment: Qt.AlignVCenter
-                
-                // Seamless slide highlight bubble
-                Rectangle {
-                    id: workspaceHighlight
-                    width: 26
-                    height: 26
-                    radius: 13
-                    color: Theme.colPrimary
-                    
-                    property int activeWs: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 1
-                    property int validIndex: Math.max(0, Math.min(activeWs - 1, 4))
-                    
-                    x: 7 + 32 * validIndex
-                    y: 4
-                    opacity: (activeWs >= 1 && activeWs <= 5) ? 1 : 0
-                    
-                    Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
-                }
-                
-                Row {
-                    id: workspaceRow
-                    anchors.centerIn: parent
-                    spacing: 0
-                    
-                    Repeater {
-                        model: 5
-                        delegate: Item {
-                            width: 32
-                            height: 34
-                            property int wsId: index + 1
-                            property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-                            property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
-
-                            // Inner Dot (For focused, occupied, or empty)
-                            Rectangle {
-                                anchors.centerIn: parent
-                                width: isFocused ? 6 : (isOccupied ? 8 : 6)
-                                height: width
-                                radius: width / 2
-                                color: isFocused ? Theme.colOnPrimary : (isOccupied ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.4))
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 150; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                onClicked: function(mouse) {
-                                    Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})")
-                                }
-                                cursorShape: Qt.PointingHandCursor
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Active Window Pill (#window)
-            Rectangle {
-                id: windowPill
-                radius: 18
-                implicitHeight: 34
-                color: Theme.colPrimary
-                implicitWidth: windowText.implicitWidth > 0 ? Math.min(windowText.implicitWidth, 400) + 32 : 0
-                Layout.alignment: Qt.AlignVCenter
-                visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
-                clip: true
-                Behavior on implicitWidth { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
-                
-                Text {
-                    id: windowText
-                    anchors.centerIn: parent
-                    text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
-                    color: Theme.colSurfaceContainerHigh
-                    font.family: Theme.defaultFontFamily
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                    style: Text.Normal
-                    renderType: Text.NativeRendering
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                    width: Math.min(implicitWidth, 400)
-                }
-            }
-        }
-
-
-
-        // =======================
-        // RIGHT MODULES
-        // =======================
-        Row {
-            id: rightModules
-            anchors.right: parent.right
-            anchors.rightMargin: actualMargin
-            anchors.top: parent.top
-            spacing: 8
-            
-            property real targetRightMargin: powerPill.targetWidth + 8
-            property real actualMargin: targetRightMargin
-            Behavior on actualMargin { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
-            
-            visible: true
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-            // Network Pill
-            Rectangle {
-                id: networkPill
-                
-                property bool isWifi: false
-                property bool isWired: false
-                property bool hotspotActive: false
-                property string hotspotName: ""
-                property string activeWifiName: ""
-                property bool btPowered: false
-                property string btConnectedDevice: ""
-                property int signalPct: 78
-                property bool isHovered: netHoverArea.containsMouse
-                
-                color: Theme.colPrimary
-                radius: 17
-                implicitHeight: 34
-                implicitWidth: networkRow.implicitWidth + 24
-                Layout.alignment: Qt.AlignVCenter
-                Behavior on color { ColorAnimation { duration: 300 } }
-                property real lastRx: 0
-                property real lastTx: 0
-
-                MouseArea {
-                    id: netHoverArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                }
-                
-                Row {
-                    id: networkRow
-                    anchors.centerIn: parent
-                    spacing: 6
-
-                    // 1. Hotspot Badge
-                    Row {
-                        spacing: 4
-                        visible: networkPill.hotspotActive && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: "\ued1b"
-                            color: Theme.colOnPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        
-                        Text {
-                            text: networkPill.hotspotName
-                            color: Theme.colOnPrimary
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.DemiBold
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: networkPill.isHovered ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                        }
-                    }
-
-
-                    // 2. Bluetooth Badge
-                    Row {
-                        spacing: 4
-                        visible: networkPill.btPowered && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            text: networkPill.btConnectedDevice !== "" ? "\uecea" : "\uea37"
-                            color: Theme.colOnPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        
-                        Text {
-                            text: networkPill.btConnectedDevice
-                            color: Theme.colOnPrimary
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.DemiBold
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: (networkPill.isHovered && networkPill.btConnectedDevice !== "") ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                        }
-                    }
-
-                    // 3. Wi-Fi Badge
-                    Row {
-                        spacing: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWifi
-                        
-                        Text {
-                            text: {
-                                let pct = networkPill.signalPct;
-                                if (pct >= 75) return "\ueb52";      // wifi
-                                if (pct >= 50) return "\ueba5";      // wifi-2
-                                if (pct >= 25) return "\ueba4";      // wifi-1
-                                return "\ueba3";                     // wifi-0
-                            }
-                            color: Theme.colOnPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
-                        Text {
-                            text: networkPill.activeWifiName
-                            color: Theme.colOnPrimary
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.DemiBold
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: (text !== "" && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                        }
-                    }
-
-
-                    // 4. Wired Badge
-                    Row {
-                        spacing: 4
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: networkPill.isWired
-                        
-                        Text {
-                            text: "\uebd9"
-                            color: Theme.colOnPrimary
-                            font.family: fontName
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-
-                        Text {
-                            text: "Wired"
-                            color: Theme.colOnPrimary
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Font.DemiBold
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: (!powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                        }
-                    }
-
-                    // Thin Vertical Hairline Separator
-                    Rectangle {
-                        width: ((networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? 1 : 0
-                        height: 13
-                        color: Theme.colOnPrimary
-                        opacity: 0.3
-                        anchors.verticalCenter: parent.verticalCenter
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                    }
-
-                    // Network Speed Traffic Badge
-                    Row {
-                        spacing: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: ((networkPill.isWired || networkPill.isWifi) && !powerPill.actionsExpanded && !controlsPill.actionsExpanded && !clockPill.hasDropdown) ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (networkPill.isHovered ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-
-                        Text {
-                            id: rxSpeedText
-                            text: "0 KB/s"
-                            color: Qt.rgba(Theme.colOnPrimary.r, Theme.colOnPrimary.g, Theme.colOnPrimary.b, 0.8)
-                            font.family: Theme.defaultFontFamily
-                            font.weight: Theme.defaultFontWeight
-                            font.pixelSize: Theme.defaultFontSize - 1
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-                }
-                
-                Process {
-                    id: networkProc
-                    command: ["bash", "-c", "nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null; echo '---'; nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | grep '^\\*'; echo '---'; nmcli -g 802-11-wireless.ssid con show \"$(nmcli -t -f TYPE,STATE,CONNECTION d 2>/dev/null | grep '^wifi:connected:' | cut -d: -f3-)\" 2>/dev/null || true"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: () => {
-                            if (!text) {
-                                networkPill.isWifi = false;
-                                networkPill.isWired = false;
-                                networkPill.activeWifiName = "";
-                                return;
-                            }
-                            const sections = text.trim().split("---");
-                            const lines = sections[0].trim().split("\n");
-                            let activeWifi = "";
-                            let activeEthernet = false;
-
-                            for (let i = 0; i < lines.length; i++) {
-                                const parts = lines[i].split(":");
-                                if (parts.length >= 3) {
-                                    if (parts[0] === "wifi" && parts[1] === "connected") {
-                                        activeWifi = parts.slice(2).join(":");
-                                    } else if (parts[0] === "ethernet" && parts[1] === "connected") {
-                                        activeEthernet = true;
-                                    }
-                                }
-                            }
-
-                            if (sections.length > 1 && sections[1].trim() !== "") {
-                                const sigParts = sections[1].trim().split(":");
-                                if (sigParts.length >= 2) {
-                                    networkPill.signalPct = parseInt(sigParts[1]) || 75;
-                                }
-                            }
-
-                            const isHotspot = activeWifi.toLowerCase().includes("hotspot");
-                            const realSsid = (sections.length > 2) ? sections[2].trim() : "";
-                            networkPill.hotspotActive = isHotspot;
-                            networkPill.hotspotName = isHotspot ? (realSsid || activeWifi) : "";
-                            networkPill.isWifi = (activeWifi !== "" && !isHotspot);
-                            networkPill.isWired = activeEthernet;
-                            networkPill.activeWifiName = isHotspot ? "" : activeWifi;
-                        }
-                    }
-                }
-                
-                Timer {
-                    interval: 2000; running: true; repeat: true
-                    onTriggered: networkProc.running = true
-                }
-
-                Process {
-                    id: btProc
-                    command: ["bash", "-c", "bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && echo 'powered' || exit 0; bluetoothctl devices Connected 2>/dev/null | head -n1 | cut -d' ' -f3-"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: () => {
-                            if (!text) {
-                                networkPill.btPowered = false;
-                                networkPill.btConnectedDevice = "";
-                                return;
-                            }
-                            const lines = text.trim().split("\n");
-                            networkPill.btPowered = lines.length > 0 && lines[0] === "powered";
-                            if (lines.length > 1 && lines[1] !== "") {
-                                networkPill.btConnectedDevice = lines[1];
-                            } else {
-                                networkPill.btConnectedDevice = "";
-                            }
-                        }
-                    }
-                }
-
-                Timer {
-                    interval: 3000; running: true; repeat: true
-                    onTriggered: btProc.running = true
-                }
-                
-                Process {
-                    id: speedProc
-                    command: ["cat", "/proc/net/dev"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: () => {
-                            if (!text) return;
-                            const lines = text.trim().split("\n");
-                            let totalRx = 0;
-                            let totalTx = 0;
-                            for (let i = 2; i < lines.length; i++) {
-                                const parts = lines[i].trim().split(/\s+/);
-                                if (parts.length >= 10 && (parts[0].startsWith("en") || parts[0].startsWith("wl") || parts[0].startsWith("eth"))) {
-                                    totalRx += parseInt(parts[1]);
-                                    totalTx += parseInt(parts[9]);
-                                }
-                            }
-                            
-                            if (networkPill.lastRx > 0 && networkPill.lastTx > 0) {
-                                let rxDiff = totalRx - networkPill.lastRx;
-                                let txDiff = totalTx - networkPill.lastTx;
-                                
-                                let formatSpeed = (bytes) => {
-                                    if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
-                                    return (bytes / 1024).toFixed(0) + " KB/s";
-                                }
-                                
-                                rxSpeedText.text = formatSpeed(rxDiff + txDiff);
-                            } else {
-                                rxSpeedText.text = "0 KB/s";
-                            }
-                            networkPill.lastRx = totalRx;
-                            networkPill.lastTx = totalTx;
-                        }
-                    }
-                }
-                
-                Timer {
-                    interval: 1000; running: true; repeat: true
-                    onTriggered: speedProc.running = true
-                }
-
-            }
-
-            // Hardware Pill
-            Rectangle {
-                radius: 18
-                implicitHeight: 34
-                id: hwPill
-                implicitWidth: hwText.implicitWidth + 32
-                Layout.alignment: Qt.AlignVCenter
-                color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity) // from custom-hw gradient
-                Text {
-                    id: hwText
-                    anchors.centerIn: parent
-                    text: "HW"
-                    color: Theme.colOnSurfaceVariant
-                    font.family: fontName
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                }
-                Process {
-                    id: hwProc
-                    command: ["sh", "-c", "~/.config/cupcake/scripts/hw_toggle_display.sh"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: (data) => {
-                            try { hwText.text = JSON.parse(data).text || "" } catch(e) { hwText.text = data || "" }
-                            hwPill.visible = hwText.text !== ""
-                        }
-                    }
-                }
-                Timer {
-                    interval: 1000; running: true; repeat: true
-                    onTriggered: hwProc.running = true
-                }
-                MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached("~/.config/cupcake/scripts/hw_toggle_state.sh") }
-            }
-
-            // Recording Pill
-            Rectangle {
-                color: "transparent"
-                implicitHeight: 34
-                id: recPill
-                implicitWidth: recText.implicitWidth + 32
-                Layout.alignment: Qt.AlignVCenter
-                Text {
-                    id: recText
-                    anchors.centerIn: parent
-                    text: ""
-                    color: fg
-                    font.family: fontName
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
-                }
-                Process {
-                    id: recProc
-                    command: ["sh", "-c", "~/.config/cupcake/scripts/rec-status.sh"]
-                    running: true
-                    stdout: StdioCollector {
-                        onStreamFinished: (data) => {
-                            try { recText.text = JSON.parse(data).text || "" } catch(e) { recText.text = data || "" }
-                            recPill.visible = recText.text !== ""
-                        }
-                    }
-                }
-                Timer {
-                    interval: 1000; running: true; repeat: true
-                    onTriggered: recProc.running = true
-                }
-            }
-
-            // Tray Pill
-            Rectangle {
-                id: trayPill
-                color: "transparent"
-                implicitHeight: 34
-                implicitWidth: trayRow.implicitWidth + 32
-                Layout.alignment: Qt.AlignVCenter
-                Row {
-                    id: trayRow
-                    anchors.centerIn: parent
-                    spacing: 8
-                    
-                    Repeater {
-                        model: SystemTray.items
-                        delegate: Image {
-                            source: modelData.icon || ""
-                            sourceSize: Qt.size(18, 18)
-                            width: 18
-                            height: 18
-                            fillMode: Image.PreserveAspectFit
-                            
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                onClicked: (mouse) => {
-                                    if (mouse.button === Qt.LeftButton) {
-                                        modelData.activate()
-                                    } else if (mouse.button === Qt.RightButton) {
-                                        if (modelData.hasMenu) {
-                                            var pos = mapToItem(bar.contentItem, mouse.x, mouse.y)
-                                            modelData.display(bar, pos.x, pos.y)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Controls Pill (#control)
-            Rectangle {
-                id: controlsPill
-                color: "transparent"
-                implicitHeight: 34
-                implicitWidth: controlsRow.implicitWidth + 32
-                clip: true
-                
-                property bool actionsExpanded: false
-                
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: controlsPill.actionsExpanded = !controlsPill.actionsExpanded
-                    cursorShape: Qt.PointingHandCursor
-                }
-                
-                Row {
-                    id: controlsRow
-                    anchors.centerIn: parent
-                    spacing: 12
-                    
-                    // Audio
-                    Row {
-                        spacing: 0
-                        Text { text: audioSlider.value === 0 ? "" : (audioSlider.value < 50 ? "" : ""); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
-                        Slider {
-                            id: audioSlider
-                            leftPadding: 8
-                            width: controlsPill.actionsExpanded ? 108 : 0
-                            clip: true
-                            handle: Rectangle {
-                                x: audioSlider.leftPadding + audioSlider.visualPosition * (audioSlider.availableWidth - width)
-                                y: audioSlider.topPadding + audioSlider.availableHeight / 2 - height / 2
-                                width: 14; height: 14
-                                color: "transparent"
-                            }
-                            background: Rectangle {
-                                x: audioSlider.leftPadding
-                                y: audioSlider.topPadding + audioSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 100
-                                implicitHeight: 14
-                                width: audioSlider.availableWidth
-                                height: implicitHeight
-                                radius: 7
-                                color: Theme.colSurfaceContainerHigh // track color
-                                Rectangle {
-                                    width: audioSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.colPrimary // fill color
-                                    radius: 7
-                                }
-                            }
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            from: 0; to: 100; value: 50
-                            anchors.verticalCenter: parent.verticalCenter
-                            Timer {
-                                id: audioVolTimer
-                                interval: 50; repeat: false
-                                property int targetVal: 100
-                                onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
-                            }
-                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart() }
-                        }
-                        Text {
-                            leftPadding: 8
-                            text: Math.round(audioSlider.value) + "%"
-                            color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
-                            width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-                    
-                    // Backlight
-                    Row {
-                        spacing: 0
-                        Text { text: lightSlider.value < 33 ? "\uf237" : (lightSlider.value < 66 ? "\ueb30" : "\uf236"); color: fg; font.family: fontName; font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize; anchors.verticalCenter: parent.verticalCenter }
-                        Slider {
-                            id: lightSlider
-                            leftPadding: 8
-                            width: controlsPill.actionsExpanded ? 108 : 0
-                            clip: true
-                            handle: Rectangle {
-                                x: lightSlider.leftPadding + lightSlider.visualPosition * (lightSlider.availableWidth - width)
-                                y: lightSlider.topPadding + lightSlider.availableHeight / 2 - height / 2
-                                width: 14; height: 14
-                                color: "transparent"
-                            }
-                            background: Rectangle {
-                                x: lightSlider.leftPadding
-                                y: lightSlider.topPadding + lightSlider.availableHeight / 2 - height / 2
-                                implicitWidth: 100
-                                implicitHeight: 14
-                                width: lightSlider.availableWidth
-                                height: implicitHeight
-                                radius: 7
-                                color: Theme.colSurfaceContainerHigh // track color
-                                Rectangle {
-                                    width: lightSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.colSecondary // fill color
-                                    radius: 7
-                                }
-                            }
-                            Timer {
-                                id: ddcTimer
-                                interval: 500
-                                repeat: false
-                                property int targetValue: 100
-                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
-                            }
-                            onMoved: { 
-                                ddcTimer.targetValue = value;
-                                ddcTimer.restart();
-                            }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    ddcTimer.stop();
-                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()]);
-                                }
-                            }
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (controlsPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            from: 0; to: 100; value: 50
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            leftPadding: 8
-                            text: Math.round(lightSlider.value) + "%"
-                            color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
-                            width: (controlsHover.hovered || controlsPill.actionsExpanded) ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((controlsHover.hovered || controlsPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-                }
-
-                HoverHandler { 
-                    id: controlsHover 
-                    onHoveredChanged: {
-                        if (!hovered && controlsPill.actionsExpanded) {
-                            controlsPill.actionsExpanded = false;
-                        }
-                    }
-                }
-
-                // Audio fetch process — at pill level like ControlCenterUI pattern
-                Process {
-                    id: audioProc
-                    command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
-                    stdout: StdioCollector { id: audioProcOut }
-                    onExited: {
-                        let t = (audioProcOut.text || "").trim();
-                        let match = t.match(/Volume:\s+([\d\.]+)/);
-                        if (match && match[1]) {
-                            let val = Math.round(parseFloat(match[1]) * 100);
-                            if (!isNaN(val) && !audioSlider.pressed) audioSlider.value = val;
-                        }
-                    }
-                }
-                // Brightness fetch process — at pill level like ControlCenterUI pattern
-                Process {
-                    id: lightProc
-                    command: ["ddcutil", "getvcp", "10", "--terse"]
-                    stdout: StdioCollector { id: lightProcOut }
-                    onExited: {
-                        let t = (lightProcOut.text || "");
-                        let match = t.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
-                        if (match && match[1]) {
-                            let val = parseInt(match[1]);
-                            if (!isNaN(val) && !lightSlider.pressed) lightSlider.value = val;
-                        }
-                    }
-                }
-                // Volume polls every 2s while pill is open (wpctl is instant)
-                Timer {
-                    id: controlsSliderTimer
-                    interval: 2000
-                    running: controlsPill.actionsExpanded
-                    repeat: true
-                    triggeredOnStart: true
-                    onTriggered: audioProc.running = true
-                }
-                // Brightness fetched once when pill opens — ddcutil is slow (I2C)
-                // repeated calls pile up and cause slider glitching
-                Timer {
-                    id: barLightInitTimer
-                    interval: 50
-                    repeat: false
-                    onTriggered: {
-                        if (!lightProc.running) lightProc.running = true;
-                    }
-                }
-                Connections {
-                    target: controlsPill
-                    function onActionsExpandedChanged() {
-                        if (controlsPill.actionsExpanded) barLightInitTimer.restart();
-                    }
-                }
-            }
-            // Clock/Notif Pill (#clock-notif-pill)
-            Item {
-                id: clockWrapper
-                width: clockPill.width
-                height: clockPill.height
-                implicitWidth: clockPill.width
-                implicitHeight: clockPill.height
-                
-                onHeightChanged: {
-                    console.log("clockWrapper height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
-                }
-                
-                Rectangle {
-                    id: clockPill
-                    y: 0
-                    radius: 18
-                    height: hasDropdown ? Math.min(600, Math.max(34, dropdownCol.implicitHeight + 16)) : 34
-                    Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
-                    color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, root.barOpacity)
-                    width: hasDropdown ? 380 : clockRow.implicitWidth + 32
-                    Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 400; easing.type: Theme.liquidify ? Easing.OutElastic : (globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 0.5 } }
-                    clip: true
-                    
-                    property var activeNotif: globalState.popups && globalState.popups.length > 0 ? globalState.popups[0] : null
-                    property bool hasDropdown: globalState.popups && globalState.popups.length > 0 && !globalState.hideIsland
-                    
-                    onWidthChanged: {
-                        globalState.islandWidth = width
-                        console.log("clockPill width changed:", width)
-                    }
-                    onHeightChanged: {
-                        console.log("clockPill height changed:", height, "mapped to window:", mapToItem(null, 0, 0, width, height))
-                    }
-                    Component.onCompleted: {
-                        globalState.islandWidth = width
-                        console.log("clockPill completed. Height:", height)
-                    }
-
-                    Row {
-                        id: clockRow
-                        anchors.top: parent.top
-                        anchors.topMargin: (34 - height) / 2
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 5
-                        
-                        // --- Standard Clock State ---
-                        Row {
-                            id: mainClockRow
-                            spacing: 5
-                            opacity: 1.0
-                            
-                            NumberAnimation { id: mainClockFadeIn; target: mainClockRow; property: "opacity"; to: 1.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
-                            NumberAnimation { id: mainClockFadeOut; target: mainClockRow; property: "opacity"; to: 0.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
-                            Timer { id: mainClockDelayTimer; interval: 400; onTriggered: mainClockFadeIn.start() }
-                            
-                            Connections {
-                                target: clockPill
-                                function onHasDropdownChanged() {
-                                    if (clockPill.hasDropdown) {
-                                        mainClockFadeIn.stop(); mainClockDelayTimer.stop(); mainClockFadeOut.start();
-                                    } else {
-                                        mainClockFadeOut.stop(); mainClockDelayTimer.start();
-                                    }
-                                }
-                            }
-
-
-
-
-
-                            Text {
-                                id: notifBellIcon
-                                text: "\uea35"
-                                color: (globalState.notifications && Object.keys(globalState.notifications.values).length > 0) ? Theme.colPrimary : fg
-                                font.family: "tabler-icons"
-                                font.pixelSize: Theme.defaultFontSize + 2
-                                anchors.verticalCenter: parent.verticalCenter
-                                
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: globalState.notifPanelVisible = !globalState.notifPanelVisible
-                                }
-                            }
-                            
-                            Rectangle {
-                                width: 1
-                                height: 16
-                                color: fg
-                                opacity: 0.3
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Text {
-                                id: customClockText
-                                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
-                                color: fg; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight
-                                onTextChanged: globalState.clockString = customClockText.text
-                                Component.onCompleted: globalState.clockString = customClockText.text
-                                MouseArea {
-                                    anchors.fill: parent
-                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                    onClicked: (mouse) => {
-                                        if (mouse.button === Qt.RightButton) {
-                                            globalState.notifPanelVisible = !globalState.notifPanelVisible;
-                                        } else {
-                                            Quickshell.execDetached("~/.config/cupcake/scripts/toggle_clock.sh");
-                                            clockUpdateTimer.start();
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            Timer {
-                                id: clockUpdateTimer
-                                interval: 100
-                                repeat: false
-                                onTriggered: clockProc.running = true
-                            }
-                            
-                            Process {
-                                id: clockProc
-                                command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                                stdout: StdioCollector { onStreamFinished: (data) => { try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
-                            }
-                            Timer { interval: 5000; running: true; repeat: true; onTriggered: clockProc.running = true }
-                        }
-                    }
-
-                    // The overlay clock (when expanded)
-                    Row {
-                        id: overlayClock
-                        visible: false
-                        anchors.top: parent.top
-                        anchors.topMargin: (34 - height) / 2
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 5
-                        opacity: 0.0
-                        
-                        NumberAnimation { id: explicitFadeOut; target: overlayClock; property: "opacity"; to: 0.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
-                        NumberAnimation { id: explicitFadeIn; target: overlayClock; property: "opacity"; to: 1.0; duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack }
-                        Timer { id: overlayFadeInDelay; interval: 400; onTriggered: explicitFadeIn.start() }
-                        
-                        Connections {
-                            target: clockPill
-                            function onHasDropdownChanged() {
-                                if (!clockPill.hasDropdown) { explicitFadeIn.stop(); explicitFadeOut.start(); }
-                                else { explicitFadeOut.stop(); overlayClock.opacity = 1.0; explicitFadeIn.start(); }
-                            }
-                        }
-
-                        Text { text: globalState.clockString || Qt.formatDateTime(new Date(), "MMM dd • hh:mm AP"); color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
-                    }
-
-                    // The dropdown column
-                    Column {
-                        id: dropdownCol
-                        anchors.top: parent.top
-                        anchors.topMargin: 8
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.margins: 8
-                        
-                        transformOrigin: Item.TopRight
-                        scale: clockPill.hasDropdown ? 1.0 : 0.0
-                        opacity: clockPill.hasDropdown ? 1.0 : 0.0
-                        
-                        Behavior on scale { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.5 } }
-                        Behavior on opacity { NumberAnimation { duration: 400; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack } }
-
-                        spacing: 6
-                        Repeater {
-                            model: globalState.popups ? globalState.popups : []
-                            delegate: Item {
-                                width: dropdownCol.width
-                                property bool isOverflow: globalState.popups.length > 3 && index === 3
-                                height: isOverflow ? overflowBadge.height : notifCard.height
-                                visible: index <= 3
-
-                                NotificationCard {
-                                    id: notifCard
-                                    width: parent.width
-                                    notificationData: !parent.isOverflow ? modelData : null
-                                    inPanel: false
-                                    visible: !parent.isOverflow
-                                }
-
-                                Rectangle {
-                                    id: overflowBadge
-                                    width: parent.width
-                                    height: 32
-                                    radius: 16
-                                    color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, root.globalOpacity)
-                                    border.color: Qt.rgba(1, 1, 1, 0.05)
-                                    border.width: 1
-                                    visible: parent.isOverflow
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "+" + (globalState.popups.length - 3) + " more"
-                                        color: Theme.colOnSurfaceVariant
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 13
-                                        font.bold: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            source: parent
+            start: Qt.point(0, 0)
+            end: Qt.point(parent.width, parent.height)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(232/255, 163/255, 194/255, 0.55) }
+                GradientStop { position: 0.3; color: Qt.rgba(182/255, 143/255, 216/255, 0.50) }
+                GradientStop { position: 0.62; color: Qt.rgba(111/255, 143/208, 208/255, 0.48) }
+                GradientStop { position: 1.0; color: Qt.rgba(86/255, 194/255, 201/255, 0.50) }
             }
         }
         
-        // Power Pill (#custom-power)
+        // Inner borders
         Rectangle {
-            id: powerPill
-            anchors.right: parent.right
-            anchors.top: parent.top
-            radius: 18
+            anchors.fill: parent
+            radius: 17
+            color: "transparent"
+            border.color: Qt.rgba(1, 1, 1, 0.14)
+            border.width: 1
+        }
+        
+        RowLayout {
+            id: rowContainer
+            anchors.centerIn: parent
+            spacing: 14
             
-            property bool actionsExpanded: globalState.powerMenuOpen
-            property bool confirmingDefault: false
-            property string pendingAction: ""
-            
-            property int selectedIndex: 0
-            property int confirmIndex: 1
-            property bool keyboardNavigating: false
-            
-            onActionsExpandedChanged: {
-                if (actionsExpanded) {
-                    selectedIndex = 0;
-                    confirmIndex = 1;
-                    keyboardNavigating = true;
-                    powerPill.forceActiveFocus();
-                } else {
-                    keyboardNavigating = false;
-                }
-            }
-            
-            focus: globalState.powerMenuOpen
-            Keys.onUpPressed: function(event) {
-                if (powerPill.confirmingDefault) return;
-                powerPill.keyboardNavigating = true;
-                powerPill.selectedIndex = (powerPill.selectedIndex - 1 + 4) % 4;
-                event.accepted = true;
-            }
-            Keys.onDownPressed: function(event) {
-                if (powerPill.confirmingDefault) return;
-                powerPill.keyboardNavigating = true;
-                powerPill.selectedIndex = (powerPill.selectedIndex + 1) % 4;
-                event.accepted = true;
-            }
-            Keys.onLeftPressed: function(event) {
-                if (!powerPill.confirmingDefault) return;
-                powerPill.keyboardNavigating = true;
-                powerPill.confirmIndex = (powerPill.confirmIndex - 1 + 2) % 2;
-                event.accepted = true;
-            }
-            Keys.onRightPressed: function(event) {
-                if (!powerPill.confirmingDefault) return;
-                powerPill.keyboardNavigating = true;
-                powerPill.confirmIndex = (powerPill.confirmIndex + 1) % 2;
-                event.accepted = true;
-            }
-            Keys.onEscapePressed: function(event) {
-                powerPill.keyboardNavigating = true;
-                if (powerPill.confirmingDefault) {
-                    powerPill.confirmingDefault = false;
-                } else {
-                    globalState.powerMenuOpen = false;
-                }
-                event.accepted = true;
-            }
-            Keys.onReturnPressed: function(event) {
-                powerPill.keyboardNavigating = true;
-                if (!powerPill.confirmingDefault) {
-                    if (powerPill.selectedIndex === 0) { powerPill.pendingAction = "sleep"; powerPill.launchHeroFrom(sleepIconRect); }
-                    else if (powerPill.selectedIndex === 1) { powerPill.pendingAction = "logout"; powerPill.launchHeroFrom(logoutIconRect); }
-                    else if (powerPill.selectedIndex === 2) { powerPill.pendingAction = "reboot"; powerPill.launchHeroFrom(rebootIconRect); }
-                    else if (powerPill.selectedIndex === 3) { powerPill.pendingAction = "shutdown"; powerPill.launchHeroFrom(shutdownIconRect); }
-                    powerPill.confirmIndex = 1;
-                    powerPill.confirmingDefault = true;
-                } else {
-                    if (powerPill.confirmIndex === 1) {
-                        powerPill.executeAction(powerPill.pendingAction);
-                    } else {
-                        powerPill.confirmingDefault = false;
-                    }
-                }
-                event.accepted = true;
-            }
-            
-            property real targetHeight: actionsExpanded ? (state2Column.implicitHeight + 24) : 34
-            property real targetWidth: actionsExpanded ? (state2Column.implicitWidth + 24) : (powerHover.containsMouse ? (34 + powerHoverText.implicitWidth + 8) : 34)
-            
-            height: targetHeight
-            width: targetWidth
-            
-            color: powerHover.containsMouse || actionsExpanded ? Theme.colError : Theme.colPrimary
-            Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-            Behavior on color { ColorAnimation { duration: 300 } }
-            clip: true
-            
-            function executeAction(action) {
-                powerPill.confirmingDefault = false;
-                globalState.powerMenuOpen = false;
-                if (action === "shutdown") Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                else if (action === "reboot") Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
-                else if (action === "logout") Quickshell.execDetached(["bash", "-c", "loginctl kill-session $XDG_SESSION_ID"]);
-                else if (action === "sleep") Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
-            }
-            
-            function triggerAction(action) {
-                powerPill.pendingAction = action;
-                powerPill.confirmingDefault = true;
-            }
-            
-            // Stored click-time coordinates for the flying icon animation
-            property real heroStartX: 0
-            property real heroStartY: 0
-            
-            function launchHeroFrom(iconRect) {
-                // Map the clicked icon's top-left into statesContainer's coordinate space
-                var startPos = iconRect.mapToItem(statesContainer, 0, 0);
-                // Map the center of the confirmation placeholder as the landing target
-                var centerPos = confirmIconPlaceholder.mapToItem(statesContainer,
-                    confirmIconPlaceholder.width / 2,
-                    confirmIconPlaceholder.height / 2);
-                heroIcon.x = startPos.x;
-                heroIcon.y = startPos.y;
-                heroIcon.width = 32;
-                heroIcon.height = 32;
-                heroIcon.radius = 16;
-                heroIcon.opacity = 1;
-                // Now animate to center of placeholder (offset by half of final 48px size)
-                // We also subtract 12 from the X target because state3Column starts with a +12 leftMargin 
-                // but animates to 0, so its final position will be 12px further to the left.
-                heroXAnim.from = startPos.x;
-                heroXAnim.to = centerPos.x - 12 - 24;
-                heroYAnim.from = startPos.y;
-                heroYAnim.to = centerPos.y - 24;
-                heroWAnim.from = 32;
-                heroWAnim.to = 48;
-                heroHAnim.from = 32;
-                heroHAnim.to = 48;
-                heroRAnim.from = 16;
-                heroRAnim.to = 24;
-                heroXAnim.restart();
-                heroYAnim.restart();
-                heroWAnim.restart();
-                heroHAnim.restart();
-                heroRAnim.restart();
-            }
-            
-            function getActionLabel(action) {
-                if (action === "sleep") return "Sleep now?";
-                if (action === "logout") return "Logout now?";
-                if (action === "reboot") return "Reboot now?";
-                if (action === "shutdown") return "Shutdown now?";
-                return "";
-            }
-            
-            function getActionIcon(action) {
-                if (action === "sleep") return "\ueaf8";
-                if (action === "logout") return "\ueba8";
-                if (action === "reboot") return "\ueb13";
-                if (action === "shutdown") return "\ueb0d";
-                return "";
-            }
-            
-            function getActionSub(action) {
-                if (action === "sleep") return "The screen will lock and go dark.";
-                if (action === "logout") return "You will be signed out of this session.";
-                if (action === "reboot") return "The system will restart shortly.";
-                if (action === "shutdown") return "Unsaved work will be lost.";
-                return "";
-            }
-            
-            MouseArea {
-                id: powerHover
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: {
-                    if (!powerPill.confirmingDefault) {
-                        globalState.powerMenuOpen = !globalState.powerMenuOpen;
-                    }
-                }
-            }
-            
-            // Expanded Actions Inner Row
-            Item {
-                id: innerContent
-                anchors.fill: parent
-                opacity: (powerPill.actionsExpanded) ? 1.0 : 0.0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 300 } }
+            // GROUP 1: Clock & Workspaces
+            RowLayout {
+                spacing: 6
                 
+                // Arch Icon
+                Text {
+                    text: ""
+                    font.family: "JetBrains Mono Nerd Font"
+                    font.pixelSize: 14
+                    color: Qt.rgba(1,1,1,0.94)
+                    Layout.alignment: Qt.AlignVCenter
+                }
+                
+                // Clock
+                Text {
+                    text: Qt.formatDateTime(timeClock.date, "h:mm ap")
+                    font.family: "JetBrains Mono"
+                    font.weight: Font.Medium
+                    font.pixelSize: 12
+                    color: Qt.rgba(1,1,1,0.94)
+                    Layout.alignment: Qt.AlignVCenter
+                }
+                
+                // Workspace Badges
                 Row {
-                    id: powerRow
-                    anchors.right: parent.right
-                    anchors.rightMargin: 12
-                    anchors.verticalCenter: parent.verticalCenter
-                    layoutDirection: Qt.RightToLeft
-                    spacing: 14
-                    
-                    // State 1: Expanding Actions Background
-                    Rectangle {
-                        visible: powerPill.actionsExpanded
-                        width: powerPill.actionsExpanded ? state2Column.implicitWidth : 0
-                        height: powerPill.actionsExpanded ? state2Column.implicitHeight : 0
-                        color: "transparent"
-                        anchors.verticalCenter: parent.verticalCenter
-                        clip: true
-                        
-                        // State 2 & 3 Container
-                        Item {
-                            id: statesContainer
-                            width: powerPill.actionsExpanded ? state2Column.implicitWidth : 0
-                            height: powerPill.actionsExpanded ? state2Column.implicitHeight : 0
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: powerPill.actionsExpanded
-                            clip: true
-                            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPill.actionsExpanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
+                    spacing: 3
+                    Layout.leftMargin: 4
+                    Repeater {
+                        model: 5
+                        delegate: Rectangle {
+                            property int wsId: index + 1
+                            property bool active: Hyprland.focusedWorkspace ? (Hyprland.focusedWorkspace.id === wsId) : (wsId === 1)
                             
-                            // Floating Hero Icon — driven imperatively from launchHeroFrom()
-                            Rectangle {
-                                id: heroIcon
-                                width: 32; height: 32; radius: width / 2
-                                color: "#ffffff"
-                                z: 10
-                                opacity: 0
-                                visible: opacity > 0
-                                
-                                NumberAnimation on x { id: heroXAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                NumberAnimation on y { id: heroYAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                NumberAnimation on width  { id: heroWAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                NumberAnimation on height { id: heroHAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                NumberAnimation on radius { id: heroRAnim; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.1; running: false }
-                                
-                                Connections {
-                                    target: powerPill
-                                    function onConfirmingDefaultChanged() {
-                                        if (!powerPill.confirmingDefault) {
-                                            heroIcon.opacity = 0;
-                                        }
-                                    }
-                                }
-                                
-                                Text { 
-                                    text: powerPill.getActionIcon(powerPill.pendingAction)
-                                    color: "#5a2432"
-                                    font.family: fontName
-                                    font.pixelSize: parent.width * 0.5
-                                    anchors.centerIn: parent
-                                }
-                            }
+                            width: 14
+                            height: 14
+                            radius: 5
+                            color: active ? Qt.rgba(1,1,1,0.85) : Qt.rgba(1,1,1,0.14)
                             
-                            // State 2: Clicked Actions
-                            Column {
-                                id: state2Column
-                                spacing: 6
-                                width: 196
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: !powerPill.confirmingDefault ? 0 : -12
-                                opacity: !powerPill.confirmingDefault ? 1 : 0
-                                visible: opacity > 0
-                                Behavior on opacity { NumberAnimation { duration: 180 } }
-                                Behavior on anchors.leftMargin { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-
-                                // Sleep
-                                Rectangle {
-                                    width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, sleepArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 0) ? 0.62 : 0.38)
-                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 0) ? 2 : 0
-                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
-                                    Row {
-                                        anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                        spacing: 10
-                                        Rectangle {
-                                            id: sleepIconRect
-                                            width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
-                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "sleep") ? 0 : 1
-                                            Text { text: "\ueaf8"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                                        }
-                                        Text { text: "Sleep"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
-                                    }
-                                    MouseArea { 
-                                        id: sleepArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
-                                        onClicked: { 
-                                            mouse.accepted = true
-                                            powerPill.pendingAction = "sleep"
-                                            powerPill.launchHeroFrom(sleepIconRect)
-                                            powerPill.confirmingDefault = true
-                                        }
-                                    }
-                                }
-
-                                // Logout
-                                Rectangle {
-                                    width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, logoutArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 1) ? 0.62 : 0.38)
-                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 1) ? 2 : 0
-                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
-                                    Row {
-                                        anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                        spacing: 10
-                                        Rectangle {
-                                            id: logoutIconRect
-                                            width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
-                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "logout") ? 0 : 1
-                                            Text { text: "\ueba8"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                                        }
-                                        Text { text: "Logout"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
-                                    }
-                                    MouseArea { 
-                                        id: logoutArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
-                                        onClicked: { 
-                                            mouse.accepted = true
-                                            powerPill.pendingAction = "logout"
-                                            powerPill.launchHeroFrom(logoutIconRect)
-                                            powerPill.confirmingDefault = true
-                                        }
-                                    }
-                                }
-
-                                // Reboot
-                                Rectangle {
-                                    width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, rebootArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 2) ? 0.62 : 0.38)
-                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 2) ? 2 : 0
-                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
-                                    Row {
-                                        anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                        spacing: 10
-                                        Rectangle {
-                                            id: rebootIconRect
-                                            width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
-                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "reboot") ? 0 : 1
-                                            Text { text: "\ueb13"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                                        }
-                                        Text { text: "Reboot"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
-                                    }
-                                    MouseArea { 
-                                        id: rebootArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
-                                        onClicked: { 
-                                            mouse.accepted = true
-                                            powerPill.pendingAction = "reboot"
-                                            powerPill.launchHeroFrom(rebootIconRect)
-                                            powerPill.confirmingDefault = true
-                                        }
-                                    }
-                                }
-
-                                // Shutdown
-                                Rectangle {
-                                    width: parent.width; height: 42; radius: 21
-                                    color: Qt.rgba(255, 255, 255, shutdownArea.containsMouse || (powerPill.focus && powerPill.selectedIndex === 3) ? 0.62 : 0.38)
-                                    border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.selectedIndex === 3) ? 2 : 0
-                                    border.color: Theme.isDark ? "#5a2432" : "#ffffff"
-                                    Row {
-                                        anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                        spacing: 10
-                                        Rectangle {
-                                            id: shutdownIconRect
-                                            width: 32; height: 32; radius: 16
-                                            color: "#ffffff"
-                                            opacity: (powerPill.confirmingDefault && powerPill.pendingAction === "shutdown") ? 0 : 1
-                                            Text { text: "\ueb0d"; color: "#5a2432"; font.family: fontName; font.pixelSize: 15; anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-                                        }
-                                        Text { text: "Shutdown"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: 600; anchors.verticalCenter: parent.verticalCenter }
-                                    }
-                                    MouseArea { 
-                                        id: shutdownArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                        onPositionChanged: { powerPill.keyboardNavigating = false; }
-                                        onClicked: { 
-                                            mouse.accepted = true
-                                            powerPill.pendingAction = "shutdown"
-                                            powerPill.launchHeroFrom(shutdownIconRect)
-                                            powerPill.confirmingDefault = true
-                                        }
-                                    }
-                                }
+                            Text {
+                                anchors.centerIn: parent
+                                text: wsId
+                                font.family: "JetBrains Mono"
+                                font.weight: Font.DemiBold
+                                font.pixelSize: 9
+                                color: active ? "#3a2a4a" : Qt.rgba(1,1,1,0.62)
                             }
-                            
-                            // State 3: Default Style Confirmation
-                            Item {
-                                id: state3Column
-                                width: 196
-                                anchors.top: parent.top
-                                anchors.bottom: parent.bottom
-                                anchors.left: parent.left
-                                anchors.leftMargin: powerPill.confirmingDefault ? 0 : 12
-                                opacity: powerPill.confirmingDefault ? 1 : 0
-                                visible: opacity > 0
-                                Behavior on opacity { NumberAnimation { duration: 180 } }
-                                Behavior on anchors.leftMargin { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-                                
-                                Item {
-                                    anchors.top: parent.top
-                                    anchors.bottom: buttonsRow.top
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    
-                                    Column {
-                                        anchors.centerIn: parent
-                                        width: parent.width
-                                        spacing: 8
-                                        
-                                        Item {
-                                            id: confirmIconPlaceholder
-                                            width: 48; height: 48
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                        }
-                                        
-                                        Column {
-                                            width: parent.width
-                                            spacing: 2
-                                            Text { width: parent.width; text: powerPill.getActionLabel(powerPill.pendingAction); color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: 700; horizontalAlignment: Text.AlignHCenter }
-                                            Text { width: parent.width; text: powerPill.getActionSub(powerPill.pendingAction); color: Theme.isDark ? "#5a2432" : "#ffffff"; opacity: 0.6; font.family: Theme.defaultFontFamily; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
-                                        }
-                                    }
-                                }
-                                
-                                Row {
-                                    id: buttonsRow
-                                    anchors.bottom: parent.bottom
-                                    anchors.bottomMargin: 8
-                                    width: parent.width
-                                    spacing: 6
-                                    
-                                    Rectangle {
-                                        width: (parent.width - 6) / 2; height: 32; radius: 16
-                                        color: Qt.rgba(255, 255, 255, nopeArea.containsMouse || (powerPill.focus && powerPill.confirmIndex === 0) ? 0.62 : 0.4)
-                                        border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.confirmIndex === 0) ? 2 : 0
-                                        border.color: Theme.isDark ? "#5a2432" : "#ffffff"
-                                        Text { text: "Cancel"; color: Theme.isDark ? "#5a2432" : "#ffffff"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
-                                        MouseArea { id: nopeArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: { powerPill.keyboardNavigating = false; } onClicked: { mouse.accepted = true; powerPill.confirmingDefault = false; } }
-                                    }
-                                    
-                                    Rectangle {
-                                        width: (parent.width - 6) / 2; height: 32; radius: 16
-                                        color: sureArea.containsMouse || (powerPill.focus && powerPill.confirmIndex === 1) ? "#6c2b3c" : "#5a2432"
-                                        border.width: (powerPill.focus && powerPill.keyboardNavigating && powerPill.confirmIndex === 1) ? 2 : 0
-                                        border.color: "#fbdfe4"
-                                        Text { text: "Confirm"; color: "#fbdfe4"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: 700; anchors.centerIn: parent }
-                                        MouseArea { id: sureArea; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: { powerPill.keyboardNavigating = false; } onClicked: { mouse.accepted = true; powerPill.executeAction(powerPill.pendingAction); } }
-                                    }
-                                }
-                            }
-                        // End of statesContainer
                         }
                     }
                 }
             }
             
-            // Main Icon and Hover Text
-            Row {
-                anchors.right: parent.right
-                anchors.rightMargin: (34 - powerIconText.implicitWidth) / 2
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
-                opacity: (!powerPill.actionsExpanded && !powerPill.confirmingDefault) ? 1.0 : 0.0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 300 } }
-                    Text {
-                        id: powerHoverText
-                        text: "Power"
-                        color: Theme.colOnPrimary
-                        font.family: Theme.defaultFontFamily
-                        font.weight: 600
-                        font.pixelSize: Theme.defaultFontSize
+            // DIVIDER
+            Rectangle { width: 1; height: 16; color: Qt.rgba(1,1,1,0.16) }
+            
+            // GROUP 2: Hardware
+            RowLayout {
+                spacing: 14
+                
+                // Temp
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Text { id: tempVal; text: "53"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "°C"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+                
+                // RAM
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Text { id: ramVal; text: "3.0"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "GiB"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+                
+                // CPU
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Text { id: cpuVal; text: "33"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+            }
+            
+            // CENTER: Date
+            Item { width: 24 } // Spacer
+            Text {
+                text: Qt.formatDateTime(timeClock.date, "ddd dd MM yyyy")
+                font.family: "Inter"
+                font.weight: Font.Medium
+                font.pixelSize: 12
+                color: Qt.rgba(1,1,1,0.94)
+            }
+            Item { width: 24 } // Spacer
+            
+            // DIVIDER
+            Rectangle { width: 1; height: 16; color: Qt.rgba(1,1,1,0.16) }
+            
+            // GROUP 3: Controls
+            RowLayout {
+                spacing: 14
+                
+                // Volume
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Text { id: volVal; text: "70"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+                
+                // Brightness
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Text { id: briVal; text: "50"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+                
+                // Battery
+                RowLayout {
+                    spacing: 4
+                    Text { text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.92); font.pixelSize: 13 }
+                    Rectangle {
+                        width: 22
+                        height: 5
+                        radius: 3
+                        color: Qt.rgba(1,1,1,0.18)
                         clip: true
-                        width: powerHover.containsMouse ? implicitWidth : 0
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerHover.containsMouse || powerPill.actionsExpanded) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
-                        anchors.verticalCenter: parent.verticalCenter
+                        Rectangle {
+                            width: parent.width * (parseInt(batVal.text) / 100.0)
+                            height: parent.height
+                            radius: 3
+                            LinearGradient {
+                                anchors.fill: parent
+                                source: parent
+                                start: Qt.point(0,0)
+                                end: Qt.point(parent.width, 0)
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#56c2c9" } // teal
+                                    GradientStop { position: 1; color: "#e8a3c2" } // rose
+                                }
+                            }
+                        }
                     }
-                    
-                    Text {
-                        id: powerIconText
-                        text: "\ueb0d"
-                        color: bg
-                        font.family: fontName
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: Theme.defaultFontSize
-                        anchors.verticalCenter: parent.verticalCenter
+                    Text { id: batVal; text: "100"; font.family: "Inter"; font.weight: Font.Medium; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    Text { text: "%"; font.family: "Inter"; color: Qt.rgba(1,1,1,0.62); font.pixelSize: 12 }
+                }
+            }
+            
+            // DIVIDER
+            Rectangle { width: 1; height: 16; color: Qt.rgba(1,1,1,0.16) }
+            
+            // GROUP 4: Power Cap
+            RowLayout {
+                spacing: 10
+                Layout.rightMargin: 4
+                
+                // Notification Bell
+                Rectangle {
+                    width: 22; height: 22; radius: 11
+                    color: Qt.rgba(1,1,1,0.10)
+                    Text { anchors.centerIn: parent; text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    // Dot
+                    Rectangle {
+                        width: 5; height: 5; radius: 2.5
+                        color: "#e8a3c2"
+                        x: 16; y: 1
                     }
                 }
-
-
-
+                
+                // Settings
+                Rectangle {
+                    width: 22; height: 22; radius: 11
+                    color: Qt.rgba(1,1,1,0.10)
+                    Text { anchors.centerIn: parent; text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 12 }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: globalState.settingsOpen = !globalState.settingsOpen
+                    }
+                }
+                
+                // Power
+                Rectangle {
+                    width: 22; height: 22; radius: 11
+                    color: Qt.rgba(1,1,1,0.16)
+                    Text { anchors.centerIn: parent; text: ""; font.family: "JetBrains Mono Nerd Font"; color: Qt.rgba(1,1,1,0.94); font.pixelSize: 13 }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: globalState.powerMenuOpen = true
+                    }
+                }
+            }
         }
     }
-
-}
-    // Moved archPill out of 46px restricted Item
-        // =======================
-        // CENTER MODULES
-        // =======================
-         Rectangle {
-            id: archPill
-            z: 20
-            
-            property bool isExpanded: false
-            
-            property bool showMusicPill: bar.hasPlayer && (bar.activePlayer.isPlaying || pillMouseArea.containsMouse)
-            
-            onShowMusicPillChanged: {
-                if (!archPill.showMusicPill) {
-                    archPill.isExpanded = false;
-                }
-            }
-            
-            property int targetHeight: bar.ccOpen ? (ccLoader.item ? ccLoader.item.height : 615) : (archPill.showMusicPill ? (archPill.isExpanded ? 340 : 34) : 34)
-            
-            y: 10
-            anchors.horizontalCenter: parent.horizontalCenter
-            radius: bar.ccOpen ? 18 : (archPill.isExpanded ? 28 : 18)
-            width: bar.ccOpen ? 362 : (archPill.showMusicPill ? (archPill.isExpanded ? 220 : 160) : archText.implicitWidth + 32)
-            height: targetHeight
-            
-            Behavior on y { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on height { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            Behavior on radius { NumberAnimation { duration: Theme.liquidify ? 800 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
-            
-            property real morphProgress: bar.ccOpen ? 1.0 : 0.0
-            Behavior on morphProgress {
-                NumberAnimation { duration: Theme.liquidify ? 800 : 600; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 }
-            }
-            
-            // Fade out the gradient if either CC is open or the music player is expanded
-            property real rawExpansion: Math.max(archPill.morphProgress, archPill.expandFade)
-            property real expansion: Math.max(0.0, Math.min(1.0, rawExpansion))
-            
-            property real gradientAlpha: Math.max(0.0, Math.min(1.0, 1.0 - rawExpansion))
-            property real expandFade: archPill.isExpanded ? 1.0 : 0.0
-            Behavior on expandFade { NumberAnimation { duration: 300 } }
-            property color mixColor: Qt.rgba(
-                Theme.colPrimary.r * (1 - expansion) + Theme.colSurface.r * expansion,
-                Theme.colPrimary.g * (1 - expansion) + Theme.colSurface.g * expansion,
-                Theme.colPrimary.b * (1 - expansion) + Theme.colSurface.b * expansion,
-                1.0
-            )
-            property real currentAlpha: 1.0 * (1 - expansion) + root.ccOpacity * expansion
-            color: Qt.rgba(mixColor.r, mixColor.g, mixColor.b, currentAlpha)
-            
-
-            MouseArea {
-                id: pillMouseArea
-                anchors.fill: parent
-                enabled: !bar.ccOpen
-                hoverEnabled: true
-                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: (mouse) => {
-                    if (mouse.button === Qt.RightButton || mouse.button === Qt.MiddleButton) {
-                        if (bar.hasPlayer) {
-                            archPill.isExpanded = !archPill.isExpanded;
-                        }
-                    } else {
-                        bar.ccOpen = true;
-                    }
-                }
-            }
-            
-            // Center label (Arch logo + name)
-            Row {
-                id: archText
-                anchors.centerIn: parent
-                spacing: 8
-                opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 0.0 : 1.0)
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Text { anchors.verticalCenter: parent.verticalCenter; text: "\uf303"; color: Theme.colOnPrimary; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: Theme.defaultFontSize + 1; font.weight: Theme.defaultFontWeight }
-                Text { anchors.verticalCenter: parent.verticalCenter; text: "Arch"; color: Theme.colOnPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight }
-            }
-
-            // Music Island Container
-            Item {
-                anchors.fill: parent
-                opacity: bar.ccOpen ? 0.0 : (archPill.showMusicPill ? 1.0 : 0.0)
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-                // ================= COLLAPSED VIEW =================
-                Item {
-                    id: collapsedView
-                    anchors.fill: parent
-                    
-                    state: archPill.isExpanded ? "hidden" : "visible"
-                    states: [
-                        State { name: "visible"; PropertyChanges { target: collapsedView; opacity: 1.0; visible: true } },
-                        State { name: "hidden"; PropertyChanges { target: collapsedView; opacity: 0.0; visible: false } }
-                    ]
-                    transitions: [
-                        Transition {
-                            from: "hidden"; to: "visible"
-                            SequentialAnimation {
-                                PauseAnimation { duration: 200 }
-                                NumberAnimation { target: collapsedView; property: "opacity"; duration: 300 }
-                            }
-                        },
-                        Transition {
-                            from: "visible"; to: "hidden"
-                            NumberAnimation { target: collapsedView; property: "opacity"; duration: 300 }
-                        }
-                    ]
-                    
-                    Item {
-                        id: albumArtSmall
-                        width: 24; height: 24
-                        anchors.left: parent.left; anchors.leftMargin: 8
-                        anchors.verticalCenter: parent.verticalCenter
-                        Rectangle { id: artMaskSmall; anchors.fill: parent; radius: 12; visible: false }
-                        Image {
-                            anchors.fill: parent; source: (bar.activePlayer && bar.activePlayer.trackArtUrl) ? bar.activePlayer.trackArtUrl : ""
-                            fillMode: Image.PreserveAspectCrop; layer.enabled: true; layer.effect: OpacityMask { maskSource: artMaskSmall }
-                        }
-                    }
-
-                    Item {
-                        anchors.left: albumArtSmall.right
-                        anchors.right: playBtnSmall.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        height: 14
-                        
-                        Row {
-                            height: 14; spacing: 3
-                            anchors.centerIn: parent
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 4; duration: 300; easing.type: Easing.InOutSine } NumberAnimation { to: 12; duration: 350; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } NumberAnimation { to: 6; duration: 300; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 8; duration: 350; easing.type: Easing.InOutSine } NumberAnimation { to: 14; duration: 400; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 6; duration: 320; easing.type: Easing.InOutSine } NumberAnimation { to: 10; duration: 280; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 12; duration: 380; easing.type: Easing.InOutSine } NumberAnimation { to: 4; duration: 340; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 4; duration: 290; easing.type: Easing.InOutSine } NumberAnimation { to: 14; duration: 390; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 14; duration: 410; easing.type: Easing.InOutSine } NumberAnimation { to: 8; duration: 310; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 10; duration: 330; easing.type: Easing.InOutSine } NumberAnimation { to: 6; duration: 360; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 8; duration: 370; easing.type: Easing.InOutSine } NumberAnimation { to: 12; duration: 320; easing.type: Easing.InOutSine } } }
-                            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 3; height: 12; radius: 1.5; color: Theme.colOnPrimary; SequentialAnimation on height { loops: Animation.Infinite; running: !archPill.isExpanded && bar.isMusicPlaying; NumberAnimation { to: 12; duration: 340; easing.type: Easing.InOutSine } NumberAnimation { to: 4; duration: 380; easing.type: Easing.InOutSine } } }
-                        }
-                    }
-                    
-                    Text {
-                        id: playBtnSmall
-                        anchors.right: parent.right; anchors.rightMargin: 12
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ued45" : "\ued46"
-                        font.family: "tabler-icons"; font.pixelSize: 15; color: Theme.colOnPrimary
-                        
-                        MouseArea {
-                            anchors.fill: parent
-                            anchors.margins: -10
-                            onClicked: {
-                                if (bar.activePlayer) bar.activePlayer.isPlaying = !bar.activePlayer.isPlaying
-                            }
-                        }
-                    }
-                }
-
-                // ================= EXPANDED VIEW =================
-                Item {
-                    id: expandedView
-                    anchors.fill: parent
-                    
-                    state: archPill.isExpanded ? "visible" : "hidden"
-                    states: [
-                        State { name: "visible"; PropertyChanges { target: expandedView; opacity: 1.0; visible: true } },
-                        State { name: "hidden"; PropertyChanges { target: expandedView; opacity: 0.0; visible: false } }
-                    ]
-                    transitions: [
-                        Transition {
-                            from: "hidden"; to: "visible"
-                            SequentialAnimation {
-                                PauseAnimation { duration: 200 }
-                                NumberAnimation { target: expandedView; property: "opacity"; duration: 300 }
-                            }
-                        },
-                        Transition {
-                            from: "visible"; to: "hidden"
-                            NumberAnimation { target: expandedView; property: "opacity"; duration: 300 }
-                        }
-                    ]
-                    
-                    Column {
-                        width: parent.width - 32
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 14
-                        
-                        Item {
-                            width: 120; height: 120
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            
-                            Rectangle { id: artMaskLarge; anchors.fill: parent; radius: 16; visible: false }
-                            Image {
-                                anchors.fill: parent; source: (bar.activePlayer && bar.activePlayer.trackArtUrl) ? bar.activePlayer.trackArtUrl : ""
-                                fillMode: Image.PreserveAspectCrop; layer.enabled: true; layer.effect: OpacityMask { maskSource: artMaskLarge }
-                            }
-                            
-                            Row {
-                                height: 20
-                                spacing: 4
-                                anchors.bottom: parent.bottom; anchors.bottomMargin: 14
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:18;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:6;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:12;duration:250;easing.type:Easing.InOutSine} NumberAnimation{to:22;duration:450;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:24;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:10;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:14;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:26;duration:400;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:6;duration:450;easing.type:Easing.InOutSine} NumberAnimation{to:18;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:20;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:8;duration:400;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:10;duration:350;easing.type:Easing.InOutSine} NumberAnimation{to:24;duration:300;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:22;duration:400;easing.type:Easing.InOutSine} NumberAnimation{to:12;duration:350;easing.type:Easing.InOutSine} } }
-                                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 4; height: 16; radius: 2; color: "white"; opacity: 0.7; SequentialAnimation on height { loops: Animation.Infinite; running: archPill.isExpanded && bar.isMusicPlaying; NumberAnimation{to:8;duration:300;easing.type:Easing.InOutSine} NumberAnimation{to:16;duration:400;easing.type:Easing.InOutSine} } }
-                            }
-                        }
-                        
-                        Column {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            spacing: 2
-                            Text {
-                                text: bar.activePlayer ? bar.activePlayer.trackTitle : ""
-                                font.pixelSize: 15; font.weight: 600; color: Theme.colOnSurface
-                                font.family: Theme.defaultFontFamily
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                width: 180; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter
-                            }
-                            Text {
-                                text: bar.activePlayer ? bar.activePlayer.trackArtist : ""
-                                font.pixelSize: 12; color: Theme.colOnSurface; opacity: 0.7
-                                font.family: Theme.defaultFontFamily
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                width: 180; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter
-                            }
-                        }
-                        
-                        Item {
-                            width: 180; height: 4
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            Rectangle { anchors.fill: parent; color: Theme.colOnSurface; opacity: 0.2; radius: 2 }
-                            Rectangle { 
-                                height: 4; radius: 2; color: Theme.colOnSurface
-                                width: parent.width * (bar.activePlayer && bar.activePlayer.length > 0 ? (bar.activePlayer.position / bar.activePlayer.length) : 0)
-                            }
-                        }
-                        
-                        Row {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            spacing: 22
-                            Text { 
-                                text: "\ued48"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
-                                MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.previous() }
-                            }
-                            Rectangle {
-                                width: 44; height: 44; radius: 22; color: Theme.colOnSurface
-                                Text { anchors.centerIn: parent; text: (bar.activePlayer && bar.activePlayer.isPlaying) ? "\ued45" : "\ued46"; font.family: "tabler-icons"; font.pixelSize: 22; color: Theme.colSurface }
-                                MouseArea { anchors.fill: parent; onClicked: if (bar.activePlayer) bar.activePlayer.isPlaying = !bar.activePlayer.isPlaying }
-                            }
-                            Text { 
-                                text: "\ued49"; font.family: "tabler-icons"; font.pixelSize: 20; color: Theme.colOnSurface; anchors.verticalCenter: parent.verticalCenter 
-                                MouseArea { anchors.fill: parent; anchors.margins: -10; onClicked: if (bar.activePlayer) bar.activePlayer.next() }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Inner clipping container for the content
-            Item {
-                anchors.fill: parent
-                anchors.margins: 0
-                clip: true
-                visible: bar.ccOpen || archPill.morphProgress > 0.0
-                
-                Loader {
-                    id: ccLoader
-                    anchors.top: parent.top
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: 362
-                    height: ccLoader.item ? ccLoader.item.height : 615
-                    source: "ControlCenterUI.qml"
-                    active: true
-                    
-                    layer.enabled: true
-                    opacity: Math.max(0, archPill.morphProgress * 3 - 2) // Stays 0 until 66% expanded
-                    visible: true
-                    enabled: bar.ccOpen
-                    
-                    onLoaded: {
-                        item.anchors.fill = ccLoader;
-                    }
-                    
-                    Connections {
-                        target: ccLoader.item
-                        function onRequestClose() {
-                            bar.ccOpen = false;
-                        }
-                    }
-                }
-                }
-            }
+    
+    // ==========================================
+    // PROCESSES FOR DATA
+    // ==========================================
+    
+    // CPU
+    Process {
+        id: cpuProc
+        command: ["bash", "-c", "top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text) cpuVal.text = Math.round(parseFloat(text.trim())) }
         }
+    }
+    Timer { interval: 3000; running: true; repeat: true; onTriggered: cpuProc.running = true }
+
+    // RAM
+    Process {
+        id: ramProc
+        command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.1f\", $3/1024}'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text) ramVal.text = text.trim() }
+        }
+    }
+    Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProc.running = true }
+
+    // TEMP
+    Process {
+        id: tempProc
+        command: ["bash", "-c", "sensors 2>/dev/null | grep -E 'Tctl|Package id 0' | awk '{print $3}' | sed 's/+//;s/°C//' | head -1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text) tempVal.text = Math.round(parseFloat(text.trim())) }
+        }
+    }
+    Timer { interval: 3000; running: true; repeat: true; onTriggered: tempProc.running = true }
+
+    // VOL
+    Process {
+        id: volProc
+        command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2 * 100)}'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text) volVal.text = text.trim() }
+        }
+    }
+    Timer { interval: 2000; running: true; repeat: true; onTriggered: volProc.running = true }
+
+    // BRI
+    Process {
+        id: briProc
+        command: ["bash", "-c", "ddcutil getvcp 10 --bus 5 2>/dev/null | awk -F'current value = ' '{print $2}' | awk '{print $1}' | tr -d ','"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text) briVal.text = text.trim() }
+        }
+    }
+    Timer { interval: 60000; running: true; repeat: true; onTriggered: briProc.running = true }
+
+    // BAT
+    Process {
+        id: batProc
+        command: ["bash", "-c", "upower -i $(upower -e | grep BAT) 2>/dev/null | grep percentage | awk '{print $2}' | tr -d '%'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: { if (text && text.trim() !== "") batVal.text = text.trim(); else batVal.text = "100" }
+        }
+    }
+    Timer { interval: 10000; running: true; repeat: true; onTriggered: batProc.running = true }
+}
