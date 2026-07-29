@@ -33,9 +33,10 @@ PanelWindow {
         // Must use Theme.barOpacity to pass Hyprland's ignore_alpha threshold
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Qt.rgba(0.1, 0.1, 0.1, Theme.barOpacity) }
-            GradientStop { position: 0.5; color: Qt.rgba(0.15, 0.15, 0.15, Theme.barOpacity) }
-            GradientStop { position: 1.0; color: Qt.rgba(0.1, 0.1, 0.1, Theme.barOpacity) }
+            GradientStop { position: 0.0; color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, Theme.barOpacity) }
+            GradientStop { position: 0.3; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, Theme.barOpacity) }
+            GradientStop { position: 0.7; color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, Theme.barOpacity) }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.colSecondary.r, Theme.colSecondary.g, Theme.colSecondary.b, Theme.barOpacity) }
         }
         radius: 15
         
