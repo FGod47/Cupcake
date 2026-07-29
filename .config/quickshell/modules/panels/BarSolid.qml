@@ -139,29 +139,29 @@ PanelWindow {
                 spacing: 12; Layout.alignment: Qt.AlignVCenter
 
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter; visible: isWifi || isWired
-                    Text { text: isWifi ? "" : ""; font.family: fontName; font.pixelSize: 13; color: fg; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: isWifi ? "\ueb52" : "\uebd9"; font.family: fontName; font.pixelSize: 13; color: fg; anchors.verticalCenter: parent.verticalCenter }
                     Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8); anchors.verticalCenter: parent.verticalCenter }
                 }
                 Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
+                    Text { text: "\ueaf8"; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: tempStr + "°"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
+                    Text { text: "\ueba8"; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: ramStr + "G"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
+                    Text { text: "\ueb0d"; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: cpuStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
                 Rectangle { width: 1; height: 14; color: Qt.rgba(fg.r, fg.g, fg.b, 0.15); anchors.verticalCenter: parent.verticalCenter }
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: parseInt(volStr) < 50 ? "" : ""; font.family: fontName; font.pixelSize: 13; color: fg }
+                    Text { text: parseInt(volStr) === 0 ? "\uea9c" : (parseInt(volStr) < 50 ? "\uea9d" : "\uea9e"); font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: volStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
                 Row { spacing: 5; anchors.verticalCenter: parent.verticalCenter
-                    Text { text: ""; font.family: fontName; font.pixelSize: 13; color: fg }
+                    Text { text: "\uea38"; font.family: fontName; font.pixelSize: 13; color: fg }
                     Text { text: batStr + "%"; font.family: Theme.defaultFontFamily; font.pixelSize: Theme.defaultFontSize; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.8) }
                 }
             }
