@@ -41,7 +41,7 @@ PanelWindow {
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
-    readonly property real barW: parent.width - 16
+    readonly property real barW: bar.width - 16
     readonly property real barX: 8
     readonly property real midY: 6 // top 8px - padding offset
 
