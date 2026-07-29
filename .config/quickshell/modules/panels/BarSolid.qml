@@ -21,6 +21,7 @@ PanelWindow {
     exclusiveZone: 40
     height: 40
     color: "transparent"
+    mask: Region { item: solidBar }
 
     // Shared styling
     property color bg: Theme.colSurface
