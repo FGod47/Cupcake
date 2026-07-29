@@ -47,18 +47,16 @@ fi
 if [ "$BAR_TRANS" = "true" ]; then
     # Calculate the minimum opacity across all widgets to set the optimal ignore_alpha threshold
     BAR_OP=$(cat ~/.config/cupcake/.bar_opacity 2>/dev/null || echo 1.0)
-    SOLID_BAR_OP=$(cat ~/.config/cupcake/.solid_bar_opacity 2>/dev/null || echo 1.0)
     DOCK_OP=$(cat ~/.config/cupcake/.dock_opacity 2>/dev/null || echo 1.0)
     CC_OP=$(cat ~/.config/cupcake/.cc_opacity 2>/dev/null || echo 1.0)
     NOTIF_OP=$(cat ~/.config/cupcake/.notif_panel_opacity 2>/dev/null || echo 1.0)
     
     [ -z "$BAR_OP" ] && BAR_OP=1.0
-    [ -z "$SOLID_BAR_OP" ] && SOLID_BAR_OP=1.0
     [ -z "$DOCK_OP" ] && DOCK_OP=1.0
     [ -z "$CC_OP" ] && CC_OP=1.0
     [ -z "$NOTIF_OP" ] && NOTIF_OP=1.0
     
-    MIN_OP=$(echo -e "$BAR_OP\n$SOLID_BAR_OP\n$DOCK_OP\n$CC_OP\n$NOTIF_OP" | sort -n | head -n 1)
+    MIN_OP=$(echo -e "$BAR_OP\n$DOCK_OP\n$CC_OP\n$NOTIF_OP" | sort -n | head -n 1)
     
     # Subtract 0.05 from the lowest opacity to allow the main body to blur, 
     # but block the soft anti-aliased edges from blurring (prevents the square bleed halo)
