@@ -1495,7 +1495,8 @@ Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            updateVolume.running = true
+            updateVolume.running = true;
+            updateBrightness.running = true;
         }
     }
 
