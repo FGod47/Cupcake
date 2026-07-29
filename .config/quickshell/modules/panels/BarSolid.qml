@@ -26,7 +26,7 @@ PanelWindow {
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
     property string fontName: "tabler-icons"
-    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
+    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, 0.8)
 
     // Hardware data
     property string cpuStr: "0"
