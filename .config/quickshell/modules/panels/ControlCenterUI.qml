@@ -1488,15 +1488,35 @@ Item {
         }
     }
 
+    // Volume polls every 1s while CC is open (wpctl is instant)
     Timer {
         id: fastSliderTimer
         interval: 1000
         running: ccUi.ccActive
         repeat: true
         triggeredOnStart: true
+        onTriggered: updateVolume.running = true
+    }
+
+    // Brightness fetched once on CC open — ddcutil is slow (1-2s I2C),
+    // repeated calls pile up and cause glitching
+    Timer {
+        id: brightnessInitTimer
+        interval: 100
+        running: ccUi.ccActive
+        repeat: false
+        triggeredOnStart: false
         onTriggered: {
-            updateVolume.running = true;
-            updateBrightness.running = true;
+            if (!updateBrightness.running) updateBrightness.running = true;
+        }
+    }
+    // Also watch for CC becoming active to trigger fetch
+    Connections {
+        target: ccUi
+        function onCcActiveChanged() {
+            if (ccUi.ccActive) {
+                brightnessInitTimer.restart();
+            }
         }
     }
 

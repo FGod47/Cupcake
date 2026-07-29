@@ -824,16 +824,29 @@ PanelWindow {
                         }
                     }
                 }
-                // Poll sliders when expanded — triggeredOnStart fires immediately on open
+                // Volume polls every 2s while pill is open (wpctl is instant)
                 Timer {
                     id: controlsSliderTimer
                     interval: 2000
                     running: controlsPill.actionsExpanded
                     repeat: true
                     triggeredOnStart: true
+                    onTriggered: audioProc.running = true
+                }
+                // Brightness fetched once when pill opens — ddcutil is slow (I2C)
+                // repeated calls pile up and cause slider glitching
+                Timer {
+                    id: barLightInitTimer
+                    interval: 50
+                    repeat: false
                     onTriggered: {
-                        audioProc.running = true;
-                        lightProc.running = true;
+                        if (!lightProc.running) lightProc.running = true;
+                    }
+                }
+                Connections {
+                    target: controlsPill
+                    function onActionsExpandedChanged() {
+                        if (controlsPill.actionsExpanded) barLightInitTimer.restart();
                     }
                 }
             }
