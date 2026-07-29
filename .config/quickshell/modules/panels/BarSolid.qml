@@ -125,7 +125,19 @@ PanelWindow {
                         
                         Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
 
+                        RectangularGlow {
+                            anchors.fill: wsRect
+                            glowRadius: wsMouse.containsMouse || isFocused ? 8 : 0
+                            spread: 0.2
+                            color: isFocused ? Theme.colPrimary : Qt.rgba(fg.r, fg.g, fg.b, 0.5)
+                            cornerRadius: wsRect.radius + glowRadius
+                            opacity: wsMouse.containsMouse || isFocused ? 0.7 : 0.0
+                            Behavior on glowRadius { NumberAnimation { duration: 150 } }
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
+                        }
+
                         Rectangle {
+                            id: wsRect
                             anchors.centerIn: parent
                             width: parent.width
                             height: isFocused ? 6 : (wsMouse.containsMouse ? 6 : 4)
