@@ -29,7 +29,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: BarSolid {
-            visible: (globalState.barStyle === "solid" || isCollapsing) && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
+            visible: globalState.barStyle === "solid" && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
 
@@ -144,7 +144,14 @@ ShellRoot {
         function setOverviewScale(val: real) { root.overviewScale = val; }
         function setDimOverlay(val: real) { globalState.dimOverlay = val; }
         function setNotifOpacity(val: real) { globalState.notifPanelOpacity = val; }
-        function setBarStyle(val: string) { globalState.barStyle = val; }
+        property string pendingBarStyle: ""
+        function setBarStyle(val: string) {
+            if (val === "pill" && globalState.barStyle === "solid") {
+                globalState.pendingBarStyle = "pill";
+            } else {
+                globalState.barStyle = val;
+            }
+        }
     }
 
     Process {

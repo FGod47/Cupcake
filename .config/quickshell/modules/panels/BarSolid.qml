@@ -22,9 +22,6 @@ PanelWindow {
     height: 46
     color: "transparent"
 
-    // Revert animation state flag
-    property bool isCollapsing: false
-
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
@@ -294,7 +291,9 @@ PanelWindow {
         }
 
         onFinished: {
-            bar.isCollapsing = false;
+            // Once collapse is complete, finalize mode change to "pill"
+            globalState.barStyle = "pill";
+            globalState.pendingBarStyle = "";
         }
     }
 
@@ -312,15 +311,14 @@ PanelWindow {
         target: globalState
         function onBarStyleChanged() {
             if (globalState.barStyle === "solid") {
-                bar.isCollapsing = false;
                 resetToArchPill();
                 expandAnim.restart();
-            } else {
-                if (solidBar.width > bar.startW + 10) {
-                    bar.isCollapsing = true;
-                    expandAnim.stop();
-                    collapseAnim.restart();
-                }
+            }
+        }
+        function onPendingBarStyleChanged() {
+            if (globalState.pendingBarStyle === "pill") {
+                expandAnim.stop();
+                collapseAnim.restart();
             }
         }
     }
