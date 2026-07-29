@@ -191,15 +191,6 @@ PanelWindow {
                 spacing: 8
                 
                 Text {
-                    text: netStr
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    font.weight: Theme.defaultFontWeight
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
                     visible: isHotspot
                     text: "\ued1b" // tabler icon for hotspot
                     font.family: fontName
@@ -214,6 +205,7 @@ PanelWindow {
                     font.family: fontName
                     font.pixelSize: 15
                     color: fg
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Text {
@@ -222,6 +214,7 @@ PanelWindow {
                     font.family: fontName
                     font.pixelSize: 15
                     color: fg
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Text {
@@ -230,6 +223,26 @@ PanelWindow {
                     font.family: fontName
                     font.pixelSize: 15
                     color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    visible: isWifi || isWired || isBluetooth || isHotspot
+                    text: "•"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 15
+                    font.weight: Theme.defaultFontWeight
+                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: netStr
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 13
+                    font.weight: Theme.defaultFontWeight
+                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
