@@ -105,7 +105,20 @@ Item {
     property real settingsOpacity: 0.80
     property real ccOpacity: 0.85
     property string wallpaperSwitcherStyle: "Carousel"
+    property string barStyle: "Pill"
     property real   osdOpacity: 0.85
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_style"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim();
+                if (s === "solid" || s === "Solid") root.barStyle = "Solid";
+                else if (s === "pill" || s === "Pill") root.barStyle = "Pill";
+            }
+        }
+    }
 
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.wallpaper_switcher_style"]
@@ -532,6 +545,28 @@ Item {
 
             NCard {
                 sectionTitle: "UI Style"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb92" } // layout-navbar
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Top bar style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Choose the layout style for the top bar"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Pill", "Solid"]
+                        current: root.barStyle
+                        onSelected: (v) => {
+                            root.barStyle = v;
+                            let style = v.toLowerCase();
+                            Quickshell.execDetached(["bash", "-c", "echo '" + style + "' > ~/.config/cupcake/.bar_style && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setBarStyle " + style]);
+                        }
+                    }
+                }
 
                 NRow {
                     RowLayout {
