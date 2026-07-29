@@ -127,11 +127,11 @@ PanelWindow {
 
                         RectangularGlow {
                             anchors.fill: wsRect
-                            glowRadius: wsMouse.containsMouse || isFocused ? 8 : 0
-                            spread: 0.2
+                            glowRadius: wsMouse.containsMouse || isFocused ? 4 : 0
+                            spread: 0.05
                             color: isFocused ? Theme.colPrimary : Qt.rgba(fg.r, fg.g, fg.b, 0.5)
                             cornerRadius: wsRect.radius + glowRadius
-                            opacity: wsMouse.containsMouse || isFocused ? 0.7 : 0.0
+                            opacity: wsMouse.containsMouse || isFocused ? 0.4 : 0.0
                             Behavior on glowRadius { NumberAnimation { duration: 150 } }
                             Behavior on opacity { NumberAnimation { duration: 150 } }
                         }
