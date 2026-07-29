@@ -104,7 +104,7 @@ PanelWindow {
         RowLayout {
             id: contentLayout
             anchors.fill: parent
-            anchors.leftMargin: 16; anchors.rightMargin: 8
+            anchors.leftMargin: 16; anchors.rightMargin: 4
             spacing: 0
             opacity: 0
 
