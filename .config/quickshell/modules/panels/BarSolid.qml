@@ -41,10 +41,11 @@ PanelWindow {
     property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
-    readonly property real barW: bar.width > 0 ? bar.width - 16 : 1164
+    readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
+    readonly property real barW: bar.screenW - 16
     readonly property real barX: 8
     readonly property real startW: 160
-    readonly property real startX: (bar.width > 0 ? bar.width : 1180) / 2 - 80
+    readonly property real startX: (bar.screenW - bar.startW) / 2
     readonly property real midY: 10
 
     // ─────────────────────────────────────────────────────
