@@ -20,9 +20,14 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     exclusiveZone: 40
-    height: 40
+    height: 40 + bar.extraHeight
     color: "transparent"
     mask: Region { item: solidBar }
+
+    property real baseHeight: startHeight
+    property bool dropdownOpen: false
+    property real extraHeight: dropdownOpen ? 120 : 0
+    Behavior on extraHeight { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
 
     // Shared styling
     property color bg: Theme.colSurface
@@ -67,7 +72,7 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: bar.startW
-        height: bar.startHeight
+        height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
         clip: true
@@ -109,8 +114,9 @@ PanelWindow {
         // 2. Solid Bar Modules (fades in as expansion completes)
         RowLayout {
             id: contentLayout
-            anchors.fill: parent
+            anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13; anchors.rightMargin: 13
+            height: bar.barHeight
             spacing: 0
             opacity: 0
 
@@ -269,6 +275,11 @@ PanelWindow {
                         id: bHover
                         onHoveredChanged: { if (hovered && bar.brightStr === "0") lightProc.running = true; }
                     }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: bar.dropdownOpen = !bar.dropdownOpen
+                    }
                     
                     Row {
                         height: 20
@@ -304,6 +315,11 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     
                     HoverHandler { id: vHover }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: bar.dropdownOpen = !bar.dropdownOpen
+                    }
                     
                     Row {
                         height: 20
@@ -379,11 +395,135 @@ PanelWindow {
         
         Image {
             id: cupcakeLogo
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: (bar.barHeight - sourceSize.height) / 2
             source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
             sourceSize.height: 24
             fillMode: Image.PreserveAspectFit
             opacity: contentLayout.opacity
+        }
+
+        // ── DROPDOWN (Brightness & Volume) ────────
+        Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: contentLayout.bottom
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 24
+            anchors.rightMargin: 24
+            anchors.topMargin: 8
+            anchors.bottomMargin: 16
+            spacing: 12
+            opacity: bar.dropdownOpen ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+            visible: opacity > 0
+            
+            // Brightness Slider
+            Row {
+                width: parent.width
+                spacing: 16
+                Text {
+                    text: "\ueb30" // sun icon
+                    font.family: fontName
+                    font.pixelSize: 20
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Slider {
+                    id: ddBrightSlider
+                    width: parent.width - 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    clip: true
+                    handle: Rectangle {
+                        x: ddBrightSlider.leftPadding + ddBrightSlider.visualPosition * (ddBrightSlider.availableWidth - width)
+                        y: ddBrightSlider.height / 2 - height / 2
+                        width: 16; height: 16; radius: 8
+                        color: Theme.colPrimary
+                    }
+                    background: Rectangle {
+                        x: ddBrightSlider.leftPadding
+                        y: ddBrightSlider.height / 2 - height / 2
+                        implicitWidth: 100
+                        implicitHeight: 8
+                        width: ddBrightSlider.availableWidth
+                        height: implicitHeight
+                        radius: 4
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                        Rectangle {
+                            width: ddBrightSlider.visualPosition * parent.width
+                            height: parent.height
+                            color: Theme.colPrimary
+                            radius: 4
+                        }
+                    }
+                    from: 0; to: 100
+                    value: parseFloat(bar.brightStr) || 0
+                    Timer {
+                        id: ddDdcTimer
+                        interval: 500; repeat: false
+                        property int targetValue: 100
+                        onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                    }
+                    onMoved: { ddDdcTimer.targetValue = value; ddDdcTimer.restart(); bar.brightStr = Math.round(value).toString() }
+                    onPressedChanged: {
+                        if (!pressed) {
+                            ddDdcTimer.stop()
+                            Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()])
+                        }
+                    }
+                }
+            }
+
+            // Volume Slider
+            Row {
+                width: parent.width
+                spacing: 16
+                Text {
+                    text: "\ueb51" // volume icon
+                    font.family: fontName
+                    font.pixelSize: 20
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Slider {
+                    id: ddVolSlider
+                    width: parent.width - 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    clip: true
+                    handle: Rectangle {
+                        x: ddVolSlider.leftPadding + ddVolSlider.visualPosition * (ddVolSlider.availableWidth - width)
+                        y: ddVolSlider.height / 2 - height / 2
+                        width: 16; height: 16; radius: 8
+                        color: Theme.colPrimary
+                    }
+                    background: Rectangle {
+                        x: ddVolSlider.leftPadding
+                        y: ddVolSlider.height / 2 - height / 2
+                        implicitWidth: 100
+                        implicitHeight: 8
+                        width: ddVolSlider.availableWidth
+                        height: implicitHeight
+                        radius: 4
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                        Rectangle {
+                            width: ddVolSlider.visualPosition * parent.width
+                            height: parent.height
+                            color: Theme.colPrimary
+                            radius: 4
+                        }
+                    }
+                    from: 0; to: 100
+                    value: parseFloat(bar.volStr) || 0
+                    Timer {
+                        id: ddAudioVolTimer
+                        interval: 50; repeat: false
+                        property int targetVal: 100
+                        onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
+                    }
+                    onMoved: { ddAudioVolTimer.targetVal = value; ddAudioVolTimer.restart(); bar.volStr = Math.round(value).toString() }
+                }
+            }
         }
     }
 
@@ -413,8 +553,8 @@ PanelWindow {
             easing.overshoot: 0.5
         }
         NumberAnimation {
-            target: solidBar
-            property: "height"
+            target: bar
+            property: "baseHeight"
             from: bar.startHeight
             to: bar.barHeight
             duration: 540
@@ -482,8 +622,8 @@ PanelWindow {
             easing.type: Easing.InOutCubic
         }
         NumberAnimation {
-            target: solidBar
-            property: "height"
+            target: bar
+            property: "baseHeight"
             to: bar.startHeight
             duration: 480
             easing.type: Easing.InOutCubic
@@ -529,7 +669,7 @@ PanelWindow {
         expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
-        solidBar.height = bar.startHeight;
+        bar.baseHeight = bar.startHeight;
         solidBar.radius = bar.startRadius;
         solidBar.color = Theme.colPrimary;
         archHeader.opacity = 1.0;
