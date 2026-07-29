@@ -20,7 +20,7 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     exclusiveZone: 40
-    height: (bar.dropdownOpen || bar.extraHeight > 0.5) ? 160 : 40
+    height: 160
     color: "transparent"
     mask: Region { item: solidBar }
 
