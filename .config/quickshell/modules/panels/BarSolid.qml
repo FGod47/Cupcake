@@ -30,11 +30,12 @@ PanelWindow {
         height: 30 // Smaller height
         
         // Glassmorphism background (glass sheet)
+        // Must use Theme.barOpacity to pass Hyprland's ignore_alpha threshold
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.08) }
-            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.03) }
-            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.08) }
+            GradientStop { position: 0.0; color: Qt.rgba(0.1, 0.1, 0.1, Theme.barOpacity) }
+            GradientStop { position: 0.5; color: Qt.rgba(0.15, 0.15, 0.15, Theme.barOpacity) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.1, 0.1, 0.1, Theme.barOpacity) }
         }
         radius: 15
         
