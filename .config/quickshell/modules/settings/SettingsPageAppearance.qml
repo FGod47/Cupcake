@@ -99,6 +99,7 @@ Item {
     property bool barTransparency: true
     property bool xrayBlur: true
     property real barOpacity: 0.50
+    property real solidBarOpacity: 0.50
     property real dockOpacity: 0.50
     property real launcherOpacity: 0.80
     property real wallpaperOpacity: 0.80
@@ -137,6 +138,16 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.solid_bar_opacity"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.solidBarOpacity = v; }
             }
         }
     }
@@ -796,6 +807,36 @@ Item {
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setBarOpacity " + root.barOpacity + " && ~/.local/bin/apply-transparency"]);
+                                }
+                            }
+                        }
+                        
+                        
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uead7" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Solid Bar opacity"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Background fill opacity of the solid status bar"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0.1; to: 1.0; stepSize: 0.05
+                            value: root.solidBarOpacity
+                            onValueChanged: { root.solidBarOpacity = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.solidBarOpacity.toFixed(2) + "' > ~/.config/cupcake/.solid_bar_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setSolidBarOpacity " + root.solidBarOpacity + " && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }

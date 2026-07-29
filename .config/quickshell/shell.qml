@@ -50,6 +50,7 @@ ShellRoot {
     // Global State
     property real globalOpacity: 1.0
     property real barOpacity: 0.50
+    property real solidBarOpacity: 0.50
     property bool barTransparency: true
 
     function withOpacity(col) {
@@ -137,6 +138,7 @@ ShellRoot {
         target: "opacity"
         function setBarTransparency(val: string) { root.barTransparency = (val === "true"); }
         function setBarOpacity(val: real) { root.barOpacity = val; }
+        function setSolidBarOpacity(val: real) { root.solidBarOpacity = val; }
         function setDockOpacity(val: real) { root.dockOpacity = val; }
         function setOsdOpacity(val: real) { root.osdOpacity = val; }
         function setCcOpacity(val: real) { root.ccOpacity = val; }
