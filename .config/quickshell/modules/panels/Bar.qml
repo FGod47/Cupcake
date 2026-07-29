@@ -14,6 +14,8 @@ import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: bar
+    property bool isDestroying: false
+    Component.onDestruction: isDestroying = true
     anchors {
         top: true
         left: true
@@ -423,6 +425,7 @@ PanelWindow {
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
+                            if (bar.isDestroying) return;
                             if (!text) {
                                 networkPill.isWifi = false;
                                 networkPill.isWired = false;
@@ -474,6 +477,7 @@ PanelWindow {
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
+                            if (bar.isDestroying) return;
                             if (!text) {
                                 networkPill.btPowered = false;
                                 networkPill.btConnectedDevice = "";
@@ -501,6 +505,7 @@ PanelWindow {
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
+                            if (bar.isDestroying) return;
                             if (!text) return;
                             const lines = text.trim().split("\n");
                             let totalRx = 0;
@@ -561,6 +566,7 @@ PanelWindow {
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
+                            if (bar.isDestroying) return;
                             let data = text;
                             try { hwText.text = JSON.parse(data).text || "" } catch(e) { hwText.text = data || "" }
                             hwPill.visible = hwText.text !== ""
@@ -596,6 +602,7 @@ PanelWindow {
                     running: true
                     stdout: StdioCollector {
                         onStreamFinished: () => {
+                            if (bar.isDestroying) return;
                             let data = text;
                             try { recText.text = JSON.parse(data).text || "" } catch(e) { recText.text = data || "" }
                             recPill.visible = recText.text !== ""
@@ -975,7 +982,7 @@ PanelWindow {
                             Process {
                                 id: clockProc
                                 command: ["sh", "-c", "~/.config/cupcake/scripts/display_clock.sh"]
-                                stdout: StdioCollector { onStreamFinished: () => { let data = text; try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
+                                stdout: StdioCollector { onStreamFinished: () => { if (bar.isDestroying) return; let data = text; try { customClockText.text = JSON.parse(data).text || customClockText.text } catch(e) { if(data) customClockText.text = data } } }
                             }
                             Timer { interval: 5000; running: true; repeat: true; onTriggered: clockProc.running = true }
                         }

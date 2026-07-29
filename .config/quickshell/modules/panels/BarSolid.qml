@@ -14,6 +14,8 @@ import Quickshell.Services.Mpris
 
 PanelWindow {
     id: bar
+    property bool isDestroying: false
+    Component.onDestruction: isDestroying = true
     anchors {
         top: true
         left: true
@@ -284,6 +286,7 @@ PanelWindow {
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
+                if (bar.isDestroying) return;
                 if (text && text.trim() !== "") {
                     let val = parseFloat(text.trim());
                     cpuVal.text = isNaN(val) ? "0" : Math.round(val).toString();
@@ -299,7 +302,7 @@ PanelWindow {
         command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.1f\", $3/1024}'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text) ramVal.text = text.trim() }
+            onStreamFinished: { if (!bar.isDestroying && text) ramVal.text = text.trim() }
         }
     }
     Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProc.running = true }
@@ -311,6 +314,7 @@ PanelWindow {
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
+                if (bar.isDestroying) return;
                 if (text && text.trim() !== "") {
                     let val = parseFloat(text.trim());
                     tempVal.text = isNaN(val) ? "0" : Math.round(val).toString();
@@ -326,7 +330,7 @@ PanelWindow {
         command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2 * 100)}'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text) volVal.text = text.trim() }
+            onStreamFinished: { if (!bar.isDestroying && text) volVal.text = text.trim() }
         }
     }
     Timer { interval: 2000; running: true; repeat: true; onTriggered: volProc.running = true }
@@ -337,7 +341,7 @@ PanelWindow {
         command: ["bash", "-c", "ddcutil getvcp 10 --bus 5 2>/dev/null | awk -F'current value = ' '{print $2}' | awk '{print $1}' | tr -d ','"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text) briVal.text = text.trim() }
+            onStreamFinished: { if (!bar.isDestroying && text) briVal.text = text.trim() }
         }
     }
     Timer { interval: 60000; running: true; repeat: true; onTriggered: briProc.running = true }
@@ -348,7 +352,7 @@ PanelWindow {
         command: ["bash", "-c", "upower -i $(upower -e | grep BAT) 2>/dev/null | grep percentage | awk '{print $2}' | tr -d '%'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text && text.trim() !== "") batVal.text = text.trim(); else batVal.text = "100" }
+            onStreamFinished: { if (bar.isDestroying) return; if (text && text.trim() !== "") batVal.text = text.trim(); else batVal.text = "100" }
         }
     }
     Timer { interval: 10000; running: true; repeat: true; onTriggered: batProc.running = true }
