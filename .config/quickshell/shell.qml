@@ -76,6 +76,7 @@ ShellRoot {
     Scope {
         id: globalState
         property string barStyle: "pill"
+        property string pendingBarStyle: ""
         property bool barVisible: true
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
@@ -144,7 +145,6 @@ ShellRoot {
         function setOverviewScale(val: real) { root.overviewScale = val; }
         function setDimOverlay(val: real) { globalState.dimOverlay = val; }
         function setNotifOpacity(val: real) { globalState.notifPanelOpacity = val; }
-        property string pendingBarStyle: ""
         function setBarStyle(val: string) {
             if (val === "pill" && globalState.barStyle === "solid") {
                 globalState.pendingBarStyle = "pill";
