@@ -46,16 +46,4 @@ PanelWindow {
             // Blank for now, as requested.
         }
     }
-
-    // Drop shadow applied externally so the transparent background is correctly exported to Wayland for Hyprland blurls
-    DropShadow {
-        anchors.fill: solidBarBackground
-        source: solidBarBackground
-        color: Qt.rgba(0, 0, 0, 0.4)
-        radius: 12
-        samples: 25
-        verticalOffset: 4
-        transparentBorder: true
-        z: -1
-    }
 }
