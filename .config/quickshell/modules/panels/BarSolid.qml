@@ -42,8 +42,8 @@ PanelWindow {
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
-    readonly property real barW: bar.screenW - 16
-    readonly property real barX: 8
+    readonly property real barW: bar.screenW - 20
+    readonly property real barX: 10
     readonly property real startW: 160
     readonly property real startX: (bar.screenW - bar.startW) / 2
     readonly property real midY: 10
