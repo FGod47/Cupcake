@@ -210,52 +210,6 @@ PanelWindow {
                             font.pixelSize: 15
                             color: fg
                         }
-                        Slider {
-                            id: bSlider
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: bHover.hovered ? 80 : 0
-                            height: 20
-                            clip: true
-                            handle: Rectangle {
-                                x: bSlider.leftPadding + bSlider.visualPosition * (bSlider.availableWidth - width)
-                                y: bSlider.height / 2 - height / 2
-                                width: 12; height: 12; radius: 6
-                                color: Theme.colPrimary
-                            }
-                            background: Rectangle {
-                                x: bSlider.leftPadding
-                                y: bSlider.height / 2 - height / 2
-                                implicitWidth: 80
-                                implicitHeight: 4
-                                width: bSlider.availableWidth
-                                height: implicitHeight
-                                radius: 2
-                                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
-                                Rectangle {
-                                    width: bSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.colPrimary
-                                    radius: 2
-                                }
-                            }
-                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                            from: 0; to: 100
-                            value: parseFloat(bar.brightStr) || 0
-                            
-                            Timer {
-                                id: ddcTimer
-                                interval: 500; repeat: false
-                                property int targetValue: 100
-                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
-                            }
-                            onMoved: { ddcTimer.targetValue = value; ddcTimer.restart(); bar.brightStr = Math.round(value).toString() }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    ddcTimer.stop()
-                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()])
-                                }
-                            }
-                        }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.brightStr + "%"
@@ -290,46 +244,6 @@ PanelWindow {
                             font.family: fontName
                             font.pixelSize: 15
                             color: fg
-                        }
-                        Slider {
-                            id: vSlider
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: vHover.hovered ? 80 : 0
-                            height: 20
-                            clip: true
-                            handle: Rectangle {
-                                x: vSlider.leftPadding + vSlider.visualPosition * (vSlider.availableWidth - width)
-                                y: vSlider.height / 2 - height / 2
-                                width: 12; height: 12; radius: 6
-                                color: Theme.colPrimary
-                            }
-                            background: Rectangle {
-                                x: vSlider.leftPadding
-                                y: vSlider.height / 2 - height / 2
-                                implicitWidth: 80
-                                implicitHeight: 4
-                                width: vSlider.availableWidth
-                                height: implicitHeight
-                                radius: 2
-                                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
-                                Rectangle {
-                                    width: vSlider.visualPosition * parent.width
-                                    height: parent.height
-                                    color: Theme.colPrimary
-                                    radius: 2
-                                }
-                            }
-                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                            from: 0; to: 100
-                            value: parseFloat(bar.volStr) || 0
-                            
-                            Timer {
-                                id: audioVolTimer
-                                interval: 50; repeat: false
-                                property int targetVal: 100
-                                onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
-                            }
-                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart(); bar.volStr = Math.round(value).toString() }
                         }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
