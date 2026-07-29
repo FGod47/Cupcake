@@ -116,23 +116,29 @@ PanelWindow {
                 Repeater {
                     model: 5
                     delegate: Item {
-                        width: isFocused ? 24 : 10
-                        height: 10
+                        width: isFocused ? 28 : 12
+                        height: 16
                         property int wsId: index + 1
                         property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
                         property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
                         
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
 
                         Rectangle {
-                            anchors.fill: parent
-                            radius: 5
-                            color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.4) : Qt.rgba(fg.r, fg.g, fg.b, 0.15))
+                            anchors.centerIn: parent
+                            width: parent.width
+                            height: isFocused ? 6 : (wsMouse.containsMouse ? 6 : 4)
+                            radius: height / 2
+                            color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
                             Behavior on color { ColorAnimation { duration: 150 } }
+                            Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
 
                         MouseArea { 
+                            id: wsMouse
                             anchors.fill: parent
+                            anchors.margins: -4 // Generous click target
+                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: Hyprland.dispatch("workspace " + wsId) 
                         }
