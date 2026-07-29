@@ -265,25 +265,21 @@ PanelWindow {
                 spacing: 12
                 
                 // Brightness
-                Item {
-                    id: bItem
+                // Brightness
+                MouseArea {
+                    id: bMouse
                     width: childrenRect.width
                     height: 20
                     anchors.verticalCenter: parent.verticalCenter
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
                     
-                    HoverHandler {
-                        id: bHover
-                        onHoveredChanged: { if (hovered && bar.brightStr === "0") lightProc.running = true; }
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: bar.dropdownOpen = !bar.dropdownOpen
-                    }
+                    onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                    onClicked: bar.dropdownOpen = !bar.dropdownOpen
                     
                     Row {
                         height: 20
-                        spacing: bHover.hovered ? 8 : 0
+                        spacing: bMouse.containsMouse ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
@@ -300,7 +296,7 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: bHover.hovered ? implicitWidth : 0
+                            width: bMouse.containsMouse ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
@@ -308,22 +304,19 @@ PanelWindow {
                 }
 
                 // Volume
-                Item {
-                    id: vItem
+                MouseArea {
+                    id: vMouse
                     width: childrenRect.width
                     height: 20
                     anchors.verticalCenter: parent.verticalCenter
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
                     
-                    HoverHandler { id: vHover }
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: bar.dropdownOpen = !bar.dropdownOpen
-                    }
+                    onClicked: bar.dropdownOpen = !bar.dropdownOpen
                     
                     Row {
                         height: 20
-                        spacing: vHover.hovered ? 8 : 0
+                        spacing: vMouse.containsMouse ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
@@ -340,7 +333,7 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: vHover.hovered ? implicitWidth : 0
+                            width: vMouse.containsMouse ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
