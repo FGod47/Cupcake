@@ -187,16 +187,18 @@ PanelWindow {
                 spacing: 12
                 
                 // Brightness
-                MouseArea {
-                    id: bMouse
+                Item {
+                    id: bItem
                     width: childrenRect.width
                     height: childrenRect.height
-                    hoverEnabled: true
-                    onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                    
+                    HoverHandler {
+                        id: bHover
+                        onHoveredChanged: { if (hovered && bar.brightStr === "0") lightProc.running = true; }
+                    }
                     
                     Row {
-                        id: bRow
-                        spacing: bMouse.containsMouse ? 4 : 0
+                        spacing: bHover.hovered ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
@@ -206,6 +208,51 @@ PanelWindow {
                             font.pixelSize: 15
                             color: fg
                         }
+                        Slider {
+                            id: bSlider
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: bHover.hovered ? 80 : 0
+                            clip: true
+                            handle: Rectangle {
+                                x: bSlider.leftPadding + bSlider.visualPosition * (bSlider.availableWidth - width)
+                                y: bSlider.topPadding + bSlider.availableHeight / 2 - height / 2
+                                width: 12; height: 12; radius: 6
+                                color: Theme.colPrimary
+                            }
+                            background: Rectangle {
+                                x: bSlider.leftPadding
+                                y: bSlider.topPadding + bSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 80
+                                implicitHeight: 4
+                                width: bSlider.availableWidth
+                                height: implicitHeight
+                                radius: 2
+                                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                                Rectangle {
+                                    width: bSlider.visualPosition * parent.width
+                                    height: parent.height
+                                    color: Theme.colPrimary
+                                    radius: 2
+                                }
+                            }
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            from: 0; to: 100
+                            value: parseFloat(bar.brightStr) || 0
+                            
+                            Timer {
+                                id: ddcTimer
+                                interval: 500; repeat: false
+                                property int targetValue: 100
+                                onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
+                            }
+                            onMoved: { ddcTimer.targetValue = value; ddcTimer.restart(); bar.brightStr = Math.round(value).toString() }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    ddcTimer.stop()
+                                    Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()])
+                                }
+                            }
+                        }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.brightStr + "%"
@@ -213,7 +260,7 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: bMouse.containsMouse ? implicitWidth : 0
+                            width: bHover.hovered ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
@@ -221,15 +268,15 @@ PanelWindow {
                 }
 
                 // Volume
-                MouseArea {
-                    id: vMouse
+                Item {
+                    id: vItem
                     width: childrenRect.width
                     height: childrenRect.height
-                    hoverEnabled: true
+                    
+                    HoverHandler { id: vHover }
                     
                     Row {
-                        id: vRow
-                        spacing: vMouse.containsMouse ? 4 : 0
+                        spacing: vHover.hovered ? 8 : 0
                         Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
@@ -239,6 +286,45 @@ PanelWindow {
                             font.pixelSize: 15
                             color: fg
                         }
+                        Slider {
+                            id: vSlider
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: vHover.hovered ? 80 : 0
+                            clip: true
+                            handle: Rectangle {
+                                x: vSlider.leftPadding + vSlider.visualPosition * (vSlider.availableWidth - width)
+                                y: vSlider.topPadding + vSlider.availableHeight / 2 - height / 2
+                                width: 12; height: 12; radius: 6
+                                color: Theme.colPrimary
+                            }
+                            background: Rectangle {
+                                x: vSlider.leftPadding
+                                y: vSlider.topPadding + vSlider.availableHeight / 2 - height / 2
+                                implicitWidth: 80
+                                implicitHeight: 4
+                                width: vSlider.availableWidth
+                                height: implicitHeight
+                                radius: 2
+                                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                                Rectangle {
+                                    width: vSlider.visualPosition * parent.width
+                                    height: parent.height
+                                    color: Theme.colPrimary
+                                    radius: 2
+                                }
+                            }
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            from: 0; to: 100
+                            value: parseFloat(bar.volStr) || 0
+                            
+                            Timer {
+                                id: audioVolTimer
+                                interval: 50; repeat: false
+                                property int targetVal: 100
+                                onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
+                            }
+                            onMoved: { audioVolTimer.targetVal = value; audioVolTimer.restart(); bar.volStr = Math.round(value).toString() }
+                        }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.volStr + "%"
@@ -246,7 +332,7 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: vMouse.containsMouse ? implicitWidth : 0
+                            width: vHover.hovered ? implicitWidth : 0
                             clip: true
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
