@@ -811,6 +811,7 @@ PanelWindow {
                     command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
                     stdout: StdioCollector { id: audioProcOut }
                     onExited: {
+                        if (bar.isDestroying) return;
                         let t = (audioProcOut.text || "").trim();
                         let match = t.match(/Volume:\s+([\d\.]+)/);
                         if (match && match[1]) {
@@ -825,6 +826,7 @@ PanelWindow {
                     command: ["ddcutil", "getvcp", "10", "--terse"]
                     stdout: StdioCollector { id: lightProcOut }
                     onExited: {
+                        if (bar.isDestroying) return;
                         let t = (lightProcOut.text || "");
                         let match = t.match(/VCP\s+10\s+[A-Za-z]+\s+(\d+)/);
                         if (match && match[1]) {
