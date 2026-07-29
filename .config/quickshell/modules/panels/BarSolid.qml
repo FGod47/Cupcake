@@ -187,59 +187,69 @@ PanelWindow {
                 spacing: 12
                 
                 // Brightness
-                Row {
-                    spacing: bMouse.containsMouse ? 4 : 0
-                    Behavior on spacing { NumberAnimation { duration: 200 } }
+                MouseArea {
+                    id: bMouse
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    hoverEnabled: true
+                    onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                    
+                    Row {
+                        id: bRow
+                        spacing: bMouse.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
 
-                    Text {
-                        text: "\ueb30" // tabler icon for sun (brightness)
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: fg
-                    }
-                    Text {
-                        text: bar.brightStr + "%"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 13
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                        width: bMouse.containsMouse ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                    }
-                    MouseArea {
-                        id: bMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "\ueb30" // tabler icon for sun (brightness)
+                            font.family: fontName
+                            font.pixelSize: 15
+                            color: fg
+                        }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: bar.brightStr + "%"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight
+                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            width: bMouse.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        }
                     }
                 }
 
                 // Volume
-                Row {
-                    spacing: vMouse.containsMouse ? 4 : 0
-                    Behavior on spacing { NumberAnimation { duration: 200 } }
+                MouseArea {
+                    id: vMouse
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    hoverEnabled: true
+                    
+                    Row {
+                        id: vRow
+                        spacing: vMouse.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
 
-                    Text {
-                        text: "\ueb51" // tabler icon for volume
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: fg
-                    }
-                    Text {
-                        text: bar.volStr + "%"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 13
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                        width: vMouse.containsMouse ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                    }
-                    MouseArea {
-                        id: vMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "\ueb51" // tabler icon for volume
+                            font.family: fontName
+                            font.pixelSize: 15
+                            color: fg
+                        }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: bar.volStr + "%"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Theme.defaultFontWeight
+                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            width: vMouse.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        }
                     }
                 }
             }
