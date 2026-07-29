@@ -41,15 +41,6 @@ PanelWindow {
         border.color: Qt.rgba(1, 1, 1, 0.2)
         border.width: 1
 
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            color: Qt.rgba(0, 0, 0, 0.4)
-            radius: 12
-            samples: 25
-            verticalOffset: 4
-        }
-
         // Container for future items
         RowLayout {
             anchors.fill: parent
@@ -59,5 +50,17 @@ PanelWindow {
             
             // Blank for now, as requested.
         }
+    }
+
+    // Drop shadow applied externally so the transparent background is correctly exported to Wayland for Hyprland blurls
+    DropShadow {
+        anchors.fill: solidBarBackground
+        source: solidBarBackground
+        color: Qt.rgba(0, 0, 0, 0.4)
+        radius: 12
+        samples: 25
+        verticalOffset: 4
+        transparentBorder: true
+        z: -1
     }
 }
