@@ -180,6 +180,78 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
             
+
+            // ── RIGHT: Network Icons ────────
+            Row {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                spacing: 8
+                
+                Text {
+                    visible: isHotspot
+                    text: "\ued1b" // tabler icon for hotspot
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    visible: isBluetooth
+                    text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    visible: isWired
+                    text: "\uebd9" // tabler icon for wired
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    visible: isWifi && !isWired && !isHotspot
+                    text: "\ueb52" // tabler icon for wifi
+                    font.family: fontName
+                    font.pixelSize: 15
+                    color: fg
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    visible: isWifi || isWired || isBluetooth || isHotspot
+                    text: "•"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 15
+                    font.weight: Theme.defaultFontWeight
+                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: netStr
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 13
+                    font.weight: Theme.defaultFontWeight
+                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            // ── RIGHT: Vertical Separator ────────
+            Rectangle {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                width: 1
+                height: 16
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+            }
+            
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
             Row {
                 Layout.alignment: Qt.AlignVCenter
@@ -257,77 +329,6 @@ PanelWindow {
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
                     }
-                }
-            }
-
-            // ── RIGHT: Vertical Separator ────────
-            Rectangle {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
-                width: 1
-                height: 16
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
-            }
-            
-            // ── RIGHT: Network Icons ────────
-            Row {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
-                spacing: 8
-                
-                Text {
-                    visible: isHotspot
-                    text: "\ued1b" // tabler icon for hotspot
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    visible: isBluetooth
-                    text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    visible: isWired
-                    text: "\uebd9" // tabler icon for wired
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    visible: isWifi && !isWired && !isHotspot
-                    text: "\ueb52" // tabler icon for wifi
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    visible: isWifi || isWired || isBluetooth || isHotspot
-                    text: "•"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 15
-                    font.weight: Theme.defaultFontWeight
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    text: netStr
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    font.weight: Theme.defaultFontWeight
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
