@@ -165,31 +165,26 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 width: 26; height: 26
                 
-                RectangularGlow {
-                    anchors.fill: pbg
-                    glowRadius: pMouse.containsMouse ? 12 : 0
-                    spread: 0.1
-                    color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, pMouse.containsMouse ? 0.5 : 0.0)
-                    cornerRadius: pbg.radius + glowRadius
-                    Behavior on glowRadius { NumberAnimation { duration: 150 } }
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                }
-
-                Rectangle {
-                    id: pbg
-                    anchors.fill: parent
-                    radius: 13
-                    color: Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, pMouse.containsMouse ? 0.25 : 0.0)
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                }
-
                 Text {
+                    id: powerIconText
                     anchors.centerIn: parent
                     text: "\ueb0d" // tabler icon for power
                     font.family: fontName
                     font.pixelSize: 15
                     color: pMouse.containsMouse ? Theme.colError : fg
                     Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                Glow {
+                    anchors.fill: powerIconText
+                    source: powerIconText
+                    radius: pMouse.containsMouse ? 8 : 0
+                    samples: 17
+                    color: Theme.colError
+                    spread: 0.3
+                    opacity: pMouse.containsMouse ? 0.8 : 0.0
+                    Behavior on radius { NumberAnimation { duration: 150 } }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
 
                 MouseArea {
