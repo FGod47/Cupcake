@@ -292,9 +292,11 @@ PanelWindow {
             }
 
             // ── RIGHT: Power Icon ────────
-            Item {
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
-                width: 26; height: 26
+                width: 26; height: 26; radius: 13
+                color: Qt.rgba(fg.r, fg.g, fg.b, pMouse.containsMouse ? 0.1 : 0.0)
+                Behavior on color { ColorAnimation { duration: 150 } }
                 
                 Text {
                     id: powerIconText
@@ -304,18 +306,6 @@ PanelWindow {
                     font.pixelSize: 15
                     color: pMouse.containsMouse ? Theme.colError : fg
                     Behavior on color { ColorAnimation { duration: 150 } }
-                }
-
-                Glow {
-                    anchors.fill: powerIconText
-                    source: powerIconText
-                    radius: pMouse.containsMouse ? 8 : 0
-                    samples: 17
-                    color: Theme.colError
-                    spread: 0.3
-                    opacity: pMouse.containsMouse ? 0.8 : 0.0
-                    Behavior on radius { NumberAnimation { duration: 150 } }
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
 
                 MouseArea {
