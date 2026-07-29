@@ -50,33 +50,56 @@ PanelWindow {
         running: false
 
         NumberAnimation {
-            target: leftModules
+            target: mainBarStrip
             property: "opacity"
             from: 0.0
             to: 1.0
-            duration: 380
+            duration: 400
             easing.type: Easing.OutCubic
         }
         NumberAnimation {
-            target: rightModules
+            target: mainBarStrip
+            property: "scale"
+            from: 0.94
+            to: 1.0
+            duration: 400
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.4
+        }
+        NumberAnimation {
+            target: archPill
             property: "opacity"
             from: 0.0
             to: 1.0
-            duration: 380
+            duration: 400
             easing.type: Easing.OutCubic
         }
         NumberAnimation {
-            target: clockWrapper
+            target: archPill
+            property: "scale"
+            from: 0.94
+            to: 1.0
+            duration: 400
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.4
+        }
+        NumberAnimation {
+            target: powerPill
             property: "opacity"
             from: 0.0
             to: 1.0
-            duration: 380
+            duration: 400
             easing.type: Easing.OutCubic
         }
     }
 
     onVisibleChanged: {
         if (visible) {
+            mainBarStrip.opacity = 0.0;
+            mainBarStrip.scale = 0.94;
+            archPill.opacity = 0.0;
+            archPill.scale = 0.94;
+            powerPill.opacity = 0.0;
             pillEntranceAnim.restart();
         }
     }
@@ -137,6 +160,7 @@ PanelWindow {
     // margin: 8px 4px 0 4px is handled by Layout properties or anchors
 
     Item {
+        id: mainBarStrip
         // Fixed 46px top strip — never resizes when bar grows
         z: 1
         anchors.top: parent.top
