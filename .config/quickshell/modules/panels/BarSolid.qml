@@ -283,7 +283,12 @@ PanelWindow {
         command: ["bash", "-c", "top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text) cpuVal.text = Math.round(parseFloat(text.trim())) }
+            onStreamFinished: {
+                if (text && text.trim() !== "") {
+                    let val = parseFloat(text.trim());
+                    cpuVal.text = isNaN(val) ? "0" : Math.round(val).toString();
+                }
+            }
         }
     }
     Timer { interval: 3000; running: true; repeat: true; onTriggered: cpuProc.running = true }
@@ -305,7 +310,12 @@ PanelWindow {
         command: ["bash", "-c", "sensors 2>/dev/null | grep -E 'Tctl|Package id 0' | awk '{print $3}' | sed 's/+//;s/°C//' | head -1"]
         running: true
         stdout: StdioCollector {
-            onStreamFinished: { if (text) tempVal.text = Math.round(parseFloat(text.trim())) }
+            onStreamFinished: {
+                if (text && text.trim() !== "") {
+                    let val = parseFloat(text.trim());
+                    tempVal.text = isNaN(val) ? "0" : Math.round(val).toString();
+                }
+            }
         }
     }
     Timer { interval: 3000; running: true; repeat: true; onTriggered: tempProc.running = true }
