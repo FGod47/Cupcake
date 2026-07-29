@@ -148,6 +148,17 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
             
+            // ── RIGHT: Clock ────────
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 12
+                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+                color: fg
+            }
+
             // ── RIGHT: Power Icon ────────
             Rectangle {
                 Layout.alignment: Qt.AlignVCenter
