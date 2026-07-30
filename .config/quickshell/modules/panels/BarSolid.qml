@@ -362,11 +362,9 @@ PanelWindow {
 
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
                 text: "•"
                 font.pixelSize: 8
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
             }
             // ── RIGHT: Power Pill ────────
             // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
