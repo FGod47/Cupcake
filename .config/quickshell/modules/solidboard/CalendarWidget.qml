@@ -84,7 +84,7 @@ Rectangle {
                 text: model.shortName
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize - 2
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+                color: Theme.transparentize(Theme.colOnSurface, 0.6)
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -109,8 +109,9 @@ Rectangle {
                 Text {
                     anchors.centerIn: parent
                     text: model.day
-                    font: monthGrid.font
-                    color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.3))
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: Theme.defaultFontSize
+                    color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Theme.transparentize(Theme.colOnSurface, 0.3))
                 }
                 
                 MouseArea {
