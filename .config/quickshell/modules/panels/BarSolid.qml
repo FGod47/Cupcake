@@ -596,6 +596,12 @@ PanelWindow {
             sourceSize.height: 24
             fillMode: Image.PreserveAspectFit
             opacity: contentLayout.opacity
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
+            }
         }
 
         // ── DROPDOWN (Brightness & Volume) ────────

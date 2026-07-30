@@ -57,7 +57,7 @@ PanelWindow {
         x: (solidBoardWindow.width - width) / 2
         y: globalState.solidBoardOpen ? 60 : (-height - 20)
         
-        color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, root.ccOpacity)
+        color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b, 0.85)
         radius: 20
         border.color: Qt.rgba(255, 255, 255, 0.05)
         border.width: 1
