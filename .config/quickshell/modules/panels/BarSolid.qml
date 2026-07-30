@@ -409,9 +409,11 @@ PanelWindow {
                         id: logoutBtn
                         height: 26
                         width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
+                        opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
                         Row {
@@ -464,9 +466,11 @@ PanelWindow {
                         id: restartBtn
                         height: 26
                         width: powerPillItem.expanded ? restartRow.implicitWidth : 0
+                        opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
                         Row {
@@ -548,8 +552,10 @@ PanelWindow {
                                 font.weight: Font.Medium
                                 color: powerMa.containsMouse ? Theme.colError : fg
                                 width: powerPillItem.expanded ? implicitWidth : 0
+                                opacity: powerPillItem.expanded ? 1 : 0
                                 clip: true
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 rightPadding: 8
                             }
                         }
@@ -584,8 +590,10 @@ PanelWindow {
                         font.weight: Theme.defaultFontWeight
                         color: Theme.colError
                         width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 8 : 0
+                        opacity: (!powerPillItem.expanded && powerPillItem.isHovered) ? 1 : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         rightPadding: 8
                         
                         MouseArea {
