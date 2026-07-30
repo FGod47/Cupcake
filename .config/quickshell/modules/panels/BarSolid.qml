@@ -412,7 +412,7 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                        Behavior on width { NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
@@ -469,7 +469,7 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                        Behavior on width { NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
@@ -557,7 +557,7 @@ PanelWindow {
                                 clip: true
                                 visible: opacity > 0 || width > 0
                                 rightPadding: 8
-                                Behavior on width   { NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+                                Behavior on width   { NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
                                 Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
                             }
                         }
