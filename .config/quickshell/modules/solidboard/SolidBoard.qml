@@ -19,14 +19,30 @@ Item {
         columnSpacing: 16
         columns: 6
 
-        // Placeholder for the widgets we'll build
-        Text {
-            Layout.columnSpan: 6
-            Layout.alignment: Qt.AlignCenter
-            text: "SolidBoard grid inside the Bar! (coming soon)"
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 18
-            color: Theme.fg || "white"
+        // Left side placeholder (spans 4 columns)
+        Rectangle {
+            Layout.columnSpan: 4
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: "transparent"
+            border.color: Qt.rgba(1, 1, 1, 0.05)
+            border.width: 1
+            radius: 16
+            
+            Text {
+                anchors.centerIn: parent
+                text: "Other Widgets"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 18
+                color: Theme.fg
+                opacity: 0.5
+            }
+        }
+
+        // Calendar on the right (spans 2 columns)
+        CalendarWidget {
+            Layout.columnSpan: 2
+            Layout.alignment: Qt.AlignRight | Qt.AlignTop
         }
     }
 }
