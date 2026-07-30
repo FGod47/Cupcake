@@ -361,27 +361,92 @@ PanelWindow {
                 color: fg
             }
 
-            // ── RIGHT: Power Icon ────────
+            // ── RIGHT: Power Pill (expands on hover to show actions) ────────
             Item {
                 Layout.alignment: Qt.AlignVCenter
-                width: 26; height: 26
-                
-                Text {
-                    id: powerIconText
-                    anchors.centerIn: parent
-                    text: "\ueb0d" // tabler icon for power
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: pMouse.containsMouse ? Theme.colError : fg
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                }
+                height: 26
+                implicitWidth: powerPillRow.implicitWidth
 
+                // Hover the whole pill
+                property bool isHovered: powerHoverArea.containsMouse
                 MouseArea {
-                    id: pMouse
+                    id: powerHoverArea
                     anchors.fill: parent
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Quickshell.execDetached(["bash", "-c", "wlogout -b 5 || systemctl poweroff"])
+                    acceptedButtons: Qt.NoButton
+                }
+
+                Row {
+                    id: powerPillRow
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 0
+
+                    // Logout icon — slides in from left on hover
+                    Item {
+                        height: 26
+                        width: parent.parent.isHovered ? 26 : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\ueba8"
+                            font.family: fontName
+                            font.pixelSize: 14
+                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                        }
+                        MouseArea {
+                            id: logoutMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"])
+                        }
+                    }
+
+                    // Restart icon — slides in on hover
+                    Item {
+                        height: 26
+                        width: parent.parent.isHovered ? 26 : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\ueb71"
+                            font.family: fontName
+                            font.pixelSize: 14
+                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                        }
+                        MouseArea {
+                            id: restartMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached(["bash", "-c", "systemctl reboot"])
+                        }
+                    }
+
+                    // Power/Shutdown icon — always visible, turns red on hover
+                    Item {
+                        height: 26
+                        width: 26
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\ueb0d"
+                            font.family: fontName
+                            font.pixelSize: 15
+                            color: shutdownMa.containsMouse ? Theme.colError : (powerHoverArea.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7) : fg)
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                        }
+                        MouseArea {
+                            id: shutdownMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
+                        }
+                    }
                 }
             }
         }
