@@ -478,7 +478,7 @@ PanelWindow {
                     anchors.topMargin: card.verticalPad + 8
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 20
-                    source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
+                    source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
                     fillMode: Image.PreserveAspectFit
                     opacity: card.logoH > 0 ? 0.7 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
