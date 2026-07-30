@@ -776,7 +776,7 @@ PanelWindow {
         width: globalState.solidBoardOpen ? endW : startW
         height: globalState.solidBoardOpen ? endH : startH
         
-        color: Qt.rgba(root.colSurface.r, root.colSurface.g, root.colSurface.b, Theme.isDark ? 0.8 : 0.95)
+        color: Qt.rgba(bg.r, bg.g, bg.b, Theme.isDark ? 0.8 : 0.95)
         border.color: Qt.rgba(1, 1, 1, 0.1)
         border.width: 1
         radius: 20
