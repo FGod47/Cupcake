@@ -1,6 +1,4 @@
 #!/bin/bash
-if pgrep -f "[q]uickshell.*shell.qml" > /dev/null; then
-    quickshell ipc call bar toggle 2>/dev/null
-else
-    quickshell -p ~/.config/quickshell/shell.qml &
-fi
+killall -9 quickshell 2>/dev/null
+sleep 0.5
+QSG_RENDER_LOOP=basic quickshell -p ~/.config/quickshell/shell.qml >/dev/null 2>&1 &
