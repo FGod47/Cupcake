@@ -8,6 +8,7 @@ import "theme"
 import "modules/panels"
 import "modules/settings"
 import "modules/common"
+import "modules/solidboard"
 
 ShellRoot {
     id: root
@@ -39,6 +40,12 @@ ShellRoot {
         delegate: ControlCenterSolid {
             // Note: visible is managed internally by ControlCenterSolid.qml
         }
+    }
+
+    // SolidBoard
+    Variants {
+        model: Quickshell.screens
+        delegate: SolidBoard {}
     }
     // Bottom Dock for all screens
     Variants {
@@ -115,6 +122,7 @@ ShellRoot {
         property bool hideIsland: false
         property bool settingsOpen: false
         property bool overviewOpen: false
+        property bool solidBoardOpen: false
         property real dimOverlay: 0.0
         property real notifPanelOpacity: 0.90
         property bool popupHovered: false
@@ -324,6 +332,13 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "solidboard"
+        function toggle() {
+            globalState.solidBoardOpen = !globalState.solidBoardOpen;
+        }
+    }
+
+    IpcHandler {
         target: "notifpanel"
         function toggle(): void {
             globalState.notifPanelVisible = !globalState.notifPanelVisible;
@@ -348,6 +363,13 @@ ShellRoot {
         name: "powermenu_toggle"
         onPressed: {
             globalState.powerMenuOpen = !globalState.powerMenuOpen;
+        }
+    }
+
+    GlobalShortcut {
+        name: "solidboard_toggle"
+        onPressed: {
+            globalState.solidBoardOpen = !globalState.solidBoardOpen;
         }
     }
 
