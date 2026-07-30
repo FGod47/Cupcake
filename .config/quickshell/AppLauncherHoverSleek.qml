@@ -716,7 +716,7 @@ PanelWindow {
             radius: 10
             clip: true
 
-            color: true ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
+            color: "transparent"
             border.width: 0
 
             // Search icon background
