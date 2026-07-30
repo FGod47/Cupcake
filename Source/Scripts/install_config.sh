@@ -106,19 +106,6 @@ else
 fi
 
 
-# ──────────────── Install Desktop Entry ────────────────
-DESKTOP_ENTRY_SRC="$SCRIPT_DIR/../cupcake-keybinds.desktop"
-DESKTOP_ENTRY_DEST="$HOME/.local/share/applications/cupcake-keybinds.desktop"
-
-if [ -f "$DESKTOP_ENTRY_SRC" ]; then
-  echo -e "${GREEN}[INSTALL]${RESET} cupcake-keybinds.desktop → ~/.local/share/applications"
-  mkdir -p "$HOME/.local/share/applications"
-  cp "$DESKTOP_ENTRY_SRC" "$DESKTOP_ENTRY_DEST"
-  update-desktop-database "$HOME/.local/share/applications" &>/dev/null || true
-else
-  echo -e "${YELLOW}[SKIP]${RESET} cupcake-keybinds.desktop not found"
-fi
-
 # ──────────────── Install Quickshell Lockscreen & SDDM Theme ────────────────
 QYLOCK_SRC="$SCRIPT_DIR/../../.local/share/qylock-themes"
 QS_LOCK_SRC="$SCRIPT_DIR/../../.local/share/quickshell-lockscreen"

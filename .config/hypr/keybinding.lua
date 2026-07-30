@@ -29,8 +29,6 @@ hl.bind(mainMod .. " + P", hl.dsp.global("quickshell:powermenu_toggle"))
 hl.bind(mainMod .. " + a", hl.dsp.global("quickshell:aipanel_toggle"))
 -- QuickShell App Launcher
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_app_launcher.sh"))
--- Hotkeys cheat sheet
-hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd("~/.config/cupcake/scripts/keybinds_hint.sh"))
 
 -- Toggle Cupcake Dark/Light Theme
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_theme.sh"))
