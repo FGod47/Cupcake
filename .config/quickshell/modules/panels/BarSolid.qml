@@ -482,7 +482,7 @@ PanelWindow {
                                 width: 26; height: 26
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "\ueb71"
+                                    text: "\ueb13"
                                     font.family: fontName
                                     font.pixelSize: 14
                                     color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
