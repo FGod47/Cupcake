@@ -448,11 +448,11 @@ PanelWindow {
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             border.color: true ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
             border.width: true ? 1 : 0
-            radius: true ? 12 : 0
-            topLeftRadius: false ? 12 : 12
-            topRightRadius: false ? 12 : 12
-            bottomLeftRadius: true ? 12 : 0
-            bottomRightRadius: true ? 12 : 0
+            radius: true ? 32 : 0
+            topLeftRadius: false ? 32 : 32
+            topRightRadius: false ? 32 : 32
+            bottomLeftRadius: true ? 32 : 0
+            bottomRightRadius: true ? 32 : 0
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -712,7 +712,7 @@ PanelWindow {
             anchors.bottomMargin: card.dynamicVMargin
 
             height: card.searchH
-            radius: 10
+            radius: 24
             clip: true
 
             color: true ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
