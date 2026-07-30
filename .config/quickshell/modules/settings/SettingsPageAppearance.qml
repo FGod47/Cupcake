@@ -365,6 +365,11 @@ Item {
                         }
                     }
                 }
+            }
+
+            // --- Themes section ---
+            NCard {
+                sectionTitle: "Themes"
 
                 NRow {
                     RowLayout {
