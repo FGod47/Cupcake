@@ -456,17 +456,17 @@ PanelWindow {
                 id: listCardBg
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: parent.top
                 anchors.bottom: searchCardBg.top
                 anchors.bottomMargin: 8
+                height: Math.max(0, parent.height - searchCardBg.height - 8)
                 
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
                 border.width: 1
                 radius: 16
                 
-                opacity: (parent.height > searchCardBg.height + 10) ? 1.0 : 0.0
-                visible: opacity > 0
+                opacity: (height > 10) ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
                 clip: true
             }
 
@@ -475,7 +475,7 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: card.searchH + card.verticalPad * 2
+                height: Math.min(card.height, card.searchH + card.verticalPad * 2)
                 
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
@@ -752,7 +752,7 @@ PanelWindow {
             Item {
                 id: searchIconWrapper
                 anchors.left: parent.left
-                anchors.leftMargin: 12
+                anchors.leftMargin: card.width > 200 ? 12 : (card.width - width) / 2
                 anchors.verticalCenter: parent.verticalCenter
                 width: 80
                 height: 32
@@ -766,6 +766,8 @@ PanelWindow {
                     sourceSize.height: 52
                     smooth: true
                     opacity: 1.0
+                    scale: card.width > 200 ? 1.0 : 0.95
+                    Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
                 }
             }
 
