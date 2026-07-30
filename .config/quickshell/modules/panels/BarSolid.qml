@@ -412,7 +412,7 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: false
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPillItem.expanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPillItem.expanded ? Easing.OutBack : Easing.InBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
@@ -469,7 +469,7 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: false
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPillItem.expanded ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPillItem.expanded ? Easing.OutBack : Easing.InBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
@@ -525,7 +525,7 @@ PanelWindow {
                         width: shutdownRow.implicitWidth
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : (powerPillItem.expanded ? Easing.OutBack : Easing.InBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                         Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
                         
                         Row {
@@ -555,7 +555,7 @@ PanelWindow {
                                 width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: false
-                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerPillItem.expanded || powerPillItem.isHovered) ? Easing.OutBack : Easing.InOutCubic); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
+                                Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 500; easing.type: Theme.liquidify ? Easing.OutElastic : ((powerPillItem.expanded || powerPillItem.isHovered) ? Easing.OutBack : Easing.InBack); easing.amplitude: 1.0; easing.period: 0.85; easing.overshoot: 1.5 } }
                                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 rightPadding: 8
                             }
