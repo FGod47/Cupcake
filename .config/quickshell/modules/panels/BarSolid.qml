@@ -410,10 +410,10 @@ PanelWindow {
                         height: 26
                         width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
                         opacity: powerPillItem.expanded ? 1 : 0
-                        clip: false
+                        clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
+                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
                         Row {
@@ -467,10 +467,10 @@ PanelWindow {
                         height: 26
                         width: powerPillItem.expanded ? restartRow.implicitWidth : 0
                         opacity: powerPillItem.expanded ? 1 : 0
-                        clip: false
+                        clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
+                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
                         Row {
@@ -555,8 +555,8 @@ PanelWindow {
                                 width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: false
-                                Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
+                                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                                 rightPadding: 8
                             }
                         }
