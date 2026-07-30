@@ -410,7 +410,7 @@ PanelWindow {
                         height: 26
                         width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
                         opacity: powerPillItem.expanded ? 1 : 0
-                        clip: true
+                        clip: false
                         property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -467,7 +467,7 @@ PanelWindow {
                         height: 26
                         width: powerPillItem.expanded ? restartRow.implicitWidth : 0
                         opacity: powerPillItem.expanded ? 1 : 0
-                        clip: true
+                        clip: false
                         property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -553,7 +553,7 @@ PanelWindow {
                                 color: powerMa.containsMouse ? Theme.colError : fg
                                 width: powerPillItem.expanded ? implicitWidth : 0
                                 opacity: powerPillItem.expanded ? 1 : 0
-                                clip: true
+                                clip: false
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 rightPadding: 8
@@ -591,7 +591,7 @@ PanelWindow {
                         color: Theme.colError
                         width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 8 : 0
                         opacity: (!powerPillItem.expanded && powerPillItem.isHovered) ? 1 : 0
-                        clip: true
+                        clip: false
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         rightPadding: 8
