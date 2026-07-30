@@ -426,8 +426,9 @@ PanelWindow {
             readonly property int searchH: 38
             readonly property int cardPad: 12
             readonly property int verticalPad: 8
+            readonly property int logoH: searchField.text.length > 0 ? 44 : 0
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + logoH + (true ? verticalPad * 3 + 8 : cardPad * 2)
 
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -471,11 +472,23 @@ PanelWindow {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
 
+                Image {
+                    id: topLogo
+                    anchors.top: parent.top
+                    anchors.topMargin: card.verticalPad + 8
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: 20
+                    source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
+                    fillMode: Image.PreserveAspectFit
+                    opacity: card.logoH > 0 ? 0.7 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                }
+
         // ── App List Area ─────────────────────────────────────────────
         Item {
             id: listArea
             anchors.top: parent.top
-            anchors.topMargin: true ? card.verticalPad : card.cardPad
+            anchors.topMargin: card.verticalPad + card.logoH
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
