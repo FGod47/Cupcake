@@ -31,14 +31,41 @@ Item {
         }
     }
 
+    property var availableIconThemes: ["Papirus-Dark", "Papirus-Light", "Papirus", "Adwaita", "breeze", "breeze-dark"]
     property string iconTheme: "Papirus-Dark"
+    
+    Process {
+        command: ["bash", "-c", "find /usr/share/icons ~/.local/share/icons ~/.icons -maxdepth 2 -name 'index.theme' 2>/dev/null | awk -F'/' '{print $(NF-1)}' | sort -u"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let txt = text.trim();
+                if (txt !== "") {
+                    let arr = txt.split("\n");
+                    arr = arr.filter(t => t !== "hicolor" && t !== "default" && t !== "locolor");
+                    if (arr.indexOf(root.iconTheme) === -1 && root.iconTheme !== "") {
+                        arr.unshift(root.iconTheme);
+                    }
+                    root.availableIconThemes = arr;
+                }
+            }
+        }
+    }
+
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.icon_theme"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
                 let s = text.trim();
-                if (s !== "") root.iconTheme = s;
+                if (s !== "") {
+                    root.iconTheme = s;
+                    if (root.availableIconThemes.indexOf(s) === -1) {
+                        let arr = root.availableIconThemes;
+                        arr.unshift(s);
+                        root.availableIconThemes = arr;
+                    }
+                }
             }
         }
     }
@@ -346,7 +373,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
-                        model: ["Papirus-Dark", "Papirus-Light", "Papirus", "Adwaita", "breeze", "breeze-dark"]
+                        model: root.availableIconThemes
                         currentIndex: model.indexOf(root.iconTheme) !== -1 ? model.indexOf(root.iconTheme) : 0
                         onActivated: (idx) => {
                             let val = model[idx];
