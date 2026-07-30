@@ -27,7 +27,7 @@ PanelWindow {
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
-    property real extraHeight: globalState.solidBoardOpen ? 450 : (dropdownOpen ? 120 : 0)
+    property real extraHeight: globalState.solidBoardOpen ? 540 : (dropdownOpen ? 120 : 0)
     Behavior on extraHeight { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
     
     Connections {
