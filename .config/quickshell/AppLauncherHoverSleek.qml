@@ -475,7 +475,7 @@ PanelWindow {
         Item {
             id: listArea
             anchors.top: parent.top
-            anchors.topMargin: card.verticalPad
+            anchors.topMargin: card.verticalPad + 8
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
