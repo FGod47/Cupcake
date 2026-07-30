@@ -420,7 +420,7 @@ PanelWindow {
                                     text: "\ueba8"
                                     font.family: fontName
                                     font.pixelSize: 14
-                                    color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                    color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                     Behavior on color { ColorAnimation { duration: 120 } }
                                 }
                             }
@@ -430,7 +430,7 @@ PanelWindow {
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
-                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 rightPadding: 8
                             }
@@ -475,7 +475,7 @@ PanelWindow {
                                     text: "\ueb71"
                                     font.family: fontName
                                     font.pixelSize: 14
-                                    color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                    color: restartMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                     Behavior on color { ColorAnimation { duration: 120 } }
                                 }
                             }
@@ -485,7 +485,7 @@ PanelWindow {
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
-                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 rightPadding: 8
                             }
@@ -530,7 +530,7 @@ PanelWindow {
                                     text: "\ueb0d"
                                     font.family: fontName
                                     font.pixelSize: 15
-                                    color: powerMa.containsMouse ? Theme.colError : fg
+                                    color: powerMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                             }
@@ -540,7 +540,7 @@ PanelWindow {
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
-                                color: powerMa.containsMouse ? Theme.colError : fg
+                                color: powerMa.containsMouse ? Theme.colError : Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7)
                                 width: powerPillItem.expanded ? implicitWidth : 0
                                 clip: true
                                 Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
