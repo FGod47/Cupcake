@@ -734,10 +734,9 @@ PanelWindow {
                     source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
                     height: 26
                     fillMode: Image.PreserveAspectFit
-                    sourceSize.height: 128
+                    sourceSize.height: 52
                     smooth: true
-                    mipmap: true
-                    opacity: 0.8
+                    opacity: 1.0
                 }
             }
 
