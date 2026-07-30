@@ -427,7 +427,7 @@ PanelWindow {
             readonly property int cardPad: 12
             readonly property int verticalPad: 12
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
 
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -522,7 +522,7 @@ PanelWindow {
                 anchors.leftMargin: card.cardPad
                 anchors.rightMargin: card.cardPad
                 clip: true
-                spacing: 0
+                spacing: 4
                 currentIndex: 0
                 maximumFlickVelocity: 2500
                 model: root.filteredApps
