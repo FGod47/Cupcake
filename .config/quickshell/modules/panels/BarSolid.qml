@@ -525,7 +525,6 @@ PanelWindow {
                         width: shutdownRow.implicitWidth
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
                         Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
                         
                         Row {
@@ -545,19 +544,17 @@ PanelWindow {
                                 }
                             }
                             Text {
+                                id: powerLabel
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: powerPillItem.expanded ? (shutdownBtn.confirming ? "Sure?" : "Shutdown") : "Power"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
                                 color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
-                                
-                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
-                                clip: false
-                                Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutQuint } }
-                                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
+                                // Width is always reserved — only opacity animates (no layout recalc = no jitter)
                                 rightPadding: 8
+                                Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuart } }
                             }
                         }
                         MouseArea {
