@@ -424,10 +424,10 @@ PanelWindow {
             readonly property int maxListItems: 7
             readonly property int itemH: 48
             readonly property int searchH: 44
-            readonly property int cardPad: 16
-            readonly property int verticalPad: 20
+            readonly property int cardPad: 12
+            readonly property int verticalPad: 12
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (true ? verticalPad * 3 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
 
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -448,11 +448,11 @@ PanelWindow {
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             border.color: true ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
             border.width: true ? 1 : 0
-            radius: true ? 32 : 0
-            topLeftRadius: false ? 32 : 32
-            topRightRadius: false ? 32 : 32
-            bottomLeftRadius: true ? 32 : 0
-            bottomRightRadius: true ? 32 : 0
+            radius: true ? 34 : 0
+            topLeftRadius: false ? 34 : 34
+            topRightRadius: false ? 34 : 34
+            bottomLeftRadius: true ? 34 : 0
+            bottomRightRadius: true ? 34 : 0
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -712,7 +712,7 @@ PanelWindow {
             anchors.bottomMargin: card.dynamicVMargin
 
             height: card.searchH
-            radius: 24
+            radius: 22
             clip: true
 
             color: true ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
