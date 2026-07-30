@@ -423,9 +423,9 @@ PanelWindow {
             readonly property int cardWidth: 500
             readonly property int maxListItems: 7
             readonly property int itemH: 48
-            readonly property int searchH: 44
+            readonly property int searchH: 38
             readonly property int cardPad: 12
-            readonly property int verticalPad: 12
+            readonly property int verticalPad: 8
 
             readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
 
