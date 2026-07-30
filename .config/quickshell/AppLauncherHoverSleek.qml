@@ -426,9 +426,8 @@ PanelWindow {
             readonly property int searchH: 38
             readonly property int cardPad: 12
             readonly property int verticalPad: 8
-            readonly property int logoH: searchField.text.length > 0 ? 48 : 0
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + logoH + (true ? verticalPad * 3 + 8 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
 
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -472,30 +471,11 @@ PanelWindow {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                Item {
-                    id: logoContainer
-                    anchors.top: parent.top
-                    anchors.topMargin: card.verticalPad
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width
-                    height: card.logoH
-                    visible: card.logoH > 0
-                    
-                    Image {
-                        anchors.centerIn: parent
-                        height: 28
-                        source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
-                        fillMode: Image.PreserveAspectFit
-                        opacity: card.logoH > 0 ? 0.7 : 0.0
-                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                    }
-                }
-
         // ── App List Area ─────────────────────────────────────────────
         Item {
             id: listArea
             anchors.top: parent.top
-            anchors.topMargin: card.verticalPad + card.logoH
+            anchors.topMargin: card.verticalPad
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -740,24 +720,21 @@ PanelWindow {
             border.width: 0
 
             // Search icon background
-            Rectangle {
+            Item {
                 id: searchIconWrapper
                 anchors.left: parent.left
-                anchors.leftMargin: 8
+                anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                width: true ? 28 : 36
-                height: true ? 28 : 36
-                radius: true ? 8 : 18
-                color: "transparent"
+                width: 60
+                height: 28
 
-                Text {
+                Image {
                     id: searchIconTxt
                     anchors.centerIn: parent
-                    text: "\ueb1c" // ti-search
-                    font.family: "tabler-icons"
-                    font.weight: Theme.defaultFontWeight
-                    font.pixelSize: true ? 16 : 18
-                    color: root.colOnSurface
+                    source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
+                    height: 18
+                    fillMode: Image.PreserveAspectFit
+                    opacity: 0.8
                 }
             }
 
@@ -779,7 +756,7 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: true ? 46 : 58
+                    anchors.leftMargin: 74
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 13
@@ -793,7 +770,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: true ? 46 : 58
+                    anchors.leftMargin: 74
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
