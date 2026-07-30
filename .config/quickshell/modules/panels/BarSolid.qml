@@ -388,16 +388,35 @@ PanelWindow {
                     // Logout
                     Item {
                         height: 26
-                        width: powerPillItem.expanded ? 24 : 0
+                        width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueba8"
-                            font.family: fontName
-                            font.pixelSize: 14
-                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                            Behavior on color { ColorAnimation { duration: 120 } }
+                        Row {
+                            id: logoutRow
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            spacing: 0
+                            Item {
+                                width: 26; height: 26
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueba8"
+                                    font.family: fontName
+                                    font.pixelSize: 14
+                                    color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                    Behavior on color { ColorAnimation { duration: 120 } }
+                                }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "Logout"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                                rightPadding: 8
+                            }
                         }
                         MouseArea {
                             id: logoutMa
@@ -407,19 +426,39 @@ PanelWindow {
                             onClicked: { powerPillItem.expanded = false; Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"]) }
                         }
                     }
+
                     // Restart
                     Item {
                         height: 26
-                        width: powerPillItem.expanded ? 24 : 0
+                        width: powerPillItem.expanded ? restartRow.implicitWidth : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueb71"
-                            font.family: fontName
-                            font.pixelSize: 14
-                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                            Behavior on color { ColorAnimation { duration: 120 } }
+                        Row {
+                            id: restartRow
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            spacing: 0
+                            Item {
+                                width: 26; height: 26
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueb71"
+                                    font.family: fontName
+                                    font.pixelSize: 14
+                                    color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                    Behavior on color { ColorAnimation { duration: 120 } }
+                                }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "Restart"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                                rightPadding: 8
+                            }
                         }
                         MouseArea {
                             id: restartMa
@@ -430,17 +469,40 @@ PanelWindow {
                         }
                     }
 
-                    // ── Power icon (always visible) ──
+                    // ── Power icon (always visible) & Shutdown text ──
                     Item {
                         height: 26
-                        width: 26
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueb0d"
-                            font.family: fontName
-                            font.pixelSize: 15
-                            color: powerMa.containsMouse ? Theme.colError : fg
-                            Behavior on color { ColorAnimation { duration: 150 } }
+                        width: shutdownRow.implicitWidth
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                        Row {
+                            id: shutdownRow
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            spacing: 0
+                            Item {
+                                width: 26; height: 26
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueb0d"
+                                    font.family: fontName
+                                    font.pixelSize: 15
+                                    color: powerMa.containsMouse ? Theme.colError : fg
+                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "Shutdown"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: powerMa.containsMouse ? Theme.colError : fg
+                                width: powerPillItem.expanded ? implicitWidth : 0
+                                clip: true
+                                Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                rightPadding: 8
+                            }
                         }
                         MouseArea {
                             id: powerMa
@@ -456,7 +518,7 @@ PanelWindow {
                         }
                     }
 
-                    // ── "Power" label — slides in on hover, hidden when expanded ──
+                    // ── "Power" label — slides in on initial hover, hidden when expanded ──
                     Text {
                         anchors.verticalCenter: parent ? parent.verticalCenter : undefined
                         text: "Power"
@@ -464,10 +526,10 @@ PanelWindow {
                         font.pixelSize: 12
                         font.weight: Theme.defaultFontWeight
                         color: Theme.colError
-                        leftPadding: 4
-                        width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 4 : 0
+                        width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 8 : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        rightPadding: 8
                     }
                 }
             }
