@@ -39,10 +39,19 @@ Item {
             }
         }
 
-        // Calendar on the right (spans 2 columns)
-        CalendarWidget {
+        // Right side column (Clock + Calendar, spans 2 columns)
+        ColumnLayout {
             Layout.columnSpan: 2
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            spacing: 16
+
+            ClockWidget {
+                Layout.fillWidth: true
+            }
+
+            CalendarWidget {
+                Layout.fillWidth: true
+            }
         }
     }
 }
