@@ -21,7 +21,7 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     exclusiveZone: 40
-    height: 160
+    implicitHeight: solidBar.y + solidBar.height + 10
     color: "transparent"
     mask: Region { item: solidBar }
 
