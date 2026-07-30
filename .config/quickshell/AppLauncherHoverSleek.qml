@@ -724,9 +724,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
-                width: true ? 38 : 36
-                height: true ? 38 : 36
-                radius: true ? 19 : 18
+                width: true ? 28 : 36
+                height: true ? 28 : 36
+                radius: true ? 14 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -735,7 +735,7 @@ PanelWindow {
                     text: "\ueb1c" // ti-search
                     font.family: "tabler-icons"
                     font.weight: Theme.defaultFontWeight
-                    font.pixelSize: true ? 20 : 18
+                    font.pixelSize: true ? 16 : 18
                     color: root.colOnSurface
                 }
             }
@@ -758,10 +758,10 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: true ? 74 : 58
+                    anchors.leftMargin: true ? 46 : 58
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
-                    font.pixelSize: 15
+                    font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
                     visible: searchField.text.length === 0
@@ -772,12 +772,12 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: true ? 74 : 58
+                    anchors.leftMargin: true ? 46 : 58
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOnSurface
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.defaultFontFamily
                     clip: true
                     focus: true
