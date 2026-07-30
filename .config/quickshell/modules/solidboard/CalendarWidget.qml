@@ -32,7 +32,7 @@ Rectangle {
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize + 2
                 font.weight: Font.Bold
-                color: Theme.fg
+                color: Theme.colOnSurface
             }
 
             // Month navigation
@@ -52,7 +52,7 @@ Rectangle {
                         text: "\uea60" // chevron-left
                         font.family: "tabler-icons"
                         font.pixelSize: 16
-                        color: Theme.fg
+                        color: Theme.colOnSurface
                     }
                 }
                 MouseArea {
@@ -68,7 +68,7 @@ Rectangle {
                         text: "\uea61" // chevron-right
                         font.family: "tabler-icons"
                         font.pixelSize: 16
-                        color: Theme.fg
+                        color: Theme.colOnSurface
                     }
                 }
             }
@@ -82,8 +82,9 @@ Rectangle {
             font.pixelSize: Theme.defaultFontSize - 2
             delegate: Text {
                 text: model.shortName
-                font: parent.font
-                color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.6)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize - 2
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -109,7 +110,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: model.day
                     font: monthGrid.font
-                    color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.fg : Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.3))
+                    color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.3))
                 }
                 
                 MouseArea {
