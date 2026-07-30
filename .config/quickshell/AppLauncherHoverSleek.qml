@@ -728,7 +728,7 @@ PanelWindow {
                 width: true ? 28 : 36
                 height: true ? 28 : 36
                 radius: true ? 8 : 18
-                color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
+                color: "transparent"
 
                 Text {
                     id: searchIconTxt
