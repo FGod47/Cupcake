@@ -21,14 +21,14 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     exclusiveZone: 40
-    implicitHeight: solidBar.y + solidBar.height + 10
+    height: 600
     color: "transparent"
     mask: Region { item: solidBar }
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
     property real extraHeight: globalState.solidBoardOpen ? 450 : (dropdownOpen ? 120 : 0)
-    Behavior on extraHeight { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+    Behavior on extraHeight { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
     
     Connections {
         target: globalState
