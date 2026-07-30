@@ -367,14 +367,8 @@ PanelWindow {
                 height: 26
                 implicitWidth: powerPillRow.implicitWidth
 
-                // Hover the whole pill
-                property bool isHovered: powerHoverArea.containsMouse
-                MouseArea {
-                    id: powerHoverArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
-                }
+                // isHovered = any of the inner icons is hovered
+                property bool isHovered: shutdownMa.containsMouse || restartMa.containsMouse || logoutMa.containsMouse
 
                 Row {
                     id: powerPillRow
@@ -392,7 +386,7 @@ PanelWindow {
                             text: "\ueba8"
                             font.family: fontName
                             font.pixelSize: 14
-                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.6)
                             Behavior on color { ColorAnimation { duration: 120 } }
                         }
                         MouseArea {
@@ -415,7 +409,7 @@ PanelWindow {
                             text: "\ueb71"
                             font.family: fontName
                             font.pixelSize: 14
-                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.6)
                             Behavior on color { ColorAnimation { duration: 120 } }
                         }
                         MouseArea {
@@ -436,7 +430,7 @@ PanelWindow {
                             text: "\ueb0d"
                             font.family: fontName
                             font.pixelSize: 15
-                            color: shutdownMa.containsMouse ? Theme.colError : (powerHoverArea.containsMouse ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.7) : fg)
+                            color: shutdownMa.containsMouse ? Theme.colError : fg
                             Behavior on color { ColorAnimation { duration: 150 } }
                         }
                         MouseArea {
