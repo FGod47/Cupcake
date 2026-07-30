@@ -530,7 +530,7 @@ PanelWindow {
                                     text: "\ueb0d"
                                     font.family: fontName
                                     font.pixelSize: 15
-                                    color: powerMa.containsMouse ? Theme.colError : fg
+                                    color: (powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                             }
