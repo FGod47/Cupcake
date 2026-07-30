@@ -641,19 +641,19 @@ PanelWindow {
                     Column {
                         visible: delegateItem.modelData?.isWebResult ?? false
                         anchors.fill: parent
-                        anchors.leftMargin: 18
-                        anchors.rightMargin: 18
-                        anchors.topMargin: 14
-                        anchors.bottomMargin: 14
-                        spacing: 6
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        anchors.topMargin: 8
+                        anchors.bottomMargin: 8
+                        spacing: 2
 
                         Row {
-                            spacing: 8
+                            spacing: 6
                             IconImage {
                                 asynchronous: true
                                 source: delegateItem.modelData?.icon ?? ""
-                                width: 18
-                                height: 18
+                                width: 14
+                                height: 14
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             Text {
@@ -667,10 +667,10 @@ PanelWindow {
                                 }
                                 color: root.colOnSurfaceVariant
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
+                                font.pixelSize: 11
                                 anchors.verticalCenter: parent.verticalCenter
                                 elide: Text.ElideRight
-                                width: parent.parent.width - 30
+                                width: parent.parent.width - 24
                             }
                         }
 
@@ -678,7 +678,7 @@ PanelWindow {
                             text: delegateItem.modelData?.name ?? ""
                             color: "#8ab4f8"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 19
+                            font.pixelSize: 15
                             font.weight: Font.DemiBold
                             elide: Text.ElideRight
                             width: parent.width
@@ -688,12 +688,12 @@ PanelWindow {
                             text: delegateItem.modelData?.comment ?? ""
                             color: root.colOnSurfaceVariant
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 14
+                            font.pixelSize: 11
                             wrapMode: Text.Wrap
                             maximumLineCount: 2
                             elide: Text.ElideRight
                             width: parent.width
-                            lineHeight: 1.2
+                            lineHeight: 1.1
                         }
                     }
                 }
