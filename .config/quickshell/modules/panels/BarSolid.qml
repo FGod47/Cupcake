@@ -766,9 +766,9 @@ PanelWindow {
         property real startW: 140
         property real startH: 26
         
-        property real endX: 12
+        property real endX: parent.width - endW - 12
         property real endY: bar.barHeight + 12
-        property real endW: parent.width - 24
+        property real endW: 340
         property real endH: 520
         
         x: globalState.solidBoardOpen ? endX : startX
