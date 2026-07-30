@@ -23,11 +23,14 @@ PanelWindow {
     exclusiveZone: 40
     height: 600
     color: "transparent"
-    mask: Region { item: solidBar }
+    mask: Region {
+        Region { item: solidBar }
+        Region { item: solidBoardBg }
+    }
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
-    property real extraHeight: globalState.solidBoardOpen ? 540 : (dropdownOpen ? 120 : 0)
+    property real extraHeight: dropdownOpen ? 120 : 0
     Behavior on extraHeight { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
     
     Connections {
@@ -366,20 +369,32 @@ PanelWindow {
             
             // ── RIGHT: Clock ────────
             Text {
+                id: clockTextMain
                 Layout.alignment: Qt.AlignVCenter
                 text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
                 color: fg
+                opacity: globalState.solidBoardOpen ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
+                }
             }
 
             Text {
+                id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 6
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                opacity: globalState.solidBoardOpen ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: 200 } }
             }
             // ── RIGHT: Power Pill ────────
             // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
@@ -740,17 +755,46 @@ PanelWindow {
             }
         }
         
-        // ── SOLIDBOARD ────────
-        Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: contentLayout.bottom
-            anchors.bottom: parent.bottom
+    }
+
+    // ── SOLIDBOARD BACKGROUND PILL ────────
+    Rectangle {
+        id: solidBoardBg
+        
+        property real startX: parent.width - 240
+        property real startY: 8
+        property real startW: 140
+        property real startH: 26
+        
+        property real endX: 12
+        property real endY: bar.barHeight + 12
+        property real endW: parent.width - 24
+        property real endH: 520
+        
+        x: globalState.solidBoardOpen ? endX : startX
+        y: globalState.solidBoardOpen ? endY : startY
+        width: globalState.solidBoardOpen ? endW : startW
+        height: globalState.solidBoardOpen ? endH : startH
+        
+        color: Qt.rgba(root.colSurface.r, root.colSurface.g, root.colSurface.b, Theme.isDark ? 0.8 : 0.95)
+        border.color: Qt.rgba(1, 1, 1, 0.1)
+        border.width: 1
+        radius: 20
+        clip: true
+        
+        opacity: globalState.solidBoardOpen ? 1 : 0
+        visible: opacity > 0
+        
+        Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on y { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on opacity { NumberAnimation { duration: 250 } }
+        
+        SolidBoard {
+            anchors.fill: parent
             opacity: globalState.solidBoardOpen ? 1 : 0
-            Behavior on opacity { NumberAnimation { duration: 300 } }
-            visible: opacity > 0
-            
-            SolidBoard {}
+            Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
         }
     }
 
