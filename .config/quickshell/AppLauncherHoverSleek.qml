@@ -526,6 +526,7 @@ PanelWindow {
                 currentIndex: 0
                 maximumFlickVelocity: 2500
                 model: root.filteredApps
+                onModelChanged: positionViewAtBeginning()
                 
                 Rectangle {
                     id: rowHighlight
@@ -562,7 +563,7 @@ PanelWindow {
                     required property int index
 
                     width: appList.width
-                    height: (delegateItem.modelData?.isWebResult) ? 76 : card.itemH
+                    height: (delegateItem.modelData?.isWebResult) ? 84 : card.itemH
 
                     Rectangle {
                         anchors.fill: parent
@@ -643,9 +644,9 @@ PanelWindow {
                         anchors.fill: parent
                         anchors.leftMargin: 12
                         anchors.rightMargin: 12
-                        anchors.topMargin: 8
-                        anchors.bottomMargin: 8
-                        spacing: 2
+                        anchors.topMargin: 12
+                        anchors.bottomMargin: 12
+                        spacing: 4
 
                         Row {
                             spacing: 6
