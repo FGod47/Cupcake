@@ -60,8 +60,13 @@ Item {
                 let s = text.trim();
                 if (s !== "") {
                     root.iconTheme = s;
-                    if (root.availableIconThemes.indexOf(s) === -1) {
-                        let arr = root.availableIconThemes;
+                    let hasCurrent = false;
+                    for (let i = 0; i < root.availableIconThemes.length; i++) {
+                        if (root.availableIconThemes[i] === s) { hasCurrent = true; break; }
+                    }
+                    if (!hasCurrent) {
+                        let arr = [];
+                        for (let i = 0; i < root.availableIconThemes.length; i++) arr.push(root.availableIconThemes[i]);
                         arr.unshift(s);
                         root.availableIconThemes = arr;
                     }
@@ -374,7 +379,12 @@ Item {
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
                         model: root.availableIconThemes
-                        currentIndex: model.indexOf(root.iconTheme) !== -1 ? model.indexOf(root.iconTheme) : 0
+                        currentIndex: {
+                            for (let i = 0; i < root.availableIconThemes.length; i++) {
+                                if (root.availableIconThemes[i] === root.iconTheme) return i;
+                            }
+                            return 0;
+                        }
                         onActivated: (idx) => {
                             let val = model[idx];
                             root.iconTheme = val;
@@ -395,8 +405,13 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
-                        model: ["Bibata-Modern-Ice", "Bibata-Modern-Classic", "Bibata-Modern-Amber", "Adwaita", "breeze"]
-                        currentIndex: model.indexOf(root.cursorTheme) !== -1 ? model.indexOf(root.cursorTheme) : 0
+                        model: ["Bibata-Modern-Ice", "Bibata-Modern-Amber", "Bibata-Modern-Classic", "Adwaita", "breeze_cursors"]
+                        currentIndex: {
+                            for (let i = 0; i < model.length; i++) {
+                                if (model[i] === root.cursorTheme) return i;
+                            }
+                            return 0;
+                        }
                         onActivated: (idx) => {
                             let val = model[idx];
                             root.cursorTheme = val;
