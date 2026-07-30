@@ -362,6 +362,7 @@ PanelWindow {
 
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 6
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
