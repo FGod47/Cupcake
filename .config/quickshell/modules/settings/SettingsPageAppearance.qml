@@ -582,7 +582,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Hug", "Hover"]
+                        options: ["Hug", "Hover", "HoverSleek"]
                         current: root.appLauncherStyle
                         onSelected: (v) => {
                             root.appLauncherStyle = v;

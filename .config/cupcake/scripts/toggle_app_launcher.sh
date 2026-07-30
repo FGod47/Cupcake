@@ -6,6 +6,8 @@ export LIQUIDIFY
 
 if [ "$STYLE" = "Hug" ]; then
     TARGET="AppLauncherHug.qml"
+elif [ "$STYLE" = "HoverSleek" ]; then
+    TARGET="AppLauncherHoverSleek.qml"
 else
     TARGET="AppLauncherHover.qml"
 fi
