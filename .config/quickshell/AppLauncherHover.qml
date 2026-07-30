@@ -442,17 +442,7 @@ PanelWindow {
 
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
-            Behavior on width {
-                SequentialAnimation {
-                    PauseAnimation { duration: (root.isOpen && searchField.text.length === 0) ? 250 : 0 }
-                    NumberAnimation {
-                        duration: Theme.liquidify ? 900 : 450
-                        easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo
-                        easing.amplitude: 0.4
-                        easing.period: 0.8
-                    }
-                }
-            }
+            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
