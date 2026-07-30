@@ -546,13 +546,13 @@ PanelWindow {
                             }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: shutdownBtn.confirming ? "Sure?" : "Shutdown"
+                                text: powerPillItem.expanded ? (shutdownBtn.confirming ? "Sure?" : "Shutdown") : "Power"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
-                                color: powerMa.containsMouse ? Theme.colError : fg
-                                width: powerPillItem.expanded ? implicitWidth : 0
-                                opacity: powerPillItem.expanded ? 1 : 0
+                                color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
+                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
+                                opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: false
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -578,28 +578,6 @@ PanelWindow {
                                     powerPillItem.expanded = true
                                 }
                             }
-                        }
-                    }
-
-                    // ── "Power" label — slides in on initial hover, hidden when expanded ──
-                    Text {
-                        anchors.verticalCenter: parent ? parent.verticalCenter : undefined
-                        text: "Power"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Theme.defaultFontWeight
-                        color: Theme.colError
-                        width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 8 : 0
-                        opacity: (!powerPillItem.expanded && powerPillItem.isHovered) ? 1 : 0
-                        clip: false
-                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                        rightPadding: 8
-                        
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: powerPillItem.expanded = true
                         }
                     }
                 }
