@@ -448,11 +448,11 @@ PanelWindow {
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
             border.color: true ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
             border.width: true ? 1 : 0
-            radius: true ? 34 : 0
-            topLeftRadius: false ? 34 : 34
-            topRightRadius: false ? 34 : 34
-            bottomLeftRadius: true ? 34 : 0
-            bottomRightRadius: true ? 34 : 0
+            radius: true ? 16 : 0
+            topLeftRadius: false ? 16 : 16
+            topRightRadius: false ? 16 : 16
+            bottomLeftRadius: true ? 16 : 0
+            bottomRightRadius: true ? 16 : 0
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -566,7 +566,7 @@ PanelWindow {
 
                     Rectangle {
                         anchors.fill: parent
-                        radius: 14
+                        radius: 8
                         color: root.colOnSurface
                         opacity: hoverH.hovered && appList.currentIndex !== delegateItem.index ? 0.05 : 0
                         Behavior on opacity { NumberAnimation { duration: 100 } }
@@ -712,7 +712,7 @@ PanelWindow {
             anchors.bottomMargin: card.dynamicVMargin
 
             height: card.searchH
-            radius: 22
+            radius: 10
             clip: true
 
             color: true ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
@@ -726,7 +726,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: true ? 28 : 36
                 height: true ? 28 : 36
-                radius: true ? 14 : 18
+                radius: true ? 8 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -749,7 +749,7 @@ PanelWindow {
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
                 height: 38
-                radius: 19
+                radius: 10
                 color: "transparent"
                 opacity: card.width > 250 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 100 } }
