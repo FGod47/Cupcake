@@ -430,9 +430,9 @@ PanelWindow {
             readonly property int cardWidth: 500
             readonly property int maxListItems: 7
             readonly property int itemH: 48
-            readonly property int searchH: 38
+            readonly property int searchH: 32
             readonly property int cardPad: 12
-            readonly property int verticalPad: 8
+            readonly property int verticalPad: 6
 
             readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + verticalPad * 3 + 32
 
@@ -779,7 +779,7 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                height: 38
+                height: parent.height
                 radius: height / 2
                 color: "transparent"
                 opacity: card.width > 250 ? 1.0 : 0.0
