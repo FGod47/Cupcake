@@ -422,10 +422,10 @@ PanelWindow {
 
             readonly property int cardWidth: 500
             readonly property int maxListItems: 7
-            readonly property int itemH: 54
+            readonly property int itemH: 48
             readonly property int searchH: 44
             readonly property int cardPad: 16
-            readonly property int verticalPad: 8
+            readonly property int verticalPad: 20
 
             readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (true ? verticalPad * 3 : cardPad * 2)
 
@@ -592,9 +592,9 @@ PanelWindow {
                     Row {
                         visible: !(delegateItem.modelData?.isWebResult ?? false)
                         anchors.fill: parent
-                        anchors.leftMargin: 14
-                        anchors.rightMargin: 14
-                        spacing: 14
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        spacing: 12
 
                         IconImage {
                             asynchronous: true
@@ -605,20 +605,20 @@ PanelWindow {
                                 }
                                 return Quickshell.iconPath(icn, "application-x-executable");
                             }
-                            width: 40
-                            height: 40
+                            width: 32
+                            height: 32
                             anchors.verticalCenter: parent.verticalCenter
                         }
 
                         Column {
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 2
-                            width: parent.width - 54 - 14
+                            spacing: 0
+                            width: parent.width - 44 - 12
 
                             Text {
                                 text: delegateItem.modelData?.name ?? ""
                                 color: root.colOnSurface
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 1
                                 font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
@@ -629,7 +629,7 @@ PanelWindow {
                                       || delegateItem.modelData?.genericName
                                       || ""
                                 color: root.colOnSurfaceVariant
-                                font.weight: Theme.defaultFontWeight; font.pixelSize: 12
+                                font.weight: Theme.defaultFontWeight; font.pixelSize: 11
                                 font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
                                 width: parent.width
