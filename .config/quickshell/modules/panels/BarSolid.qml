@@ -379,6 +379,11 @@ PanelWindow {
                 }
                 
                 property bool isHovered: hoverMa.containsMouse || powerMa.containsMouse || logoutMa.containsMouse || restartMa.containsMouse
+                onIsHoveredChanged: {
+                    if (!isHovered && expanded) {
+                        expanded = false
+                    }
+                }
 
                 MouseArea {
                     id: hoverMa
