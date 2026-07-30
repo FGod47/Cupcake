@@ -563,7 +563,7 @@ PanelWindow {
                     required property int index
 
                     width: appList.width
-                    height: (delegateItem.modelData?.isWebResult) ? 84 : card.itemH
+                    height: (delegateItem.modelData?.isWebResult) ? 96 : card.itemH
 
                     Rectangle {
                         anchors.fill: parent
