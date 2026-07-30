@@ -725,14 +725,14 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                width: 60
-                height: 28
+                width: 80
+                height: 32
 
                 Image {
                     id: searchIconTxt
                     anchors.centerIn: parent
                     source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
-                    height: 18
+                    height: 26
                     fillMode: Image.PreserveAspectFit
                     opacity: 0.8
                 }
@@ -756,7 +756,7 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: 74
+                    anchors.leftMargin: 96
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 13
@@ -770,7 +770,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: 74
+                    anchors.leftMargin: 96
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
