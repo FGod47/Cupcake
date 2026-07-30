@@ -407,11 +407,11 @@ PanelWindow {
     Item {
         id: masterWrapper
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: localAppLauncherStyle === "Hover" ? 200 : 0
+        anchors.bottomMargin: true ? 200 : 0
         anchors.horizontalCenter: parent.horizontalCenter
         width: card.width
         height: card.height + 1
-        clip: localAppLauncherStyle === "Hug"
+        clip: false
 
         // ── Launcher card ─────────────────────────────────────────────
         Rectangle {
@@ -427,17 +427,17 @@ PanelWindow {
             readonly property int cardPad: 16
             readonly property int verticalPad: 8
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (localAppLauncherStyle === "Hover" ? verticalPad * 3 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, maxListItems * itemH)) + searchH + (true ? verticalPad * 3 : cardPad * 2)
 
-            width: localAppLauncherStyle === "Hover" ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
+            width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
             property real dynamicVMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * verticalPad : 0
-            height: localAppLauncherStyle === "Hover" ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
+            height: true ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
             onWidthChanged: console.log("Card width:", width)
 
-            scale: localAppLauncherStyle === "Hover" ? (root.isOpen ? 1.0 : 0.9) : 1.0
+            scale: true ? (root.isOpen ? 1.0 : 0.9) : 1.0
             opacity: 1.0
 
             Behavior on scale { NumberAnimation { duration: Theme.liquidify ? 1000 : 450; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutExpo; easing.amplitude: 1.0; easing.period: 0.85 } }
@@ -446,13 +446,13 @@ PanelWindow {
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
             color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            border.color: localAppLauncherStyle === "Hover" ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-            border.width: localAppLauncherStyle === "Hover" ? 1 : 0
-            radius: localAppLauncherStyle === "Hover" ? 12 : 0
-            topLeftRadius: localAppLauncherStyle === "Hug" ? 12 : 12
-            topRightRadius: localAppLauncherStyle === "Hug" ? 12 : 12
-            bottomLeftRadius: localAppLauncherStyle === "Hover" ? 12 : 0
-            bottomRightRadius: localAppLauncherStyle === "Hover" ? 12 : 0
+            border.color: true ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+            border.width: true ? 1 : 0
+            radius: true ? 12 : 0
+            topLeftRadius: false ? 12 : 12
+            topRightRadius: false ? 12 : 12
+            bottomLeftRadius: true ? 12 : 0
+            bottomRightRadius: true ? 12 : 0
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -475,11 +475,11 @@ PanelWindow {
         Item {
             id: listArea
             anchors.top: parent.top
-            anchors.topMargin: localAppLauncherStyle === "Hover" ? card.verticalPad : card.cardPad
+            anchors.topMargin: true ? card.verticalPad : card.cardPad
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: localAppLauncherStyle === "Hover" ? (card.searchH + card.verticalPad * 2) : card.searchH + card.cardPad
+            anchors.bottomMargin: true ? (card.searchH + card.verticalPad * 2) : card.searchH + card.cardPad
             clip: true
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 300 } }
@@ -715,7 +715,7 @@ PanelWindow {
             radius: 9999
             clip: true
 
-            color: localAppLauncherStyle === "Hover" ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
+            color: true ? Qt.rgba(root.colSurfaceContainerHigh.r, root.colSurfaceContainerHigh.g, root.colSurfaceContainerHigh.b, 0.4) : "transparent"
             border.width: 0
 
             // Search icon background
@@ -724,9 +724,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
-                width: localAppLauncherStyle === "Hover" ? 38 : 36
-                height: localAppLauncherStyle === "Hover" ? 38 : 36
-                radius: localAppLauncherStyle === "Hover" ? 19 : 18
+                width: true ? 38 : 36
+                height: true ? 38 : 36
+                radius: true ? 19 : 18
                 color: Qt.rgba(root.colPrimary.r, root.colPrimary.g, root.colPrimary.b, 0.15)
 
                 Text {
@@ -735,7 +735,7 @@ PanelWindow {
                     text: "\ueb1c" // ti-search
                     font.family: "tabler-icons"
                     font.weight: Theme.defaultFontWeight
-                    font.pixelSize: localAppLauncherStyle === "Hover" ? 20 : 18
+                    font.pixelSize: true ? 20 : 18
                     color: root.colOnSurface
                 }
             }
@@ -758,12 +758,12 @@ PanelWindow {
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 74 : 58
+                    anchors.leftMargin: true ? 74 : 58
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 15
                     font.family: Theme.defaultFontFamily
-                    text: localAppLauncherStyle === "Hover" ? "Search, calculate or run" : "Search applications…"
+                    text: true ? "Search, calculate or run" : "Search applications…"
                     visible: searchField.text.length === 0
                     opacity: card.width > 100 ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -772,7 +772,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: localAppLauncherStyle === "Hover" ? 74 : 58
+                    anchors.leftMargin: true ? 74 : 58
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
@@ -838,7 +838,7 @@ PanelWindow {
     } // contentWrapper
 
         Shape {
-            visible: localAppLauncherStyle === "Hug"
+            visible: false
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.right: parent.left
@@ -860,7 +860,7 @@ PanelWindow {
         }
 
         Shape {
-            visible: localAppLauncherStyle === "Hug"
+            visible: false
             width: 28; height: 28
             anchors.bottom: parent.bottom
             anchors.left: parent.right
