@@ -134,7 +134,7 @@ PanelWindow {
                         property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
                         property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
                         
-                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
 
                         Rectangle {
                             id: wsRect
@@ -144,7 +144,7 @@ PanelWindow {
                             radius: height / 2
                             color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
                             Behavior on color { ColorAnimation { duration: 150 } }
-                            Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                            Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
 
                         MouseArea { 
@@ -298,7 +298,7 @@ PanelWindow {
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
                             width: bMouse.containsMouse ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
                     }
                 }
@@ -335,7 +335,7 @@ PanelWindow {
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
                             width: vMouse.containsMouse ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
                     }
                 }
@@ -412,8 +412,8 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 380; easing.type: Easing.OutQuint } }
-                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
                         Row {
@@ -469,8 +469,8 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 380; easing.type: Easing.OutQuint } }
-                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
                         Row {
@@ -557,8 +557,8 @@ PanelWindow {
                                 clip: true
                                 visible: opacity > 0 || width > 0
                                 rightPadding: 8
-                                Behavior on width   { NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+                                Behavior on width   { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                             }
                         }
                         MouseArea {
