@@ -8,6 +8,7 @@ import Quickshell.Services.SystemTray
 import QtQuick.Controls
 import "../../theme"
 import "../common"
+import "../solidboard"
 import Quickshell.Services.Mpris
 import Qt5Compat.GraphicalEffects
 
@@ -26,8 +27,15 @@ PanelWindow {
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
-    property real extraHeight: dropdownOpen ? 120 : 0
+    property real extraHeight: globalState.solidBoardOpen ? 450 : (dropdownOpen ? 120 : 0)
     Behavior on extraHeight { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+    
+    Connections {
+        target: globalState
+        function onSolidBoardOpenChanged() {
+            if (globalState.solidBoardOpen) bar.dropdownOpen = false;
+        }
+    }
 
     // Shared styling
     property color bg: Theme.colSurface
@@ -275,7 +283,10 @@ PanelWindow {
                     cursorShape: Qt.PointingHandCursor
                     
                     onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
-                    onClicked: bar.dropdownOpen = !bar.dropdownOpen
+                    onClicked: {
+                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        bar.dropdownOpen = !bar.dropdownOpen;
+                    }
                     
                     Row {
                         height: 20
@@ -312,7 +323,10 @@ PanelWindow {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     
-                    onClicked: bar.dropdownOpen = !bar.dropdownOpen
+                    onClicked: {
+                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        bar.dropdownOpen = !bar.dropdownOpen;
+                    }
                     
                     Row {
                         height: 20
@@ -615,7 +629,7 @@ PanelWindow {
             anchors.topMargin: 8
             anchors.bottomMargin: 16
             spacing: 12
-            opacity: bar.dropdownOpen ? 1 : 0
+            opacity: bar.dropdownOpen && !globalState.solidBoardOpen ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 300 } }
             visible: opacity > 0
             
@@ -724,6 +738,19 @@ PanelWindow {
                     onMoved: { ddAudioVolTimer.targetVal = value; ddAudioVolTimer.restart(); bar.volStr = Math.round(value).toString() }
                 }
             }
+        }
+        
+        // ── SOLIDBOARD ────────
+        Item {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: contentLayout.bottom
+            anchors.bottom: parent.bottom
+            opacity: globalState.solidBoardOpen ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+            visible: opacity > 0
+            
+            SolidBoard {}
         }
     }
 

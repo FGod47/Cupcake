@@ -42,11 +42,7 @@ ShellRoot {
         }
     }
 
-    // SolidBoard
-    Variants {
-        model: Quickshell.screens
-        delegate: SolidBoard {}
-    }
+
     // Bottom Dock for all screens
     Variants {
         model: Quickshell.screens
