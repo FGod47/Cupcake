@@ -852,21 +852,34 @@ PanelWindow {
                 }
 
                 // Clear button
-                Text {
+                Rectangle {
                     id: clearBtn
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "close" // material icon
-                    font.family: "Material Symbols Rounded"
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 18
-                    color: root.colOnSurfaceVariant
+                    width: 22
+                    height: 22
+                    radius: 11
+                    color: clearBtnMa.containsMouse ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.15) : "transparent"
+                    border.color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.3)
+                    border.width: 1
                     opacity: searchField.text.length > 0 && card.width > 100 ? 1 : 0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
 
+                    Text {
+                        anchors.centerIn: parent
+                        text: "close"
+                        font.family: "Material Symbols Rounded"
+                        font.weight: Theme.defaultFontWeight
+                        font.pixelSize: 14
+                        color: root.colOnSurfaceVariant
+                    }
+
                     MouseArea {
+                        id: clearBtnMa
                         anchors.fill: parent
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             searchField.text = "";
