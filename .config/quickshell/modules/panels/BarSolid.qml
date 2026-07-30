@@ -530,6 +530,12 @@ PanelWindow {
                         clip: true
                         Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         rightPadding: 8
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: powerPillItem.expanded = true
+                        }
                     }
                 }
             }
