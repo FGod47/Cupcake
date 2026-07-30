@@ -144,7 +144,7 @@ PanelWindow {
                             radius: height / 2
                             color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
                             Behavior on color { ColorAnimation { duration: 150 } }
-                            Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                         }
 
                         MouseArea { 
@@ -298,7 +298,7 @@ PanelWindow {
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
                             width: bMouse.containsMouse ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                         }
                     }
                 }
@@ -335,7 +335,7 @@ PanelWindow {
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
                             width: vMouse.containsMouse ? implicitWidth : 0
                             clip: true
-                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                         }
                     }
                 }
@@ -412,8 +412,8 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
-                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutQuint } }
+                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                         Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
                         
                         Row {
@@ -469,8 +469,8 @@ PanelWindow {
                         opacity: powerPillItem.expanded ? 1 : 0
                         clip: true
                         property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
-                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutQuint } }
+                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                         Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
                         
                         Row {
@@ -555,8 +555,8 @@ PanelWindow {
                                 width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: false
-                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutExpo } }
-                                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                                Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutQuint } }
+                                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
                                 rightPadding: 8
                             }
                         }
