@@ -754,11 +754,23 @@ PanelWindow {
                 opacity: card.width > 250 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 100 } }
                 
+                Text {
+                    id: separatorDot
+                    anchors.left: parent.left
+                    anchors.leftMargin: 88
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: root.colOutline
+                    text: "•"
+                    font.pixelSize: 10
+                    opacity: card.width > 100 ? 0.5 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                }
+
                 // Placeholder
                 Text {
                     id: placeholderTxt
                     anchors.left: parent.left
-                    anchors.leftMargin: 96
+                    anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
                     color: root.colOutline
                     font.pixelSize: 13
@@ -772,7 +784,7 @@ PanelWindow {
                 TextInput {
                     id: searchField
                     anchors.left: parent.left
-                    anchors.leftMargin: 96
+                    anchors.leftMargin: 106
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
