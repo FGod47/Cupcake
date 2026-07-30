@@ -33,6 +33,13 @@ ShellRoot {
         }
     }
 
+    // Control Center for solid bar
+    Variants {
+        model: Quickshell.screens
+        delegate: ControlCenterSolid {
+            // Note: visible is managed internally by ControlCenterSolid.qml
+        }
+    }
     // Bottom Dock for all screens
     Variants {
         model: Quickshell.screens
