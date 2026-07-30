@@ -563,7 +563,7 @@ PanelWindow {
                     width: appList.width
                     height: appList.currentItem ? appList.currentItem.height : card.itemH
                     y: appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0
-                    radius: 8
+                    radius: height / 2
                     color: root.colOnSurface
                     opacity: appList.count > 0 ? 0.09 : 0
                     visible: appList.count > 0
@@ -596,7 +596,7 @@ PanelWindow {
 
                     Rectangle {
                         anchors.fill: parent
-                        radius: 8
+                        radius: height / 2
                         color: root.colOnSurface
                         opacity: hoverH.hovered && appList.currentIndex !== delegateItem.index ? 0.05 : 0
                         Behavior on opacity { NumberAnimation { duration: 100 } }
