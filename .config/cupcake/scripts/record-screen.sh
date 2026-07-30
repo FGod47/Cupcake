@@ -1,6 +1,7 @@
 #!/bin/bash
 
 output="$HOME/Videos/recording_$(date +%Y-%m-%d_%H-%M-%S).mp4"
+mkdir -p "$HOME/Videos"
 
 notify-send "  󰑓  Fullscreen Recording Started"
 
