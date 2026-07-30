@@ -551,9 +551,13 @@ PanelWindow {
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
                                 color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
+                                // Use clip+width:0 when idle, opacity fade when transitioning
+                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
-                                // Width is always reserved — only opacity animates (no layout recalc = no jitter)
+                                clip: true
+                                visible: opacity > 0 || width > 0
                                 rightPadding: 8
+                                Behavior on width   { NumberAnimation { duration: 200; easing.type: Easing.OutQuint } }
                                 Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuart } }
                             }
                         }
