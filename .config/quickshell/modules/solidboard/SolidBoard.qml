@@ -46,11 +46,11 @@ Item {
             spacing: 16
 
             ClockWidget {
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignRight
             }
 
             CalendarWidget {
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignRight
             }
         }
     }

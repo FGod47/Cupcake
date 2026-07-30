@@ -7,6 +7,7 @@ import "../common"
 
 Rectangle {
     id: clockWidget
+    implicitWidth: 320
     width: 320
     implicitHeight: 100
     color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5)

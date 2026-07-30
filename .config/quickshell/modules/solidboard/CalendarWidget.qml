@@ -6,6 +6,7 @@ import "../common"
 
 Rectangle {
     id: calWidget
+    implicitWidth: 320
     width: 320
     implicitHeight: mainLayout.implicitHeight + 32
     color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5)
