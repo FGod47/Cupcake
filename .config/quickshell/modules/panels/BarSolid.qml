@@ -421,16 +421,6 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             spacing: 0
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: logoutBtn.confirming ? "Sure?" : "Logout"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                                rightPadding: 8
-                            }
                             Item {
                                 width: 26; height: 26
                                 Text {
@@ -441,6 +431,16 @@ PanelWindow {
                                     color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
                                     Behavior on color { ColorAnimation { duration: 120 } }
                                 }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: logoutBtn.confirming ? "Sure?" : "Logout"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                                rightPadding: 8
                             }
                         }
                         MouseArea {
@@ -478,16 +478,6 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             spacing: 0
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: restartBtn.confirming ? "Sure?" : "Restart"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                                rightPadding: 8
-                            }
                             Item {
                                 width: 26; height: 26
                                 Text {
@@ -498,6 +488,16 @@ PanelWindow {
                                     color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
                                     Behavior on color { ColorAnimation { duration: 120 } }
                                 }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: restartBtn.confirming ? "Sure?" : "Restart"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                                rightPadding: 8
                             }
                         }
                         MouseArea {
@@ -518,12 +518,14 @@ PanelWindow {
                         }
                     }
 
-                    // ── Power / Shutdown button (Always visible on far right) ──
+                    // ── Power icon (always visible) & Shutdown text ──
                     Item {
                         id: shutdownBtn
                         height: 26
                         width: shutdownRow.implicitWidth
+                        clip: true
                         property bool confirming: false
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                         Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
                         
                         Row {
@@ -531,25 +533,6 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             spacing: 0
-                            
-                            // Text appears on the LEFT of the icon
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: powerPillItem.expanded ? (shutdownBtn.confirming ? "Sure?" : "Shutdown") : "Power"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
-                                
-                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
-                                opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
-                                clip: false
-                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                                rightPadding: 8
-                            }
-                            
-                            // Icon appears on the RIGHT
                             Item {
                                 width: 26; height: 26
                                 Text {
@@ -560,6 +543,20 @@ PanelWindow {
                                     color: (powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: shutdownBtn.confirming ? "Sure?" : "Shutdown"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: powerMa.containsMouse ? Theme.colError : fg
+                                width: powerPillItem.expanded ? implicitWidth : 0
+                                opacity: powerPillItem.expanded ? 1 : 0
+                                clip: false
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                                rightPadding: 8
                             }
                         }
                         MouseArea {
@@ -581,6 +578,28 @@ PanelWindow {
                                     powerPillItem.expanded = true
                                 }
                             }
+                        }
+                    }
+
+                    // ── "Power" label — slides in on initial hover, hidden when expanded ──
+                    Text {
+                        anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+                        text: "Power"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Theme.defaultFontWeight
+                        color: Theme.colError
+                        width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 8 : 0
+                        opacity: (!powerPillItem.expanded && powerPillItem.isHovered) ? 1 : 0
+                        clip: false
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+                        rightPadding: 8
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: powerPillItem.expanded = true
                         }
                     }
                 }
