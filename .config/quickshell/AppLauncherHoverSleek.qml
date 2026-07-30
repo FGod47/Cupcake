@@ -421,7 +421,7 @@ PanelWindow {
         clip: false
 
         // ── Launcher card ─────────────────────────────────────────────
-        Rectangle {
+        Item {
             id: card
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -434,7 +434,7 @@ PanelWindow {
             readonly property int cardPad: 12
             readonly property int verticalPad: 8
 
-            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + (true ? verticalPad * 3 + 8 : cardPad * 2)
+            readonly property int fullHeight: (appList.count === 0 ? 120 : Math.min(appList.contentHeight, (maxListItems * itemH) + ((maxListItems - 1) * 4))) + searchH + verticalPad * 3 + 16
 
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
@@ -452,14 +452,36 @@ PanelWindow {
             Behavior on width { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
             Behavior on height { NumberAnimation { duration: Theme.liquidify ? 1200 : 550; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.InOutExpo; easing.amplitude: 0.4; easing.period: 0.85 } }
 
-            color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-            border.color: true ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-            border.width: true ? 1 : 0
-            radius: true ? 16 : 0
-            topLeftRadius: false ? 16 : 16
-            topRightRadius: false ? 16 : 16
-            bottomLeftRadius: true ? 16 : 0
-            bottomRightRadius: true ? 16 : 0
+            Rectangle {
+                id: listCardBg
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: searchCardBg.top
+                anchors.bottomMargin: 8
+                
+                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                border.color: Qt.rgba(1, 1, 1, 0.10)
+                border.width: 1
+                radius: 16
+                
+                opacity: (parent.height > searchCardBg.height + 10) ? 1.0 : 0.0
+                visible: opacity > 0
+                clip: true
+            }
+
+            Rectangle {
+                id: searchCardBg
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: card.searchH + card.verticalPad * 2
+                
+                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                border.color: Qt.rgba(1, 1, 1, 0.10)
+                border.width: 1
+                radius: height / 2
+            }
 
             MouseArea { anchors.fill: parent; onClicked: {} }
 
@@ -486,7 +508,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: true ? (card.searchH + card.verticalPad * 2) : card.searchH + card.cardPad
+            anchors.bottomMargin: card.searchH + card.verticalPad * 2 + 16
             clip: true
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 300 } }
@@ -502,8 +524,8 @@ PanelWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "\ueb1c" // ti-search
-                    font.family: "tabler-icons"
+                    text: "search" // material icon
+                    font.family: "Material Symbols Rounded"
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 42
                     color: root.colOnSurfaceVariant
                 }
@@ -720,7 +742,7 @@ PanelWindow {
             anchors.bottomMargin: card.dynamicVMargin
 
             height: card.searchH
-            radius: 10
+            radius: height / 2
             clip: true
 
             color: "transparent"
@@ -756,7 +778,7 @@ PanelWindow {
                 anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
                 height: 38
-                radius: 10
+                radius: height / 2
                 color: "transparent"
                 opacity: card.width > 250 ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 100 } }
@@ -833,9 +855,9 @@ PanelWindow {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "\ueb55" // ti-x
-                    font.family: "tabler-icons"
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 15
+                    text: "close" // material icon
+                    font.family: "Material Symbols Rounded"
+                    font.weight: Theme.defaultFontWeight; font.pixelSize: 18
                     color: root.colOnSurfaceVariant
                     opacity: searchField.text.length > 0 && card.width > 100 ? 1 : 0
                     visible: opacity > 0
