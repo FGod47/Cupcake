@@ -544,6 +544,13 @@ PanelWindow {
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                             }
+                            TextMetrics {
+                                id: shutdownMetrics
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                text: "Shutdown"
+                            }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: powerPillItem.expanded ? (shutdownBtn.confirming ? "Sure?" : "Shutdown") : "Power"
@@ -551,12 +558,15 @@ PanelWindow {
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
                                 color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
-                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
+                                
+                                property real targetWidth: shutdownMetrics.advanceWidth + 8
+                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? targetWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: false
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                                 rightPadding: 8
+                                horizontalAlignment: Text.AlignLeft
                             }
                         }
                         MouseArea {
