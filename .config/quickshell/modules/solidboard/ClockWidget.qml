@@ -22,7 +22,7 @@ Rectangle {
         spacing: 12
 
         Text {
-            text: Qt.formatDateTime(timeClock.date, "hh")
+            text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
             font.family: Theme.defaultFontFamily
             font.pixelSize: 48
             font.weight: Font.Bold

@@ -101,18 +101,24 @@ Rectangle {
             font.pixelSize: Theme.defaultFontSize
             spacing: 4
 
-            delegate: Rectangle {
+            delegate: Item {
                 implicitWidth: 32
                 implicitHeight: 32
-                radius: 16
-                color: model.today ? Theme.colPrimary : (cellMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent")
-                
-                Text {
+
+                Rectangle {
+                    width: 32
+                    height: 32
+                    radius: 16
                     anchors.centerIn: parent
-                    text: model.day
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: Theme.defaultFontSize
-                    color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Theme.transparentize(Theme.colOnSurface, 0.3))
+                    color: model.today ? Theme.colPrimary : (cellMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent")
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: model.day
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Theme.transparentize(Theme.colOnSurface, 0.3))
+                    }
                 }
                 
                 MouseArea {
