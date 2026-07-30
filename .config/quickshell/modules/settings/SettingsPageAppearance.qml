@@ -34,8 +34,31 @@ Item {
     property var availableIconThemes: ["Papirus-Dark", "Papirus-Light", "Papirus", "Adwaita", "breeze", "breeze-dark"]
     property string iconTheme: "Papirus-Dark"
     
+    property var availableCursorThemes: ["Bibata-Modern-Ice", "Bibata-Modern-Amber", "Bibata-Modern-Classic", "Adwaita"]
+
     Process {
-        command: ["bash", "-c", "find /usr/share/icons ~/.local/share/icons ~/.icons -maxdepth 2 -name 'index.theme' 2>/dev/null | awk -F'/' '{print $(NF-1)}' | sort -u"]
+        command: ["bash", "-c", "find /usr/share/icons ~/.local/share/icons ~/.icons -maxdepth 2 -type d -name 'cursors' 2>/dev/null | awk -F'/' '{print $(NF-1)}' | sort -u"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let txt = text.trim();
+                if (txt !== "") {
+                    let arr = txt.split("\n");
+                    let hasCurrent = false;
+                    for (let i = 0; i < arr.length; i++) {
+                        if (arr[i] === root.cursorTheme) { hasCurrent = true; break; }
+                    }
+                    if (!hasCurrent && root.cursorTheme !== "") {
+                        arr.unshift(root.cursorTheme);
+                    }
+                    root.availableCursorThemes = arr;
+                }
+            }
+        }
+    }
+
+    Process {
+        command: ["bash", "-c", "find /usr/share/icons ~/.local/share/icons ~/.icons -maxdepth 2 -name 'index.theme' 2>/dev/null | while read f; do [ ! -d \"$(dirname \"$f\")/cursors\" ] && echo \"$f\"; done | awk -F'/' '{print $(NF-1)}' | sort -u"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -43,7 +66,11 @@ Item {
                 if (txt !== "") {
                     let arr = txt.split("\n");
                     arr = arr.filter(t => t !== "hicolor" && t !== "default" && t !== "locolor");
-                    if (arr.indexOf(root.iconTheme) === -1 && root.iconTheme !== "") {
+                    let hasCurrent = false;
+                    for (let i = 0; i < arr.length; i++) {
+                        if (arr[i] === root.iconTheme) { hasCurrent = true; break; }
+                    }
+                    if (!hasCurrent && root.iconTheme !== "") {
                         arr.unshift(root.iconTheme);
                     }
                     root.availableIconThemes = arr;
@@ -410,10 +437,10 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     StyledComboBox {
-                        model: ["Bibata-Modern-Ice", "Bibata-Modern-Amber", "Bibata-Modern-Classic", "Adwaita", "breeze_cursors"]
+                        model: root.availableCursorThemes
                         currentIndex: {
-                            for (let i = 0; i < model.length; i++) {
-                                if (model[i] === root.cursorTheme) return i;
+                            for (let i = 0; i < root.availableCursorThemes.length; i++) {
+                                if (root.availableCursorThemes[i] === root.cursorTheme) return i;
                             }
                             return 0;
                         }
