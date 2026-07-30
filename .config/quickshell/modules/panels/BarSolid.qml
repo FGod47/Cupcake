@@ -361,32 +361,34 @@ PanelWindow {
                 color: fg
             }
 
-            // ── RIGHT: Power Pill (expands on hover to show actions) ────────
+            // ── RIGHT: Power Pill ────────
+            // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
             Item {
+                id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
-                implicitWidth: powerPillRow.implicitWidth
+                implicitWidth: powerPillInner.implicitWidth
 
-                // isHovered = any of the inner icons is hovered
-                property bool isHovered: shutdownMa.containsMouse || restartMa.containsMouse || logoutMa.containsMouse
+                property bool expanded: false  // true after clicking
 
                 Row {
-                    id: powerPillRow
+                    id: powerPillInner
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 0
 
-                    // Logout icon — slides in from left on hover
+                    // ── Expanded: action icons slide in ──
+                    // Logout
                     Item {
                         height: 26
-                        width: parent.parent.isHovered ? 26 : 0
+                        width: powerPillItem.expanded ? 24 : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                         Text {
                             anchors.centerIn: parent
                             text: "\ueba8"
                             font.family: fontName
                             font.pixelSize: 14
-                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.6)
+                            color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
                             Behavior on color { ColorAnimation { duration: 120 } }
                         }
                         MouseArea {
@@ -394,22 +396,21 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"])
+                            onClicked: { powerPillItem.expanded = false; Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"]) }
                         }
                     }
-
-                    // Restart icon — slides in on hover
+                    // Restart
                     Item {
                         height: 26
-                        width: parent.parent.isHovered ? 26 : 0
+                        width: powerPillItem.expanded ? 24 : 0
                         clip: true
-                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                         Text {
                             anchors.centerIn: parent
                             text: "\ueb71"
                             font.family: fontName
                             font.pixelSize: 14
-                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.6)
+                            color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
                             Behavior on color { ColorAnimation { duration: 120 } }
                         }
                         MouseArea {
@@ -417,11 +418,11 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "systemctl reboot"])
+                            onClicked: { powerPillItem.expanded = false; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]) }
                         }
                     }
 
-                    // Power/Shutdown icon — always visible, turns red on hover
+                    // ── Power icon (always visible) ──
                     Item {
                         height: 26
                         width: 26
@@ -430,19 +431,39 @@ PanelWindow {
                             text: "\ueb0d"
                             font.family: fontName
                             font.pixelSize: 15
-                            color: shutdownMa.containsMouse ? Theme.colError : fg
+                            color: powerMa.containsMouse ? Theme.colError : fg
                             Behavior on color { ColorAnimation { duration: 150 } }
                         }
                         MouseArea {
-                            id: shutdownMa
+                            id: powerMa
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
+                            onClicked: {
+                                if (powerPillItem.expanded)
+                                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
+                                else
+                                    powerPillItem.expanded = true
+                            }
                         }
+                    }
+
+                    // ── "Power" label — slides in on hover, hidden when expanded ──
+                    Text {
+                        anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+                        text: "Power"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Theme.defaultFontWeight
+                        color: Theme.colError
+                        leftPadding: 4
+                        width: (!powerPillItem.expanded && powerMa.containsMouse) ? implicitWidth + 4 : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                     }
                 }
             }
+
         }
         
         Image {
