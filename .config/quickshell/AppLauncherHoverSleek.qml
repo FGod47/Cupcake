@@ -860,9 +860,8 @@ PanelWindow {
                     width: 22
                     height: 22
                     radius: 11
-                    color: clearBtnMa.containsMouse ? Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.15) : "transparent"
-                    border.color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 0.3)
-                    border.width: 1
+                    color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, clearBtnMa.containsMouse ? 0.15 : 0.08)
+                    border.width: 0
                     opacity: searchField.text.length > 0 && card.width > 100 ? 1 : 0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
