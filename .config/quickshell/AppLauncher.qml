@@ -336,6 +336,13 @@ PanelWindow {
         if (q.length === 0) {
             let arr = [];
             for (let i = 0; i < allApps.length; i++) arr.push(allApps[i]);
+            arr.sort((a, b) => {
+                let nameA = (a.name || "").toLowerCase();
+                let nameB = (b.name || "").toLowerCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
             filteredApps = arr;
         } else {
             let results = FuzzySort.go(q, allApps, {
