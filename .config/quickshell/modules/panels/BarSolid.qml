@@ -370,6 +370,14 @@ PanelWindow {
                 implicitWidth: powerPillInner.implicitWidth
 
                 property bool expanded: false  // true after clicking
+                onExpandedChanged: {
+                    if (!expanded) {
+                        logoutBtn.confirming = false
+                        restartBtn.confirming = false
+                        shutdownBtn.confirming = false
+                    }
+                }
+                
                 property bool isHovered: hoverMa.containsMouse || powerMa.containsMouse || logoutMa.containsMouse || restartMa.containsMouse
 
                 MouseArea {
@@ -387,10 +395,14 @@ PanelWindow {
                     // ── Expanded: action icons slide in ──
                     // Logout
                     Item {
+                        id: logoutBtn
                         height: 26
                         width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
                         clip: true
+                        property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                        Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
+                        
                         Row {
                             id: logoutRow
                             anchors.verticalCenter: parent.verticalCenter
@@ -409,7 +421,7 @@ PanelWindow {
                             }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "Logout"
+                                text: logoutBtn.confirming ? "Sure?" : "Logout"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
@@ -423,16 +435,29 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: { powerPillItem.expanded = false; Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"]) }
+                            onClicked: {
+                                if (logoutBtn.confirming) {
+                                    powerPillItem.expanded = false;
+                                    logoutBtn.confirming = false;
+                                    Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"]);
+                                } else {
+                                    logoutBtn.confirming = true;
+                                    logoutTimer.restart();
+                                }
+                            }
                         }
                     }
 
                     // Restart
                     Item {
+                        id: restartBtn
                         height: 26
                         width: powerPillItem.expanded ? restartRow.implicitWidth : 0
                         clip: true
+                        property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                        Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
+                        
                         Row {
                             id: restartRow
                             anchors.verticalCenter: parent.verticalCenter
@@ -451,7 +476,7 @@ PanelWindow {
                             }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "Restart"
+                                text: restartBtn.confirming ? "Sure?" : "Restart"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
@@ -465,16 +490,29 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: { powerPillItem.expanded = false; Quickshell.execDetached(["bash", "-c", "systemctl reboot"]) }
+                            onClicked: {
+                                if (restartBtn.confirming) {
+                                    powerPillItem.expanded = false;
+                                    restartBtn.confirming = false;
+                                    Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
+                                } else {
+                                    restartBtn.confirming = true;
+                                    restartTimer.restart();
+                                }
+                            }
                         }
                     }
 
                     // ── Power icon (always visible) & Shutdown text ──
                     Item {
+                        id: shutdownBtn
                         height: 26
                         width: shutdownRow.implicitWidth
                         clip: true
+                        property bool confirming: false
                         Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                        Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
+                        
                         Row {
                             id: shutdownRow
                             anchors.verticalCenter: parent.verticalCenter
@@ -493,7 +531,7 @@ PanelWindow {
                             }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "Shutdown"
+                                text: shutdownBtn.confirming ? "Sure?" : "Shutdown"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
@@ -510,10 +548,18 @@ PanelWindow {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                if (powerPillItem.expanded)
-                                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"])
-                                else
+                                if (powerPillItem.expanded) {
+                                    if (shutdownBtn.confirming) {
+                                        powerPillItem.expanded = false;
+                                        shutdownBtn.confirming = false;
+                                        Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                                    } else {
+                                        shutdownBtn.confirming = true;
+                                        shutdownTimer.restart();
+                                    }
+                                } else {
                                     powerPillItem.expanded = true
+                                }
                             }
                         }
                     }
