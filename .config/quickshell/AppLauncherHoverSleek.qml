@@ -439,6 +439,11 @@ PanelWindow {
             width: true ? (root.isOpen ? cardWidth : 52) : (root.isOpen ? cardWidth : 160)
             property real dynamicMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * cardPad : 0
             property real dynamicVMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * verticalPad : 0
+            
+            property bool isModeFiles: typeof searchField !== "undefined" && searchField !== null ? (searchField.text.startsWith("f ") || searchField.text.startsWith("F ")) : false
+            property real splitOffset: isModeFiles ? (card.searchH + card.verticalPad * 2 + 8) : 0
+            Behavior on splitOffset { NumberAnimation { duration: 450; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
+            
             height: true ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
             onHeightChanged: console.log("Card height:", height)
@@ -471,8 +476,35 @@ PanelWindow {
             }
 
             Rectangle {
+                id: modeIndicatorBg
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                height: searchCardBg.height
+                width: Math.max(0, card.splitOffset - 8)
+                opacity: card.isModeFiles ? 1.0 : 0.0
+                radius: height / 2
+                
+                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                border.color: Qt.rgba(1, 1, 1, 0.10)
+                border.width: 1
+                clip: true
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "folder"
+                    font.family: "Material Symbols Rounded"
+                    font.pixelSize: 20
+                    color: root.colOnSurface
+                    opacity: modeIndicatorBg.width > 24 ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+            }
+
+            Rectangle {
                 id: searchCardBg
                 anchors.left: parent.left
+                anchors.leftMargin: card.splitOffset
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 height: Math.min(card.height, card.searchH + card.verticalPad * 2)
@@ -737,7 +769,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: card.dynamicMargin
+            anchors.leftMargin: card.dynamicMargin + card.splitOffset
             anchors.rightMargin: card.dynamicMargin
             anchors.bottomMargin: card.dynamicVMargin
 
