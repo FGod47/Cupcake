@@ -370,6 +370,14 @@ PanelWindow {
                 implicitWidth: powerPillInner.implicitWidth
 
                 property bool expanded: false  // true after clicking
+                property bool isHovered: hoverMa.containsMouse || powerMa.containsMouse || logoutMa.containsMouse || restartMa.containsMouse
+
+                MouseArea {
+                    id: hoverMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.NoButton
+                }
 
                 Row {
                     id: powerPillInner
@@ -457,7 +465,7 @@ PanelWindow {
                         font.weight: Theme.defaultFontWeight
                         color: Theme.colError
                         leftPadding: 4
-                        width: (!powerPillItem.expanded && powerMa.containsMouse) ? implicitWidth + 4 : 0
+                        width: (!powerPillItem.expanded && powerPillItem.isHovered) ? implicitWidth + 4 : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                     }
