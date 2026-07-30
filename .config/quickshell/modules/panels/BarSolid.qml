@@ -353,7 +353,6 @@ PanelWindow {
             // ── RIGHT: Clock ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
                 text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
@@ -361,6 +360,14 @@ PanelWindow {
                 color: fg
             }
 
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 12
+                Layout.rightMargin: 12
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+            }
             // ── RIGHT: Power Pill ────────
             // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
             Item {
