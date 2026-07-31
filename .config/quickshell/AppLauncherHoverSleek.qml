@@ -478,53 +478,59 @@ PanelWindow {
                 clip: true
             }
 
-            // ── Folder mode pill — lives at left, revealed as search bar retreats ──
-            // z-order: folder pill is BEHIND (lower z) than searchCardBg.
-            // The search bar starts full-width and covers it; when files mode
-            // activates the search bar's left edge bounces right, exposing the pill.
-            Rectangle {
-                id: modeIndicatorBg
+            // ── Two-pill row: splits apart when files mode activates ──
+            // Both pills live inside a Row. As spacing grows from 0 to gap,
+            // they physically push apart — the folder pill slides LEFT,
+            // the search pill slides RIGHT. No appearing from below.
+            Row {
+                id: pillRow
+                anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                height: card.searchH + card.verticalPad * 2
-                width: height  // square pill, same height as search bar
-                radius: height / 2
-                z: 0  // behind the search bar
-
-                // Instant show — it just sits there; the search bar reveals it
-                opacity: card.isModeFiles ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 80 } }
-
-                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-                border.color: Qt.rgba(1, 1, 1, 0.10)
-                border.width: 1
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "folder"
-                    font.family: "Material Symbols Rounded"
-                    font.pixelSize: 20
-                    color: root.colOnSurface
-                    opacity: card.isModeFiles ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: 150 } }
-                }
-            }
-
-            // ── Search bar pill — bounces right, uncovering the folder pill ──
-            Rectangle {
-                id: searchCardBg
                 anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                // Shrinks from the LEFT as splitOffset grows (with OutBack bounce)
-                // This makes it look like the left portion tears off
-                width: parent.width - card.splitOffset
-                height: Math.min(card.height, card.searchH + card.verticalPad * 2)
-                z: 1  // on top, covering the folder pill when not split
+                layoutDirection: Qt.LeftToRight
 
-                color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-                border.color: Qt.rgba(1, 1, 1, 0.10)
-                border.width: 1
-                radius: height / 2
+                // The gap between the two pills, driven by splitOffset's Behavior
+                spacing: card.splitOffset > 0 ? 8 : 0
+                Behavior on spacing { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+
+                // ── Folder pill (left) ──
+                Rectangle {
+                    id: modeIndicatorBg
+                    height: card.searchH + card.verticalPad * 2
+                    width: card.isModeFiles ? height : 0
+                    radius: height / 2
+                    clip: true
+                    visible: width > 0
+
+                    Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+
+                    color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                    border.color: Qt.rgba(1, 1, 1, 0.10)
+                    border.width: 1
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "folder"
+                        font.family: "Material Symbols Rounded"
+                        font.pixelSize: 20
+                        color: root.colOnSurface
+                        opacity: modeIndicatorBg.width > modeIndicatorBg.height * 0.8 ? 1.0 : 0.0
+                        Behavior on opacity { NumberAnimation { duration: 120 } }
+                    }
+                }
+
+                // ── Search bar pill (right) ──
+                Rectangle {
+                    id: searchCardBg
+                    // Takes remaining width after folder pill + spacing
+                    width: parent.width - modeIndicatorBg.width - pillRow.spacing
+                    height: Math.min(card.height, card.searchH + card.verticalPad * 2)
+
+                    color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                    border.color: Qt.rgba(1, 1, 1, 0.10)
+                    border.width: 1
+                    radius: height / 2
+                }
             }
 
             MouseArea { anchors.fill: parent; onClicked: {} }
@@ -782,7 +788,8 @@ PanelWindow {
             anchors.bottom: parent.bottom
             anchors.rightMargin: card.dynamicMargin
             anchors.bottomMargin: card.dynamicVMargin
-            width: parent.width - (card.splitOffset > 0 ? card.splitOffset : 0) - card.dynamicMargin * 2
+            // Match searchCardBg: full width minus folder pill minus gap
+            width: parent.width - modeIndicatorBg.width - (card.isModeFiles ? 8 : 0) - card.dynamicMargin
 
             height: card.searchH
             radius: height / 2
