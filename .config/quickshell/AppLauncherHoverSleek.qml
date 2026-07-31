@@ -479,9 +479,6 @@ PanelWindow {
             }
 
             // ── Two-pill row: splits apart when files mode activates ──
-            // Both pills live inside a Row. As spacing grows from 0 to gap,
-            // they physically push apart — the folder pill slides LEFT,
-            // the search pill slides RIGHT. No appearing from below.
             Row {
                 id: pillRow
                 anchors.bottom: parent.bottom
@@ -489,11 +486,22 @@ PanelWindow {
                 anchors.right: parent.right
                 layoutDirection: Qt.LeftToRight
 
-                // The gap between the two pills, driven by splitOffset's Behavior
                 spacing: card.splitOffset > 0 ? 8 : 0
                 Behavior on spacing { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
 
-                // ── Folder pill (left) ──
+                // ── Search bar pill (left) ──
+                Rectangle {
+                    id: searchCardBg
+                    width: parent.width - modeIndicatorBg.width - pillRow.spacing
+                    height: Math.min(card.height, card.searchH + card.verticalPad * 2)
+
+                    color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
+                    border.color: Qt.rgba(1, 1, 1, 0.10)
+                    border.width: 1
+                    radius: height / 2
+                }
+
+                // ── Folder pill (right) ──
                 Rectangle {
                     id: modeIndicatorBg
                     height: card.searchH + card.verticalPad * 2
@@ -517,19 +525,6 @@ PanelWindow {
                         opacity: modeIndicatorBg.width > modeIndicatorBg.height * 0.8 ? 1.0 : 0.0
                         Behavior on opacity { NumberAnimation { duration: 120 } }
                     }
-                }
-
-                // ── Search bar pill (right) ──
-                Rectangle {
-                    id: searchCardBg
-                    // Takes remaining width after folder pill + spacing
-                    width: parent.width - modeIndicatorBg.width - pillRow.spacing
-                    height: Math.min(card.height, card.searchH + card.verticalPad * 2)
-
-                    color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
-                    border.color: Qt.rgba(1, 1, 1, 0.10)
-                    border.width: 1
-                    radius: height / 2
                 }
             }
 
