@@ -1,112 +1,283 @@
 // ClockDropdown.qml
 // A floating pill that animates from the clock text position in the solid bar,
-// expanding downward to reveal a ClockWidget + CalendarWidget.
-// Usage: place as a sibling of solidBar inside PanelWindow.
+// expanding downward to reveal a compact clock + calendar.
 // Controlled via globalState.solidBoardOpen.
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Services.SystemTray
 import Quickshell
-import Quickshell.Wayland
 import "../../theme"
 import "../common"
-import "../solidboard"
 
 Item {
     id: root
 
-    // The bar's screen width so we can position correctly
     property real screenW: 1920
-    // X-position of the clock text in the bar (right side, approximate)
-    // The pill will animate from a small pill near the clock to a full dropdown
-    property real clockX: screenW - 260   // roughly where clock text sits
-    property real clockY: 8              // same top as the bar pill
+    // Bar geometry — matches BarSolid: barX=100, barW=screenW-200
+    readonly property real barRightEdge: screenW - 100  // right edge of the solid bar
 
-    // Final expanded size & position
-    readonly property real expandedW: 356
-    readonly property real expandedH: clockWidget.implicitHeight + calWidget.implicitHeight + 32 + 16
-    readonly property real expandedX: screenW - expandedW - 12
-    readonly property real expandedY: 50   // just below the bar
+    // Dropdown width — compact, right-aligned with bar
+    readonly property real dropW: 280
+    readonly property real dropX: barRightEdge - dropW  // right-aligned to bar
+    readonly property real dropY: 50                    // just below bar
 
-    // Collapsed (pill) size — small pill sitting at clock position
-    readonly property real collapsedW: 140
-    readonly property real collapsedH: 26
+    // Collapsed pill — sits at clock position (near bar right side)
+    readonly property real collapsedW: 130
+    readonly property real collapsedH: 24
+    readonly property real collapsedX: barRightEdge - collapsedW - 8
 
     property bool isOpen: globalState.solidBoardOpen
 
     // Expose inner card for BarSolid's mask Region
     property alias dropdownCard: card
 
+    SystemClock { id: timeClock; precision: SystemClock.Minutes }
+
     // ── Floating card ─────────────────────────────────────────────────
     Rectangle {
         id: card
 
-        x: root.isOpen ? root.expandedX : root.clockX
-        y: root.isOpen ? root.expandedY : root.clockY
-        width:  root.isOpen ? root.expandedW  : root.collapsedW
-        height: root.isOpen ? root.expandedH  : root.collapsedH
+        x: root.isOpen ? root.dropX      : root.collapsedX
+        y: root.isOpen ? root.dropY      : 8
+        width:  root.isOpen ? root.dropW  : root.collapsedW
+        height: root.isOpen ? contentCol.implicitHeight + 24 : root.collapsedH
 
-        radius: root.isOpen ? 20 : height / 2
+        radius: root.isOpen ? 16 : height / 2
         clip: true
 
         color: Qt.rgba(Theme.colSurface.r, Theme.colSurface.g, Theme.colSurface.b,
-                       Theme.isDark ? 0.92 : 0.97)
+                       Theme.isDark ? 0.94 : 0.97)
         border.color: Qt.rgba(1, 1, 1, Theme.isDark ? 0.10 : 0.06)
         border.width: 1
 
         opacity: root.isOpen ? 1.0 : 0.0
         visible: opacity > 0
 
-        Behavior on x      { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.0 } }
-        Behavior on y      { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.0 } }
-        Behavior on width  { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.0 } }
-        Behavior on height { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.0 } }
-        Behavior on radius { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        Behavior on x      { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 0.9 } }
+        Behavior on y      { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 0.9 } }
+        Behavior on width  { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 0.9 } }
+        Behavior on height { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 0.9 } }
+        Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: 180 } }
 
-        // Top highlight line
+        // Top highlight
         Rectangle {
-            anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-            anchors.leftMargin: 6; anchors.rightMargin: 6
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 4; anchors.rightMargin: 4
             height: 1; radius: 1
-            color: Qt.rgba(1, 1, 1, 0.12)
+            color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        // Content fades in after card expands
         ColumnLayout {
             id: contentCol
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 12
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 12
+            spacing: 10
 
             opacity: root.isOpen ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 160 } }
 
-            ClockWidget {
-                id: clockWidget
+            // ── Compact clock row ──────────────────────────────────
+            Row {
                 Layout.fillWidth: true
-                // Override fixed width from ClockWidget so it fills the card
-                width: parent.width
-                implicitWidth: parent.width
-                // Remove the card-style bg — parent card handles it
-                color: "transparent"
-                border.width: 0
+                spacing: 6
+                Layout.alignment: Qt.AlignHCenter
+
+                Text {
+                    text: Qt.formatDateTime(timeClock.date, "hh")
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 36
+                    font.weight: Font.Bold
+                    color: Theme.colPrimary
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: ":"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 36
+                    font.weight: Font.Bold
+                    color: Theme.colOnSurface
+                    opacity: 0.4
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: Qt.formatDateTime(timeClock.date, "mm")
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 36
+                    font.weight: Font.Bold
+                    color: Theme.colOnSurface
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 1
+                    Text {
+                        text: Qt.formatDateTime(timeClock.date, "AP")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.Bold
+                        color: Theme.colPrimary
+                    }
+                    Text {
+                        text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        color: Theme.colOnSurface
+                        opacity: 0.55
+                    }
+                }
             }
 
-            CalendarWidget {
-                id: calWidget
+            // ── Thin separator ──────────────────────────────────────
+            Rectangle {
                 Layout.fillWidth: true
-                width: parent.width
-                implicitWidth: parent.width
-                color: "transparent"
-                border.width: 0
+                height: 1
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+            }
+
+            // ── Inline calendar ─────────────────────────────────────
+            Column {
+                Layout.fillWidth: true
+                spacing: 6
+
+                property date currentDate: new Date()
+
+                // Month header
+                Row {
+                    width: parent.width
+                    Text {
+                        text: Qt.formatDateTime(parent.parent.currentDate, "MMMM yyyy")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.DemiBold
+                        color: Theme.colOnSurface
+                        width: parent.width - 48
+                    }
+                    Row {
+                        spacing: 4
+                        MouseArea {
+                            width: 20; height: 20
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                let d = new Date(parent.parent.parent.currentDate);
+                                d.setMonth(d.getMonth() - 1);
+                                parent.parent.parent.currentDate = d;
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea60"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colOnSurface
+                                opacity: 0.6
+                            }
+                        }
+                        MouseArea {
+                            width: 20; height: 20
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                let d = new Date(parent.parent.parent.currentDate);
+                                d.setMonth(d.getMonth() + 1);
+                                parent.parent.parent.currentDate = d;
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uea61"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colOnSurface
+                                opacity: 0.6
+                            }
+                        }
+                    }
+                }
+
+                // Day of week header
+                Row {
+                    width: parent.width
+                    Repeater {
+                        model: ["Su","Mo","Tu","We","Th","Fr","Sa"]
+                        Text {
+                            width: (contentCol.width - 24) / 7
+                            text: modelData
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 10
+                            color: Theme.colOnSurface
+                            opacity: 0.4
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+                }
+
+                // Calendar grid
+                Grid {
+                    id: calGrid
+                    width: parent.width
+                    columns: 7
+                    spacing: 2
+
+                    property date currentDate: parent.currentDate
+                    property int month: currentDate.getMonth()
+                    property int year: currentDate.getFullYear()
+                    property int firstDayOfWeek: new Date(year, month, 1).getDay()
+                    property int daysInMonth: new Date(year, month + 1, 0).getDate()
+                    property int daysInPrevMonth: new Date(year, month, 0).getDate()
+                    property int totalCells: Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7
+
+                    Repeater {
+                        model: calGrid.totalCells
+                        delegate: Item {
+                            width: (contentCol.width - 24) / 7
+                            height: width
+
+                            property int cellDay: {
+                                let idx = index - calGrid.firstDayOfWeek;
+                                if (idx < 0) return calGrid.daysInPrevMonth + idx + 1;
+                                if (idx >= calGrid.daysInMonth) return idx - calGrid.daysInMonth + 1;
+                                return idx + 1;
+                            }
+                            property bool isCurrentMonth: {
+                                let idx = index - calGrid.firstDayOfWeek;
+                                return idx >= 0 && idx < calGrid.daysInMonth;
+                            }
+                            property bool isToday: {
+                                let now = new Date();
+                                return isCurrentMonth &&
+                                       cellDay === now.getDate() &&
+                                       calGrid.month === now.getMonth() &&
+                                       calGrid.year === now.getFullYear();
+                            }
+
+                            Rectangle {
+                                anchors.centerIn: parent
+                                width: parent.width - 2
+                                height: width
+                                radius: width / 2
+                                color: isToday ? Theme.colPrimary : "transparent"
+                            }
+                            Text {
+                                anchors.centerIn: parent
+                                text: cellDay
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 10
+                                font.weight: isToday ? Font.Bold : Font.Normal
+                                color: isToday ? Theme.colOnPrimary : (isCurrentMonth ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25))
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    // Click-outside to close (covers bar area above the dropdown)
+    // Click-outside to close
     MouseArea {
-        id: closeArea
         anchors.fill: parent
         z: -1
         enabled: root.isOpen
