@@ -782,22 +782,27 @@ PanelWindow {
     }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    // Lives outside the solidBar to the right. solidBar's right edge is bar.barX+bar.barW.
-    // Gap of 8px, then this pill grows rightward.
+    // Teardown animation: starts collapsed at the power button location inside solidBar,
+    // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
     Rectangle {
         id: powerSplitPill
 
         y: solidBar.y
         height: solidBar.height
+        z: -1
 
-        property real contentW: powerOptionsRow.implicitWidth + 20
-        readonly property real openGap: 8
+        readonly property real openGap: 10
 
-        // Sits just to the right of solidBar's right edge
-        x: solidBar.x + solidBar.width + openGap
-        width: globalState.powerDropdownOpen ? contentW : 0
+        // When closed: starts at the power icon location inside solidBar
+        // When open: slides out to the right as solidBar shrinks
+        x: globalState.powerDropdownOpen ? (solidBar.x + solidBar.width + openGap) : (bar.barX + bar.barW - 40)
+        width: globalState.powerDropdownOpen ? contentW : 30
+        scale: globalState.powerDropdownOpen ? 1.0 : 0.5
+        transformOrigin: Item.Left
 
-        Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+        Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.35 } }
+        Behavior on width { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.35 } }
+        Behavior on scale { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
 
         radius: solidBar.radius
         clip: true
