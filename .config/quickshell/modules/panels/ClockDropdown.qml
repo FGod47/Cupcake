@@ -122,7 +122,8 @@ Item {
                     Behavior on scale { NumberAnimation { duration: 450; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
 
                     Text {
-                        text: Qt.formatDateTime(timeClock.date, "hh")
+                        // Including 'AP' forces 12-hour format in Qt, then we substring just the hour part
+                        text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 36
                         font.weight: Font.Bold
