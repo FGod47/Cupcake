@@ -45,6 +45,8 @@ PanelWindow {
             if (globalState.powerDropdownOpen) {
                 bar.dropdownOpen = false;
                 globalState.solidBoardOpen = false;
+            } else {
+                powerSplitPill.menuExpanded = false;
             }
         }
     }
