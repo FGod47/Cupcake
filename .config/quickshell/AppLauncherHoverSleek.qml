@@ -441,8 +441,9 @@ PanelWindow {
             property real dynamicVMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * verticalPad : 0
             
             property bool isModeFiles: typeof searchField !== "undefined" && searchField !== null ? (searchField.text.startsWith("f ") || searchField.text.startsWith("F ")) : false
+            // How far the folder pill has slid to the left (away from the search bar)
             property real splitOffset: isModeFiles ? (card.searchH + card.verticalPad * 2 + 8) : 0
-            Behavior on splitOffset { NumberAnimation { duration: 450; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
+            Behavior on splitOffset { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 1.3 } }
             
             height: true ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
@@ -475,20 +476,37 @@ PanelWindow {
                 clip: true
             }
 
+            // ── Folder mode pill — slides LEFT from the search bar ───────
+            // It starts aligned with the right edge of the search bar's left margin
+            // and then slides out to the far left as splitOffset grows.
             Rectangle {
                 id: modeIndicatorBg
-                anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                height: searchCardBg.height
-                width: Math.max(0, card.splitOffset - 8)
-                opacity: card.isModeFiles ? 1.0 : 0.0
+
+                // Pill height matches search bar height
+                height: card.searchH + card.verticalPad * 2
+                // Width: same as height (square pill) that grows with overshoot
+                width: height
+
+                // X: slides from where the search bar's left edge is, toward the left
+                // When splitOffset==0, x == searchCardBg.x (fully behind/overlapping it)
+                // When splitOffset grows, it slides left until there's an 8px gap
+                x: card.splitOffset > 0
+                   ? Math.max(0, searchCardBg.x - width - 8)
+                   : searchCardBg.x
+
                 radius: height / 2
-                
+                scale: card.isModeFiles ? 1.0 : 0.7
+                opacity: card.isModeFiles ? 1.0 : 0.0
+                transformOrigin: Item.Right
+
+                Behavior on scale  { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 1.3 } }
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
                 border.width: 1
                 clip: true
-                Behavior on opacity { NumberAnimation { duration: 250 } }
 
                 Text {
                     anchors.centerIn: parent
@@ -496,19 +514,22 @@ PanelWindow {
                     font.family: "Material Symbols Rounded"
                     font.pixelSize: 20
                     color: root.colOnSurface
-                    opacity: modeIndicatorBg.width > 24 ? 1.0 : 0.0
+                    opacity: parent.width > 24 && parent.opacity > 0.5 ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
             }
 
+            // ── Search bar pill — stays right, just shifts left margin ──
             Rectangle {
                 id: searchCardBg
-                anchors.left: parent.left
-                anchors.leftMargin: card.splitOffset
+                // Pin to the RIGHT side, shift left margin by splitOffset (gap for folder pill)
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                // Width shrinks by splitOffset + gap so the two pills feel like they're
+                // splitting apart, not the whole bar getting smaller
+                width: parent.width - (card.splitOffset > 0 ? card.splitOffset : 0)
                 height: Math.min(card.height, card.searchH + card.verticalPad * 2)
-                
+
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
                 border.width: 1
@@ -766,12 +787,11 @@ PanelWindow {
         Rectangle {
             id: searchBar
             parent: card
-            anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: card.dynamicMargin + card.splitOffset
             anchors.rightMargin: card.dynamicMargin
             anchors.bottomMargin: card.dynamicVMargin
+            width: parent.width - (card.splitOffset > 0 ? card.splitOffset : 0) - card.dynamicMargin * 2
 
             height: card.searchH
             radius: height / 2
