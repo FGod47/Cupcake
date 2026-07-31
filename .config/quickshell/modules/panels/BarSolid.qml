@@ -8,7 +8,6 @@ import Quickshell.Services.SystemTray
 import QtQuick.Controls
 import "../../theme"
 import "../common"
-import "../solidboard"
 import Quickshell.Services.Mpris
 import Qt5Compat.GraphicalEffects
 
@@ -25,7 +24,7 @@ PanelWindow {
     color: "transparent"
     mask: Region {
         Region { item: solidBar }
-        Region { item: solidBoardBg }
+        Region { item: clockDropdown.dropdownCard }
     }
 
     property real baseHeight: startHeight
@@ -757,45 +756,11 @@ PanelWindow {
         
     }
 
-    // ── SOLIDBOARD BACKGROUND PILL ────────
-    Rectangle {
-        id: solidBoardBg
-        
-        property real startX: parent.width - 240
-        property real startY: 8
-        property real startW: 140
-        property real startH: 26
-        
-        property real endX: parent.width - endW - 12
-        property real endY: bar.barHeight + 12
-        property real endW: 340
-        property real endH: 520
-        
-        x: globalState.solidBoardOpen ? endX : startX
-        y: globalState.solidBoardOpen ? endY : startY
-        width: globalState.solidBoardOpen ? endW : startW
-        height: globalState.solidBoardOpen ? endH : startH
-        
-        color: Qt.rgba(bg.r, bg.g, bg.b, Theme.isDark ? 0.8 : 0.95)
-        border.color: Qt.rgba(1, 1, 1, 0.1)
-        border.width: 1
-        radius: 20
-        clip: true
-        
-        opacity: globalState.solidBoardOpen ? 1 : 0
-        visible: opacity > 0
-        
-        Behavior on x { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-        Behavior on y { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-        Behavior on width { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-        Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-        Behavior on opacity { NumberAnimation { duration: 250 } }
-        
-        SolidBoard {
-            anchors.fill: parent
-            opacity: globalState.solidBoardOpen ? 1 : 0
-            Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.InOutCubic } }
-        }
+    // ── CLOCK DROPDOWN ────────────────────────
+    ClockDropdown {
+        id: clockDropdown
+        anchors.fill: parent
+        screenW: bar.screenW
     }
 
     // ─────────────────────────────────────────────────────
