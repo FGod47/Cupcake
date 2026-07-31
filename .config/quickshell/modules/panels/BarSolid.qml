@@ -115,6 +115,15 @@ PanelWindow {
         color: Theme.colPrimary
         clip: true
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                if (bar.dropdownOpen) bar.dropdownOpen = false;
+            }
+        }
+
         // Top glass highlight line
         Rectangle {
             anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
@@ -788,11 +797,15 @@ PanelWindow {
         id: powerSplitPill
 
         y: solidBar.y
-        height: solidBar.height
+        property bool menuExpanded: false
+        height: menuExpanded ? (powerMenu.implicitHeight + 20) : solidBar.height
+        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+
         z: -1
 
         readonly property real openGap: 10
-        property real contentW: powerOptionsRow.implicitWidth + 20
+        // Hardcode contentW to prevent binding loop caused by Column's implicitWidth depending on children's width
+        property real contentW: 130
 
         // When closed: starts at the power icon location inside solidBar
         // When open: slides out to the right as solidBar shrinks (uses target width to avoid animation conflict)
@@ -829,19 +842,24 @@ PanelWindow {
             id: powerSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                globalState.powerDropdownOpen = false;
+                if (mouse.y <= solidBar.height) {
+                    powerSplitPill.menuExpanded = !powerSplitPill.menuExpanded;
+                }
             }
         }
 
-        // ── Action buttons row ──────────────────────────────────────
+        // ── Header (Power Icon + Text) ──────────────────────────────
         Row {
             id: powerOptionsRow
-            anchors.verticalCenter: parent.verticalCenter
+            y: (solidBar.height - height) / 2
             anchors.left: parent.left
             anchors.leftMargin: 10
             spacing: 4
+            opacity: powerSplitPill.menuExpanded ? 0.0 : 1.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 250 } }
 
             Item {
                 width: 26; height: 26
@@ -862,6 +880,109 @@ PanelWindow {
                 font.weight: Font.Medium
                 color: Theme.colError
                 rightPadding: 8
+            }
+        }
+
+        // ── Expanded Menu (Vertical) ────────────────────────────────
+        Column {
+            id: powerMenu
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            spacing: 4
+            opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+
+            component SplitMenuBtn: Item {
+                id: splitBtn
+                property string icon: ""
+                property string label: ""
+                property color accentCol: Theme.colError
+                property bool confirming: false
+                signal triggered()
+
+                width: parent.width
+                implicitWidth: innerRow.implicitWidth + 16
+                height: 32
+
+                Timer { id: splitConfirmTimer; interval: 3000; onTriggered: splitBtn.confirming = false }
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: height / 2
+                    color: splitMa.containsMouse
+                           ? Qt.rgba(splitBtn.accentCol.r, splitBtn.accentCol.g, splitBtn.accentCol.b, 0.18)
+                           : "transparent"
+                    Behavior on color { ColorAnimation { duration: 120 } }
+                }
+
+                Row {
+                    id: innerRow
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    spacing: 8
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: splitBtn.icon
+                        font.family: bar.fontName
+                        font.pixelSize: 14
+                        color: splitMa.containsMouse ? splitBtn.accentCol : bar.fg
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: splitBtn.confirming ? "Sure?" : splitBtn.label
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        color: splitBtn.confirming ? splitBtn.accentCol
+                               : (splitMa.containsMouse ? splitBtn.accentCol : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75))
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+                }
+
+                MouseArea {
+                    id: splitMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (splitBtn.confirming) {
+                            splitBtn.confirming = false;
+                            splitBtn.triggered();
+                        } else {
+                            splitBtn.confirming = true;
+                            splitConfirmTimer.restart();
+                        }
+                    }
+                }
+            }
+
+            SplitMenuBtn {
+                icon: "\ueaf8"; label: "Sleep"
+                accentCol: Theme.colPrimary
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl suspend"]); }
+            }
+            SplitMenuBtn {
+                icon: "\ueba8"; label: "Logout"
+                accentCol: Theme.colPrimary
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","hyprctl dispatch exit"]); }
+            }
+            SplitMenuBtn {
+                icon: "\ueb13"; label: "Restart"
+                accentCol: Theme.colError
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl reboot"]); }
+            }
+            SplitMenuBtn {
+                icon: "\ueb0d"; label: "Shutdown"
+                accentCol: Theme.colError
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl poweroff"]); }
             }
         }
     }
