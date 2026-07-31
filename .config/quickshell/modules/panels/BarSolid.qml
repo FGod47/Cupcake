@@ -25,6 +25,7 @@ PanelWindow {
     mask: Region {
         Region { item: solidBar }
         Region { item: clockDropdown.dropdownCard }
+        Region { item: powerDropdown.dropdownCard }
     }
 
     property real baseHeight: startHeight
@@ -35,7 +36,16 @@ PanelWindow {
     Connections {
         target: globalState
         function onSolidBoardOpenChanged() {
-            if (globalState.solidBoardOpen) bar.dropdownOpen = false;
+            if (globalState.solidBoardOpen) {
+                bar.dropdownOpen = false;
+                globalState.powerDropdownOpen = false;
+            }
+        }
+        function onPowerDropdownOpenChanged() {
+            if (globalState.powerDropdownOpen) {
+                bar.dropdownOpen = false;
+                globalState.solidBoardOpen = false;
+            }
         }
     }
 
@@ -403,7 +413,7 @@ PanelWindow {
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
 
-                property bool expanded: false  // true after clicking
+                property bool expanded: false  // always false — expansion now handled by PowerDropdown
                 onExpandedChanged: {
                     if (!expanded) {
                         logoutBtn.confirming = false
@@ -413,11 +423,7 @@ PanelWindow {
                 }
                 
                 property bool isHovered: hoverMa.containsMouse || powerMa.containsMouse || logoutMa.containsMouse || restartMa.containsMouse
-                onIsHoveredChanged: {
-                    if (!isHovered && expanded) {
-                        expanded = false
-                    }
-                }
+                // Note: no auto-collapse since we use the separate PowerDropdown now
 
                 MouseArea {
                     id: hoverMa
@@ -595,18 +601,8 @@ PanelWindow {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                if (powerPillItem.expanded) {
-                                    if (shutdownBtn.confirming) {
-                                        powerPillItem.expanded = false;
-                                        shutdownBtn.confirming = false;
-                                        Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                                    } else {
-                                        shutdownBtn.confirming = true;
-                                        shutdownTimer.restart();
-                                    }
-                                } else {
-                                    powerPillItem.expanded = true
-                                }
+                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                                globalState.powerDropdownOpen = !globalState.powerDropdownOpen;
                             }
                         }
                     }
@@ -759,6 +755,13 @@ PanelWindow {
     // ── CLOCK DROPDOWN ────────────────────────
     ClockDropdown {
         id: clockDropdown
+        anchors.fill: parent
+        screenW: bar.screenW
+    }
+
+    // ── POWER DROPDOWN ────────────────────────
+    PowerDropdown {
+        id: powerDropdown
         anchors.fill: parent
         screenW: bar.screenW
     }
