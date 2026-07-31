@@ -152,7 +152,14 @@ PanelWindow {
         RowLayout {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-            anchors.leftMargin: 13; anchors.rightMargin: 13
+            anchors.leftMargin: 13
+            // Shrink from the right when power pill is open (same as Files pill retreating)
+            anchors.rightMargin: globalState.powerDropdownOpen
+                                 ? (powerSplitPill.contentW + powerSplitPill.openGap + 13)
+                                 : 13
+            Behavior on anchors.rightMargin {
+                NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 }
+            }
             height: bar.barHeight
             spacing: 0
             opacity: 0
@@ -777,24 +784,24 @@ PanelWindow {
     }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    // Same mechanic as AppLauncherHoverSleek's Files pill:
-    //   - solidBar shrinks from its RIGHT edge by powerSplitOffset
-    //   - this pill sits just to the right of solidBar and bounces out with OutBack
+    // Files-pill mechanic: pill is anchored to the RIGHT edge of the bar.
+    // When power is clicked, solidBar shrinks from the right (powerSplitOffset)
+    // exposing this pill that was hidden behind — then it bounces left with OutBack.
     Rectangle {
         id: powerSplitPill
 
-        // Sits at same Y/height as solidBar
         y: solidBar.y
         height: solidBar.height
 
-        // Target content width (icon buttons in a row)
         property real contentW: powerOptionsRow.implicitWidth + 24
-        // Gap between solidBar right edge and this pill
-        readonly property real gap: 8
 
-        // When closed: snuggles against solidBar's right edge with width=0
-        // When open:   sits gap away to the right and grows to contentW
-        x: solidBar.x + solidBar.width + (globalState.powerDropdownOpen ? gap : 0)
+        // Right edge is always fixed to solidBar's right edge
+        // Width grows leftward from 0 → contentW when open
+        // x adjusts so right edge stays fixed:
+        //   closed: x = solidBar.x + solidBar.width - 0  (hidden, 0 width)
+        //   open:   x = solidBar.x + solidBar.width - gap - contentW
+        readonly property real openGap: 8
+        x: solidBar.x + solidBar.width - (globalState.powerDropdownOpen ? (contentW + openGap) : 0)
         width: globalState.powerDropdownOpen ? contentW : 0
 
         Behavior on x     { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
