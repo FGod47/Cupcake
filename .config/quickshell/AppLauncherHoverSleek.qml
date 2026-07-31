@@ -441,9 +441,11 @@ PanelWindow {
             property real dynamicVMargin: width > 52 ? ((width - 52) / (cardWidth - 52)) * verticalPad : 0
             
             property bool isModeFiles: typeof searchField !== "undefined" && searchField !== null ? (searchField.text.startsWith("f ") || searchField.text.startsWith("F ")) : false
-            // How far the folder pill has slid to the left (away from the search bar)
-            property real splitOffset: isModeFiles ? (card.searchH + card.verticalPad * 2 + 8) : 0
-            Behavior on splitOffset { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 1.3 } }
+            // splitOffset = folder pill width + gap between pills
+            // The search bar's width = cardWidth - splitOffset, driven by this with OutBack bounce
+            readonly property real folderPillSize: card.searchH + card.verticalPad * 2
+            property real splitOffset: isModeFiles ? (folderPillSize + 8) : 0
+            Behavior on splitOffset { NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
             
             height: true ? (searchField.text.length > 0 ? fullHeight : (root.isOpen ? searchH + verticalPad * 2 : searchH)) : (root.isOpen ? fullHeight : 0)
 
@@ -476,37 +478,26 @@ PanelWindow {
                 clip: true
             }
 
-            // ── Folder mode pill — slides LEFT from the search bar ───────
-            // It starts aligned with the right edge of the search bar's left margin
-            // and then slides out to the far left as splitOffset grows.
+            // ── Folder mode pill — lives at left, revealed as search bar retreats ──
+            // z-order: folder pill is BEHIND (lower z) than searchCardBg.
+            // The search bar starts full-width and covers it; when files mode
+            // activates the search bar's left edge bounces right, exposing the pill.
             Rectangle {
                 id: modeIndicatorBg
+                anchors.left: parent.left
                 anchors.bottom: parent.bottom
-
-                // Pill height matches search bar height
                 height: card.searchH + card.verticalPad * 2
-                // Width: same as height (square pill) that grows with overshoot
-                width: height
-
-                // X: slides from where the search bar's left edge is, toward the left
-                // When splitOffset==0, x == searchCardBg.x (fully behind/overlapping it)
-                // When splitOffset grows, it slides left until there's an 8px gap
-                x: card.splitOffset > 0
-                   ? Math.max(0, searchCardBg.x - width - 8)
-                   : searchCardBg.x
-
+                width: height  // square pill, same height as search bar
                 radius: height / 2
-                scale: card.isModeFiles ? 1.0 : 0.7
-                opacity: card.isModeFiles ? 1.0 : 0.0
-                transformOrigin: Item.Right
+                z: 0  // behind the search bar
 
-                Behavior on scale  { NumberAnimation { duration: 480; easing.type: Easing.OutBack; easing.overshoot: 1.3 } }
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                // Instant show — it just sits there; the search bar reveals it
+                opacity: card.isModeFiles ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 80 } }
 
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
                 border.width: 1
-                clip: true
 
                 Text {
                     anchors.centerIn: parent
@@ -514,21 +505,21 @@ PanelWindow {
                     font.family: "Material Symbols Rounded"
                     font.pixelSize: 20
                     color: root.colOnSurface
-                    opacity: parent.width > 24 && parent.opacity > 0.5 ? 1.0 : 0.0
+                    opacity: card.isModeFiles ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
             }
 
-            // ── Search bar pill — stays right, just shifts left margin ──
+            // ── Search bar pill — bounces right, uncovering the folder pill ──
             Rectangle {
                 id: searchCardBg
-                // Pin to the RIGHT side, shift left margin by splitOffset (gap for folder pill)
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                // Width shrinks by splitOffset + gap so the two pills feel like they're
-                // splitting apart, not the whole bar getting smaller
-                width: parent.width - (card.splitOffset > 0 ? card.splitOffset : 0)
+                // Shrinks from the LEFT as splitOffset grows (with OutBack bounce)
+                // This makes it look like the left portion tears off
+                width: parent.width - card.splitOffset
                 height: Math.min(card.height, card.searchH + card.verticalPad * 2)
+                z: 1  // on top, covering the folder pill when not split
 
                 color: Qt.rgba(root.colSurfaceContainer.r, root.colSurfaceContainer.g, root.colSurfaceContainer.b, root.bgOpacity)
                 border.color: Qt.rgba(1, 1, 1, 0.10)
