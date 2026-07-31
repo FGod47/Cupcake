@@ -92,55 +92,14 @@ Item {
             opacity: root.isOpen ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 160 } }
 
-            // ── Compact clock row ──────────────────────────────────
-            Row {
-                Layout.fillWidth: true
-                spacing: 6
+            // ── Clock Text (Matches BarSolid) ──────────────────────
+            Text {
                 Layout.alignment: Qt.AlignHCenter
-
-                Text {
-                    text: Qt.formatDateTime(timeClock.date, "hh")
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 36
-                    font.weight: Font.Bold
-                    color: Theme.colPrimary
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Text {
-                    text: ":"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 36
-                    font.weight: Font.Bold
-                    color: Theme.colOnSurface
-                    opacity: 0.4
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Text {
-                    text: Qt.formatDateTime(timeClock.date, "mm")
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 36
-                    font.weight: Font.Bold
-                    color: Theme.colOnSurface
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 1
-                    Text {
-                        text: Qt.formatDateTime(timeClock.date, "AP")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Bold
-                        color: Theme.colPrimary
-                    }
-                    Text {
-                        text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 11
-                        color: Theme.colOnSurface
-                        opacity: 0.55
-                    }
-                }
+                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+                color: Theme.colOnSurface
             }
 
             // ── Thin separator ──────────────────────────────────────
