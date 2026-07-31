@@ -89,17 +89,82 @@ Item {
             anchors.margins: 12
             spacing: 10
 
-            opacity: root.isOpen ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 160 } }
-
-            // ── Clock Text (Matches BarSolid) ──────────────────────
-            Text {
+            // ── Morphing Clock Header ──────────────────────
+            Item {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
-                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: Theme.colOnSurface
+                implicitHeight: bigClockRow.implicitHeight
+
+                // Small bar clock (fades out and scales up as it opens)
+                Text {
+                    id: smallClock
+                    anchors.centerIn: parent
+                    text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: Theme.defaultFontSize
+                    font.weight: Theme.defaultFontWeight
+                    color: Theme.colOnSurface
+                    opacity: root.isOpen ? 0.0 : 1.0
+                    scale: root.isOpen ? 1.6 : 1.0
+                    Behavior on opacity { NumberAnimation { duration: 250 } }
+                    Behavior on scale { NumberAnimation { duration: 400; easing.type: Easing.OutBack } }
+                }
+
+                // Big accented clock (fades in and scales up to normal size)
+                Row {
+                    id: bigClockRow
+                    anchors.centerIn: parent
+                    spacing: 6
+                    
+                    opacity: root.isOpen ? 1.0 : 0.0
+                    scale: root.isOpen ? 1.0 : 0.7
+                    Behavior on opacity { NumberAnimation { duration: 350 } }
+                    Behavior on scale { NumberAnimation { duration: 450; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+
+                    Text {
+                        text: Qt.formatDateTime(timeClock.date, "hh")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 36
+                        font.weight: Font.Bold
+                        color: Theme.colPrimary
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        text: ":"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 36
+                        font.weight: Font.Bold
+                        color: Theme.colOnSurface
+                        opacity: 0.4
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        text: Qt.formatDateTime(timeClock.date, "mm")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 36
+                        font.weight: Font.Bold
+                        color: Theme.colOnSurface
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 1
+                        Text {
+                            text: Qt.formatDateTime(timeClock.date, "AP")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Bold
+                            color: Theme.colPrimary
+                        }
+                        Text {
+                            text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurface
+                            opacity: 0.55
+                        }
+                    }
+                }
             }
 
             // ── Thin separator ──────────────────────────────────────
@@ -107,12 +172,16 @@ Item {
                 Layout.fillWidth: true
                 height: 1
                 color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                opacity: root.isOpen ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 160 } }
             }
 
             // ── Inline calendar ─────────────────────────────────────
             Column {
                 Layout.fillWidth: true
                 spacing: 6
+                opacity: root.isOpen ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 160 } }
 
                 property date currentDate: new Date()
 
