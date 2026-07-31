@@ -22,10 +22,17 @@ Item {
     readonly property real dropX: barRightEdge - dropW  // right-aligned to bar
     readonly property real dropY: 50                    // just below bar
 
-    // Collapsed pill — sits at clock position (near bar right side)
-    readonly property real collapsedW: 130
-    readonly property real collapsedH: 24
-    readonly property real collapsedX: barRightEdge - collapsedW - 8
+    // Precise position of the clock text triggering this dropdown
+    property real triggerX: 0
+    property real triggerY: 0
+    property real triggerW: 130
+    property real triggerH: 24
+
+    // Collapsed pill — sits perfectly over the clock text
+    readonly property real collapsedW: triggerW + 24
+    readonly property real collapsedH: triggerH + 12
+    readonly property real collapsedX: triggerX - 12
+    readonly property real collapsedY: triggerY - 6
 
     property bool isOpen: globalState.solidBoardOpen
 
@@ -39,7 +46,7 @@ Item {
         id: card
 
         x: root.isOpen ? root.dropX      : root.collapsedX
-        y: root.isOpen ? root.dropY      : 8
+        y: root.isOpen ? root.dropY      : root.collapsedY
         width:  root.isOpen ? root.dropW  : root.collapsedW
         height: root.isOpen ? contentCol.implicitHeight + 24 : root.collapsedH
 
