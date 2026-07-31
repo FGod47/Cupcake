@@ -109,7 +109,7 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: (solidBar.x === bar.barX) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW
-        Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+        Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutBack; easing.overshoot: 1.18 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
@@ -622,17 +622,8 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onEntered: {
-                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                                globalState.powerDropdownOpen = true;
-                            }
-                            onExited: {
-                                // Keep open if mouse moves into split menu, otherwise close
-                                if (!powerSplitPillMa.containsMouse) {
-                                    globalState.powerDropdownOpen = false;
-                                }
-                            }
                             onClicked: {
+                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                                 globalState.powerDropdownOpen = !globalState.powerDropdownOpen;
                             }
                         }
@@ -801,10 +792,11 @@ PanelWindow {
         z: -1
 
         readonly property real openGap: 10
+        property real contentW: powerOptionsRow.implicitWidth + 20
 
         // When closed: starts at the power icon location inside solidBar
-        // When open: slides out to the right as solidBar shrinks
-        x: globalState.powerDropdownOpen ? (solidBar.x + solidBar.width + openGap) : (bar.barX + bar.barW - 40)
+        // When open: slides out to the right as solidBar shrinks (uses target width to avoid animation conflict)
+        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 40)
         width: globalState.powerDropdownOpen ? contentW : 30
         scale: globalState.powerDropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -837,11 +829,9 @@ PanelWindow {
             id: powerSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-            onExited: {
-                if (!powerMa.containsMouse) {
-                    globalState.powerDropdownOpen = false;
-                }
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                globalState.powerDropdownOpen = false;
             }
         }
 
@@ -853,97 +843,25 @@ PanelWindow {
             anchors.leftMargin: 10
             spacing: 4
 
-            component SplitBtn: Item {
-                id: splitBtn
-                property string icon: ""
-                property string label: ""
-                property color accentCol: Theme.colError
-                property bool confirming: false
-                signal triggered()
-
-                width: innerRow.implicitWidth + 16
-                height: powerSplitPill.height
-
-                Timer { id: splitConfirmTimer; interval: 3000; onTriggered: splitBtn.confirming = false }
-
-                Rectangle {
-                    anchors.fill: parent
-                    radius: height / 2
-                    color: splitMa.containsMouse
-                           ? Qt.rgba(splitBtn.accentCol.r, splitBtn.accentCol.g, splitBtn.accentCol.b, 0.18)
-                           : "transparent"
-                    Behavior on color { ColorAnimation { duration: 120 } }
-                }
-
-                Row {
-                    id: innerRow
-                    anchors.centerIn: parent
-                    spacing: 5
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: splitBtn.icon
-                        font.family: bar.fontName
-                        font.pixelSize: 14
-                        color: splitMa.containsMouse ? splitBtn.accentCol : bar.fg
-                        Behavior on color { ColorAnimation { duration: 120 } }
-                    }
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: splitBtn.confirming ? "Sure?" : splitBtn.label
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Medium
-                        color: splitBtn.confirming ? splitBtn.accentCol
-                               : (splitMa.containsMouse ? splitBtn.accentCol : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75))
-                        Behavior on color { ColorAnimation { duration: 120 } }
-                    }
-                }
-
-                MouseArea {
-                    id: splitMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (splitBtn.confirming) {
-                            splitBtn.confirming = false;
-                            splitBtn.triggered();
-                        } else {
-                            splitBtn.confirming = true;
-                            splitConfirmTimer.restart();
-                        }
-                    }
-                }
-            }
-
-            SplitBtn {
-                icon: "\ueaf8"; label: "Sleep"
-                accentCol: Theme.colPrimary
-                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl suspend"]); }
-            }
-
-            // Thin divider
-            Rectangle {
-                width: 1; height: parent.height * 0.5
+            Item {
+                width: 26; height: 26
                 anchors.verticalCenter: parent.verticalCenter
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                Text {
+                    anchors.centerIn: parent
+                    text: "\ueb0d"
+                    font.family: bar.fontName
+                    font.pixelSize: 15
+                    color: Theme.colError
+                }
             }
-
-            SplitBtn {
-                icon: "\ueba8"; label: "Logout"
-                accentCol: Theme.colPrimary
-                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","hyprctl dispatch exit"]); }
-            }
-            SplitBtn {
-                icon: "\ueb13"; label: "Restart"
-                accentCol: Theme.colError
-                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl reboot"]); }
-            }
-            SplitBtn {
-                icon: "\ueb0d"; label: "Shutdown"
-                accentCol: Theme.colError
-                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl poweroff"]); }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Power"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 12
+                font.weight: Font.Medium
+                color: Theme.colError
+                rightPadding: 8
             }
         }
     }
@@ -1018,6 +936,9 @@ PanelWindow {
         
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
+            solidBar.width = Qt.binding(function() {
+                return (solidBar.x === bar.barX) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW;
+            });
         }
     }
 
@@ -1082,6 +1003,10 @@ PanelWindow {
             // Once collapse is complete, finalize mode change to "pill"
             globalState.barStyle = "pill";
             globalState.pendingBarStyle = "";
+            solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
+            solidBar.width = Qt.binding(function() {
+                return (solidBar.x === bar.barX) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW;
+            });
         }
     }
 
