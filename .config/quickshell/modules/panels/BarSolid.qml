@@ -761,12 +761,6 @@ PanelWindow {
         id: clockDropdown
         anchors.fill: parent
         screenW: bar.screenW
-        // Pass the exact bounds of the clock text for the dropdown to animate from
-        property point clockPos: clockTextMain.mapToItem(bar, 0, 0)
-        triggerX: clockPos.x
-        triggerY: clockPos.y
-        triggerW: clockTextMain.width
-        triggerH: clockTextMain.height
     }
 
     // ─────────────────────────────────────────────────────

@@ -23,10 +23,13 @@ Item {
     readonly property real dropY: 50                    // just below bar
 
     // Precise position of the clock text triggering this dropdown
-    property real triggerX: 0
-    property real triggerY: 0
-    property real triggerW: 130
-    property real triggerH: 24
+    // The solid bar right edge is screenW - 100.
+    // The RowLayout has 12px right margin, 26px power pill, 12px spacing, 8px bullet, 12px spacing, then the clock text (~130px).
+    // So the clock text starts roughly 200px from the bar right edge.
+    readonly property real triggerX: barRightEdge - 200
+    readonly property real triggerY: 18   // solidBar is at y=10 with height=40 (center is 30) -> 30 - (24/2) = 18
+    readonly property real triggerW: 130
+    readonly property real triggerH: 24
 
     // Collapsed pill — sits perfectly over the clock text
     readonly property real collapsedW: triggerW + 24
