@@ -622,8 +622,17 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
+                            onEntered: {
                                 if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                                globalState.powerDropdownOpen = true;
+                            }
+                            onExited: {
+                                // Keep open if mouse moves into split menu, otherwise close
+                                if (!powerSplitPillMa.containsMouse) {
+                                    globalState.powerDropdownOpen = false;
+                                }
+                            }
+                            onClicked: {
                                 globalState.powerDropdownOpen = !globalState.powerDropdownOpen;
                             }
                         }
@@ -823,6 +832,18 @@ PanelWindow {
 
         opacity: globalState.powerDropdownOpen ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 180 } }
+
+        MouseArea {
+            id: powerSplitPillMa
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+            onExited: {
+                if (!powerMa.containsMouse) {
+                    globalState.powerDropdownOpen = false;
+                }
+            }
+        }
 
         // ── Action buttons row ──────────────────────────────────────
         Row {
