@@ -25,7 +25,7 @@ PanelWindow {
     mask: Region {
         Region { item: solidBar }
         Region { item: clockDropdown.dropdownCard }
-        Region { item: powerDropdown.dropdownCard }
+        Region { item: powerSplitPill }
     }
 
     property real baseHeight: startHeight
@@ -83,6 +83,23 @@ PanelWindow {
     readonly property real barHeight: 30
     readonly property real startRadius: 18
     readonly property real barRadius: 15
+
+    // Power split pill dimensions
+    readonly property real powerPillGap: 8   // gap between bar and power pill
+    property real powerSplitOffset: 0       // grows with OutBack to push bar left
+    Behavior on powerSplitOffset {
+        NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+    }
+    onPowerSplitOffsetChanged: {
+        // keep mask updated
+    }
+
+    Connections {
+        target: globalState
+        function onPowerDropdownOpenChanged() {
+            // powerSplitPill drives its own width; we track it via a binding below
+        }
+    }
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
@@ -759,11 +776,151 @@ PanelWindow {
         screenW: bar.screenW
     }
 
-    // ── POWER DROPDOWN ────────────────────────
-    PowerDropdown {
-        id: powerDropdown
-        anchors.fill: parent
-        screenW: bar.screenW
+    // ── POWER SPLIT PILL ──────────────────────────────────────────────────
+    // Same mechanic as AppLauncherHoverSleek's Files pill:
+    //   - solidBar shrinks from its RIGHT edge by powerSplitOffset
+    //   - this pill sits just to the right of solidBar and bounces out with OutBack
+    Rectangle {
+        id: powerSplitPill
+
+        // Sits at same Y/height as solidBar
+        y: solidBar.y
+        height: solidBar.height
+
+        // Target content width (icon buttons in a row)
+        property real contentW: powerOptionsRow.implicitWidth + 24
+        // Gap between solidBar right edge and this pill
+        readonly property real gap: 8
+
+        // When closed: snuggles against solidBar's right edge with width=0
+        // When open:   sits gap away to the right and grows to contentW
+        x: solidBar.x + solidBar.width + (globalState.powerDropdownOpen ? gap : 0)
+        width: globalState.powerDropdownOpen ? contentW : 0
+
+        Behavior on x     { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+        Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+
+        radius: solidBar.radius
+        clip: true
+
+        color: bar.pillColor
+        border.color: Qt.rgba(1, 1, 1, 0.10)
+        border.width: 1
+
+        // Top glass highlight
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 4; anchors.rightMargin: 4
+            height: 1; radius: 1
+            color: Qt.rgba(1, 1, 1, 0.10)
+        }
+
+        opacity: globalState.powerDropdownOpen ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: 180 } }
+
+        // ── Action buttons row ──────────────────────────────────────
+        Row {
+            id: powerOptionsRow
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            spacing: 4
+
+            component SplitBtn: Item {
+                id: splitBtn
+                property string icon: ""
+                property string label: ""
+                property color accentCol: Theme.colError
+                property bool confirming: false
+                signal triggered()
+
+                width: innerRow.implicitWidth + 16
+                height: powerSplitPill.height
+
+                Timer { id: splitConfirmTimer; interval: 3000; onTriggered: splitBtn.confirming = false }
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: height / 2
+                    color: splitMa.containsMouse
+                           ? Qt.rgba(splitBtn.accentCol.r, splitBtn.accentCol.g, splitBtn.accentCol.b, 0.18)
+                           : "transparent"
+                    Behavior on color { ColorAnimation { duration: 120 } }
+                }
+
+                Row {
+                    id: innerRow
+                    anchors.centerIn: parent
+                    spacing: 5
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: splitBtn.icon
+                        font.family: bar.fontName
+                        font.pixelSize: 14
+                        color: splitMa.containsMouse ? splitBtn.accentCol : bar.fg
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: splitBtn.confirming ? "Sure?" : splitBtn.label
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        color: splitBtn.confirming ? splitBtn.accentCol
+                               : (splitMa.containsMouse ? splitBtn.accentCol : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75))
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+                }
+
+                MouseArea {
+                    id: splitMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (splitBtn.confirming) {
+                            splitBtn.confirming = false;
+                            splitBtn.triggered();
+                        } else {
+                            splitBtn.confirming = true;
+                            splitConfirmTimer.restart();
+                        }
+                    }
+                }
+            }
+
+            SplitBtn {
+                icon: "\ueaf8"; label: "Sleep"
+                accentCol: Theme.colPrimary
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl suspend"]); }
+            }
+
+            // Thin divider
+            Rectangle {
+                width: 1; height: parent.height * 0.5
+                anchors.verticalCenter: parent.verticalCenter
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+            }
+
+            SplitBtn {
+                icon: "\ueba8"; label: "Logout"
+                accentCol: Theme.colPrimary
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","hyprctl dispatch exit"]); }
+            }
+            SplitBtn {
+                icon: "\ueb13"; label: "Restart"
+                accentCol: Theme.colError
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl reboot"]); }
+            }
+            SplitBtn {
+                icon: "\ueb0d"; label: "Shutdown"
+                accentCol: Theme.colError
+                onTriggered: { globalState.powerDropdownOpen = false; Quickshell.execDetached(["bash","-c","systemctl poweroff"]); }
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────────
