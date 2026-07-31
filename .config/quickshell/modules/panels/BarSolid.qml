@@ -575,8 +575,12 @@ PanelWindow {
                     Item {
                         id: shutdownBtn
                         height: 26
-                        width: shutdownRow.implicitWidth
+                        width: globalState.powerDropdownOpen ? 0 : shutdownRow.implicitWidth
+                        opacity: globalState.powerDropdownOpen ? 0.0 : 1.0
+                        visible: opacity > 0 || width > 0
                         clip: true
+                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
                         property bool confirming: false
                         Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
                         
@@ -592,11 +596,8 @@ PanelWindow {
                                     text: "\ueb0d"
                                     font.family: fontName
                                     font.pixelSize: 15
-                                    color: globalState.powerDropdownOpen ? Theme.colError
-                                           : ((powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg)
-                                    opacity: globalState.powerDropdownOpen ? 0.5 : 1.0
-                                    Behavior on color   { ColorAnimation { duration: 150 } }
-                                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                                    color: (powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg
+                                    Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                             }
                             Text {
@@ -607,7 +608,6 @@ PanelWindow {
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
                                 color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
-                                // Use clip+width:0 when idle, opacity fade when transitioning
                                 width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
                                 opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
                                 clip: true
