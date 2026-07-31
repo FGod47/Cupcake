@@ -85,7 +85,7 @@ ShellRoot {
 
     Scope {
         id: globalState
-        property string barStyle: "pill"
+        property string barStyle: "solid"
         property string pendingBarStyle: ""
         property bool barVisible: true
         property var barMonitors: ["all"]

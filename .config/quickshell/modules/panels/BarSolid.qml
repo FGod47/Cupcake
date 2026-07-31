@@ -108,7 +108,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: (bar.startW === bar.barW) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW
+        width: (solidBar.x === bar.barX) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW
         Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
