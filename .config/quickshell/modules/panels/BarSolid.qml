@@ -153,13 +153,7 @@ PanelWindow {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13
-            // Shrink from the right when power pill is open (same as Files pill retreating)
-            anchors.rightMargin: globalState.powerDropdownOpen
-                                 ? (powerSplitPill.contentW + powerSplitPill.openGap + 13)
-                                 : 13
-            Behavior on anchors.rightMargin {
-                NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 }
-            }
+            anchors.rightMargin: 13
             height: bar.barHeight
             spacing: 0
             opacity: 0
@@ -597,8 +591,11 @@ PanelWindow {
                                     text: "\ueb0d"
                                     font.family: fontName
                                     font.pixelSize: 15
-                                    color: (powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg
-                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                    color: globalState.powerDropdownOpen ? Theme.colError
+                                           : ((powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg)
+                                    opacity: globalState.powerDropdownOpen ? 0.5 : 1.0
+                                    Behavior on color   { ColorAnimation { duration: 150 } }
+                                    Behavior on opacity { NumberAnimation { duration: 200 } }
                                 }
                             }
                             Text {
@@ -784,27 +781,21 @@ PanelWindow {
     }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    // Files-pill mechanic: pill is anchored to the RIGHT edge of the bar.
-    // When power is clicked, solidBar shrinks from the right (powerSplitOffset)
-    // exposing this pill that was hidden behind — then it bounces left with OutBack.
+    // Lives outside the solidBar to the right. solidBar's right edge is bar.barX+bar.barW.
+    // Gap of 8px, then this pill grows rightward.
     Rectangle {
         id: powerSplitPill
 
         y: solidBar.y
         height: solidBar.height
 
-        property real contentW: powerOptionsRow.implicitWidth + 24
-
-        // Right edge is always fixed to solidBar's right edge
-        // Width grows leftward from 0 → contentW when open
-        // x adjusts so right edge stays fixed:
-        //   closed: x = solidBar.x + solidBar.width - 0  (hidden, 0 width)
-        //   open:   x = solidBar.x + solidBar.width - gap - contentW
+        property real contentW: powerOptionsRow.implicitWidth + 20
         readonly property real openGap: 8
-        x: solidBar.x + solidBar.width - (globalState.powerDropdownOpen ? (contentW + openGap) : 0)
+
+        // Sits just to the right of bar's right edge
+        x: bar.barX + bar.barW + openGap
         width: globalState.powerDropdownOpen ? contentW : 0
 
-        Behavior on x     { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
         Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
 
         radius: solidBar.radius
