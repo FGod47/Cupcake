@@ -37,6 +37,7 @@ hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("antigravity-ide"))
 -- Screenshots
 hl.bind(sMod .. " + Print", hl.dsp.exec_cmd("bash -c 'mkdir -p $HOME/Pictures/Screenshot && file=\"$HOME/Pictures/Screenshot/$(date +%m-%d-%H-%M-%S).png\" && grim -g \"$(slurp)\" \"$file\" && notify-send \"Screenshot Saved\" \"$file\" -i \"$file\"'"))
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("~/.config/cupcake/scripts/screenshot-edit.sh"))
+hl.bind(aMod .. " + SHIFT + S", hl.dsp.exec_cmd("bash -c 'mkdir -p $HOME/Pictures/Screenshot && file=\"$HOME/Pictures/Screenshot/$(date +%m-%d-%H-%M-%S).png\" && grim -g \"$(slurp)\" \"$file\" && notify-send \"Screenshot Saved\" \"$file\" -i \"$file\"'"))
 
 -- Screen recording
 hl.bind(sMod .. " + J", hl.dsp.exec_cmd("~/.config/cupcake/scripts/record-screen.sh"))
