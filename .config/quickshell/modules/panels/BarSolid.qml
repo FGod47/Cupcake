@@ -108,7 +108,8 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: bar.startW
+        width: (bar.startW === bar.barW) ? (globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : bar.barW) : bar.startW
+        Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
@@ -792,8 +793,8 @@ PanelWindow {
         property real contentW: powerOptionsRow.implicitWidth + 20
         readonly property real openGap: 8
 
-        // Sits just to the right of bar's right edge
-        x: bar.barX + bar.barW + openGap
+        // Sits just to the right of solidBar's right edge
+        x: solidBar.x + solidBar.width + openGap
         width: globalState.powerDropdownOpen ? contentW : 0
 
         Behavior on width { NumberAnimation { duration: 520; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
