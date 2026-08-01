@@ -471,7 +471,72 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Hardware -> Clock) ────────
+            // ── RIGHT: Dot Separator (Hardware -> Tray) ────────
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
+                Layout.rightMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                visible: opacity > 0 && sysTrayRepeater.count > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
+                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
+            }
+
+            // ── RIGHT: System Tray ────────
+            Row {
+                id: sysTrayRow
+                Layout.alignment: Qt.AlignVCenter
+                height: 20
+                spacing: 8
+                opacity: bar.dropdownOpen ? 0 : 1
+                visible: opacity > 0 && sysTrayRepeater.count > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                Repeater {
+                    id: sysTrayRepeater
+                    model: SystemTray.items
+                    delegate: Item {
+                        width: 13
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        IconImage {
+                            anchors.centerIn: parent
+                            source: modelData.icon || ""
+                            width: 13
+                            height: 13
+                            layer.enabled: true
+                            layer.effect: ColorOverlay {
+                                color: bar.fg
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            onClicked: (mouse) => {
+                                if (mouse.button === Qt.LeftButton) {
+                                    modelData.activate();
+                                } else if (mouse.button === Qt.RightButton) {
+                                    if (modelData.hasMenu) {
+                                        var pos = mapToItem(bar.contentItem, mouse.x, mouse.y);
+                                        modelData.display(bar, pos.x, pos.y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: opacity > 0 ? 8 : 0
@@ -487,7 +552,7 @@ PanelWindow {
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
                 Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
             }
-            
+
             // ── RIGHT: Clock ────────
             MouseArea {
                 id: clockMouse
@@ -531,72 +596,7 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: System Tray Separator (Clock -> Tray) ────────
-            Text {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
-                Layout.rightMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && !globalState.powerDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
-                visible: opacity > 0 && sysTrayRepeater.count > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
-            }
-
-            // ── RIGHT: System Tray ────────
-            Row {
-                id: sysTrayRow
-                Layout.alignment: Qt.AlignVCenter
-                height: 20
-                spacing: 8
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && !globalState.powerDropdownOpen) ? 1 : 0
-                visible: opacity > 0 && sysTrayRepeater.count > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-
-                Repeater {
-                    id: sysTrayRepeater
-                    model: SystemTray.items
-                    delegate: Item {
-                        width: 13
-                        height: 20
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        IconImage {
-                            anchors.centerIn: parent
-                            source: modelData.icon || ""
-                            width: 13
-                            height: 13
-                            layer.enabled: true
-                            layer.effect: ColorOverlay {
-                                color: bar.fg
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            onClicked: (mouse) => {
-                                if (mouse.button === Qt.LeftButton) {
-                                    modelData.activate();
-                                } else if (mouse.button === Qt.RightButton) {
-                                    if (modelData.hasMenu) {
-                                        var pos = mapToItem(bar.contentItem, mouse.x, mouse.y);
-                                        modelData.display(bar, pos.x, pos.y);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // ── RIGHT: Dot Separator (Tray -> Power) ────────
+            // ── RIGHT: Dot Separator (Clock -> Power) ────────
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
