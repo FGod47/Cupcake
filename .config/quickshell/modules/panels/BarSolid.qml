@@ -463,6 +463,44 @@ PanelWindow {
                 }
             }
 
+            // ── RIGHT: System Tray ────────
+            Row {
+                id: sysTrayRow
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 8
+                spacing: 8
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                Repeater {
+                    model: SystemTray.items
+                    delegate: Image {
+                        source: modelData.icon || ""
+                        sourceSize: Qt.size(16, 16)
+                        width: 16
+                        height: 16
+                        fillMode: Image.PreserveAspectFit
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            onClicked: (mouse) => {
+                                if (mouse.button === Qt.LeftButton) {
+                                    modelData.activate();
+                                } else if (mouse.button === Qt.RightButton) {
+                                    if (modelData.hasMenu) {
+                                        var pos = mapToItem(solidBar, mouse.x, mouse.y);
+                                        modelData.display(solidBar, pos.x, pos.y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // ── RIGHT: Vertical Separator ────────
             Rectangle {
                 Layout.alignment: Qt.AlignVCenter
