@@ -494,7 +494,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 height: 20
                 spacing: 8
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: bar.dropdownOpen ? 0 : 1
                 visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
