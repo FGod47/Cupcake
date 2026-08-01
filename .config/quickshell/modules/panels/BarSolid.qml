@@ -704,9 +704,9 @@ PanelWindow {
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
-        // When closed: starts at hardware icons location inside solidBar
+        // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - 120)
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -744,7 +744,7 @@ PanelWindow {
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= solidBar.height) {
-                    volBrightSplitPill.menuExpanded = !volBrightSplitPill.menuExpanded;
+                    bar.dropdownOpen = false;
                 }
             }
         }
