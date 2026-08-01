@@ -304,7 +304,6 @@ PanelWindow {
             // ── RIGHT: Network Icons ────────
             Row {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
                 spacing: 8
                 
                 Text {
