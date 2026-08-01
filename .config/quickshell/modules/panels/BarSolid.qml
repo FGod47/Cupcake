@@ -82,6 +82,22 @@ PanelWindow {
     property string activeSinkName: ""
     property var sinkList: []
 
+    function getVolumeIcon(volVal, isMuted) {
+        if (isMuted) return "\ueb4f";
+        var v = parseFloat(volVal) || 0;
+        if (v <= 0) return "\ueb4f";
+        if (v < 34) return "\ueb50";
+        if (v < 67) return "\ueb4e";
+        return "\ueb51";
+    }
+
+    function getBrightnessIcon(brightVal) {
+        var b = parseFloat(brightVal) || 0;
+        if (b < 34) return "\uea38";
+        if (b < 67) return "\uea39";
+        return "\ueb30";
+    }
+
     Process {
         id: volMuteCheckProc
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
@@ -384,7 +400,7 @@ PanelWindow {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "\ueb30" // tabler icon for sun (brightness)
+                            text: bar.getBrightnessIcon(bar.brightStr)
                             font.family: fontName
                             font.pixelSize: 15
                             color: fg
@@ -424,10 +440,10 @@ PanelWindow {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "\ueb51" // tabler icon for volume
+                            text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
                             font.family: fontName
                             font.pixelSize: 15
-                            color: fg
+                            color: bar.isVolMuted ? Theme.colError : fg
                         }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
@@ -797,7 +813,7 @@ PanelWindow {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "\ueb30 " + bar.brightStr + "%"
+                text: bar.getBrightnessIcon(bar.brightStr) + " " + bar.brightStr + "%"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
@@ -811,7 +827,7 @@ PanelWindow {
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: (bar.isVolMuted ? "\ueb4f " : "\ueb51 ") + bar.volStr + "%"
+                text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted) + " " + bar.volStr + "%"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
@@ -836,7 +852,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 spacing: 12
                 Text {
-                    text: "\ueb30"
+                    text: bar.getBrightnessIcon(bar.brightStr)
                     font.family: fontName
                     font.pixelSize: 18
                     color: bar.fg
@@ -898,7 +914,7 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.centerIn: parent
-                        text: bar.isVolMuted ? "\ueb4f" : "\ueb51"
+                        text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
                         font.family: fontName
                         font.pixelSize: 18
                         color: bar.isVolMuted ? Theme.colError : bar.fg
