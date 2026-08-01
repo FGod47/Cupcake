@@ -407,6 +407,9 @@ PanelWindow {
                 width: 1
                 height: 16
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
             }
             
             // ── RIGHT: Clock ────────
@@ -418,7 +421,8 @@ PanelWindow {
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
                 color: fg
-                opacity: globalState.solidBoardOpen ? 0 : 1
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
                 MouseArea {
@@ -435,7 +439,8 @@ PanelWindow {
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                opacity: globalState.solidBoardOpen ? 0 : 1
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
             // ── RIGHT: Power Pill ────────
@@ -445,6 +450,9 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
 
                 property bool expanded: false  // always false — expansion now handled by PowerDropdown
                 onExpandedChanged: {
