@@ -39,9 +39,9 @@ PanelWindow {
             if (globalState.solidBoardOpen) {
                 bar.dropdownOpen = false;
                 globalState.powerDropdownOpen = false;
-                clockSplitPill.menuExpanded = true;
+                clockSplitPill.menuExpanded = false;
             } else {
-                clockSplitPill.menuExpanded = true;
+                clockSplitPill.menuExpanded = false;
             }
         }
         function onPowerDropdownOpenChanged() {
@@ -795,14 +795,16 @@ PanelWindow {
         id: clockSplitPill
 
         y: solidBar.y
-        property bool menuExpanded: true
+        property bool menuExpanded: false
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : solidBar.height
         Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
 
         z: -1
 
         readonly property real openGap: 10
-        property real contentW: 280
+        readonly property real headerW: clockOptionsRow.implicitWidth + 24
+        readonly property real expandedW: 280
+        property real contentW: menuExpanded ? expandedW : headerW
 
         // When closed: starts at the clock location inside solidBar
         // When open: slides out to the right as solidBar shrinks
