@@ -365,6 +365,8 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
@@ -373,7 +375,6 @@ PanelWindow {
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
             Row {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
                 spacing: 12
                 opacity: bar.dropdownOpen ? 0 : 1
                 visible: opacity > 0
@@ -465,6 +466,8 @@ PanelWindow {
             // ── RIGHT: System Tray Separator (Left) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
@@ -477,7 +480,6 @@ PanelWindow {
             Row {
                 id: sysTrayRow
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 8
                 spacing: 8
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
@@ -514,6 +516,8 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
