@@ -15,6 +15,11 @@ ShellRoot {
 
     readonly property string homeDir: Quickshell.env("HOME")
 
+    // Load tabler-icons font explicitly at root level so all child components can use it reliably
+    FontLoader {
+        id: tablerIconsFont
+        source: "file://" + root.homeDir + "/.local/share/fonts/tabler-icons.ttf"
+    }
     // Top Bar Components for all screens
     function setGlobalDockRadius(c: int) {
         globalState.dockRadius = c;

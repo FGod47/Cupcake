@@ -62,11 +62,7 @@ PanelWindow {
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
-    FontLoader {
-        id: tablerFontLoader
-        source: "file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf"
-    }
-    property string fontName: tablerFontLoader.name
+    property string fontName: "tabler-icons"
     property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
     // Hardware data
@@ -936,7 +932,7 @@ PanelWindow {
                     Text {
                         anchors.centerIn: parent
                         text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                        font.family: fontName
+                        font.family: "tabler-icons"
                         font.pixelSize: 18
                         color: bar.isVolMuted ? Theme.colError : bar.fg
                     }
