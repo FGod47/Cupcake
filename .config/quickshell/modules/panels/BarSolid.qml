@@ -365,6 +365,8 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -466,6 +468,8 @@ PanelWindow {
             // ── RIGHT: System Tray Separator (Left) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -516,6 +520,8 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -549,6 +555,8 @@ PanelWindow {
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
