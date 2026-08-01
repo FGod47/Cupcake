@@ -62,7 +62,11 @@ PanelWindow {
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
-    property string fontName: "tabler-icons"
+    FontLoader {
+        id: tablerFontLoader
+        source: "file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf"
+    }
+    property string fontName: tablerFontLoader.name
     property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
     // Hardware data
