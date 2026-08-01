@@ -86,13 +86,15 @@ PanelWindow {
         if (isMuted) return "\ueb4f";
         var v = parseFloat(volVal) || 0;
         if (v <= 0) return "\ueb4f";
-        if (v < 34) return "\ueb4f";
-        if (v < 67) return "\ueb50";
+        if (v < 50) return "\ueb4f";
         return "\ueb51";
     }
 
     function getBrightnessIcon(brightVal) {
-        return "\ueb30";
+        var b = parseFloat(brightVal) || 0;
+        if (b < 33) return "\uf237";
+        if (b < 66) return "\ueb30";
+        return "\uf236";
     }
 
     Process {
