@@ -498,10 +498,6 @@ PanelWindow {
                         width: 16
                         height: 16
                         fillMode: Image.PreserveAspectFit
-                        layer.enabled: true
-                        layer.effect: ColorOverlay {
-                            color: bar.fg
-                        }
 
                         MouseArea {
                             anchors.fill: parent
