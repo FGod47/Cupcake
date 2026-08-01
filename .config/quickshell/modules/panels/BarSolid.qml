@@ -855,16 +855,15 @@ PanelWindow {
         // ── Header (Power Icon + Text) ──────────────────────────────
         Row {
             id: powerOptionsRow
+            anchors.horizontalCenter: parent.horizontalCenter
             y: (solidBar.height - height) / 2
-            anchors.left: parent.left
-            anchors.leftMargin: 10
             spacing: 4
             opacity: powerSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
             Item {
-                width: 26; height: 26
+                width: 22; height: 26
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
                     anchors.centerIn: parent
@@ -881,7 +880,6 @@ PanelWindow {
                 font.pixelSize: 12
                 font.weight: Font.Medium
                 color: Theme.colError
-                rightPadding: 8
             }
         }
 
