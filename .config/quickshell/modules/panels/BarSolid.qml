@@ -39,17 +39,12 @@ PanelWindow {
             if (globalState.solidBoardOpen) {
                 bar.dropdownOpen = false;
                 globalState.powerDropdownOpen = false;
-                clockSplitPill.menuExpanded = false;
-            } else {
-                clockSplitPill.menuExpanded = false;
             }
         }
         function onPowerDropdownOpenChanged() {
             if (globalState.powerDropdownOpen) {
                 bar.dropdownOpen = false;
                 globalState.solidBoardOpen = false;
-            } else {
-                powerSplitPill.menuExpanded = false;
             }
         }
     }
