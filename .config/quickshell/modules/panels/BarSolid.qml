@@ -450,7 +450,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
-                opacity: globalState.powerDropdownOpen ? 0 : 1
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
