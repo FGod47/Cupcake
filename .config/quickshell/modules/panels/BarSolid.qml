@@ -477,7 +477,7 @@ PanelWindow {
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
-                visible: opacity > 0 && (SystemTray.items && SystemTray.items.count > 0)
+                visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
 
@@ -487,10 +487,11 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 8
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
-                visible: opacity > 0 && (SystemTray.items && SystemTray.items.count > 0)
+                visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
                 Repeater {
+                    id: sysTrayRepeater
                     model: SystemTray.items
                     delegate: IconImage {
                         source: modelData.icon || ""
