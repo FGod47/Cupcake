@@ -385,7 +385,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 12
                 opacity: bar.dropdownOpen ? 0 : 1
-                visible: opacity > 0
+                visible: !bar.dropdownOpen
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 
                 // Brightness
@@ -471,7 +471,7 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: System Tray Separator (Left) ────────
+            // ── RIGHT: System Tray Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
@@ -481,7 +481,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: sysTrayRepeater.count > 0 ? 1 : 0
+                opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
