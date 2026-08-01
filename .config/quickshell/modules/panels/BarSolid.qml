@@ -494,8 +494,8 @@ PanelWindow {
                     model: SystemTray.items
                     delegate: IconImage {
                         source: modelData.icon || ""
-                        width: 14
-                        height: 14
+                        width: 11
+                        height: 11
                         layer.enabled: true
                         layer.effect: ColorOverlay {
                             color: bar.fg
