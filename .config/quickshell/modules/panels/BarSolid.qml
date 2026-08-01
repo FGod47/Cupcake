@@ -365,11 +365,11 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
@@ -466,11 +466,11 @@ PanelWindow {
             // ── RIGHT: System Tray Separator (Left) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -516,11 +516,11 @@ PanelWindow {
             // ── RIGHT: Dot Separator ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -549,10 +549,11 @@ PanelWindow {
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 6
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
