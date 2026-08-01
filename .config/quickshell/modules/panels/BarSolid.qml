@@ -62,7 +62,7 @@ PanelWindow {
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
-    property string fontName: "tabler-icons"
+    property string fontName: globalState.tablerIconsFamily
     property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
     // Hardware data
@@ -932,7 +932,7 @@ PanelWindow {
                     Text {
                         anchors.centerIn: parent
                         text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                        font.family: "tabler-icons"
+                        font.family: globalState.tablerIconsFamily
                         font.pixelSize: 18
                         color: bar.isVolMuted ? Theme.colError : bar.fg
                     }

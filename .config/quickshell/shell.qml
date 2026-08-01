@@ -90,6 +90,7 @@ ShellRoot {
 
     Scope {
         id: globalState
+        property string tablerIconsFamily: tablerIconsFont.name !== "" ? tablerIconsFont.name : "tabler-icons"
         property string barStyle: "solid"
         property string pendingBarStyle: ""
         property bool barVisible: true
