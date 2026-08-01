@@ -484,6 +484,7 @@ PanelWindow {
             Row {
                 id: sysTrayRow
                 Layout.alignment: Qt.AlignVCenter
+                height: 20
                 spacing: 8
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0 && sysTrayRepeater.count > 0
@@ -492,13 +493,20 @@ PanelWindow {
                 Repeater {
                     id: sysTrayRepeater
                     model: SystemTray.items
-                    delegate: IconImage {
-                        source: modelData.icon || ""
+                    delegate: Item {
                         width: 13
-                        height: 13
-                        layer.enabled: true
-                        layer.effect: ColorOverlay {
-                            color: bar.fg
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        IconImage {
+                            anchors.centerIn: parent
+                            source: modelData.icon || ""
+                            width: 13
+                            height: 13
+                            layer.enabled: true
+                            layer.effect: ColorOverlay {
+                                color: bar.fg
+                            }
                         }
 
                         MouseArea {

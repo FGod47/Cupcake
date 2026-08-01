@@ -696,12 +696,19 @@ PanelWindow {
                     
                     Repeater {
                         model: SystemTray.items
-                        delegate: IconImage {
-                            source: modelData.icon || ""
+                        delegate: Item {
                             width: 13
-                            height: 13
-                            layer.enabled: true
-                            layer.effect: ColorOverlay { color: bar.fg }
+                            height: 20
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            IconImage {
+                                anchors.centerIn: parent
+                                source: modelData.icon || ""
+                                width: 13
+                                height: 13
+                                layer.enabled: true
+                                layer.effect: ColorOverlay { color: bar.fg }
+                            }
                             
                             MouseArea {
                                 anchors.fill: parent
