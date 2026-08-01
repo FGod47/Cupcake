@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Io
@@ -491,12 +492,16 @@ PanelWindow {
 
                 Repeater {
                     model: SystemTray.items
-                    delegate: IconImage {
+                    delegate: Image {
                         source: modelData.icon || ""
                         sourceSize: Qt.size(16, 16)
                         width: 16
                         height: 16
-                        color: bar.fg
+                        fillMode: Image.PreserveAspectFit
+                        layer.enabled: true
+                        layer.effect: ColorOverlay {
+                            color: bar.fg
+                        }
 
                         MouseArea {
                             anchors.fill: parent
