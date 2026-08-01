@@ -83,9 +83,9 @@ PanelWindow {
     property var sinkList: []
 
     function getVolumeIcon(volVal, isMuted) {
-        if (isMuted) return "\ueb4f";
+        if (isMuted) return "\uec60";
         var v = parseFloat(volVal) || 0;
-        if (v <= 0) return "\ueb4f";
+        if (v <= 0) return "\uec60";
         if (v < 50) return "\ueb4f";
         return "\ueb51";
     }
@@ -810,13 +810,22 @@ PanelWindow {
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
-            Text {
+            Row {
+                spacing: 4
                 anchors.verticalCenter: parent.verticalCenter
-                text: bar.getBrightnessIcon(bar.brightStr) + " " + bar.brightStr + "%"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: bar.fg
+                Text {
+                    text: bar.getBrightnessIcon(bar.brightStr)
+                    font.family: fontName
+                    font.pixelSize: Theme.defaultFontSize
+                    color: bar.fg
+                }
+                Text {
+                    text: bar.brightStr + "%"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: Theme.defaultFontSize
+                    font.weight: Theme.defaultFontWeight
+                    color: bar.fg
+                }
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
@@ -824,13 +833,22 @@ PanelWindow {
                 font.pixelSize: 8
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
             }
-            Text {
+            Row {
+                spacing: 4
                 anchors.verticalCenter: parent.verticalCenter
-                text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted) + " " + bar.volStr + "%"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: bar.isVolMuted ? Theme.colError : bar.fg
+                Text {
+                    text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
+                    font.family: fontName
+                    font.pixelSize: Theme.defaultFontSize
+                    color: bar.isVolMuted ? Theme.colError : bar.fg
+                }
+                Text {
+                    text: bar.volStr + "%"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: Theme.defaultFontSize
+                    font.weight: Theme.defaultFontWeight
+                    color: bar.isVolMuted ? Theme.colError : bar.fg
+                }
             }
         }
 
