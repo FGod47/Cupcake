@@ -1274,7 +1274,7 @@ PanelWindow {
             }
         }
 
-        // ── Header (Clock & Date Text + Power Icon when dropdown open) ──────
+        // ── Header (Tray + Clock & Date Text + Power Icon when dropdown open) ──────
         Row {
             id: clockOptionsRow
             anchors.horizontalCenter: parent.horizontalCenter
@@ -1283,6 +1283,54 @@ PanelWindow {
             opacity: clockSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
+
+            // System Tray — shown in this pill when Vol/Bright separates
+            Row {
+                spacing: 6
+                anchors.verticalCenter: parent.verticalCenter
+                opacity: bar.dropdownOpen ? 1.0 : 0.0
+                visible: opacity > 0 && sysTrayRepeaterClock.count > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                Repeater {
+                    id: sysTrayRepeaterClock
+                    model: SystemTray.items
+                    delegate: Item {
+                        width: 13
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        IconImage {
+                            anchors.centerIn: parent
+                            source: modelData.icon || ""
+                            width: 13
+                            height: 13
+                            layer.enabled: true
+                            layer.effect: ColorOverlay { color: bar.fg }
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            onClicked: (mouse) => {
+                                if (mouse.button === Qt.LeftButton) modelData.activate();
+                                else if (mouse.button === Qt.RightButton && modelData.hasMenu) {
+                                    var pos = mapToItem(bar.contentItem, mouse.x, mouse.y);
+                                    modelData.display(bar, pos.x, pos.y);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                opacity: bar.dropdownOpen && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
+                visible: opacity > 0
+            }
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
