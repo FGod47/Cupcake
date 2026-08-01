@@ -533,22 +533,45 @@ PanelWindow {
             }
             
             // ── RIGHT: Clock ────────
-            Text {
-                id: clockTextMain
+            MouseArea {
+                id: clockMouse
                 Layout.alignment: Qt.AlignVCenter
-                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: fg
+                width: clockRow.implicitWidth
+                height: 20
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+                onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
+                Row {
+                    id: clockRow
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: clockMouse.containsMouse ? 4 : 0
+                    Behavior on spacing { NumberAnimation { duration: 200 } }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Qt.formatDateTime(timeClock.date, "MMM dd • ")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        width: clockMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        color: fg
+                    }
                 }
             }
 
