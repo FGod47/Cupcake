@@ -744,7 +744,11 @@ PanelWindow {
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= solidBar.height) {
-                    bar.dropdownOpen = false;
+                    bar.dropdownOpen = !bar.dropdownOpen;
+                    if (bar.dropdownOpen) {
+                        globalState.solidBoardOpen = false;
+                        globalState.powerDropdownOpen = false;
+                    }
                 }
             }
         }
@@ -910,7 +914,7 @@ PanelWindow {
         id: clockSplitPill
 
         y: solidBar.y
-        property bool menuExpanded: false
+        property bool menuExpanded: globalState.solidBoardOpen
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : solidBar.height
         Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
 
@@ -961,7 +965,13 @@ PanelWindow {
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= solidBar.height) {
-                    clockSplitPill.menuExpanded = !clockSplitPill.menuExpanded;
+                    if (globalState.solidBoardOpen) {
+                        globalState.solidBoardOpen = false;
+                    } else {
+                        bar.dropdownOpen = false;
+                        globalState.powerDropdownOpen = false;
+                        globalState.solidBoardOpen = true;
+                    }
                 }
             }
         }
@@ -1205,7 +1215,7 @@ PanelWindow {
         id: powerSplitPill
 
         y: solidBar.y
-        property bool menuExpanded: false
+        property bool menuExpanded: globalState.powerDropdownOpen
         height: menuExpanded ? (powerMenu.implicitHeight + 20) : solidBar.height
         Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
 
@@ -1253,13 +1263,14 @@ PanelWindow {
             hoverEnabled: true
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (!globalState.powerDropdownOpen && (globalState.solidBoardOpen || bar.dropdownOpen || clockSplitPill.menuExpanded)) {
-                    globalState.powerDropdownOpen = true;
-                    globalState.solidBoardOpen = false;
-                    bar.dropdownOpen = false;
-                    clockSplitPill.menuExpanded = false;
-                } else if (mouse.y <= solidBar.height) {
-                    powerSplitPill.menuExpanded = !powerSplitPill.menuExpanded;
+                if (mouse.y <= solidBar.height) {
+                    if (globalState.powerDropdownOpen) {
+                        globalState.powerDropdownOpen = false;
+                    } else {
+                        bar.dropdownOpen = false;
+                        globalState.solidBoardOpen = false;
+                        globalState.powerDropdownOpen = true;
+                    }
                 }
             }
         }
