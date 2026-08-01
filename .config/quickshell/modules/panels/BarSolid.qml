@@ -362,16 +362,21 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator ────────
+            // ── RIGHT: Dot Separator (Network -> Hardware) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
+                Layout.leftMargin: opacity > 0 ? 8 : 0
+                Layout.rightMargin: opacity > 0 ? 8 : 0
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
+                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
@@ -468,8 +473,8 @@ PanelWindow {
             // ── RIGHT: System Tray Separator (Left) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
+                Layout.leftMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
+                Layout.rightMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -478,6 +483,8 @@ PanelWindow {
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
+                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
             }
 
             // ── RIGHT: System Tray ────────
@@ -528,11 +535,11 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator ────────
+            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
+                Layout.leftMargin: opacity > 0 ? 8 : 0
+                Layout.rightMargin: opacity > 0 ? 8 : 0
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -541,6 +548,8 @@ PanelWindow {
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
+                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
             }
             
             // ── RIGHT: Clock ────────
@@ -589,8 +598,8 @@ PanelWindow {
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
+                Layout.leftMargin: opacity > 0 ? 8 : 0
+                Layout.rightMargin: opacity > 0 ? 8 : 0
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -599,7 +608,10 @@ PanelWindow {
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
+                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
             }
+
             // ── RIGHT: Power Pill ────────
             // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
             Item {
