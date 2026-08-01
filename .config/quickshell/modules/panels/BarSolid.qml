@@ -87,18 +87,18 @@ PanelWindow {
     property var sinkList: []
 
     function getVolumeIcon(volVal, isMuted) {
-        if (isMuted) return "\uec60";
+        if (isMuted) return "";
         var v = parseFloat(volVal) || 0;
-        if (v <= 0) return "\uec60";
-        if (v < 50) return "\ueb4f";
-        return "\ueb51";
+        if (v <= 0) return "";
+        if (v < 50) return "";
+        return "";
     }
 
     function getBrightnessIcon(brightVal) {
         var b = parseFloat(brightVal) || 0;
-        if (b < 33) return "\uf237";
-        if (b < 66) return "\ueb30";
-        return "\uf236";
+        if (b < 33) return "";
+        if (b < 66) return "";
+        return "";
     }
 
     Process {
@@ -1056,7 +1056,7 @@ PanelWindow {
                             spacing: 8
 
                             Text {
-                                text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "\ueb51")
+                                text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "")
                                 font.family: fontName
                                 font.pixelSize: 15
                                 color: isActiveSink ? Theme.colPrimary : bar.fg
