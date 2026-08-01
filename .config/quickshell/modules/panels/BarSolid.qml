@@ -230,7 +230,7 @@ PanelWindow {
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13
             anchors.rightMargin: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 22 : 13
-            Behavior on anchors.rightMargin { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
+            Behavior on anchors.rightMargin { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
             height: bar.barHeight
             spacing: 0
             opacity: 0
@@ -366,18 +366,16 @@ PanelWindow {
             // ── RIGHT: Dot Separator (Network -> Hardware) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: opacity > 0 ? 8 : 0
-                Layout.rightMargin: opacity > 0 ? 8 : 0
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: bar.dropdownOpen ? 0 : 1
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
@@ -385,8 +383,8 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 12
                 opacity: bar.dropdownOpen ? 0 : 1
-                visible: !bar.dropdownOpen
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 
                 // Brightness
                 // Brightness
@@ -474,18 +472,16 @@ PanelWindow {
             // ── RIGHT: Dot Separator (Hardware -> Tray) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
-                Layout.rightMargin: (opacity > 0 && sysTrayRepeater.count > 0) ? 8 : 0
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
-                visible: opacity > 0 && sysTrayRepeater.count > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: System Tray ────────
@@ -495,8 +491,8 @@ PanelWindow {
                 height: 20
                 spacing: 8
                 opacity: bar.dropdownOpen ? 0 : 1
-                visible: opacity > 0 && sysTrayRepeater.count > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 Repeater {
                     id: sysTrayRepeater
@@ -536,21 +532,19 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
+            // ── RIGHT: Dot Separator (Tray -> Hardware -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: opacity > 0 ? 8 : 0
-                Layout.rightMargin: opacity > 0 ? 8 : 0
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: Clock ────────
@@ -562,8 +556,8 @@ PanelWindow {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
 
                 Row {
@@ -600,30 +594,27 @@ PanelWindow {
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: opacity > 0 ? 8 : 0
-                Layout.rightMargin: opacity > 0 ? 8 : 0
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
                 opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: Power Pill ────────
-            // Hover: shows "Power" text. Click: shows Shutdown/Restart/Logout icons.
             Item {
                 id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 property bool expanded: false  // always false — expansion now handled by PowerDropdown
                 onExpandedChanged: {
@@ -1858,7 +1849,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 12 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - clockSplitPill.openGap - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
             });
         }
     }
@@ -1926,7 +1917,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 12 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - clockSplitPill.openGap - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
             });
         }
     }
