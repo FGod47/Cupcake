@@ -123,7 +123,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -706,7 +706,7 @@ PanelWindow {
 
         // When closed: starts at hardware icons location inside solidBar
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - 120)
+        x: bar.dropdownOpen ? (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 10 - contentW)) : (bar.barX + bar.barW - 120)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1503,7 +1503,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
@@ -1571,7 +1571,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
