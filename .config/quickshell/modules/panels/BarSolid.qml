@@ -1004,10 +1004,12 @@ PanelWindow {
                     model: bar.sinkList
                     delegate: Rectangle {
                         Layout.fillWidth: true
-                        height: 32
-                        radius: 8
+                        height: 34
+                        radius: 17
                         property bool isActiveSink: modelData.name === bar.activeSinkName
-                        color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : "transparent")
+                        color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
+                        border.color: isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                        border.width: 1
                         Behavior on color { ColorAnimation { duration: 150 } }
 
                         RowLayout {
