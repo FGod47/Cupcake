@@ -174,7 +174,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 12 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - 16) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - 16) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : bar.barW))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -229,7 +229,8 @@ PanelWindow {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13
-            anchors.rightMargin: 13
+            anchors.rightMargin: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 22 : 13
+            Behavior on anchors.rightMargin { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
             height: bar.barHeight
             spacing: 0
             opacity: 0
@@ -856,14 +857,14 @@ PanelWindow {
 
         z: -1
 
-        readonly property real openGap: 12
+        readonly property real openGap: 16
         readonly property real headerW: volBrightOptionsRow.implicitWidth + 24
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
         // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 12 - contentW) : (bar.barX + bar.barW - 285)
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -915,7 +916,7 @@ PanelWindow {
             id: volBrightOptionsRow
             anchors.horizontalCenter: parent.horizontalCenter
             y: (solidBar.height - height) / 2
-            spacing: 8
+            spacing: 12
             opacity: volBrightSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
@@ -1216,14 +1217,14 @@ PanelWindow {
 
         z: -1
 
-        readonly property real openGap: 12
+        readonly property real openGap: 16
         readonly property real headerW: clockOptionsRow.implicitWidth + 24
         readonly property real expandedW: 280
         property real contentW: menuExpanded ? expandedW : headerW
 
         // When closed: starts at the clock location inside solidBar
         // When open: slides out to the left of powerSplitPill (or far right if dropdownOpen) as solidBar shrinks
-        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 12 - contentW) : (bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
+        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : (bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
         width: (globalState.solidBoardOpen || bar.dropdownOpen) ? contentW : 140
         scale: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
