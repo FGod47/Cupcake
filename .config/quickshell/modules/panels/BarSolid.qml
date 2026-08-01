@@ -492,12 +492,10 @@ PanelWindow {
 
                 Repeater {
                     model: SystemTray.items
-                    delegate: Image {
+                    delegate: IconImage {
                         source: modelData.icon || ""
-                        sourceSize: Qt.size(16, 16)
                         width: 16
                         height: 16
-                        fillMode: Image.PreserveAspectFit
 
                         MouseArea {
                             anchors.fill: parent
