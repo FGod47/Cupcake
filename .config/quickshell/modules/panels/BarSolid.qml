@@ -26,12 +26,12 @@ PanelWindow {
         Region { item: solidBar }
         Region { item: clockSplitPill }
         Region { item: powerSplitPill }
+        Region { item: volBrightSplitPill }
     }
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
-    property real extraHeight: dropdownOpen ? 120 : 0
-    Behavior on extraHeight { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+    property real extraHeight: 0
     
     Connections {
         target: globalState
@@ -51,6 +51,16 @@ PanelWindow {
             } else {
                 powerSplitPill.menuExpanded = false;
             }
+        }
+    }
+
+    onDropdownOpenChanged: {
+        if (bar.dropdownOpen) {
+            globalState.solidBoardOpen = false;
+            globalState.powerDropdownOpen = false;
+            volBrightSplitPill.menuExpanded = true;
+        } else {
+            volBrightSplitPill.menuExpanded = true;
         }
     }
 
@@ -113,7 +123,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -316,6 +326,9 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.rightMargin: 12
                 spacing: 12
+                opacity: bar.dropdownOpen ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
                 
                 // Brightness
                 // Brightness
@@ -407,7 +420,7 @@ PanelWindow {
                 width: 1
                 height: 16
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
-                opacity: globalState.solidBoardOpen ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
@@ -421,7 +434,7 @@ PanelWindow {
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
                 color: fg
-                opacity: globalState.solidBoardOpen ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
@@ -439,7 +452,7 @@ PanelWindow {
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
@@ -450,7 +463,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
-                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
@@ -672,57 +685,151 @@ PanelWindow {
             }
         }
 
-        // ── DROPDOWN (Brightness & Volume) ────────
-        Column {
+    // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
+    // Teardown animation: starts collapsed at hardware icons location inside solidBar,
+    // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
+    Rectangle {
+        id: volBrightSplitPill
+
+        y: solidBar.y
+        property bool menuExpanded: true
+        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : solidBar.height
+        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+
+        z: -1
+
+        readonly property real openGap: 10
+        readonly property real headerW: volBrightOptionsRow.implicitWidth + 24
+        readonly property real expandedW: 260
+        property real contentW: menuExpanded ? expandedW : headerW
+
+        // When closed: starts at hardware icons location inside solidBar
+        // When open: slides out to the right as solidBar shrinks
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 120)
+        width: bar.dropdownOpen ? contentW : 80
+        scale: bar.dropdownOpen ? 1.0 : 0.5
+        transformOrigin: Item.Left
+
+        Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.35 } }
+        Behavior on width { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.35 } }
+        Behavior on scale { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+
+        radius: menuExpanded ? 16 : solidBar.radius
+        Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        clip: true
+
+        color: bar.pillColor
+        border.color: Qt.rgba(1, 1, 1, 0.10)
+        border.width: 1
+
+        // Top glass highlight
+        Rectangle {
+            anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: contentLayout.bottom
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 24
-            anchors.rightMargin: 24
-            anchors.topMargin: 8
-            anchors.bottomMargin: 16
-            spacing: 12
-            opacity: bar.dropdownOpen && !globalState.solidBoardOpen ? 1 : 0
-            Behavior on opacity { NumberAnimation { duration: 300 } }
+            anchors.leftMargin: 4; anchors.rightMargin: 4
+            height: 1; radius: 1
+            color: Qt.rgba(1, 1, 1, 0.10)
+        }
+
+        opacity: bar.dropdownOpen ? 1.0 : 0.0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 180 } }
+
+        MouseArea {
+            id: volBrightSplitPillMa
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onClicked: {
+                if (mouse.y <= solidBar.height) {
+                    volBrightSplitPill.menuExpanded = !volBrightSplitPill.menuExpanded;
+                }
+            }
+        }
+
+        // ── Header (Brightness & Volume Icons + %) ──────────────────────────────
+        Row {
+            id: volBrightOptionsRow
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: (solidBar.height - height) / 2
+            spacing: 8
+            opacity: volBrightSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
-            
-            // Brightness Slider
+            Behavior on opacity { NumberAnimation { duration: 250 } }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "\ueb30 " + bar.brightStr + "%"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+                color: bar.fg
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "\ueb51 " + bar.volStr + "%"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+                color: bar.fg
+            }
+        }
+
+        // ── Expanded Sliders View ────────────────────────────────
+        ColumnLayout {
+            id: volBrightContentCol
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 14
+            spacing: 12
+            opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+
+            // Brightness Slider Row
             Row {
-                width: parent.width
-                spacing: 16
+                Layout.fillWidth: true
+                spacing: 12
                 Text {
-                    text: "\ueb30" // sun icon
+                    text: "\ueb30"
                     font.family: fontName
-                    font.pixelSize: 20
-                    color: fg
+                    font.pixelSize: 18
+                    color: bar.fg
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Slider {
                     id: ddBrightSlider
-                    width: parent.width - 40
+                    width: parent.width - 34
                     anchors.verticalCenter: parent.verticalCenter
                     clip: true
                     handle: Rectangle {
                         x: ddBrightSlider.leftPadding + ddBrightSlider.visualPosition * (ddBrightSlider.availableWidth - width)
                         y: ddBrightSlider.height / 2 - height / 2
-                        width: 16; height: 16; radius: 8
+                        width: 14; height: 14; radius: 7
                         color: Theme.colPrimary
                     }
                     background: Rectangle {
                         x: ddBrightSlider.leftPadding
                         y: ddBrightSlider.height / 2 - height / 2
                         implicitWidth: 100
-                        implicitHeight: 8
+                        implicitHeight: 6
                         width: ddBrightSlider.availableWidth
                         height: implicitHeight
-                        radius: 4
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                        radius: 3
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
                         Rectangle {
                             width: ddBrightSlider.visualPosition * parent.width
                             height: parent.height
                             color: Theme.colPrimary
-                            radius: 4
+                            radius: 3
                         }
                     }
                     from: 0; to: 100
@@ -743,42 +850,42 @@ PanelWindow {
                 }
             }
 
-            // Volume Slider
+            // Volume Slider Row
             Row {
-                width: parent.width
-                spacing: 16
+                Layout.fillWidth: true
+                spacing: 12
                 Text {
-                    text: "\ueb51" // volume icon
+                    text: "\ueb51"
                     font.family: fontName
-                    font.pixelSize: 20
-                    color: fg
+                    font.pixelSize: 18
+                    color: bar.fg
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Slider {
                     id: ddVolSlider
-                    width: parent.width - 40
+                    width: parent.width - 34
                     anchors.verticalCenter: parent.verticalCenter
                     clip: true
                     handle: Rectangle {
                         x: ddVolSlider.leftPadding + ddVolSlider.visualPosition * (ddVolSlider.availableWidth - width)
                         y: ddVolSlider.height / 2 - height / 2
-                        width: 16; height: 16; radius: 8
+                        width: 14; height: 14; radius: 7
                         color: Theme.colPrimary
                     }
                     background: Rectangle {
                         x: ddVolSlider.leftPadding
                         y: ddVolSlider.height / 2 - height / 2
                         implicitWidth: 100
-                        implicitHeight: 8
+                        implicitHeight: 6
                         width: ddVolSlider.availableWidth
                         height: implicitHeight
-                        radius: 4
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                        radius: 3
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
                         Rectangle {
                             width: ddVolSlider.visualPosition * parent.width
                             height: parent.height
                             color: Theme.colPrimary
-                            radius: 4
+                            radius: 3
                         }
                     }
                     from: 0; to: 100
@@ -793,6 +900,7 @@ PanelWindow {
                 }
             }
         }
+    }
         
     }
 
@@ -1365,7 +1473,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
@@ -1433,7 +1541,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
