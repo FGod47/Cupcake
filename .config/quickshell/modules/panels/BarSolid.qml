@@ -114,7 +114,7 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW))
-        Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutBack; easing.overshoot: 1.18 } }
+        Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
