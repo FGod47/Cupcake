@@ -496,7 +496,6 @@ PanelWindow {
                         fillMode: Image.PreserveAspectFit
 
                         MouseArea {
-                            id: sysTrayItemMa
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -504,13 +503,9 @@ PanelWindow {
                                 if (mouse.button === Qt.LeftButton) {
                                     modelData.activate();
                                 } else if (mouse.button === Qt.RightButton) {
-                                    var pos = sysTrayItemMa.mapToItem(bar.contentItem, mouse.x, mouse.y);
-                                    if (modelData.hasMenu && modelData.menu) {
-                                        modelData.menu.display(bar, pos.x, pos.y);
-                                    } else if (modelData.hasMenu) {
+                                    if (modelData.hasMenu) {
+                                        var pos = mapToItem(bar.contentItem, mouse.x, mouse.y);
                                         modelData.display(bar, pos.x, pos.y);
-                                    } else {
-                                        modelData.secondaryActivate();
                                     }
                                 }
                             }
