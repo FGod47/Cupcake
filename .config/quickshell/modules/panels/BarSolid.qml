@@ -154,7 +154,7 @@ PanelWindow {
     readonly property real powerPillGap: 8   // gap between bar and power pill
     property real powerSplitOffset: 0       // grows with OutBack to push bar left
     Behavior on powerSplitOffset {
-        NumberAnimation { duration: 500; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+        NumberAnimation { duration: 700; easing.type: Easing.OutQuart }
     }
     onPowerSplitOffsetChanged: {
         // keep mask updated
@@ -175,7 +175,7 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - 16) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - 16) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : bar.barW))
-        Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+        Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
@@ -854,7 +854,7 @@ PanelWindow {
         property bool menuExpanded: true
         property bool showSinkList: false
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : solidBar.height
-        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+        Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
 
@@ -870,9 +870,9 @@ PanelWindow {
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
 
-        Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on width { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on scale { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: menuExpanded ? 16 : solidBar.radius
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -894,7 +894,7 @@ PanelWindow {
 
         opacity: bar.dropdownOpen ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 180 } }
+        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: volBrightSplitPillMa
@@ -1214,7 +1214,7 @@ PanelWindow {
         y: solidBar.y
         property bool menuExpanded: globalState.solidBoardOpen
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : solidBar.height
-        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+        Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
 
@@ -1230,9 +1230,9 @@ PanelWindow {
         scale: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
-        Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on width { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on scale { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: menuExpanded ? 16 : solidBar.radius
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -1254,7 +1254,7 @@ PanelWindow {
 
         opacity: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 180 } }
+        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: clockSplitPillMa
@@ -1594,7 +1594,7 @@ PanelWindow {
         y: solidBar.y
         property bool menuExpanded: globalState.powerDropdownOpen
         height: menuExpanded ? (powerMenu.implicitHeight + 20) : solidBar.height
-        Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
+        Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
 
@@ -1609,9 +1609,9 @@ PanelWindow {
         scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
-        Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on width { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
-        Behavior on scale { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+        Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: solidBar.radius
         clip: true
@@ -1632,7 +1632,7 @@ PanelWindow {
 
         opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 180 } }
+        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: powerSplitPillMa
@@ -1803,36 +1803,32 @@ PanelWindow {
             property: "x"
             from: bar.startX
             to: bar.barX
-            duration: 540
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.5
+            duration: 700
+            easing.type: Easing.OutQuart
         }
         NumberAnimation {
             target: solidBar
             property: "width"
             from: bar.startW
             to: bar.barW
-            duration: 540
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.5
+            duration: 700
+            easing.type: Easing.OutQuart
         }
         NumberAnimation {
             target: bar
             property: "baseHeight"
             from: bar.startHeight
             to: bar.barHeight
-            duration: 540
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.5
+            duration: 700
+            easing.type: Easing.OutQuart
         }
         NumberAnimation {
             target: solidBar
             property: "radius"
             from: bar.startRadius
             to: bar.barRadius
-            duration: 540
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.5
+            duration: 700
+            easing.type: Easing.OutQuart
         }
         ColorAnimation {
             target: solidBar
