@@ -434,7 +434,7 @@ PanelWindow {
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
                 color: fg
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                opacity: globalState.solidBoardOpen ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
@@ -452,7 +452,7 @@ PanelWindow {
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
@@ -463,7 +463,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
