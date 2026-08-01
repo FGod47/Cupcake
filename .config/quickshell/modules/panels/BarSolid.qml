@@ -78,9 +78,45 @@ PanelWindow {
     property bool isBluetooth: false
     property bool isBluetoothConnected: false
     property bool isHotspot: false
+    property bool isVolMuted: false
+    property string activeSinkName: ""
+    property var sinkList: []
 
+    Process {
+        id: volMuteCheckProc
+        command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
+        running: true
+        stdout: StdioCollector {
+            onTextChanged: {
+                bar.isVolMuted = text.includes("[MUTED]");
+            }
+        }
+    }
 
-    property var activePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
+    Process {
+        id: sinkFetchProc
+        command: ["pactl", "-f", "json", "list", "sinks"]
+        stdout: StdioCollector {
+            onTextChanged: {
+                if (text && text.trim().length > 0) {
+                    try {
+                        var parsed = JSON.parse(text);
+                        bar.sinkList = parsed;
+                    } catch (e) {}
+                }
+            }
+        }
+    }
+
+    Process {
+        id: activeSinkProc
+        command: ["pactl", "get-default-sink"]
+        stdout: StdioCollector {
+            onTextChanged: {
+                if (text) bar.activeSinkName = text.trim();
+            }
+        }
+    }
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
@@ -689,6 +725,7 @@ PanelWindow {
 
         y: solidBar.y
         property bool menuExpanded: true
+        property bool showSinkList: false
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : solidBar.height
         Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
 
@@ -774,11 +811,11 @@ PanelWindow {
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "\ueb51 " + bar.volStr + "%"
+                text: (bar.isVolMuted ? "\ueb4f " : "\ueb51 ") + bar.volStr + "%"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
-                color: bar.fg
+                color: bar.isVolMuted ? Theme.colError : bar.fg
             }
         }
 
@@ -853,24 +890,39 @@ PanelWindow {
             // Volume Slider Row
             Row {
                 Layout.fillWidth: true
-                spacing: 12
-                Text {
-                    text: "\ueb51"
-                    font.family: fontName
-                    font.pixelSize: 18
-                    color: bar.fg
+                spacing: 8
+
+                // Mute / Unmute Button
+                Item {
+                    width: 22; height: 22
                     anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: bar.isVolMuted ? "\ueb4f" : "\ueb51"
+                        font.family: fontName
+                        font.pixelSize: 18
+                        color: bar.isVolMuted ? Theme.colError : bar.fg
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
+                            bar.isVolMuted = !bar.isVolMuted;
+                        }
+                    }
                 }
+
                 Slider {
                     id: ddVolSlider
-                    width: parent.width - 34
+                    width: parent.width - 56
                     anchors.verticalCenter: parent.verticalCenter
                     clip: true
                     handle: Rectangle {
                         x: ddVolSlider.leftPadding + ddVolSlider.visualPosition * (ddVolSlider.availableWidth - width)
                         y: ddVolSlider.height / 2 - height / 2
                         width: 14; height: 14; radius: 7
-                        color: Theme.colPrimary
+                        color: bar.isVolMuted ? Theme.colError : Theme.colPrimary
                     }
                     background: Rectangle {
                         x: ddVolSlider.leftPadding
@@ -884,7 +936,7 @@ PanelWindow {
                         Rectangle {
                             width: ddVolSlider.visualPosition * parent.width
                             height: parent.height
-                            color: Theme.colPrimary
+                            color: bar.isVolMuted ? Theme.colError : Theme.colPrimary
                             radius: 3
                         }
                     }
@@ -897,6 +949,110 @@ PanelWindow {
                         onTriggered: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(targetVal).toString() + "%"])
                     }
                     onMoved: { ddAudioVolTimer.targetVal = value; ddAudioVolTimer.restart(); bar.volStr = Math.round(value).toString() }
+                }
+
+                // Audio Output Sources Dropdown Toggle Button
+                Item {
+                    width: 22; height: 22
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: volBrightSplitPill.showSinkList ? "\uea62" : "\uea5f"
+                        font.family: fontName
+                        font.pixelSize: 16
+                        color: volBrightSplitPill.showSinkList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            volBrightSplitPill.showSinkList = !volBrightSplitPill.showSinkList;
+                            if (volBrightSplitPill.showSinkList) {
+                                sinkFetchProc.running = true;
+                                activeSinkProc.running = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Audio Output Devices Picker List
+            ColumnLayout {
+                id: sinkListCol
+                Layout.fillWidth: true
+                spacing: 6
+                opacity: volBrightSplitPill.showSinkList ? 1.0 : 0.0
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 1
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                }
+
+                Text {
+                    text: "AUDIO OUTPUT"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    Layout.topMargin: 4
+                }
+
+                Repeater {
+                    model: bar.sinkList
+                    delegate: Rectangle {
+                        Layout.fillWidth: true
+                        height: 32
+                        radius: 8
+                        property bool isActiveSink: modelData.name === bar.activeSinkName
+                        color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : "transparent")
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 8
+
+                            Text {
+                                text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "\ueb51")
+                                font.family: fontName
+                                font.pixelSize: 15
+                                color: isActiveSink ? Theme.colPrimary : bar.fg
+                            }
+
+                            Text {
+                                Layout.fillWidth: true
+                                text: modelData.description || modelData.name
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: isActiveSink ? Font.Bold : Font.Normal
+                                color: isActiveSink ? Theme.colPrimary : bar.fg
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: "\uea5e"
+                                font.family: fontName
+                                font.pixelSize: 14
+                                color: Theme.colPrimary
+                                visible: isActiveSink
+                            }
+                        }
+
+                        MouseArea {
+                            id: sinkItemMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                Quickshell.execDetached(["pactl", "set-default-sink", modelData.name]);
+                                bar.activeSinkName = modelData.name;
+                            }
+                        }
+                    }
                 }
             }
         }
