@@ -362,13 +362,12 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Vertical Separator ────────
-            Rectangle {
+            // ── RIGHT: Dot Separator ────────
+            Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
-                width: 1
-                height: 16
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
@@ -464,13 +463,11 @@ PanelWindow {
             }
 
             // ── RIGHT: System Tray Separator (Left) ────────
-            Rectangle {
+            Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
-                width: 1
-                height: 16
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -514,13 +511,12 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Vertical Separator ────────
-            Rectangle {
+            // ── RIGHT: Dot Separator ────────
+            Text {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 12
-                width: 1
-                height: 16
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                text: "•"
+                font.pixelSize: 8
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.5)
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
