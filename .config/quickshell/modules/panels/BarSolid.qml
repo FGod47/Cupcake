@@ -684,6 +684,7 @@ PanelWindow {
                 onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
             }
         }
+    }
 
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
     // Teardown animation: starts collapsed at hardware icons location inside solidBar,
@@ -900,8 +901,6 @@ PanelWindow {
                 }
             }
         }
-    }
-        
     }
 
     // ── CLOCK SPLIT PILL ──────────────────────────────────────────────────
