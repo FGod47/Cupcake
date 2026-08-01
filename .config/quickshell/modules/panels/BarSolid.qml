@@ -497,6 +497,10 @@ PanelWindow {
                         source: modelData.icon || ""
                         width: 16
                         height: 16
+                        layer.enabled: true
+                        layer.effect: ColorOverlay {
+                            color: "#ffffff"
+                        }
 
                         MouseArea {
                             anchors.fill: parent
