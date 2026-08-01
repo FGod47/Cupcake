@@ -373,7 +373,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: bar.dropdownOpen ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
@@ -481,7 +481,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: opacity > 0 && sysTrayRepeater.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
@@ -536,7 +536,7 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
+            // ── RIGHT: Dot Separator (Tray/Hardware -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: opacity > 0 ? 8 : 0
@@ -546,7 +546,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
@@ -606,7 +606,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
                 Behavior on Layout.leftMargin { NumberAnimation { duration: 200 } }
