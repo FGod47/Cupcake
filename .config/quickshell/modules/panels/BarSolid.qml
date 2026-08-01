@@ -123,7 +123,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -706,7 +706,7 @@ PanelWindow {
 
         // When closed: starts at hardware icons location inside solidBar
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? (bar.barX + bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 10 - contentW)) : (bar.barX + bar.barW - 120)
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 10 - contentW) : (bar.barX + bar.barW - 120)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1017,6 +1017,35 @@ PanelWindow {
             }
         }
 
+        // Top-Right Power Button inside Expanded Calendar view
+        Item {
+            width: 24; height: 24
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.margins: 10
+            z: 10
+            opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
+            visible: opacity > 0
+
+            Text {
+                anchors.centerIn: parent
+                text: "\ueb0d"
+                font.family: bar.fontName
+                font.pixelSize: 15
+                color: Theme.colError
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    clockSplitPill.menuExpanded = false;
+                    globalState.solidBoardOpen = false;
+                    bar.dropdownOpen = false;
+                    globalState.powerDropdownOpen = true;
+                }
+            }
+        }
+
         // ── Expanded Calendar & Clock View ────────────────────────────────
         ColumnLayout {
             id: clockContentCol
@@ -1248,9 +1277,9 @@ PanelWindow {
 
         // When closed: starts at the power icon location inside solidBar
         // When open: slides out to the right as solidBar shrinks
-        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
-        width: globalState.powerDropdownOpen ? contentW : ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? 36 : 30)
-        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? 1.0 : 0.5
+        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
+        width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
+        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.35 } }
@@ -1274,7 +1303,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? 1.0 : 0.0
+        opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 180 } }
 
@@ -1284,10 +1313,9 @@ PanelWindow {
             hoverEnabled: true
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (!globalState.powerDropdownOpen && (globalState.solidBoardOpen || clockSplitPill.menuExpanded)) {
+                if (!globalState.powerDropdownOpen && globalState.solidBoardOpen) {
                     globalState.powerDropdownOpen = true;
                     globalState.solidBoardOpen = false;
-                    clockSplitPill.menuExpanded = false;
                 } else if (mouse.y <= solidBar.height) {
                     powerSplitPill.menuExpanded = !powerSplitPill.menuExpanded;
                 }
@@ -1504,7 +1532,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
@@ -1572,7 +1600,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : ((globalState.solidBoardOpen || clockSplitPill.menuExpanded) ? (bar.dropdownOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap)) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 10 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 10 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)));
             });
         }
     }
