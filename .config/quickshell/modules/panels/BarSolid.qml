@@ -463,6 +463,19 @@ PanelWindow {
                 }
             }
 
+            // ── RIGHT: System Tray Separator (Left) ────────
+            Rectangle {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
+                width: 1
+                height: 16
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+            }
+
             // ── RIGHT: System Tray ────────
             Row {
                 id: sysTrayRow
