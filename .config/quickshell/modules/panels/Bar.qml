@@ -10,6 +10,7 @@ import "../../theme"
 import "../common"
 import "../settings"
 import Quickshell.Services.Mpris
+import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 
 PanelWindow {
@@ -695,12 +696,12 @@ PanelWindow {
                     
                     Repeater {
                         model: SystemTray.items
-                        delegate: Image {
+                        delegate: IconImage {
                             source: modelData.icon || ""
-                            sourceSize: Qt.size(18, 18)
-                            width: 18
-                            height: 18
-                            fillMode: Image.PreserveAspectFit
+                            width: 14
+                            height: 14
+                            layer.enabled: true
+                            layer.effect: ColorOverlay { color: bar.fg }
                             
                             MouseArea {
                                 anchors.fill: parent
