@@ -499,7 +499,7 @@ PanelWindow {
                         height: 16
                         layer.enabled: true
                         layer.effect: ColorOverlay {
-                            color: "#ffffff"
+                            color: bar.fg
                         }
 
                         MouseArea {
