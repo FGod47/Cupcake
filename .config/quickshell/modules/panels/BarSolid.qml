@@ -407,7 +407,7 @@ PanelWindow {
                 width: 1
                 height: 16
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.2)
-                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: globalState.solidBoardOpen ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
             }
@@ -421,7 +421,7 @@ PanelWindow {
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
                 color: fg
-                opacity: (globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: globalState.solidBoardOpen ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
