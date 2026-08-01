@@ -118,7 +118,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - 12 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 12 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 12 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (Math.abs(solidBar.x - bar.barX) < 2 ? bar.barW : bar.startW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -701,7 +701,7 @@ PanelWindow {
 
         // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - 36 - 12 - clockSplitPill.contentW - 12 - contentW) : (bar.barX + bar.barW - 285)
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 12 - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -921,8 +921,8 @@ PanelWindow {
         property real contentW: menuExpanded ? expandedW : headerW
 
         // When closed: starts at the clock location inside solidBar
-        // When open: slides out to the left of powerSplitPill as solidBar shrinks
-        x: (globalState.solidBoardOpen || bar.dropdownOpen) ? (bar.barX + bar.barW - 36 - 12 - contentW) : (bar.barX + bar.barW - 220)
+        // When open: slides out to the left of powerSplitPill (or far right if dropdownOpen) as solidBar shrinks
+        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 12 - contentW) : (bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
         width: (globalState.solidBoardOpen || bar.dropdownOpen) ? contentW : 140
         scale: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1253,9 +1253,9 @@ PanelWindow {
 
         // When closed: starts at the power icon location inside solidBar
         // When open: slides out to the right as solidBar shrinks
-        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : ((globalState.solidBoardOpen || bar.dropdownOpen) ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
-        width: globalState.powerDropdownOpen ? contentW : ((globalState.solidBoardOpen || bar.dropdownOpen) ? 36 : 30)
-        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
+        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
+        width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
+        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 540; easing.type: Easing.OutBack; easing.overshoot: 1.08 } }
@@ -1279,7 +1279,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.0
+        opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 180 } }
 
