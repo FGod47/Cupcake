@@ -62,7 +62,11 @@ PanelWindow {
     // Shared styling
     property color bg: Theme.colSurface
     property color fg: Theme.colOnSurface
-    property string fontName: globalState.tablerIconsFamily
+    FontLoader {
+        id: localTablerFont
+        source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
+    }
+    property string fontName: "tabler-icons"
     property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
     // Hardware data
@@ -83,9 +87,9 @@ PanelWindow {
     property var sinkList: []
 
     function getVolumeIcon(volVal, isMuted) {
-        if (isMuted) return "";
+        if (isMuted) return "";
         var v = parseFloat(volVal) || 0;
-        if (v <= 0) return "";
+        if (v <= 0) return "";
         if (v < 50) return "";
         return "";
     }
@@ -932,7 +936,7 @@ PanelWindow {
                     Text {
                         anchors.centerIn: parent
                         text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                        font.family: globalState.tablerIconsFamily
+                        font.family: fontName
                         font.pixelSize: 18
                         color: bar.isVolMuted ? Theme.colError : bar.fg
                     }
