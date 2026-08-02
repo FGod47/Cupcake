@@ -2028,7 +2028,8 @@ PanelWindow {
                     text: "\ueb0d"
                     font.family: bar.fontName
                     font.pixelSize: 15
-                    color: Theme.colError
+                    color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= solidBar.height) ? Theme.colError : bar.fg
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
             }
             Text {
@@ -2038,7 +2039,8 @@ PanelWindow {
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 12
                 font.weight: Font.Medium
-                color: Theme.colError
+                color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= solidBar.height) ? Theme.colError : bar.fg
+                Behavior on color { ColorAnimation { duration: 150 } }
                 opacity: globalState.powerDropdownOpen ? (powerSplitPill.menuExpanded ? 0.0 : 1.0) : 0.0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 250 } }
