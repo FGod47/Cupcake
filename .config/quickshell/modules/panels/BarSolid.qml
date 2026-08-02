@@ -1533,12 +1533,66 @@ PanelWindow {
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
             // Hardware Icons (Brightness & Volume) — shown in this pill when Network separates
-            Row {
-                spacing: 8
+            Item {
+                implicitWidth: hwRow.implicitWidth
+                height: 20
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: bar.netDropdownOpen ? 1.0 : 0.0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                Row {
+                    id: hwRow
+                    spacing: 8
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Row {
+                        spacing: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            text: bar.getBrightnessIcon(bar.brightStr)
+                            font.family: fontName
+                            font.pixelSize: Theme.defaultFontSize
+                            color: bar.fg
+                        }
+                        Text {
+                            text: bar.brightStr + "%"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: Theme.defaultFontSize
+                            font.weight: Theme.defaultFontWeight
+                            color: bar.fg
+                        }
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "•"
+                        font.pixelSize: 8
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    }
+                    Row {
+                        spacing: 4
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
+                            font.family: fontName
+                            font.pixelSize: Theme.defaultFontSize
+                            color: bar.isVolMuted ? Theme.colError : bar.fg
+                        }
+                        Text {
+                            text: bar.volStr + "%"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: Theme.defaultFontSize
+                            font.weight: Theme.defaultFontWeight
+                            color: bar.isVolMuted ? Theme.colError : bar.fg
+                        }
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "•"
+                        font.pixelSize: 8
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    }
+                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -1547,53 +1601,6 @@ PanelWindow {
                         bar.netDropdownOpen = false;
                         bar.dropdownOpen = true;
                     }
-                }
-
-                Row {
-                    spacing: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        text: bar.getBrightnessIcon(bar.brightStr)
-                        font.family: fontName
-                        font.pixelSize: Theme.defaultFontSize
-                        color: bar.fg
-                    }
-                    Text {
-                        text: bar.brightStr + "%"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: bar.fg
-                    }
-                }
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "•"
-                    font.pixelSize: 8
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                }
-                Row {
-                    spacing: 4
-                    anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                        font.family: fontName
-                        font.pixelSize: Theme.defaultFontSize
-                        color: bar.isVolMuted ? Theme.colError : bar.fg
-                    }
-                    Text {
-                        text: bar.volStr + "%"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: bar.isVolMuted ? Theme.colError : bar.fg
-                    }
-                }
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "•"
-                    font.pixelSize: 8
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                 }
             }
 
