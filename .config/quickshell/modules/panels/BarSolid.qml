@@ -41,24 +41,32 @@ PanelWindow {
         function onSolidBoardOpenChanged() {
             if (globalState.solidBoardOpen) {
                 bar.dropdownOpen = false;
+                bar.netDropdownOpen = false;
                 globalState.powerDropdownOpen = false;
             }
         }
         function onPowerDropdownOpenChanged() {
             if (globalState.powerDropdownOpen) {
                 bar.dropdownOpen = false;
+                bar.netDropdownOpen = false;
                 globalState.solidBoardOpen = false;
             }
         }
     }
 
     onDropdownOpenChanged: {
-        if (bar.dropdownOpen) {
+        if (dropdownOpen) {
+            netDropdownOpen = false;
             globalState.solidBoardOpen = false;
             globalState.powerDropdownOpen = false;
-            volBrightSplitPill.menuExpanded = true;
-        } else {
-            volBrightSplitPill.menuExpanded = true;
+        }
+    }
+
+    onNetDropdownOpenChanged: {
+        if (netDropdownOpen) {
+            dropdownOpen = false;
+            globalState.solidBoardOpen = false;
+            globalState.powerDropdownOpen = false;
         }
     }
 
