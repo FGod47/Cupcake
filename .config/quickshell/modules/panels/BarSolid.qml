@@ -175,11 +175,11 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: globalState.powerDropdownOpen
-            ? (bar.barX + bar.barW - bar.barX - powerSplitPill.contentW - powerSplitPill.openGap)
+            ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
             : globalState.solidBoardOpen
                 ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
                 : bar.dropdownOpen
-                    ? (bar.barW - volBrightSplitPill.openGap - volBrightSplitPill.contentW - clockSplitPill.openGap - clockSplitPill.contentW)
+                    ? (bar.barW - volBrightSplitPill.openGap - volBrightSplitPill.contentW - clockSplitPill.openGap - clockSplitPill.dropdownHeaderW)
                     : bar.barW
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
@@ -894,7 +894,7 @@ PanelWindow {
 
         // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
         // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - contentW) : (bar.barX + bar.barW - 285)
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.dropdownHeaderW - clockSplitPill.openGap - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1249,8 +1249,9 @@ PanelWindow {
 
         readonly property real openGap: 16
         readonly property real headerW: clockOptionsRow.implicitWidth + 24
+        readonly property real dropdownHeaderW: 190  // fixed width when shown beside vol/bright pill (tray+clock+power)
         readonly property real expandedW: 280
-        property real contentW: menuExpanded ? expandedW : headerW
+        property real contentW: menuExpanded ? expandedW : (bar.dropdownOpen ? dropdownHeaderW : headerW)
 
         // When closed: starts at the clock location inside solidBar
         // When open: slides to far right (solidBoardOpen) or left of volBright pill (dropdownOpen)
@@ -1969,7 +1970,7 @@ PanelWindow {
                     : globalState.solidBoardOpen
                         ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
                         : bar.dropdownOpen
-                            ? (bar.barW - volBrightSplitPill.openGap - volBrightSplitPill.contentW - clockSplitPill.openGap - clockSplitPill.contentW)
+                            ? (bar.barW - volBrightSplitPill.openGap - volBrightSplitPill.contentW - clockSplitPill.openGap - clockSplitPill.dropdownHeaderW)
                             : bar.barW;
             });
         }
