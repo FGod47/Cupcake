@@ -184,7 +184,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? ((windowTitleText.visible ? windowTitleText.x + windowTitleText.width : workspacesRow.x + workspacesRow.width) + 16) : bar.barW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -248,6 +248,7 @@ PanelWindow {
 
             // ── LEFT: Workspaces ────────
             Row {
+                id: workspacesRow
                 spacing: 8
                 Layout.alignment: Qt.AlignVCenter
 
@@ -608,18 +609,6 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: clockMouse.containsMouse ? 4 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd • ")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                        width: clockMouse.containsMouse ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
-                    }
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter

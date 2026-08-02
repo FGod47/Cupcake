@@ -211,7 +211,7 @@ Item {
             PowerBtn {
                 icon: "\ueb13"
                 label: "Restart"
-                accentColor: Theme.colError
+                accentColor: Theme.colOnSurface
                 onTriggered: {
                     globalState.powerDropdownOpen = false;
                     Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
@@ -221,7 +221,7 @@ Item {
             PowerBtn {
                 icon: "\ueb0d"
                 label: "Shutdown"
-                accentColor: Theme.colError
+                accentColor: Theme.colOnSurface
                 onTriggered: {
                     globalState.powerDropdownOpen = false;
                     Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);

@@ -6,6 +6,7 @@ import Quickshell.Services.Notifications
 import QtQuick
 import "theme"
 import "modules/panels"
+import "modules/panels/modular"
 import "modules/settings"
 import "modules/common"
 import "modules/solidboard"
@@ -34,7 +35,7 @@ ShellRoot {
 
     Variants {
         model: Quickshell.screens
-        delegate: BarSolid {
+        delegate: BarModular {
             visible: globalState.barStyle === "solid" && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
