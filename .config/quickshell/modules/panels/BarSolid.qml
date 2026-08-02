@@ -1188,12 +1188,6 @@ PanelWindow {
                     color: bar.fg
                 }
             }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-            }
             Row {
                 spacing: 4
                 anchors.verticalCenter: parent.verticalCenter
@@ -1544,7 +1538,7 @@ PanelWindow {
 
                 Row {
                     id: hwRow
-                    spacing: 4
+                    spacing: 12
                     anchors.verticalCenter: parent.verticalCenter
 
                     Row {
@@ -1566,14 +1560,6 @@ PanelWindow {
                             color: bar.fg
                         }
                     }
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "•"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 15
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                    }
                     Row {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
@@ -1593,14 +1579,6 @@ PanelWindow {
                             color: bar.isVolMuted ? Theme.colError : bar.fg
                         }
                     }
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "•"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 15
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                    }
                 }
 
                 MouseArea {
@@ -1611,6 +1589,17 @@ PanelWindow {
                         bar.dropdownOpen = true;
                     }
                 }
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                opacity: bar.netDropdownOpen && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
+                visible: opacity > 0
             }
 
             // System Tray — shown in this pill when Vol/Bright or Network separates
