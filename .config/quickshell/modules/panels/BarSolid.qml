@@ -626,14 +626,14 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (globalState.solidBoardOpen || globalState.powerDropdownOpen || bar.dropdownOpen) ? 0 : implicitWidth
+                Layout.preferredWidth: (globalState.powerDropdownOpen || bar.dropdownOpen) ? 0 : implicitWidth
                 clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
+                opacity: (!globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -645,11 +645,11 @@ PanelWindow {
             Item {
                 id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
+                Layout.preferredWidth: (bar.dropdownOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
                 clip: true
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
