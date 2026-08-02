@@ -28,10 +28,12 @@ PanelWindow {
         Region { item: clockSplitPill }
         Region { item: powerSplitPill }
         Region { item: volBrightSplitPill }
+        Region { item: netSplitPill }
     }
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
+    property bool netDropdownOpen: false
     property real extraHeight: 0
     
     Connections {
@@ -174,7 +176,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - netSplitPill.openGap) : bar.barW)))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -187,6 +189,7 @@ PanelWindow {
                 if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                 if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                 if (bar.dropdownOpen) bar.dropdownOpen = false;
+                if (bar.netDropdownOpen) bar.netDropdownOpen = false;
             }
         }
 
@@ -229,7 +232,7 @@ PanelWindow {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13
-            anchors.rightMargin: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 22 : 13
+            anchors.rightMargin: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen || bar.netDropdownOpen) ? 22 : 13
             Behavior on anchors.rightMargin { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
             height: bar.barHeight
             spacing: 0
@@ -303,63 +306,86 @@ PanelWindow {
             
 
             // ── RIGHT: Network Icons ────────
-            Row {
+            MouseArea {
+                id: nMouse
                 Layout.alignment: Qt.AlignVCenter
-                spacing: 8
-                
-                Text {
-                    visible: isHotspot
-                    text: "\ued1b" // tabler icon for hotspot
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
+                width: networkRowContent.implicitWidth
+                height: 20
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                Layout.preferredWidth: implicitWidth * opacity
+
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+
+                onClicked: {
+                    if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                    if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                    if (bar.dropdownOpen) bar.dropdownOpen = false;
+                    bar.netDropdownOpen = !bar.netDropdownOpen;
                 }
 
-                Text {
-                    visible: isBluetooth
-                    text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
+                Row {
+                    id: networkRowContent
+                    height: 20
+                    spacing: 8
                     anchors.verticalCenter: parent.verticalCenter
-                }
+                    
+                    Text {
+                        visible: isHotspot
+                        text: "\ued1b" // tabler icon for hotspot
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
 
-                Text {
-                    visible: isWired
-                    text: "\uebd9" // tabler icon for wired
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+                    Text {
+                        visible: isBluetooth
+                        text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
 
-                Text {
-                    visible: isWifi && !isWired && !isHotspot
-                    text: "\ueb52" // tabler icon for wifi
-                    font.family: fontName
-                    font.pixelSize: 15
-                    color: fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+                    Text {
+                        visible: isWired
+                        text: "\uebd9" // tabler icon for wired
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
 
-                Text {
-                    visible: isWifi || isWired || isBluetooth || isHotspot
-                    text: "•"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 15
-                    font.weight: Theme.defaultFontWeight
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+                    Text {
+                        visible: isWifi && !isWired && !isHotspot
+                        text: "\ueb52" // tabler icon for wifi
+                        font.family: fontName
+                        font.pixelSize: 15
+                        color: fg
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
 
-                Text {
-                    text: netStr
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    font.weight: Theme.defaultFontWeight
-                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        visible: isWifi || isWired || isBluetooth || isHotspot
+                        text: "•"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 15
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Text {
+                        text: netStr
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 13
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
 
@@ -374,7 +400,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: bar.dropdownOpen ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -384,11 +410,10 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: implicitWidth * opacity
                 spacing: 12
-                opacity: bar.dropdownOpen ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 
-                // Brightness
                 // Brightness
                 MouseArea {
                     id: bMouse
@@ -401,6 +426,7 @@ PanelWindow {
                     onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
                     onClicked: {
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
                         bar.dropdownOpen = !bar.dropdownOpen;
                     }
                     
@@ -441,6 +467,7 @@ PanelWindow {
                     
                     onClicked: {
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
                         bar.dropdownOpen = !bar.dropdownOpen;
                     }
                     
@@ -482,7 +509,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -494,7 +521,7 @@ PanelWindow {
                 Layout.preferredWidth: implicitWidth * opacity
                 height: 20
                 spacing: 8
-                opacity: bar.dropdownOpen ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -843,6 +870,220 @@ PanelWindow {
         }
     }
 
+    // ── NETWORK SPLIT PILL ──────────────────────────────────────────────────
+    Rectangle {
+        id: netSplitPill
+
+        y: solidBar.y
+        property bool menuExpanded: bar.netDropdownOpen
+        height: menuExpanded ? (netContentCol.implicitHeight + 28) : solidBar.height
+        Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
+
+        z: -1
+
+        readonly property real openGap: 16
+        readonly property real headerW: networkIconsRow.implicitWidth + 24
+        readonly property real expandedW: 240
+        property real contentW: menuExpanded ? expandedW : headerW
+
+        x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 380)
+        width: bar.netDropdownOpen ? contentW : 100
+        scale: bar.netDropdownOpen ? 1.0 : 0.5
+        transformOrigin: Item.Left
+
+        Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+
+        radius: menuExpanded ? 16 : solidBar.radius
+        Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        clip: true
+
+        color: bar.pillColor
+        border.color: Qt.rgba(1, 1, 1, 0.10)
+        border.width: 1
+
+        // Top glass highlight
+        Rectangle {
+            anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+            anchors.leftMargin: 4; anchors.rightMargin: 4
+            height: 1; radius: 1
+            color: Qt.rgba(1, 1, 1, 0.10)
+        }
+
+        opacity: bar.netDropdownOpen ? 1.0 : 0.0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+
+        MouseArea {
+            id: netSplitPillMa
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onClicked: {
+                if (mouse.y <= solidBar.height) {
+                    bar.netDropdownOpen = false;
+                }
+            }
+        }
+
+        // Header (shown when closed or in transit)
+        Row {
+            id: networkIconsRow
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: (solidBar.height - height) / 2
+            spacing: 8
+            opacity: netSplitPill.menuExpanded ? 0.0 : 1.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 250 } }
+
+            Text {
+                visible: isHotspot
+                text: "\ued1b"
+                font.family: fontName
+                font.pixelSize: 15
+                color: fg
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                visible: isBluetooth
+                text: isBluetoothConnected ? "\uecea" : "\uea37"
+                font.family: fontName
+                font.pixelSize: 15
+                color: fg
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                visible: isWired
+                text: "\uebd9"
+                font.family: fontName
+                font.pixelSize: 15
+                color: fg
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                visible: isWifi && !isWired && !isHotspot
+                text: "\ueb52"
+                font.family: fontName
+                font.pixelSize: 15
+                color: fg
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                visible: isWifi || isWired || isBluetooth || isHotspot
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                text: netStr
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 13
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        // Expanded View Content
+        ColumnLayout {
+            id: netContentCol
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 14
+            spacing: 12
+            opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 10
+
+                Text {
+                    text: isWifi ? "\ueb52" : (isWired ? "\uebd9" : "\uea37")
+                    font.family: fontName
+                    font.pixelSize: 18
+                    color: bar.fg
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Column {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    Text {
+                        text: isWifi ? "Wi-Fi Network" : (isWired ? "Ethernet" : "Network")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        color: bar.fg
+                    }
+                    Text {
+                        text: netStr + " speed"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.rgba(1, 1, 1, 0.1)
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 8
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 32
+                    radius: 8
+                    color: navMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.08)
+                    border.color: Qt.rgba(1, 1, 1, 0.1)
+                    border.width: 1
+
+                    Row {
+                        anchors.centerIn: parent
+                        spacing: 6
+                        Text {
+                            text: "\ueb2d"
+                            font.family: fontName
+                            font.pixelSize: 14
+                            color: bar.fg
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "Network Settings"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Medium
+                            color: bar.fg
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    MouseArea {
+                        id: navMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            bar.netDropdownOpen = false;
+                            Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
     // Teardown animation: starts collapsed at hardware icons location inside solidBar,
     // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
@@ -850,7 +1091,7 @@ PanelWindow {
         id: volBrightSplitPill
 
         y: solidBar.y
-        property bool menuExpanded: true
+        property bool menuExpanded: bar.dropdownOpen
         property bool showSinkList: false
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : solidBar.height
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
@@ -862,11 +1103,9 @@ PanelWindow {
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
-        // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
-        // When open: slides out to the left of clockSplitPill as solidBar shrinks
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 285)
-        width: bar.dropdownOpen ? contentW : 80
-        scale: bar.dropdownOpen ? 1.0 : 0.5
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 285))
+        width: (bar.dropdownOpen || bar.netDropdownOpen) ? contentW : 80
+        scale: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -891,7 +1130,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: bar.dropdownOpen ? 1.0 : 0.0
+        opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
@@ -902,6 +1141,7 @@ PanelWindow {
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= solidBar.height) {
+                    if (bar.netDropdownOpen) bar.netDropdownOpen = false;
                     bar.dropdownOpen = !bar.dropdownOpen;
                     if (bar.dropdownOpen) {
                         globalState.solidBoardOpen = false;
@@ -1222,11 +1462,9 @@ PanelWindow {
         readonly property real expandedW: 280
         property real contentW: menuExpanded ? expandedW : headerW
 
-        // When closed: starts at the clock location inside solidBar
-        // When open: slides out to the left of powerSplitPill (or far right if dropdownOpen) as solidBar shrinks
-        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : (bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
-        width: (globalState.solidBoardOpen || bar.dropdownOpen) ? contentW : 140
-        scale: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
+        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
+        width: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? contentW : 140
+        scale: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -1251,7 +1489,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.0
+        opacity: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
@@ -1266,6 +1504,7 @@ PanelWindow {
                         globalState.solidBoardOpen = false;
                     } else {
                         bar.dropdownOpen = false;
+                        bar.netDropdownOpen = false;
                         globalState.powerDropdownOpen = false;
                         globalState.solidBoardOpen = true;
                     }
@@ -1283,11 +1522,11 @@ PanelWindow {
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
-            // System Tray — shown in this pill when Vol/Bright separates
+            // System Tray — shown in this pill when Vol/Bright or Network separates
             Row {
                 spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
-                opacity: bar.dropdownOpen ? 1.0 : 0.0
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
                 visible: opacity > 0 && sysTrayRepeaterClock.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
@@ -1327,7 +1566,7 @@ PanelWindow {
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                opacity: bar.dropdownOpen && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
                 visible: opacity > 0
             }
 
@@ -1345,14 +1584,14 @@ PanelWindow {
                 text: "•"
                 font.pixelSize: 8
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                opacity: bar.dropdownOpen ? 1.0 : 0.0
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
                 visible: opacity > 0
             }
 
             Item {
                 width: 22; height: 26
                 anchors.verticalCenter: parent.verticalCenter
-                opacity: bar.dropdownOpen ? 1.0 : 0.0
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
                 visible: opacity > 0
                 Text {
                     anchors.centerIn: parent
@@ -1366,6 +1605,7 @@ PanelWindow {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         bar.dropdownOpen = false;
+                        bar.netDropdownOpen = false;
                         globalState.powerDropdownOpen = true;
                     }
                 }
@@ -1644,6 +1884,7 @@ PanelWindow {
                         globalState.powerDropdownOpen = false;
                     } else {
                         bar.dropdownOpen = false;
+                        bar.netDropdownOpen = false;
                         globalState.solidBoardOpen = false;
                         globalState.powerDropdownOpen = true;
                     }
@@ -1857,7 +2098,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
             });
         }
     }
@@ -1925,7 +2166,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
             });
         }
     }
