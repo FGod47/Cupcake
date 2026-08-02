@@ -1544,7 +1544,7 @@ PanelWindow {
 
                 Row {
                     id: hwRow
-                    spacing: 8
+                    spacing: 4
                     anchors.verticalCenter: parent.verticalCenter
 
                     Row {
@@ -1569,8 +1569,10 @@ PanelWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "•"
-                        font.pixelSize: 8
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 15
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
                     }
                     Row {
                         spacing: 4
@@ -1594,8 +1596,10 @@ PanelWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "•"
-                        font.pixelSize: 8
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 15
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
                     }
                 }
 
@@ -1651,15 +1655,17 @@ PanelWindow {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
                 opacity: (bar.dropdownOpen || bar.netDropdownOpen) && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
                 visible: opacity > 0
             }
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: Qt.formatDateTime(timeClock.date, "MMM dd • hh:mm AP")
+                text: Qt.formatDateTime(timeClock.date, "MMM dd")
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: Theme.defaultFontSize
                 font.weight: Theme.defaultFontWeight
@@ -1669,8 +1675,30 @@ PanelWindow {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "•"
-                font.pixelSize: 8
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
+                visible: opacity > 0
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: Theme.defaultFontSize
+                font.weight: Theme.defaultFontWeight
+                color: bar.fg
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
                 opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
                 visible: opacity > 0
             }
@@ -1685,10 +1713,13 @@ PanelWindow {
                     text: "\ueb0d"
                     font.family: bar.fontName
                     font.pixelSize: 15
-                    color: Theme.colError
+                    color: pma.containsMouse ? Theme.colError : bar.fg
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
                 MouseArea {
+                    id: pma
                     anchors.fill: parent
+                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         bar.dropdownOpen = false;
