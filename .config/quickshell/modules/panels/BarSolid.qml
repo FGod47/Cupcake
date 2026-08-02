@@ -1534,6 +1534,7 @@ PanelWindow {
 
             // Hardware Icons (Brightness & Volume) — shown in this pill when Network separates
             Item {
+                width: hwRow.implicitWidth
                 implicitWidth: hwRow.implicitWidth
                 height: 20
                 anchors.verticalCenter: parent.verticalCenter
