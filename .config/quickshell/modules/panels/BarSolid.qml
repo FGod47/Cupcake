@@ -174,7 +174,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - 16) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - 16) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : bar.barW))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - 16) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - 16) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW) : bar.barW))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
