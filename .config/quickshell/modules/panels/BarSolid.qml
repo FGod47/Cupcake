@@ -575,7 +575,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -589,7 +589,7 @@ PanelWindow {
                 height: 20
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
@@ -636,7 +636,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
+                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -648,7 +648,7 @@ PanelWindow {
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
                 Layout.preferredWidth: implicitWidth * opacity
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
