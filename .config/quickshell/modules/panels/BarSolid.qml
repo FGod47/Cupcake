@@ -1047,125 +1047,114 @@ PanelWindow {
                 color: Qt.rgba(1, 1, 1, 0.1)
             }
 
-            // Quick Toggles
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
-
-                // Wi-Fi Toggle
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 54
-                    radius: 12
-                    color: isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08)
-                    border.color: Qt.rgba(1, 1, 1, 0.1)
-                    border.width: 1
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "\ueb52"
-                            font.family: fontName
-                            font.pixelSize: 18
-                            color: isWifi ? Theme.colOnPrimary : bar.fg
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Wi-Fi"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
-                            color: isWifi ? Theme.colOnPrimary : bar.fg
-                        }
+            // Wi-Fi Toggle List Item
+            Item {
+                Layout.fillWidth: true; height: 50
+                MouseArea { id: wifiRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]); bar.netDropdownOpen = false } }
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 12
+                    Rectangle {
+                        width: 32; height: 32; radius: 10
+                        color: isWifi ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
+                        Text { anchors.centerIn: parent; text: "\ueb52"; color: isWifi ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: fontName; font.pixelSize: 15 }
                     }
-                    MouseArea {
-                        id: wifiTMouse
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"])
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 2
+                        Text { text: "Wi-Fi"; color: bar.fg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                        Text { text: isWifi ? "Connected" : "Disconnected"; color: isWifi ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                     }
                     Rectangle {
-                        anchors.fill: parent; radius: 12
-                        color: Qt.rgba(1, 1, 1, wifiTMouse.pressed ? 0.1 : (wifiTMouse.containsMouse ? 0.05 : 0))
+                        width: 44; height: 24; radius: 12
+                        color: isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                        border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                        Behavior on color { ColorAnimation { duration: 250 } }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]) } }
+                        Rectangle {
+                            property bool isExpanded: wifiRowMa.pressed || wifiRowMa.containsMouse
+                            width: isExpanded ? 20 : 14; height: 14; radius: 7
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: isWifi ? (isExpanded ? 18 : 24) : 6
+                            color: isWifi ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            Behavior on color { ColorAnimation { duration: 250 } }
+                            Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        }
                     }
                 }
+            }
 
-                // Bluetooth Toggle
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 54
-                    radius: 12
-                    color: isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08)
-                    border.color: Qt.rgba(1, 1, 1, 0.1)
-                    border.width: 1
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: isBluetoothConnected ? "\uecea" : "\uea37"
-                            font.family: fontName
-                            font.pixelSize: 18
-                            color: isBluetooth ? Theme.colOnPrimary : bar.fg
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Bluetooth"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
-                            color: isBluetooth ? Theme.colOnPrimary : bar.fg
-                        }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.06) }
+
+            // Bluetooth Toggle List Item
+            Item {
+                Layout.fillWidth: true; height: 50
+                MouseArea { id: btRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]); bar.netDropdownOpen = false } }
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 12
+                    Rectangle {
+                        width: 32; height: 32; radius: 10
+                        color: isBluetooth ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
+                        Text { anchors.centerIn: parent; text: isBluetoothConnected ? "\uecea" : "\uea37"; color: isBluetooth ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: fontName; font.pixelSize: 15 }
                     }
-                    MouseArea {
-                        id: btTMouse
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; else rfkill block bluetooth; fi"])
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 2
+                        Text { text: "Bluetooth"; color: bar.fg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                        Text { text: isBluetoothConnected ? "Connected" : (isBluetooth ? "Enabled" : "Disabled"); color: isBluetooth ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                     }
                     Rectangle {
-                        anchors.fill: parent; radius: 12
-                        color: Qt.rgba(1, 1, 1, btTMouse.pressed ? 0.1 : (btTMouse.containsMouse ? 0.05 : 0))
+                        width: 44; height: 24; radius: 12
+                        color: isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                        border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                        Behavior on color { ColorAnimation { duration: 250 } }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; else rfkill block bluetooth; fi"]) } }
+                        Rectangle {
+                            property bool isExpanded: btRowMa.pressed || btRowMa.containsMouse
+                            width: isExpanded ? 20 : 14; height: 14; radius: 7
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: isBluetooth ? (isExpanded ? 18 : 24) : 6
+                            color: isBluetooth ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            Behavior on color { ColorAnimation { duration: 250 } }
+                            Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        }
                     }
                 }
+            }
 
-                // Hotspot Toggle
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 54
-                    radius: 12
-                    color: isHotspot ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08)
-                    border.color: Qt.rgba(1, 1, 1, 0.1)
-                    border.width: 1
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "\ued1b"
-                            font.family: fontName
-                            font.pixelSize: 18
-                            color: isHotspot ? Theme.colOnPrimary : bar.fg
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Hotspot"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
-                            color: isHotspot ? Theme.colOnPrimary : bar.fg
-                        }
+            Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.06) }
+
+            // Hotspot Toggle List Item
+            Item {
+                Layout.fillWidth: true; height: 50
+                MouseArea { id: hotspotRowMa; hoverEnabled: true; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]); bar.netDropdownOpen = false } }
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 12
+                    Rectangle {
+                        width: 32; height: 32; radius: 10
+                        color: isHotspot ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
+                        Text { anchors.centerIn: parent; text: "\ued1b"; color: isHotspot ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: fontName; font.pixelSize: 15 }
                     }
-                    MouseArea {
-                        id: hotTMouse
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: Quickshell.execDetached(["bash", "-c", bar.isHotspot ? "nmcli con down hotspot" : "nmcli con up hotspot"])
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 2
+                        Text { text: "Hotspot"; color: bar.fg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                        Text { text: isHotspot ? "Active" : "Disabled"; color: isHotspot ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                     }
                     Rectangle {
-                        anchors.fill: parent; radius: 12
-                        color: Qt.rgba(1, 1, 1, hotTMouse.pressed ? 0.1 : (hotTMouse.containsMouse ? 0.05 : 0))
+                        width: 44; height: 24; radius: 12
+                        color: isHotspot ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                        border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
+                        Behavior on color { ColorAnimation { duration: 250 } }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { Quickshell.execDetached(["bash", "-c", bar.isHotspot ? "nmcli con down hotspot" : "nmcli con up hotspot"]) } }
+                        Rectangle {
+                            property bool isExpanded: hotspotRowMa.pressed || hotspotRowMa.containsMouse
+                            width: isExpanded ? 20 : 14; height: 14; radius: 7
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: isHotspot ? (isExpanded ? 18 : 24) : 6
+                            color: isHotspot ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            Behavior on color { ColorAnimation { duration: 250 } }
+                            Behavior on x { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                            Behavior on width { NumberAnimation { duration: Theme.liquidify ? 800 : 250; easing.type: Theme.liquidify ? Easing.OutElastic : Easing.OutCubic; easing.amplitude: 1.0; easing.period: 0.85 } }
+                        }
                     }
                 }
             }
