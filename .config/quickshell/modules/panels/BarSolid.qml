@@ -174,13 +174,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen
-            ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
-            : globalState.solidBoardOpen
-                ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
-                : bar.dropdownOpen
-                    ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW - volBrightSplitPill.openGap - volBrightSplitPill.contentW)
-                    : bar.barW
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - 16) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - 16) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : bar.barW))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -374,8 +368,6 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: bar.dropdownOpen ? 0 : implicitWidth
-                clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -384,21 +376,15 @@ PanelWindow {
                 opacity: bar.dropdownOpen ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.leftMargin   { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.rightMargin  { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
             Row {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: bar.dropdownOpen ? 0 : implicitWidth
-                clip: true
                 spacing: 12
                 opacity: bar.dropdownOpen ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 
                 // Brightness
                 // Brightness
@@ -488,33 +474,25 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || sysTrayRepeater.count === 0) ? 0 : implicitWidth
-                clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                opacity: (!bar.dropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.leftMargin  { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: System Tray ────────
             Row {
                 id: sysTrayRow
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
-                clip: true
                 height: 20
                 spacing: 8
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                opacity: bar.dropdownOpen ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 Repeater {
                     id: sysTrayRepeater
@@ -554,13 +532,11 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
+            // ── RIGHT: Dot Separator (Tray -> Hardware -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
-                clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -569,25 +545,19 @@ PanelWindow {
                 opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.leftMargin  { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: Clock ────────
             MouseArea {
                 id: clockMouse
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
                 implicitWidth: clockRow.implicitWidth
-                clip: true
                 height: 20
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
 
                 Row {
@@ -626,33 +596,25 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (globalState.powerDropdownOpen || bar.dropdownOpen) ? 0 : implicitWidth
-                clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
+                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.leftMargin  { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.rightMargin { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
             // ── RIGHT: Power Pill ────────
             Item {
                 id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
-                clip: true
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
-                opacity: (bar.dropdownOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 property bool expanded: false  // always false — expansion now handled by PowerDropdown
                 onExpandedChanged: {
@@ -892,8 +854,9 @@ PanelWindow {
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
-        // When open: slides out to left of clockSplitPill; when closed parked off-bar
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - contentW) : (bar.barX + bar.barW - 285)
+        // When closed: starts at hardware icons location inside solidBar (around bar.barW - 285)
+        // When open: slides out to the left of clockSplitPill as solidBar shrinks
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1252,12 +1215,8 @@ PanelWindow {
         property real contentW: menuExpanded ? expandedW : headerW
 
         // When closed: starts at the clock location inside solidBar
-        // When open: slides to far right (solidBoardOpen) or left of volBright pill (dropdownOpen)
-        x: globalState.solidBoardOpen
-            ? (bar.barX + bar.barW - contentW)
-            : bar.dropdownOpen
-                ? (bar.barX + bar.barW - contentW)
-                : (bar.barX + bar.barW - 220)
+        // When open: slides out to the left of powerSplitPill (or far right if dropdownOpen) as solidBar shrinks
+        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : (bar.dropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
         width: (globalState.solidBoardOpen || bar.dropdownOpen) ? contentW : 140
         scale: (globalState.solidBoardOpen || bar.dropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1321,11 +1280,8 @@ PanelWindow {
                 spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: bar.dropdownOpen ? 1.0 : 0.0
-                width: (bar.dropdownOpen && sysTrayRepeaterClock.count > 0) ? implicitWidth : 0
-                clip: true
-                visible: true
+                visible: opacity > 0 && sysTrayRepeaterClock.count > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
-                Behavior on width   { NumberAnimation { duration: 200 } }
 
                 Repeater {
                     id: sysTrayRepeaterClock
@@ -1637,10 +1593,11 @@ PanelWindow {
         // Hardcode contentW to prevent binding loop caused by Column's implicitWidth depending on children's width
         property real contentW: 130
 
-        // When closed: parked off-screen-right (invisible anyway); when open: slides to far right edge
-        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 40)
-        width: globalState.powerDropdownOpen ? contentW : 30
-        scale: globalState.powerDropdownOpen ? 1.0 : 0.5
+        // When closed: starts at the power icon location inside solidBar
+        // When open: slides out to the right as solidBar shrinks
+        x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
+        width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
+        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -1664,7 +1621,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: globalState.powerDropdownOpen ? 1.0 : 0.0
+        opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
@@ -1892,13 +1849,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen
-                    ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
-                    : globalState.solidBoardOpen
-                        ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
-                        : bar.dropdownOpen
-                            ? (bar.barW - volBrightSplitPill.openGap - volBrightSplitPill.contentW - clockSplitPill.openGap - clockSplitPill.contentW)
-                            : bar.barW;
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - clockSplitPill.openGap - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
             });
         }
     }
@@ -1966,13 +1917,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen
-                    ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
-                    : globalState.solidBoardOpen
-                        ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
-                        : bar.dropdownOpen
-                            ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW - volBrightSplitPill.openGap - volBrightSplitPill.contentW)
-                            : bar.barW;
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - clockSplitPill.openGap - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : bar.barW));
             });
         }
     }
