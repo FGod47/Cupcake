@@ -863,7 +863,7 @@ PanelWindow {
         
         Image {
             id: cupcakeLogo
-            anchors.horizontalCenter: parent.horizontalCenter
+            x: (bar.screenW / 2) - solidBar.x - (width / 2)
             anchors.top: parent.top
             anchors.topMargin: (bar.barHeight - sourceSize.height) / 2
             source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
