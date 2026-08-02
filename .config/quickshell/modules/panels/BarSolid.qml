@@ -488,14 +488,14 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen || sysTrayRepeater.count === 0) ? 0 : implicitWidth
+                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || sysTrayRepeater.count === 0) ? 0 : implicitWidth
                 clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && !globalState.powerDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -507,11 +507,11 @@ PanelWindow {
             Row {
                 id: sysTrayRow
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
+                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
                 clip: true
                 height: 20
                 spacing: 8
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -559,14 +559,14 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
+                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
                 clip: true
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen && !globalState.powerDropdownOpen) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -578,13 +578,13 @@ PanelWindow {
             MouseArea {
                 id: clockMouse
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : implicitWidth
+                Layout.preferredWidth: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : implicitWidth
                 implicitWidth: clockRow.implicitWidth
                 clip: true
                 height: 20
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                opacity: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: true
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 Behavior on Layout.preferredWidth { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
