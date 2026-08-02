@@ -1551,12 +1551,14 @@ PanelWindow {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
+                            anchors.verticalCenter: parent.verticalCenter
                             text: bar.getBrightnessIcon(bar.brightStr)
                             font.family: fontName
                             font.pixelSize: Theme.defaultFontSize
                             color: bar.fg
                         }
                         Text {
+                            anchors.verticalCenter: parent.verticalCenter
                             text: bar.brightStr + "%"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: Theme.defaultFontSize
@@ -1574,12 +1576,14 @@ PanelWindow {
                         spacing: 4
                         anchors.verticalCenter: parent.verticalCenter
                         Text {
+                            anchors.verticalCenter: parent.verticalCenter
                             text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
                             font.family: fontName
                             font.pixelSize: Theme.defaultFontSize
                             color: bar.isVolMuted ? Theme.colError : bar.fg
                         }
                         Text {
+                            anchors.verticalCenter: parent.verticalCenter
                             text: bar.volStr + "%"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: Theme.defaultFontSize
