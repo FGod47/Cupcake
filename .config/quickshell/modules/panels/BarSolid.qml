@@ -177,9 +177,9 @@ PanelWindow {
         width: globalState.powerDropdownOpen
             ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
             : globalState.solidBoardOpen
-                ? (clockSplitPill.x - bar.barX - clockSplitPill.openGap)
+                ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
                 : bar.dropdownOpen
-                    ? (volBrightSplitPill.x - bar.barX - volBrightSplitPill.openGap)
+                    ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW - volBrightSplitPill.openGap - volBrightSplitPill.contentW)
                     : bar.barW
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
@@ -892,8 +892,8 @@ PanelWindow {
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
-        // When open: sits exactly left of clockSplitPill with openGap spacing
-        x: bar.dropdownOpen ? (clockSplitPill.x - clockSplitPill.openGap - contentW) : (bar.barX + bar.barW - 285)
+        // When open: slides out to left of clockSplitPill; when closed parked off-bar
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - clockSplitPill.openGap - contentW) : (bar.barX + bar.barW - 285)
         width: bar.dropdownOpen ? contentW : 80
         scale: bar.dropdownOpen ? 1.0 : 0.5
         transformOrigin: Item.Left
@@ -1321,8 +1321,11 @@ PanelWindow {
                 spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: bar.dropdownOpen ? 1.0 : 0.0
-                visible: opacity > 0 && sysTrayRepeaterClock.count > 0
+                width: (bar.dropdownOpen && sysTrayRepeaterClock.count > 0) ? implicitWidth : 0
+                clip: true
+                visible: true
                 Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on width   { NumberAnimation { duration: 200 } }
 
                 Repeater {
                     id: sysTrayRepeaterClock
@@ -1966,9 +1969,9 @@ PanelWindow {
                 return globalState.powerDropdownOpen
                     ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap)
                     : globalState.solidBoardOpen
-                        ? (clockSplitPill.x - bar.barX - clockSplitPill.openGap)
+                        ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW)
                         : bar.dropdownOpen
-                            ? (volBrightSplitPill.x - bar.barX - volBrightSplitPill.openGap)
+                            ? (bar.barW - clockSplitPill.openGap - clockSplitPill.contentW - volBrightSplitPill.openGap - volBrightSplitPill.contentW)
                             : bar.barW;
             });
         }
