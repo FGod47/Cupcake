@@ -1663,33 +1663,58 @@ PanelWindow {
                 visible: opacity > 0
             }
 
-            Text {
+            MouseArea {
+                id: clockSplitMouse
+                width: childrenRect.width
+                height: 20
                 anchors.verticalCenter: parent.verticalCenter
-                text: Qt.formatDateTime(timeClock.date, "MMM dd")
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: bar.fg
-            }
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    bar.dropdownOpen = false;
+                    bar.netDropdownOpen = false;
+                    globalState.solidBoardOpen = true;
+                }
+                
+                Row {
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: clockSplitMouse.containsMouse ? 4 : 0
+                    Behavior on spacing { NumberAnimation { duration: 200 } }
 
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
-                visible: opacity > 0
-            }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Qt.formatDateTime(timeClock.date, "MMM dd")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                        width: clockSplitMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
+                    }
 
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-                color: bar.fg
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "•"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 15
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                        width: clockSplitMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        color: bar.fg
+                    }
+                }
             }
 
             Text {
