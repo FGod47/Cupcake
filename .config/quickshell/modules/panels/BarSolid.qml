@@ -184,7 +184,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - volBrightSplitPill.openGap) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - netSplitPill.openGap) : bar.barW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW))
         Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -895,9 +895,9 @@ PanelWindow {
         readonly property real expandedW: 240
         property real contentW: menuExpanded ? expandedW : headerW
 
-        x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 380)
-        width: bar.netDropdownOpen ? contentW : 100
-        scale: bar.netDropdownOpen ? 1.0 : 0.5
+        x: (bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 380)
+        width: (bar.dropdownOpen || bar.netDropdownOpen) ? contentW : 100
+        scale: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.5
         transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -920,7 +920,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.10)
         }
 
-        opacity: bar.netDropdownOpen ? 1.0 : 0.0
+        opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
@@ -931,7 +931,8 @@ PanelWindow {
             cursorShape: (mouseY <= solidBar.height) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= solidBar.height) {
-                    bar.netDropdownOpen = false;
+                    if (bar.dropdownOpen) bar.dropdownOpen = false;
+                    bar.netDropdownOpen = !bar.netDropdownOpen;
                 }
             }
         }
@@ -2107,7 +2108,7 @@ PanelWindow {
         onFinished: {
             solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW));
             });
         }
     }
@@ -2175,7 +2176,7 @@ PanelWindow {
             globalState.pendingBarStyle = "";
             solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW));
             });
         }
     }
