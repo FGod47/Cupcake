@@ -21,10 +21,9 @@ import "../../../theme"
 
     Rectangle {
         id: clockSplitPill
-
-        y: 0
+        y: 10
         property bool menuExpanded: globalState.solidBoardOpen
-        height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 42
+        height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
@@ -43,7 +42,7 @@ import "../../../theme"
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
-        radius: menuExpanded ? 16 : 20
+        radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         clip: true
 
@@ -69,9 +68,9 @@ import "../../../theme"
             id: clockSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: (mouseY <= 42) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (mouse.y <= 42) {
+                if (mouse.y <= 30) {
                     if (globalState.solidBoardOpen) {
                         globalState.solidBoardOpen = false;
                     } else {
@@ -88,7 +87,7 @@ import "../../../theme"
         Row {
             id: clockOptionsRow
             anchors.horizontalCenter: parent.horizontalCenter
-            y: (42 - height) / 2
+            y: (30 - height) / 2
             spacing: 4
             opacity: clockSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0

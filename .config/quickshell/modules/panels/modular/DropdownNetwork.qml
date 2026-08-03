@@ -21,10 +21,9 @@ import "../../../theme"
 
     Rectangle {
         id: netSplitPill
-
-        y: 0
+        y: 10
         property bool menuExpanded: bar.netDropdownOpen
-        height: menuExpanded ? (netContentCol.implicitHeight + 28) : 42
+        height: menuExpanded ? (netContentCol.implicitHeight + 28) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
@@ -43,7 +42,7 @@ import "../../../theme"
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
-        radius: menuExpanded ? 16 : 20
+        radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         clip: true
 
@@ -67,9 +66,9 @@ import "../../../theme"
             id: netSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: (mouseY <= 42) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (mouse.y <= 42) {
+                if (mouse.y <= 30) {
                     if (bar.dropdownOpen) bar.dropdownOpen = false;
                     bar.netDropdownOpen = !bar.netDropdownOpen;
                 }
@@ -80,7 +79,7 @@ import "../../../theme"
         Row {
             id: networkIconsRow
             anchors.horizontalCenter: parent.horizontalCenter
-            y: (42 - height) / 2
+            y: (30 - height) / 2
             spacing: 8
             opacity: netSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0

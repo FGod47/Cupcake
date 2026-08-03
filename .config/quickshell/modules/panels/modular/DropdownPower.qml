@@ -21,10 +21,9 @@ import "../../../theme"
 
     Rectangle {
         id: powerSplitPill
-
-        y: 0
+        y: 10
         property bool menuExpanded: globalState.powerDropdownOpen
-        height: menuExpanded ? (powerMenu.implicitHeight + 20) : 42
+        height: menuExpanded ? (powerMenu.implicitHeight + 20) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
@@ -43,8 +42,7 @@ import "../../../theme"
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-
-        radius: 20
+        radius: 15
         clip: true
 
         color: bar.pillColor
@@ -69,9 +67,9 @@ import "../../../theme"
             id: powerSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: (mouseY <= 42) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (mouse.y <= 42) {
+                if (mouse.y <= 30) {
                     if (globalState.powerDropdownOpen) {
                         globalState.powerDropdownOpen = false;
                     } else {
@@ -88,7 +86,7 @@ import "../../../theme"
         Row {
             id: powerOptionsRow
             anchors.horizontalCenter: parent.horizontalCenter
-            y: (42 - height) / 2
+            y: (30 - height) / 2
             spacing: 4
             opacity: powerSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
@@ -102,7 +100,7 @@ import "../../../theme"
                     text: "\ueb0d"
                     font.family: bar.fontName
                     font.pixelSize: 15
-                    color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= 42) ? Theme.colError : bar.fg
+                    color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= 30) ? Theme.colError : bar.fg
                     Behavior on color { ColorAnimation { duration: 150 } }
                 }
             }
@@ -113,7 +111,7 @@ import "../../../theme"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 12
                 font.weight: Font.Medium
-                color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= 42) ? Theme.colError : bar.fg
+                color: (powerSplitPillMa.containsMouse && powerSplitPillMa.mouseY <= 30) ? Theme.colError : bar.fg
                 Behavior on color { ColorAnimation { duration: 150 } }
                 opacity: globalState.powerDropdownOpen ? (powerSplitPill.menuExpanded ? 0.0 : 1.0) : 0.0
                 visible: opacity > 0

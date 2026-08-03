@@ -21,11 +21,10 @@ import "../../../theme"
 
     Rectangle {
         id: volBrightSplitPill
-
-        y: 0
+        y: 10
         property bool menuExpanded: bar.dropdownOpen
         property bool showSinkList: false
-        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 42
+        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         z: -1
@@ -44,7 +43,7 @@ import "../../../theme"
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
-        radius: menuExpanded ? 16 : 20
+        radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         clip: true
 
@@ -70,9 +69,9 @@ import "../../../theme"
             id: volBrightSplitPillMa
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: (mouseY <= 42) ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (mouse.y <= 42) {
+                if (mouse.y <= 30) {
                     if (bar.netDropdownOpen) bar.netDropdownOpen = false;
                     bar.dropdownOpen = !bar.dropdownOpen;
                     if (bar.dropdownOpen) {
@@ -87,7 +86,7 @@ import "../../../theme"
         Row {
             id: volBrightOptionsRow
             anchors.horizontalCenter: parent.horizontalCenter
-            y: (42 - height) / 2
+            y: (30 - height) / 2
             spacing: 12
             opacity: volBrightSplitPill.menuExpanded ? 0.0 : 1.0
             visible: opacity > 0
