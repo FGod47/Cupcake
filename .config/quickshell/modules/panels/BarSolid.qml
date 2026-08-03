@@ -443,7 +443,8 @@ PanelWindow {
                     
                     Row {
                         height: 20
-                        spacing: 4
+                        spacing: bMouse.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
@@ -459,6 +460,9 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            width: bMouse.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
                     }
                 }
@@ -480,7 +484,8 @@ PanelWindow {
                     
                     Row {
                         height: 20
-                        spacing: 4
+                        spacing: vMouse.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
@@ -496,6 +501,9 @@ PanelWindow {
                             font.pixelSize: 13
                             font.weight: Theme.defaultFontWeight
                             color: bar.isVolMuted ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            width: vMouse.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
                     }
                 }

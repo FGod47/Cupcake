@@ -87,23 +87,31 @@ import "../../../theme"
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
             // Hardware Icons (Brightness & Volume) — shown in this pill when Network separates
-            Item {
-                width: hwRow.implicitWidth
-                implicitWidth: hwRow.implicitWidth
-                height: 20
+            Row {
+                id: hwRow
+                spacing: 12
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: bar.netDropdownOpen ? 1.0 : 0.0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
-                Row {
-                    id: hwRow
-                    spacing: 12
+                MouseArea {
+                    id: bMouseClock
+                    width: childrenRect.width
+                    height: 20
                     anchors.verticalCenter: parent.verticalCenter
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        bar.netDropdownOpen = false;
+                        bar.dropdownOpen = true;
+                    }
 
                     Row {
-                        spacing: 4
-                        anchors.verticalCenter: parent.verticalCenter
+                        height: 20
+                        spacing: bMouseClock.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
+
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.getBrightnessIcon(bar.brightStr)
@@ -117,12 +125,31 @@ import "../../../theme"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: Theme.defaultFontSize
                             font.weight: Theme.defaultFontWeight
-                            color: bar.fg
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            width: bMouseClock.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
                     }
+                }
+
+                MouseArea {
+                    id: vMouseClock
+                    width: childrenRect.width
+                    height: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        bar.netDropdownOpen = false;
+                        bar.dropdownOpen = true;
+                    }
+
                     Row {
-                        spacing: 4
-                        anchors.verticalCenter: parent.verticalCenter
+                        height: 20
+                        spacing: vMouseClock.containsMouse ? 4 : 0
+                        Behavior on spacing { NumberAnimation { duration: 200 } }
+
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
@@ -136,17 +163,11 @@ import "../../../theme"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: Theme.defaultFontSize
                             font.weight: Theme.defaultFontWeight
-                            color: bar.isVolMuted ? Theme.colError : bar.fg
+                            color: bar.isVolMuted ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            width: vMouseClock.containsMouse ? implicitWidth : 0
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        bar.netDropdownOpen = false;
-                        bar.dropdownOpen = true;
                     }
                 }
             }
