@@ -35,7 +35,7 @@ ShellRoot {
 
     Variants {
         model: Quickshell.screens
-        delegate: BarModular {
+        delegate: BarSolid {
             visible: globalState.barStyle === "solid" && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
