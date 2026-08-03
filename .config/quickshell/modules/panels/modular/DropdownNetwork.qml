@@ -18,21 +18,16 @@ import "../../../theme"
         height: menuExpanded ? (netContentCol.implicitHeight + 28) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-        z: -1
-
         readonly property real openGap: 16
         readonly property real headerW: networkIconsRow.implicitWidth + 24
         readonly property real expandedW: 240
         property real contentW: menuExpanded ? expandedW : headerW
 
-        x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 380)
-        width: bar.netDropdownOpen ? contentW : 100
-        scale: bar.netDropdownOpen ? 1.0 : 0.5
-        transformOrigin: Item.Left
+        x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
+        width: bar.netDropdownOpen ? contentW : headerW
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

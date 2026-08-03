@@ -26,8 +26,6 @@ import "../../../theme"
         height: menuExpanded ? (powerMenu.implicitHeight + 20) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-        z: -1
-
         readonly property real openGap: 12
         // Hardcode contentW to prevent binding loop caused by Column's implicitWidth depending on children's width
         property real contentW: 130
@@ -36,12 +34,9 @@ import "../../../theme"
         // When open: slides out to the right as solidBar shrinks
         x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
         width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
-        scale: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.5
-        transformOrigin: Item.Left
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         radius: 15
         clip: true
 

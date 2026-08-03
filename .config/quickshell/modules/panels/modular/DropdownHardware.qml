@@ -19,21 +19,16 @@ import "../../../theme"
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-        z: -1
-
         readonly property real openGap: 16
         readonly property real headerW: volBrightOptionsRow.implicitWidth + 24
         readonly property real expandedW: 260
         property real contentW: menuExpanded ? expandedW : headerW
 
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - 285)
-        width: bar.dropdownOpen ? contentW : 80
-        scale: bar.dropdownOpen ? 1.0 : 0.5
-        transformOrigin: Item.Left
+        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
+        width: bar.dropdownOpen ? contentW : headerW
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

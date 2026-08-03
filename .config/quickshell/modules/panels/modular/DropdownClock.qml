@@ -19,21 +19,16 @@ import "../../../theme"
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-        z: -1
-
         readonly property real openGap: 16
         readonly property real headerW: clockOptionsRow.implicitWidth + 24
         readonly property real expandedW: 280
         property real contentW: menuExpanded ? expandedW : headerW
 
-        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
-        width: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? contentW : 140
-        scale: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.5
-        transformOrigin: Item.Left
+        x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : (bar.barX + bar.barW - contentW)
+        width: contentW
 
         Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
         radius: menuExpanded ? 16 : 15
         Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
