@@ -30,7 +30,7 @@ import "../../../theme"
 
         readonly property real openGap: 16
         readonly property real headerW: clockOptionsRow.implicitWidth + 24
-        readonly property real expandedW: 210
+        readonly property real expandedW: 280
         property real contentW: menuExpanded ? expandedW : headerW
 
         x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : ((bar.dropdownOpen || bar.netDropdownOpen) ? (bar.barX + bar.barW - contentW) : (bar.barX + bar.barW - 220))
@@ -480,7 +480,7 @@ import "../../../theme"
                         model: clockCalGrid.totalCells
                         delegate: Item {
                             width: (clockContentCol.width - 24) / 7
-                            height: 20
+                            height: width
 
                             property int cellDay: {
                                 let idx = index - clockCalGrid.firstDayOfWeek;
@@ -502,9 +502,9 @@ import "../../../theme"
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: 18
-                                height: 18
-                                radius: 9
+                                width: parent.width - 2
+                                height: width
+                                radius: width / 2
                                 color: isToday ? Theme.colPrimary : "transparent"
                             }
                             Text {
