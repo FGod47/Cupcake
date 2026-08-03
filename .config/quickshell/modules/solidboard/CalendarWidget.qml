@@ -6,8 +6,8 @@ import "../common"
 
 Rectangle {
     id: calWidget
-    implicitWidth: 320
-    width: 320
+    implicitWidth: 260
+    width: 260
     implicitHeight: mainLayout.implicitHeight + 32
     color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, 0.5)
     radius: 16
@@ -98,17 +98,17 @@ Rectangle {
             year: calWidget.currentDate.getFullYear()
             locale: Qt.locale("en_US")
             font.family: Theme.defaultFontFamily
-            font.pixelSize: Theme.defaultFontSize
-            spacing: 4
+            font.pixelSize: Theme.defaultFontSize - 2
+            spacing: 2
 
             delegate: Item {
-                implicitWidth: 32
-                implicitHeight: 32
+                implicitWidth: 26
+                implicitHeight: 26
 
                 Rectangle {
-                    width: 32
-                    height: 32
-                    radius: 16
+                    width: 24
+                    height: 24
+                    radius: 12
                     anchors.centerIn: parent
                     color: model.today ? Theme.colPrimary : (cellMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent")
                     
@@ -116,7 +116,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: model.day
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
+                        font.pixelSize: Theme.defaultFontSize - 1
                         color: model.today ? Theme.colOnPrimary : (model.month === monthGrid.month ? Theme.colOnSurface : Theme.transparentize(Theme.colOnSurface, 0.3))
                     }
                 }
