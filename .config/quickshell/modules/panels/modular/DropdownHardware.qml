@@ -2,21 +2,13 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import Quickshell.Widgets
-import Qt5Compat.GraphicalEffects
-import Quickshell.Io
-import "../../common"
-import Qt5Compat.GraphicalEffects
-import Quickshell.Widgets
 import Quickshell
-import Qt5Compat.GraphicalEffects
-import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
+import Quickshell.Io
 import Quickshell.Services.Mpris
-import Qt5Compat.GraphicalEffects
 import Quickshell.Hyprland
-import Qt5Compat.GraphicalEffects
-import Qt5Compat.GraphicalEffects
 import Quickshell.Wayland
+import "../../common"
 import "../../../theme"
 
     Rectangle {

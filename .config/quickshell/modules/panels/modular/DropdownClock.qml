@@ -2,21 +2,14 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import Quickshell.Widgets
-import Qt5Compat.GraphicalEffects
-import Quickshell.Io
-import "../../common"
-import Qt5Compat.GraphicalEffects
-import Quickshell.Widgets
 import Quickshell
-import Qt5Compat.GraphicalEffects
-import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
+import Quickshell.Io
 import Quickshell.Services.Mpris
-import Qt5Compat.GraphicalEffects
+import Quickshell.Services.SystemTray
 import Quickshell.Hyprland
-import Qt5Compat.GraphicalEffects
-import Qt5Compat.GraphicalEffects
 import Quickshell.Wayland
+import "../../common"
 import "../../../theme"
 
     Rectangle {
@@ -165,7 +158,7 @@ import "../../../theme"
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                opacity: bar.netDropdownOpen && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
+                opacity: bar.netDropdownOpen ? 1.0 : 0.0
                 visible: opacity > 0
             }
 
