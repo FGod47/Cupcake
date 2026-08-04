@@ -7,9 +7,9 @@
 > - **Settings Isolation**: The "Top bar style" option in Settings (`SettingsPageAppearance.qml`) has been completely removed.
 > - **AGENT MANDATE**: **NO AI AGENT IS PERMITTED TO TOUCH, MODIFY, REFACTOR, RESTORE, RE-ENABLE, OR INSTANTIATE ANY FILE IN `modules/panels/archive/` UNDER ANY CIRCUMSTANCES UNLESS THE USER EXPLICITLY INSTRUCTS IT.**
 >
-> ### 🔒 SOLID BAR STABILITY LOCK (DO NOT TOUCH)
-> - **Solid Bar Protected**: The Solid Top Bar (`BarSolid.qml`), `ControlCenterSolid.qml`, and its dropdown components (`modules/panels/modular/Dropdown*.qml`) are **STABLE & LOCKED**.
-> - **AGENT MANDATE**: **DO NOT TOUCH, REFACTOR, OR MODIFY ANYTHING RELATED TO THE SOLID BAR OR ITS COMPONENTS UNLESS THE USER EXPLICITLY DIRECTS A SPECIFIC MODIFICATION TO IT.**
+> ### 💎 ACTIVE SOLID BAR SYSTEM (KEEP DISTINCT & FULLY FUNCTIONAL)
+> - **Active Top Bar Suite**: The environment actively uses the Solid Top Bar suite: `BarSolid.qml`, `ControlCenterSolid.qml`, `modules/panels/modular/Dropdown*.qml` (`DropdownClock.qml`, `DropdownHardware.qml`, `DropdownNetwork.qml`, `DropdownPower.qml`), and `modules/solidboard/`.
+> - **Component Integrity**: Ensure none of the active Solid Bar components are ever confused with, coupled to, or accidentally archived with the legacy Pill Bar files. All Solid Bar components remain fully active, functional, and ready for regular feature development as requested by the user.
 
 ## 1. System & Architecture Overview
 - **Core Technology**: QML (Quickshell), Hyprland, Wayland native overlay. Quickshell features built-in hot-reloading, so QML files update live on save without requiring a daemon restart (`killall quickshell`).
