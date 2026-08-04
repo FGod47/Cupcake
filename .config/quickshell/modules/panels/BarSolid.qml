@@ -910,7 +910,6 @@ PanelWindow {
         }
         
         onFinished: {
-            solidBar.color = Qt.binding(function() { return bar.pillColor; });
             solidBar.width = Qt.binding(function() {
                 return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
             });
@@ -923,7 +922,6 @@ PanelWindow {
         solidBar.width = bar.startW;
         bar.baseHeight = bar.startHeight;
         solidBar.radius = bar.startRadius;
-        solidBar.color = bar.pillColor;
         contentLayout.opacity = 0.0;
     }
 

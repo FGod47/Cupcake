@@ -61,7 +61,7 @@ ShellRoot {
 
     // Global State
     property real globalOpacity: 1.0
-    property real barOpacity: 0.50
+    property real barOpacity: 1.0
     property bool barTransparency: true
 
     function withOpacity(col) {
