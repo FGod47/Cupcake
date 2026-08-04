@@ -805,15 +805,15 @@ PanelWindow {
                 Image {
                     id: searchIconTxt
                     anchors.centerIn: parent
-                    // dark.svg has dark fill (#33383E) — correct for light mode
-                    // light.svg has cream fill (#F4F2EC) — correct for dark mode
-                    // No ColorOverlay needed; SVGs encode the right color per theme.
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                    sourceSize.height: 52
                     height: 26
                     width: 73
                     fillMode: Image.PreserveAspectFit
                     opacity: 1.0
+                    layer.enabled: true
+                    layer.effect: ColorOverlay {
+                        color: root.colOnSurface
+                    }
                     smooth: true
                     scale: card.width > 200 ? 1.0 : 0.95
                     Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
