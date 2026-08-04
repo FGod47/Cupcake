@@ -12,6 +12,7 @@ import Quickshell.Wayland
 import "theme"
 import "modules/common"
 import "modules/settings"
+import Qt5Compat.GraphicalEffects
 
 // Use the same pattern as WallpaperSwitcher.qml (which works as standalone)
 // Center it on screen via a centered Item inside the window
@@ -809,6 +810,10 @@ PanelWindow {
                     sourceSize.height: 52
                     smooth: true
                     opacity: 1.0
+                    layer.enabled: true
+                    layer.effect: ColorOverlay {
+                        color: root.colOnSurface
+                    }
                     scale: card.width > 200 ? 1.0 : 0.95
                     Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
                 }

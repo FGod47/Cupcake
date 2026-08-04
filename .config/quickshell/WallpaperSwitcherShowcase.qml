@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Widgets
 import "modules/common"
 import "theme"
+import Qt5Compat.GraphicalEffects
 
 Item {
     id: gv
@@ -317,5 +318,9 @@ Item {
         opacity: 0.5
         smooth: true
         antialiasing: true
+        layer.enabled: true
+        layer.effect: ColorOverlay {
+            color: Theme.colOnSurface
+        }
     }
 }
