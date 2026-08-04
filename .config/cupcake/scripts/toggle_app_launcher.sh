@@ -3,6 +3,7 @@
 STYLE=$(cat ~/.config/cupcake/.applauncher_style 2>/dev/null || echo "Hover")
 LIQUIDIFY=$(cat ~/.config/cupcake/.liquidify 2>/dev/null || echo "false")
 export LIQUIDIFY
+export CUPCAKE_IS_DARK=$(cat ~/.config/cupcake/.color_mode 2>/dev/null || echo "dark")
 
 if [ "$STYLE" = "Hug" ]; then
     TARGET="AppLauncherHug.qml"

@@ -833,7 +833,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 88
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.colOnSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
                     text: "•"
                     font.pixelSize: 10
                     opacity: card.width > 100 ? 1.0 : 0.0
@@ -846,7 +846,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.colOnSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
                     font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
@@ -862,7 +862,7 @@ PanelWindow {
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.colOnSurface
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.defaultFontFamily
                     clip: true

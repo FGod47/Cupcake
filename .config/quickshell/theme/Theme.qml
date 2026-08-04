@@ -10,7 +10,7 @@ Item {
 
     property bool globalTransparency: true
     
-    property bool isDark: true
+    property bool isDark: Quickshell.env("CUPCAKE_IS_DARK") === "light" ? false : true
     
     Process {
         id: initThemeConfigs
@@ -57,12 +57,14 @@ Item {
             let t = text();
             if (t && t.trim().length > 0) {
                 themeSingleton.isDark = (t.trim() !== "light");
+                    console.log("Theme.isDark updated to: " + themeSingleton.isDark);
             }
         }
         onLoadedChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
                 themeSingleton.isDark = (t.trim() !== "light");
+                    console.log("Theme.isDark updated to: " + themeSingleton.isDark);
             }
         }
     }
