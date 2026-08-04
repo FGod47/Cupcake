@@ -1,3 +1,9 @@
+// ==============================================================================
+// ⚠️ STRICT DIRECTIVE / AGENT LOCK: THIS COMPONENT IS TOTALLY DISABLED
+// THIS COMPONENT IS PRESERVED FOR ARCHIVAL PURPOSES ONLY. IT IS DECOUPLED FROM
+// THE CUPCAKE RUNTIME. NO AGENT MAY TOUCH, REFACTOR, MODIFY, OR RE-ENABLE THIS
+// FILE IN ANY WAY UNLESS THE USER EXPLICITLY INSTRUCTS YOU TO DO SO.
+// ==============================================================================
 // PowerDropdown.qml
 // A floating pill that animates from the power icon in the solid bar,
 // expanding downward to reveal power options — same pattern as ClockDropdown.
