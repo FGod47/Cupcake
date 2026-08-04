@@ -47,10 +47,23 @@ Item {
     }
 
     FileView {
+        id: colorModeFileView
         path: themeSingleton.homeDir + "/.config/cupcake/.color_mode"
         watchChanges: true
         onFileChanged: {
-            themeSingleton.isDark = (text.trim() !== "light");
+            reload();
+        }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.isDark = (t.trim() !== "light");
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.isDark = (t.trim() !== "light");
+            }
         }
     }
 
