@@ -26,17 +26,22 @@ ShellRoot {
         globalState.dockRadius = c;
     }
 
+    // ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR (Bar.qml) IS TOTALLY DISABLED.
+    // Preserved in files for archival purposes only; detached from active runtime.
+    // DO NOT re-enable, modify, or instantiate Bar { ... } unless explicitly instructed by the USER.
+    /*
     Variants {
         model: Quickshell.screens
         delegate: Bar {
-            visible: globalState.barStyle === "pill" && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
+            visible: false
         }
     }
+    */
 
     Variants {
         model: Quickshell.screens
         delegate: BarSolid {
-            visible: globalState.barStyle === "solid" && globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
+            visible: globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
     }
 
