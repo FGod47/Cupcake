@@ -805,18 +805,12 @@ PanelWindow {
                 Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
 
                 Image {
-                    id: searchIconTxt
+                    id: rawSearchIcon
                     anchors.centerIn: parent
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                    sourceSize.height: 26
-                    width: 73
+                    sourceSize.height: 24
+                    width: 67
                     fillMode: Image.PreserveAspectFit
-                    opacity: 1.0
-                    layer.enabled: true
-                    layer.effect: ColorOverlay {
-                        color: Theme.isDark ? "#ffffff" : "#000000"
-                    }
-                    smooth: true
                 }
             }
 
@@ -839,10 +833,10 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 88
                     anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOnSurfaceVariant
+                    color: Theme.colOnSurface
                     text: "•"
                     font.pixelSize: 10
-                    opacity: card.width > 100 ? 0.7 : 0.0
+                    opacity: card.width > 100 ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
 
@@ -852,12 +846,12 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.isDark ? Qt.rgba(1, 1, 1, 0.75) : Qt.rgba(0, 0, 0, 0.75)
+                    color: Theme.colOnSurface
                     font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
                     visible: searchField.text.length === 0
-                    opacity: card.width > 100 ? 0.75 : 0.0
+                    opacity: card.width > 100 ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
 
@@ -868,7 +862,7 @@ PanelWindow {
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.isDark ? "#ffffff" : "#000000"
+                    color: Theme.colOnSurface
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.defaultFontFamily
                     clip: true
