@@ -26,17 +26,8 @@ ShellRoot {
         globalState.dockRadius = c;
     }
 
-    // ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR (Bar.qml) IS TOTALLY DISABLED.
-    // Preserved in files for archival purposes only; detached from active runtime.
-    // DO NOT re-enable, modify, or instantiate Bar { ... } unless explicitly instructed by the USER.
-    /*
-    Variants {
-        model: Quickshell.screens
-        delegate: Bar {
-            visible: false
-        }
-    }
-    */
+    // ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR (Bar.qml) IS TOTALLY DISABLED & ARCHIVED in modules/panels/archive/
+    // DO NOT re-enable or instantiate Bar { ... } unless explicitly instructed by the USER.
 
     Variants {
         model: Quickshell.screens
@@ -98,7 +89,6 @@ ShellRoot {
         id: globalState
         property string tablerIconsFamily: tablerIconsFont.name !== "" ? tablerIconsFont.name : "tabler-icons"
         property string barStyle: "solid"
-        property string pendingBarStyle: ""
         property bool barVisible: true
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
@@ -169,18 +159,11 @@ ShellRoot {
         function setOverviewScale(val: real) { root.overviewScale = val; }
         function setDimOverlay(val: real) { globalState.dimOverlay = val; }
         function setNotifOpacity(val: real) { globalState.notifPanelOpacity = val; }
-        function setBarStyle(val: string) {
-            if (val === "pill" && globalState.barStyle === "solid") {
-                globalState.pendingBarStyle = "pill";
-            } else {
-                globalState.barStyle = val;
-            }
-        }
     }
 
     Process {
         id: initShellConfigs
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dim_overlay 2>/dev/null; echo '---'; cat ~/.config/cupcake/.notif_panel_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.osd_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.cc_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_tabs 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_style 2>/dev/null || exit 0"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dim_overlay 2>/dev/null; echo '---'; cat ~/.config/cupcake/.notif_panel_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.osd_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.cc_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_tabs 2>/dev/null; echo '---'; cat ~/.config/cupcake/.overview_scale 2>/dev/null || exit 0"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -196,7 +179,7 @@ ShellRoot {
                 if (parts[7]) { let v = parseFloat(parts[7].trim()); if (!isNaN(v)) root.overviewOpacity = v; }
                 if (parts[8]) { let v = parseInt(parts[8].trim()); if (!isNaN(v) && v > 0) root.overviewTabs = v; }
                 if (parts[9]) { let v = parseFloat(parts[9].trim()); if (!isNaN(v) && v > 0) root.overviewScale = v; }
-                if (parts[10]) { let s = parts[10].trim(); if (s === "solid" || s === "pill") globalState.barStyle = s; }
+                globalState.barStyle = "solid";
             }
         }
     }

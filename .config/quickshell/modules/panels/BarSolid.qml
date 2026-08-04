@@ -186,7 +186,7 @@ PanelWindow {
         y: bar.midY
         x: bar.startX
         width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)))
-        Behavior on width { enabled: !expandAnim.running && !collapseAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: Theme.colPrimary
@@ -959,76 +959,7 @@ PanelWindow {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  2. REVERSE COLLAPSE ANIMATION (Solid Bar -> Pill)
-    // ─────────────────────────────────────────────────────
-    ParallelAnimation {
-        id: collapseAnim
-        running: false
-
-        NumberAnimation {
-            target: solidBar
-            property: "x"
-            to: bar.startX
-            duration: 480
-            easing.type: Easing.InOutCubic
-        }
-        NumberAnimation {
-            target: solidBar
-            property: "width"
-            to: bar.startW
-            duration: 480
-            easing.type: Easing.InOutCubic
-        }
-        NumberAnimation {
-            target: bar
-            property: "baseHeight"
-            to: bar.startHeight
-            duration: 480
-            easing.type: Easing.InOutCubic
-        }
-        NumberAnimation {
-            target: solidBar
-            property: "radius"
-            to: bar.startRadius
-            duration: 480
-            easing.type: Easing.InOutCubic
-        }
-        ColorAnimation {
-            target: solidBar
-            property: "color"
-            to: Theme.colPrimary
-            duration: 420
-            easing.type: Easing.OutCubic
-        }
-        NumberAnimation {
-            target: archHeader
-            property: "opacity"
-            to: 1.0
-            duration: 250
-            easing.type: Easing.InQuad
-        }
-        NumberAnimation {
-            target: contentLayout
-            property: "opacity"
-            to: 0.0
-            duration: 200
-            easing.type: Easing.InQuad
-        }
-
-        onFinished: {
-            // Once collapse is complete, finalize mode change to "pill"
-            globalState.barStyle = "pill";
-            globalState.pendingBarStyle = "";
-            solidBar.color = Qt.binding(function() { return Theme.colPrimary; });
-            solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
-            });
-        }
-    }
-
     function resetToArchPill() {
-        collapseAnim.stop();
         expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
@@ -1039,27 +970,9 @@ PanelWindow {
         contentLayout.opacity = 0.0;
     }
 
-    Connections {
-        target: globalState
-        function onBarStyleChanged() {
-            if (globalState.barStyle === "solid") {
-                resetToArchPill();
-                expandAnim.restart();
-            }
-        }
-        function onPendingBarStyleChanged() {
-            if (globalState.pendingBarStyle === "pill") {
-                expandAnim.stop();
-                collapseAnim.restart();
-            }
-        }
-    }
-
     Component.onCompleted: {
-        if (globalState.barStyle === "solid") {
-            resetToArchPill();
-            expandAnim.start();
-        }
+        resetToArchPill();
+        expandAnim.start();
     }
 
     // ─────────────────────────────────────────────────────
