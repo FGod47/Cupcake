@@ -825,15 +825,20 @@ PanelWindow {
 
         }
         
-        IconImage {
+        Image {
             id: cupcakeLogo
             x: (bar.screenW / 2) - solidBar.x - (width / 2)
             anchors.top: parent.top
-            anchors.topMargin: (bar.barHeight - sourceSize.height) / 2
+            anchors.topMargin: (bar.barHeight - 24) / 2
             source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
             sourceSize.height: 24
-            color: bar.fg
+            width: 67
+            fillMode: Image.PreserveAspectFit
             opacity: 1.0
+            layer.enabled: true
+            layer.effect: ColorOverlay {
+                color: bar.fg
+            }
 
             MouseArea {
                 anchors.fill: parent
