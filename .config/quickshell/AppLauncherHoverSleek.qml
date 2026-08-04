@@ -802,19 +802,14 @@ PanelWindow {
                 width: 80
                 height: 32
 
-                Image {
+                IconImage {
                     id: searchIconTxt
                     anchors.centerIn: parent
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                    color: root.colOnSurface
                     height: 26
-                    fillMode: Image.PreserveAspectFit
                     sourceSize.height: 52
-                    smooth: true
                     opacity: 1.0
-                    layer.enabled: true
-                    layer.effect: ColorOverlay {
-                        color: root.colOnSurface
-                    }
                     scale: card.width > 200 ? 1.0 : 0.95
                     Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
                 }
