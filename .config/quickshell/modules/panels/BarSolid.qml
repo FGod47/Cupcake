@@ -830,7 +830,7 @@ PanelWindow {
             x: (bar.screenW / 2) - solidBar.x - (width / 2)
             anchors.top: parent.top
             anchors.topMargin: (bar.barHeight - sourceSize.height) / 2
-            source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
+            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
             sourceSize.height: 24
             fillMode: Image.PreserveAspectFit
             opacity: 1.0
