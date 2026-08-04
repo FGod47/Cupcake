@@ -814,7 +814,7 @@ PanelWindow {
                     opacity: 1.0
                     layer.enabled: true
                     layer.effect: ColorOverlay {
-                        color: Theme.colOnSurface
+                        color: Theme.isDark ? "#ffffff" : "#000000"
                     }
                     smooth: true
                 }
@@ -852,7 +852,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOnSurfaceVariant
+                    color: Theme.isDark ? Qt.rgba(1, 1, 1, 0.75) : Qt.rgba(0, 0, 0, 0.75)
                     font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
@@ -868,7 +868,7 @@ PanelWindow {
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOnSurface
+                    color: Theme.isDark ? "#ffffff" : "#000000"
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.defaultFontFamily
                     clip: true
