@@ -570,35 +570,46 @@ PanelWindow {
                     id: speedProc
                     command: ["cat", "/proc/net/dev"]
                     running: true
+                    property double lastTime: 0
                     stdout: StdioCollector {
                         onStreamFinished: () => {
                             if (bar.isDestroying) return;
                             if (!text) return;
+                            const now = Date.now();
                             const lines = text.trim().split("\n");
                             let totalRx = 0;
                             let totalTx = 0;
                             for (let i = 2; i < lines.length; i++) {
-                                const parts = lines[i].trim().split(/\s+/);
-                                if (parts.length >= 10 && (parts[0].startsWith("en") || parts[0].startsWith("wl") || parts[0].startsWith("eth"))) {
-                                    totalRx += parseInt(parts[1]);
-                                    totalTx += parseInt(parts[9]);
+                                const line = lines[i].trim();
+                                if (!line) continue;
+                                const colonIdx = line.indexOf(":");
+                                if (colonIdx === -1) continue;
+                                const iface = line.substring(0, colonIdx).trim();
+                                const rest = line.substring(colonIdx + 1).trim();
+                                const parts = rest.split(/\s+/);
+                                if (parts.length >= 9 && (iface.startsWith("en") || iface.startsWith("wl") || iface.startsWith("eth") || iface.startsWith("wlan") || iface.startsWith("ww"))) {
+                                    totalRx += parseInt(parts[0]) || 0;
+                                    totalTx += parseInt(parts[8]) || 0;
                                 }
                             }
                             
-                            if (networkPill.lastRx > 0 && networkPill.lastTx > 0) {
-                                let rxDiff = totalRx - networkPill.lastRx;
-                                let txDiff = totalTx - networkPill.lastTx;
+                            if (speedProc.lastTime > 0 && networkPill.lastRx > 0) {
+                                const dt = Math.max(0.1, (now - speedProc.lastTime) / 1000.0);
+                                let rxDiff = Math.max(0, (totalRx - networkPill.lastRx) / dt);
+                                let txDiff = Math.max(0, (totalTx - networkPill.lastTx) / dt);
+                                let d = rxDiff + txDiff;
                                 
                                 let formatSpeed = (bytes) => {
                                     if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + " MB/s";
                                     return (bytes / 1024).toFixed(0) + " KB/s";
                                 }
-                                bar.rxSpeedStr = formatSpeed(rxDiff + txDiff);
+                                bar.rxSpeedStr = formatSpeed(d);
                             } else {
                                 bar.rxSpeedStr = "0 KB/s";
                             }
                             networkPill.lastRx = totalRx;
                             networkPill.lastTx = totalTx;
+                            speedProc.lastTime = now;
                         }
                     }
                 }

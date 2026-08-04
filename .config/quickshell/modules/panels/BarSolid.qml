@@ -1110,26 +1110,40 @@ PanelWindow {
         id: netProc; running: true
         command: ["bash", "-c", "cat /proc/net/dev"]
         property real lastRx: 0; property real lastTx: 0
+        property double lastTime: 0
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return
+                const now = Date.now()
                 const lines = text.trim().split("\n")
                 let rx = 0, tx = 0
                 for (let i = 2; i < lines.length; i++) {
-                    const p = lines[i].trim().split(/\s+/)
-                    if (p.length >= 10 && (p[0].startsWith("en") || p[0].startsWith("wl") || p[0].startsWith("eth"))) {
-                        rx += parseInt(p[1]) || 0; tx += parseInt(p[9]) || 0
+                    const line = lines[i].trim()
+                    if (!line) continue
+                    const colonIdx = line.indexOf(":")
+                    if (colonIdx === -1) continue
+                    const iface = line.substring(0, colonIdx).trim()
+                    const rest = line.substring(colonIdx + 1).trim()
+                    const p = rest.split(/\s+/)
+                    if (p.length >= 9 && (iface.startsWith("en") || iface.startsWith("wl") || iface.startsWith("eth") || iface.startsWith("wlan") || iface.startsWith("ww"))) {
+                        rx += parseInt(p[0]) || 0
+                        tx += parseInt(p[8]) || 0
                     }
                 }
-                if (netProc.lastRx > 0) {
-                    let d = Math.max(0, (rx - netProc.lastRx) + (tx - netProc.lastTx))
-                    bar.netStr = d >= 1048576 ? (d/1048576).toFixed(1) + " MB/s" : Math.round(d/1024) + " KB/s"
+                if (netProc.lastTime > 0 && netProc.lastRx > 0) {
+                    const dt = Math.max(0.1, (now - netProc.lastTime) / 1000.0)
+                    const rxRate = Math.max(0, (rx - netProc.lastRx) / dt)
+                    const txRate = Math.max(0, (tx - netProc.lastTx) / dt)
+                    const d = rxRate + txRate
+                    bar.netStr = d >= 1048576 ? (d / 1048576).toFixed(1) + " MB/s" : (Math.round(d / 1024) + " KB/s")
                 }
-                netProc.lastRx = rx; netProc.lastTx = tx
+                netProc.lastRx = rx
+                netProc.lastTx = tx
+                netProc.lastTime = now
             }
         }
     }
-    Timer { interval: 2000; running: true; repeat: true; onTriggered: netProc.running = true }
+    Timer { interval: 1000; running: true; repeat: true; onTriggered: netProc.running = true }
 
     Process {
         id: netTypeProc; running: true
