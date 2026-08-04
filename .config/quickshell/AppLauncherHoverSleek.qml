@@ -801,12 +801,14 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 80
                 height: 32
+                scale: card.width > 200 ? 1.0 : 0.95
+                Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
 
                 Image {
                     id: searchIconTxt
                     anchors.centerIn: parent
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                    height: 26
+                    sourceSize.height: 26
                     width: 73
                     fillMode: Image.PreserveAspectFit
                     opacity: 1.0
@@ -815,8 +817,6 @@ PanelWindow {
                         color: Theme.colOnSurface
                     }
                     smooth: true
-                    scale: card.width > 200 ? 1.0 : 0.95
-                    Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
                 }
             }
 
