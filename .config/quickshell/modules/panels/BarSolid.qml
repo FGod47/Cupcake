@@ -153,12 +153,12 @@ PanelWindow {
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
     readonly property real barW: bar.screenW - 200
     readonly property real barX: 100
-    readonly property real startW: 160
+    readonly property real startW: 100
     readonly property real startX: (bar.screenW - bar.startW) / 2
     readonly property real midY: 10
-    readonly property real startHeight: 34
+    readonly property real startHeight: 30
     readonly property real barHeight: 30
-    readonly property real startRadius: 18
+    readonly property real startRadius: 15
     readonly property real barRadius: 15
 
     // Power split pill dimensions
@@ -179,7 +179,7 @@ PanelWindow {
     }
 
     // ─────────────────────────────────────────────────────
-    //  MORPHING BAR (Starts exactly as archPill, expands into solid bar)
+    //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
@@ -189,7 +189,7 @@ PanelWindow {
         Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
-        color: Theme.colPrimary
+        color: bar.pillColor
         clip: true
 
         MouseArea {
@@ -210,33 +210,7 @@ PanelWindow {
             color: Qt.rgba(1, 1, 1, 0.12)
         }
 
-        // 1. Initial Arch Pill Label (Arch Logo + Name)
-        Row {
-            id: archHeader
-            anchors.centerIn: parent
-            spacing: 8
-            opacity: 1.0
-            visible: opacity > 0
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "\uf303"
-                color: Theme.colOnPrimary
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: Theme.defaultFontSize + 1
-                font.weight: Theme.defaultFontWeight
-            }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Arch"
-                color: Theme.colOnPrimary
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: Theme.defaultFontSize
-                font.weight: Theme.defaultFontWeight
-            }
-        }
-
-        // 2. Solid Bar Modules (fades in as expansion completes)
+        // Solid Bar Modules (fades in as expansion completes)
         RowLayout {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
@@ -859,7 +833,7 @@ PanelWindow {
             source: Theme.isDark ? "../../assets/cupcake-word-light.svg" : "../../assets/cupcake-word-dark.svg"
             sourceSize.height: 24
             fillMode: Image.PreserveAspectFit
-            opacity: contentLayout.opacity
+            opacity: 1.0
 
             MouseArea {
                 anchors.fill: parent
@@ -888,7 +862,7 @@ PanelWindow {
     DropdownPower { id: powerSplitPill }
 
     // ─────────────────────────────────────────────────────
-    //  1. FORWARD EXPANSION ANIMATION (Pill -> Solid Bar)
+    //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
     ParallelAnimation {
         id: expandAnim
@@ -926,22 +900,6 @@ PanelWindow {
             duration: 700
             easing.type: Easing.OutQuart
         }
-        ColorAnimation {
-            target: solidBar
-            property: "color"
-            from: Theme.colPrimary
-            to: bar.pillColor
-            duration: 440
-            easing.type: Easing.OutCubic
-        }
-        NumberAnimation {
-            target: archHeader
-            property: "opacity"
-            from: 1.0
-            to: 0.0
-            duration: 220
-            easing.type: Easing.OutQuad
-        }
         NumberAnimation {
             target: contentLayout
             property: "opacity"
@@ -959,19 +917,18 @@ PanelWindow {
         }
     }
 
-    function resetToArchPill() {
+    function resetToCupcakePill() {
         expandAnim.stop();
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
         bar.baseHeight = bar.startHeight;
         solidBar.radius = bar.startRadius;
-        solidBar.color = Theme.colPrimary;
-        archHeader.opacity = 1.0;
+        solidBar.color = bar.pillColor;
         contentLayout.opacity = 0.0;
     }
 
     Component.onCompleted: {
-        resetToArchPill();
+        resetToCupcakePill();
         expandAnim.start();
     }
 
