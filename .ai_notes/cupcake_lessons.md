@@ -1,0 +1,94 @@
+# Cupcake Shell - AI Development Lessons & Architecture Notes
+
+> [!CAUTION]
+> ### ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR & ITS COMPONENTS ARE TOTALLY DISABLED & ISOLATED
+> - **Status**: The Pill Bar (`Bar.qml`) and all associated legacy pill bar & modular components (`ControlCenterUI.qml`, `ControlCenter.qml`, `PowerPill.qml`, `ClockDropdown.qml`, `PowerDropdown.qml`, `BarModular.qml`, and `modular/*Module.qml`) are **STRICTLY DISABLED**, moved into `modules/panels/archive/`, and completely decoupled from the active Cupcake setup.
+> - **Zero Runtime Work**: These files perform zero work and are kept for offline archival reference only.
+> - **Settings Isolation**: The "Top bar style" option in Settings (`SettingsPageAppearance.qml`) has been completely removed.
+> - **AGENT MANDATE**: **NO AI AGENT IS PERMITTED TO TOUCH, MODIFY, REFACTOR, RESTORE, RE-ENABLE, OR INSTANTIATE ANY FILE IN `modules/panels/archive/` UNDER ANY CIRCUMSTANCES UNLESS THE USER EXPLICITLY INSTRUCTS IT.**
+>
+> ### 🔒 SOLID BAR STABILITY LOCK (DO NOT TOUCH)
+> - **Solid Bar Protected**: The Solid Top Bar (`BarSolid.qml`), `ControlCenterSolid.qml`, and its dropdown components (`modules/panels/modular/Dropdown*.qml`) are **STABLE & LOCKED**.
+> - **AGENT MANDATE**: **DO NOT TOUCH, REFACTOR, OR MODIFY ANYTHING RELATED TO THE SOLID BAR OR ITS COMPONENTS UNLESS THE USER EXPLICITLY DIRECTS A SPECIFIC MODIFICATION TO IT.**
+
+## 1. System & Architecture Overview
+- **Core Technology**: QML (Quickshell), Hyprland, Wayland native overlay. Quickshell features built-in hot-reloading, so QML files update live on save without requiring a daemon restart (`killall quickshell`).
+- **Active Bar Layout**: Cupcake exclusively uses the Solid Top Bar layout (`BarSolid.qml`). The legacy Pill bar (`Bar.qml`) is disabled and archived.
+- **Modular Directory Structure**: The core Quickshell environment is neatly organized into modular directories: `modules/panels/` (primary UI elements), `modules/common/` (reusable widgets), `modules/settings/` (settings UI components), `services/` (background daemons), and `theme/` (global styling components). 
+- **Quickshell Sandboxing Constraints**: When launching a standalone QML window via `quickshell -p <path>`, Quickshell treats the directory containing the file as the absolute root of the configuration. Relative imports (e.g., `import "../../theme"`) that attempt to escape this root are blocked by the QML scanner. Therefore, standalone UI components like `AppLauncherHover.qml` MUST remain in the root directory (`~/.config/quickshell/`) to retain access to global themes and assets.
+- **Font Dependencies**: Requires specific Google Fonts: *JetBrains Mono Nerd Font* (terminals), *Material Symbols Variable* (UI icons), *Space Grotesk* (headers), *Rubik / Readex Pro / Gabarito* (UI text), and *Twemoji* (emojis).
+- **Logo Assets**: All SVG assets are stored in `.config/quickshell/assets/` to ensure they can be accessed consistently across variants without relying on absolute file paths.
+
+## 2. Installation & Distro Compatibility
+- **AUR Helper**: Support `yay`, `paru`, `yay-cachyos`, `paru-cachyos`.
+- **Kernel Headers**: Dynamically detect running kernel (`uname -r`) to install matching headers (`linux-cachyos-headers`, `linux-zen-headers`, etc.).
+- **GPU Packages**: Dynamically check for NVIDIA hardware before installing `nvidia-dkms` or `libva-nvidia-driver`.
+- **mkinitcpio Presets**: Iterate across all `/etc/mkinitcpio.d/*.preset` files rather than hardcoding `linux.preset`.
+- **Boot Experience**: Plymouth themes, custom UKI bootsplash via `mkinitcpio`, GRUB theme.
+- **Planned Cupcake GUI Installer**: Hybrid architecture (`install.sh` bootstrapper for blank Arch TTY installs + QML installer window matching Cupcake's aesthetic).
+
+## 3. Matugen & Dynamic Theming
+- **Scheme Name Validation**: Matugen 4.x only accepts valid Material 3 scheme names (`content`, `expressive`, `fidelity`, etc.). Invalid scheme strings cause Matugen to crash without generating colors. `set-theme` now validates `$SCHEME` and falls back safely to `tonal-spot`.
+- **State Directory Creation**: Matugen templates require target directories like `~/.local/state/quickshell/user/generated/` and `~/.cache/` to exist. Ensure these are created with `mkdir -p`.
+- **Synchronous Initial Theme Parsing**: Reading `~/.cache/quickshell_colors.json` inside `Component.onCompleted` in `Theme.qml` prevents an initial 100ms fallback color flash when restarting the shell.
+- **Real-time Color Reactivity (`onTextChanged`)**: In Quickshell `FileView`, binding `readColorsImmediately()` to `onTextChanged` ensures the UI updates dynamically when the file contents finish loading from disk without needing to restart the bar.
+- **Dominant Primary Color Extraction**: Using `matugen image "$WALLPAPER" --source-color-index 0` extracts the true dominant primary accent color of the wallpaper instead of picking warm secondary spot hues.
+- **Deleted Wallpaper Recovery**: `set-theme` automatically falls back to finding the first available wallpaper in `~/.config/cupcake/walls/` and updates `~/.cache/current_wallpaper` if the previously active wallpaper file was deleted.
+- **Theme Parsing Crashes**: When parsing config files in `Theme.qml` via bash `cat`, if one configuration file is missing, bash returns a non-zero exit code (`1`). Quickshell discards the stdout of failed processes, causing ALL user configurations to fail. **Always append `|| exit 0`** to batch `cat` commands inside `Theme.qml`.
+
+## 4. QML & UI Development (Common Pitfalls)
+
+### A. Performance & Processes
+- **Quickshell Startup Performance**: To avoid lag when toggling the bar, we use a daemon-mode IPC toggling architecture (`quickshell ipc call bar toggle`). Additionally, individual config file reads in `Theme.qml` and `shell.qml` are consolidated into single batch `Process` calls to eliminate excessive bash forks on startup.
+- **ddcutil I2C Polling Glitches**: `ddcutil` takes 1-2 seconds over the I2C bus. NEVER place it on a fast polling timer (e.g. 1s). Repeated calls pile up, causing severe slider glitching and freezing. Defer brightness queries to an asynchronous timer after window rendering or a much slower dedicated timer.
+- **StdioCollector Accumulation**: When re-triggering a `Process` via a Timer setting `running: true`, `StdioCollector.text` accumulates output indefinitely. Do NOT use `onStreamFinished` to parse repeated output. Use `onExited` with a named `StdioCollector` to read `stdout.text` safely, or use `bash -c ... | tail -1` patterns.
+
+### B. State, Bindings, and Visibility
+- **Animations Severing Property Bindings**: Running a `PropertyAnimation` permanently overwrites the target property with a hardcoded value, destroying its original declarative binding to live state. If a property is expected to respond to live IPC updates (e.g., live opacity sliders), you **MUST** re-bind it explicitly using `Qt.binding()` inside the animation's `onFinished` block.
+- **QML Dynamic Object Undefined Checks**: Adding ternary undefined checks like `root.barOpacity !== undefined ? root.barOpacity : 0.5` breaks QML's dependency tracker. Bind directly without wrapping it in JS conditionals when dealing with dynamic root IDs.
+- **Animation Triggers**: Do NOT rely on `Component.onCompleted` to trigger animations for layout switching (e.g. Pill to Solid bar). Quickshell keeps components in memory, so `onCompleted` only fires on full daemon restarts. Use `Connections { target: globalState }` to listen for IPC state changes.
+- **Two-Way Morphing Visibility**: When cross-fading or morphing between mutually exclusive UI states, do NOT instantly toggle their `visible` property. Introduce a "pending" state variable, trigger the collapse animation, and only update the actual layout state inside the `onFinished` block.
+- **Animating Text Show/Hide**: Do NOT use `visible: condition` to show/hide text during pill width animations, as text will instantly pop in/out and spill over. Use `width: condition ? implicitWidth : 0` with `clip: true` and a `Behavior on width` to smoothly slide text in and out.
+
+### C. Layouts, Masks & Styling
+- **Layer Shell Blur & Transparent Margins**: Hyprland applies blur to the *entire bounding box* of a layer shell window. If the bar has transparent margins, Hyprland blurs those gaps. You MUST add `mask: Region { item: visualItem }` to the `PanelWindow` so Wayland only blurs the exact physical shape of the UI.
+- **Standalone Masked Dropdowns in PanelWindows**: When building an animated dropdown (like `ClockDropdown.qml`) that spawns from a specific element inside a `PanelWindow`, construct the dropdown as a standalone `Item` sibling to the main bar. Most importantly, you **MUST** add the dropdown's visual `Rectangle` to the `PanelWindow`'s `mask` (via an exposed property alias like `property alias dropdownCard: card`) in the `Region` block.
+- **Organic Pill Split Animations (Row + Spacing)**: When creating a "pill split" animation (like the Caelestia app launcher mode switch), do NOT use absolute positioning and a background element revealing a foreground element. Instead, place both elements inside a `Row` layout and animate the `spacing` property, combined with an `OutBack` bounce on the `width` of the appearing element. This creates a realistic physical extrusion effect.
+- **Dynamic `ignore_alpha` Calculations**: When calculating Hyprland's `ignore_alpha` threshold for `quickshell` layers (in `apply-transparency`), you must calculate the minimum opacity across *all* active UI elements. All newly added opacity sliders MUST be factored into this script.
+- **RowLayout alignment without implicitWidth**: Custom components placed at the end of a `RowLayout` (pushed by a spacer) will fail to align flush with the right edge if they only declare an explicit `width`. You **MUST** define `implicitWidth` on the custom root item.
+- **Washed Out Accented Pills**: When changing a pill's background to the accent color (`Theme.colPrimary`), do NOT keep the previous `Qt.rgba(..., root.barOpacity)` alpha transparency. Use a solid `Theme.colPrimary` and switch internal texts/icons to `Theme.colOnPrimary`.
+- **QML Font Fallbacks & CSS Classes**: QML `Text` elements do not support CSS classes (like `ri-shut-down-fill`); you must pass the exact raw Unicode character. Explicitly use `String.fromCodePoint(0x1023A)` for high-plane Unicode icons in QML to prevent parser issues.
+
+### D. General Troubleshooting
+- **Duplicate Property Crash**: Setting the same QML property twice causes Quickshell to refuse to load the file with `Property value set multiple times`. Run `quickshell 2>&1 | head -20` to get the exact line number.
+
+## 5. System Integrations (Networking & Bluetooth)
+- **Hotspot Firewall Compatibility**: NetworkManager shared connections require UFW `DEFAULT_FORWARD_POLICY="ACCEPT"` and interface allow rules (`ufw allow in on wlan0`). Setup scripts handle this automatically.
+- **nmcli Parsing for Hotspot**: When the system broadcasts a Wi-Fi hotspot, `nmcli -t -f TYPE,STATE,CONNECTION d` reports `wifi:disconnected:` for `wlan0`. The active hotspot connection appears only via `nmcli con show --active`. Detect by connection name containing "Hotspot".
+- **Network Pill Icon Grouping**: The network status is split into distinct independent badges: Hotspot → Bluetooth → Wi-Fi → Wired → Separator → Speed. Wi-Fi and Wired badges are always visible when connected. Other badges gate on `!expanded`.
+- **Bluetooth Connected Device State Parsing**: `bluetoothctl show` only confirms if the adapter is powered on. You must poll `bluetoothctl devices Connected` to detect an active peripheral, and use `bluetoothctl info <mac>` to check the `Icon:` field (e.g. `Icon: audio-headset`).
+- **Hyprland Custom Lua Dispatchers**: If standard `hyprctl dispatch workspace` commands fail with Lua syntax errors, a custom Lua IPC layer is intercepting dispatches. Use the custom IPC payload string (e.g., `hl.dsp.focus({workspace = ...})`).
+
+## 6. Development Workflows
+- **Syncing Code**: Always remember to sync your changes! If you edit files directly in `~/.config/quickshell/`, you MUST copy those changes back to `/home/code/Cupcake/.config/quickshell/` and commit them via Git so the codebase doesn't diverge from the live system.
+- **Git Repository vs Live Config Syncing**: Performing a `git reset --hard` in the repository does NOT automatically propagate those reverted files to the live `~/.config/quickshell/` directory. You must manually `cp` them over.
+- **Sudo / Root Traps**: Avoid using `sudo pacman` or `pkexec` when installing dependencies (like fonts) unless absolutely necessary, as it halts automated workflows. Install `.ttf` fonts locally to `~/.local/share/fonts/`.
+- **Automated External Drive Backups**: `backup-cupcake` syncs codebase, lessons, and configs to `/run/media/code/~codeBlack/Prjt Cupcake` via a systemd path unit whenever the drive is mounted.
+
+## 7. Design Ideation
+- **Chrome-Style Seamless Tabs**: Exploring the "inverted border radius" design where active elements (workspace pills, active tabs, settings navigation) seamlessly merge into their parent container toolbars without dividing lines, mimicking fluid attachment.
+
+## 8. Top Bar Spatial Teardown Architecture & Multi-Pill Mechanics
+
+- **Spatial Right-Chain Teardown Rule**: Top bar modules follow a fixed spatial order from left to right: `[Workspaces/Tray]` -> `[Volume/Brightness]` -> `[Clock/Calendar]` -> `[Power]`. Clicking option $i$ separates option $i$ from `solidBar` into its dedicated floating pill. Any items to the **right** of option $i$ MUST ALSO separate into independent floating pills at their spatial coordinates so option $i$ can expand without pushing or overlapping elements to its right.
+- **Single-Pill Power Combination for Left-Item Teardown**: When Volume & Brightness separates out (`bar.dropdownOpen = true`), Clock & Power remain combined into **one single floating pill** on the far right (`[ Aug 01 • 08:31 PM • ⏻ ]`). Standalone `powerSplitPill.opacity` MUST be set to `0.0` during Volume dropdown mode to prevent duplicate Power pills from rendering.
+- **Floating Point Math in QML Bindings (`Math.abs` vs `===`)**: In QML, comparing floating point positions directly (e.g. `solidBar.x === bar.barX`) fails due to IEEE 754 precision rounding. Always use a delta tolerance check like `Math.abs(solidBar.x - bar.barX) < 2` for width re-binding logic in animation `onFinished` handlers.
+- **Eliminating Overshoot Collisions (`Easing.OutBack`)**: High `easing.overshoot` values (e.g., `1.35`) cause animated pills to overshoot by 35% to the left, slamming into `solidBar` during teardown. Tuning `easing.overshoot` to `1.08` with a `12px` inter-pill gap guarantees zero visual collisions during bounce entrance animations.
+- **Excluding Extra Offsets for Hidden Items in Container Widths**: When calculating `solidBar` width, only subtract widths for currently *visible* floating pills. If `powerSplitPill` is hidden during Volume dropdown mode (because Power is inside the combined Clock pill), do NOT subtract its 36px width + 12px gap from `solidBar`, otherwise a 58px dead gap appears between `solidBar` and the Volume pill.
+- **State Handler Cleanliness (`Connections` vs Declarative Property Bindings)**: Avoid imperatively overwriting child properties (e.g. `clockSplitPill.menuExpanded = false`) inside global state event listeners (`Connections`). Declaratively bind child state properties directly to global focus flags (e.g. `property bool menuExpanded: globalState.solidBoardOpen`) to prevent state desynchronization bugs.
+- **Phantom Gaps from Faded Elements**: Setting `opacity: 0` on elements in a `RowLayout` hides them visually but keeps their layout footprint, causing "phantom gaps". You must bind `Layout.preferredWidth` and layout margins (e.g. `Layout.leftMargin`) directly to `opacity` so that the space smoothly collapses as the element fades out (e.g. `Layout.preferredWidth: implicitWidth * opacity`).
+- **Consistent Pill Separation Spacing**: When an inline pill pops out into an expanded state, ensure that its `openGap` (e.g. `16px`) is explicitly subtracted from the collapsing `solidBar` width formula across ALL active animation bindings (e.g. `onFinished` transitions) so the bar stops perfectly shy of the expanded pill.
+- **Gooey SDF Shaders & Wayland Overlays**: While Signed Distance Field (SDF) "metaball" shaders create beautiful liquid separation animations, applying a `ShaderEffect` to a full-screen or wide Wayland `PanelWindow` (like a 1920x600 top bar mask) creates a massive GPU fill-rate bottleneck. SDF shaders should be strictly isolated to small, localized UI components, and moving/resizing Wayland `Region` masks every frame to accommodate the shader causes severe compositor lag.
+- **Network Pill Teardown Mechanics & Mask Regions**: When implementing new split pills (e.g. `netSplitPill`), you MUST add `Region { item: netSplitPill }` to the `PanelWindow`'s `mask` definition so clicks register under Wayland. All click handlers on other split pills must exclusively reset `netDropdownOpen = false` to prevent overlapping pill states. Additionally, QML `Loader`'s `implicitWidth` is a read-only property; do NOT assign to `implicitWidth` directly on a `Loader` as it will cause Quickshell to crash on startup.
+- **Background Tasks and Restarting Quickshell**: When reloading quickshell via terminal commands like `killall quickshell && quickshell &`, if this is executed in the background by an AI agent, the spawned process will be instantly killed when the agent's shell execution terminates. This leaves the user staring at a frozen "zombie" UI instance, leading to confusion that "no changes were made." You MUST start the new UI instance safely, such as in the foreground or properly detached, and verify it survives.
+- **Teardown Pill Geometry Syncing**: When breaking a solid UI component (e.g. `solidBar` positioned at `y: 10` with `height: 30`, `radius: 15`) into modular floating pills (`Dropdown*.qml`), the absolute geometry metrics must be strictly enforced on the floating components. Hardcoded discrepancies (like fallback `y: 0`, `height: 42`, `radius: 20`) will cause aggressive visual jumping during morph animations.
