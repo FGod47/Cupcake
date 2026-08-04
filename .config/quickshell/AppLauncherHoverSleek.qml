@@ -104,6 +104,7 @@ PanelWindow {
     }
 
     Component.onCompleted: {
+        openTimer.start();
         filterApps("");
     }
 
@@ -804,7 +805,7 @@ PanelWindow {
                 Image {
                     id: searchIconTxt
                     anchors.centerIn: parent
-                    source: Theme.isDark ? "assets/cupcake-word-light.svg" : "assets/cupcake-word-dark.svg"
+                    source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
                     height: 26
                     fillMode: Image.PreserveAspectFit
                     sourceSize.height: 52
@@ -838,10 +839,10 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 88
                     anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOutline
+                    color: root.colOnSurfaceVariant
                     text: "•"
                     font.pixelSize: 10
-                    opacity: card.width > 100 ? 0.5 : 0.0
+                    opacity: card.width > 100 ? 0.7 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
 
@@ -851,12 +852,12 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
-                    color: root.colOutline
+                    color: root.colOnSurfaceVariant
                     font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
                     visible: searchField.text.length === 0
-                    opacity: card.width > 100 ? 1.0 : 0.0
+                    opacity: card.width > 100 ? 0.75 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
 
