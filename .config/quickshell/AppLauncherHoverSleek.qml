@@ -812,7 +812,7 @@ PanelWindow {
                     opacity: 1.0
                     layer.enabled: true
                     layer.effect: ColorOverlay {
-                        color: root.colOnSurface
+                        color: Theme.colOnSurface
                     }
                     smooth: true
                     scale: card.width > 200 ? 1.0 : 0.95
