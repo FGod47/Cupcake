@@ -25,7 +25,7 @@ import "../../../theme"
 
         readonly property real openGap: 16
         readonly property real headerW: networkIconsRow.implicitWidth + 24
-        readonly property real expandedW: (showWifiList || showBtList) ? 280 : 240
+        readonly property real expandedW: (showWifiList || showBtList) ? 270 : 240
         property real contentW: menuExpanded ? expandedW : headerW
 
         x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -239,13 +239,13 @@ import "../../../theme"
 
             Column {
                 Layout.fillWidth: true
-                spacing: 4
+                spacing: 6
 
                 // ── Wi-Fi Row ──
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 8
+                        anchors.fill: parent; anchors.leftMargin: 4; anchors.rightMargin: 4; spacing: 8
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -279,7 +279,7 @@ import "../../../theme"
                             width: 22; height: 22
                             Text {
                                 anchors.centerIn: parent
-                                text: showWifiList ? "\uea5f" : "\uea62"
+                                text: showWifiList ? "\uea62" : "\uea5f" // Correct arrow direction (up when open, down when closed)
                                 font.family: fontName
                                 font.pixelSize: 15
                                 color: showWifiList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -331,24 +331,27 @@ import "../../../theme"
                 ColumnLayout {
                     id: wifiListCol
                     Layout.fillWidth: true
-                    spacing: 4
+                    spacing: 6
                     opacity: netSplitPill.showWifiList ? 1.0 : 0.0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250 } }
 
-                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15) }
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) }
 
                     RowLayout {
                         Layout.fillWidth: true
+                        Layout.topMargin: 2
+                        Layout.bottomMargin: 2
                         Text {
                             text: "AVAILABLE WI-FI"
                             font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
+                            font.letterSpacing: 0.5
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                         }
                         Item { Layout.fillWidth: true }
                         Text {
-                            text: "\ueb23" // refresh icon
-                            font.family: fontName; font.pixelSize: 12
+                            text: "\ueb1c" // Tabler refresh icon
+                            font.family: fontName; font.pixelSize: 13
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: wifiScanProc.running = true }
                         }
@@ -358,17 +361,17 @@ import "../../../theme"
                         model: netSplitPill.wifiList
                         delegate: Rectangle {
                             Layout.fillWidth: true
-                            height: 32
-                            radius: 16
-                            color: wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
-                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                            height: 34
+                            radius: 10
+                            color: wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(1, 1, 1, 0.04))
+                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.30) : "transparent"
                             border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
                                 Text {
                                     text: "\ueb52"
-                                    font.family: fontName; font.pixelSize: 13
+                                    font.family: fontName; font.pixelSize: 14
                                     color: modelData.connected ? Theme.colPrimary : bar.fg
                                 }
                                 Text {
@@ -380,14 +383,14 @@ import "../../../theme"
                                     elide: Text.ElideRight
                                 }
                                 Text {
-                                    text: modelData.security !== "Open" ? "\ueae2" : "" // lock icon
-                                    font.family: fontName; font.pixelSize: 11
+                                    text: modelData.security !== "Open" ? "\ueae2" : ""
+                                    font.family: fontName; font.pixelSize: 12
                                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                     visible: text !== ""
                                 }
                                 Text {
-                                    text: "\uea5e" // checkmark
-                                    font.family: fontName; font.pixelSize: 13
+                                    text: "\uea5e"
+                                    font.family: fontName; font.pixelSize: 14
                                     color: Theme.colPrimary
                                     visible: modelData.connected
                                 }
@@ -413,7 +416,7 @@ import "../../../theme"
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 8
+                        anchors.fill: parent; anchors.leftMargin: 4; anchors.rightMargin: 4; spacing: 8
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -447,7 +450,7 @@ import "../../../theme"
                             width: 22; height: 22
                             Text {
                                 anchors.centerIn: parent
-                                text: showBtList ? "\uea5f" : "\uea62"
+                                text: showBtList ? "\uea62" : "\uea5f" // Correct arrow direction
                                 font.family: fontName
                                 font.pixelSize: 15
                                 color: showBtList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -499,24 +502,27 @@ import "../../../theme"
                 ColumnLayout {
                     id: btListCol
                     Layout.fillWidth: true
-                    spacing: 4
+                    spacing: 6
                     opacity: netSplitPill.showBtList ? 1.0 : 0.0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: 250 } }
 
-                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15) }
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) }
 
                     RowLayout {
                         Layout.fillWidth: true
+                        Layout.topMargin: 2
+                        Layout.bottomMargin: 2
                         Text {
                             text: "BLUETOOTH DEVICES"
                             font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
+                            font.letterSpacing: 0.5
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                         }
                         Item { Layout.fillWidth: true }
                         Text {
-                            text: "\ueb23" // refresh icon
-                            font.family: fontName; font.pixelSize: 12
+                            text: "\ueb1c" // Tabler refresh icon
+                            font.family: fontName; font.pixelSize: 13
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: btScanProc.running = true }
                         }
@@ -526,17 +532,17 @@ import "../../../theme"
                         model: netSplitPill.btList
                         delegate: Rectangle {
                             Layout.fillWidth: true
-                            height: 32
-                            radius: 16
-                            color: btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
-                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                            height: 34
+                            radius: 10
+                            color: btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15) : Qt.rgba(1, 1, 1, 0.04))
+                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.30) : "transparent"
                             border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
                                 Text {
                                     text: modelData.connected ? "\uecea" : "\uea37"
-                                    font.family: fontName; font.pixelSize: 13
+                                    font.family: fontName; font.pixelSize: 14
                                     color: modelData.connected ? Theme.colPrimary : bar.fg
                                 }
                                 Text {
@@ -548,8 +554,8 @@ import "../../../theme"
                                     elide: Text.ElideRight
                                 }
                                 Text {
-                                    text: "\uea5e" // checkmark
-                                    font.family: fontName; font.pixelSize: 13
+                                    text: "\uea5e"
+                                    font.family: fontName; font.pixelSize: 14
                                     color: Theme.colPrimary
                                     visible: modelData.connected
                                 }
@@ -575,7 +581,7 @@ import "../../../theme"
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 10
+                        anchors.fill: parent; anchors.leftMargin: 4; anchors.rightMargin: 4; spacing: 8
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -590,7 +596,7 @@ import "../../../theme"
                             }
                             RowLayout {
                                 anchors.fill: parent
-                                spacing: 10
+                                spacing: 8
                                 Rectangle {
                                     width: 28; height: 28; radius: 8
                                     color: isHotspot ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
