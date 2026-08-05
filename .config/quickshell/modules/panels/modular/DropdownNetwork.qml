@@ -898,12 +898,13 @@ Rectangle {
                                         Layout.alignment: Qt.AlignVCenter
                                     }
 
-                                    // Disconnect button (less white, 20px, perfectly centered)
+                                    // Disconnect button (less white, 18px, optically centered)
                                     Text {
                                         visible: modelData.connected
-                                        text: "\uea6a"; font.family: fontName; font.pixelSize: 20
+                                        text: "\uea6a"; font.family: fontName; font.pixelSize: 18
                                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                                         Layout.alignment: Qt.AlignVCenter
+                                        Layout.topMargin: 2
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
