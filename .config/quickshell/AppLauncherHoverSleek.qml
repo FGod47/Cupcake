@@ -36,8 +36,8 @@ PanelWindow {
     color: "transparent"
 
     property color colSurface:               Theme.colSurface
-    property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
-    property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
+    property color colSurfaceContainer:      Quickshell.env("CUPCAKE_COL_SURFACE_CONTAINER") !== "" ? Theme.transparentize(Quickshell.env("CUPCAKE_COL_SURFACE_CONTAINER"), root.bgOpacity) : Theme.colSurfaceContainer // pure black
+    property color colSurfaceContainerHigh:  Quickshell.env("CUPCAKE_COL_SURFACE_CONTAINER_HIGH") !== "" ? Theme.transparentize(Quickshell.env("CUPCAKE_COL_SURFACE_CONTAINER_HIGH"), root.bgOpacity) : Theme.colSurfaceContainerHigh // very dark grey for search
     property color colOnSurface:             Quickshell.env("CUPCAKE_COL_ON_SURFACE") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE") : Theme.colOnSurface
     property color colOnSurfaceVariant:      Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") : Theme.colOnSurfaceVariant
     property color colOutline:               Theme.colOutline
