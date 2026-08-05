@@ -535,6 +535,30 @@ Item {
                             }
                         }
                         
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb12" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Reset layout"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Revert all layout dimensions to default values"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Pill {
+                        label: "Reset Defaults"
+                        active: false
+                        onClicked: {
+                            root.iconSize = 48;
+                            root.mainAxisPadding = 12;
+                            root.crossAxisPadding = 8;
+                            root.itemSpacing = 6;
+                            root.endsMargin = 10;
+                            root.edgeMargin = 8;
+                            bashProcess.command = ["bash", "-c", "echo 48 > ~/.config/cupcake/.dock_icon_size; echo 12 > ~/.config/cupcake/.dock_main_axis_padding; echo 8 > ~/.config/cupcake/.dock_cross_axis_padding; echo 6 > ~/.config/cupcake/.dock_item_spacing; echo 10 > ~/.config/cupcake/.dock_ends_margin; echo 8 > ~/.config/cupcake/.dock_edge_margin; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize 48; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding 12; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding 8; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing 6; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin 10; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin 8"];
+                            bashProcess.running = true;
+                        }
                     }
                 }
             }
