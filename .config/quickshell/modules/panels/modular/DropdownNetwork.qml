@@ -981,7 +981,7 @@ Rectangle {
                                     Text {
                                         id: showWifiPass; property bool show: false
                                         visible: modelData.security !== "Open"
-                                        text: show ? "\uea97" : "\uea98"; font.family: fontName; font.pixelSize: 14; color: bar.fg
+                                        text: show ? "\uf7ec" : "\uea9a"; font.family: fontName; font.pixelSize: 14; color: bar.fg
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
                                     }
 
