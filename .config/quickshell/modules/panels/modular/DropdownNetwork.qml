@@ -673,6 +673,7 @@ Rectangle {
                                 // Tabler Disconnect Button
                                 Rectangle {
                                     visible: modelData.connected
+                                    z: 10
                                     width: 28; height: 28; radius: 8
                                     color: Qt.rgba(1, 0, 0, 0.18)
                                     border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
@@ -680,7 +681,8 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
+                                            Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
+                                            statusProc.running = true;
                                             wifiScanProc.running = true;
                                         }
                                     }
@@ -693,7 +695,12 @@ Rectangle {
                             MouseArea {
                                 id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    if (modelData.connected) return;
+                                    if (modelData.connected) {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
+                                        statusProc.running = true;
+                                        wifiScanProc.running = true;
+                                        return;
+                                    }
                                     // Clicking an un-connected network card ONLY opens password drawer or prompts connection!
                                     // It NEVER prematurely disconnects your active Wi-Fi!
                                     if (selectedSSID === modelData.ssid && showPassInput) {
