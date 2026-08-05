@@ -409,7 +409,7 @@ import "../../../theme"
 
                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1, 1, 1, 0.06) }
 
-                # ── Bluetooth Row ──
+                // ── Bluetooth Row ──
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
