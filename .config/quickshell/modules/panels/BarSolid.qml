@@ -289,9 +289,89 @@ PanelWindow {
 
             // Spacer
             Item { Layout.fillWidth: true }
-            
 
-            // ── RIGHT: Network Icons ────────
+            // ── CENTER-RIGHT: System Resource Monitor ────────
+            Row {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 10
+                spacing: 12
+                opacity: (bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
+                visible: true
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+
+                // CPU
+                Row {
+                    spacing: 4
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        text: "\uea4a" // cpu icon
+                        font.family: fontName
+                        font.pixelSize: 13
+                        color: {
+                            let v = parseFloat(bar.cpuStr) || 0;
+                            if (v >= 80) return "#ff6b6b";
+                            if (v >= 50) return "#ffd580";
+                            return Qt.rgba(fg.r, fg.g, fg.b, 0.6);
+                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        text: bar.cpuStr + "%"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        font.weight: Theme.defaultFontWeight
+                        color: {
+                            let v = parseFloat(bar.cpuStr) || 0;
+                            if (v >= 80) return "#ff6b6b";
+                            if (v >= 50) return "#ffd580";
+                            return Qt.rgba(fg.r, fg.g, fg.b, 0.6);
+                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                // RAM
+                Row {
+                    spacing: 4
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        text: "\uf4bc" // memory/ram icon
+                        font.family: fontName
+                        font.pixelSize: 13
+                        color: {
+                            let v = parseFloat(bar.ramStr) || 0;
+                            if (v >= 80) return "#ff6b6b";
+                            if (v >= 50) return "#ffd580";
+                            return Qt.rgba(fg.r, fg.g, fg.b, 0.6);
+                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        text: bar.ramStr + "%"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        font.weight: Theme.defaultFontWeight
+                        color: {
+                            let v = parseFloat(bar.ramStr) || 0;
+                            if (v >= 80) return "#ff6b6b";
+                            if (v >= 50) return "#ffd580";
+                            return Qt.rgba(fg.r, fg.g, fg.b, 0.6);
+                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                // Separator dot
+                Text {
+                    text: "•"
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 13
+                    color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+
             Item {
                 id: networkContainer
                 Layout.alignment: Qt.AlignVCenter
