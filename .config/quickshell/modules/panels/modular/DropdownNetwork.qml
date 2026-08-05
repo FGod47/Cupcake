@@ -15,12 +15,17 @@ import "../../../theme"
         id: netSplitPill
         y: 10
         property bool menuExpanded: bar.netDropdownOpen
+        property bool showWifiList: false
+        property bool showBtList: false
+        property var wifiList: []
+        property var btList: []
+
         height: menuExpanded ? (netContentCol.implicitHeight + 28) : 30
         Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         readonly property real openGap: 16
         readonly property real headerW: networkIconsRow.implicitWidth + 24
-        readonly property real expandedW: 240
+        readonly property real expandedW: (showWifiList || showBtList) ? 280 : 240
         property real contentW: menuExpanded ? expandedW : headerW
 
         x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -36,6 +41,66 @@ import "../../../theme"
         color: bar.pillColor
         border.color: Qt.rgba(1, 1, 1, 0.10)
         border.width: 1
+
+        Process {
+            id: wifiScanProc
+            command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL,SECURITY,IN-USE dev wifi list"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (!text) return;
+                    let lines = text.trim().split('\n');
+                    let res = [];
+                    let seen = new Set();
+                    for (let l of lines) {
+                        let parts = l.split(':');
+                        if (parts.length >= 4 && parts[0].trim() !== "") {
+                            let ssid = parts[0].trim();
+                            if (!seen.has(ssid)) {
+                                seen.add(ssid);
+                                res.push({
+                                    ssid: ssid,
+                                    signal: parseInt(parts[1]) || 0,
+                                    security: parts[2] || "Open",
+                                    connected: parts[3].includes("*")
+                                });
+                            }
+                        }
+                    }
+                    netSplitPill.wifiList = res;
+                }
+            }
+        }
+
+        Process {
+            id: btScanProc
+            command: ["bash", "-c", "bluetoothctl devices; echo '---conn---'; bluetoothctl devices Connected"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (!text) return;
+                    let lines = text.trim().split('\n');
+                    let res = [];
+                    let isConnSection = false;
+                    let connMacs = new Set();
+                    for (let l of lines) {
+                        if (l.includes("---conn---")) { isConnSection = true; continue; }
+                        let m = l.match(/Device\s+([0-9A-Fa-f:]+)\s+(.+)/);
+                        if (m) {
+                            let mac = m[1];
+                            let name = m[2];
+                            if (isConnSection) {
+                                connMacs.add(mac);
+                            } else {
+                                res.push({ mac: mac, name: name, connected: false });
+                            }
+                        }
+                    }
+                    for (let dev of res) {
+                        dev.connected = connMacs.has(dev.mac);
+                    }
+                    netSplitPill.btList = res;
+                }
+            }
+        }
 
         // Top glass highlight
         Rectangle {
@@ -176,16 +241,15 @@ import "../../../theme"
                 Layout.fillWidth: true
                 spacing: 4
 
-                // Wi-Fi Toggle List Item
+                // ── Wi-Fi Row ──
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 10
+                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 8
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MouseArea {
-                                id: wifiRowMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
@@ -196,7 +260,7 @@ import "../../../theme"
                             }
                             RowLayout {
                                 anchors.fill: parent
-                                spacing: 10
+                                spacing: 8
                                 Rectangle {
                                     width: 28; height: 28; radius: 8
                                     color: isWifi ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
@@ -209,6 +273,29 @@ import "../../../theme"
                                 }
                             }
                         }
+
+                        // Arrow Expand Button
+                        Item {
+                            width: 22; height: 22
+                            Text {
+                                anchors.centerIn: parent
+                                text: showWifiList ? "\uea5f" : "\uea62"
+                                font.family: fontName
+                                font.pixelSize: 15
+                                color: showWifiList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    netSplitPill.showWifiList = !netSplitPill.showWifiList;
+                                    netSplitPill.showBtList = false;
+                                    if (netSplitPill.showWifiList) wifiScanProc.running = true;
+                                }
+                            }
+                        }
+
+                        // Switch
                         Rectangle {
                             width: 36; height: 20; radius: 10
                             color: isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
@@ -240,18 +327,97 @@ import "../../../theme"
                     }
                 }
 
+                // ── Expandable Wi-Fi Networks Picker List ──
+                ColumnLayout {
+                    id: wifiListCol
+                    Layout.fillWidth: true
+                    spacing: 4
+                    opacity: netSplitPill.showWifiList ? 1.0 : 0.0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15) }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text {
+                            text: "AVAILABLE WI-FI"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                        }
+                        Item { Layout.fillWidth: true }
+                        Text {
+                            text: "\ueb23" // refresh icon
+                            font.family: fontName; font.pixelSize: 12
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: wifiScanProc.running = true }
+                        }
+                    }
+
+                    Repeater {
+                        model: netSplitPill.wifiList
+                        delegate: Rectangle {
+                            Layout.fillWidth: true
+                            height: 32
+                            radius: 16
+                            color: wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
+                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                                Text {
+                                    text: "\ueb52"
+                                    font.family: fontName; font.pixelSize: 13
+                                    color: modelData.connected ? Theme.colPrimary : bar.fg
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.ssid
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                                    font.weight: modelData.connected ? Font.Bold : Font.Normal
+                                    color: modelData.connected ? Theme.colPrimary : bar.fg
+                                    elide: Text.ElideRight
+                                }
+                                Text {
+                                    text: modelData.security !== "Open" ? "\ueae2" : "" // lock icon
+                                    font.family: fontName; font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    visible: text !== ""
+                                }
+                                Text {
+                                    text: "\uea5e" // checkmark
+                                    font.family: fontName; font.pixelSize: 13
+                                    color: Theme.colPrimary
+                                    visible: modelData.connected
+                                }
+                            }
+
+                            MouseArea {
+                                id: wifiItemMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]);
+                                    wifiScanProc.running = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1, 1, 1, 0.06) }
 
-                // Bluetooth Toggle List Item
+                # ── Bluetooth Row ──
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 10
+                        anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 8
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MouseArea {
-                                id: btRowMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
@@ -262,7 +428,7 @@ import "../../../theme"
                             }
                             RowLayout {
                                 anchors.fill: parent
-                                spacing: 10
+                                spacing: 8
                                 Rectangle {
                                     width: 28; height: 28; radius: 8
                                     color: isBluetooth ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.1) : Qt.rgba(1, 1, 1, 0.05)
@@ -275,6 +441,29 @@ import "../../../theme"
                                 }
                             }
                         }
+
+                        // Arrow Expand Button
+                        Item {
+                            width: 22; height: 22
+                            Text {
+                                anchors.centerIn: parent
+                                text: showBtList ? "\uea5f" : "\uea62"
+                                font.family: fontName
+                                font.pixelSize: 15
+                                color: showBtList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    netSplitPill.showBtList = !netSplitPill.showBtList;
+                                    netSplitPill.showWifiList = false;
+                                    if (netSplitPill.showBtList) btScanProc.running = true;
+                                }
+                            }
+                        }
+
+                        // Switch
                         Rectangle {
                             width: 36; height: 20; radius: 10
                             color: isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
@@ -306,9 +495,83 @@ import "../../../theme"
                     }
                 }
 
+                // ── Expandable Bluetooth Devices Picker List ──
+                ColumnLayout {
+                    id: btListCol
+                    Layout.fillWidth: true
+                    spacing: 4
+                    opacity: netSplitPill.showBtList ? 1.0 : 0.0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15) }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text {
+                            text: "BLUETOOTH DEVICES"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                        }
+                        Item { Layout.fillWidth: true }
+                        Text {
+                            text: "\ueb23" // refresh icon
+                            font.family: fontName; font.pixelSize: 12
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: btScanProc.running = true }
+                        }
+                    }
+
+                    Repeater {
+                        model: netSplitPill.btList
+                        delegate: Rectangle {
+                            Layout.fillWidth: true
+                            height: 32
+                            radius: 16
+                            color: btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
+                            border.color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                                Text {
+                                    text: modelData.connected ? "\uecea" : "\uea37"
+                                    font.family: fontName; font.pixelSize: 13
+                                    color: modelData.connected ? Theme.colPrimary : bar.fg
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.name
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                                    font.weight: modelData.connected ? Font.Bold : Font.Normal
+                                    color: modelData.connected ? Theme.colPrimary : bar.fg
+                                    elide: Text.ElideRight
+                                }
+                                Text {
+                                    text: "\uea5e" // checkmark
+                                    font.family: fontName; font.pixelSize: 13
+                                    color: Theme.colPrimary
+                                    visible: modelData.connected
+                                }
+                            }
+
+                            MouseArea {
+                                id: btItemMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["bash", "-c", modelData.connected ? ("bluetoothctl disconnect " + modelData.mac) : ("bluetoothctl connect " + modelData.mac)]);
+                                    btScanProc.running = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1, 1, 1, 0.06) }
 
-                // Hotspot Toggle List Item
+                // ── Hotspot Row ──
                 Item {
                     width: parent.width; height: 40
                     RowLayout {
@@ -317,7 +580,6 @@ import "../../../theme"
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             MouseArea {
-                                id: hotspotRowMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
