@@ -22,11 +22,22 @@ Rectangle {
     property var wifiList: []
     property var btList: []
 
+    property string wifiSSID: "Disconnected"
+    property string btDeviceName: ""
+
     property string hsName: "Cupcake_AP"
     property string hsPass: "12345678"
     property string hsBand: "2.4 GHz"
 
-    height: menuExpanded ? (netContentCol.implicitHeight + 28) : 30
+    onMenuExpandedChanged: {
+        if (menuExpanded) {
+            statusCheckProc.running = true;
+            if (showWifiList) wifiScanProc.running = true;
+            if (showBtList) btScanProc.running = true;
+        }
+    }
+
+    height: menuExpanded ? (netContentCol.implicitHeight + 24) : 30
     Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutQuart } }
 
     readonly property real openGap: 16
@@ -48,10 +59,48 @@ Rectangle {
     border.color: Qt.rgba(1, 1, 1, 0.08)
     border.width: 1
 
+    // Status Checker Process
+    Process {
+        id: statusCheckProc
+        running: netSplitPill.menuExpanded
+        command: ["bash", "-c", "nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl devices Connected"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let parts = text.split("---bt---");
+                let nmOut = parts[0] || "";
+                let btOut = parts[1] || "";
+
+                // Parse active Wi-Fi connection
+                let wifiMatch = nmOut.match(/^([^:]+):802-11-wireless/m);
+                if (wifiMatch) {
+                    netSplitPill.wifiSSID = wifiMatch[1].trim();
+                } else {
+                    netSplitPill.wifiSSID = "Disconnected";
+                }
+
+                // Parse active Bluetooth connection
+                let btMatch = btOut.match(/Device\s+[0-9A-Fa-f:]+\s+(.+)/);
+                if (btMatch) {
+                    netSplitPill.btDeviceName = btMatch[1].trim();
+                } else {
+                    netSplitPill.btDeviceName = "";
+                }
+            }
+        }
+    }
+
+    Timer {
+        interval: 4000
+        running: netSplitPill.menuExpanded
+        repeat: true
+        onTriggered: statusCheckProc.running = true
+    }
+
     // Scanners
     Process {
         id: wifiScanProc
-        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL,SECURITY,IN-USE dev wifi list"]
+        command: ["bash", "-c", "nmcli device wifi rescan 2>/dev/null; sleep 0.5; nmcli -t -f SSID,SIGNAL,SECURITY,IN-USE dev wifi list"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -195,32 +244,32 @@ Rectangle {
         }
     }
 
-    // Expanded View Content (Matching reference design 100%)
+    // Expanded View Content (Fully Wired Up)
     ColumnLayout {
         id: netContentCol
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 14
+        anchors.margins: 12
         spacing: 10
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 250 } }
 
-        // ── Top Header Row (Ethernet / Network Active Header) ──
+        // ── Top Header Row (Active Connection Header) ──
         RowLayout {
             Layout.fillWidth: true
-            spacing: 12
+            spacing: 10
 
             Rectangle {
-                width: 40; height: 40; radius: 20
+                width: 38; height: 38; radius: 19
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
                 border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.1)
                 border.width: 1
                 Text {
                     anchors.centerIn: parent
                     text: isWired ? "\uebd9" : (isWifi ? "\ueb52" : "\uea37")
-                    font.family: fontName; font.pixelSize: 18
+                    font.family: fontName; font.pixelSize: 17
                     color: bar.fg
                 }
             }
@@ -228,8 +277,8 @@ Rectangle {
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 1
                 Text {
-                    text: isWired ? "Ethernet" : (isWifi ? "Wi-Fi Network" : "Network")
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold
+                    text: isWired ? "Ethernet" : (isWifi && wifiSSID !== "Disconnected" ? wifiSSID : "Network")
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold
                     color: bar.fg
                 }
                 Text {
@@ -239,14 +288,14 @@ Rectangle {
                 }
             }
 
-            // Options Button (...)
+            // Options Button (...) -> Launches Settings
             Rectangle {
                 width: 32; height: 32; radius: 16
                 color: optMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
                 Text {
                     anchors.centerIn: parent
-                    text: "\uea9d" // dots icon
-                    font.family: fontName; font.pixelSize: 14
+                    text: "•••"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                 }
                 MouseArea {
@@ -290,7 +339,7 @@ Rectangle {
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Wi-Fi"; color: bar.fg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold }
-                        Text { text: isWifi ? "Home-5G · Strong signal" : "Off"; color: isWifi ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                        Text { text: isWifi ? (wifiSSID !== "Disconnected" ? (wifiSSID + " · Connected") : "Enabled") : "Off"; color: isWifi ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                     }
 
                     // Chevron arrow
@@ -311,10 +360,10 @@ Rectangle {
 
                     // Switch
                     Rectangle {
-                        width: 40; height: 24; radius: 12
+                        width: 44; height: 24; radius: 12
                         color: isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                         Behavior on color { ColorAnimation { duration: 200 } }
-                        Timer { id: wifiRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
+                        Timer { id: wifiRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); statusCheckProc.running = true; } }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
@@ -338,17 +387,17 @@ Rectangle {
                     Layout.fillWidth: true
                     spacing: 6
                     visible: showWifiList
-                    
+
                     Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08) }
 
                     Repeater {
-                        model: netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "Home-5G", connected: true, security: "WPA2"}, {ssid: "Neighbor_2.4G", connected: false, security: "WPA2"}, {ssid: "Pixel_9210", connected: false, security: "WPA2"}]
+                        model: netSplitPill.wifiList
                         delegate: Rectangle {
                             Layout.fillWidth: true
                             height: 36
                             radius: 10
                             color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
-                            
+
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
                                 Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
@@ -364,6 +413,7 @@ Rectangle {
                                 onClicked: {
                                     Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]);
                                     wifiScanProc.running = true;
+                                    wifiRefreshTimer.restart();
                                 }
                             }
                         }
@@ -372,7 +422,18 @@ Rectangle {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.topMargin: 4
-                        Text { text: "+  Add network manually"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                        Text {
+                            text: "+  Add network manually"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]);
+                                    bar.netDropdownOpen = false;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -407,7 +468,7 @@ Rectangle {
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 1
                         Text { text: "Bluetooth"; color: bar.fg; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold }
-                        Text { text: isBluetoothConnected ? "Galaxy Buds · 67%" : (isBluetooth ? "Enabled" : "Disabled"); color: isBluetooth ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11 }
+                        Text { text: isBluetoothConnected ? (btDeviceName !== "" ? btDeviceName : "Connected") : (isBluetooth ? "Enabled" : "Disabled"); color: isBluetooth ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); font.family: Theme.defaultFontFamily; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
                     }
 
                     // Chevron arrow
@@ -428,10 +489,10 @@ Rectangle {
 
                     // Switch
                     Rectangle {
-                        width: 40; height: 24; radius: 12
+                        width: 44; height: 24; radius: 12
                         color: isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                         Behavior on color { ColorAnimation { duration: 200 } }
-                        Timer { id: btRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
+                        Timer { id: btRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); statusCheckProc.running = true; } }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
@@ -459,7 +520,7 @@ Rectangle {
                     Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08) }
 
                     Repeater {
-                        model: netSplitPill.btList.length > 0 ? netSplitPill.btList : [{name: "Galaxy Buds", connected: true, mac: "00:11:22", battery: "67%"}, {name: "Pixel Watch", connected: false, mac: "33:44:55", battery: "Paired"}]
+                        model: netSplitPill.btList
                         delegate: Rectangle {
                             Layout.fillWidth: true
                             height: 36
@@ -471,10 +532,10 @@ Rectangle {
                                 Rectangle {
                                     width: 26; height: 26; radius: 13
                                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                                    Text { anchors.centerIn: parent; text: modelData.connected ? "\uea76" : "\uea37"; font.family: fontName; font.pixelSize: 13; color: bar.fg }
+                                    Text { anchors.centerIn: parent; text: modelData.connected ? "\uecea" : "\uea37"; font.family: fontName; font.pixelSize: 13; color: bar.fg }
                                 }
                                 Text { Layout.fillWidth: true; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg; elide: Text.ElideRight }
-                                Text { text: modelData.connected ? ("🔋 " + (modelData.battery || "Connected")) : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                                Text { text: modelData.connected ? "Connected" : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
 
                             MouseArea {
@@ -484,6 +545,7 @@ Rectangle {
                                 onClicked: {
                                     Quickshell.execDetached(["bash", "-c", modelData.connected ? ("bluetoothctl disconnect " + modelData.mac) : ("bluetoothctl connect " + modelData.mac)]);
                                     btScanProc.running = true;
+                                    btRefreshTimer.restart();
                                 }
                             }
                         }
@@ -492,7 +554,18 @@ Rectangle {
                     RowLayout {
                         Layout.fillWidth: true
                         Layout.topMargin: 4
-                        Text { text: "🕒  Scan for new devices"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                        Text {
+                            text: "🕒  Scan for new devices"
+                            font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["bash", "-c", "bluetoothctl scan on"]);
+                                    btScanProc.running = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -547,7 +620,7 @@ Rectangle {
 
                     // Switch
                     Rectangle {
-                        width: 40; height: 24; radius: 12
+                        width: 44; height: 24; radius: 12
                         color: isHotspot ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                         Behavior on color { ColorAnimation { duration: 200 } }
                         Timer { id: hsRefreshTimer; interval: 600; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
@@ -578,7 +651,7 @@ Rectangle {
                     Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08) }
 
                     Text { text: "NETWORK NAME"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    
+
                     Rectangle {
                         Layout.fillWidth: true; height: 36; radius: 10
                         color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
@@ -590,7 +663,10 @@ Rectangle {
                                 text: hsName
                                 font.family: Theme.defaultFontFamily; font.pixelSize: 12
                                 color: bar.fg
-                                onTextChanged: hsName = text
+                                onTextChanged: {
+                                    hsName = text;
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\" 2>/dev/null"]);
+                                }
                             }
                             Text { text: "✏️"; font.pixelSize: 12 }
                         }
@@ -610,7 +686,10 @@ Rectangle {
                                 echoMode: showPassText.show ? TextInput.Normal : TextInput.Password
                                 font.family: Theme.defaultFontFamily; font.pixelSize: 12
                                 color: bar.fg
-                                onTextChanged: hsPass = text
+                                onTextChanged: {
+                                    hsPass = text;
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\" 2>/dev/null"]);
+                                }
                             }
                             Text {
                                 id: showPassText
@@ -662,6 +741,5 @@ Rectangle {
                 }
             }
         }
-
-            }
+    }
 }
