@@ -36,6 +36,7 @@ Rectangle {
     property string hsPass: "12345678"
     property string hsBand: "2.4 GHz"
     property string hsIp: "10.42.0.1"
+    property bool hsSavedNotify: false
 
     property string selectedSSID: ""
     property string passInputText: ""
@@ -86,10 +87,14 @@ Rectangle {
                 let clientOut = parts[1] || "";
 
                 let nameM = nmOut.match(/802-11-wireless.ssid:\s*(.+)/);
-                if (nameM && nameM[1].trim()) netSplitPill.hsName = nameM[1].trim();
+                if (nameM && nameM[1].trim() && !hsNameInput.activeFocus) {
+                    netSplitPill.hsName = nameM[1].trim();
+                }
 
                 let passM = nmOut.match(/802-11-wireless-security.psk:\s*(.+)/);
-                if (passM && passM[1].trim()) netSplitPill.hsPass = passM[1].trim();
+                if (passM && passM[1].trim() && !hsPassInput.activeFocus) {
+                    netSplitPill.hsPass = passM[1].trim();
+                }
 
                 let bandM = nmOut.match(/802-11-wireless.band:\s*(.+)/);
                 if (bandM) {
@@ -654,11 +659,37 @@ Rectangle {
                 }
             }
 
-            // Tab 2: Hotspot Config Section (100% Tabler Icons)
+            // Tab 2: Hotspot Config Section (Robust Save & Live Updates)
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
                 spacing: 8
+
+                // Saved Toast Notification
+                Rectangle {
+                    visible: hsSavedNotify
+                    Layout.fillWidth: true; height: 26; radius: 8
+                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25)
+                    border.color: Theme.colPrimary; border.width: 1
+                    Text { anchors.centerIn: parent; text: "Hotspot updated successfully ✓"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colPrimary }
+                }
+
+                // Function to apply Hotspot config
+                function saveHotspotConfig() {
+                    let nameVal = hsNameInput.text.trim();
+                    let passVal = hsPassInput.text.trim();
+                    if (!nameVal || !passVal) return;
+                    netSplitPill.hsName = nameVal;
+                    netSplitPill.hsPass = passVal;
+
+                    let cmd = "nmcli con modify Hotspot 802-11-wireless.ssid \"" + nameVal + "\" 802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk \"" + passVal + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi";
+                    Quickshell.execDetached(["bash", "-c", cmd]);
+                    hsSavedNotify = true;
+                    hsSavedNotifyTimer.restart();
+                    hsProc.running = true;
+                }
+
+                Timer { id: hsSavedNotifyTimer; interval: 2500; onTriggered: hsSavedNotify = false }
 
                 // Network Name Card
                 ColumnLayout {
@@ -666,18 +697,15 @@ Rectangle {
                     Text { text: "NETWORK NAME"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                     Rectangle {
                         Layout.fillWidth: true; height: 38; radius: 12
-                        color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                        color: Qt.rgba(1, 1, 1, 0.04); border.color: hsNameInput.activeFocus ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08); border.width: 1
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 8
                             Text { text: "\ued1b"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
                             TextInput {
                                 id: hsNameInput
                                 Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
-                                onEditingFinished: {
-                                    hsName = text;
-                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
-                                    hsProc.running = true;
-                                }
+                                onAccepted: saveHotspotConfig()
+                                onEditingFinished: saveHotspotConfig()
                             }
                             Text { text: "\ueab6"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                         }
@@ -690,18 +718,15 @@ Rectangle {
                     Text { text: "PASSWORD"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                     Rectangle {
                         Layout.fillWidth: true; height: 38; radius: 12
-                        color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                        color: Qt.rgba(1, 1, 1, 0.04); border.color: hsPassInput.activeFocus ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08); border.width: 1
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 8
                             Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
                             TextInput {
                                 id: hsPassInput
                                 Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
-                                onEditingFinished: {
-                                    hsPass = text;
-                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
-                                    hsProc.running = true;
-                                }
+                                onAccepted: saveHotspotConfig()
+                                onEditingFinished: saveHotspotConfig()
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
@@ -709,6 +734,21 @@ Rectangle {
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
                             }
                         }
+                    }
+                }
+
+                // Save Hotspot Button
+                Rectangle {
+                    Layout.fillWidth: true; height: 32; radius: 10
+                    color: Theme.colPrimary
+                    RowLayout {
+                        anchors.centerIn: parent; spacing: 6
+                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 13; color: Theme.colOnPrimary }
+                        Text { text: "Save Hotspot Details"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.colOnPrimary }
+                    }
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: saveHotspotConfig()
                     }
                 }
 
