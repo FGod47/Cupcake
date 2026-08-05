@@ -701,14 +701,21 @@ Rectangle {
                                         wifiScanProc.running = true;
                                         return;
                                     }
-                                    // Clicking an un-connected network card ONLY opens password drawer or prompts connection!
-                                    // It NEVER prematurely disconnects your active Wi-Fi!
-                                    if (selectedSSID === modelData.ssid && showPassInput) {
+                                    let isSaved = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
+                                    if (isSaved || modelData.security === "Open") {
                                         showPassInput = false;
+                                        let connCmd = "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\"";
+                                        Quickshell.execDetached(["bash", "-c", connCmd]);
+                                        statusProc.running = true;
+                                        wifiScanProc.running = true;
                                     } else {
-                                        selectedSSID = modelData.ssid;
-                                        showPassInput = true;
-                                        passInputText = "";
+                                        if (selectedSSID === modelData.ssid && showPassInput) {
+                                            showPassInput = false;
+                                        } else {
+                                            selectedSSID = modelData.ssid;
+                                            showPassInput = true;
+                                            passInputText = "";
+                                        }
                                     }
                                 }
                             }
