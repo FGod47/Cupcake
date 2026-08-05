@@ -276,7 +276,9 @@ Rectangle {
                     }
                 }
                 if (!foundConn) netSplitPill.wifiSSID = "Disconnected";
-                netSplitPill.wifiList = res;
+                if (!netSplitPill.showPassInput) {
+                    netSplitPill.wifiList = res;
+                }
             }
         }
     }
