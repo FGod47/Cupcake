@@ -685,44 +685,88 @@ Rectangle {
                             // Top Row: Network Info
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 10
+                                spacing: 8
 
-                                Text { text: getSignalIcon(modelData.signal); font.family: fontName; font.pixelSize: 14; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg }
-                                ColumnLayout {
-                                    Layout.fillWidth: true; spacing: 0
-                                    Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg; elide: Text.ElideRight }
-                                    Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                                // Signal Icon
+                                Text {
+                                    text: getSignalIcon(modelData.signal)
+                                    font.family: fontName; font.pixelSize: 15
+                                    color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg
+                                    Layout.alignment: Qt.AlignVCenter
                                 }
 
-                                // Tabler Disconnect Button
-                                Rectangle {
-                                    visible: modelData.connected
-                                    z: 10; width: 28; height: 28; radius: 8
-                                    color: Qt.rgba(1, 0, 0, 0.18)
-                                    border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
-                                    Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
-                                            statusProc.running = true; wifiScanProc.running = true;
+                                // Network Name + Status (fills all available width)
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
+                                    spacing: 1
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: modelData.ssid
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 12
+                                        font.weight: modelData.connected ? Font.Bold : Font.DemiBold
+                                        color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg
+                                        elide: Text.ElideRight
+                                    }
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open")
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 9
+                                        color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                        elide: Text.ElideRight
+                                    }
+                                }
+
+                                // Right-side action icons (fixed-size, never overlap name)
+                                Row {
+                                    spacing: 6
+                                    Layout.alignment: Qt.AlignVCenter
+
+                                    // Lock icon for secured unconnected networks
+                                    Text {
+                                        text: "\ueae2"; font.family: fontName; font.pixelSize: 12
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                        visible: modelData.security !== "Open" && !modelData.connected && !isExpanded
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+
+                                    // Cancel close button when password drawer is open
+                                    Text {
+                                        visible: isExpanded
+                                        text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: { showPassInput = false; passInputText = ""; }
+                                        }
+                                    }
+
+                                    // Connected checkmark
+                                    Text {
+                                        text: "\uea5e"; font.family: fontName; font.pixelSize: 14
+                                        color: Theme.colPrimary
+                                        visible: modelData.connected && hasInternet && !modelData.connected
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+
+                                    // Disconnect red button
+                                    Rectangle {
+                                        visible: modelData.connected
+                                        width: 28; height: 28; radius: 8
+                                        color: Qt.rgba(1, 0, 0, 0.18)
+                                        border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
+                                                statusProc.running = true; wifiScanProc.running = true;
+                                            }
                                         }
                                     }
                                 }
-
-                                Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: modelData.security !== "Open" && !modelData.connected && !isExpanded }
-
-                                // Cancel Close Button when Expanded
-                                Text {
-                                    visible: isExpanded
-                                    text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: { showPassInput = false; passInputText = ""; }
-                                    }
-                                }
-
-                                Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected && hasInternet }
                             }
 
                             // Bottom Row: Action Drawer
