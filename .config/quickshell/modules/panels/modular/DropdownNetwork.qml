@@ -867,7 +867,7 @@ Rectangle {
 
                                 // Right-side action icons (fixed-size, never overlap name)
                                 Row {
-                                    z: 10
+                                    id: actionRow
                                     spacing: 6
                                     Layout.alignment: Qt.AlignVCenter
 
@@ -1025,7 +1025,10 @@ Rectangle {
                         }
 
                         MouseArea {
-                            id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            id: wifiItemMa
+                            anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.left: parent.left
+                            anchors.right: actionRow.left; anchors.rightMargin: 8
+                            cursorShape: Qt.PointingHandCursor
                             enabled: !isExpanded
                             onClicked: {
                                 if (modelData.connected) return;
