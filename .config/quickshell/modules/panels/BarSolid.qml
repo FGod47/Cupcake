@@ -1020,15 +1020,15 @@ PanelWindow {
 
     Process {
         id: netTypeProc; running: true
-        command: ["bash", "-c", "echo '---nmcli---'; nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl show; echo '---bt-conn---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "echo '---wifi---'; nmcli radio wifi; echo '---nmcli---'; nmcli -t -f NAME,TYPE,STATE con show --active; echo '---bt---'; bluetoothctl show; echo '---bt-conn---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: { 
                 let t = text.toLowerCase();
-                bar.isWifi = t.includes("802-11-wireless") && !t.includes("hotspot");
+                bar.isWifi = t.includes("---wifi---") ? t.split("---wifi---")[1].split("---")[0].includes("enabled") : false;
                 bar.isWired = t.includes("802-3-ethernet");
                 bar.isHotspot = t.includes("hotspot");
                 bar.isBluetooth = t.includes("powered: yes");
-                bar.isBluetoothConnected = t.includes("---bt-conn---\ndevice");
+                bar.isBluetoothConnected = t.includes("---bt-conn---") && t.split("---bt-conn---")[1].includes("device");
             }
         }
     }
