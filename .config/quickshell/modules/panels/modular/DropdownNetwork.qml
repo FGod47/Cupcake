@@ -773,8 +773,12 @@ Rectangle {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         hsBand = modelData;
-                                        let code = modelData === "2.4 GHz" ? "bg" : (modelData === "5 GHz" ? "a" : "");
-                                        Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.band \"" + code + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
+                                        let bandCmd = modelData === "2.4 GHz" ? "802-11-wireless.band bg 802-11-wireless.channel 6" : (modelData === "5 GHz" ? "802-11-wireless.band a 802-11-wireless.channel 36" : "802-11-wireless.band \"\" 802-11-wireless.channel \"\"");
+                                        let fullCmd = "nmcli con modify Hotspot " + bandCmd + "; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi";
+                                        Quickshell.execDetached(["bash", "-c", fullCmd]);
+                                        hsSavedNotify = true;
+                                        hsSavedNotifyTimer.restart();
+                                        hsProc.running = true;
                                     }
                                 }
                             }
