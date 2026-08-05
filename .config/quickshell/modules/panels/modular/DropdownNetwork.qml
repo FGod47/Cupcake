@@ -104,7 +104,6 @@ Rectangle {
                     else netSplitPill.hsBand = "Auto";
                 }
 
-                // Parse clients
                 let clines = clientOut.trim().split('\n');
                 let clients = [];
                 for (let l of clines) {
@@ -200,6 +199,7 @@ Rectangle {
                 let lines = text.trim().split('\n');
                 let res = [];
                 let seen = new Set();
+                let foundConn = false;
                 for (let l of lines) {
                     let parts = l.split(':');
                     if (parts.length >= 4 && parts[0].trim() !== "") {
@@ -209,6 +209,7 @@ Rectangle {
                         if (isConn) {
                             netSplitPill.wifiSSID = ssid;
                             netSplitPill.wifiSignal = sig;
+                            foundConn = true;
                         }
                         if (!seen.has(ssid)) {
                             seen.add(ssid);
@@ -221,6 +222,7 @@ Rectangle {
                         }
                     }
                 }
+                if (!foundConn) netSplitPill.wifiSSID = "Disconnected";
                 netSplitPill.wifiList = res;
             }
         }
@@ -458,7 +460,7 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + (isWifi ? "Connected" : "Disconnected")) : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + "Connected") : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
@@ -544,7 +546,7 @@ Rectangle {
                 }
             }
 
-            // Tab 1: Full-Fledged Wi-Fi Management Section
+            // Tab 1: Wi-Fi Networks Section
             ColumnLayout {
                 visible: activeTab === 1
                 Layout.fillWidth: true
@@ -603,9 +605,17 @@ Rectangle {
                     }
                 }
 
-                // Wi-Fi Repeater
+                // Wi-Fi Disabled Warning Banner
+                Rectangle {
+                    visible: !isWifi
+                    Layout.fillWidth: true; height: 34; radius: 10
+                    color: Qt.rgba(1, 1, 1, 0.03); border.color: Qt.rgba(1, 1, 1, 0.06); border.width: 1
+                    Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
+                }
+
+                // Wi-Fi Repeater (Filtered to real networks when radio is ON)
                 Repeater {
-                    model: netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]
+                    model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
                     delegate: Rectangle {
                         Layout.fillWidth: true; height: 40; radius: 12
                         color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
@@ -620,19 +630,18 @@ Rectangle {
                                 Text { text: modelData.connected ? "Connected" : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
 
-                            Row {
+                            // Disconnect Button for Connected Network (Sleek Red Pill)
+                            Rectangle {
                                 visible: modelData.connected
-                                spacing: 4
-                                Rectangle {
-                                    width: 26; height: 26; radius: 6
-                                    color: Qt.rgba(1, 0, 0, 0.2)
-                                    Text { anchors.centerIn: parent; text: "\uea6a"; font.family: fontName; font.pixelSize: 12; color: "#ff6b6b" }
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
-                                            wifiScanProc.running = true;
-                                        }
+                                width: 28; height: 28; radius: 8
+                                color: Qt.rgba(1, 0, 0, 0.18)
+                                border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
+                                Text { anchors.centerIn: parent; text: "\uea6a"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
+                                        wifiScanProc.running = true;
                                     }
                                 }
                             }
@@ -659,7 +668,7 @@ Rectangle {
                 }
             }
 
-            // Tab 2: Hotspot Config Section (Robust Save & Live Updates)
+            // Tab 2: Hotspot Config Section
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
@@ -674,7 +683,6 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Hotspot updated successfully ✓"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colPrimary }
                 }
 
-                // Function to apply Hotspot config
                 function saveHotspotConfig() {
                     let nameVal = hsNameInput.text.trim();
                     let passVal = hsPassInput.text.trim();
