@@ -769,8 +769,8 @@ Rectangle {
                             // Bottom Row: Action Drawer
                             Rectangle {
                                 visible: isExpanded
-                                Layout.fillWidth: true; height: 34; radius: 10
-                                color: Qt.rgba(1, 1, 1, 0.06); border.color: Theme.colPrimary; border.width: 1
+                                Layout.fillWidth: true; height: 34; radius: 17
+                                color: Qt.rgba(1, 1, 1, 0.06); border.width: 0
                                 property bool isKnownSaved: netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim())
 
                                 RowLayout {
@@ -811,7 +811,7 @@ Rectangle {
                                     }
 
                                     Rectangle {
-                                        width: 65; height: 24; radius: 6; color: Theme.colPrimary
+                                        width: 65; height: 24; radius: 12; color: Theme.colPrimary
                                         Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
