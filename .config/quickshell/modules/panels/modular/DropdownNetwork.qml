@@ -1054,7 +1054,8 @@ Rectangle {
                     Quickshell.execDetached(["bash", "-c", cmd]);
                     hsSavedNotify = true;
                     hsSavedNotifyTimer.restart();
-                    hsProc.running = true;
+                    hsNameInput.focus = false;
+                    hsPassInput.focus = false;
                 }
 
                 Timer { id: hsSavedNotifyTimer; interval: 2500; onTriggered: hsSavedNotify = false }
@@ -1073,9 +1074,11 @@ Rectangle {
                                 id: hsNameInput
                                 Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
                                 onAccepted: saveHotspotConfig()
-                                onEditingFinished: saveHotspotConfig()
                             }
-                            Text { text: "\ueb04"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                            Text {
+                                text: "\ueb04"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: hsNameInput.forceActiveFocus() }
+                            }
                         }
                     }
                 }
@@ -1094,7 +1097,6 @@ Rectangle {
                                 id: hsPassInput
                                 Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
                                 onAccepted: saveHotspotConfig()
-                                onEditingFinished: saveHotspotConfig()
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
