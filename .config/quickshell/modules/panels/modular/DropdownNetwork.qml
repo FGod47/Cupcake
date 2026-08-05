@@ -1317,6 +1317,15 @@ Rectangle {
                         color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                         border.width: 0
 
+                        MouseArea {
+                            id: btItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            enabled: !modelData.connected
+                            onClicked: {
+                                Quickshell.execDetached(["bash", "-c", "bluetoothctl connect " + modelData.mac + " 2>/dev/null || bluetoothctl pair " + modelData.mac]);
+                                btScanProc.running = true;
+                            }
+                        }
+
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10; spacing: 8
 
@@ -1345,20 +1354,21 @@ Rectangle {
 
                             // Action Buttons (Connect/Disconnect Pill + Forget Trash Button)
                             RowLayout {
+                                z: 10
                                 spacing: 4
 
                                 Rectangle {
-                                    implicitWidth: btActionText.implicitWidth + 16
-                                    height: 26; radius: 7
-                                    color: modelData.connected ? Qt.rgba(1, 0, 0, 0.18) : Theme.colPrimary
-                                    border.color: modelData.connected ? Qt.rgba(1, 0, 0, 0.3) : "transparent"; border.width: 1
+                                    implicitWidth: btActionText.implicitWidth + 20
+                                    height: 24; radius: 12
+                                    color: modelData.connected ? Qt.rgba(1, 1, 1, 0.08) : Theme.colPrimary
+                                    border.width: 0
 
                                     Text {
                                         id: btActionText
                                         anchors.centerIn: parent
                                         text: modelData.connected ? "Disconnect" : "Connect"
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
-                                        color: modelData.connected ? "#ff6b6b" : Theme.colOnPrimary
+                                        color: modelData.connected ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85) : Theme.colOnPrimary
                                     }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -1375,12 +1385,12 @@ Rectangle {
 
                                 // Forget Device Button
                                 Rectangle {
-                                    width: 26; height: 26; radius: 7
-                                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
+                                    width: 24; height: 24; radius: 12
+                                    color: Qt.rgba(1, 1, 1, 0.08); border.width: 0
                                     Text {
                                         anchors.centerIn: parent; text: "\uea6a"
-                                        font.family: fontName; font.pixelSize: 13
-                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                        font.family: fontName; font.pixelSize: 14
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                                     }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -1390,15 +1400,6 @@ Rectangle {
                                         }
                                     }
                                 }
-                            }
-                        }
-
-                        MouseArea {
-                            id: btItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            enabled: !modelData.connected
-                            onClicked: {
-                                Quickshell.execDetached(["bash", "-c", "bluetoothctl connect " + modelData.mac + " 2>/dev/null || bluetoothctl pair " + modelData.mac]);
-                                btScanProc.running = true;
                             }
                         }
                     }
