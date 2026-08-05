@@ -396,13 +396,20 @@ Rectangle {
             // Animated Sliding Pill Highlight Indicator
             Rectangle {
                 id: activeIndicator
-                width: (tabBarContainer.width - 8) / 4
+                width: tabBarContainer.width > 0 ? (tabBarContainer.width - 8) / 4 : 0
                 height: 28
                 y: 4
                 x: 4 + activeTab * width
                 radius: 14
                 color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.28)
-                Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                
+                property bool initialized: false
+                Component.onCompleted: initialized = true
+                
+                Behavior on x {
+                    enabled: activeIndicator.initialized && netSplitPill.menuExpanded && tabBarContainer.width > 100
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                }
             }
 
             RowLayout {
