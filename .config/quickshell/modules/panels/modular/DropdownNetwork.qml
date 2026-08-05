@@ -96,7 +96,7 @@ Rectangle {
     border.color: Qt.rgba(1, 1, 1, 0.08)
     border.width: 1
 
-    // 1. Instant NetworkManager Event Monitor (Zero Delay)
+    // Instant Event Monitor
     Process {
         id: monitorProc
         running: true
@@ -624,7 +624,7 @@ Rectangle {
                     }
                 }
 
-                // Captive Portal Login Banner (When internetStatus === "Login Required")
+                // Captive Portal Login Banner
                 Rectangle {
                     visible: internetStatus === "Login Required" && isWifi
                     Layout.fillWidth: true; height: 34; radius: 10
@@ -645,7 +645,7 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Wi-Fi Repeater with Dynamic Signal Icons & Instant Monitor
+                // Wi-Fi Repeater with Clean Tabler Font Icons
                 Repeater {
                     model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
                     delegate: ColumnLayout {
@@ -667,13 +667,13 @@ Rectangle {
                                     Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                                 }
 
-                                // Disconnect Button for Connected Network
+                                // Tabler Disconnect Button ( = 'x' in Tabler font)
                                 Rectangle {
                                     visible: modelData.connected
                                     width: 28; height: 28; radius: 8
                                     color: Qt.rgba(1, 0, 0, 0.18)
                                     border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
-                                    Text { anchors.centerIn: parent; text: "✕"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: "#ff6b6b" }
+                                    Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -709,7 +709,7 @@ Rectangle {
                             }
                         }
 
-                        // INLINE PASSWORD DRAWER
+                        // INLINE PASSWORD DRAWER (Tabler icons for eye show/hide and close)
                         ColumnLayout {
                             visible: showPassInput && selectedSSID === modelData.ssid && isWifi
                             Layout.fillWidth: true
@@ -719,7 +719,7 @@ Rectangle {
                                 Layout.fillWidth: true
                                 Text { Layout.fillWidth: true; text: "ENTER PASSWORD FOR " + modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary; elide: Text.ElideRight }
                                 Text {
-                                    text: "✕"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: "#ff6b6b"
+                                    text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
                                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { showPassInput = false; passInputText = ""; } }
                                 }
                             }
@@ -752,7 +752,7 @@ Rectangle {
                                     }
                                     Text {
                                         id: showWifiPass; property bool show: false
-                                        text: show ? "👁️" : "🙈"; font.pixelSize: 13
+                                        text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 15; color: bar.fg
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
                                     }
                                     Rectangle {
@@ -845,7 +845,7 @@ Rectangle {
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
-                                text: show ? "👁️" : "🙈"; font.pixelSize: 13
+                                text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 15; color: bar.fg
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
                             }
                         }
@@ -923,99 +923,65 @@ Rectangle {
                 }
             }
 
-            // Tab 3: Full-Fledged Bluetooth Devices Management Section
-            ColumnLayout {
-                visible: activeTab === 3
-                Layout.fillWidth: true
-                spacing: 8
+            // Tab 3: Bluetooth Devices List
+            Repeater {
+                model: activeTab === 3 ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : []) : []
+                delegate: Rectangle {
+                    Layout.fillWidth: true; height: 40; radius: 12
+                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+                    border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
-                // Header Bar: AVAILABLE DEVICES + Scan / Refresh Icon
-                RowLayout {
-                    Layout.fillWidth: true
-                    Text { text: "AVAILABLE DEVICES"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    Item { Layout.fillWidth: true }
-                    Text {
-                        text: "\ueb1c"
-                        font.family: fontName; font.pixelSize: 13
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Quickshell.execDetached(["bash", "-c", "bluetoothctl scan on & sleep 5; bluetoothctl scan off"]);
-                                btScanProc.running = true;
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                        Text { text: "\uea37"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 0
+                            Text { text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                            Text { text: modelData.connected ? "Connected" : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                        }
+
+                        // Disconnect / Forget Buttons for Bluetooth Device
+                        Row {
+                            spacing: 4
+                            // Disconnect Button (if connected)
+                            Rectangle {
+                                visible: modelData.connected
+                                width: 28; height: 28; radius: 8
+                                color: Qt.rgba(1, 0, 0, 0.18); border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
+                                Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 12; color: "#ff6b6b" }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "bluetoothctl disconnect " + modelData.mac]);
+                                        btScanProc.running = true;
+                                    }
+                                }
+                            }
+
+                            // Forget Device Button
+                            Rectangle {
+                                width: 28; height: 28; radius: 8
+                                color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
+                                Text { anchors.centerIn: parent; text: "\ueab6"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "bluetoothctl remove " + modelData.mac]);
+                                        btScanProc.running = true;
+                                    }
+                                }
                             }
                         }
+
+                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
                     }
-                }
 
-                // Bluetooth Disabled Warning Banner
-                Rectangle {
-                    visible: !isBluetooth
-                    Layout.fillWidth: true; height: 34; radius: 10
-                    color: Qt.rgba(1, 1, 1, 0.03); border.color: Qt.rgba(1, 1, 1, 0.06); border.width: 1
-                    Text { anchors.centerIn: parent; text: "Bluetooth is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
-                }
-
-                // Bluetooth Repeater
-                Repeater {
-                    model: isBluetooth ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : []) : []
-                    delegate: Rectangle {
-                        Layout.fillWidth: true; height: 40; radius: 12
-                        color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
-                        border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
-
-                        RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                            Text { text: "\uea37"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
-                            ColumnLayout {
-                                Layout.fillWidth: true; spacing: 0
-                                Text { text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                                Text { text: modelData.connected ? "Connected" : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                            }
-
-                            // Disconnect / Forget Buttons for Bluetooth Device
-                            Row {
-                                spacing: 4
-                                // Disconnect Button (if connected)
-                                Rectangle {
-                                    visible: modelData.connected
-                                    width: 28; height: 28; radius: 8
-                                    color: Qt.rgba(1, 0, 0, 0.18); border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
-                                    Text { anchors.centerIn: parent; text: "✕"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: "#ff6b6b" }
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "bluetoothctl disconnect " + modelData.mac]);
-                                            btScanProc.running = true;
-                                        }
-                                    }
-                                }
-
-                                // Forget Device Button
-                                Rectangle {
-                                    width: 28; height: 28; radius: 8
-                                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
-                                    Text { anchors.centerIn: parent; text: "\ueab6"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "bluetoothctl remove " + modelData.mac]);
-                                            btScanProc.running = true;
-                                        }
-                                    }
-                                }
-                            }
-
-                            Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
-                        }
-
-                        MouseArea {
-                            id: btItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (modelData.connected) return;
-                                Quickshell.execDetached(["bash", "-c", "bluetoothctl connect " + modelData.mac + " 2>/dev/null || bluetoothctl pair " + modelData.mac]);
-                                btScanProc.running = true;
-                            }
+                    MouseArea {
+                        id: btItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (modelData.connected) return;
+                            Quickshell.execDetached(["bash", "-c", "bluetoothctl connect " + modelData.mac + " 2>/dev/null || bluetoothctl pair " + modelData.mac]);
+                            btScanProc.running = true;
                         }
                     }
                 }
