@@ -594,7 +594,7 @@ Rectangle {
 
         // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD) ──
         RowLayout {
-            visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected") || (activeTab === 2 && isHotspot)
+            visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected")
             Layout.fillWidth: true
             spacing: 8
 
