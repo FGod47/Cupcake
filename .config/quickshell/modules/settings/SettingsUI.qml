@@ -318,7 +318,8 @@ Item {
                     // BRAND
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.bottomMargin: 22
+                        Layout.preferredHeight: 50
+                        Layout.bottomMargin: 16
                         Layout.topMargin: 6
                         Layout.leftMargin: 8
                         Layout.rightMargin: 8
@@ -326,9 +327,10 @@ Item {
                         
                         Item {
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.topMargin: 10
-                            
-                            implicitWidth: settingsLogo.implicitWidth
+                            Layout.preferredHeight: 50
+                            Layout.preferredWidth: settingsLogo.implicitWidth > 0 ? settingsLogo.implicitWidth : 160
+                            implicitHeight: 50
+                            implicitWidth: settingsLogo.implicitWidth > 0 ? settingsLogo.implicitWidth : 160
                             
                             Image {
                                 id: settingsLogo
