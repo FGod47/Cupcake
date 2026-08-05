@@ -648,21 +648,32 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Wi-Fi Repeater with Font Standardized Icons
+                // Wi-Fi Repeater with UNIFIED GLASSMORPHIC CARD (SSID + Password in SAME background!)
                 Repeater {
                     model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
-                    delegate: ColumnLayout {
+                    delegate: Rectangle {
+                        id: wifiItemCard
                         Layout.fillWidth: true
-                        spacing: 4
+                        property bool isExpanded: showPassInput && selectedSSID === modelData.ssid && isWifi
+                        implicitHeight: isExpanded ? 90 : 40
+                        Behavior on implicitHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                        radius: 14
+                        clip: true
+                        color: modelData.connected ? (hasInternet ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 0, 0, 0.18)) : (isExpanded ? Qt.rgba(1, 1, 1, 0.07) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)))
+                        border.color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : (isExpanded ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06))
+                        border.width: 1
 
-                        // Network Item Card
-                        Rectangle {
-                            Layout.fillWidth: true; height: 40; radius: 12
-                            color: modelData.connected ? (hasInternet ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 0, 0, 0.18)) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
-                            border.color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 12; anchors.rightMargin: 12
+                            anchors.topMargin: 6; anchors.bottomMargin: 6
+                            spacing: 6
 
+                            // Top Row: Network Info
                             RowLayout {
-                                anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                                Layout.fillWidth: true
+                                spacing: 10
+
                                 Text { text: getSignalIcon(modelData.signal); font.family: fontName; font.pixelSize: 14; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg }
                                 ColumnLayout {
                                     Layout.fillWidth: true; spacing: 0
@@ -673,8 +684,7 @@ Rectangle {
                                 // Tabler Disconnect Button
                                 Rectangle {
                                     visible: modelData.connected
-                                    z: 10
-                                    width: 28; height: 28; radius: 8
+                                    z: 10; width: 28; height: 28; radius: 8
                                     color: Qt.rgba(1, 0, 0, 0.18)
                                     border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
                                     Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
@@ -682,77 +692,43 @@ Rectangle {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
-                                            statusProc.running = true;
-                                            wifiScanProc.running = true;
+                                            statusProc.running = true; wifiScanProc.running = true;
                                         }
                                     }
                                 }
 
-                                Text { text: modelData.security !== "Open" && !modelData.connected ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" && !modelData.connected }
+                                Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: modelData.security !== "Open" && !modelData.connected && !isExpanded }
+
+                                // Cancel Close Button when Expanded
+                                Text {
+                                    visible: isExpanded
+                                    text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { showPassInput = false; passInputText = ""; }
+                                    }
+                                }
+
                                 Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected && hasInternet }
                             }
 
-                            MouseArea {
-                                id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (modelData.connected) {
-                                        Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
-                                        statusProc.running = true;
-                                        wifiScanProc.running = true;
-                                        return;
-                                    }
-                                    let isSaved = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
-                                    if (isSaved || modelData.security === "Open") {
-                                        showPassInput = false;
-                                        let connCmd = "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\"";
-                                        Quickshell.execDetached(["bash", "-c", connCmd]);
-                                        statusProc.running = true;
-                                        wifiScanProc.running = true;
-                                    } else {
-                                        if (selectedSSID === modelData.ssid && showPassInput) {
-                                            showPassInput = false;
-                                        } else {
-                                            selectedSSID = modelData.ssid;
-                                            showPassInput = true;
-                                            passInputText = "";
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // INLINE PASSWORD DRAWER
-                        ColumnLayout {
-                            visible: showPassInput && selectedSSID === modelData.ssid && isWifi
-                            Layout.fillWidth: true
-                            spacing: 4
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text { Layout.fillWidth: true; text: "ENTER PASSWORD FOR " + modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary; elide: Text.ElideRight }
-                                Text {
-                                    text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { showPassInput = false; passInputText = ""; } }
-                                }
-                            }
-
+                            // Bottom Row: Password Input Field (INSIDE SAME UNIFIED BACKGROUND CARD!)
                             Rectangle {
-                                Layout.fillWidth: true; height: 38; radius: 12
-                                color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
+                                visible: isExpanded
+                                Layout.fillWidth: true; height: 34; radius: 10
+                                color: Qt.rgba(1, 1, 1, 0.06); border.color: Theme.colPrimary; border.width: 1
                                 RowLayout {
-                                    anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 8; spacing: 8
-                                    Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
+                                    anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 6; spacing: 6
+                                    Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 13; color: Theme.colPrimary }
                                     TextInput {
                                         id: wifiPassInput
                                         Layout.fillWidth: true; text: passInputText
                                         echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
-                                        font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: bar.fg
                                         onTextChanged: passInputText = text
                                         onAccepted: {
                                             Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
-                                            showPassInput = false;
-                                            passInputText = "";
-                                            wifiScanProc.running = true;
+                                            showPassInput = false; passInputText = ""; wifiScanProc.running = true;
                                         }
 
                                         Text {
@@ -764,22 +740,40 @@ Rectangle {
                                     }
                                     Text {
                                         id: showWifiPass; property bool show: false
-                                        text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 15; color: bar.fg
+                                        text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 14; color: bar.fg
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
                                     }
                                     Rectangle {
-                                        width: 62; height: 28; radius: 8; color: Theme.colPrimary
-                                        Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.colOnPrimary }
+                                        width: 58; height: 24; radius: 6; color: Theme.colPrimary
+                                        Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
-                                                showPassInput = false;
-                                                passInputText = "";
-                                                wifiScanProc.running = true;
+                                                showPassInput = false; passInputText = ""; wifiScanProc.running = true;
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            enabled: !isExpanded
+                            onClicked: {
+                                if (modelData.connected) {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
+                                    statusProc.running = true; wifiScanProc.running = true; return;
+                                }
+                                let isSaved = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
+                                if (isSaved || modelData.security === "Open") {
+                                    showPassInput = false;
+                                    let connCmd = "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\"";
+                                    Quickshell.execDetached(["bash", "-c", connCmd]);
+                                    statusProc.running = true; wifiScanProc.running = true;
+                                } else {
+                                    selectedSSID = modelData.ssid; showPassInput = true; passInputText = "";
                                 }
                             }
                         }
