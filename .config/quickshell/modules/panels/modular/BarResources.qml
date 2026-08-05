@@ -4,15 +4,15 @@ import Quickshell
 import "../../../theme"
 
 // ── System Resource Monitor ──
-// Displays CPU, RAM, Swap, and network speed with color-coded indicators.
-Row {
+// Displays CPU and RAM usage with color-coded indicators.
+Item {
     id: barResources
-    spacing: 10
+    implicitWidth: resRow.implicitWidth
+    implicitHeight: 20
     opacity: (bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
     visible: true
     Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-    // Load icon font locally so it's always available in this module
     FontLoader {
         id: resIconFont
         source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
@@ -22,119 +22,69 @@ Row {
         let v = parseFloat(val) || 0;
         if (v >= 80) return "#ff6b6b";
         if (v >= 50) return "#ffd580";
-        return Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55);
+        return Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6);
     }
 
-    // ── Click anywhere → open btop ──
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: Quickshell.execDetached(["bash", "-c",
-            "foot --title='System Monitor' btop 2>/dev/null || kitty --title='System Monitor' btop 2>/dev/null || alacritty -e btop 2>/dev/null || xterm -e btop &"])
+        onClicked: Quickshell.execDetached(["bash", "-c", "foot --title='System Monitor' btop 2>/dev/null || kitty --title='System Monitor' btop 2>/dev/null || alacritty -e btop 2>/dev/null || xterm -e btop &"])
     }
 
-    // CPU
     Row {
-        spacing: 4
+        id: resRow
         anchors.verticalCenter: parent.verticalCenter
-        Text {
-            text: "\uea4a" // cpu
-            font.family: "tabler-icons"
-            font.pixelSize: 13
-            color: barResources.resourceColor(bar.cpuStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Text {
-            text: bar.cpuStr + "%"
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Theme.defaultFontWeight
-            color: barResources.resourceColor(bar.cpuStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
+        spacing: 10
 
-    // RAM
-    Row {
-        spacing: 4
-        anchors.verticalCenter: parent.verticalCenter
-        Text {
-            text: "\uf4bc" // memory
-            font.family: "tabler-icons"
-            font.pixelSize: 13
-            color: barResources.resourceColor(bar.ramStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Text {
-            text: bar.ramStr + "%"
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Theme.defaultFontWeight
-            color: barResources.resourceColor(bar.ramStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
-    // Swap (only show when in use > 0%)
-    Row {
-        spacing: 4
-        anchors.verticalCenter: parent.verticalCenter
-        visible: (parseFloat(bar.swapStr) || 0) > 0
-        Text {
-            text: "\uecd2" // arrows-transfer
-            font.family: "tabler-icons"
-            font.pixelSize: 13
-            color: barResources.resourceColor(bar.swapStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Text {
-            text: bar.swapStr + "%"
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Theme.defaultFontWeight
-            color: barResources.resourceColor(bar.swapStr)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
-    // Network ↓↑
-    Row {
-        spacing: 4
-        anchors.verticalCenter: parent.verticalCenter
-        visible: bar.isWifi || bar.isWired || bar.isHotspot
-        Text {
-            text: "\uea7a" // arrow up-down transfer
-            font.family: "tabler-icons"
-            font.pixelSize: 13
-            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Column {
-            spacing: 0
+        // CPU
+        Row {
+            spacing: 4
             anchors.verticalCenter: parent.verticalCenter
             Text {
-                text: "↓ " + bar.netRxStr
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 9
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                text: "\uea4a" // cpu icon
+                font.family: resIconFont.name
+                font.pixelSize: 13
+                color: barResources.resourceColor(bar.cpuStr)
+                anchors.verticalCenter: parent.verticalCenter
             }
             Text {
-                text: "↑ " + bar.netTxStr
+                text: bar.cpuStr + "%"
                 font.family: Theme.defaultFontFamily
-                font.pixelSize: 9
+                font.pixelSize: 11
                 font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                color: barResources.resourceColor(bar.cpuStr)
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
-    }
 
-    // Trailing separator dot
-    Text {
-        text: "•"
-        font.family: Theme.defaultFontFamily
-        font.pixelSize: 13
-        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25)
-        anchors.verticalCenter: parent.verticalCenter
+        // RAM
+        Row {
+            spacing: 4
+            anchors.verticalCenter: parent.verticalCenter
+            Text {
+                text: "\uf4bc" // memory icon
+                font.family: resIconFont.name
+                font.pixelSize: 13
+                color: barResources.resourceColor(bar.ramStr)
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                text: bar.ramStr + "%"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 11
+                font.weight: Theme.defaultFontWeight
+                color: barResources.resourceColor(bar.ramStr)
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        // Trailing separator dot
+        Text {
+            text: "•"
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 13
+            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.3)
+            anchors.verticalCenter: parent.verticalCenter
+        }
     }
 }
