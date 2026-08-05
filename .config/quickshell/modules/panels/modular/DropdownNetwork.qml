@@ -222,7 +222,7 @@ import "../../../theme"
                                 onClicked: {
                                     bar.isWifi = !bar.isWifi;
                                     Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]);
-                                    if (typeof netTypeProc !== "undefined") netTypeProc.running = true;
+                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
                                 }
                             }
                             Rectangle {
@@ -286,8 +286,8 @@ import "../../../theme"
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     bar.isBluetooth = !bar.isBluetooth;
-                                    Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; else rfkill block bluetooth; fi"]);
-                                    if (typeof netTypeProc !== "undefined") netTypeProc.running = true;
+                                    Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; bluetoothctl power on; else rfkill block bluetooth; bluetoothctl power off; fi"]);
+                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
                                 }
                             }
                             Rectangle {
@@ -351,8 +351,8 @@ import "../../../theme"
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     bar.isHotspot = !bar.isHotspot;
-                                    Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli con show --active | grep -i hotspot)\" ]; then nmcli con down hotspot; else nmcli con up hotspot; fi"]);
-                                    if (typeof netTypeProc !== "undefined") netTypeProc.running = true;
+                                    Quickshell.execDetached(["bash", "-c", "if nmcli con show --active | grep -qi hotspot; then nmcli con down Hotspot; else nmcli con up Hotspot; fi"]);
+                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
                                 }
                             }
                             Rectangle {
