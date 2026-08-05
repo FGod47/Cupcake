@@ -46,9 +46,10 @@ Rectangle {
     property bool showSavedWifi: false
 
     function getSignalIcon(sig) {
-        if (sig >= 75) return "\ueb52";
-        if (sig >= 50) return "\ueba5";
-        if (sig >= 25) return "\ueba4";
+        let s = parseInt(sig) || 0;
+        if (s >= 75) return "\ueb52";
+        if (s >= 50) return "\ueba5";
+        if (s >= 25) return "\ueba4";
         return "\ueba3";
     }
 
@@ -647,7 +648,7 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Wi-Fi Repeater with Clean Tabler Font Icons
+                // Wi-Fi Repeater with Font Standardized Icons
                 Repeater {
                     model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
                     delegate: ColumnLayout {
@@ -669,7 +670,7 @@ Rectangle {
                                     Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                                 }
 
-                                // Tabler Disconnect Button ( = 'x' in Tabler font)
+                                // Tabler Disconnect Button
                                 Rectangle {
                                     visible: modelData.connected
                                     width: 28; height: 28; radius: 8
@@ -693,25 +694,20 @@ Rectangle {
                                 id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     if (modelData.connected) return;
-                                    let isSaved = netSplitPill.savedWifiList.includes(modelData.ssid);
-                                    if (isSaved || modelData.security === "Open") {
+                                    // Clicking an un-connected network card ONLY opens password drawer or prompts connection!
+                                    // It NEVER prematurely disconnects your active Wi-Fi!
+                                    if (selectedSSID === modelData.ssid && showPassInput) {
                                         showPassInput = false;
-                                        Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]);
-                                        wifiScanProc.running = true;
                                     } else {
-                                        if (selectedSSID === modelData.ssid && showPassInput) {
-                                            showPassInput = false;
-                                        } else {
-                                            selectedSSID = modelData.ssid;
-                                            showPassInput = true;
-                                            passInputText = "";
-                                        }
+                                        selectedSSID = modelData.ssid;
+                                        showPassInput = true;
+                                        passInputText = "";
                                     }
                                 }
                             }
                         }
 
-                        // INLINE PASSWORD DRAWER (Tabler icons for eye show/hide and close)
+                        // INLINE PASSWORD DRAWER
                         ColumnLayout {
                             visible: showPassInput && selectedSSID === modelData.ssid && isWifi
                             Layout.fillWidth: true
