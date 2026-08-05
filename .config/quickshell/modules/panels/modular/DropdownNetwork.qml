@@ -668,11 +668,10 @@ Rectangle {
                         property bool isExpanded: showPassInput && selectedSSID === modelData.ssid && isWifi
                         implicitHeight: isExpanded ? 90 : 40
                         Behavior on implicitHeight { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                        radius: 14
+                        radius: 20
                         clip: true
                         color: modelData.connected ? (hasInternet ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 0, 0, 0.18)) : (isExpanded ? Qt.rgba(1, 1, 1, 0.07) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)))
-                        border.color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : (isExpanded ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06))
-                        border.width: 1
+                        border.width: 0
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -1047,9 +1046,9 @@ Rectangle {
                 Repeater {
                     model: isBluetooth ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : []) : []
                     delegate: Rectangle {
-                        Layout.fillWidth: true; height: 46; radius: 12
+                        Layout.fillWidth: true; height: 46; radius: 23
                         color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
-                        border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+                        border.width: 0
 
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10; spacing: 8
