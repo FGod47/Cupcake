@@ -393,27 +393,6 @@ Rectangle {
             color: Qt.rgba(1, 1, 1, 0.05)
             clip: true
 
-            // Animated Sliding Pill Highlight Indicator
-            Rectangle {
-                id: activeIndicator
-                property real cachedTabWidth: 70
-                onWidthChanged: {
-                    if (width > 20) cachedTabWidth = width
-                }
-
-                width: tabBarContainer.width > 8 ? (tabBarContainer.width - 8) / 4 : cachedTabWidth
-                height: 28
-                y: 4
-                x: 4 + activeTab * (tabBarContainer.width > 8 ? (tabBarContainer.width - 8) / 4 : cachedTabWidth)
-                radius: 14
-                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.28)
-                
-                Behavior on x {
-                    enabled: netSplitPill.menuExpanded && tabBarContainer.width > 100
-                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-                }
-            }
-
             RowLayout {
                 anchors.fill: parent
                 spacing: 0
@@ -429,13 +408,21 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: modelData.icon
-                            font.family: fontName
-                            font.pixelSize: 15
-                            color: activeTab === modelData.tabIndex ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 4
+                            radius: 14
+                            color: activeTab === modelData.tabIndex ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.28) : "transparent"
                             Behavior on color { ColorAnimation { duration: 200 } }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.icon
+                                font.family: fontName
+                                font.pixelSize: 15
+                                color: activeTab === modelData.tabIndex ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
                         }
 
                         MouseArea {
