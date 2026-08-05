@@ -1075,7 +1075,7 @@ Rectangle {
                                 onAccepted: saveHotspotConfig()
                                 onEditingFinished: saveHotspotConfig()
                             }
-                            Text { text: "\ueab6"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                            Text { text: "\ueb04"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                         }
                     }
                 }
