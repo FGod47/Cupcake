@@ -268,7 +268,7 @@ Rectangle {
             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
             border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
             border.width: 1
-            implicitHeight: wifiCardCol.implicitHeight + 20
+            Layout.preferredHeight: wifiCardCol.implicitHeight + 16
 
             ColumnLayout {
                 id: wifiCardCol
@@ -326,7 +326,7 @@ Rectangle {
                         Rectangle {
                             width: 18; height: 18; radius: 9
                             anchors.verticalCenter: parent.verticalCenter
-                            x: isWifi ? 19 : 3
+                            x: isWifi ? 23 : 3
                             color: isWifi ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                             Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                         }
@@ -385,7 +385,7 @@ Rectangle {
             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
             border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
             border.width: 1
-            implicitHeight: btCardCol.implicitHeight + 20
+            Layout.preferredHeight: btCardCol.implicitHeight + 16
 
             ColumnLayout {
                 id: btCardCol
@@ -443,7 +443,7 @@ Rectangle {
                         Rectangle {
                             width: 18; height: 18; radius: 9
                             anchors.verticalCenter: parent.verticalCenter
-                            x: isBluetooth ? 19 : 3
+                            x: isBluetooth ? 23 : 3
                             color: isBluetooth ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                             Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                         }
@@ -505,7 +505,7 @@ Rectangle {
             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
             border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
             border.width: 1
-            implicitHeight: hsCardCol.implicitHeight + 20
+            Layout.preferredHeight: hsCardCol.implicitHeight + 16
 
             ColumnLayout {
                 id: hsCardCol
@@ -562,7 +562,7 @@ Rectangle {
                         Rectangle {
                             width: 18; height: 18; radius: 9
                             anchors.verticalCenter: parent.verticalCenter
-                            x: isHotspot ? 19 : 3
+                            x: isHotspot ? 23 : 3
                             color: isHotspot ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                             Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                         }
@@ -663,45 +663,5 @@ Rectangle {
             }
         }
 
-        // ── 4. Bottom Footer Button (Network Settings) ──
-        Rectangle {
-            Layout.fillWidth: true
-            height: 44
-            radius: 16
-            color: navBtnMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
-            border.color: Qt.rgba(1, 1, 1, 0.08)
-            border.width: 1
-
-            Row {
-                anchors.centerIn: parent
-                spacing: 8
-                Text {
-                    text: "\ueb2d" // settings gear
-                    font.family: fontName
-                    font.pixelSize: 16
-                    color: bar.fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Text {
-                    text: "Network Settings"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    font.weight: Font.Bold
-                    color: bar.fg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
             }
-
-            MouseArea {
-                id: navBtnMa
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    bar.netDropdownOpen = false;
-                    Quickshell.execDetached(["hyprctl", "dispatch", "exec", "[float] quickshell -c " + homeDir + "/.config/quickshell/Settings.qml"]);
-                }
-            }
-        }
-    }
 }
