@@ -70,13 +70,14 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         y: (30 - height) / 2
         spacing: 6
+        z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
         Text {
             text: "\ueafc" // tabler music note icon
-            font.family: "tabler-icons"
+            font.family: ddMusicFont.name
             font.pixelSize: 13
             color: Theme.colPrimary
             anchors.verticalCenter: parent.verticalCenter
@@ -100,21 +101,25 @@ Rectangle {
         }
 
         // Play / Pause Button inside compact pill
-        MouseArea {
-            width: 18; height: 18
+        Item {
+            width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
-            cursorShape: Qt.PointingHandCursor
-            z: 10
-            onClicked: {
-                if (hasPlayer) player.togglePlaying();
-            }
+            z: 20
 
             Text {
                 anchors.centerIn: parent
                 text: musicSplitPill.isPlaying ? "\uea8c" : "\ueaed" // pause vs play icon
-                font.family: "tabler-icons"
-                font.pixelSize: 13
+                font.family: ddMusicFont.name
+                font.pixelSize: 14
                 color: Theme.colPrimary
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (hasPlayer) player.togglePlaying();
+                }
             }
         }
     }
