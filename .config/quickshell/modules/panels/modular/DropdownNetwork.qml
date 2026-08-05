@@ -674,7 +674,7 @@ Rectangle {
                             Text {
                                 id: copyIpIcon
                                 property bool copied: false
-                                text: copied ? "\uea66" : "\uea9c"
+                                text: copied ? "\uea5e" : "\uea7a"
                                 font.family: fontName; font.pixelSize: 13
                                 color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                 MouseArea {
@@ -700,7 +700,7 @@ Rectangle {
                             Text {
                                 id: copyGwIcon
                                 property bool copied: false
-                                text: copied ? "\uea66" : "\uea9c"
+                                text: copied ? "\uea5e" : "\uea7a"
                                 font.family: fontName; font.pixelSize: 13
                                 color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                 MouseArea {
@@ -726,7 +726,7 @@ Rectangle {
                             Text {
                                 id: copyDnsIcon
                                 property bool copied: false
-                                text: copied ? "\uea66" : "\uea9c"
+                                text: copied ? "\uea5e" : "\uea7a"
                                 font.family: fontName; font.pixelSize: 13
                                 color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                 MouseArea {
@@ -752,7 +752,7 @@ Rectangle {
                             Text {
                                 id: copyMacIcon
                                 property bool copied: false
-                                text: copied ? "\uea66" : "\uea9c"
+                                text: copied ? "\uea5e" : "\uea7a"
                                 font.family: fontName; font.pixelSize: 13
                                 color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                 MouseArea {
