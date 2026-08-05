@@ -24,12 +24,15 @@ Rectangle {
     property int wifiSignal: 85
     property string wifiIp: "192.168.1.87"
 
+    property string wiredIface: "enp6s0"
     property string wiredIp: "192.168.1.42"
 
     property string btDeviceName: ""
     property int btBattery: 67
 
     property string hsName: "Pixel_9210_AP"
+    property string hsPass: "12345678"
+    property string hsBand: "2.4 GHz"
     property string hsIp: "10.42.0.1"
 
     onMenuExpandedChanged: {
@@ -66,7 +69,7 @@ Rectangle {
     Process {
         id: statusProc
         running: netSplitPill.menuExpanded
-        command: ["bash", "-c", "nmcli -t -f NAME,TYPE,DEVICE,STATE con show --active; echo '---ip---'; ip -4 addr show; echo '---bt---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---bt---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -77,17 +80,14 @@ Rectangle {
                 let ipOut = restParts[0] || "";
                 let btOut = restParts[1] || "";
 
-                // Wi-Fi SSID (excluding Hotspot)
-                let lines = nmOut.split('\n');
-                let foundWifi = false;
-                for (let line of lines) {
-                    if (line.includes(":802-11-wireless") && !line.toLowerCase().includes("hotspot")) {
-                        netSplitPill.wifiSSID = line.split(':')[0].trim();
-                        foundWifi = true;
-                        break;
-                    }
+                // Wired Ethernet Interface
+                let ethMatch = nmOut.match(/^([^:]+):ethernet:connected/m);
+                if (ethMatch) {
+                    netSplitPill.wiredIface = ethMatch[1].trim();
                 }
-                if (!foundWifi) netSplitPill.wifiSSID = "Disconnected";
+
+                // Wi-Fi SSID
+                let wifiMatch = nmOut.match(/^([^:]+):wifi:connected/m);
 
                 // IP Addresses
                 let ipMatches = ipOut.match(/inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/g);
@@ -137,7 +137,10 @@ Rectangle {
                     if (parts.length >= 4 && parts[0].trim() !== "") {
                         let ssid = parts[0].trim();
                         let sig = parseInt(parts[1]) || 0;
-                        if (parts[3].includes("*")) netSplitPill.wifiSignal = sig;
+                        if (parts[3].includes("*")) {
+                            netSplitPill.wifiSSID = ssid;
+                            netSplitPill.wifiSignal = sig;
+                        }
                         if (!seen.has(ssid)) {
                             seen.add(ssid);
                             res.push({
@@ -228,7 +231,7 @@ Rectangle {
         Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.7); anchors.verticalCenter: parent.verticalCenter }
     }
 
-    // Expanded View Dashboard (Spacious & Luxurious Layout)
+    // Expanded View Dashboard
     ColumnLayout {
         id: netContentCol
         anchors.left: parent.left
@@ -425,7 +428,7 @@ Rectangle {
             }
         }
 
-        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD - Exclusively on Active Connected Interface) ──
+        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD) ──
         RowLayout {
             visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected") || (activeTab === 2 && isHotspot)
             Layout.fillWidth: true
@@ -457,16 +460,22 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 8
 
-            // Tab 0: Wired
-            Text {
+            // Tab 0: Wired Ethernet Active Card
+            Rectangle {
                 visible: activeTab === 0
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 6; Layout.bottomMargin: 6
-                text: "No additional devices or networks nearby"
-                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                Layout.fillWidth: true; height: 38; radius: 12
+                color: isWired ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.03)
+                border.color: isWired ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                    Text { text: "\uebd9"; font.family: fontName; font.pixelSize: 14; color: isWired ? Theme.colPrimary : bar.fg }
+                    Text { Layout.fillWidth: true; text: wiredIface + " (Ethernet)"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: isWired ? Font.Bold : Font.DemiBold; color: isWired ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                    Text { text: isWired ? "\uea5e" : ""; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: isWired }
+                }
             }
 
-            // Tab 1: Wi-Fi Networks
+            // Tab 1: Wi-Fi Networks List
             Repeater {
                 model: activeTab === 1 ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]) : []
                 delegate: Rectangle {
@@ -489,16 +498,45 @@ Rectangle {
                 }
             }
 
-            // Tab 2: Hotspot
-            Text {
+            // Tab 2: Hotspot Config Section
+            ColumnLayout {
                 visible: activeTab === 2
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 6; Layout.bottomMargin: 6
-                text: "No additional devices or networks nearby"
-                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                Layout.fillWidth: true
+                spacing: 8
+
+                Rectangle {
+                    Layout.fillWidth: true; height: 36; radius: 10
+                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                        Text { text: "SSID: "; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                        TextInput {
+                            Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
+                            onTextChanged: { hsName = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\" 2>/dev/null"]); }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true; height: 36; radius: 10
+                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                        Text { text: "PASS: "; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                        TextInput {
+                            Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
+                            onTextChanged: { hsPass = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\" 2>/dev/null"]); }
+                        }
+                        Text {
+                            id: showHsPassText; property bool show: false
+                            text: show ? "👁️" : "🙈"; font.pixelSize: 12
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
+                        }
+                    }
+                }
             }
 
-            // Tab 3: Bluetooth
+            // Tab 3: Bluetooth Devices List
             Repeater {
                 model: activeTab === 3 ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : [{name: "Galaxy Buds", connected: true, mac: "00:11:22", battery: "67%"}, {name: "Pixel Watch", connected: false, mac: "33:44:55", battery: "Paired"}]) : []
                 delegate: Rectangle {
