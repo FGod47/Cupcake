@@ -46,10 +46,10 @@ Rectangle {
     property bool showSavedWifi: false
 
     function getSignalIcon(sig) {
-        if (sig > 75) return "\ueb52";
-        if (sig > 50) return "\ueb51";
-        if (sig > 25) return "\ueb50";
-        return "\ueb4f";
+        if (sig >= 75) return "\ueb52";
+        if (sig >= 50) return "\ueba5";
+        if (sig >= 25) return "\ueba4";
+        return "\ueba3";
     }
 
     function openCaptivePortal() {
