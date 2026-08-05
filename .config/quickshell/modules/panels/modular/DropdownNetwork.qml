@@ -77,9 +77,17 @@ Rectangle {
                 let ipOut = restParts[0] || "";
                 let btOut = restParts[1] || "";
 
-                // Wi-Fi SSID
-                let wMatch = nmOut.match(/^([^:]+):802-11-wireless/m);
-                if (wMatch) netSplitPill.wifiSSID = wMatch[1].trim();
+                // Wi-Fi SSID (excluding Hotspot)
+                let lines = nmOut.split('\n');
+                let foundWifi = false;
+                for (let line of lines) {
+                    if (line.includes(":802-11-wireless") && !line.toLowerCase().includes("hotspot")) {
+                        netSplitPill.wifiSSID = line.split(':')[0].trim();
+                        foundWifi = true;
+                        break;
+                    }
+                }
+                if (!foundWifi) netSplitPill.wifiSSID = "Disconnected";
 
                 // IP Addresses
                 let ipMatches = ipOut.match(/inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/g);
@@ -284,7 +292,7 @@ Rectangle {
             }
         }
 
-        // ── 2. Central Circular Progress Gauge / Ring (Bluetooth Only) ──
+        // ── 2. Bluetooth Only Circular Progress Ring ──
         Item {
             visible: activeTab === 3
             Layout.alignment: Qt.AlignHCenter
@@ -294,7 +302,7 @@ Rectangle {
             Canvas {
                 id: gaugeCanvas
                 anchors.fill: parent
-                property real percentage: activeTab === 0 ? 1.0 : (activeTab === 1 ? (wifiSignal / 100.0) : (activeTab === 2 ? 0.0 : (activeTab === 3 ? (btBattery / 100.0) : 0.5)))
+                property real percentage: (btBattery / 100.0)
                 onPercentageChanged: requestPaint()
 
                 onPaint: {
@@ -306,14 +314,12 @@ Rectangle {
                     let startAngle = -Math.PI / 2;
                     let endAngle = startAngle + (percentage * 2 * Math.PI);
 
-                    // Track Ring
                     ctx.beginPath();
                     ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
                     ctx.lineWidth = 8;
                     ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.08);
                     ctx.stroke();
 
-                    // Active Progress Glow Ring
                     if (percentage > 0) {
                         ctx.beginPath();
                         ctx.arc(cx, cy, radius, startAngle, endAngle);
@@ -325,7 +331,6 @@ Rectangle {
                 }
             }
 
-            // Center Badge & Text
             ColumnLayout {
                 anchors.centerIn: parent
                 spacing: 2
@@ -334,42 +339,84 @@ Rectangle {
                     Layout.alignment: Qt.AlignHCenter
                     width: 32; height: 32; radius: 16
                     color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2)
-                    Text {
-                        anchors.centerIn: parent
-                        text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? "\ueb52" : (activeTab === 2 ? "\ued1b" : "\uecea"))
-                        font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary
-                    }
+                    Text { anchors.centerIn: parent; text: "\uecea"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: activeTab === 0 ? "100%" : (activeTab === 1 ? (wifiSignal + "%") : (activeTab === 2 ? "0%" : (btBattery + "%")))
+                    text: btBattery + "%"
                     font.family: Theme.defaultFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: bar.fg
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: activeTab === 0 ? "Link quality" : (activeTab === 1 ? "Signal strength" : (activeTab === 2 ? "Broadcasting" : "Battery"))
+                    text: "Battery"
                     font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                 }
             }
         }
 
-        // ── 3. Connection Title & IP/Speed Subtitle ──
-        ColumnLayout {
-            Layout.alignment: Qt.AlignHCenter
-            spacing: 2
+        // ── 3. Connection Title + Icon + Enable Switch Header Row ──
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 10
 
-            Text {
-                Layout.alignment: Qt.AlignHCenter
-                text: activeTab === 0 ? "Wired" : (activeTab === 1 ? (wifiSSID !== "Disconnected" ? wifiSSID : "Wi-Fi") : (activeTab === 2 ? hsName : (btDeviceName !== "" ? btDeviceName : "Bluetooth")))
-                font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Font.Bold; color: bar.fg
+            Rectangle {
+                width: 34; height: 34; radius: 17
+                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
+                border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3)
+                border.width: 1
+
+                Text {
+                    anchors.centerIn: parent
+                    text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? "\ueb52" : (activeTab === 2 ? "\ued1b" : "\uea37"))
+                    font.family: fontName; font.pixelSize: 16
+                    color: Theme.colPrimary
+                }
             }
 
-            Text {
-                Layout.alignment: Qt.AlignHCenter
-                text: activeTab === 0 ? (wiredIp + " · " + netStr) : (activeTab === 1 ? (wifiIp + " · " + netStr) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? ("Connected · " + btBattery + "% battery") : "Disabled")))
-                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+            ColumnLayout {
+                Layout.fillWidth: true; spacing: 1
+                Text {
+                    text: activeTab === 0 ? "Wired" : (activeTab === 1 ? (wifiSSID !== "Disconnected" ? wifiSSID : "Wi-Fi") : (activeTab === 2 ? "Hotspot" : (btDeviceName !== "" ? btDeviceName : "Bluetooth")))
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
+                }
+                Text {
+                    text: activeTab === 0 ? (wiredIp + " · " + netStr) : (activeTab === 1 ? (wifiIp + " · " + netStr) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? ("Connected · " + btBattery + "% battery") : "Disabled")))
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                }
+            }
+
+            // Enable Toggle Switch right at the Name side!
+            Rectangle {
+                width: 44; height: 24; radius: 12
+                color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                Behavior on color { ColorAnimation { duration: 200 } }
+
+                MouseArea {
+                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (activeTab === 0) bar.isWired = !bar.isWired;
+                        else if (activeTab === 1) {
+                            bar.isWifi = !bar.isWifi;
+                            Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]);
+                        } else if (activeTab === 2) {
+                            bar.isHotspot = !bar.isHotspot;
+                            Quickshell.execDetached(["bash", "-c", "if nmcli con show --active | grep -qi hotspot; then nmcli con down Hotspot; else nmcli con up Hotspot; fi"]);
+                        } else if (activeTab === 3) {
+                            bar.isBluetooth = !bar.isBluetooth;
+                            Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; bluetoothctl power on; else rfkill block bluetooth; bluetoothctl power off; fi"]);
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 18; height: 18; radius: 9
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? 23 : 3
+                    color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                    Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                }
             }
         }
 
@@ -464,56 +511,6 @@ Rectangle {
                         id: btItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: { Quickshell.execDetached(["bash", "-c", modelData.connected ? ("bluetoothctl disconnect " + modelData.mac) : ("bluetoothctl connect " + modelData.mac)]); btScanProc.running = true; }
                     }
-                }
-            }
-        }
-
-        // ── 6. Bottom Power Switch Bar ──
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.topMargin: 4
-            spacing: 10
-
-            ColumnLayout {
-                Layout.fillWidth: true; spacing: 1
-                Text {
-                    text: activeTab === 0 ? "Wired" : (activeTab === 1 ? "Wi-Fi" : (activeTab === 2 ? "Hotspot" : "Bluetooth"))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold; color: bar.fg
-                }
-                Text {
-                    text: activeTab === 0 ? (isWired ? "Enabled" : "Disabled") : (activeTab === 1 ? (isWifi ? "On" : "Off") : (activeTab === 2 ? (isHotspot ? "On" : "Off") : (isBluetooth ? "Enabled" : "Disabled")))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                }
-            }
-
-            Rectangle {
-                width: 44; height: 24; radius: 12
-                color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
-                Behavior on color { ColorAnimation { duration: 200 } }
-
-                MouseArea {
-                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (activeTab === 0) bar.isWired = !bar.isWired;
-                        else if (activeTab === 1) {
-                            bar.isWifi = !bar.isWifi;
-                            Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]);
-                        } else if (activeTab === 2) {
-                            bar.isHotspot = !bar.isHotspot;
-                            Quickshell.execDetached(["bash", "-c", "if nmcli con show --active | grep -qi hotspot; then nmcli con down Hotspot; else nmcli con up Hotspot; fi"]);
-                        } else if (activeTab === 3) {
-                            bar.isBluetooth = !bar.isBluetooth;
-                            Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; bluetoothctl power on; else rfkill block bluetooth; bluetoothctl power off; fi"]);
-                        }
-                    }
-                }
-
-                Rectangle {
-                    width: 18; height: 18; radius: 9
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? 23 : 3
-                    color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                    Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
             }
         }
