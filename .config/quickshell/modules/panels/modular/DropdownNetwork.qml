@@ -43,6 +43,11 @@ Rectangle {
     property bool showPassInput: false
     property bool showSavedWifi: false
 
+    onActiveTabChanged: {
+        showPassInput = false;
+        passInputText = "";
+    }
+
     onMenuExpandedChanged: {
         if (menuExpanded) {
             statusProc.running = true;
@@ -50,6 +55,9 @@ Rectangle {
             btScanProc.running = true;
             savedProc.running = true;
             hsProc.running = true;
+        } else {
+            showPassInput = false;
+            passInputText = "";
         }
     }
 
@@ -564,13 +572,21 @@ Rectangle {
                     }
                 }
 
-                // Password Drawer
+                // Password Drawer (With Cancel Button & Auto-Close)
                 ColumnLayout {
-                    visible: showPassInput
+                    visible: showPassInput && isWifi
                     Layout.fillWidth: true
                     spacing: 4
 
-                    Text { text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { Layout.fillWidth: true; text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary; elide: Text.ElideRight }
+                        Text {
+                            text: "\uea6a"; font.family: fontName; font.pixelSize: 12; color: "#ff6b6b"
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { showPassInput = false; passInputText = ""; } }
+                        }
+                    }
+
                     Rectangle {
                         Layout.fillWidth: true; height: 36; radius: 10
                         color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
@@ -582,6 +598,12 @@ Rectangle {
                                 echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
                                 font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
                                 onTextChanged: passInputText = text
+                                onAccepted: {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
+                                    showPassInput = false;
+                                    passInputText = "";
+                                    wifiScanProc.running = true;
+                                }
                             }
                             Text {
                                 id: showWifiPass; property bool show: false
@@ -630,7 +652,7 @@ Rectangle {
                                 Text { text: modelData.connected ? "Connected" : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
 
-                            // Disconnect Button for Connected Network (Sleek Red Pill)
+                            // Disconnect Button for Connected Network
                             Rectangle {
                                 visible: modelData.connected
                                 width: 28; height: 28; radius: 8
@@ -656,11 +678,16 @@ Rectangle {
                                 if (modelData.connected) return;
                                 let isSaved = netSplitPill.savedWifiList.includes(modelData.ssid);
                                 if (isSaved || modelData.security === "Open") {
+                                    showPassInput = false;
                                     Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]);
                                     wifiScanProc.running = true;
                                 } else {
-                                    selectedSSID = modelData.ssid;
-                                    showPassInput = true;
+                                    if (selectedSSID === modelData.ssid && showPassInput) {
+                                        showPassInput = false;
+                                    } else {
+                                        selectedSSID = modelData.ssid;
+                                        showPassInput = true;
+                                    }
                                 }
                             }
                         }
