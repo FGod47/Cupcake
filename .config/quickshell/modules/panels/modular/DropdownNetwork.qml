@@ -894,9 +894,9 @@ Rectangle {
                                         visible: modelData.connected && hasInternet && !modelData.connected
                                     }
 
-                                    // Disconnect button (less white, 18px, centered)
+                                    // Disconnect button (hidden on own broadcast hotspot)
                                     Text {
-                                        visible: modelData.connected
+                                        visible: modelData.connected && !(netSplitPill.hsActive && modelData.ssid.toLowerCase().trim() === netSplitPill.hsName.toLowerCase().trim())
                                         text: "\uea6a"; font.family: fontName; font.pixelSize: 18
                                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                                         MouseArea {
