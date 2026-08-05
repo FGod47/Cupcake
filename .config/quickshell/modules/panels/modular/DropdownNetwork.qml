@@ -823,7 +823,29 @@ Rectangle {
                         color: modelData.connected ? (hasInternet ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 0, 0, 0.18)) : (isExpanded ? Qt.rgba(1, 1, 1, 0.07) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)))
                         border.width: 0
 
+                        MouseArea {
+                            id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            enabled: !isExpanded
+                            onClicked: {
+                                if (modelData.connected) return;
+                                let isKnown = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
+                                if (isKnown || modelData.security === "Open") {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\""]);
+                                    statusProc.running = true; wifiScanProc.running = true;
+                                } else {
+                                    if (selectedSSID === modelData.ssid && showPassInput) {
+                                        showPassInput = false;
+                                    } else {
+                                        selectedSSID = modelData.ssid;
+                                        showPassInput = true;
+                                        passInputText = "";
+                                    }
+                                }
+                            }
+                        }
+
                         ColumnLayout {
+                            z: 10
                             anchors.fill: parent
                             anchors.leftMargin: 12; anchors.rightMargin: 12
                             anchors.topMargin: 6; anchors.bottomMargin: 6
@@ -1023,32 +1045,6 @@ Rectangle {
                                 }
                             }
                         }
-
-                        MouseArea {
-                            id: wifiItemMa
-                            anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.left: parent.left
-                            anchors.right: actionRow.left; anchors.rightMargin: 8
-                            cursorShape: Qt.PointingHandCursor
-                            enabled: !isExpanded
-                            onClicked: {
-                                if (modelData.connected) return;
-                                let isKnown = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
-                                if (isKnown || modelData.security === "Open") {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\""]);
-                                    statusProc.running = true; wifiScanProc.running = true;
-                                } else {
-                                    if (selectedSSID === modelData.ssid && showPassInput) {
-                                        showPassInput = false;
-                                    } else {
-                                        selectedSSID = modelData.ssid;
-                                        showPassInput = true;
-                                        passInputText = "";
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
             // Tab 2: Hotspot Config Section
