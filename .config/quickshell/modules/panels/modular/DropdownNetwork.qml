@@ -214,6 +214,7 @@ import "../../../theme"
                             color: isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                             border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                             Behavior on color { ColorAnimation { duration: 250 } }
+                            Timer { id: wifiRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
                             MouseArea {
                                 id: wifiToggleMa
                                 anchors.fill: parent
@@ -222,7 +223,7 @@ import "../../../theme"
                                 onClicked: {
                                     bar.isWifi = !bar.isWifi;
                                     Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]);
-                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
+                                    wifiRefreshTimer.restart();
                                 }
                             }
                             Rectangle {
@@ -279,6 +280,7 @@ import "../../../theme"
                             color: isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                             border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                             Behavior on color { ColorAnimation { duration: 250 } }
+                            Timer { id: btRefreshTimer; interval: 400; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
                             MouseArea {
                                 id: btToggleMa
                                 anchors.fill: parent
@@ -287,7 +289,7 @@ import "../../../theme"
                                 onClicked: {
                                     bar.isBluetooth = !bar.isBluetooth;
                                     Quickshell.execDetached(["bash", "-c", "if rfkill list bluetooth | grep -q 'Soft blocked: yes'; then rfkill unblock bluetooth; bluetoothctl power on; else rfkill block bluetooth; bluetoothctl power off; fi"]);
-                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
+                                    btRefreshTimer.restart();
                                 }
                             }
                             Rectangle {
@@ -344,6 +346,7 @@ import "../../../theme"
                             color: isHotspot ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                             border.color: Qt.rgba(1, 1, 1, 0.05); border.width: 1
                             Behavior on color { ColorAnimation { duration: 250 } }
+                            Timer { id: hsRefreshTimer; interval: 600; repeat: false; onTriggered: { if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus(); } }
                             MouseArea {
                                 id: hotspotToggleMa
                                 anchors.fill: parent
@@ -352,7 +355,7 @@ import "../../../theme"
                                 onClicked: {
                                     bar.isHotspot = !bar.isHotspot;
                                     Quickshell.execDetached(["bash", "-c", "if nmcli con show --active | grep -qi hotspot; then nmcli con down Hotspot; else nmcli con up Hotspot; fi"]);
-                                    if (typeof bar.refreshNetworkStatus === "function") bar.refreshNetworkStatus();
+                                    hsRefreshTimer.restart();
                                 }
                             }
                             Rectangle {
