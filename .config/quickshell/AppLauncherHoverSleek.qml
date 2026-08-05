@@ -506,7 +506,7 @@ PanelWindow {
                     text: "folder"
                     font.family: "Material Symbols Rounded"
                     font.pixelSize: 20
-                    color: root.colOnSurface
+                    color: Theme.colOnSurface
                     opacity: card.isModeFiles ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
@@ -573,12 +573,12 @@ PanelWindow {
                     text: "search" // material icon
                     font.family: "Material Symbols Rounded"
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 42
-                    color: root.colOnSurfaceVariant
+                    color: Theme.colOnSurfaceVariant
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "No results. Apps: " + (filteredApps ? filteredApps.length : "null") + " Count: " + appList.count + " Comp: " + (customResultComp ? "OK" : "NULL")
-                    color: root.colOnSurfaceVariant
+                    color: Theme.colOnSurfaceVariant
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 17
                     font.family: Theme.defaultFontFamily
                 }
@@ -610,7 +610,7 @@ PanelWindow {
                     height: appList.currentItem ? appList.currentItem.height : card.itemH
                     y: appList.currentItem ? (appList.currentItem.y - appList.contentY) : 0
                     radius: height / 2
-                    color: root.colOnSurface
+                    color: Theme.colOnSurface
                     opacity: appList.count > 0 ? 0.09 : 0
                     visible: appList.count > 0
 
@@ -643,7 +643,7 @@ PanelWindow {
                     Rectangle {
                         anchors.fill: parent
                         radius: height / 2
-                        color: root.colOnSurface
+                        color: Theme.colOnSurface
                         opacity: hoverH.hovered && appList.currentIndex !== delegateItem.index ? 0.05 : 0
                         Behavior on opacity { NumberAnimation { duration: 100 } }
                     }
@@ -693,7 +693,7 @@ PanelWindow {
 
                             Text {
                                 text: delegateItem.modelData?.name ?? ""
-                                color: root.colOnSurface
+                                color: Theme.colOnSurface
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: Theme.defaultFontSize - 1
                                 font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
@@ -704,7 +704,7 @@ PanelWindow {
                                 text: delegateItem.modelData?.comment
                                       || delegateItem.modelData?.genericName
                                       || ""
-                                color: root.colOnSurfaceVariant
+                                color: Theme.colOnSurfaceVariant
                                 font.weight: Theme.defaultFontWeight; font.pixelSize: 11
                                 font.family: Theme.defaultFontFamily
                                 elide: Text.ElideRight
@@ -741,7 +741,7 @@ PanelWindow {
                                     }
                                     return "";
                                 }
-                                color: root.colOnSurfaceVariant
+                                color: Theme.colOnSurfaceVariant
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 11
                                 anchors.verticalCenter: parent.verticalCenter
@@ -762,7 +762,7 @@ PanelWindow {
 
                         Text {
                             text: delegateItem.modelData?.comment ?? ""
-                            color: root.colOnSurfaceVariant
+                            color: Theme.colOnSurfaceVariant
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
                             wrapMode: Text.Wrap
@@ -816,7 +816,7 @@ PanelWindow {
                 ColorOverlay {
                     anchors.fill: rawSearchIcon
                     source: rawSearchIcon
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
+                    color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 1.0)
                     opacity: 1.0
                 }
             }
@@ -840,7 +840,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 88
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
+                    color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 1.0)
                     text: "•"
                     font.pixelSize: 10
                     opacity: card.width > 100 ? 1.0 : 0.0
@@ -853,7 +853,7 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.leftMargin: 106
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
+                    color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 1.0)
                     font.pixelSize: 13
                     font.family: Theme.defaultFontFamily
                     text: true ? "Search, calculate or run" : "Search applications…"
@@ -869,7 +869,7 @@ PanelWindow {
                     anchors.right: clearBtn.left
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
+                    color: Qt.rgba(root.colOnSurface.r, root.colOnSurface.g, root.colOnSurface.b, 1.0)
                     font.weight: Theme.defaultFontWeight; font.pixelSize: 14
                     font.family: Theme.defaultFontFamily
                     clip: true
@@ -922,7 +922,7 @@ PanelWindow {
                         font.family: "Material Symbols Rounded"
                         font.weight: Theme.defaultFontWeight
                         font.pixelSize: 14
-                        color: root.colOnSurfaceVariant
+                        color: Theme.colOnSurfaceVariant
                     }
 
                     MouseArea {
