@@ -957,8 +957,8 @@ PanelWindow {
 
     Process {
         id: ramProc; running: true
-        command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.1f\", $3/1024}'"]
-        stdout: StdioCollector { onStreamFinished: { if (text) bar.ramStr = text.trim() } }
+        command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.0f\", $3/$2*100}'"]
+        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text); if (!isNaN(v)) bar.ramStr = Math.round(v).toString() } }
     }
     Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProc.running = true }
 
