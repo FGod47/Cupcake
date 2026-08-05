@@ -908,7 +908,7 @@ Rectangle {
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
-                                                Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
+                                                Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
                                                 statusProc.running = true; wifiScanProc.running = true;
                                             }
                                         }
