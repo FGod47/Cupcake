@@ -712,16 +712,29 @@ Rectangle {
                                 Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected && hasInternet }
                             }
 
-                            // Bottom Row: Password Input Field (INSIDE SAME UNIFIED BACKGROUND CARD!)
+                            // Bottom Row: Action Drawer (Password input or Direct Connect button for saved networks)
                             Rectangle {
                                 visible: isExpanded
                                 Layout.fillWidth: true; height: 34; radius: 10
                                 color: Qt.rgba(1, 1, 1, 0.06); border.color: Theme.colPrimary; border.width: 1
+                                property bool isKnownSaved: netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim())
+
                                 RowLayout {
                                     anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 6; spacing: 6
                                     Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 13; color: Theme.colPrimary }
+
+                                    // For Saved / Open networks: show "Saved Profile" label
+                                    Text {
+                                        visible: parent.parent.isKnownSaved || modelData.security === "Open"
+                                        Layout.fillWidth: true
+                                        text: parent.parent.isKnownSaved ? "Saved Profile (No Password Required)" : "Open Network"
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                                    }
+
+                                    // For New Encrypted networks: show Password TextInput
                                     TextInput {
                                         id: wifiPassInput
+                                        visible: !parent.parent.isKnownSaved && modelData.security !== "Open"
                                         Layout.fillWidth: true; text: passInputText
                                         echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: bar.fg
@@ -740,17 +753,28 @@ Rectangle {
                                     }
                                     Text {
                                         id: showWifiPass; property bool show: false
+                                        visible: !parent.parent.isKnownSaved && modelData.security !== "Open"
                                         text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 14; color: bar.fg
                                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
                                     }
+
+                                    // Explicit Connect Button
                                     Rectangle {
-                                        width: 58; height: 24; radius: 6; color: Theme.colPrimary
+                                        width: 65; height: 24; radius: 6; color: Theme.colPrimary
                                         Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
-                                                Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
-                                                showPassInput = false; passInputText = ""; wifiScanProc.running = true;
+                                                let isKnown = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === selectedSSID.toLowerCase().trim());
+                                                let cmd = "";
+                                                if (isKnown || modelData.security === "Open") {
+                                                    cmd = "nmcli con up id \"" + selectedSSID + "\" 2>/dev/null || nmcli dev wifi connect \"" + selectedSSID + "\"";
+                                                } else {
+                                                    cmd = "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\"";
+                                                }
+                                                Quickshell.execDetached(["bash", "-c", cmd]);
+                                                showPassInput = false; passInputText = "";
+                                                statusProc.running = true; wifiScanProc.running = true;
                                             }
                                         }
                                     }
@@ -762,18 +786,13 @@ Rectangle {
                             id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             enabled: !isExpanded
                             onClicked: {
-                                if (modelData.connected) {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
-                                    statusProc.running = true; wifiScanProc.running = true; return;
-                                }
-                                let isSaved = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
-                                if (isSaved || modelData.security === "Open") {
+                                if (modelData.connected) return;
+                                if (selectedSSID === modelData.ssid && showPassInput) {
                                     showPassInput = false;
-                                    let connCmd = "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\"";
-                                    Quickshell.execDetached(["bash", "-c", connCmd]);
-                                    statusProc.running = true; wifiScanProc.running = true;
                                 } else {
-                                    selectedSSID = modelData.ssid; showPassInput = true; passInputText = "";
+                                    selectedSSID = modelData.ssid;
+                                    showPassInput = true;
+                                    passInputText = "";
                                 }
                             }
                         }
