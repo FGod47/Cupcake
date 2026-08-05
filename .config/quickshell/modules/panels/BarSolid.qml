@@ -345,7 +345,6 @@ PanelWindow {
                     }
 
                     Text {
-                        visible: isWired || (isWifi && isWifiConnected) || isHotspot
                         text: "•"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 15
@@ -355,8 +354,7 @@ PanelWindow {
                     }
 
                     Text {
-                        visible: isWired || (isWifi && isWifiConnected) || isHotspot
-                        text: netStr
+                        text: (isWired || (isWifi && isWifiConnected) || isHotspot) ? netStr : "Disconnected"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.weight: Theme.defaultFontWeight
