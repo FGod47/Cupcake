@@ -345,15 +345,6 @@ PanelWindow {
                     }
 
                     Text {
-                        text: "•"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 15
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    Text {
                         text: {
                             let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
                             let hasInt = netSplitPill ? netSplitPill.hasInternet : true;
