@@ -30,11 +30,15 @@ PanelWindow {
         Region { item: powerSplitPill }
         Region { item: volBrightSplitPill }
         Region { item: netSplitPill }
+        Region { item: musicSplitPill }
     }
 
     property real baseHeight: startHeight
     property bool dropdownOpen: false
     property bool netDropdownOpen: false
+    property bool musicDropdownOpen: false
+    property var barActivePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
+    property bool isMusicPlaying: barActivePlayer !== null && (barActivePlayer.playbackState === 1 || barActivePlayer.isPlaying) && (barActivePlayer.trackTitle !== "")
     property real extraHeight: 0
     
     Connections {
@@ -191,7 +195,7 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: bar.startX
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))))
         Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -880,6 +884,9 @@ PanelWindow {
     // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
     DropdownPower { id: powerSplitPill }
 
+    // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
+    DropdownMusic { id: musicSplitPill }
+
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
@@ -930,7 +937,7 @@ PanelWindow {
         
         onFinished: {
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : bar.barW)));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))));
             });
         }
     }
