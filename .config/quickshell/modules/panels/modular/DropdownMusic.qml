@@ -25,7 +25,7 @@ Rectangle {
     height: menuExpanded ? (musicContentCol.implicitHeight + 28) : 30
     Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-    x: bar.barX + bar.barW - contentW
+    x: bar.barX
     width: contentW
 
     Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
