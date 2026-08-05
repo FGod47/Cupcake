@@ -45,7 +45,7 @@ Rectangle {
 
     readonly property real openGap: 16
     readonly property real headerW: networkIconsRow.implicitWidth + 24
-    readonly property real expandedW: 310
+    readonly property real expandedW: 320
     property real contentW: menuExpanded ? expandedW : headerW
 
     x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -96,7 +96,7 @@ Rectangle {
                         let cleanIp = ipStr.replace("inet ", "").trim();
                         if (cleanIp !== "127.0.0.1") {
                             if (cleanIp.startsWith("10.42.")) netSplitPill.hsIp = cleanIp;
-                            else if (cleanIp.startsWith("192.168.")) {
+                            else if (cleanIp.startsWith("192.168.") || cleanIp.startsWith("172.") || cleanIp.startsWith("10.")) {
                                 netSplitPill.wifiIp = cleanIp;
                                 netSplitPill.wiredIp = cleanIp;
                             }
@@ -234,7 +234,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 12
+        anchors.margins: 14
         spacing: 12
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
@@ -356,13 +356,14 @@ Rectangle {
             }
         }
 
-        // ── 3. Connection Title + Icon + Enable Switch Header Row ──
+        // ── 3. Header Row: Icon Badge + Name/Subtitle + Enable Switch ──
         RowLayout {
             Layout.fillWidth: true
-            spacing: 10
+            spacing: 12
 
             Rectangle {
-                width: 34; height: 34; radius: 17
+                width: 38; height: 38; radius: 19
+                Layout.alignment: Qt.AlignVCenter
                 color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
                 border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3)
                 border.width: 1
@@ -370,26 +371,30 @@ Rectangle {
                 Text {
                     anchors.centerIn: parent
                     text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? "\ueb52" : (activeTab === 2 ? "\ued1b" : "\uea37"))
-                    font.family: fontName; font.pixelSize: 16
+                    font.family: fontName; font.pixelSize: 17
                     color: Theme.colPrimary
                 }
             }
 
             ColumnLayout {
-                Layout.fillWidth: true; spacing: 1
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                spacing: 2
+
                 Text {
-                    text: activeTab === 0 ? "Wired" : (activeTab === 1 ? (wifiSSID !== "Disconnected" ? wifiSSID : "Wi-Fi") : (activeTab === 2 ? "Hotspot" : (btDeviceName !== "" ? btDeviceName : "Bluetooth")))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
+                    text: activeTab === 0 ? "Wired" : (activeTab === 1 ? "Wi-Fi" : (activeTab === 2 ? "Hotspot" : "Bluetooth"))
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + netStr) : (activeTab === 1 ? (wifiIp + " · " + netStr) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? ("Connected · " + btBattery + "% battery") : "Disabled")))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                    text: activeTab === 0 ? (wiredIp + " · " + netStr) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + wifiIp) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
 
-            // Enable Toggle Switch right at the Name side!
+            // Enable Toggle Switch (Aligned Right & Centered)
             Rectangle {
                 width: 44; height: 24; radius: 12
+                Layout.alignment: Qt.AlignVCenter
                 color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                 Behavior on color { ColorAnimation { duration: 200 } }
 
@@ -420,7 +425,7 @@ Rectangle {
             }
         }
 
-        // ── 4. Dual Stat Cards (Show ONLY on the active internet connection tab) ──
+        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD - Exclusively on Active Connected Interface) ──
         RowLayout {
             visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected") || (activeTab === 2 && isHotspot)
             Layout.fillWidth: true
@@ -450,7 +455,7 @@ Rectangle {
         // ── 5. Tab Dynamic Content List ──
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: 6
+            spacing: 8
 
             // Tab 0: Wired
             Text {
@@ -463,16 +468,16 @@ Rectangle {
 
             // Tab 1: Wi-Fi Networks
             Repeater {
-                model: activeTab === 1 ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "Home-5G", connected: true, security: "WPA2"}, {ssid: "Neighbor_2.4G", connected: false, security: "WPA2"}, {ssid: "Pixel_9210", connected: false, security: "WPA2"}]) : []
+                model: activeTab === 1 ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]) : []
                 delegate: Rectangle {
-                    Layout.fillWidth: true; height: 36; radius: 10
+                    Layout.fillWidth: true; height: 38; radius: 12
                     color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                     border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
                         Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
-                        Text { Layout.fillWidth: true; text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.Normal; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                        Text { Layout.fillWidth: true; text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
                         Text { text: modelData.security !== "Open" ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" }
                         Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
                     }
@@ -497,13 +502,13 @@ Rectangle {
             Repeater {
                 model: activeTab === 3 ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : [{name: "Galaxy Buds", connected: true, mac: "00:11:22", battery: "67%"}, {name: "Pixel Watch", connected: false, mac: "33:44:55", battery: "Paired"}]) : []
                 delegate: Rectangle {
-                    Layout.fillWidth: true; height: 36; radius: 10
+                    Layout.fillWidth: true; height: 38; radius: 12
                     color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                     border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
-                        Text { Layout.fillWidth: true; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.Normal; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                        Text { Layout.fillWidth: true; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
                         Text { text: modelData.connected ? (modelData.battery || "67%") : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                         Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
                     }
