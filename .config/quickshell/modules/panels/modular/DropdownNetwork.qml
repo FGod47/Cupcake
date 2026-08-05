@@ -866,9 +866,8 @@ Rectangle {
                                 }
 
                                 // Right-side action icons (fixed-size, never overlap name)
-                                RowLayout {
+                                Row {
                                     spacing: 6
-                                    Layout.fillHeight: true
                                     Layout.alignment: Qt.AlignVCenter
 
                                     // Lock icon for secured unconnected networks
@@ -876,14 +875,12 @@ Rectangle {
                                         text: "\ueae2"; font.family: fontName; font.pixelSize: 12
                                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                         visible: modelData.security !== "Open" && !modelData.connected && !isExpanded
-                                        Layout.alignment: Qt.AlignVCenter
                                     }
 
                                     // Cancel close button when password drawer is open
                                     Text {
                                         visible: isExpanded
                                         text: "\uea6a"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b"
-                                        Layout.alignment: Qt.AlignVCenter
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: { showPassInput = false; passInputText = ""; }
@@ -895,16 +892,13 @@ Rectangle {
                                         text: "\uea5e"; font.family: fontName; font.pixelSize: 14
                                         color: Theme.colPrimary
                                         visible: modelData.connected && hasInternet && !modelData.connected
-                                        Layout.alignment: Qt.AlignVCenter
                                     }
 
-                                    // Disconnect button (less white, 18px, optically centered)
+                                    // Disconnect button (less white, 18px, centered)
                                     Text {
                                         visible: modelData.connected
                                         text: "\uea6a"; font.family: fontName; font.pixelSize: 18
                                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                                        Layout.alignment: Qt.AlignVCenter
-                                        Layout.topMargin: 2
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
