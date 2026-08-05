@@ -30,6 +30,9 @@ Rectangle {
 
     property string wiredIface: "enp6s0"
     property string wiredIp: "192.168.1.42"
+    property string wiredGateway: "192.168.1.1"
+    property string wiredDns: "1.1.1.1"
+    property string wiredMac: "00:00:00:00:00:00"
 
     property string btDeviceName: ""
     property int btBattery: 0
@@ -178,7 +181,7 @@ Rectangle {
     Process {
         id: statusProc
         running: netSplitPill.menuExpanded
-        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---ping---'; (ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && echo 'online' || echo 'no_internet'); echo '---bt---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---ping---'; (ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && echo 'online' || echo 'no_internet'); echo '---bt---'; bluetoothctl devices Connected; echo '---eth---'; nmcli dev show $(nmcli -t -f DEVICE,TYPE dev | grep ':ethernet$' | cut -d: -f1 | head -n1) 2>/dev/null"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -193,7 +196,10 @@ Rectangle {
                 let pingRest = connParts[1] || "";
                 let pingParts = pingRest.split("---bt---");
                 let pingState = (pingParts[0] || "").trim();
-                let btOut = pingParts[1] || "";
+                let btRest = pingParts[1] || "";
+                let btParts = btRest.split("---eth---");
+                let btOut = btParts[0] || "";
+                let ethOut = btParts[1] || "";
 
                 if (nmConnState === "portal") {
                     netSplitPill.internetStatus = "Login Required";
@@ -235,6 +241,18 @@ Rectangle {
                 } else {
                     netSplitPill.btDeviceName = "";
                     netSplitPill.btBattery = 0;
+                }
+
+                // Ethernet Details
+                if (ethOut) {
+                    let gwMatch = ethOut.match(/IP4\.GATEWAY:\s*(.+)/);
+                    if (gwMatch && gwMatch[1].trim() !== "--") netSplitPill.wiredGateway = gwMatch[1].trim();
+                    let dnsMatch = ethOut.match(/IP4\.DNS\[1\]:\s*(.+)/);
+                    if (dnsMatch && dnsMatch[1].trim() !== "--") netSplitPill.wiredDns = dnsMatch[1].trim();
+                    let macMatch = ethOut.match(/GENERAL\.HWADDR:\s*(.+)/);
+                    if (macMatch && macMatch[1].trim() !== "--") netSplitPill.wiredMac = macMatch[1].trim();
+                    let ip4Match = ethOut.match(/IP4\.ADDRESS\[1\]:\s*([0-9\.]+)/);
+                    if (ip4Match) netSplitPill.wiredIp = ip4Match[1].trim();
                 }
             }
         }
@@ -606,18 +624,149 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 8
 
-            // Tab 0: Wired Ethernet Active Card
-            Rectangle {
+            // Tab 0: Wired Ethernet Active Card & Details
+            ColumnLayout {
                 visible: activeTab === 0
-                Layout.fillWidth: true; height: 38; radius: 19
-                color: isWired ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.03)
-                border.width: 0
+                Layout.fillWidth: true
+                spacing: 8
 
-                RowLayout {
-                    anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                    Text { text: "\uebd9"; font.family: fontName; font.pixelSize: 14; color: isWired ? Theme.colPrimary : bar.fg }
-                    Text { Layout.fillWidth: true; text: wiredIface + " (Ethernet)"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: isWired ? Font.Bold : Font.DemiBold; color: isWired ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                    Text { text: isWired ? "\uea5e" : ""; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: isWired }
+                Rectangle {
+                    Layout.fillWidth: true; height: 38; radius: 19
+                    color: isWired ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.03)
+                    border.width: 0
+
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                        Text { text: "\uebd9"; font.family: fontName; font.pixelSize: 14; color: isWired ? Theme.colPrimary : bar.fg }
+                        Text { Layout.fillWidth: true; text: wiredIface + " (Ethernet)"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: isWired ? Font.Bold : Font.DemiBold; color: isWired ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                        Text { text: isWired ? "\uea5e" : ""; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: isWired }
+                    }
+                }
+
+                Text {
+                    visible: isWired
+                    text: "CONNECTION DETAILS"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                }
+
+                // Connection Details Card
+                Rectangle {
+                    visible: isWired
+                    Layout.fillWidth: true
+                    height: 148
+                    radius: 14
+                    color: Qt.rgba(1, 1, 1, 0.03)
+                    border.width: 0
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 14; anchors.rightMargin: 14
+                        anchors.topMargin: 8; anchors.bottomMargin: 8
+                        spacing: 0
+
+                        // IPv4 row
+                        RowLayout {
+                            Layout.fillWidth: true; Layout.fillHeight: true
+                            Text { text: "IPv4 address"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: wiredIp; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: bar.fg }
+                            Text {
+                                id: copyIpIcon
+                                property bool copied: false
+                                text: copied ? "\uea66" : "\uea9c"
+                                font.family: fontName; font.pixelSize: 13
+                                color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["wl-copy", wiredIp]);
+                                        copyIpIcon.copied = true;
+                                        resetTimerIp.restart();
+                                    }
+                                }
+                                Timer { id: resetTimerIp; interval: 1500; onTriggered: copyIpIcon.copied = false }
+                            }
+                        }
+
+                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.05) }
+
+                        // Gateway row
+                        RowLayout {
+                            Layout.fillWidth: true; Layout.fillHeight: true
+                            Text { text: "Gateway"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: wiredGateway; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: bar.fg }
+                            Text {
+                                id: copyGwIcon
+                                property bool copied: false
+                                text: copied ? "\uea66" : "\uea9c"
+                                font.family: fontName; font.pixelSize: 13
+                                color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["wl-copy", wiredGateway]);
+                                        copyGwIcon.copied = true;
+                                        resetTimerGw.restart();
+                                    }
+                                }
+                                Timer { id: resetTimerGw; interval: 1500; onTriggered: copyGwIcon.copied = false }
+                            }
+                        }
+
+                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.05) }
+
+                        // DNS row
+                        RowLayout {
+                            Layout.fillWidth: true; Layout.fillHeight: true
+                            Text { text: "DNS"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: wiredDns; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: bar.fg }
+                            Text {
+                                id: copyDnsIcon
+                                property bool copied: false
+                                text: copied ? "\uea66" : "\uea9c"
+                                font.family: fontName; font.pixelSize: 13
+                                color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["wl-copy", wiredDns]);
+                                        copyDnsIcon.copied = true;
+                                        resetTimerDns.restart();
+                                    }
+                                }
+                                Timer { id: resetTimerDns; interval: 1500; onTriggered: copyDnsIcon.copied = false }
+                            }
+                        }
+
+                        Rectangle { Layout.fillWidth: true; height: 1; color: Qt.rgba(1, 1, 1, 0.05) }
+
+                        // MAC address row
+                        RowLayout {
+                            Layout.fillWidth: true; Layout.fillHeight: true
+                            Text { text: "MAC address"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: wiredMac; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: bar.fg }
+                            Text {
+                                id: copyMacIcon
+                                property bool copied: false
+                                text: copied ? "\uea66" : "\uea9c"
+                                font.family: fontName; font.pixelSize: 13
+                                color: copied ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["wl-copy", wiredMac]);
+                                        copyMacIcon.copied = true;
+                                        resetTimerMac.restart();
+                                    }
+                                }
+                                Timer { id: resetTimerMac; interval: 1500; onTriggered: copyMacIcon.copied = false }
+                            }
+                        }
+                    }
                 }
             }
 
