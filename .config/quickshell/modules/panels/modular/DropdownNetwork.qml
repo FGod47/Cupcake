@@ -498,8 +498,11 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (activeTab === 0) bar.isWired = !bar.isWired;
-                        else if (activeTab === 1) {
+                        if (activeTab === 0) {
+                            bar.isWired = !bar.isWired;
+                            Quickshell.execDetached(["bash", "-c", "if nmcli dev status | grep -E 'ethernet\\s+connected'; then nmcli dev disconnect " + netSplitPill.wiredIface + "; else nmcli dev connect " + netSplitPill.wiredIface + " 2>/dev/null || nmcli con up 'Wired connection 1'; fi"]);
+                            statusProc.running = true;
+                        } else if (activeTab === 1) {
                             bar.isWifi = !bar.isWifi;
                             Quickshell.execDetached(["bash", "-c", "if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi"]);
                         } else if (activeTab === 2) {
