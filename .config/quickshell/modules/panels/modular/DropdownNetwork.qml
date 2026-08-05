@@ -19,6 +19,7 @@ Rectangle {
 
     property var wifiList: []
     property var btList: []
+    property var savedWifiList: []
 
     property string wifiSSID: "Disconnected"
     property int wifiSignal: 85
@@ -35,11 +36,17 @@ Rectangle {
     property string hsBand: "2.4 GHz"
     property string hsIp: "10.42.0.1"
 
+    property string selectedSSID: ""
+    property string passInputText: ""
+    property bool showPassInput: false
+    property bool showSavedWifi: false
+
     onMenuExpandedChanged: {
         if (menuExpanded) {
             statusProc.running = true;
             wifiScanProc.running = true;
             btScanProc.running = true;
+            savedProc.running = true;
         }
     }
 
@@ -48,7 +55,7 @@ Rectangle {
 
     readonly property real openGap: 16
     readonly property real headerW: networkIconsRow.implicitWidth + 24
-    readonly property real expandedW: 310
+    readonly property real expandedW: 320
     property real contentW: menuExpanded ? expandedW : headerW
 
     x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -64,6 +71,24 @@ Rectangle {
     color: bar.pillColor
     border.color: Qt.rgba(1, 1, 1, 0.08)
     border.width: 1
+
+    // Saved Networks Processor
+    Process {
+        id: savedProc
+        command: ["bash", "-c", "nmcli -t -f NAME,TYPE con show | grep 802-11-wireless | cut -d: -f1"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let lines = text.trim().split('\n');
+                let res = [];
+                for (let l of lines) {
+                    let name = l.trim();
+                    if (name && name !== "Hotspot") res.push(name);
+                }
+                netSplitPill.savedWifiList = res;
+            }
+        }
+    }
 
     // Real Status Processor
     Process {
@@ -85,9 +110,6 @@ Rectangle {
                 if (ethMatch) {
                     netSplitPill.wiredIface = ethMatch[1].trim();
                 }
-
-                // Wi-Fi SSID
-                let wifiMatch = nmOut.match(/^([^:]+):wifi:connected/m);
 
                 // IP Addresses
                 let ipMatches = ipOut.match(/inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/g);
@@ -125,7 +147,7 @@ Rectangle {
     // Scanners
     Process {
         id: wifiScanProc
-        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL,SECURITY,IN-USE dev wifi list"]
+        command: ["bash", "-c", "nmcli device wifi rescan 2>/dev/null; sleep 0.3; nmcli -t -f SSID,SIGNAL,SECURITY,IN-USE dev wifi list"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -137,7 +159,8 @@ Rectangle {
                     if (parts.length >= 4 && parts[0].trim() !== "") {
                         let ssid = parts[0].trim();
                         let sig = parseInt(parts[1]) || 0;
-                        if (parts[3].includes("*")) {
+                        let isConn = parts[3].includes("*");
+                        if (isConn) {
                             netSplitPill.wifiSSID = ssid;
                             netSplitPill.wifiSignal = sig;
                         }
@@ -147,7 +170,7 @@ Rectangle {
                                 ssid: ssid,
                                 signal: sig,
                                 security: parts[2] || "Open",
-                                connected: parts[3].includes("*")
+                                connected: isConn
                             });
                         }
                     }
@@ -475,30 +498,167 @@ Rectangle {
                 }
             }
 
-            // Tab 1: Wi-Fi Networks List
-            Repeater {
-                model: activeTab === 1 ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]) : []
-                delegate: Rectangle {
-                    Layout.fillWidth: true; height: 38; radius: 12
-                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
-                    border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+            // Tab 1: Full-Fledged Wi-Fi Management Section
+            ColumnLayout {
+                visible: activeTab === 1
+                Layout.fillWidth: true
+                spacing: 8
 
-                    RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                        Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
-                        Text { Layout.fillWidth: true; text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                        Text { text: modelData.security !== "Open" ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" }
-                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
+                // Header Bar: AVAILABLE NETWORKS + Refresh Icon
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text { text: "AVAILABLE NETWORKS"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Item { Layout.fillWidth: true }
+                    Text {
+                        text: "\ueb1c" // refresh icon
+                        font.family: fontName; font.pixelSize: 13
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: wifiScanProc.running = true }
                     }
+                }
 
-                    MouseArea {
-                        id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                        onClicked: { Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]); wifiScanProc.running = true; }
+                // Inline Password Input Drawer (when connecting to new protected network)
+                ColumnLayout {
+                    visible: showPassInput
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    Text { text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary }
+                    Rectangle {
+                        Layout.fillWidth: true; height: 36; radius: 10
+                        color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                            TextInput {
+                                id: wifiPassInput
+                                Layout.fillWidth: true; text: passInputText
+                                echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
+                                onTextChanged: passInputText = text
+                            }
+                            Text {
+                                id: showWifiPass; property bool show: false
+                                text: show ? "👁️" : "🙈"; font.pixelSize: 12
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
+                            }
+                            Rectangle {
+                                width: 56; height: 26; radius: 6; color: Theme.colPrimary
+                                Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
+                                        showPassInput = false;
+                                        passInputText = "";
+                                        wifiScanProc.running = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Wi-Fi Available Networks List Repeater
+                Repeater {
+                    model: netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]
+                    delegate: Rectangle {
+                        Layout.fillWidth: true; height: 40; radius: 12
+                        color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+                        border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
+                            Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 0
+                                Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                                Text { text: modelData.connected ? "Connected" : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                            }
+
+                            // Disconnect / Forget Buttons for Connected Network
+                            Row {
+                                visible: modelData.connected
+                                spacing: 4
+                                Rectangle {
+                                    width: 26; height: 26; radius: 6
+                                    color: Qt.rgba(1, 0, 0, 0.2)
+                                    Text { anchors.centerIn: parent; text: "✕"; font.pixelSize: 10; color: "#ff6b6b" }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
+                                            wifiScanProc.running = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            Text { text: modelData.security !== "Open" && !modelData.connected ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" && !modelData.connected }
+                            Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
+                        }
+
+                        MouseArea {
+                            id: wifiItemMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (modelData.connected) return;
+                                let isSaved = netSplitPill.savedWifiList.includes(modelData.ssid);
+                                if (isSaved || modelData.security === "Open") {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\""]);
+                                    wifiScanProc.running = true;
+                                } else {
+                                    selectedSSID = modelData.ssid;
+                                    showPassInput = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Manage Saved Networks Drawer Toggle
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.topMargin: 4
+                    Text {
+                        text: showSavedWifi ? "Hide Saved Networks" : "⚙  Manage Saved Networks"
+                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showSavedWifi = !showSavedWifi }
+                    }
+                }
+
+                // Saved Networks List Drawer
+                ColumnLayout {
+                    visible: showSavedWifi
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    Repeater {
+                        model: netSplitPill.savedWifiList
+                        delegate: Rectangle {
+                            Layout.fillWidth: true; height: 32; radius: 8
+                            color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                                Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                Text { Layout.fillWidth: true; text: modelData; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: bar.fg; elide: Text.ElideRight }
+                                Text {
+                                    text: "🗑️"; font.pixelSize: 11
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Quickshell.execDetached(["bash", "-c", "nmcli con delete id \"" + modelData + "\""]);
+                                            savedProc.running = true;
+                                            wifiScanProc.running = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            // Tab 2: Sleek Hotspot Config Section (Modern Pill Cards)
+            // Tab 2: Sleek Hotspot Config Section
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
