@@ -386,7 +386,7 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + netStr) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + wifiIp) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + (isWifi ? "Connected" : "Disconnected")) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
