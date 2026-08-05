@@ -1017,12 +1017,18 @@ Rectangle {
                             enabled: !isExpanded
                             onClicked: {
                                 if (modelData.connected) return;
-                                if (selectedSSID === modelData.ssid && showPassInput) {
-                                    showPassInput = false;
+                                let isKnown = netSplitPill.savedWifiList.some(s => s.toLowerCase().trim() === modelData.ssid.toLowerCase().trim());
+                                if (isKnown || modelData.security === "Open") {
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con up id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev wifi connect \"" + modelData.ssid + "\""]);
+                                    statusProc.running = true; wifiScanProc.running = true;
                                 } else {
-                                    selectedSSID = modelData.ssid;
-                                    showPassInput = true;
-                                    passInputText = "";
+                                    if (selectedSSID === modelData.ssid && showPassInput) {
+                                        showPassInput = false;
+                                    } else {
+                                        selectedSSID = modelData.ssid;
+                                        showPassInput = true;
+                                        passInputText = "";
+                                    }
                                 }
                             }
                         }
