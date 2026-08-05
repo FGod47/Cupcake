@@ -610,9 +610,9 @@ Rectangle {
             // Tab 0: Wired Ethernet Active Card
             Rectangle {
                 visible: activeTab === 0
-                Layout.fillWidth: true; height: 38; radius: 12
+                Layout.fillWidth: true; height: 38; radius: 19
                 color: isWired ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.03)
-                border.color: isWired ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+                border.width: 0
 
                 RowLayout {
                     anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
