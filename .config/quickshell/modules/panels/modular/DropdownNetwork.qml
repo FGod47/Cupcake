@@ -1330,7 +1330,7 @@ Rectangle {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10; spacing: 8
 
                             Text {
-                                text: modelData.name.toLowerCase().includes("head") || modelData.name.toLowerCase().includes("buds") || modelData.name.toLowerCase().includes("audio") ? "\uea98" : (modelData.name.toLowerCase().includes("phone") ? "\ueb10" : "\uea37")
+                                text: modelData.name.toLowerCase().includes("head") || modelData.name.toLowerCase().includes("buds") || modelData.name.toLowerCase().includes("audio") || modelData.name.toLowerCase().includes("ear") ? "\ueabd" : (modelData.name.toLowerCase().includes("phone") ? "\ueb10" : "\uea37")
                                 font.family: fontName; font.pixelSize: 16; color: modelData.connected ? Theme.colPrimary : bar.fg
                             }
 
