@@ -472,69 +472,7 @@ Rectangle {
             }
         }
 
-        // ── 2. Bluetooth Circular Progress Ring (ONLY SHOWN WHEN CONNECTED TO A DEVICE!) ──
-        Item {
-            visible: activeTab === 3 && btDeviceName !== "" && isBluetooth
-            Layout.alignment: Qt.AlignHCenter
-            width: 120
-            height: 120
 
-            Canvas {
-                id: gaugeCanvas
-                anchors.fill: parent
-                property real percentage: (btBattery / 100.0)
-                onPercentageChanged: requestPaint()
-
-                onPaint: {
-                    let ctx = getContext("2d");
-                    ctx.reset();
-                    let cx = width / 2;
-                    let cy = height / 2;
-                    let radius = 50;
-                    let startAngle = -Math.PI / 2;
-                    let endAngle = startAngle + (percentage * 2 * Math.PI);
-
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-                    ctx.lineWidth = 6;
-                    ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.08);
-                    ctx.stroke();
-
-                    if (percentage > 0) {
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, radius, startAngle, endAngle);
-                        ctx.lineWidth = 6;
-                        ctx.lineCap = "round";
-                        ctx.strokeStyle = Theme.colPrimary;
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 2
-
-                Rectangle {
-                    Layout.alignment: Qt.AlignHCenter
-                    width: 28; height: 28; radius: 14
-                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2)
-                    Text { anchors.centerIn: parent; text: "\uecea"; font.family: fontName; font.pixelSize: 13; color: Theme.colPrimary }
-                }
-
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: btBattery > 0 ? (btBattery + "%") : "--"
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: bar.fg
-                }
-
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "Battery"
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                }
-            }
-        }
 
         // ── 3. Header Row: Icon Badge + Name/Subtitle + Enable Switch ──
         RowLayout {
