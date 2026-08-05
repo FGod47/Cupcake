@@ -432,7 +432,7 @@ Rectangle {
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 8; spacing: 1
                     Text { text: "DOWNLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
+                    Text { text: (typeof bar.netRxStr !== "undefined" && bar.netRxStr !== "") ? bar.netRxStr : netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
                 }
             }
 
@@ -442,7 +442,7 @@ Rectangle {
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 8; spacing: 1
                     Text { text: "UPLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    Text { text: isWired || isWifi ? "18 KB/s" : "0 KB/s"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
+                    Text { text: (typeof bar.netTxStr !== "undefined" && bar.netTxStr !== "") ? bar.netTxStr : "0 KB/s"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
                 }
             }
         }

@@ -89,6 +89,8 @@ PanelWindow {
     property string brightStr: "0"
     property string batStr: "100"
     property string netStr: "0 KB/s"
+    property string netRxStr: "0 KB/s"
+    property string netTxStr: "0 KB/s"
     property bool isWifi: false
     property bool isWired: false
     property bool isBluetooth: false
@@ -1007,8 +1009,11 @@ PanelWindow {
                     const dt = Math.max(0.1, (now - netProc.lastTime) / 1000.0)
                     const rxRate = Math.max(0, (rx - netProc.lastRx) / dt)
                     const txRate = Math.max(0, (tx - netProc.lastTx) / dt)
-                    const d = rxRate + txRate
-                    bar.netStr = d >= 1048576 ? (d / 1048576).toFixed(1) + " MB/s" : (Math.round(d / 1024) + " KB/s")
+                    const rxFmt = rxRate >= 1048576 ? (rxRate / 1048576).toFixed(1) + " MB/s" : (Math.round(rxRate / 1024) + " KB/s")
+                    const txFmt = txRate >= 1048576 ? (txRate / 1048576).toFixed(1) + " MB/s" : (Math.round(txRate / 1024) + " KB/s")
+                    bar.netRxStr = rxFmt
+                    bar.netTxStr = txFmt
+                    bar.netStr = rxFmt
                 }
                 netProc.lastRx = rx
                 netProc.lastTx = tx
