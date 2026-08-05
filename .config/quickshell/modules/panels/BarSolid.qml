@@ -331,7 +331,7 @@ PanelWindow {
                         text: "\uebd9" // tabler icon for wired
                         font.family: fontName
                         font.pixelSize: 15
-                        color: fg
+                        color: (netSplitPill && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -340,7 +340,7 @@ PanelWindow {
                         text: "\ueb52" // tabler icon for wifi
                         font.family: fontName
                         font.pixelSize: 15
-                        color: fg
+                        color: (netSplitPill && netSplitPill.wifiSSID !== "Disconnected" && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -354,11 +354,28 @@ PanelWindow {
                     }
 
                     Text {
-                        text: (isWired || (isWifi && isWifiConnected) || isHotspot) ? netStr : "Disconnected"
+                        text: {
+                            let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
+                            let hasInt = netSplitPill ? netSplitPill.hasInternet : true;
+                            if (isWired) {
+                                return hasInt ? netStr : "No Internet";
+                            } else if (isWifi && isWifiConn) {
+                                return hasInt ? netStr : "No Internet";
+                            } else if (isHotspot) {
+                                return netStr;
+                            } else {
+                                return "Disconnected";
+                            }
+                        }
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 13
                         font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        color: {
+                            let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
+                            let hasInt = netSplitPill ? netSplitPill.hasInternet : true;
+                            let noInt = ((isWired || (isWifi && isWifiConn)) && !hasInt);
+                            return noInt ? "#ff6b6b" : Qt.rgba(fg.r, fg.g, fg.b, 0.7);
+                        }
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
