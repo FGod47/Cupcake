@@ -867,6 +867,7 @@ Rectangle {
 
                                 // Right-side action icons (fixed-size, never overlap name)
                                 Row {
+                                    z: 10
                                     spacing: 6
                                     Layout.alignment: Qt.AlignVCenter
 
@@ -896,6 +897,7 @@ Rectangle {
 
                                     // Disconnect Pill Button (hidden on own broadcast hotspot)
                                     Rectangle {
+                                        z: 10
                                         visible: modelData.connected && !(netSplitPill.hsActive && modelData.ssid.toLowerCase().trim() === netSplitPill.hsName.toLowerCase().trim())
                                         width: 76; height: 24; radius: 12
                                         color: Qt.rgba(1, 1, 1, 0.08); border.width: 0
@@ -908,7 +910,7 @@ Rectangle {
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
-                                                Quickshell.execDetached(["bash", "-c", "nmcli con down id \"" + modelData.ssid + "\" 2>/dev/null || nmcli dev disconnect wlan0"]);
+                                                Quickshell.execDetached(["bash", "-c", "nmcli dev disconnect wlan0 2>/dev/null || nmcli con down id \"" + modelData.ssid + "\""]);
                                                 statusProc.running = true; wifiScanProc.running = true;
                                             }
                                         }
