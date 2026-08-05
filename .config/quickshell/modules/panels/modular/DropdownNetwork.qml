@@ -581,7 +581,7 @@ Rectangle {
                     }
                 }
 
-                // Password Drawer
+                // Password Drawer (Clean UI & Tabler Icons)
                 ColumnLayout {
                     visible: showPassInput && isWifi
                     Layout.fillWidth: true
@@ -591,16 +591,17 @@ Rectangle {
                         Layout.fillWidth: true
                         Text { Layout.fillWidth: true; text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary; elide: Text.ElideRight }
                         Text {
-                            text: "\uea6a"; font.family: fontName; font.pixelSize: 12; color: "#ff6b6b"
+                            text: "✕"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: "#ff6b6b"
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { showPassInput = false; passInputText = ""; } }
                         }
                     }
 
                     Rectangle {
-                        Layout.fillWidth: true; height: 36; radius: 10
+                        Layout.fillWidth: true; height: 38; radius: 12
                         color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
                         RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 8; spacing: 8
+                            Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
                             TextInput {
                                 id: wifiPassInput
                                 Layout.fillWidth: true; text: passInputText
@@ -613,15 +614,22 @@ Rectangle {
                                     passInputText = "";
                                     wifiScanProc.running = true;
                                 }
+
+                                Text {
+                                    text: "Enter Wi-Fi password..."
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                                    visible: wifiPassInput.text === "" && !wifiPassInput.activeFocus
+                                }
                             }
                             Text {
                                 id: showWifiPass; property bool show: false
-                                text: show ? "\ueaa5" : "\uea28"; font.family: fontName; font.pixelSize: 14; color: bar.fg
+                                text: show ? "👁️" : "🙈"; font.pixelSize: 13
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
                             }
                             Rectangle {
-                                width: 56; height: 26; radius: 6; color: Theme.colPrimary
-                                Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
+                                width: 62; height: 28; radius: 8; color: Theme.colPrimary
+                                Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.colOnPrimary }
                                 MouseArea {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
@@ -667,7 +675,7 @@ Rectangle {
                                 width: 28; height: 28; radius: 8
                                 color: Qt.rgba(1, 0, 0, 0.18)
                                 border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
-                                Text { anchors.centerIn: parent; text: "\uea6a"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
+                                Text { anchors.centerIn: parent; text: "✕"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: "#ff6b6b" }
                                 MouseArea {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
@@ -774,7 +782,7 @@ Rectangle {
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
-                                text: show ? "\ueaa5" : "\uea28"; font.family: fontName; font.pixelSize: 14; color: bar.fg
+                                text: show ? "👁️" : "🙈"; font.pixelSize: 13
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
                             }
                         }
