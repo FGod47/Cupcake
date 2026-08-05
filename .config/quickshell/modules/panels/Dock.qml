@@ -76,7 +76,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: Math.max(24, globalState.dockIconSize - 12); height: Math.max(24, globalState.dockIconSize - 12); radius: width / 2
+                            width: Math.max(24, globalState.dockIconSize - 6); height: Math.max(24, globalState.dockIconSize - 6); radius: width / 2
                             color: mouseAreaStartLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
                             Text {
                                 anchors.centerIn: parent
@@ -256,7 +256,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: Math.max(24, globalState.dockIconSize - 12); height: Math.max(24, globalState.dockIconSize - 12); radius: width / 2
+                            width: Math.max(24, globalState.dockIconSize - 6); height: Math.max(24, globalState.dockIconSize - 6); radius: width / 2
                             color: mouseAreaEndLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
                             Text {
                                 anchors.centerIn: parent
