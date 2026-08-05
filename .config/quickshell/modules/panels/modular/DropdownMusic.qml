@@ -75,7 +75,7 @@ Rectangle {
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
         Text {
-            text: "\ueabd" // tabler headphones/music icon
+            text: "\ueafc" // tabler music note icon
             font.family: "tabler-icons"
             font.pixelSize: 13
             color: Theme.colPrimary
