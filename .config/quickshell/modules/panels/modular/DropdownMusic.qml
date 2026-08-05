@@ -47,9 +47,9 @@ Rectangle {
         color: Qt.rgba(1, 1, 1, 0.12)
     }
 
-    opacity: bar.isMusicPlaying ? 1.0 : 0.0
+    opacity: bar.musicDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
 
     FontLoader {
         id: ddMusicFont
