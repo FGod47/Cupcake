@@ -868,6 +868,7 @@ Rectangle {
                                 // Right-side action icons (fixed-size, never overlap name)
                                 RowLayout {
                                     spacing: 6
+                                    Layout.fillHeight: true
                                     Layout.alignment: Qt.AlignVCenter
 
                                     // Lock icon for secured unconnected networks
