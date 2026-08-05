@@ -626,7 +626,7 @@ Rectangle {
 
             // Tab 0: Wired Ethernet Active Card & Details
             ColumnLayout {
-                visible: activeTab === 0
+                visible: activeTab === 0 && isWired
                 Layout.fillWidth: true
                 spacing: 8
 
@@ -772,7 +772,7 @@ Rectangle {
 
             // Tab 1: Wi-Fi Networks Section
             ColumnLayout {
-                visible: activeTab === 1
+                visible: activeTab === 1 && isWifi
                 Layout.fillWidth: true
                 spacing: 8
 
@@ -1051,7 +1051,7 @@ Rectangle {
 
             // Tab 2: Hotspot Config Section
             ColumnLayout {
-                visible: activeTab === 2
+                visible: activeTab === 2 && isHotspot
                 Layout.fillWidth: true
                 spacing: 8
 
@@ -1201,7 +1201,7 @@ Rectangle {
 
             // Tab 3: Complete & Feature-Rich Bluetooth Devices Page
             ColumnLayout {
-                visible: activeTab === 3
+                visible: activeTab === 3 && isBluetooth
                 Layout.fillWidth: true
                 spacing: 8
 
