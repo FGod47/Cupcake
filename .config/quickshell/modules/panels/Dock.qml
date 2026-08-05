@@ -73,13 +73,13 @@ PanelWindow {
 
                     Rectangle {
                         width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
-                        color: Theme.colPrimary
+                        color: mouseAreaStartLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
                             font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
-                            color: Theme.colOnPrimary
+                            color: Theme.colPrimary
                         }
                         scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
                         Behavior on scale { NumberAnimation { duration: 150 } }
@@ -248,13 +248,13 @@ PanelWindow {
 
                     Rectangle {
                         width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
-                        color: Theme.colPrimary
+                        color: mouseAreaEndLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
                             font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
-                            color: Theme.colOnPrimary
+                            color: Theme.colPrimary
                         }
                         scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0
                         Behavior on scale { NumberAnimation { duration: 150 } }
