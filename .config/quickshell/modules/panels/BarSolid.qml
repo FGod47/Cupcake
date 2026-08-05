@@ -840,12 +840,6 @@ PanelWindow {
             layer.effect: ColorOverlay {
                 color: bar.fg
             }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
-            }
         }
     }
 
