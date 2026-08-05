@@ -38,8 +38,8 @@ PanelWindow {
     property color colSurface:               Theme.colSurface
     property color colSurfaceContainer:      Theme.colSurfaceContainer // pure black
     property color colSurfaceContainerHigh:  Theme.colSurfaceContainerHigh // very dark grey for search
-    property color colOnSurface:             Theme.colOnSurface // match bar fg
-    property color colOnSurfaceVariant:      Theme.colOnSurfaceVariant
+    property color colOnSurface:             Quickshell.env("CUPCAKE_COL_ON_SURFACE") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE") : Theme.colOnSurface
+    property color colOnSurfaceVariant:      Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") : Theme.colOnSurfaceVariant
     property color colOutline:               Theme.colOutline
     property color colPrimary:               Theme.colPrimary // match bar accent
     
