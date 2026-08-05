@@ -845,7 +845,6 @@ Rectangle {
                         }
 
                         ColumnLayout {
-                            z: 10
                             anchors.fill: parent
                             anchors.leftMargin: 12; anchors.rightMargin: 12
                             anchors.topMargin: 6; anchors.bottomMargin: 6
@@ -890,6 +889,7 @@ Rectangle {
                                 // Right-side action icons (fixed-size, never overlap name)
                                 Row {
                                     id: actionRow
+                                    z: 10
                                     spacing: 6
                                     Layout.alignment: Qt.AlignVCenter
 
