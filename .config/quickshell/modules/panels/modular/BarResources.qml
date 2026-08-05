@@ -5,14 +5,18 @@ import "../../../theme"
 
 // ── System Resource Monitor ──
 // Displays CPU, RAM, Swap, and network speed with color-coded indicators.
-// Reads bar.cpuStr, bar.ramStr, bar.swapStr, bar.netRxStr, bar.netTxStr
-// from parent bar context.
 Row {
     id: barResources
     spacing: 10
     opacity: (bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
     visible: true
     Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+
+    // Load icon font locally so it's always available in this module
+    FontLoader {
+        id: resIconFont
+        source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
+    }
 
     function resourceColor(val) {
         let v = parseFloat(val) || 0;
@@ -35,7 +39,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         Text {
             text: "\uea4a" // cpu
-            font.family: bar.fontName
+            font.family: "tabler-icons"
             font.pixelSize: 13
             color: barResources.resourceColor(bar.cpuStr)
             anchors.verticalCenter: parent.verticalCenter
@@ -56,7 +60,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         Text {
             text: "\uf4bc" // memory
-            font.family: bar.fontName
+            font.family: "tabler-icons"
             font.pixelSize: 13
             color: barResources.resourceColor(bar.ramStr)
             anchors.verticalCenter: parent.verticalCenter
@@ -71,14 +75,14 @@ Row {
         }
     }
 
-    // Swap (only show if in use > 0%)
+    // Swap (only show when in use > 0%)
     Row {
         spacing: 4
         anchors.verticalCenter: parent.verticalCenter
         visible: (parseFloat(bar.swapStr) || 0) > 0
         Text {
-            text: "\uecd2" // swap/arrows icon
-            font.family: bar.fontName
+            text: "\uecd2" // arrows-transfer
+            font.family: "tabler-icons"
             font.pixelSize: 13
             color: barResources.resourceColor(bar.swapStr)
             anchors.verticalCenter: parent.verticalCenter
@@ -97,10 +101,10 @@ Row {
     Row {
         spacing: 4
         anchors.verticalCenter: parent.verticalCenter
-        visible: (bar.isWifi || bar.isWired || bar.isHotspot)
+        visible: bar.isWifi || bar.isWired || bar.isHotspot
         Text {
-            text: "\uea7a" // arrow-down-up / transfer
-            font.family: bar.fontName
+            text: "\uea7a" // arrow up-down transfer
+            font.family: "tabler-icons"
             font.pixelSize: 13
             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
             anchors.verticalCenter: parent.verticalCenter
