@@ -1098,7 +1098,7 @@ Rectangle {
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
-                                text: show ? "\ueaa5" : "\ueaa4"; font.family: fontName; font.pixelSize: 15; color: bar.fg
+                                text: show ? "\uf7ec" : "\uea9a"; font.family: fontName; font.pixelSize: 15; color: bar.fg
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
                             }
                         }
