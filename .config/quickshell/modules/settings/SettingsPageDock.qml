@@ -534,7 +534,9 @@ Item {
                                 bashProcess.running = true;
                             }
                         }
-                        
+                    }
+                }
+
                 NRow {
                     RowLayout {
                         spacing: 12
