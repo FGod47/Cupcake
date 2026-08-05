@@ -84,6 +84,7 @@ PanelWindow {
     // Hardware data
     property string cpuStr: "0"
     property string ramStr: "0"
+    property string swapStr: "0"
     property string tempStr: "0"
     property string volStr: "0"
     property string brightStr: "0"
@@ -91,6 +92,9 @@ PanelWindow {
     property string netStr: "0 KB/s"
     property string netRxStr: "0 KB/s"
     property string netTxStr: "0 KB/s"
+    // CPU delta tracking (for accurate /proc/stat measurement)
+    property int prevCpuIdle: 0
+    property int prevCpuTotal: 0
     property bool isWifi: false
     property bool isWired: false
     property bool isBluetooth: false
@@ -948,19 +952,44 @@ PanelWindow {
     // ─────────────────────────────────────────────────────
     //  BACKGROUND DATA POLLING
     // ─────────────────────────────────────────────────────
+    // Accurate CPU via /proc/stat delta
     Process {
         id: cpuProc; running: true
-        command: ["bash", "-c", "top -bn1 | grep 'Cpu(s)' | awk '{print int($2+$4)}'"]
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text); if (!isNaN(v)) bar.cpuStr = Math.round(v).toString() } }
+        command: ["bash", "-c", "head -1 /proc/stat"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let p = text.trim().split(/\s+/);
+                let user=parseInt(p[1])||0, nice=parseInt(p[2])||0, sys=parseInt(p[3])||0,
+                    idle=parseInt(p[4])||0, iowait=parseInt(p[5])||0,
+                    irq=parseInt(p[6])||0, softirq=parseInt(p[7])||0;
+                let total = user+nice+sys+idle+iowait+irq+softirq;
+                let idleAll = idle+iowait;
+                if (bar.prevCpuTotal > 0) {
+                    let dTotal = total - bar.prevCpuTotal;
+                    let dIdle  = idleAll - bar.prevCpuIdle;
+                    if (dTotal > 0)
+                        bar.cpuStr = Math.max(0, Math.min(100, Math.round(100*(1-dIdle/dTotal)))).toString();
+                }
+                bar.prevCpuIdle  = idleAll;
+                bar.prevCpuTotal = total;
+            }
+        }
     }
-    Timer { interval: 3000; running: true; repeat: true; onTriggered: cpuProc.running = true }
+    Timer { interval: 2000; running: true; repeat: true; onTriggered: cpuProc.running = true }
 
+    // RAM + Swap via /proc/meminfo
     Process {
         id: ramProc; running: true
-        command: ["bash", "-c", "free -m | awk '/Mem:/ {printf \"%.0f\", $3/$2*100}'"]
-        stdout: StdioCollector { onStreamFinished: { let v = parseFloat(text); if (!isNaN(v)) bar.ramStr = Math.round(v).toString() } }
+        command: ["bash", "-c", "awk '/^MemTotal:/{mt=$2}/^MemAvailable:/{ma=$2}/^SwapTotal:/{st=$2}/^SwapFree:/{sf=$2}END{printf \"%.0f %.0f\",((mt-ma)/mt*100),(st>0?(st-sf)/st*100:0)}' /proc/meminfo"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let parts = text.trim().split(" ");
+                let r = parseFloat(parts[0]); if (!isNaN(r)) bar.ramStr = Math.round(r).toString();
+                let s = parseFloat(parts[1]); if (!isNaN(s)) bar.swapStr = Math.round(s).toString();
+            }
+        }
     }
-    Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProc.running = true }
+    Timer { interval: 2000; running: true; repeat: true; onTriggered: ramProc.running = true }
 
     Process {
         id: tempProc; running: true
