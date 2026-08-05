@@ -20,7 +20,7 @@ PanelWindow {
 
     anchors { top: true; left: true; right: true }
     WlrLayershell.namespace: "quickshell"
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: bar.netDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusiveZone: 40
     height: 600
     color: "transparent"
