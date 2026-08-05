@@ -45,6 +45,17 @@ Rectangle {
     property bool showPassInput: false
     property bool showSavedWifi: false
 
+    function getSignalIcon(sig) {
+        if (sig > 75) return "\ueb52";
+        if (sig > 50) return "\ueb51";
+        if (sig > 25) return "\ueb50";
+        return "\ueb4f";
+    }
+
+    function openCaptivePortal() {
+        Quickshell.execDetached(["xdg-open", "https://nmcheck.gnome.org/"]);
+    }
+
     onActiveTabChanged: {
         showPassInput = false;
         passInputText = "";
@@ -84,6 +95,19 @@ Rectangle {
     color: bar.pillColor
     border.color: Qt.rgba(1, 1, 1, 0.08)
     border.width: 1
+
+    // 1. Instant NetworkManager Event Monitor (Zero Delay)
+    Process {
+        id: monitorProc
+        running: true
+        command: ["nmcli", "monitor"]
+        stdout: SplitParser {
+            onRead: {
+                statusProc.running = true;
+                wifiScanProc.running = true;
+            }
+        }
+    }
 
     // Hotspot Settings Processor
     Process {
@@ -149,7 +173,7 @@ Rectangle {
     Process {
         id: statusProc
         running: netSplitPill.menuExpanded
-        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; (ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && echo 'online' || echo 'no_internet'); echo '---bt---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---ping---'; (ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && echo 'online' || echo 'no_internet'); echo '---bt---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -159,11 +183,17 @@ Rectangle {
                 let restParts = rest.split("---conn---");
                 let ipOut = restParts[0] || "";
                 let connRest = restParts[1] || "";
-                let connParts = connRest.split("---bt---");
-                let connState = (connParts[0] || "").trim();
-                let btOut = connParts[1] || "";
+                let connParts = connRest.split("---ping---");
+                let nmConnState = (connParts[0] || "").trim();
+                let pingRest = connParts[1] || "";
+                let pingParts = pingRest.split("---bt---");
+                let pingState = (pingParts[0] || "").trim();
+                let btOut = pingParts[1] || "";
 
-                if (connState === "no_internet") {
+                if (nmConnState === "portal") {
+                    netSplitPill.internetStatus = "Login Required";
+                    netSplitPill.hasInternet = false;
+                } else if (pingState === "no_internet") {
                     netSplitPill.internetStatus = "No Internet";
                     netSplitPill.hasInternet = false;
                 } else {
@@ -192,7 +222,7 @@ Rectangle {
                     }
                 }
 
-                // Bluetooth Connected Device & Info
+                // Bluetooth Connected Device
                 let btMatch = btOut.match(/Device\s+([0-9A-Fa-f:]+)\s+(.+)/);
                 if (btMatch) {
                     netSplitPill.btDeviceName = btMatch[2].trim();
@@ -206,7 +236,7 @@ Rectangle {
     }
 
     Timer {
-        interval: 3000
+        interval: 4000
         running: netSplitPill.menuExpanded
         repeat: true
         onTriggered: { statusProc.running = true; hsProc.running = true; }
@@ -251,7 +281,7 @@ Rectangle {
         }
     }
 
-    // Bluetooth Devices & Scan Processor
+    // Bluetooth Devices Processor
     Process {
         id: btScanProc
         command: ["bash", "-c", "bluetoothctl devices; echo '---conn---'; bluetoothctl devices Connected"]
@@ -321,7 +351,7 @@ Rectangle {
         Text { visible: isHotspot; text: "\ued1b"; font.family: fontName; font.pixelSize: 15; color: fg; anchors.verticalCenter: parent.verticalCenter }
         Text { visible: isBluetooth; text: isBluetoothConnected ? "\uecea" : "\uea37"; font.family: fontName; font.pixelSize: 15; color: fg; anchors.verticalCenter: parent.verticalCenter }
         Text { visible: isWired; text: "\uebd9"; font.family: fontName; font.pixelSize: 15; color: fg; anchors.verticalCenter: parent.verticalCenter }
-        Text { visible: isWifi && !isWired && !isHotspot; text: "\ueb52"; font.family: fontName; font.pixelSize: 15; color: fg; anchors.verticalCenter: parent.verticalCenter }
+        Text { visible: isWifi && !isWired && !isHotspot; text: getSignalIcon(wifiSignal); font.family: fontName; font.pixelSize: 15; color: fg; anchors.verticalCenter: parent.verticalCenter }
         Text { text: "•"; font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.4); anchors.verticalCenter: parent.verticalCenter }
         Text { text: (isWired || (isWifi && wifiSSID !== "Disconnected") || isHotspot) ? netStr : "Disconnected"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.7); anchors.verticalCenter: parent.verticalCenter }
     }
@@ -468,7 +498,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? "\ueb52" : (activeTab === 2 ? "\ued1b" : "\uea37"))
+                    text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? getSignalIcon(wifiSignal) : (activeTab === 2 ? "\ued1b" : "\uea37"))
                     font.family: fontName; font.pixelSize: 16
                     color: Theme.colPrimary
                 }
@@ -594,6 +624,19 @@ Rectangle {
                     }
                 }
 
+                // Captive Portal Login Banner (When internetStatus === "Login Required")
+                Rectangle {
+                    visible: internetStatus === "Login Required" && isWifi
+                    Layout.fillWidth: true; height: 34; radius: 10
+                    color: Qt.rgba(1, 0.6, 0, 0.18); border.color: "#ffa500"; border.width: 1
+                    RowLayout {
+                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                        Text { Layout.fillWidth: true; text: "Web Login Required (Captive Portal)"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: "#ffa500" }
+                        Text { text: "Open Browser ↗"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: bar.fg }
+                    }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: openCaptivePortal() }
+                }
+
                 // Wi-Fi Disabled Warning Banner
                 Rectangle {
                     visible: !isWifi
@@ -602,7 +645,7 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Wi-Fi Repeater
+                // Wi-Fi Repeater with Dynamic Signal Icons & Instant Monitor
                 Repeater {
                     model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
                     delegate: ColumnLayout {
@@ -617,7 +660,7 @@ Rectangle {
 
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                                Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg }
+                                Text { text: getSignalIcon(modelData.signal); font.family: fontName; font.pixelSize: 14; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg }
                                 ColumnLayout {
                                     Layout.fillWidth: true; spacing: 0
                                     Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg; elide: Text.ElideRight }
@@ -694,7 +737,7 @@ Rectangle {
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
                                         onTextChanged: passInputText = text
                                         onAccepted: {
-                                            Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\" password \"" + passInputText + "\""]);
+                                            Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
                                             showPassInput = false;
                                             passInputText = "";
                                             wifiScanProc.running = true;
@@ -718,7 +761,7 @@ Rectangle {
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
-                                                Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + modelData.ssid + "\" password \"" + passInputText + "\""]);
+                                                Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
                                                 showPassInput = false;
                                                 passInputText = "";
                                                 wifiScanProc.running = true;
@@ -892,7 +935,7 @@ Rectangle {
                     Text { text: "AVAILABLE DEVICES"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                     Item { Layout.fillWidth: true }
                     Text {
-                        text: "\ueb1c" // refresh icon
+                        text: "\ueb1c"
                         font.family: fontName; font.pixelSize: 13
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                         MouseArea {
@@ -913,7 +956,7 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Bluetooth is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Bluetooth Repeater (Real paired/scanned devices)
+                // Bluetooth Repeater
                 Repeater {
                     model: isBluetooth ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : []) : []
                     delegate: Rectangle {
