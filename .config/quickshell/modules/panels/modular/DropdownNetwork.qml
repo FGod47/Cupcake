@@ -1043,9 +1043,11 @@ Rectangle {
                                         }
                                     }
                                 }
-                            }
                         }
+                    }
+                }
             }
+        }
 
             // Tab 2: Hotspot Config Section
             ColumnLayout {
