@@ -811,6 +811,13 @@ PanelWindow {
                     sourceSize.height: 24
                     width: 67
                     fillMode: Image.PreserveAspectFit
+                    visible: false
+                }
+                ColorOverlay {
+                    anchors.fill: rawSearchIcon
+                    source: rawSearchIcon
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 1.0)
+                    opacity: 1.0
                 }
             }
 
