@@ -390,8 +390,7 @@ Rectangle {
             height: 38
             radius: 19
             color: Qt.rgba(1, 1, 1, 0.05)
-            border.color: Qt.rgba(1, 1, 1, 0.08)
-            border.width: 1
+            border.width: 0
 
             RowLayout {
                 anchors.fill: parent
@@ -413,8 +412,7 @@ Rectangle {
                             anchors.margins: 3
                             radius: 16
                             color: activeTab === modelData.tabIndex ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : "transparent"
-                            border.color: activeTab === modelData.tabIndex ? Theme.colPrimary : "transparent"
-                            border.width: 1
+                            border.width: 0
                             Behavior on color { ColorAnimation { duration: 200 } }
 
                             Text {
