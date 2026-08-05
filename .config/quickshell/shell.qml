@@ -106,12 +106,12 @@ ShellRoot {
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
         property var dockRadius: 20
-        property int dockIconSize: 49
-        property int dockMainAxisPadding: 6
+        property int dockIconSize: 50
+        property int dockMainAxisPadding: 0
         property int dockCrossAxisPadding: 5
-        property int dockItemSpacing: 17
-        property int dockEndsMargin: 20
-        property int dockEdgeMargin: 8
+        property int dockItemSpacing: 11
+        property int dockEndsMargin: 10
+        property int dockEdgeMargin: 10
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property bool powerMenuOpen: false

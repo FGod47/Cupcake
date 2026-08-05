@@ -71,12 +71,12 @@ Item {
     property bool magnificationEnabled: false
     
     property string dockPosition: "Bottom"
-    property int iconSize: 49
-    property int mainAxisPadding: 6
+    property int iconSize: 50
+    property int mainAxisPadding: 0
     property int crossAxisPadding: 5
-    property int itemSpacing: 17
-    property int endsMargin: 20
-    property int edgeMargin: 8
+    property int itemSpacing: 11
+    property int endsMargin: 10
+    property int edgeMargin: 10
     
     property int cornerRadius: 20
     
@@ -552,13 +552,13 @@ Item {
                         label: "Reset Defaults"
                         active: false
                         onClicked: {
-                            root.iconSize = 49;
-                            root.mainAxisPadding = 6;
+                            root.iconSize = 50;
+                            root.mainAxisPadding = 0;
                             root.crossAxisPadding = 5;
-                            root.itemSpacing = 17;
-                            root.endsMargin = 20;
-                            root.edgeMargin = 8;
-                            bashProcess.command = ["bash", "-c", "echo 49 > ~/.config/cupcake/.dock_icon_size; echo 6 > ~/.config/cupcake/.dock_main_axis_padding; echo 5 > ~/.config/cupcake/.dock_cross_axis_padding; echo 17 > ~/.config/cupcake/.dock_item_spacing; echo 20 > ~/.config/cupcake/.dock_ends_margin; echo 8 > ~/.config/cupcake/.dock_edge_margin; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize 49; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding 6; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding 5; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing 17; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin 20; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin 8"];
+                            root.itemSpacing = 11;
+                            root.endsMargin = 10;
+                            root.edgeMargin = 10;
+                            bashProcess.command = ["bash", "-c", "echo 50 > ~/.config/cupcake/.dock_icon_size; echo 0 > ~/.config/cupcake/.dock_main_axis_padding; echo 5 > ~/.config/cupcake/.dock_cross_axis_padding; echo 11 > ~/.config/cupcake/.dock_item_spacing; echo 10 > ~/.config/cupcake/.dock_ends_margin; echo 10 > ~/.config/cupcake/.dock_edge_margin; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize 50; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding 0; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding 5; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing 11; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin 10; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin 10"];
                             bashProcess.running = true;
                         }
                     }
