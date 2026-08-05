@@ -1001,33 +1001,57 @@ Rectangle {
                     }
                 }
 
-                // Bluetooth Device Cards List
+                // Bluetooth Device Cards List (Fixed Long Name Overlap & Font Icons)
                 Repeater {
                     model: isBluetooth ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : []) : []
                     delegate: Rectangle {
-                        Layout.fillWidth: true; height: 44; radius: 12
+                        Layout.fillWidth: true; height: 46; radius: 12
                         color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                         border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                         RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10; spacing: 10
-                            Text { text: modelData.name.toLowerCase().includes("head") || modelData.name.toLowerCase().includes("buds") || modelData.name.toLowerCase().includes("audio") ? "\uea99" : (modelData.name.toLowerCase().includes("phone") ? "\ueb10" : "\uea37"); font.family: fontName; font.pixelSize: 15; color: modelData.connected ? Theme.colPrimary : bar.fg }
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 10; spacing: 8
 
-                            ColumnLayout {
-                                Layout.fillWidth: true; spacing: 0
-                                Text { text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                                Text { text: modelData.connected ? ("Connected" + (netSplitPill.btBattery > 0 ? (" · " + netSplitPill.btBattery + "% Battery") : "")) : "Paired Device"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                            Text {
+                                text: modelData.name.toLowerCase().includes("head") || modelData.name.toLowerCase().includes("buds") || modelData.name.toLowerCase().includes("audio") ? "\uea98" : (modelData.name.toLowerCase().includes("phone") ? "\ueb10" : "\uea37")
+                                font.family: fontName; font.pixelSize: 16; color: modelData.connected ? Theme.colPrimary : bar.fg
                             }
 
-                            // Disconnect / Connect Pill Buttons
-                            Row {
-                                spacing: 6
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 1
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold
+                                    color: modelData.connected ? Theme.colPrimary : bar.fg
+                                    elide: Text.ElideRight
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.connected ? ("Connected" + (netSplitPill.btBattery > 0 ? (" · " + netSplitPill.btBattery + "% Battery") : "")) : "Paired Device"
+                                    font.family: Theme.defaultFontFamily; font.pixelSize: 9
+                                    color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    elide: Text.ElideRight
+                                }
+                            }
+
+                            // Action Buttons (Connect/Disconnect Pill + Forget Trash Button)
+                            RowLayout {
+                                spacing: 4
 
                                 Rectangle {
-                                    width: 60; height: 26; radius: 7
+                                    implicitWidth: btActionText.implicitWidth + 16
+                                    height: 26; radius: 7
                                     color: modelData.connected ? Qt.rgba(1, 0, 0, 0.18) : Theme.colPrimary
                                     border.color: modelData.connected ? Qt.rgba(1, 0, 0, 0.3) : "transparent"; border.width: 1
-                                    Text { anchors.centerIn: parent; text: modelData.connected ? "Disconnect" : "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: modelData.connected ? "#ff6b6b" : Theme.colOnPrimary }
+
+                                    Text {
+                                        id: btActionText
+                                        anchors.centerIn: parent
+                                        text: modelData.connected ? "Disconnect" : "Connect"
+                                        font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
+                                        color: modelData.connected ? "#ff6b6b" : Theme.colOnPrimary
+                                    }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -1041,11 +1065,15 @@ Rectangle {
                                     }
                                 }
 
-                                // Forget Device Trash Button
+                                // Forget Device Button
                                 Rectangle {
                                     width: 26; height: 26; radius: 7
                                     color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
-                                    Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                    Text {
+                                        anchors.centerIn: parent; text: "\uea02"
+                                        font.family: fontName; font.pixelSize: 12
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                    }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
