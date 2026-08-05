@@ -547,7 +547,7 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? (hasInternet ? "Connected" : "No Internet") : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + internetStatus) : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (isBluetooth ? (btDeviceName !== "" ? (btDeviceName + " · " + (btBattery > 0 ? btBattery + "%" : "Connected")) : "Enabled") : "Disabled")))
+                    text: activeTab === 0 ? (isWired ? (hasInternet ? "Connected" : "No Internet") : "Disconnected") : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + internetStatus) : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (isBluetooth ? (btDeviceName !== "" ? (btDeviceName + " · " + (btBattery > 0 ? btBattery + "%" : "Connected")) : "Enabled") : "Disabled")))
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11
                     color: (activeTab === 1 && !hasInternet && wifiSSID !== "Disconnected") ? "#ff6b6b" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                     elide: Text.ElideRight; Layout.fillWidth: true
