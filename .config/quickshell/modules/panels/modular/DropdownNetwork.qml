@@ -557,6 +557,47 @@ Rectangle {
                     }
                 }
 
+                // Password Drawer
+                ColumnLayout {
+                    visible: showPassInput
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    Text { text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary }
+                    Rectangle {
+                        Layout.fillWidth: true; height: 36; radius: 10
+                        color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                            TextInput {
+                                id: wifiPassInput
+                                Layout.fillWidth: true; text: passInputText
+                                echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
+                                font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
+                                onTextChanged: passInputText = text
+                            }
+                            Text {
+                                id: showWifiPass; property bool show: false
+                                text: show ? "\ueaa5" : "\uea28"; font.family: fontName; font.pixelSize: 14; color: bar.fg
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
+                            }
+                            Rectangle {
+                                width: 56; height: 26; radius: 6; color: Theme.colPrimary
+                                Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
+                                        showPassInput = false;
+                                        passInputText = "";
+                                        wifiScanProc.running = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Wi-Fi Repeater
                 Repeater {
                     model: netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]
@@ -580,7 +621,7 @@ Rectangle {
                                 Rectangle {
                                     width: 26; height: 26; radius: 6
                                     color: Qt.rgba(1, 0, 0, 0.2)
-                                    Text { anchors.centerIn: parent; text: "✕"; font.pixelSize: 10; color: "#ff6b6b" }
+                                    Text { anchors.centerIn: parent; text: "\uea6a"; font.family: fontName; font.pixelSize: 12; color: "#ff6b6b" }
                                     MouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -613,7 +654,7 @@ Rectangle {
                 }
             }
 
-            // Tab 2: Fully Wired Hotspot Control Section
+            // Tab 2: Hotspot Config Section (100% Tabler Icons)
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
@@ -638,7 +679,7 @@ Rectangle {
                                     hsProc.running = true;
                                 }
                             }
-                            Text { text: "✏️"; font.pixelSize: 12 }
+                            Text { text: "\ueab6"; font.family: fontName; font.pixelSize: 13; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                         }
                     }
                 }
@@ -664,7 +705,7 @@ Rectangle {
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
-                                text: show ? "👁️" : "🙈"; font.pixelSize: 12
+                                text: show ? "\ueaa5" : "\uea28"; font.family: fontName; font.pixelSize: 14; color: bar.fg
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
                             }
                         }
