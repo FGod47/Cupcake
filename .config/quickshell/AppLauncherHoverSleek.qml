@@ -780,6 +780,7 @@ PanelWindow {
         Rectangle {
             id: searchBar
             parent: card
+            z: 2
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.rightMargin: card.dynamicMargin
