@@ -930,8 +930,9 @@ Rectangle {
                                     Text {
                                         visible: parent.parent.isKnownSaved || modelData.security === "Open"
                                         Layout.fillWidth: true
-                                        text: parent.parent.isKnownSaved ? "Saved Profile (No Password Required)" : "Open Network"
+                                        text: parent.parent.isKnownSaved ? "Saved Profile" : "Open Network"
                                         font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                                        elide: Text.ElideRight
                                     }
 
                                     TextInput {
