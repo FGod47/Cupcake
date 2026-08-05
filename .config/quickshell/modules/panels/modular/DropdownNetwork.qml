@@ -386,11 +386,24 @@ Rectangle {
 
         // ── 1. Top Segmented Tab Bar ──
         Rectangle {
+            id: tabBarContainer
             Layout.fillWidth: true
-            height: 38
-            radius: 19
+            height: 36
+            radius: 18
             color: Qt.rgba(1, 1, 1, 0.05)
-            border.width: 0
+            clip: true
+
+            // Animated Sliding Pill Highlight Indicator
+            Rectangle {
+                id: activeIndicator
+                width: (tabBarContainer.width - 8) / 4
+                height: 28
+                y: 4
+                x: 4 + activeTab * width
+                radius: 14
+                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.28)
+                Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            }
 
             RowLayout {
                 anchors.fill: parent
@@ -407,21 +420,13 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: 3
-                            radius: 16
-                            color: activeTab === modelData.tabIndex ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : "transparent"
-                            border.width: 0
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.icon
+                            font.family: fontName
+                            font.pixelSize: 15
+                            color: activeTab === modelData.tabIndex ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                             Behavior on color { ColorAnimation { duration: 200 } }
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: modelData.icon
-                                font.family: fontName
-                                font.pixelSize: 15
-                                color: activeTab === modelData.tabIndex ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                            }
                         }
 
                         MouseArea {
