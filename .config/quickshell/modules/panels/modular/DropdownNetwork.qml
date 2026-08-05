@@ -15,7 +15,7 @@ Rectangle {
     id: netSplitPill
     y: 10
     property bool menuExpanded: bar.netDropdownOpen
-    property int activeTab: isWifi ? 1 : (isWired ? 0 : (isBluetooth ? 3 : 1))
+    property int activeTab: 1
 
     property var wifiList: []
     property var btList: []
