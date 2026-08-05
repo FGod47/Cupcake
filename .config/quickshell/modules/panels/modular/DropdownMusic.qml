@@ -98,6 +98,25 @@ Rectangle {
             elide: Text.ElideRight
             maximumLineCount: 1
         }
+
+        // Play / Pause Button inside compact pill
+        MouseArea {
+            width: 18; height: 18
+            anchors.verticalCenter: parent.verticalCenter
+            cursorShape: Qt.PointingHandCursor
+            z: 10
+            onClicked: {
+                if (hasPlayer) player.togglePlaying();
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: musicSplitPill.isPlaying ? "\uea8c" : "\ueaed" // pause vs play icon
+                font.family: "tabler-icons"
+                font.pixelSize: 13
+                color: Theme.colPrimary
+            }
+        }
     }
 
     // MouseArea for Header Pill click -> Toggle Music Dropdown
