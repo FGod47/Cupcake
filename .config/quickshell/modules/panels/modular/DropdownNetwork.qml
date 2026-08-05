@@ -625,6 +625,18 @@ Rectangle {
             spacing: 8
 
             // Tab 0: Wired Ethernet Active Card & Details
+            Rectangle {
+                visible: activeTab === 0 && !isWired
+                Layout.fillWidth: true; height: 46; radius: 14
+                color: Qt.rgba(1, 1, 1, 0.03); border.width: 0
+                Text {
+                    anchors.centerIn: parent
+                    text: "Ethernet is disconnected"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                }
+            }
+
             ColumnLayout {
                 visible: activeTab === 0 && isWired
                 Layout.fillWidth: true
@@ -771,6 +783,18 @@ Rectangle {
             }
 
             // Tab 1: Wi-Fi Networks Section
+            Rectangle {
+                visible: activeTab === 1 && !isWifi
+                Layout.fillWidth: true; height: 46; radius: 14
+                color: Qt.rgba(1, 1, 1, 0.03); border.width: 0
+                Text {
+                    anchors.centerIn: parent
+                    text: "Wi-Fi is turned off"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                }
+            }
+
             ColumnLayout {
                 visible: activeTab === 1 && isWifi
                 Layout.fillWidth: true
@@ -1050,6 +1074,18 @@ Rectangle {
         }
 
             // Tab 2: Hotspot Config Section
+            Rectangle {
+                visible: activeTab === 2 && !isHotspot
+                Layout.fillWidth: true; height: 46; radius: 14
+                color: Qt.rgba(1, 1, 1, 0.03); border.width: 0
+                Text {
+                    anchors.centerIn: parent
+                    text: "Hotspot is turned off"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                }
+            }
+
             ColumnLayout {
                 visible: activeTab === 2 && isHotspot
                 Layout.fillWidth: true
@@ -1200,6 +1236,18 @@ Rectangle {
             }
 
             // Tab 3: Complete & Feature-Rich Bluetooth Devices Page
+            Rectangle {
+                visible: activeTab === 3 && !isBluetooth
+                Layout.fillWidth: true; height: 46; radius: 14
+                color: Qt.rgba(1, 1, 1, 0.03); border.width: 0
+                Text {
+                    anchors.centerIn: parent
+                    text: "Bluetooth is turned off"
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                }
+            }
+
             ColumnLayout {
                 visible: activeTab === 3 && isBluetooth
                 Layout.fillWidth: true
