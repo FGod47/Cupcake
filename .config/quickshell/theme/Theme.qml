@@ -158,8 +158,8 @@ Item {
     property color colSurfaceContainer: transparentize("#221e28", bgAlpha)
     property color colSurfaceContainerHigh: transparentize("#2c2833", bgAlpha)
     property color colSurfaceVariant: transparentize("#4a4550", bgAlpha)
-    property color colOnSurface: "#e8dfee"
-    property color colOnSurfaceVariant: "#cbc4d2"
+    property color colOnSurface: Quickshell.env("CUPCAKE_COL_ON_SURFACE") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE") : "#e8dfee"
+    property color colOnSurfaceVariant: Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") !== "" ? Quickshell.env("CUPCAKE_COL_ON_SURFACE_VARIANT") : "#cbc4d2"
     property color colOutline: "#958e9b"
     property color colPrimary: "#d4bbff"
     property color colOnPrimary: "#40008c"

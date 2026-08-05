@@ -805,19 +805,17 @@ PanelWindow {
                 Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutElastic; easing.amplitude: 0.6 } }
 
                 Image {
-                    id: rawSearchIcon
+                    id: cupcakeLogo
                     anchors.centerIn: parent
                     source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
                     sourceSize.height: 24
                     width: 67
                     fillMode: Image.PreserveAspectFit
-                    visible: false
-                }
-                ColorOverlay {
-                    anchors.fill: rawSearchIcon
-                    source: rawSearchIcon
-                    color: root.colOnSurface
                     opacity: 1.0
+                    layer.enabled: true
+                    layer.effect: ColorOverlay {
+                        color: root.colOnSurface
+                    }
                 }
             }
 
