@@ -420,9 +420,9 @@ Rectangle {
             }
         }
 
-        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD - Exclude Bluetooth) ──
+        // ── 4. Dual Stat Cards (Show ONLY on the active internet connection tab) ──
         RowLayout {
-            visible: activeTab !== 3
+            visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected") || (activeTab === 2 && isHotspot)
             Layout.fillWidth: true
             spacing: 8
 
