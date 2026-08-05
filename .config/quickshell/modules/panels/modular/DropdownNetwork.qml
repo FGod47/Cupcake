@@ -25,7 +25,8 @@ Rectangle {
     property string wifiSSID: "Disconnected"
     property int wifiSignal: 85
     property string wifiIp: "192.168.1.87"
-    property string internetStatus: "Online"
+    property string internetStatus: "Internet Access"
+    property bool hasInternet: true
 
     property string wiredIface: "enp6s0"
     property string wiredIp: "192.168.1.42"
@@ -144,11 +145,11 @@ Rectangle {
         }
     }
 
-    // Real Status & Internet Connectivity Processor
+    // Real Status & Instant Ping Connectivity Check Processor
     Process {
         id: statusProc
         running: netSplitPill.menuExpanded
-        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---bt---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; (ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && echo 'online' || echo 'no_internet'); echo '---bt---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
@@ -162,10 +163,13 @@ Rectangle {
                 let connState = (connParts[0] || "").trim();
                 let btOut = connParts[1] || "";
 
-                if (connState === "full") netSplitPill.internetStatus = "Internet Access";
-                else if (connState === "limited") netSplitPill.internetStatus = "No Internet";
-                else if (connState === "portal") netSplitPill.internetStatus = "Login Required";
-                else netSplitPill.internetStatus = "Online";
+                if (connState === "no_internet") {
+                    netSplitPill.internetStatus = "No Internet";
+                    netSplitPill.hasInternet = false;
+                } else {
+                    netSplitPill.internetStatus = "Internet Access";
+                    netSplitPill.hasInternet = true;
+                }
 
                 // Wired Ethernet Interface
                 let ethMatch = nmOut.match(/^([^:]+):ethernet:connected/m);
@@ -477,8 +481,10 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + internetStatus) : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
+                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? (hasInternet ? "Connected" : "No Internet") : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + internetStatus) : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                    color: (activeTab === 1 && !hasInternet && wifiSSID !== "Disconnected") ? "#ff6b6b" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                    elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
 
@@ -589,7 +595,7 @@ Rectangle {
                     Text { anchors.centerIn: parent; text: "Wi-Fi is currently turned off"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4) }
                 }
 
-                // Wi-Fi Repeater (Each card expands password drawer directly under itself!)
+                // Wi-Fi Repeater
                 Repeater {
                     model: isWifi ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : []) : []
                     delegate: ColumnLayout {
@@ -599,16 +605,16 @@ Rectangle {
                         // Network Item Card
                         Rectangle {
                             Layout.fillWidth: true; height: 40; radius: 12
-                            color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
-                            border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
+                            color: modelData.connected ? (hasInternet ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 0, 0, 0.18)) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+                            border.color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                             RowLayout {
                                 anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                                Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
+                                Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg }
                                 ColumnLayout {
                                     Layout.fillWidth: true; spacing: 0
-                                    Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                                    Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                                    Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : bar.fg; elide: Text.ElideRight }
+                                    Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? (hasInternet ? Theme.colPrimary : "#ff6b6b") : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                                 }
 
                                 // Disconnect Button for Connected Network
@@ -628,7 +634,7 @@ Rectangle {
                                 }
 
                                 Text { text: modelData.security !== "Open" && !modelData.connected ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" && !modelData.connected }
-                                Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
+                                Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected && hasInternet }
                             }
 
                             MouseArea {
@@ -653,7 +659,7 @@ Rectangle {
                             }
                         }
 
-                        // INLINE PASSWORD DRAWER (Expands directly under THIS specific network card!)
+                        // INLINE PASSWORD DRAWER
                         ColumnLayout {
                             visible: showPassInput && selectedSSID === modelData.ssid && isWifi
                             Layout.fillWidth: true
