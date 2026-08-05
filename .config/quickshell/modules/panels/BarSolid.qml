@@ -194,9 +194,9 @@ PanelWindow {
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: expandAnim.running ? bar.startX : (bar.musicDropdownOpen ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
+        x: expandAnim.running ? bar.startX : (bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.musicDropdownOpen ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))))
+        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))))
         Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -294,12 +294,6 @@ PanelWindow {
                 font.pixelSize: 13
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.6)
-            }
-
-            // ── LEFT-CENTER: Bar Music Module ────────
-            BarMusic {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
             }
 
             // Spacer
@@ -944,10 +938,10 @@ PanelWindow {
         
         onFinished: {
             solidBar.x = Qt.binding(function() {
-                return bar.musicDropdownOpen ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
+                return bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.musicDropdownOpen ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))));
+                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))));
             });
         }
     }
