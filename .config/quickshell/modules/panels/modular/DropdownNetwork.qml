@@ -40,12 +40,12 @@ Rectangle {
         }
     }
 
-    height: menuExpanded ? (netContentCol.implicitHeight + 24) : 30
+    height: menuExpanded ? (netContentCol.implicitHeight + 20) : 30
     Behavior on height { NumberAnimation { duration: 500; easing.type: Easing.OutQuart } }
 
     readonly property real openGap: 16
     readonly property real headerW: networkIconsRow.implicitWidth + 24
-    readonly property real expandedW: 320
+    readonly property real expandedW: 275
     property real contentW: menuExpanded ? expandedW : headerW
 
     x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -54,7 +54,7 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
     Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
-    radius: menuExpanded ? 24 : 15
+    radius: menuExpanded ? 20 : 15
     Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     clip: true
 
@@ -228,14 +228,14 @@ Rectangle {
         Text { text: netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Theme.defaultFontWeight; color: Qt.rgba(fg.r, fg.g, fg.b, 0.7); anchors.verticalCenter: parent.verticalCenter }
     }
 
-    // Expanded View Dashboard
+    // Expanded View Dashboard (Compact & Spacious Layout)
     ColumnLayout {
         id: netContentCol
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 14
-        spacing: 12
+        anchors.margins: 10
+        spacing: 8
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 250 } }
@@ -243,8 +243,8 @@ Rectangle {
         // ── 1. Top Segmented Tab Bar ──
         Rectangle {
             Layout.fillWidth: true
-            height: 40
-            radius: 20
+            height: 34
+            radius: 17
             color: Qt.rgba(1, 1, 1, 0.05)
             border.color: Qt.rgba(1, 1, 1, 0.08)
             border.width: 1
@@ -266,8 +266,8 @@ Rectangle {
 
                         Rectangle {
                             anchors.fill: parent
-                            anchors.margins: 3
-                            radius: 17
+                            anchors.margins: 2
+                            radius: 15
                             color: activeTab === modelData.tabIndex ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : "transparent"
                             border.color: activeTab === modelData.tabIndex ? Theme.colPrimary : "transparent"
                             border.width: 1
@@ -277,7 +277,7 @@ Rectangle {
                                 anchors.centerIn: parent
                                 text: modelData.icon
                                 font.family: fontName
-                                font.pixelSize: 16
+                                font.pixelSize: 14
                                 color: activeTab === modelData.tabIndex ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                             }
                         }
@@ -296,8 +296,8 @@ Rectangle {
         Item {
             visible: activeTab === 3
             Layout.alignment: Qt.AlignHCenter
-            width: 140
-            height: 140
+            width: 110
+            height: 110
 
             Canvas {
                 id: gaugeCanvas
@@ -310,20 +310,20 @@ Rectangle {
                     ctx.reset();
                     let cx = width / 2;
                     let cy = height / 2;
-                    let radius = 60;
+                    let radius = 46;
                     let startAngle = -Math.PI / 2;
                     let endAngle = startAngle + (percentage * 2 * Math.PI);
 
                     ctx.beginPath();
                     ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-                    ctx.lineWidth = 8;
+                    ctx.lineWidth = 6;
                     ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.08);
                     ctx.stroke();
 
                     if (percentage > 0) {
                         ctx.beginPath();
                         ctx.arc(cx, cy, radius, startAngle, endAngle);
-                        ctx.lineWidth = 8;
+                        ctx.lineWidth = 6;
                         ctx.lineCap = "round";
                         ctx.strokeStyle = Theme.colPrimary;
                         ctx.stroke();
@@ -333,25 +333,25 @@ Rectangle {
 
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 2
+                spacing: 1
 
                 Rectangle {
                     Layout.alignment: Qt.AlignHCenter
-                    width: 32; height: 32; radius: 16
+                    width: 26; height: 26; radius: 13
                     color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2)
-                    Text { anchors.centerIn: parent; text: "\uecea"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
+                    Text { anchors.centerIn: parent; text: "\uecea"; font.family: fontName; font.pixelSize: 12; color: Theme.colPrimary }
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: btBattery + "%"
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: bar.fg
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Font.Bold; color: bar.fg
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Battery"
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                 }
             }
         }
@@ -359,10 +359,10 @@ Rectangle {
         // ── 3. Header Row: Icon Badge + Name/Subtitle + Enable Switch ──
         RowLayout {
             Layout.fillWidth: true
-            spacing: 12
+            spacing: 10
 
             Rectangle {
-                width: 38; height: 38; radius: 19
+                width: 32; height: 32; radius: 16
                 Layout.alignment: Qt.AlignVCenter
                 color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
                 border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.3)
@@ -371,7 +371,7 @@ Rectangle {
                 Text {
                     anchors.centerIn: parent
                     text: activeTab === 0 ? "\uebd9" : (activeTab === 1 ? "\ueb52" : (activeTab === 2 ? "\ued1b" : "\uea37"))
-                    font.family: fontName; font.pixelSize: 17
+                    font.family: fontName; font.pixelSize: 15
                     color: Theme.colPrimary
                 }
             }
@@ -379,21 +379,21 @@ Rectangle {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
-                spacing: 2
+                spacing: 1
 
                 Text {
                     text: activeTab === 0 ? "Wired" : (activeTab === 1 ? "Wi-Fi" : (activeTab === 2 ? "Hotspot" : "Bluetooth"))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 15; font.weight: Font.Bold; color: bar.fg
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
                     text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + (isWifi ? "Connected" : "Disconnected")) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
-                    font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
+                    font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
 
-            // Enable Toggle Switch (Aligned Right & Centered)
+            // Enable Toggle Switch
             Rectangle {
-                width: 44; height: 24; radius: 12
+                width: 38; height: 22; radius: 11
                 Layout.alignment: Qt.AlignVCenter
                 color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
                 Behavior on color { ColorAnimation { duration: 200 } }
@@ -416,9 +416,9 @@ Rectangle {
                 }
 
                 Rectangle {
-                    width: 18; height: 18; radius: 9
+                    width: 16; height: 16; radius: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    x: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? 23 : 3
+                    x: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? 19 : 3
                     color: (activeTab === 0 ? isWired : (activeTab === 1 ? isWifi : (activeTab === 2 ? isHotspot : isBluetooth))) ? Theme.colOnPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                     Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
@@ -429,25 +429,25 @@ Rectangle {
         RowLayout {
             visible: (activeTab === 0 && isWired) || (activeTab === 1 && isWifi && wifiSSID !== "Disconnected") || (activeTab === 2 && isHotspot)
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 6
 
             Rectangle {
-                Layout.fillWidth: true; height: 54; radius: 12
+                Layout.fillWidth: true; height: 46; radius: 10
                 color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 8; spacing: 1
-                    Text { text: "DOWNLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    Text { text: (typeof bar.netRxStr !== "undefined" && bar.netRxStr !== "") ? bar.netRxStr : netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
+                    anchors.fill: parent; anchors.margins: 6; spacing: 0
+                    Text { text: "DOWNLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 8; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Text { text: (typeof bar.netRxStr !== "undefined" && bar.netRxStr !== "") ? bar.netRxStr : netStr; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold; color: bar.fg }
                 }
             }
 
             Rectangle {
-                Layout.fillWidth: true; height: 54; radius: 12
+                Layout.fillWidth: true; height: 46; radius: 10
                 color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 8; spacing: 1
-                    Text { text: "UPLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                    Text { text: (typeof bar.netTxStr !== "undefined" && bar.netTxStr !== "") ? bar.netTxStr : "0 KB/s"; font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg }
+                    anchors.fill: parent; anchors.margins: 6; spacing: 0
+                    Text { text: "UPLOAD"; font.family: Theme.defaultFontFamily; font.pixelSize: 8; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Text { text: (typeof bar.netTxStr !== "undefined" && bar.netTxStr !== "") ? bar.netTxStr : "0 KB/s"; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Bold; color: bar.fg }
                 }
             }
         }
@@ -455,31 +455,31 @@ Rectangle {
         // ── 5. Tab Dynamic Content List ──
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 6
 
             // Tab 0: Wired
             Text {
                 visible: activeTab === 0
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 6; Layout.bottomMargin: 6
+                Layout.topMargin: 4; Layout.bottomMargin: 4
                 text: "No additional devices or networks nearby"
-                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
             }
 
             // Tab 1: Wi-Fi Networks
             Repeater {
                 model: activeTab === 1 ? (netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]) : []
                 delegate: Rectangle {
-                    Layout.fillWidth: true; height: 38; radius: 12
-                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+                    Layout.fillWidth: true; height: 34; radius: 10
+                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : (wifiItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                     border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                        Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 14; color: modelData.connected ? Theme.colPrimary : bar.fg }
-                        Text { Layout.fillWidth: true; text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                        Text { text: modelData.security !== "Open" ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" }
-                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
+                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                        Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 13; color: modelData.connected ? Theme.colPrimary : bar.fg }
+                        Text { Layout.fillWidth: true; text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: modelData.connected ? Font.Bold : Font.Normal; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                        Text { text: modelData.security !== "Open" ? "\ueae2" : ""; font.family: fontName; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5); visible: text !== "" }
+                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 13; color: Theme.colPrimary; visible: modelData.connected }
                     }
 
                     MouseArea {
@@ -493,24 +493,24 @@ Rectangle {
             Text {
                 visible: activeTab === 2
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 6; Layout.bottomMargin: 6
+                Layout.topMargin: 4; Layout.bottomMargin: 4
                 text: "No additional devices or networks nearby"
-                font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
             }
 
             // Tab 3: Bluetooth
             Repeater {
                 model: activeTab === 3 ? (netSplitPill.btList.length > 0 ? netSplitPill.btList : [{name: "Galaxy Buds", connected: true, mac: "00:11:22", battery: "67%"}, {name: "Pixel Watch", connected: false, mac: "33:44:55", battery: "Paired"}]) : []
                 delegate: Rectangle {
-                    Layout.fillWidth: true; height: 38; radius: 12
-                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+                    Layout.fillWidth: true; height: 34; radius: 10
+                    color: modelData.connected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : (btItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
                     border.color: modelData.connected ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.06); border.width: 1
 
                     RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 10
-                        Text { Layout.fillWidth: true; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                        Text { text: modelData.connected ? (modelData.battery || "67%") : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
-                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary; visible: modelData.connected }
+                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                        Text { Layout.fillWidth: true; text: modelData.name; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: modelData.connected ? Font.Bold : Font.Normal; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
+                        Text { text: modelData.connected ? (modelData.battery || "67%") : "Paired"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                        Text { text: "\uea5e"; font.family: fontName; font.pixelSize: 13; color: Theme.colPrimary; visible: modelData.connected }
                     }
 
                     MouseArea {
