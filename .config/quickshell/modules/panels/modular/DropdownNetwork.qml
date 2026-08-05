@@ -897,10 +897,10 @@ Rectangle {
                                         anchors.verticalCenter: parent.verticalCenter
                                     }
 
-                                    // Disconnect red button (no background)
+                                    // Disconnect button (white, 22px, centered)
                                     Text {
                                         visible: modelData.connected
-                                        text: "\uea6a"; font.family: fontName; font.pixelSize: 17; color: "#ff6b6b"
+                                        text: "\uea6a"; font.family: fontName; font.pixelSize: 22; color: bar.fg
                                         anchors.verticalCenter: parent.verticalCenter
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
