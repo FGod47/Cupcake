@@ -284,8 +284,9 @@ Rectangle {
             }
         }
 
-        // ── 2. Central Circular Progress Gauge / Ring ──
+        // ── 2. Central Circular Progress Gauge / Ring (Bluetooth Only) ──
         Item {
+            visible: activeTab === 3
             Layout.alignment: Qt.AlignHCenter
             width: 140
             height: 140
