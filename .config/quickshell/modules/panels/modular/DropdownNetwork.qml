@@ -898,8 +898,7 @@ Rectangle {
                                     Rectangle {
                                         visible: modelData.connected && !(netSplitPill.hsActive && modelData.ssid.toLowerCase().trim() === netSplitPill.hsName.toLowerCase().trim())
                                         width: 76; height: 24; radius: 12
-                                        color: Qt.rgba(1, 1, 1, 0.08)
-                                        border.color: Qt.rgba(1, 1, 1, 0.15); border.width: 1
+                                        color: Qt.rgba(1, 1, 1, 0.08); border.width: 0
                                         Text {
                                             anchors.centerIn: parent
                                             text: "Disconnect"
