@@ -71,23 +71,28 @@ PanelWindow {
                     visible: globalState.dockLauncherPosition !== "End"
                     spacing: globalState.dockItemSpacing
 
-                    Rectangle {
-                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
-                        color: mouseAreaStartLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
-                        Text {
+                    Item {
+                        width: globalState.dockIconSize; height: globalState.dockIconSize
+
+                        Rectangle {
                             anchors.centerIn: parent
-                            text: "\uebb6"
-                            font.family: "tabler-icons"
-                            font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
-                            color: Theme.colPrimary
-                        }
-                        scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
-                        Behavior on scale { NumberAnimation { duration: 150 } }
-                        
-                        MouseArea {
-                            id: mouseAreaStartLauncher
-                            anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            width: Math.max(24, globalState.dockIconSize - 12); height: Math.max(24, globalState.dockIconSize - 12); radius: width / 2
+                            color: mouseAreaStartLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uebb6"
+                                font.family: "tabler-icons"
+                                font.pixelSize: Math.max(12, parent.width * 0.5)
+                                color: Theme.colPrimary
+                            }
+                            scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150 } }
+                            
+                            MouseArea {
+                                id: mouseAreaStartLauncher
+                                anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            }
                         }
                     }
 
@@ -246,23 +251,28 @@ PanelWindow {
 
                     Rectangle { width: 2; height: Math.max(16, globalState.dockIconSize - 16); color: Theme.colSurfaceVariant; radius: 1 }
 
-                    Rectangle {
-                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
-                        color: mouseAreaEndLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
-                        Text {
+                    Item {
+                        width: globalState.dockIconSize; height: globalState.dockIconSize
+
+                        Rectangle {
                             anchors.centerIn: parent
-                            text: "\uebb6"
-                            font.family: "tabler-icons"
-                            font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
-                            color: Theme.colPrimary
-                        }
-                        scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0
-                        Behavior on scale { NumberAnimation { duration: 150 } }
-                        
-                        MouseArea {
-                            id: mouseAreaEndLauncher
-                            anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            width: Math.max(24, globalState.dockIconSize - 12); height: Math.max(24, globalState.dockIconSize - 12); radius: width / 2
+                            color: mouseAreaEndLauncher.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22) : Qt.rgba(1, 1, 1, 0.05)
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uebb6"
+                                font.family: "tabler-icons"
+                                font.pixelSize: Math.max(12, parent.width * 0.5)
+                                color: Theme.colPrimary
+                            }
+                            scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150 } }
+                            
+                            MouseArea {
+                                id: mouseAreaEndLauncher
+                                anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                onClicked: Quickshell.execDetached([dockWindow.homeDir + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                            }
                         }
                     }
                 }
