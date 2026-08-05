@@ -420,8 +420,9 @@ Rectangle {
             }
         }
 
-        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD) ──
+        // ── 4. Dual Stat Cards (DOWNLOAD & UPLOAD - Exclude Bluetooth) ──
         RowLayout {
+            visible: activeTab !== 3
             Layout.fillWidth: true
             spacing: 8
 
