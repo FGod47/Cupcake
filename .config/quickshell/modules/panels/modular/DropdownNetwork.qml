@@ -498,39 +498,75 @@ Rectangle {
                 }
             }
 
-            // Tab 2: Hotspot Config Section
+            // Tab 2: Sleek Hotspot Config Section (Modern Pill Cards)
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
                 spacing: 8
 
-                Rectangle {
-                    Layout.fillWidth: true; height: 36; radius: 10
-                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
-                    RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
-                        Text { text: "SSID: "; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                        TextInput {
-                            Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
-                            onTextChanged: { hsName = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\" 2>/dev/null"]); }
+                // Network Name Card
+                ColumnLayout {
+                    Layout.fillWidth: true; spacing: 3
+                    Text { text: "NETWORK NAME"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Rectangle {
+                        Layout.fillWidth: true; height: 38; radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 8
+                            Text { text: "\ued1b"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
+                            TextInput {
+                                id: hsNameInput
+                                Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
+                                onTextChanged: { hsName = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\" 2>/dev/null"]); }
+                            }
+                            Text { text: "✏️"; font.pixelSize: 12 }
                         }
                     }
                 }
 
-                Rectangle {
-                    Layout.fillWidth: true; height: 36; radius: 10
-                    color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
-                    RowLayout {
-                        anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
-                        Text { text: "PASS: "; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                        TextInput {
-                            Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
-                            onTextChanged: { hsPass = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\" 2>/dev/null"]); }
+                // Password Card
+                ColumnLayout {
+                    Layout.fillWidth: true; spacing: 3
+                    Text { text: "PASSWORD"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Rectangle {
+                        Layout.fillWidth: true; height: 38; radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                        RowLayout {
+                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 8
+                            Text { text: "\ueae2"; font.family: fontName; font.pixelSize: 14; color: Theme.colPrimary }
+                            TextInput {
+                                id: hsPassInput
+                                Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
+                                onTextChanged: { hsPass = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\" 2>/dev/null"]); }
+                            }
+                            Text {
+                                id: showHsPassText; property bool show: false
+                                text: show ? "👁️" : "🙈"; font.pixelSize: 12
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
+                            }
                         }
-                        Text {
-                            id: showHsPassText; property bool show: false
-                            text: show ? "👁️" : "🙈"; font.pixelSize: 12
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showHsPassText.show = !showHsPassText.show }
+                    }
+                }
+
+                // Band Selection Pills
+                ColumnLayout {
+                    Layout.fillWidth: true; spacing: 3
+                    Text { text: "BAND SELECTION"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    RowLayout {
+                        Layout.fillWidth: true; spacing: 8
+                        Repeater {
+                            model: ["2.4 GHz", "5 GHz", "Auto"]
+                            delegate: Rectangle {
+                                Layout.fillWidth: true; height: 32; radius: 16
+                                property bool isSel: hsBand === modelData
+                                color: isSel ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : Qt.rgba(1, 1, 1, 0.04)
+                                border.color: isSel ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                                Text {
+                                    anchors.centerIn: parent; text: modelData; font.family: Theme.defaultFontFamily; font.pixelSize: 11
+                                    font.weight: isSel ? Font.Bold : Font.Normal; color: isSel ? Theme.colPrimary : bar.fg
+                                }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: hsBand = modelData }
+                            }
                         }
                     }
                 }
