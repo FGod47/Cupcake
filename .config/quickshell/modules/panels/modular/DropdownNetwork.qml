@@ -25,6 +25,7 @@ Rectangle {
     property string wifiSSID: "Disconnected"
     property int wifiSignal: 85
     property string wifiIp: "192.168.1.87"
+    property string internetStatus: "Online"
 
     property string wiredIface: "enp6s0"
     property string wiredIp: "192.168.1.42"
@@ -143,20 +144,28 @@ Rectangle {
         }
     }
 
-    // Real Status Processor
+    // Real Status & Internet Connectivity Processor
     Process {
         id: statusProc
         running: netSplitPill.menuExpanded
-        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---bt---'; bluetoothctl devices Connected"]
+        command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---bt---'; bluetoothctl devices Connected"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!text) return;
                 let parts = text.split("---ip---");
                 let nmOut = parts[0] || "";
                 let rest = parts[1] || "";
-                let restParts = rest.split("---bt---");
+                let restParts = rest.split("---conn---");
                 let ipOut = restParts[0] || "";
-                let btOut = restParts[1] || "";
+                let connRest = restParts[1] || "";
+                let connParts = connRest.split("---bt---");
+                let connState = (connParts[0] || "").trim();
+                let btOut = connParts[1] || "";
+
+                if (connState === "full") netSplitPill.internetStatus = "Internet Access";
+                else if (connState === "limited") netSplitPill.internetStatus = "No Internet";
+                else if (connState === "portal") netSplitPill.internetStatus = "Login Required";
+                else netSplitPill.internetStatus = "Online";
 
                 // Wired Ethernet Interface
                 let ethMatch = nmOut.match(/^([^:]+):ethernet:connected/m);
@@ -468,7 +477,7 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + "Connected") : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? (isWifi ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + internetStatus) : "Disabled") : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
@@ -572,7 +581,7 @@ Rectangle {
                     }
                 }
 
-                // Password Drawer (With Cancel Button & Auto-Close)
+                // Password Drawer
                 ColumnLayout {
                     visible: showPassInput && isWifi
                     Layout.fillWidth: true
@@ -649,7 +658,7 @@ Rectangle {
                             ColumnLayout {
                                 Layout.fillWidth: true; spacing: 0
                                 Text { text: modelData.ssid; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: modelData.connected ? Font.Bold : Font.DemiBold; color: modelData.connected ? Theme.colPrimary : bar.fg; elide: Text.ElideRight }
-                                Text { text: modelData.connected ? "Connected" : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                                Text { text: modelData.connected ? ("Connected · " + internetStatus) : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: modelData.connected ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
 
                             // Disconnect Button for Connected Network
