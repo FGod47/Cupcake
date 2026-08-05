@@ -871,11 +871,23 @@ Rectangle {
                                     spacing: 6
                                     Layout.alignment: Qt.AlignVCenter
 
-                                    // Lock icon for secured unconnected networks
+                                    // Lock icon for secured unconnected networks (clicking opens password drawer)
                                     Text {
-                                        text: "\ueae2"; font.family: fontName; font.pixelSize: 12
-                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                        text: "\ueae2"; font.family: fontName; font.pixelSize: 13
+                                        color: isExpanded ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                                         visible: modelData.security !== "Open" && !modelData.connected && !isExpanded
+                                        MouseArea {
+                                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                if (selectedSSID === modelData.ssid && showPassInput) {
+                                                    showPassInput = false;
+                                                } else {
+                                                    selectedSSID = modelData.ssid;
+                                                    showPassInput = true;
+                                                    passInputText = "";
+                                                }
+                                            }
+                                        }
                                     }
 
                                     // Cancel close button when password drawer is open
