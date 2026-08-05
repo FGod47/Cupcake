@@ -20,6 +20,7 @@ Rectangle {
     property var wifiList: []
     property var btList: []
     property var savedWifiList: []
+    property var hsClientList: []
 
     property string wifiSSID: "Disconnected"
     property int wifiSignal: 85
@@ -47,6 +48,7 @@ Rectangle {
             wifiScanProc.running = true;
             btScanProc.running = true;
             savedProc.running = true;
+            hsProc.running = true;
         }
     }
 
@@ -55,7 +57,7 @@ Rectangle {
 
     readonly property real openGap: 16
     readonly property real headerW: networkIconsRow.implicitWidth + 24
-    readonly property real expandedW: 320
+    readonly property real expandedW: 310
     property real contentW: menuExpanded ? expandedW : headerW
 
     x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
@@ -71,6 +73,45 @@ Rectangle {
     color: bar.pillColor
     border.color: Qt.rgba(1, 1, 1, 0.08)
     border.width: 1
+
+    // Hotspot Settings Processor
+    Process {
+        id: hsProc
+        command: ["bash", "-c", "nmcli -s -f 802-11-wireless.ssid,802-11-wireless-security.psk,802-11-wireless.band con show Hotspot 2>/dev/null; echo '---clients---'; ip neighbor show | grep -v FAILED | grep -v 192.168.0.1"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let parts = text.split("---clients---");
+                let nmOut = parts[0] || "";
+                let clientOut = parts[1] || "";
+
+                let nameM = nmOut.match(/802-11-wireless.ssid:\s*(.+)/);
+                if (nameM && nameM[1].trim()) netSplitPill.hsName = nameM[1].trim();
+
+                let passM = nmOut.match(/802-11-wireless-security.psk:\s*(.+)/);
+                if (passM && passM[1].trim()) netSplitPill.hsPass = passM[1].trim();
+
+                let bandM = nmOut.match(/802-11-wireless.band:\s*(.+)/);
+                if (bandM) {
+                    let b = bandM[1].trim();
+                    if (b === "bg") netSplitPill.hsBand = "2.4 GHz";
+                    else if (b === "a") netSplitPill.hsBand = "5 GHz";
+                    else netSplitPill.hsBand = "Auto";
+                }
+
+                // Parse clients
+                let clines = clientOut.trim().split('\n');
+                let clients = [];
+                for (let l of clines) {
+                    let m = l.match(/^([0-9.]+)\s+dev\s+\S+\s+lladdr\s+([0-9a-f:]+)/i);
+                    if (m) {
+                        clients.push({ ip: m[1], mac: m[2] });
+                    }
+                }
+                netSplitPill.hsClientList = clients;
+            }
+        }
+    }
 
     // Saved Networks Processor
     Process {
@@ -141,7 +182,7 @@ Rectangle {
         interval: 3000
         running: netSplitPill.menuExpanded
         repeat: true
-        onTriggered: statusProc.running = true
+        onTriggered: { statusProc.running = true; hsProc.running = true; }
     }
 
     // Scanners
@@ -412,7 +453,7 @@ Rectangle {
                     font.family: Theme.defaultFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: bar.fg
                 }
                 Text {
-                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + (isWifi ? "Connected" : "Disconnected")) : (activeTab === 2 ? (hsIp + " · 0 devices") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
+                    text: activeTab === 0 ? (wiredIp + " · " + (isWired ? "Connected" : "Disconnected")) : (activeTab === 1 ? ((wifiSSID !== "Disconnected" ? (wifiSSID + " · ") : "") + (isWifi ? "Connected" : "Disconnected")) : (activeTab === 2 ? (hsIp + " · " + hsClientList.length + " connected") : (btDeviceName !== "" ? (btDeviceName + " · " + btBattery + "%") : "Disabled")))
                     font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6); elide: Text.ElideRight; Layout.fillWidth: true
                 }
             }
@@ -504,61 +545,19 @@ Rectangle {
                 Layout.fillWidth: true
                 spacing: 8
 
-                // Header Bar: AVAILABLE NETWORKS + Refresh Icon
                 RowLayout {
                     Layout.fillWidth: true
                     Text { text: "AVAILABLE NETWORKS"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                     Item { Layout.fillWidth: true }
                     Text {
-                        text: "\ueb1c" // refresh icon
+                        text: "\ueb1c"
                         font.family: fontName; font.pixelSize: 13
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: wifiScanProc.running = true }
                     }
                 }
 
-                // Inline Password Input Drawer (when connecting to new protected network)
-                ColumnLayout {
-                    visible: showPassInput
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    Text { text: "ENTER PASSWORD FOR " + selectedSSID; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary }
-                    Rectangle {
-                        Layout.fillWidth: true; height: 36; radius: 10
-                        color: Qt.rgba(1, 1, 1, 0.05); border.color: Theme.colPrimary; border.width: 1
-                        RowLayout {
-                            anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
-                            TextInput {
-                                id: wifiPassInput
-                                Layout.fillWidth: true; text: passInputText
-                                echoMode: showWifiPass.show ? TextInput.Normal : TextInput.Password
-                                font.family: Theme.defaultFontFamily; font.pixelSize: 12; color: bar.fg
-                                onTextChanged: passInputText = text
-                            }
-                            Text {
-                                id: showWifiPass; property bool show: false
-                                text: show ? "👁️" : "🙈"; font.pixelSize: 12
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showWifiPass.show = !showWifiPass.show }
-                            }
-                            Rectangle {
-                                width: 56; height: 26; radius: 6; color: Theme.colPrimary
-                                Text { anchors.centerIn: parent; text: "Connect"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; color: Theme.colOnPrimary }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        Quickshell.execDetached(["bash", "-c", "nmcli dev wifi connect \"" + selectedSSID + "\" password \"" + passInputText + "\""]);
-                                        showPassInput = false;
-                                        passInputText = "";
-                                        wifiScanProc.running = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Wi-Fi Available Networks List Repeater
+                // Wi-Fi Repeater
                 Repeater {
                     model: netSplitPill.wifiList.length > 0 ? netSplitPill.wifiList : [{ssid: "AirFiber-Saibal", connected: true, security: "WPA2"}, {ssid: "Airtel_pran_3314", connected: false, security: "WPA2"}]
                     delegate: Rectangle {
@@ -575,7 +574,6 @@ Rectangle {
                                 Text { text: modelData.connected ? "Connected" : (modelData.security !== "Open" ? "Secured" : "Open"); font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
 
-                            // Disconnect / Forget Buttons for Connected Network
                             Row {
                                 visible: modelData.connected
                                 spacing: 4
@@ -613,52 +611,9 @@ Rectangle {
                         }
                     }
                 }
-
-                // Manage Saved Networks Drawer Toggle
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.topMargin: 4
-                    Text {
-                        text: showSavedWifi ? "Hide Saved Networks" : "⚙  Manage Saved Networks"
-                        font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: showSavedWifi = !showSavedWifi }
-                    }
-                }
-
-                // Saved Networks List Drawer
-                ColumnLayout {
-                    visible: showSavedWifi
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    Repeater {
-                        model: netSplitPill.savedWifiList
-                        delegate: Rectangle {
-                            Layout.fillWidth: true; height: 32; radius: 8
-                            color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
-                            RowLayout {
-                                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
-                                Text { text: "\ueb52"; font.family: fontName; font.pixelSize: 12; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                Text { Layout.fillWidth: true; text: modelData; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: bar.fg; elide: Text.ElideRight }
-                                Text {
-                                    text: "🗑️"; font.pixelSize: 11
-                                    MouseArea {
-                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            Quickshell.execDetached(["bash", "-c", "nmcli con delete id \"" + modelData + "\""]);
-                                            savedProc.running = true;
-                                            wifiScanProc.running = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
-            // Tab 2: Sleek Hotspot Config Section
+            // Tab 2: Fully Wired Hotspot Control Section
             ColumnLayout {
                 visible: activeTab === 2
                 Layout.fillWidth: true
@@ -677,7 +632,11 @@ Rectangle {
                             TextInput {
                                 id: hsNameInput
                                 Layout.fillWidth: true; text: hsName; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
-                                onTextChanged: { hsName = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\" 2>/dev/null"]); }
+                                onEditingFinished: {
+                                    hsName = text;
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.ssid \"" + text + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
+                                    hsProc.running = true;
+                                }
                             }
                             Text { text: "✏️"; font.pixelSize: 12 }
                         }
@@ -697,7 +656,11 @@ Rectangle {
                             TextInput {
                                 id: hsPassInput
                                 Layout.fillWidth: true; text: hsPass; echoMode: showHsPassText.show ? TextInput.Normal : TextInput.Password; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: bar.fg
-                                onTextChanged: { hsPass = text; Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\" 2>/dev/null"]); }
+                                onEditingFinished: {
+                                    hsPass = text;
+                                    Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless-security.psk \"" + text + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
+                                    hsProc.running = true;
+                                }
                             }
                             Text {
                                 id: showHsPassText; property bool show: false
@@ -725,7 +688,35 @@ Rectangle {
                                     anchors.centerIn: parent; text: modelData; font.family: Theme.defaultFontFamily; font.pixelSize: 11
                                     font.weight: isSel ? Font.Bold : Font.Normal; color: isSel ? Theme.colPrimary : bar.fg
                                 }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: hsBand = modelData }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        hsBand = modelData;
+                                        let code = modelData === "2.4 GHz" ? "bg" : (modelData === "5 GHz" ? "a" : "");
+                                        Quickshell.execDetached(["bash", "-c", "nmcli con modify Hotspot 802-11-wireless.band \"" + code + "\"; if nmcli con show --active | grep -qi hotspot; then nmcli con up Hotspot; fi"]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Connected Hotspot Devices List
+                ColumnLayout {
+                    visible: isHotspot
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Text { text: "CONNECTED DEVICES (" + hsClientList.length + ")"; font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 0.5; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
+                    Repeater {
+                        model: hsClientList
+                        delegate: Rectangle {
+                            Layout.fillWidth: true; height: 34; radius: 10
+                            color: Qt.rgba(1, 1, 1, 0.04); border.color: Qt.rgba(1, 1, 1, 0.08); border.width: 1
+                            RowLayout {
+                                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; spacing: 8
+                                Text { text: "\ued1b"; font.family: fontName; font.pixelSize: 12; color: Theme.colPrimary }
+                                Text { Layout.fillWidth: true; text: modelData.ip; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: bar.fg }
+                                Text { text: modelData.mac; font.family: Theme.defaultFontFamily; font.pixelSize: 10; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5) }
                             }
                         }
                     }
