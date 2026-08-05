@@ -881,7 +881,7 @@ Rectangle {
                                     // Cancel close button when password drawer is open
                                     Text {
                                         visible: isExpanded
-                                        text: "\uea02"; font.family: fontName; font.pixelSize: 13; color: "#ff6b6b"
+                                        text: "\uea6a"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b"
                                         anchors.verticalCenter: parent.verticalCenter
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -904,7 +904,7 @@ Rectangle {
                                         color: Qt.rgba(1, 0, 0, 0.18)
                                         border.color: Qt.rgba(1, 0, 0, 0.3); border.width: 1
                                         anchors.verticalCenter: parent.verticalCenter
-                                        Text { anchors.centerIn: parent; text: "\uea02"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
+                                        Text { anchors.centerIn: parent; text: "\uea6a"; font.family: fontName; font.pixelSize: 14; color: "#ff6b6b" }
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                             onClicked: {
@@ -1288,8 +1288,8 @@ Rectangle {
                                     width: 26; height: 26; radius: 7
                                     color: Qt.rgba(1, 1, 1, 0.05); border.color: Qt.rgba(1, 1, 1, 0.1); border.width: 1
                                     Text {
-                                        anchors.centerIn: parent; text: "\uea02"
-                                        font.family: fontName; font.pixelSize: 12
+                                        anchors.centerIn: parent; text: "\uea6a"
+                                        font.family: fontName; font.pixelSize: 13
                                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                                     }
                                     MouseArea {
