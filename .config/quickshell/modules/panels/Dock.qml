@@ -72,13 +72,13 @@ PanelWindow {
                     spacing: globalState.dockItemSpacing
 
                     Rectangle {
-                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
+                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
                         color: Theme.colPrimary
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
-                            font.pixelSize: Math.max(14, globalState.dockIconSize * 0.5)
+                            font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
                             color: Theme.colOnPrimary
                         }
                         scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
@@ -247,13 +247,13 @@ PanelWindow {
                     Rectangle { width: 2; height: Math.max(16, globalState.dockIconSize - 16); color: Theme.colSurfaceVariant; radius: 1 }
 
                     Rectangle {
-                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
+                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: width / 2
                         color: Theme.colPrimary
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
-                            font.pixelSize: Math.max(14, globalState.dockIconSize * 0.5)
+                            font.pixelSize: Math.max(12, globalState.dockIconSize * 0.42)
                             color: Theme.colOnPrimary
                         }
                         scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0
