@@ -19,9 +19,9 @@ PanelWindow {
     required property var modelData
     screen: modelData
     
-    // Make the window exact size of the dock + 12px bottom padding
-    implicitWidth: dockLayout.implicitWidth + 32
-    implicitHeight: 48 + 24
+    // Make the window exact size of the dock + edge margin
+    implicitWidth: dockLayout.implicitWidth + (globalState.dockMainAxisPadding + globalState.dockEndsMargin) * 2
+    implicitHeight: visualDock.height + globalState.dockEdgeMargin
     
     color: "transparent"
     exclusiveZone: globalState.dockReserveSpace ? ((globalState.dockAutoHide && !hoverHandler.hovered) ? 0 : implicitHeight) : 0 // 0 means do not reserve space, float over maximized apps
@@ -56,7 +56,7 @@ PanelWindow {
                 y: (globalState.dockAutoHide && !hoverHandler.hovered) ? 1 : 0 // Push completely out of window bounds when hidden
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
-                height: 64
+                height: globalState.dockIconSize + globalState.dockCrossAxisPadding * 2
                 color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.dockOpacity)
                 radius: globalState.dockRadius
             }
@@ -64,21 +64,21 @@ PanelWindow {
             RowLayout {
                 id: dockLayout
                 anchors.centerIn: visualDock
-                spacing: 12
+                spacing: globalState.dockItemSpacing
 
                 // Start Launcher
                 RowLayout {
                     visible: globalState.dockLauncherPosition !== "End"
-                    spacing: 12
+                    spacing: globalState.dockItemSpacing
 
                     Rectangle {
-                        width: 48; height: 48; radius: 12
+                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
                         color: Theme.colPrimary
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
-                            font.pixelSize: 24
+                            font.pixelSize: Math.max(14, globalState.dockIconSize * 0.5)
                             color: Theme.colOnPrimary
                         }
                         scale: mouseAreaStartLauncher.containsMouse ? 1.05 : 1.0
@@ -126,14 +126,14 @@ PanelWindow {
                         property bool isRunning: toplevel !== null
                         property bool isActive: isRunning && toplevel.activated
                         
-                        width: 48; height: 48; radius: 12
+                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
                         color: "transparent"
                         
                         Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottomMargin: 2
-                            width: isActive ? 24 : (isRunning ? 8 : 0)
+                            width: isActive ? Math.min(24, globalState.dockIconSize / 2) : (isRunning ? 8 : 0)
                             height: 3; radius: 2
                             color: Theme.colPrimary
                             Behavior on width { NumberAnimation { duration: 200 } }
@@ -142,7 +142,7 @@ PanelWindow {
 
                         Image {
                             anchors.centerIn: parent
-                            width: 32; height: 32
+                            width: Math.max(16, globalState.dockIconSize - 16); height: Math.max(16, globalState.dockIconSize - 16)
                             source: "image://icon/" + modelData.appId
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
@@ -201,8 +201,8 @@ PanelWindow {
                         }
                         
                         visible: !isPinned
-                        width: visible ? 48 : 0
-                        height: 48; radius: 12
+                        width: visible ? globalState.dockIconSize : 0
+                        height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
                         color: "transparent"
                         
 
@@ -210,7 +210,7 @@ PanelWindow {
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottomMargin: 2
-                            width: modelData.activated ? 24 : 8
+                            width: modelData.activated ? Math.min(24, globalState.dockIconSize / 2) : 8
                             height: 3; radius: 2
                             color: Theme.colPrimary
                             Behavior on width { NumberAnimation { duration: 200 } }
@@ -219,7 +219,7 @@ PanelWindow {
 
                         Image {
                             anchors.centerIn: parent
-                            width: 32; height: 32
+                            width: Math.max(16, globalState.dockIconSize - 16); height: Math.max(16, globalState.dockIconSize - 16)
                             source: modelData.appId ? "image://icon/" + modelData.appId : ""
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
@@ -242,18 +242,18 @@ PanelWindow {
                 // End Launcher
                 RowLayout {
                     visible: globalState.dockLauncherPosition === "End"
-                    spacing: 12
+                    spacing: globalState.dockItemSpacing
 
-                    Rectangle { width: 2; height: 32; color: Theme.colSurfaceVariant; radius: 1 }
+                    Rectangle { width: 2; height: Math.max(16, globalState.dockIconSize - 16); color: Theme.colSurfaceVariant; radius: 1 }
 
                     Rectangle {
-                        width: 48; height: 48; radius: 12
+                        width: globalState.dockIconSize; height: globalState.dockIconSize; radius: Math.min(12, globalState.dockIconSize / 4)
                         color: Theme.colPrimary
                         Text {
                             anchors.centerIn: parent
                             text: "\uebb6"
                             font.family: "tabler-icons"
-                            font.pixelSize: 24
+                            font.pixelSize: Math.max(14, globalState.dockIconSize * 0.5)
                             color: Theme.colOnPrimary
                         }
                         scale: mouseAreaEndLauncher.containsMouse ? 1.05 : 1.0

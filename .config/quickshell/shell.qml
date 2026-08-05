@@ -106,6 +106,12 @@ ShellRoot {
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
         property var dockRadius: 20
+        property int dockIconSize: 48
+        property int dockMainAxisPadding: 12
+        property int dockCrossAxisPadding: 8
+        property int dockItemSpacing: 6
+        property int dockEndsMargin: 10
+        property int dockEdgeMargin: 8
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property bool powerMenuOpen: false
@@ -203,7 +209,7 @@ ShellRoot {
 
     Process {
         id: initDockSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_icon_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_main_axis_padding 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_cross_axis_padding 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_item_spacing 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_ends_margin 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_edge_margin 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -224,6 +230,12 @@ ShellRoot {
                             globalState.dockPinnedApps = JSON.parse(parts[8].trim());
                         } catch(e) {}
                     }
+                    if (parts[9] && parts[9].trim() !== "") globalState.dockIconSize = parseInt(parts[9].trim());
+                    if (parts[10] && parts[10].trim() !== "") globalState.dockMainAxisPadding = parseInt(parts[10].trim());
+                    if (parts[11] && parts[11].trim() !== "") globalState.dockCrossAxisPadding = parseInt(parts[11].trim());
+                    if (parts[12] && parts[12].trim() !== "") globalState.dockItemSpacing = parseInt(parts[12].trim());
+                    if (parts[13] && parts[13].trim() !== "") globalState.dockEndsMargin = parseInt(parts[13].trim());
+                    if (parts[14] && parts[14].trim() !== "") globalState.dockEdgeMargin = parseInt(parts[14].trim());
                 }
             }
         }
@@ -264,6 +276,24 @@ ShellRoot {
         }
         function setDockShape(c: int) {
             root.setGlobalDockRadius(c);
+        }
+        function setDockIconSize(size: int) {
+            globalState.dockIconSize = size;
+        }
+        function setDockMainAxisPadding(pad: int) {
+            globalState.dockMainAxisPadding = pad;
+        }
+        function setDockCrossAxisPadding(pad: int) {
+            globalState.dockCrossAxisPadding = pad;
+        }
+        function setDockItemSpacing(space: int) {
+            globalState.dockItemSpacing = space;
+        }
+        function setDockEndsMargin(margin: int) {
+            globalState.dockEndsMargin = margin;
+        }
+        function setDockEdgeMargin(margin: int) {
+            globalState.dockEdgeMargin = margin;
         }
         function setPinnedAppsEnabled(enabled: bool) {
             globalState.dockPinnedAppsEnabled = enabled;

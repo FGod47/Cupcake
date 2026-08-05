@@ -22,7 +22,7 @@ Item {
 
     Process {
         id: initSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.dock_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_autohide 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_reserve_space 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_launcher_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_show_dots 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_magnification_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_shape 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps_enabled 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_pinned_apps 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_icon_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_main_axis_padding 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_cross_axis_padding 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_item_spacing 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_ends_margin 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_edge_margin 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -44,6 +44,12 @@ Item {
                             root.pinnedApps = JSON.parse(parts[9].trim());
                         } catch(e) {}
                     }
+                    if (parts[10] && parts[10].trim() !== "") root.iconSize = parseInt(parts[10].trim());
+                    if (parts[11] && parts[11].trim() !== "") root.mainAxisPadding = parseInt(parts[11].trim());
+                    if (parts[12] && parts[12].trim() !== "") root.crossAxisPadding = parseInt(parts[12].trim());
+                    if (parts[13] && parts[13].trim() !== "") root.itemSpacing = parseInt(parts[13].trim());
+                    if (parts[14] && parts[14].trim() !== "") root.endsMargin = parseInt(parts[14].trim());
+                    if (parts[15] && parts[15].trim() !== "") root.edgeMargin = parseInt(parts[15].trim());
                 }
             }
         }
@@ -387,7 +393,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 16; to: 128; stepSize: 1
                             value: root.iconSize
-                            onValueChanged: root.iconSize = value
+                            onValueChanged: {
+                                root.iconSize = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_icon_size && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
@@ -410,7 +420,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.mainAxisPadding
-                            onValueChanged: root.mainAxisPadding = value
+                            onValueChanged: {
+                                root.mainAxisPadding = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_main_axis_padding && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
@@ -433,7 +447,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.crossAxisPadding
-                            onValueChanged: root.crossAxisPadding = value
+                            onValueChanged: {
+                                root.crossAxisPadding = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_cross_axis_padding && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
@@ -456,7 +474,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.itemSpacing
-                            onValueChanged: root.itemSpacing = value
+                            onValueChanged: {
+                                root.itemSpacing = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_item_spacing && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
@@ -479,7 +501,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.endsMargin
-                            onValueChanged: root.endsMargin = value
+                            onValueChanged: {
+                                root.endsMargin = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_ends_margin && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
@@ -502,7 +528,11 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.edgeMargin
-                            onValueChanged: root.edgeMargin = value
+                            onValueChanged: {
+                                root.edgeMargin = value;
+                                bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_edge_margin && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin " + value];
+                                bashProcess.running = true;
+                            }
                         }
                         
                     }
