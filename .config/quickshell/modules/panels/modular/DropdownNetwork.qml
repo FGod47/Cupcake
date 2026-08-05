@@ -897,14 +897,14 @@ Rectangle {
                                     // Disconnect Pill Button (hidden on own broadcast hotspot)
                                     Rectangle {
                                         visible: modelData.connected && !(netSplitPill.hsActive && modelData.ssid.toLowerCase().trim() === netSplitPill.hsName.toLowerCase().trim())
-                                        width: 75; height: 24; radius: 12
-                                        color: Qt.rgba(1, 0, 0, 0.22)
-                                        border.color: Qt.rgba(1, 0, 0, 0.35); border.width: 1
+                                        width: 76; height: 24; radius: 12
+                                        color: Qt.rgba(1, 1, 1, 0.08)
+                                        border.color: Qt.rgba(1, 1, 1, 0.15); border.width: 1
                                         Text {
                                             anchors.centerIn: parent
                                             text: "Disconnect"
                                             font.family: Theme.defaultFontFamily; font.pixelSize: 10; font.weight: Font.Bold
-                                            color: "#ff6b6b"
+                                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
                                         }
                                         MouseArea {
                                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
