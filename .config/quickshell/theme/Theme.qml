@@ -107,7 +107,9 @@ Item {
 
     // helper function to parse hex string into color with alpha
     function transparentize(hexStr, alpha) {
+        if (!hexStr || hexStr === "") hexStr = "#000000";
         var c = Qt.color(hexStr);
+        if (!c || isNaN(c.r)) return Qt.rgba(0, 0, 0, alpha);
         return Qt.rgba(c.r, c.g, c.b, alpha);
     }
 
