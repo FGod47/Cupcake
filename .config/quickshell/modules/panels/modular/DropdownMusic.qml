@@ -114,7 +114,8 @@ Rectangle {
             height: 24
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
-            leftPadding: 12
+            leftPadding: 14
+            rightPadding: 10
             visible: !musicSplitPill.menuExpanded
 
             PwNodePeakMonitor {
@@ -138,7 +139,7 @@ Rectangle {
             }
 
             Repeater {
-                model: 8
+                model: 6
                 Rectangle {
                     width: 2
                     radius: 1
