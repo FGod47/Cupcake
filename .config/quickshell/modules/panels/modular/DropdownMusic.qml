@@ -93,7 +93,7 @@ Rectangle {
             Rectangle {
                 id: pillArtMask
                 anchors.fill: parent
-                radius: 4
+                radius: 9
                 visible: false
             }
 
