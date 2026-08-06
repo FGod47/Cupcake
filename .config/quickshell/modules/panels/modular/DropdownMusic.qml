@@ -167,25 +167,9 @@ Rectangle {
 
         // Play / Pause Button inside compact pill
         Item {
+            id: smallPlayPausePlaceholder
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
-            z: 20
-
-            Text {
-                anchors.centerIn: parent
-                text: musicSplitPill.isPlaying ? "\ued45" : "\ued46" // pause vs play icon
-                font.family: ddMusicFont.name
-                font.pixelSize: 14
-                color: Theme.colPrimary
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (hasPlayer) player.togglePlaying();
-                }
-            }
         }
     }
 
@@ -219,6 +203,46 @@ Rectangle {
         layer.enabled: true
         layer.effect: OpacityMask {
             maskSource: floatingArtMask
+        }
+    }
+
+    // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
+    Rectangle {
+        id: floatingPlayButton
+        x: musicSplitPill.menuExpanded ? 268 : 90
+        y: musicSplitPill.menuExpanded ? 96 : 4
+        width: musicSplitPill.menuExpanded ? 38 : 22
+        height: musicSplitPill.menuExpanded ? 38 : 22
+        radius: musicSplitPill.menuExpanded ? 19 : 11
+        color: musicSplitPill.menuExpanded ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+        z: 20
+        
+        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on radius { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on color { ColorAnimation { duration: 250 } }
+
+        Text {
+            anchors.centerIn: parent
+            text: isPlaying ? "\ued45" : "\ued46"
+            font.family: ddMusicFont.name
+            font.pixelSize: musicSplitPill.menuExpanded ? 18 : 14
+            color: musicSplitPill.menuExpanded ? bar.fg : Theme.colPrimary
+            
+            Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+            Behavior on color { ColorAnimation { duration: 250 } }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                if (hasPlayer) {
+                    player.togglePlaying();
+                }
+            }
         }
     }
 
@@ -424,23 +448,9 @@ Rectangle {
 
             // Icon removed as per user request
 
-            Rectangle {
-                width: 38; height: 38; radius: 19
-                color: Qt.rgba(1, 1, 1, 0.10)
-
-                Text {
-                    anchors.centerIn: parent
-                    text: isPlaying ? "\ued45" : "\ued46"
-                    font.family: ddMusicFont.name
-                    font.pixelSize: 18
-                    color: bar.fg
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: if (hasPlayer) player.togglePlaying()
-                }
+            Item {
+                id: largePlayPausePlaceholder
+                width: 38; height: 38
             }
         }
     }
