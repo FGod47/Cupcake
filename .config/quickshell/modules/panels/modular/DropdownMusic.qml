@@ -163,10 +163,11 @@ Rectangle {
                     ctx.stroke();
                 }
                 
-                // Draw 3 distinct strings with different opacities and phase offsets for depth
-                drawWave(dynamicAmp * 0.5, 0.4, 2.0, 0.0); // Background string
-                drawWave(dynamicAmp * 0.75, 0.7, 1.5, 2.5); // Middle string
-                drawWave(dynamicAmp, 1.0, 1.5, 5.0); // Foreground string
+                // Draw 3 distinct strings. 
+                // By passing a negative amplitude, we perfectly invert the wave so it acts as an exact opposite.
+                drawWave(-dynamicAmp * 0.9, 0.7, 1.5, 0.0); // Inverted mirrored string
+                drawWave(dynamicAmp, 1.0, 1.5, 0.0); // Normal foreground string
+                drawWave(dynamicAmp * 0.5, 0.4, 2.0, 2.5); // Smaller offset background string
             }
         }
 
