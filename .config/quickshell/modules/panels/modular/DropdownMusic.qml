@@ -39,6 +39,8 @@ Rectangle {
     border.color: Qt.rgba(1, 1, 1, 0.12)
     border.width: 1
 
+    property bool isHovered: musicHeaderMa.containsMouse || false
+
     // Top glass highlight line
     Rectangle {
         anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
@@ -47,7 +49,7 @@ Rectangle {
         color: Qt.rgba(1, 1, 1, 0.12)
     }
 
-    opacity: bar.isMusicPlaying ? 1.0 : 0.0
+    opacity: bar.keepMusicAlive ? 1.0 : 0.0
     visible: opacity > 0
     Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 

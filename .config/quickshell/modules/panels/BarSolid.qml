@@ -39,8 +39,9 @@ PanelWindow {
     property bool musicDropdownOpen: false
     property var barActivePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool isMusicPlaying: barActivePlayer !== null && (barActivePlayer.playbackState === 1 || barActivePlayer.isPlaying) && (barActivePlayer.trackTitle !== "")
-    onIsMusicPlayingChanged: {
-        if (!isMusicPlaying) musicDropdownOpen = false;
+    property bool keepMusicAlive: isMusicPlaying || (musicSplitPill && musicSplitPill.isHovered)
+    onKeepMusicAliveChanged: {
+        if (!keepMusicAlive) musicDropdownOpen = false;
     }
     property real extraHeight: 0
     
@@ -197,10 +198,10 @@ PanelWindow {
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: expandAnim.running ? bar.startX : (bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
+        x: expandAnim.running ? bar.startX : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         width: (bar.barW) 
-               - (bar.isMusicPlaying ? (musicSplitPill.contentW + 16) : 0)
+               - (bar.keepMusicAlive ? (musicSplitPill.contentW + 16) : 0)
                - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                  (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                  (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
@@ -946,11 +947,11 @@ PanelWindow {
         
         onFinished: {
             solidBar.x = Qt.binding(function() {
-                return bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
+                return bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
             });
             solidBar.width = Qt.binding(function() {
                 return (bar.barW) 
-                       - (bar.isMusicPlaying ? (musicSplitPill.contentW + 16) : 0)
+                       - (bar.keepMusicAlive ? (musicSplitPill.contentW + 16) : 0)
                        - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                          (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                          (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
