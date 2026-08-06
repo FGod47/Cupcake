@@ -109,7 +109,7 @@ Rectangle {
             Image {
                 id: pillAlbumArt
                 anchors.fill: parent
-                source: (hasPlayer && player.artUrl) ? player.artUrl : ""
+                source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
                 fillMode: Image.PreserveAspectCrop
                 visible: status === Image.Ready
                 layer.enabled: true
@@ -284,7 +284,7 @@ Rectangle {
                 Image {
                     id: albumArtImg
                     anchors.fill: parent
-                    source: (hasPlayer && player.artUrl) ? player.artUrl : ""
+                    source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
                     fillMode: Image.PreserveAspectCrop
                     visible: status === Image.Ready
                     layer.enabled: true
