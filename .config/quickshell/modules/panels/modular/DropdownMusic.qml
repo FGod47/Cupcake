@@ -101,18 +101,13 @@ Rectangle {
             
             property real time: 0
             
-            // Get live audio peak from Pipewire
-            property real currentPeak: {
-                let sink = Pipewire.defaultAudioSink;
-                if (sink && sink.audio && sink.audio.peaks && sink.audio.peaks.length > 0) {
-                    let maxP = 0;
-                    for (let i = 0; i < sink.audio.peaks.length; i++) {
-                        if (sink.audio.peaks[i] > maxP) maxP = sink.audio.peaks[i];
-                    }
-                    return maxP;
-                }
-                return 0.0;
+            PwNodePeakMonitor {
+                id: peakMonitor
+                node: Pipewire.defaultAudioSink
             }
+            
+            // Get live audio peak from Pipewire monitor
+            property real currentPeak: peakMonitor.peak || 0.0
             
             // Smooth the peak to avoid jitter
             property real smoothedPeak: 0
