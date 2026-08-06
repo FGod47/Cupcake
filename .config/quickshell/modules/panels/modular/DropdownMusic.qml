@@ -163,15 +163,15 @@ Rectangle {
             }
 
             Repeater {
-                model: 5
+                model: 8
                 Rectangle {
-                    width: 4
-                    radius: 2
+                    width: 2
+                    radius: 1
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
 
                     // Fake frequencies by using different sin phases and speeds
                     property real basePhase: index * 1.5
-                    property real speedMod: 1.0 + (index * 0.3)
+                    property real speedMod: 1.0 + (index * 0.2)
                     
                     // The bounce factor oscillates naturally
                     property real osc: Math.sin(barVisualizer.time * speedMod + basePhase) * 0.5 + 0.5
