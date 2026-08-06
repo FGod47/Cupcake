@@ -245,9 +245,9 @@ Rectangle {
         elide: Text.ElideRight
         maximumLineCount: 1
 
-        x: musicSplitPill.menuExpanded ? 80 : (12 + compactTrackTitle.x)
-        y: musicSplitPill.menuExpanded ? 27 : (musicHeaderRow.y + compactTrackTitle.y)
-        width: musicSplitPill.menuExpanded ? (musicSplitPill.width - 94) : compactTrackTitle.width
+        x: musicSplitPill.menuExpanded ? (14 + trackInfoWrapper.x) : (12 + compactTrackTitle.x)
+        y: musicSplitPill.menuExpanded ? (14 + trackInfoWrapper.y) : (musicHeaderRow.y + compactTrackTitle.y)
+        width: musicSplitPill.menuExpanded ? realTitleText.width : compactTrackTitle.width
 
         Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -294,6 +294,7 @@ Rectangle {
             }
 
             Item {
+                id: trackInfoWrapper
                 Layout.fillWidth: true
                 height: trackInfoCol.implicitHeight
                 clip: true
@@ -307,6 +308,7 @@ Rectangle {
                     Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
                     Text {
+                        id: realTitleText
                         Layout.fillWidth: true
                         text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
                         font.family: Theme.defaultFontFamily
