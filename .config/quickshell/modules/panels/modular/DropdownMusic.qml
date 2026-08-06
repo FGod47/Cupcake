@@ -5,6 +5,7 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Mpris
+import Quickshell.Services.Pipewire
 import "../../../theme"
 
 // ── MUSIC SPLIT PILL & DROPDOWN ──
@@ -100,6 +101,24 @@ Rectangle {
             
             property real time: 0
             
+            // Get live audio peak from Pipewire
+            property real currentPeak: {
+                let sink = Pipewire.defaultAudioSink;
+                if (sink && sink.audio && sink.audio.peaks && sink.audio.peaks.length > 0) {
+                    let maxP = 0;
+                    for (let i = 0; i < sink.audio.peaks.length; i++) {
+                        if (sink.audio.peaks[i] > maxP) maxP = sink.audio.peaks[i];
+                    }
+                    return maxP;
+                }
+                return 0.0;
+            }
+            
+            // Smooth the peak to avoid jitter
+            property real smoothedPeak: 0
+            Behavior on smoothedPeak { NumberAnimation { duration: 50; easing.type: Easing.OutQuad } }
+            onCurrentPeakChanged: smoothedPeak = currentPeak
+            
             Timer {
                 running: musicSplitPill.isPlaying && !musicSplitPill.menuExpanded
                 repeat: true
@@ -115,6 +134,9 @@ Rectangle {
                 ctx.clearRect(0, 0, width, height);
                 
                 var centerY = height / 2;
+                // Minimum amplitude even when quiet, scales up with music
+                var baseAmp = 3;
+                var dynamicAmp = baseAmp + (smoothedPeak * 15);
                 
                 function drawWave(amplitude, frequency, phase, opacity, lineWidth) {
                     ctx.beginPath();
@@ -130,11 +152,11 @@ Rectangle {
                 }
                 
                 // Glow
-                drawWave(7, 0.08, time, 0.3, 3);
-                drawWave(5, 0.11, -time * 0.8, 0.2, 4);
+                drawWave(dynamicAmp, 0.08, time, 0.3, 3);
+                drawWave(dynamicAmp * 0.7, 0.11, -time * 0.8, 0.2, 4);
                 // Core
-                drawWave(7, 0.08, time, 0.9, 1.2);
-                drawWave(5, 0.11, -time * 0.8, 0.7, 1.2);
+                drawWave(dynamicAmp, 0.08, time, 0.9, 1.2);
+                drawWave(dynamicAmp * 0.7, 0.11, -time * 0.8, 0.7, 1.2);
             }
         }
 
