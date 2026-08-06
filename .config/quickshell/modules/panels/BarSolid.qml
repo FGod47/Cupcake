@@ -228,10 +228,10 @@ PanelWindow {
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: expandAnim.running ? bar.startX : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
+        x: expandAnim.running ? bar.startX : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX)
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         width: (bar.barW) 
-               - (bar.keepMusicAlive ? (musicSplitPill.contentW + 16) : 0)
+               - (bar.keepMusicAlive ? (musicSplitPill.contentW + 8) : 0)
                - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                  (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                  (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
