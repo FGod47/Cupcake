@@ -45,13 +45,7 @@ Rectangle {
     }
     property bool isHovered: pillHover.hovered || musicHeaderMa.containsMouse
 
-    // Top glass highlight line
-    Rectangle {
-        anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-        anchors.leftMargin: 4; anchors.rightMargin: 4
-        height: 1; radius: 1
-        color: Qt.rgba(1, 1, 1, 0.12)
-    }
+
 
     opacity: bar.keepMusicAlive ? 1.0 : 0.0
     visible: opacity > 0
