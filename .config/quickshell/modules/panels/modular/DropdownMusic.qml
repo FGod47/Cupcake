@@ -18,22 +18,24 @@ Rectangle {
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
     readonly property real headerW: musicHeaderRow.implicitWidth + 20
-    readonly property real expandedW: 340
+    readonly property real expandedW: 300
     property real contentW: menuExpanded ? expandedW : headerW
 
-    height: menuExpanded ? (expandedInner.implicitHeight + 28) : 30
+    // Art is 110px + 14px margin = 124. Right column fills the rest.
+    readonly property real artSize: 110
+    readonly property real artMargin: 14
+
+    height: menuExpanded ? (artSize + artMargin * 2) : 30
     Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
     x: bar.barX
     width: contentW
-
     Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
     Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
 
     radius: menuExpanded ? 20 : 15
     Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
     clip: true
-
     color: bar.pillColor
 
     HoverHandler { id: pillHover }
@@ -61,12 +63,12 @@ Rectangle {
 
     function formatRemaining(val, total) {
         if (!val || !total || isNaN(val) || isNaN(total)) return "-0:00";
-        let remaining = total - val;
-        if (remaining < 0) remaining = 0;
-        let seconds = remaining;
-        if (total > 10000000) seconds = Math.floor(remaining / 1000000);
-        else if (total > 10000) seconds = Math.floor(remaining / 1000);
-        else seconds = Math.floor(remaining);
+        let r = total - val;
+        if (r < 0) r = 0;
+        let seconds = r;
+        if (total > 10000000) seconds = Math.floor(r / 1000000);
+        else if (total > 10000) seconds = Math.floor(r / 1000);
+        else seconds = Math.floor(r);
         let m = Math.floor(seconds / 60);
         let s = Math.floor(seconds % 60);
         return "-" + m + ":" + (s < 10 ? "0" : "") + s;
@@ -76,11 +78,10 @@ Rectangle {
         if (!title) return "No Track";
         let t = title;
         t = t.replace(/\s*[([].*?(official|music video|lyric|audio).*?[)\]]/gi, "");
-        if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + " - ")) {
+        if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + " - "))
             t = t.substring(artist.length + 3);
-        } else if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + "-")) {
+        else if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + "-"))
             t = t.substring(artist.length + 1);
-        }
         return t.trim() || "No Track";
     }
 
@@ -131,8 +132,7 @@ Rectangle {
             elide: Text.ElideRight
             maximumLineCount: 1
             width: Math.min(implicitWidth, 180)
-            visible: !musicSplitPill.menuExpanded
-            opacity: 0 // floatingTrackTitle takes its place
+            opacity: 0
         }
 
         Item {
@@ -142,13 +142,13 @@ Rectangle {
         }
     }
 
-    // ── FLOATING ANIMATED ALBUM ART ──
+    // ── FLOATING ALBUM ART MASK ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : (12 + smallArtPlaceholder.x)
-        y: musicSplitPill.menuExpanded ? 14 : 4
-        width:  musicSplitPill.menuExpanded ? 100 : 22
-        height: musicSplitPill.menuExpanded ? 100 : 22
+        x: musicSplitPill.menuExpanded ? artMargin : (12 + smallArtPlaceholder.x)
+        y: musicSplitPill.menuExpanded ? artMargin : 4
+        width:  musicSplitPill.menuExpanded ? artSize : 22
+        height: musicSplitPill.menuExpanded ? artSize : 22
         radius: musicSplitPill.menuExpanded ? 14 : 11
         visible: false
         Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -160,10 +160,8 @@ Rectangle {
 
     Image {
         id: floatingAlbumArt
-        x: floatingArtMask.x
-        y: floatingArtMask.y
-        width:  floatingArtMask.width
-        height: floatingArtMask.height
+        x: floatingArtMask.x; y: floatingArtMask.y
+        width: floatingArtMask.width; height: floatingArtMask.height
         z: 20
         source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
         fillMode: Image.PreserveAspectCrop
@@ -172,14 +170,41 @@ Rectangle {
         layer.effect: OpacityMask { maskSource: floatingArtMask }
     }
 
+    // Fallback icon when no art
+    Rectangle {
+        x: floatingArtMask.x; y: floatingArtMask.y
+        width: floatingArtMask.width; height: floatingArtMask.height
+        radius: floatingArtMask.radius
+        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+        visible: musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready
+        z: 19
+        Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Text {
+            anchors.centerIn: parent
+            text: "\ueafc"
+            font.family: ddMusicFont.name
+            font.pixelSize: 36
+            color: Theme.colPrimary
+        }
+    }
+
     // ── FLOATING PLAY/PAUSE ──
+    // In expanded: sits in the controls row (centre of 3 buttons on right column)
+    // right column starts at: artMargin + artSize + 12
+    readonly property real rightColX: artMargin + artSize + 12
+    // Controls row is vertically centred in the right column, roughly 2/3 down
+    readonly property real controlsRowY: artMargin + 52
+
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? (14 + 100 + 12 + 28 + 8) : (12 + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? (14 + 52) : 4
-        width:  musicSplitPill.menuExpanded ? 38 : 22
-        height: musicSplitPill.menuExpanded ? 38 : 22
-        radius: musicSplitPill.menuExpanded ? 19 : 11
+        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + 32) : (12 + smallPlayPausePlaceholder.x)
+        y: musicSplitPill.menuExpanded ? musicSplitPill.controlsRowY : 4
+        width:  musicSplitPill.menuExpanded ? 36 : 22
+        height: musicSplitPill.menuExpanded ? 36 : 22
+        radius: musicSplitPill.menuExpanded ? 18 : 11
         color:  musicSplitPill.menuExpanded ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
         z: 20
         Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -193,12 +218,11 @@ Rectangle {
             anchors.centerIn: parent
             text: isPlaying ? "\ued45" : "\ued46"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 18 : 14
+            font.pixelSize: musicSplitPill.menuExpanded ? 17 : 14
             color: musicSplitPill.menuExpanded ? bar.fg : Theme.colPrimary
             Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
             Behavior on color { ColorAnimation { duration: 250 } }
         }
-
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
@@ -209,22 +233,26 @@ Rectangle {
     // ── FLOATING TRACK TITLE ──
     Text {
         id: floatingTrackTitle
-        text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
+        text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
         font.family: Theme.defaultFontFamily
         font.pixelSize: 11
-        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
+        font.weight: Font.Bold
         color: bar.fg
+        elide: Text.ElideRight
+        width: musicSplitPill.menuExpanded
+               ? (musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin)
+               : compactTrackTitle.width
         scale: musicSplitPill.menuExpanded ? (16.0 / 11.0) : 1.0
         transformOrigin: Item.TopLeft
-        Behavior on scale { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        x: musicSplitPill.menuExpanded ? (14 + 100 + 12) : (12 + compactTrackTitle.x)
-        y: musicSplitPill.menuExpanded ? 14 : (musicHeaderRow.y + compactTrackTitle.y)
+        Behavior on scale  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        x: musicSplitPill.menuExpanded ? musicSplitPill.rightColX : (12 + compactTrackTitle.x)
+        y: musicSplitPill.menuExpanded ? artMargin : (musicHeaderRow.y + compactTrackTitle.y)
         Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         z: 20
     }
 
-    // MouseArea for pill click
+    // ── MOUSE AREA ──
     MouseArea {
         id: musicHeaderMa
         anchors.fill: parent
@@ -239,123 +267,91 @@ Rectangle {
         }
     }
 
-    // ── EXPANDED DROPDOWN CONTENT ──
-    ColumnLayout {
-        id: expandedInner
+    // ── EXPANDED CONTENT (right column only, art is handled by floating elements) ──
+    Item {
+        id: expandedContent
         anchors.left: parent.left
+        anchors.leftMargin: musicSplitPill.rightColX
         anchors.right: parent.right
+        anchors.rightMargin: artMargin
         anchors.top: parent.top
-        anchors.margins: 14
-        spacing: 14
+        anchors.topMargin: artMargin
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: artMargin
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250 } }
+        Behavior on opacity { NumberAnimation { duration: 300 } }
 
-        // Top section: big art + track info + controls
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 12
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 0
 
-            // Album art placeholder (floating art sits here visually)
+            // Title placeholder (floating title sits here, needs height reserve)
             Item {
-                id: largeArtPlaceholder
-                width: 100; height: 100
+                Layout.fillWidth: true
+                // Reserve space for the scaled-up title (11px * 16/11 scale ≈ 16px + a bit)
+                height: 22
+            }
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: 14
-                    color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
-                    visible: floatingAlbumArt.status !== Image.Ready
+            // Artist
+            Text {
+                Layout.fillWidth: true
+                text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 13
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                elide: Text.ElideRight
+                maximumLineCount: 1
+            }
+
+            Item { Layout.fillHeight: true }
+
+            // Controls: prev | [play/pause placeholder] | next
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 8
+
+                MouseArea {
+                    width: 28; height: 36
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: if (hasPlayer) player.previous()
                     Text {
                         anchors.centerIn: parent
-                        text: "\ueafc"
+                        text: "\ued4c"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 36
-                        color: Theme.colPrimary
+                        font.pixelSize: 18
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
                     }
                 }
+
+                // Play/pause placeholder — floating button goes here
+                Item { width: 36; height: 36 }
+
+                MouseArea {
+                    width: 28; height: 36
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: if (hasPlayer) player.next()
+                    Text {
+                        anchors.centerIn: parent
+                        text: "\ued4b"
+                        font.family: ddMusicFont.name
+                        font.pixelSize: 18
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                    }
+                }
+
+                Item { Layout.fillWidth: true }
             }
 
-            // Right side: title + artist + controls
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 4
+            Item { height: 6 }
 
-                // Title placeholder (floating title sits here visually)
-                Item {
-                    Layout.fillWidth: true
-                    height: 22
-                }
-
-                // Artist
-                Text {
-                    Layout.fillWidth: true
-                    text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                }
-
-                Item { Layout.fillHeight: true; height: 4 }
-
-                // Controls row: prev | play/pause placeholder | next
-                RowLayout {
-                    spacing: 8
-
-                    // Prev
-                    MouseArea {
-                        width: 28; height: 28
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: if (hasPlayer) player.previous()
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ued4c"
-                            font.family: ddMusicFont.name
-                            font.pixelSize: 18
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
-                        }
-                    }
-
-                    // Play/Pause placeholder (floating button sits here)
-                    Item {
-                        id: largePlayPausePlaceholder
-                        width: 38; height: 38
-                    }
-
-                    // Next
-                    MouseArea {
-                        width: 28; height: 28
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: if (hasPlayer) player.next()
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ued4b"
-                            font.family: ddMusicFont.name
-                            font.pixelSize: 18
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
-                        }
-                    }
-                }
-            }
-        }
-
-        // Progress bar + timestamps
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 4
-
-            // Progress track
+            // Progress bar
             Item {
+                id: progressWrapper
                 Layout.fillWidth: true
-                height: 4
-
+                height: 3
                 property real currentPosition: hasPlayer ? player.position : 0
                 property real progress: (hasPlayer && player.length > 0) ? (currentPosition / player.length) : 0
-
-                id: progressWrapper
 
                 Timer {
                     interval: 1000
@@ -367,8 +363,7 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     radius: 2
-                    color: Qt.rgba(1, 1, 1, 0.12)
-
+                    color: Qt.rgba(1, 1, 1, 0.15)
                     Rectangle {
                         height: parent.height
                         width: parent.width * progressWrapper.progress
@@ -383,39 +378,38 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: (mouse) => {
                         if (hasPlayer && player.length > 0) {
-                            let newPos = (mouse.x / width) * player.length;
-                            try { player.position = newPos; } catch(e) {}
-                            progressWrapper.currentPosition = Math.max(0, Math.min(newPos, player.length));
+                            let np = (mouse.x / width) * player.length;
+                            try { player.position = np; } catch(e) {}
+                            progressWrapper.currentPosition = Math.max(0, Math.min(np, player.length));
                         }
                     }
                     onPositionChanged: (mouse) => {
                         if (pressed && hasPlayer && player.length > 0) {
-                            let clampedX = Math.max(0, Math.min(mouse.x, width));
-                            let newPos = (clampedX / width) * player.length;
-                            try { player.position = newPos; } catch(e) {}
-                            progressWrapper.currentPosition = newPos;
+                            let cx = Math.max(0, Math.min(mouse.x, width));
+                            let np = (cx / width) * player.length;
+                            try { player.position = np; } catch(e) {}
+                            progressWrapper.currentPosition = np;
                         }
                     }
                 }
             }
 
+            Item { height: 2 }
+
             // Timestamps
             RowLayout {
                 Layout.fillWidth: true
-
                 Text {
                     text: hasPlayer ? formatTime(progressWrapper.currentPosition) : "0:00"
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: 10
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                 }
-
                 Item { Layout.fillWidth: true }
-
                 Text {
                     text: hasPlayer ? formatRemaining(progressWrapper.currentPosition, player.length) : "-0:00"
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: 10
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                 }
             }
