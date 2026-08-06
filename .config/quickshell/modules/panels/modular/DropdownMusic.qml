@@ -87,7 +87,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.top
         anchors.verticalCenterOffset: 15
-        spacing: 6
+        spacing: 4
         z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
         visible: opacity > 0
@@ -109,13 +109,12 @@ Rectangle {
             }
         }
 
-        Item { width: 2; height: 1 } // Spacer to push visualizer slightly right
-
         Row {
             id: barVisualizer
             height: 24
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
+            leftPadding: 4
             visible: !musicSplitPill.menuExpanded
 
             PwNodePeakMonitor {
@@ -178,7 +177,7 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : 8
+        x: musicSplitPill.menuExpanded ? 14 : 12
         y: musicSplitPill.menuExpanded ? 14 : 4
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
@@ -211,7 +210,7 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : 94
+        x: musicSplitPill.menuExpanded ? 268 : 90
         y: musicSplitPill.menuExpanded ? 96 : 4
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
