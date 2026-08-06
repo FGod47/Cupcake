@@ -136,81 +136,58 @@ Rectangle {
             }
         }
 
-        Canvas {
-            id: waveCanvas
-            width: 80
-            height: 24
+        Row {
+            id: barVisualizer
             anchors.verticalCenter: parent.verticalCenter
-            
-            property real time: 0
-            
+            spacing: 4
+            visible: !musicSplitPill.menuExpanded
+
             PwNodePeakMonitor {
                 id: peakMonitor
                 node: Pipewire.defaultAudioSink
             }
-            
-            // Get live audio peak from Pipewire monitor
+
             property real currentPeak: peakMonitor.peak || 0.0
-            
-            // Smooth the peak to avoid jitter, but keep it snappy!
             property real smoothedPeak: 0
-            Behavior on smoothedPeak { NumberAnimation { duration: 30; easing.type: Easing.OutQuart } }
+            Behavior on smoothedPeak { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
             onCurrentPeakChanged: smoothedPeak = currentPeak
-            
+
+            property real time: 0
             Timer {
                 running: musicSplitPill.isPlaying && !musicSplitPill.menuExpanded
                 repeat: true
-                interval: 24 // ~40 fps for buttery smooth punchy animation
+                interval: 30
                 onTriggered: {
-                    // Speed up the wave aggressively on loud beats
-                    waveCanvas.time += 0.04 + (Math.pow(waveCanvas.smoothedPeak, 3) * 0.4);
-                    waveCanvas.requestPaint();
+                    barVisualizer.time += 0.2 + (Math.pow(barVisualizer.smoothedPeak, 2) * 0.4);
                 }
             }
-            
-            onPaint: {
-                var ctx = getContext("2d");
-                ctx.clearRect(0, 0, width, height);
-                
-                var centerY = height / 2;
-                
-                // Max allowed amplitude to stay well within the 24px high Canvas
-                var maxAmp = (height / 2) - 5; 
-                
-                // Exaggerate the peak aggressively (power of 4) so only loud beats spike the wave!
-                var beat = Math.pow(smoothedPeak, 4.0);
-                
-                // Tiny base amplitude (almost flat) + heavily scaled beat (clamped to maxAmp)
-                var dynamicAmp = 0.5 + (beat * maxAmp * 3.5);
-                if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
-                
-                function drawWave(amplitude, opacity, lineWidth, phaseOffset) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, opacity);
-                    ctx.lineWidth = lineWidth;
-                    for (var x = 0; x <= width; x += 1) {
-                        // Taper off at the edges
-                        var envelope = Math.sin((x / width) * Math.PI);
-                        
-                        // Combine multiple lower-frequency sine waves for a less chaotic, cleaner waveform
-                        var wave1 = Math.sin(x * 0.15 + (time + phaseOffset) * 2.0) * 0.6;
-                        var wave2 = Math.sin(x * 0.28 - (time + phaseOffset) * 3.1) * 0.3;
-                        var wave3 = Math.sin(x * 0.45 + (time + phaseOffset) * 4.5) * 0.1;
-                        
-                        var combinedWave = wave1 + wave2 + wave3;
-                        var y = centerY + (combinedWave * amplitude * envelope);
-                        
-                        if (x === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-                    }
-                    ctx.stroke();
+
+            Repeater {
+                model: 5
+                Rectangle {
+                    width: 4
+                    radius: 2
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
+
+                    // Fake frequencies by using different sin phases and speeds
+                    property real basePhase: index * 1.5
+                    property real speedMod: 1.0 + (index * 0.3)
+                    
+                    // The bounce factor oscillates naturally
+                    property real osc: Math.sin(barVisualizer.time * speedMod + basePhase) * 0.5 + 0.5
+                    
+                    // Exaggerate the peak so it only bounces high on beats
+                    property real beat: Math.pow(barVisualizer.smoothedPeak, 3.5) * 2.0
+                    
+                    // Minimum height 4, max height 22
+                    property real targetHeight: 4 + (osc * beat * 18)
+                    
+                    height: Math.min(22, Math.max(4, targetHeight))
+                    
+                    anchors.verticalCenter: parent.verticalCenter
+                    
+                    Behavior on height { NumberAnimation { duration: 30 } }
                 }
-                
-                // Draw 3 distinct strings. 
-                // By passing a negative amplitude, we perfectly invert the wave so it acts as an exact opposite.
-                drawWave(-dynamicAmp * 0.9, 0.7, 1.5, 0.0); // Inverted mirrored string
-                drawWave(dynamicAmp, 1.0, 1.5, 0.0); // Normal foreground string
-                drawWave(dynamicAmp * 0.5, 0.4, 2.0, 2.5); // Smaller offset background string
             }
         }
 
