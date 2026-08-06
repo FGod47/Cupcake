@@ -20,7 +20,8 @@ PanelWindow {
 
     anchors { top: true; left: true; right: true }
     WlrLayershell.namespace: "quickshell"
-    WlrLayershell.keyboardFocus: bar.netDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
+    WlrLayershell.keyboardFocus: anyDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusiveZone: 40
     height: 600
     color: "transparent"
@@ -76,6 +77,16 @@ PanelWindow {
             dropdownOpen = false;
             globalState.solidBoardOpen = false;
             globalState.powerDropdownOpen = false;
+        }
+    }
+
+    onActiveChanged: {
+        if (!active && anyDropdownOpen) {
+            bar.dropdownOpen = false;
+            bar.netDropdownOpen = false;
+            bar.musicDropdownOpen = false;
+            globalState.powerDropdownOpen = false;
+            globalState.solidBoardOpen = false;
         }
     }
 
