@@ -149,10 +149,10 @@ Rectangle {
                         // Taper off at the edges
                         var envelope = Math.sin((x / width) * Math.PI);
                         
-                        // Combine multiple high-frequency sine waves to create an erratic, "voice-note" style waveform
-                        var wave1 = Math.sin(x * 0.35 + time * 2.0) * 0.5;
-                        var wave2 = Math.sin(x * 0.62 - time * 3.1) * 0.3;
-                        var wave3 = Math.sin(x * 1.15 + time * 4.5) * 0.2;
+                        // Combine multiple lower-frequency sine waves for a less chaotic, cleaner waveform
+                        var wave1 = Math.sin(x * 0.15 + time * 2.0) * 0.6;
+                        var wave2 = Math.sin(x * 0.28 - time * 3.1) * 0.3;
+                        var wave3 = Math.sin(x * 0.45 + time * 4.5) * 0.1;
                         
                         var combinedWave = wave1 + wave2 + wave3;
                         var y = centerY + (combinedWave * amplitude * envelope);
