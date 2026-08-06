@@ -114,7 +114,7 @@ Rectangle {
             id: compactTrackTitle
             text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
             font.family: Theme.defaultFontFamily
-            font.pixelSize: 13
+            font.pixelSize: 11
             font.weight: Font.DemiBold
             color: bar.fg
             anchors.verticalCenter: parent.verticalCenter
