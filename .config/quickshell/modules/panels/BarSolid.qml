@@ -37,13 +37,16 @@ PanelWindow {
 
     Item {
         id: clickCatcherItem
-        anchors.fill: parent
-        // Only provide bounds to the mask when a dropdown is open
-        visible: bar.anyDropdownOpen
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: bar.anyDropdownOpen ? bar.height : 0
+        visible: height > 0
 
         MouseArea {
             anchors.fill: parent
             enabled: bar.anyDropdownOpen
+            hoverEnabled: true
             onClicked: {
                 bar.dropdownOpen = false;
                 bar.netDropdownOpen = false;
