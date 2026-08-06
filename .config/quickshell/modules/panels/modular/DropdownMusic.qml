@@ -334,15 +334,16 @@ Rectangle {
             Layout.rightMargin: 16
             height: 4
 
-            property real progress: (hasPlayer && player.length > 0) ? (player.position / player.length) : 0
+            property real currentPosition: hasPlayer ? player.position : 0
+            property real progress: (hasPlayer && player.length > 0) ? (currentPosition / player.length) : 0
             
             Timer {
                 interval: 1000
                 running: hasPlayer && isPlaying
                 repeat: true
                 onTriggered: {
-                    if (hasPlayer && player.length > 0) {
-                        progressWrapper.progress = player.position / player.length;
+                    if (hasPlayer) {
+                        progressWrapper.currentPosition = player.position;
                     }
                 }
             }
@@ -367,7 +368,7 @@ Rectangle {
                     if (hasPlayer && player.length > 0) {
                         let newPos = (mouse.x / width) * player.length;
                         try { player.position = newPos; } catch(e) {}
-                        progressWrapper.progress = Math.max(0, Math.min(mouse.x / width, 1));
+                        progressWrapper.currentPosition = Math.max(0, Math.min(newPos, player.length));
                     }
                 }
                 onPositionChanged: (mouse) => {
@@ -375,7 +376,7 @@ Rectangle {
                         let clampedX = Math.max(0, Math.min(mouse.x, width));
                         let newPos = (clampedX / width) * player.length;
                         try { player.position = newPos; } catch(e) {}
-                        progressWrapper.progress = clampedX / width;
+                        progressWrapper.currentPosition = newPos;
                     }
                 }
             }
@@ -415,7 +416,7 @@ Rectangle {
             }
 
             Text {
-                text: hasPlayer ? (formatTime(player.position) + " - " + formatTime(player.length)) : "0:00 - 0:00"
+                text: hasPlayer ? (formatTime(progressWrapper.currentPosition) + " - " + formatTime(player.length)) : "0:00 - 0:00"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 11
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
