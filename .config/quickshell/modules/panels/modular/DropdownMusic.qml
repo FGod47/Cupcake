@@ -109,18 +109,18 @@ Rectangle {
             // Get live audio peak from Pipewire monitor
             property real currentPeak: peakMonitor.peak || 0.0
             
-            // Smooth the peak to avoid jitter
+            // Smooth the peak to avoid jitter, but keep it snappy!
             property real smoothedPeak: 0
-            Behavior on smoothedPeak { NumberAnimation { duration: 50; easing.type: Easing.OutQuad } }
+            Behavior on smoothedPeak { NumberAnimation { duration: 30; easing.type: Easing.OutQuart } }
             onCurrentPeakChanged: smoothedPeak = currentPeak
             
             Timer {
                 running: musicSplitPill.isPlaying && !musicSplitPill.menuExpanded
                 repeat: true
-                interval: 32 // ~30 fps
+                interval: 24 // ~40 fps for buttery smooth punchy animation
                 onTriggered: {
-                    // Speed up the wave on loud beats
-                    waveCanvas.time += 0.05 + (Math.pow(waveCanvas.smoothedPeak, 2) * 0.25);
+                    // Speed up the wave aggressively on loud beats
+                    waveCanvas.time += 0.04 + (Math.pow(waveCanvas.smoothedPeak, 3) * 0.4);
                     waveCanvas.requestPaint();
                 }
             }
@@ -134,11 +134,11 @@ Rectangle {
                 // Max allowed amplitude to stay well within the 24px high Canvas
                 var maxAmp = (height / 2) - 5; 
                 
-                // Exaggerate the peak so it bounces more dramatically (squaring it pushes quiet sounds down, loud beats up)
-                var beat = Math.pow(smoothedPeak, 2.0);
+                // Exaggerate the peak aggressively (power of 4) so only loud beats spike the wave!
+                var beat = Math.pow(smoothedPeak, 4.0);
                 
-                // Base minimal amplitude + heavily scaled beat (clamped to maxAmp)
-                var dynamicAmp = 1.0 + (beat * maxAmp * 1.8);
+                // Tiny base amplitude (almost flat) + heavily scaled beat (clamped to maxAmp)
+                var dynamicAmp = 0.5 + (beat * maxAmp * 3.5);
                 if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
                 function drawWave(amplitude, opacity, lineWidth) {
