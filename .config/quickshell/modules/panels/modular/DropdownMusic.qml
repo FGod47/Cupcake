@@ -102,14 +102,14 @@ Rectangle {
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
         Item {
-            width: 18
-            height: 18
+            width: 22
+            height: 22
             anchors.verticalCenter: parent.verticalCenter
 
             Rectangle {
                 id: pillArtMask
                 anchors.fill: parent
-                radius: 9
+                radius: 11
                 visible: false
             }
 
