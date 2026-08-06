@@ -44,15 +44,7 @@ import "../../../theme"
         border.color: Qt.rgba(1, 1, 1, 0.10)
         border.width: 1
 
-        // Top glass highlight
-        Rectangle {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 4; anchors.rightMargin: 4
-            height: 1; radius: 1
-            color: Qt.rgba(1, 1, 1, 0.10)
-        }
+
 
         opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
         visible: opacity > 0

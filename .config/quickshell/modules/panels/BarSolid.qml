@@ -251,13 +251,7 @@ PanelWindow {
             }
         }
 
-        // Top glass highlight line
-        Rectangle {
-            anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-            anchors.leftMargin: 4; anchors.rightMargin: 4
-            height: 1; radius: 1
-            color: Qt.rgba(1, 1, 1, 0.12)
-        }
+
 
         // Solid Bar Modules (fades in as expansion completes)
         RowLayout {

@@ -347,13 +347,7 @@ Rectangle {
         }
     }
 
-    // Top glass highlight
-    Rectangle {
-        anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-        anchors.leftMargin: 6; anchors.rightMargin: 6
-        height: 1; radius: 1
-        color: Qt.rgba(1, 1, 1, 0.12)
-    }
+
 
     opacity: bar.netDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
