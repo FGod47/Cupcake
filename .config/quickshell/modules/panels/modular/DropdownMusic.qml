@@ -337,15 +337,25 @@ Rectangle {
                 }
             }
 
-            Text {
+            Rectangle {
                 Layout.alignment: Qt.AlignTop | Qt.AlignRight
-                text: hasPlayer ? (player.identity || "Unknown App") : ""
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 10
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                elide: Text.ElideRight
-                maximumLineCount: 1
-                visible: text !== ""
+                visible: appNameText.text !== ""
+                color: Qt.rgba(1, 1, 1, 0.08)
+                radius: 12
+                width: appNameText.implicitWidth + 16
+                height: appNameText.implicitHeight + 8
+
+                Text {
+                    id: appNameText
+                    anchors.centerIn: parent
+                    text: hasPlayer ? (player.identity || "Unknown App") : ""
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                }
             }
 
             // Liked icon removed as per user request
