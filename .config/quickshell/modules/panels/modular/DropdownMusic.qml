@@ -130,12 +130,12 @@ Rectangle {
                 
                 var centerY = height / 2;
                 
-                // Max allowed amplitude to stay within the 24px high Canvas
-                // Leaving 2px margin for the line width
-                var maxAmp = (height / 2) - 2; 
+                // Max allowed amplitude to stay well within the 24px high Canvas
+                // Leaving 6px margin on top and bottom so it doesn't touch the edges
+                var maxAmp = (height / 2) - 6; 
                 
                 // Base minimal amplitude + scaled audio peak (clamped to maxAmp)
-                var dynamicAmp = 2 + (smoothedPeak * maxAmp);
+                var dynamicAmp = 1.5 + (smoothedPeak * maxAmp);
                 if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
                 function drawWave(amplitude, frequency, phase, opacity, lineWidth) {
