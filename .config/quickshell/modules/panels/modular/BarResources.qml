@@ -25,12 +25,6 @@ Item {
         return Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6);
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: Quickshell.execDetached(["bash", "-c", "foot --title='System Monitor' btop 2>/dev/null || kitty --title='System Monitor' btop 2>/dev/null || alacritty -e btop 2>/dev/null || xterm -e btop &"])
-    }
-
     Row {
         id: resRow
         anchors.verticalCenter: parent.verticalCenter
