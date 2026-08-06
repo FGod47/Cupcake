@@ -109,7 +109,7 @@ Rectangle {
             }
         }
 
-        Item { width: 6; height: 1 } // Spacer to push visualizer slightly right
+        Item { width: 2; height: 1 } // Spacer to push visualizer slightly right
 
         Row {
             id: barVisualizer
