@@ -141,7 +141,7 @@ Rectangle {
                 var dynamicAmp = 0.5 + (beat * maxAmp * 3.5);
                 if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
-                function drawWave(amplitude, opacity, lineWidth) {
+                function drawWave(amplitude, opacity, lineWidth, phaseOffset) {
                     ctx.beginPath();
                     ctx.strokeStyle = Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, opacity);
                     ctx.lineWidth = lineWidth;
@@ -150,9 +150,9 @@ Rectangle {
                         var envelope = Math.sin((x / width) * Math.PI);
                         
                         // Combine multiple lower-frequency sine waves for a less chaotic, cleaner waveform
-                        var wave1 = Math.sin(x * 0.15 + time * 2.0) * 0.6;
-                        var wave2 = Math.sin(x * 0.28 - time * 3.1) * 0.3;
-                        var wave3 = Math.sin(x * 0.45 + time * 4.5) * 0.1;
+                        var wave1 = Math.sin(x * 0.15 + (time + phaseOffset) * 2.0) * 0.6;
+                        var wave2 = Math.sin(x * 0.28 - (time + phaseOffset) * 3.1) * 0.3;
+                        var wave3 = Math.sin(x * 0.45 + (time + phaseOffset) * 4.5) * 0.1;
                         
                         var combinedWave = wave1 + wave2 + wave3;
                         var y = centerY + (combinedWave * amplitude * envelope);
@@ -163,8 +163,10 @@ Rectangle {
                     ctx.stroke();
                 }
                 
-                // Single clean erratic string matching the screenshot
-                drawWave(dynamicAmp, 1.0, 1.5);
+                // Draw 3 distinct strings with different opacities and phase offsets for depth
+                drawWave(dynamicAmp * 0.5, 0.4, 2.0, 0.0); // Background string
+                drawWave(dynamicAmp * 0.75, 0.7, 1.5, 2.5); // Middle string
+                drawWave(dynamicAmp, 1.0, 1.5, 5.0); // Foreground string
             }
         }
 
