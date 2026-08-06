@@ -178,8 +178,8 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : (musicHeaderRow.x + smallArtPlaceholder.x)
-        y: musicSplitPill.menuExpanded ? 14 : (musicHeaderRow.y + smallArtPlaceholder.y)
+        x: musicSplitPill.menuExpanded ? 14 : 8
+        y: musicSplitPill.menuExpanded ? 14 : 4
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
         radius: musicSplitPill.menuExpanded ? 12 : 11
@@ -211,8 +211,8 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : (musicHeaderRow.x + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? 96 : (musicHeaderRow.y + smallPlayPausePlaceholder.y)
+        x: musicSplitPill.menuExpanded ? 268 : 94
+        y: musicSplitPill.menuExpanded ? 96 : 4
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
         radius: musicSplitPill.menuExpanded ? 19 : 11
