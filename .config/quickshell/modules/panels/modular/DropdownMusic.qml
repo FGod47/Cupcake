@@ -237,8 +237,8 @@ Rectangle {
         text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         
         font.family: Theme.defaultFontFamily
-        font.pixelSize: musicSplitPill.menuExpanded ? 14 : 11
-        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
         color: bar.fg
         elide: Text.ElideRight
         maximumLineCount: 1
@@ -310,8 +310,8 @@ Rectangle {
                         Layout.fillWidth: true
                         text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 14
-                        font.weight: Font.Bold
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
                         color: bar.fg
                         elide: Text.ElideRight
                         maximumLineCount: 1
