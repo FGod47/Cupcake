@@ -330,7 +330,7 @@ Rectangle {
         Item {
             id: progressWrapper
             Layout.fillWidth: true
-            height: 6
+            height: 4
 
             property real progress: (hasPlayer && player.length > 0) ? (player.position / player.length) : 0
             
@@ -347,13 +347,13 @@ Rectangle {
 
             Rectangle {
                 anchors.fill: parent
-                radius: 3
+                radius: 2
                 color: Qt.rgba(1, 1, 1, 0.10)
 
                 Rectangle {
                     height: parent.height
                     width: parent.width * progressWrapper.progress
-                    radius: 3
+                    radius: 2
                     color: Theme.colPrimary
                 }
             }
