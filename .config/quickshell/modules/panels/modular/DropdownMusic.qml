@@ -74,6 +74,20 @@ Rectangle {
         return m + ":" + (s < 10 ? "0" : "") + s;
     }
 
+    function cleanTrackTitle(title, artist) {
+        if (!title) return "No Track";
+        let t = title;
+        // Remove common YouTube/Spotify clutter
+        t = t.replace(/\s*[([].*?(official|music video|lyric|audio).*?[)\]]/gi, "");
+        // Remove the prepended "Artist - " which happens on some MPRIS sources
+        if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + " - ")) {
+            t = t.substring(artist.length + 3);
+        } else if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + "-")) {
+            t = t.substring(artist.length + 1);
+        }
+        return t.trim() || "No Track";
+    }
+
     // ── COLLAPSED HEADER ROW (Shown inside split pill) ──
     Row {
         id: musicHeaderRow
@@ -303,7 +317,7 @@ Rectangle {
 
                 Text {
                     Layout.fillWidth: true
-                    text: hasPlayer ? (player.trackTitle || "No Track") : "No Track"
+                    text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 14
                     font.weight: Font.Bold
