@@ -132,6 +132,7 @@ Rectangle {
             maximumLineCount: 1
             width: Math.min(implicitWidth, 180)
             visible: !musicSplitPill.menuExpanded
+            opacity: 0 // Hidden because floatingTrackTitle takes its place
         }
 
         // Play / Pause Button inside compact pill
@@ -230,6 +231,31 @@ Rectangle {
         }
     }
 
+    // ── FLOATING ANIMATED TRACK TITLE ──
+    Text {
+        id: floatingTrackTitle
+        text: musicSplitPill.menuExpanded ? 
+              (hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track") :
+              (hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track")
+        
+        font.family: Theme.defaultFontFamily
+        font.pixelSize: musicSplitPill.menuExpanded ? 14 : 11
+        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
+        color: bar.fg
+        elide: Text.ElideRight
+        maximumLineCount: 1
+
+        x: musicSplitPill.menuExpanded ? 14 : (12 + compactTrackTitle.x)
+        y: musicSplitPill.menuExpanded ? 80 : (musicHeaderRow.y + compactTrackTitle.y)
+        width: musicSplitPill.menuExpanded ? (musicSplitPill.width - 28) : compactTrackTitle.width
+
+        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        
+        z: 20
+    }
+
     // ── EXPANDED DROPDOWN CONTENT ──
     ColumnLayout {
         id: musicContentCol
@@ -289,6 +315,7 @@ Rectangle {
                         color: bar.fg
                         elide: Text.ElideRight
                         maximumLineCount: 1
+                        opacity: 0 // Hidden because floatingTrackTitle takes its place
                     }
 
                     Text {
