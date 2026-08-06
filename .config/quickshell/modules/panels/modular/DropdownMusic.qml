@@ -138,19 +138,21 @@ Rectangle {
                 var dynamicAmp = 1.5 + (smoothedPeak * maxAmp);
                 if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
-                function drawWave(amplitude, frequency, phase, opacity, lineWidth) {
+                function drawWave(amplitude, opacity, lineWidth) {
                     ctx.beginPath();
                     ctx.strokeStyle = Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, opacity);
                     ctx.lineWidth = lineWidth;
-                    // Step by 1 for maximum smoothness (curvier look)
                     for (var x = 0; x <= width; x += 1) {
+                        // Taper off at the edges
                         var envelope = Math.sin((x / width) * Math.PI);
-                        // Add a secondary harmonic for a more organic, fluid "curvy" feel
-                        var primaryWave = Math.sin(x * frequency + phase);
-                        var secondaryWave = 0.35 * Math.sin(x * (frequency * 2.3) - (phase * 1.4));
-                        var combinedWave = primaryWave + secondaryWave;
                         
-                        var y = centerY + combinedWave * amplitude * envelope;
+                        // Combine multiple high-frequency sine waves to create an erratic, "voice-note" style waveform
+                        var wave1 = Math.sin(x * 0.35 + time * 2.0) * 0.5;
+                        var wave2 = Math.sin(x * 0.62 - time * 3.1) * 0.3;
+                        var wave3 = Math.sin(x * 1.15 + time * 4.5) * 0.2;
+                        
+                        var combinedWave = wave1 + wave2 + wave3;
+                        var y = centerY + (combinedWave * amplitude * envelope);
                         
                         if (x === 0) ctx.moveTo(x, y);
                         else ctx.lineTo(x, y);
@@ -158,8 +160,8 @@ Rectangle {
                     ctx.stroke();
                 }
                 
-                // Single clean string, slightly lower frequency for wider curves
-                drawWave(dynamicAmp, 0.05, time, 1.0, 2);
+                // Single clean erratic string matching the screenshot
+                drawWave(dynamicAmp, 1.0, 1.5);
             }
         }
 
