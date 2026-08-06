@@ -19,7 +19,7 @@ Rectangle {
     property bool hasPlayer: player !== null
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
-    readonly property real headerW: musicHeaderRow.implicitWidth + 24
+    readonly property real headerW: musicHeaderRow.implicitWidth + 20
     readonly property real expandedW: 320
     property real contentW: menuExpanded ? expandedW : headerW
 
@@ -84,10 +84,11 @@ Rectangle {
     Row {
         id: musicHeaderRow
         height: 24
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 12
         anchors.verticalCenter: parent.top
         anchors.verticalCenterOffset: 15
-        spacing: 0
+        spacing: 8
         z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
         visible: opacity > 0
@@ -108,8 +109,6 @@ Rectangle {
                 visible: floatingAlbumArt.status !== Image.Ready
             }
         }
-
-        Item { width: 16; height: 1 }
 
         Row {
             id: barVisualizer
@@ -167,8 +166,6 @@ Rectangle {
             }
         }
 
-        Item { width: 12; height: 1 }
-
         // Play / Pause Button inside compact pill
         Item {
             id: smallPlayPausePlaceholder
@@ -180,7 +177,7 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : 4
+        x: musicSplitPill.menuExpanded ? 14 : 12
         y: musicSplitPill.menuExpanded ? 14 : 4
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
@@ -213,7 +210,7 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : 98
+        x: musicSplitPill.menuExpanded ? 268 : 94
         y: musicSplitPill.menuExpanded ? (14 + musicContentCol.implicitHeight - 38) : 4
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
