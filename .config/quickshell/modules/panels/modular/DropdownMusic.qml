@@ -103,7 +103,7 @@ Rectangle {
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Theme.colPrimary
-                visible: !pillAlbumArt.visible
+                visible: pillAlbumArt.status !== Image.Ready
             }
 
             Image {
@@ -111,10 +111,13 @@ Rectangle {
                 anchors.fill: parent
                 source: (hasPlayer && player.artUrl) ? player.artUrl : ""
                 fillMode: Image.PreserveAspectCrop
-                visible: status === Image.Ready && source !== ""
+                visible: status === Image.Ready
                 layer.enabled: true
                 layer.effect: OpacityMask {
                     maskSource: pillArtMask
+                }
+                onStatusChanged: {
+                    console.log("PILL ALBUM ART STATUS:", status, "URL:", source)
                 }
             }
         }
@@ -267,6 +270,7 @@ Rectangle {
                     anchors.fill: parent
                     radius: 12
                     color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                    visible: albumArtImg.status !== Image.Ready
 
                     Text {
                         anchors.centerIn: parent
@@ -282,10 +286,13 @@ Rectangle {
                     anchors.fill: parent
                     source: (hasPlayer && player.artUrl) ? player.artUrl : ""
                     fillMode: Image.PreserveAspectCrop
-                    visible: status === Image.Ready && source !== ""
+                    visible: status === Image.Ready
                     layer.enabled: true
                     layer.effect: OpacityMask {
                         maskSource: musicArtMask
+                    }
+                    onStatusChanged: {
+                        console.log("EXPANDED ALBUM ART STATUS:", status, "URL:", source)
                     }
                 }
             }
