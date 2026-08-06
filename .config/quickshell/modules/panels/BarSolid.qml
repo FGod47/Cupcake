@@ -23,7 +23,7 @@ PanelWindow {
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
     WlrLayershell.keyboardFocus: anyDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusiveZone: 40
-    height: bar.screen.height
+    implicitHeight: 600
     color: "transparent"
     mask: Region {
         Region { item: solidBar }
@@ -32,28 +32,20 @@ PanelWindow {
         Region { item: volBrightSplitPill }
         Region { item: netSplitPill }
         Region { item: musicSplitPill }
-        Region { item: clickCatcherItem }
     }
 
-    Item {
-        id: clickCatcherItem
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: bar.anyDropdownOpen ? bar.height : 0
-        visible: height > 0
+    onAnyDropdownOpenChanged: {
+        globalState.anyBarDropdownOpen = anyDropdownOpen;
+    }
 
-        MouseArea {
-            anchors.fill: parent
-            enabled: bar.anyDropdownOpen
-            hoverEnabled: true
-            onClicked: {
-                bar.dropdownOpen = false;
-                bar.netDropdownOpen = false;
-                bar.musicDropdownOpen = false;
-                globalState.powerDropdownOpen = false;
-                globalState.solidBoardOpen = false;
-            }
+    Connections {
+        target: globalState
+        function onCloseAllDropdowns() {
+            bar.dropdownOpen = false;
+            bar.netDropdownOpen = false;
+            bar.musicDropdownOpen = false;
+            globalState.powerDropdownOpen = false;
+            globalState.solidBoardOpen = false;
         }
     }
 
@@ -100,16 +92,6 @@ PanelWindow {
             dropdownOpen = false;
             globalState.solidBoardOpen = false;
             globalState.powerDropdownOpen = false;
-        }
-    }
-
-    onActiveChanged: {
-        if (!active && anyDropdownOpen) {
-            bar.dropdownOpen = false;
-            bar.netDropdownOpen = false;
-            bar.musicDropdownOpen = false;
-            globalState.powerDropdownOpen = false;
-            globalState.solidBoardOpen = false;
         }
     }
 
