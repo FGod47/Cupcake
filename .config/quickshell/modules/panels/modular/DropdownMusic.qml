@@ -91,8 +91,10 @@ Rectangle {
     // ── COLLAPSED HEADER ROW (Shown inside split pill) ──
     Row {
         id: musicHeaderRow
+        height: 24
         anchors.horizontalCenter: parent.horizontalCenter
-        y: (30 - height) / 2
+        anchors.verticalCenter: parent.top
+        anchors.verticalCenterOffset: 15
         spacing: 6
         z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
@@ -138,6 +140,7 @@ Rectangle {
 
         Row {
             id: barVisualizer
+            height: 24
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
             visible: !musicSplitPill.menuExpanded
