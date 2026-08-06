@@ -245,9 +245,9 @@ Rectangle {
         elide: Text.ElideRight
         maximumLineCount: 1
 
-        x: musicSplitPill.menuExpanded ? 14 : (12 + compactTrackTitle.x)
-        y: musicSplitPill.menuExpanded ? 80 : (musicHeaderRow.y + compactTrackTitle.y)
-        width: musicSplitPill.menuExpanded ? (musicSplitPill.width - 28) : compactTrackTitle.width
+        x: musicSplitPill.menuExpanded ? 80 : (12 + compactTrackTitle.x)
+        y: musicSplitPill.menuExpanded ? 27 : (musicHeaderRow.y + compactTrackTitle.y)
+        width: musicSplitPill.menuExpanded ? (musicSplitPill.width - 94) : compactTrackTitle.width
 
         Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
