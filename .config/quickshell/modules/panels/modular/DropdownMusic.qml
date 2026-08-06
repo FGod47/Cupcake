@@ -109,6 +109,8 @@ Rectangle {
             }
         }
 
+        Item { width: 4 } // Spacer to push visualizer slightly right
+
         Row {
             id: barVisualizer
             height: 24
@@ -176,8 +178,8 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : 12
-        y: musicSplitPill.menuExpanded ? 14 : 4
+        x: musicSplitPill.menuExpanded ? 14 : (musicHeaderRow.x + smallArtPlaceholder.x)
+        y: musicSplitPill.menuExpanded ? 14 : (musicHeaderRow.y + smallArtPlaceholder.y)
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
         radius: musicSplitPill.menuExpanded ? 12 : 11
@@ -209,8 +211,8 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : 90
-        y: musicSplitPill.menuExpanded ? 96 : 4
+        x: musicSplitPill.menuExpanded ? 268 : (musicHeaderRow.x + smallPlayPausePlaceholder.x)
+        y: musicSplitPill.menuExpanded ? 96 : (musicHeaderRow.y + smallPlayPausePlaceholder.y)
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
         radius: musicSplitPill.menuExpanded ? 19 : 11
