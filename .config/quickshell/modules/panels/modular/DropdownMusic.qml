@@ -393,7 +393,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "\ueaa7"
+                    text: "\ued4c"
                     font.family: ddMusicFont.name
                     font.pixelSize: 16
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
@@ -407,7 +407,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "\ueaa6"
+                    text: "\ued4b"
                     font.family: ddMusicFont.name
                     font.pixelSize: 16
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
