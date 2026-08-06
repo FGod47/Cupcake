@@ -335,6 +335,17 @@ Rectangle {
                     elide: Text.ElideRight
                     maximumLineCount: 1
                 }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: hasPlayer ? ("playing on " + (player.identity || "Unknown App")) : ""
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 10
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                    visible: text !== ""
+                }
             }
 
             // Liked icon removed as per user request
