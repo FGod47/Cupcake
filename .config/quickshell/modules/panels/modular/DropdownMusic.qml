@@ -94,11 +94,6 @@ Rectangle {
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
         Item {
-            width: 22
-            height: 22
-            anchors.verticalCenter: parent.verticalCenter
-
-        Item {
             id: smallArtPlaceholder
             width: 22
             height: 22
