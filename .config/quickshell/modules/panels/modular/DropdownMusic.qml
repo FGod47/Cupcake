@@ -110,60 +110,18 @@ Rectangle {
             }
         }
 
-        Row {
-            id: barVisualizer
-            height: 24
+        Text {
+            id: compactTrackTitle
+            text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 13
+            font.weight: Font.DemiBold
+            color: bar.fg
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 4
+            elide: Text.ElideRight
+            maximumLineCount: 1
+            width: Math.min(implicitWidth, 180)
             visible: !musicSplitPill.menuExpanded
-
-            PwNodePeakMonitor {
-                id: peakMonitor
-                node: Pipewire.defaultAudioSink
-            }
-
-            property real currentPeak: peakMonitor.peak || 0.0
-            property real smoothedPeak: 0
-            Behavior on smoothedPeak { NumberAnimation { duration: 60; easing.type: Easing.OutQuart } }
-            onCurrentPeakChanged: smoothedPeak = currentPeak
-
-            property real time: 0
-            Timer {
-                running: musicSplitPill.isPlaying && !musicSplitPill.menuExpanded
-                repeat: true
-                interval: 30
-                onTriggered: {
-                    barVisualizer.time += 0.2 + (Math.pow(barVisualizer.smoothedPeak, 2) * 0.4);
-                }
-            }
-
-            Repeater {
-                model: 8
-                Rectangle {
-                    width: 2
-                    radius: 1
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
-
-                    // Fake frequencies by using different sin phases and speeds
-                    property real basePhase: index * 1.5
-                    property real speedMod: 1.0 + (index * 0.2)
-                    
-                    // The bounce factor oscillates naturally
-                    property real osc: Math.sin(barVisualizer.time * speedMod + basePhase) * 0.5 + 0.5
-                    
-                    // Exaggerate the peak so it only bounces high on beats
-                    property real beat: Math.pow(barVisualizer.smoothedPeak, 3.5) * 2.0
-                    
-                    // Minimum height 4, max height 22
-                    property real targetHeight: 4 + (osc * beat * 18)
-                    
-                    height: Math.min(22, Math.max(4, targetHeight))
-                    
-                    anchors.verticalCenter: parent.verticalCenter
-                    
-                    Behavior on height { NumberAnimation { duration: 30 } }
-                }
-            }
         }
 
         // Play / Pause Button inside compact pill
@@ -177,7 +135,7 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : 12
+        x: musicSplitPill.menuExpanded ? 14 : (12 + smallArtPlaceholder.x)
         y: musicSplitPill.menuExpanded ? 14 : 4
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
@@ -210,7 +168,7 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : 94
+        x: musicSplitPill.menuExpanded ? 268 : (12 + smallPlayPausePlaceholder.x)
         y: musicSplitPill.menuExpanded ? (14 + musicContentCol.implicitHeight - 38) : 4
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
