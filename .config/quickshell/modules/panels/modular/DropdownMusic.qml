@@ -39,7 +39,10 @@ Rectangle {
     border.color: Qt.rgba(1, 1, 1, 0.12)
     border.width: 1
 
-    property bool isHovered: musicHeaderMa.containsMouse || false
+    HoverHandler {
+        id: pillHover
+    }
+    property bool isHovered: pillHover.hovered || musicHeaderMa.containsMouse
 
     // Top glass highlight line
     Rectangle {
