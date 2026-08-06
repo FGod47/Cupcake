@@ -37,8 +37,6 @@ Rectangle {
     clip: true
 
     color: bar.pillColor
-    border.color: Qt.rgba(1, 1, 1, 0.12)
-    border.width: 1
 
     HoverHandler {
         id: pillHover
