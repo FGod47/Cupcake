@@ -92,21 +92,50 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        Text {
-            width: Math.min(implicitWidth, 140)
-            text: {
-                if (!hasPlayer) return "";
-                let title = player.trackTitle || "Music";
-                let artist = player.trackArtist || "";
-                return artist ? (title + " · " + artist) : title;
-            }
-            font.family: Theme.defaultFontFamily
-            font.pixelSize: 11
-            font.weight: Theme.defaultFontWeight
-            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+        Canvas {
+            id: waveCanvas
+            width: 80
+            height: 24
             anchors.verticalCenter: parent.verticalCenter
-            elide: Text.ElideRight
-            maximumLineCount: 1
+            
+            property real time: 0
+            
+            Timer {
+                running: musicSplitPill.isPlaying && !musicSplitPill.menuExpanded
+                repeat: true
+                interval: 32 // ~30 fps
+                onTriggered: {
+                    waveCanvas.time += 0.15;
+                    waveCanvas.requestPaint();
+                }
+            }
+            
+            onPaint: {
+                var ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
+                
+                var centerY = height / 2;
+                
+                function drawWave(amplitude, frequency, phase, opacity, lineWidth) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, opacity);
+                    ctx.lineWidth = lineWidth;
+                    for (var x = 0; x <= width; x += 2) {
+                        var envelope = Math.sin((x / width) * Math.PI);
+                        var y = centerY + Math.sin(x * frequency + phase) * amplitude * envelope;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+                
+                // Glow
+                drawWave(7, 0.08, time, 0.3, 3);
+                drawWave(5, 0.11, -time * 0.8, 0.2, 4);
+                // Core
+                drawWave(7, 0.08, time, 0.9, 1.2);
+                drawWave(5, 0.11, -time * 0.8, 0.7, 1.2);
+            }
         }
 
         // Play / Pause Button inside compact pill
