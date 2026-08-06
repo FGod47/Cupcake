@@ -85,12 +85,38 @@ Rectangle {
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
-        Text {
-            text: "\ueafc" // tabler music note icon
-            font.family: ddMusicFont.name
-            font.pixelSize: 13
-            color: Theme.colPrimary
+        Item {
+            width: 18
+            height: 18
             anchors.verticalCenter: parent.verticalCenter
+
+            Rectangle {
+                id: pillArtMask
+                anchors.fill: parent
+                radius: 4
+                visible: false
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: "\ueafc" // fallback music note
+                font.family: ddMusicFont.name
+                font.pixelSize: 13
+                color: Theme.colPrimary
+                visible: !pillAlbumArt.visible
+            }
+
+            Image {
+                id: pillAlbumArt
+                anchors.fill: parent
+                source: (hasPlayer && player.artUrl) ? player.artUrl : ""
+                fillMode: Image.PreserveAspectCrop
+                visible: status === Image.Ready && source !== ""
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: pillArtMask
+                }
+            }
         }
 
         Canvas {
