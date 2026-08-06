@@ -98,12 +98,11 @@ Rectangle {
             height: 22
             anchors.verticalCenter: parent.verticalCenter
 
-            Rectangle {
-                id: pillArtMask
-                anchors.fill: parent
-                radius: 11
-                visible: false
-            }
+        Item {
+            id: smallArtPlaceholder
+            width: 22
+            height: 22
+            anchors.verticalCenter: parent.verticalCenter
 
             Text {
                 anchors.centerIn: parent
@@ -111,22 +110,7 @@ Rectangle {
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Theme.colPrimary
-                visible: pillAlbumArt.status !== Image.Ready
-            }
-
-            Image {
-                id: pillAlbumArt
-                anchors.fill: parent
-                source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-                fillMode: Image.PreserveAspectCrop
-                visible: status === Image.Ready
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: pillArtMask
-                }
-                onStatusChanged: {
-                    console.log("PILL ALBUM ART STATUS:", status, "URL:", source)
-                }
+                visible: floatingAlbumArt.status !== Image.Ready
             }
         }
 
@@ -210,6 +194,39 @@ Rectangle {
         }
     }
 
+    // ── FLOATING ANIMATED ALBUM ART ──
+    Rectangle {
+        id: floatingArtMask
+        x: musicSplitPill.menuExpanded ? 14 : 12
+        y: musicSplitPill.menuExpanded ? 14 : 4
+        width: musicSplitPill.menuExpanded ? 54 : 22
+        height: musicSplitPill.menuExpanded ? 54 : 22
+        radius: musicSplitPill.menuExpanded ? 12 : 11
+        visible: false
+        
+        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on radius { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+    }
+
+    Image {
+        id: floatingAlbumArt
+        x: floatingArtMask.x
+        y: floatingArtMask.y
+        width: floatingArtMask.width
+        height: floatingArtMask.height
+        z: 20 // Above both layouts
+        source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
+        fillMode: Image.PreserveAspectCrop
+        visible: status === Image.Ready
+        layer.enabled: true
+        layer.effect: OpacityMask {
+            maskSource: floatingArtMask
+        }
+    }
+
     // MouseArea for Header Pill click -> Toggle Music Dropdown
     MouseArea {
         id: musicHeaderMa
@@ -243,20 +260,14 @@ Rectangle {
             spacing: 12
 
             Item {
+                id: largeArtPlaceholder
                 width: 54; height: 54
-
-                Rectangle {
-                    id: musicArtMask
-                    anchors.fill: parent
-                    radius: 12
-                    visible: false
-                }
 
                 Rectangle {
                     anchors.fill: parent
                     radius: 12
                     color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
-                    visible: albumArtImg.status !== Image.Ready
+                    visible: floatingAlbumArt.status !== Image.Ready
 
                     Text {
                         anchors.centerIn: parent
@@ -264,21 +275,6 @@ Rectangle {
                         font.family: ddMusicFont.name
                         font.pixelSize: 24
                         color: Theme.colPrimary
-                    }
-                }
-
-                Image {
-                    id: albumArtImg
-                    anchors.fill: parent
-                    source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-                    fillMode: Image.PreserveAspectCrop
-                    visible: status === Image.Ready
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: musicArtMask
-                    }
-                    onStatusChanged: {
-                        console.log("EXPANDED ALBUM ART STATUS:", status, "URL:", source)
                     }
                 }
             }
