@@ -32,6 +32,26 @@ PanelWindow {
         Region { item: volBrightSplitPill }
         Region { item: netSplitPill }
         Region { item: musicSplitPill }
+        Region { item: clickCatcherItem }
+    }
+
+    Item {
+        id: clickCatcherItem
+        anchors.fill: parent
+        // Only provide bounds to the mask when a dropdown is open
+        visible: bar.anyDropdownOpen
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: bar.anyDropdownOpen
+            onClicked: {
+                bar.dropdownOpen = false;
+                bar.netDropdownOpen = false;
+                bar.musicDropdownOpen = false;
+                globalState.powerDropdownOpen = false;
+                globalState.solidBoardOpen = false;
+            }
+        }
     }
 
     property real baseHeight: startHeight
@@ -87,6 +107,19 @@ PanelWindow {
             bar.musicDropdownOpen = false;
             globalState.powerDropdownOpen = false;
             globalState.solidBoardOpen = false;
+        }
+    }
+
+    Connections {
+        target: Hyprland
+        function onActiveWindowChanged() {
+            if (anyDropdownOpen) {
+                bar.dropdownOpen = false;
+                bar.netDropdownOpen = false;
+                bar.musicDropdownOpen = false;
+                globalState.powerDropdownOpen = false;
+                globalState.solidBoardOpen = false;
+            }
         }
     }
 
