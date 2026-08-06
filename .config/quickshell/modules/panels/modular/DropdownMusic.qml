@@ -108,7 +108,7 @@ Rectangle {
 
             Text {
                 anchors.centerIn: parent
-                text: musicSplitPill.isPlaying ? "\uea8c" : "\ueaed" // pause vs play icon
+                text: musicSplitPill.isPlaying ? "\ued45" : "\ued46" // pause vs play icon
                 font.family: ddMusicFont.name
                 font.pixelSize: 14
                 color: Theme.colPrimary
@@ -219,20 +219,7 @@ Rectangle {
                 }
             }
 
-            MouseArea {
-                width: 32; height: 32
-                cursorShape: Qt.PointingHandCursor
-                property bool liked: false
-                onClicked: liked = !liked
-
-                Text {
-                    anchors.centerIn: parent
-                    text: parent.liked ? "\uea82" : "\uea83"
-                    font.family: ddMusicFont.name
-                    font.pixelSize: 18
-                    color: parent.liked ? "#ff6b6b" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                }
-            }
+            // Liked icon removed as per user request
         }
 
         // Middle Row: Progress Slider Line
@@ -296,12 +283,7 @@ Rectangle {
 
             Item { Layout.fillWidth: true }
 
-            Text {
-                text: "\uf85d"
-                font.family: ddMusicFont.name
-                font.pixelSize: 16
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-            }
+            // Icon removed as per user request
 
             Rectangle {
                 width: 38; height: 38; radius: 19
@@ -309,7 +291,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: isPlaying ? "\uea8c" : "\ueaed"
+                    text: isPlaying ? "\ued45" : "\ued46"
                     font.family: ddMusicFont.name
                     font.pixelSize: 18
                     color: bar.fg

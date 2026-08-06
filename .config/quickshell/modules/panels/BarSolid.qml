@@ -39,6 +39,9 @@ PanelWindow {
     property bool musicDropdownOpen: false
     property var barActivePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool isMusicPlaying: barActivePlayer !== null && (barActivePlayer.playbackState === 1 || barActivePlayer.isPlaying) && (barActivePlayer.trackTitle !== "")
+    onIsMusicPlayingChanged: {
+        if (!isMusicPlaying) musicDropdownOpen = false;
+    }
     property real extraHeight: 0
     
     Connections {
@@ -196,7 +199,12 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : (bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX)
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        width: globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))))
+        width: (bar.barW) 
+               - (bar.isMusicPlaying ? (musicSplitPill.contentW + 16) : 0)
+               - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
+                 (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
+                 (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
+                 (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0))))
         Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
@@ -941,7 +949,12 @@ PanelWindow {
                 return bar.isMusicPlaying ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return globalState.powerDropdownOpen ? (bar.barW - powerSplitPill.contentW - powerSplitPill.openGap) : (globalState.solidBoardOpen ? (bar.barW - 36 - 16 - clockSplitPill.contentW - clockSplitPill.openGap) : (bar.dropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - volBrightSplitPill.contentW - 16) : (bar.netDropdownOpen ? (bar.barW - clockSplitPill.contentW - 16 - netSplitPill.contentW - 16) : (bar.isMusicPlaying ? (bar.barW - musicSplitPill.contentW - 16) : bar.barW))));
+                return (bar.barW) 
+                       - (bar.isMusicPlaying ? (musicSplitPill.contentW + 16) : 0)
+                       - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
+                         (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
+                         (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
+                         (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0))));
             });
         }
     }
