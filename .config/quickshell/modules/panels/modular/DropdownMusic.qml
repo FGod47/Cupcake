@@ -61,11 +61,15 @@ Rectangle {
         source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
     }
 
-    function formatTime(microseconds) {
-        if (!microseconds || isNaN(microseconds)) return "0:00";
-        let seconds = Math.floor(microseconds / 1000000);
+    function formatTime(val) {
+        if (!val || isNaN(val)) return "0:00";
+        let seconds = val;
+        if (val > 10000000) seconds = Math.floor(val / 1000000); // microseconds
+        else if (val > 10000) seconds = Math.floor(val / 1000); // milliseconds
+        else seconds = Math.floor(val); // seconds
+        
         let m = Math.floor(seconds / 60);
-        let s = seconds % 60;
+        let s = Math.floor(seconds % 60);
         return m + ":" + (s < 10 ? "0" : "") + s;
     }
 
@@ -229,8 +233,22 @@ Rectangle {
 
         // Middle Row: Progress Slider Line
         Item {
+            id: progressWrapper
             Layout.fillWidth: true
             height: 6
+
+            property real progress: (hasPlayer && player.length > 0) ? (player.position / player.length) : 0
+            
+            Timer {
+                interval: 1000
+                running: hasPlayer && isPlaying
+                repeat: true
+                onTriggered: {
+                    if (hasPlayer && player.length > 0) {
+                        progressWrapper.progress = player.position / player.length;
+                    }
+                }
+            }
 
             Rectangle {
                 anchors.fill: parent
@@ -239,9 +257,29 @@ Rectangle {
 
                 Rectangle {
                     height: parent.height
-                    width: (hasPlayer && player.length > 0) ? (parent.width * (player.position / player.length)) : 0
+                    width: parent.width * progressWrapper.progress
                     radius: 3
                     color: Theme.colPrimary
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: (mouse) => {
+                    if (hasPlayer && player.length > 0) {
+                        let newPos = (mouse.x / width) * player.length;
+                        try { player.position = newPos; } catch(e) {}
+                        progressWrapper.progress = Math.max(0, Math.min(mouse.x / width, 1));
+                    }
+                }
+                onPositionChanged: (mouse) => {
+                    if (pressed && hasPlayer && player.length > 0) {
+                        let clampedX = Math.max(0, Math.min(mouse.x, width));
+                        let newPos = (clampedX / width) * player.length;
+                        try { player.position = newPos; } catch(e) {}
+                        progressWrapper.progress = clampedX / width;
+                    }
                 }
             }
         }
