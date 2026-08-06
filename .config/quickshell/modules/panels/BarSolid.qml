@@ -23,14 +23,7 @@ PanelWindow {
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
     WlrLayershell.keyboardFocus: anyDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     exclusiveZone: 40
-    implicitHeight: Math.max(
-        solidBar.y + solidBar.height,
-        clockSplitPill.y + clockSplitPill.height,
-        powerSplitPill.y + powerSplitPill.height,
-        volBrightSplitPill.y + volBrightSplitPill.height,
-        netSplitPill.y + netSplitPill.height,
-        musicSplitPill.y + musicSplitPill.height
-    ) + 20
+    implicitHeight: bar.screen.height - 40
     color: "transparent"
     mask: Region {
         Region { item: solidBar }
