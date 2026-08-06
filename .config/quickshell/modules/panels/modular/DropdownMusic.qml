@@ -119,7 +119,8 @@ Rectangle {
                 repeat: true
                 interval: 32 // ~30 fps
                 onTriggered: {
-                    waveCanvas.time += 0.15;
+                    // Speed up the wave on loud beats
+                    waveCanvas.time += 0.05 + (Math.pow(waveCanvas.smoothedPeak, 2) * 0.25);
                     waveCanvas.requestPaint();
                 }
             }
@@ -131,11 +132,13 @@ Rectangle {
                 var centerY = height / 2;
                 
                 // Max allowed amplitude to stay well within the 24px high Canvas
-                // Leaving 6px margin on top and bottom so it doesn't touch the edges
-                var maxAmp = (height / 2) - 6; 
+                var maxAmp = (height / 2) - 5; 
                 
-                // Base minimal amplitude + scaled audio peak (clamped to maxAmp)
-                var dynamicAmp = 1.5 + (smoothedPeak * maxAmp);
+                // Exaggerate the peak so it bounces more dramatically (squaring it pushes quiet sounds down, loud beats up)
+                var beat = Math.pow(smoothedPeak, 2.0);
+                
+                // Base minimal amplitude + heavily scaled beat (clamped to maxAmp)
+                var dynamicAmp = 1.0 + (beat * maxAmp * 1.8);
                 if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
                 function drawWave(amplitude, opacity, lineWidth) {
