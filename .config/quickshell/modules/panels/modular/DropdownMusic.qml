@@ -299,29 +299,39 @@ Rectangle {
                 }
             }
 
-            ColumnLayout {
+            Item {
                 Layout.fillWidth: true
-                spacing: 2
+                height: trackInfoCol.implicitHeight
+                clip: true
 
-                Text {
-                    Layout.fillWidth: true
-                    text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 14
-                    font.weight: Font.Bold
-                    color: bar.fg
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                }
+                ColumnLayout {
+                    id: trackInfoCol
+                    width: parent.width
+                    spacing: 2
 
-                Text {
-                    Layout.fillWidth: true
-                    text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 12
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
+                    x: musicSplitPill.menuExpanded ? 0 : -40
+                    Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        color: bar.fg
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 12
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                    }
                 }
             }
 
