@@ -330,6 +330,8 @@ Rectangle {
         Item {
             id: progressWrapper
             Layout.fillWidth: true
+            Layout.leftMargin: 16
+            Layout.rightMargin: 16
             height: 4
 
             property real progress: (hasPlayer && player.length > 0) ? (player.position / player.length) : 0
