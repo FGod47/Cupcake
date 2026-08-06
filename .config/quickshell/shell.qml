@@ -30,28 +30,7 @@ ShellRoot {
     // ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR (Bar.qml) IS TOTALLY DISABLED & ARCHIVED in modules/panels/archive/
     // DO NOT re-enable or instantiate Bar { ... } unless explicitly instructed by the USER.
 
-    // Invisible click catcher window to close dropdowns when clicking outside
-    // Defined BEFORE BarSolid so it sits behind the bar in the Wayland z-order
-    Variants {
-        model: Quickshell.screens
-        delegate: PanelWindow {
-            property var modelData
-            screen: modelData
-            anchors { top: true; bottom: true; left: true; right: true }
-            WlrLayershell.namespace: "quickshell-clickcatcher"
-            WlrLayershell.layer: WlrLayer.Top
-            color: "transparent"
-            visible: globalState.anyBarDropdownOpen
-            
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: {
-                    globalState.closeAllDropdowns();
-                }
-            }
-        }
-    }
+
 
     Variants {
         model: Quickshell.screens
