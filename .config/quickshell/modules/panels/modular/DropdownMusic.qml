@@ -114,7 +114,7 @@ Rectangle {
             height: 24
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
-            leftPadding: 4
+            leftPadding: 12
             visible: !musicSplitPill.menuExpanded
 
             PwNodePeakMonitor {
@@ -177,7 +177,7 @@ Rectangle {
     // ── FLOATING ANIMATED ALBUM ART ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? 14 : 12
+        x: musicSplitPill.menuExpanded ? 14 : 8
         y: musicSplitPill.menuExpanded ? 14 : 4
         width: musicSplitPill.menuExpanded ? 54 : 22
         height: musicSplitPill.menuExpanded ? 54 : 22
@@ -210,8 +210,8 @@ Rectangle {
     // ── FLOATING ANIMATED PLAY/PAUSE BUTTON ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? 268 : 90
-        y: musicSplitPill.menuExpanded ? 96 : 4
+        x: musicSplitPill.menuExpanded ? 268 : 94
+        y: musicSplitPill.menuExpanded ? (14 + musicContentCol.implicitHeight - 38) : 4
         width: musicSplitPill.menuExpanded ? 38 : 22
         height: musicSplitPill.menuExpanded ? 38 : 22
         radius: musicSplitPill.menuExpanded ? 19 : 11
