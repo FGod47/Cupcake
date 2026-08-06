@@ -238,7 +238,7 @@ Rectangle {
         
         font.family: Theme.defaultFontFamily
         font.pixelSize: 11
-        font.weight: Font.DemiBold
+        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
         color: bar.fg
 
         scale: musicSplitPill.menuExpanded ? (14.0 / 11.0) : 1.0
