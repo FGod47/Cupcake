@@ -142,17 +142,24 @@ Rectangle {
                     ctx.beginPath();
                     ctx.strokeStyle = Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, opacity);
                     ctx.lineWidth = lineWidth;
-                    for (var x = 0; x <= width; x += 2) {
+                    // Step by 1 for maximum smoothness (curvier look)
+                    for (var x = 0; x <= width; x += 1) {
                         var envelope = Math.sin((x / width) * Math.PI);
-                        var y = centerY + Math.sin(x * frequency + phase) * amplitude * envelope;
+                        // Add a secondary harmonic for a more organic, fluid "curvy" feel
+                        var primaryWave = Math.sin(x * frequency + phase);
+                        var secondaryWave = 0.35 * Math.sin(x * (frequency * 2.3) - (phase * 1.4));
+                        var combinedWave = primaryWave + secondaryWave;
+                        
+                        var y = centerY + combinedWave * amplitude * envelope;
+                        
                         if (x === 0) ctx.moveTo(x, y);
                         else ctx.lineTo(x, y);
                     }
                     ctx.stroke();
                 }
                 
-                // Single clean string
-                drawWave(dynamicAmp, 0.08, time, 1.0, 2);
+                // Single clean string, slightly lower frequency for wider curves
+                drawWave(dynamicAmp, 0.05, time, 1.0, 2);
             }
         }
 
