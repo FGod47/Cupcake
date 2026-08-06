@@ -234,9 +234,7 @@ Rectangle {
     // ── FLOATING ANIMATED TRACK TITLE ──
     Text {
         id: floatingTrackTitle
-        text: musicSplitPill.menuExpanded ? 
-              (hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track") :
-              (hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track")
+        text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         
         font.family: Theme.defaultFontFamily
         font.pixelSize: musicSplitPill.menuExpanded ? 14 : 11
@@ -310,7 +308,7 @@ Rectangle {
                     Text {
                         id: realTitleText
                         Layout.fillWidth: true
-                        text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
+                        text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 14
                         font.weight: Font.Bold
