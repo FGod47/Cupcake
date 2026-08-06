@@ -129,9 +129,14 @@ Rectangle {
                 ctx.clearRect(0, 0, width, height);
                 
                 var centerY = height / 2;
-                // Minimum amplitude even when quiet, scales up with music
-                var baseAmp = 3;
-                var dynamicAmp = baseAmp + (smoothedPeak * 15);
+                
+                // Max allowed amplitude to stay within the 24px high Canvas
+                // Leaving 2px margin for the line width
+                var maxAmp = (height / 2) - 2; 
+                
+                // Base minimal amplitude + scaled audio peak (clamped to maxAmp)
+                var dynamicAmp = 2 + (smoothedPeak * maxAmp);
+                if (dynamicAmp > maxAmp) dynamicAmp = maxAmp;
                 
                 function drawWave(amplitude, frequency, phase, opacity, lineWidth) {
                     ctx.beginPath();
@@ -146,12 +151,8 @@ Rectangle {
                     ctx.stroke();
                 }
                 
-                // Glow
-                drawWave(dynamicAmp, 0.08, time, 0.3, 3);
-                drawWave(dynamicAmp * 0.7, 0.11, -time * 0.8, 0.2, 4);
-                // Core
-                drawWave(dynamicAmp, 0.08, time, 0.9, 1.2);
-                drawWave(dynamicAmp * 0.7, 0.11, -time * 0.8, 0.7, 1.2);
+                // Single clean string
+                drawWave(dynamicAmp, 0.08, time, 1.0, 2);
             }
         }
 
