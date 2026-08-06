@@ -80,6 +80,16 @@ Rectangle {
         return t.trim() || "No Track";
     }
 
+    function shortenTrackTitle(title, artist, maxWords) {
+        let t = cleanTrackTitle(title, artist);
+        if (t === "No Track") return t;
+        let words = t.split(/\s+/);
+        if (words.length > maxWords) {
+            return words.slice(0, maxWords).join(" ");
+        }
+        return t;
+    }
+
     // ── COLLAPSED HEADER ROW (Shown inside split pill) ──
     Row {
         id: musicHeaderRow
@@ -112,7 +122,7 @@ Rectangle {
 
         Text {
             id: compactTrackTitle
-            text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
+            text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
             font.family: Theme.defaultFontFamily
             font.pixelSize: 11
             font.weight: Font.DemiBold
