@@ -139,7 +139,8 @@ Rectangle {
         id: floatingArtMask
         width: artSizeExpanded
         height: artSizeExpanded
-        radius: 16
+        radius: musicSplitPill.menuExpanded ? 16 : 70
+        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         visible: false
     }
 
