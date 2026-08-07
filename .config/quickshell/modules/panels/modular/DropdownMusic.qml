@@ -70,23 +70,15 @@ Rectangle {
     function cleanTrackTitle(title, artist) {
         if (!title) return "No Track";
         let t = title;
-        if (t.indexOf("|") !== -1) t = t.split("|")[0];
-        t = t.replace(/\s*[([].*?[)\]]/gi, "");
-        if (artist) {
-            let a = artist.trim().toLowerCase();
-            let tl = t.trim().toLowerCase();
-            if (tl.startsWith(a + " - ")) {
-                t = t.trim().substring(artist.trim().length + 3);
-            } else if (tl.startsWith(a + "-")) {
-                t = t.trim().substring(artist.trim().length + 1);
-            }
-        }
+        // Step 1: If title contains " - ", extract song title (part after hyphen)
         if (t.indexOf(" - ") !== -1) {
             let parts = t.split(" - ");
-            if (artist && parts[0].trim().toLowerCase() === artist.trim().toLowerCase()) {
-                t = parts.slice(1).join(" - ");
-            }
+            t = parts[1];
         }
+        // Step 2: Strip pipe metadata "| ..."
+        if (t.indexOf("|") !== -1) t = t.split("|")[0];
+        // Step 3: Strip parenthetical/bracketed tags like (Official Video), [HD]
+        t = t.replace(/\s*[([].*?[)\]]/gi, "");
         return t.trim() || title.trim() || "No Track";
     }
 
