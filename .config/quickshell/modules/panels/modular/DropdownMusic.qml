@@ -22,21 +22,25 @@ Rectangle {
     readonly property real expandedH: 136
     property real contentW: menuExpanded ? expandedW : headerW
 
+    // Art: 108×108, left margin 14. Right column starts at 136.
     readonly property real artSize: 108
     readonly property real artMargin: 14
-    readonly property real rightColX: artMargin + artSize + 14 // 136px
-    readonly property real rightColW: expandedW - rightColX - artMargin // 170px
+    readonly property real rightColX: artMargin + artSize + 14   // 136
+
+    // All shared animation duration/easing
+    readonly property int dur: 500
+    readonly property int easingType: Easing.OutQuart
 
     height: menuExpanded ? expandedH : 30
-    Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
+    Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
     x: bar.barX
     width: contentW
-    Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-    Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+    Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+    Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
     radius: menuExpanded ? 20 : 15
-    Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+    Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     clip: true
     color: bar.pillColor
 
@@ -54,32 +58,20 @@ Rectangle {
 
     function formatTime(val) {
         if (!val || isNaN(val)) return "0:00";
-        let seconds = val;
-        if (val > 10000000) seconds = Math.floor(val / 1000000);
-        else if (val > 10000) seconds = Math.floor(val / 1000);
-        else seconds = Math.floor(val);
-        let m = Math.floor(seconds / 60);
-        let s = Math.floor(seconds % 60);
-        return m + ":" + (s < 10 ? "0" : "") + s;
+        let s = val > 10000000 ? Math.floor(val/1000000) : val > 10000 ? Math.floor(val/1000) : Math.floor(val);
+        return Math.floor(s/60) + ":" + (s%60 < 10 ? "0" : "") + Math.floor(s%60);
     }
 
     function formatRemaining(val, total) {
         if (!val || !total || isNaN(val) || isNaN(total)) return "-0:00";
-        let r = total - val;
-        if (r < 0) r = 0;
-        let seconds = r;
-        if (total > 10000000) seconds = Math.floor(r / 1000000);
-        else if (total > 10000) seconds = Math.floor(r / 1000);
-        else seconds = Math.floor(r);
-        let m = Math.floor(seconds / 60);
-        let s = Math.floor(seconds % 60);
-        return "-" + m + ":" + (s < 10 ? "0" : "") + s;
+        let r = Math.max(0, total - val);
+        let s = total > 10000000 ? Math.floor(r/1000000) : total > 10000 ? Math.floor(r/1000) : Math.floor(r);
+        return "-" + Math.floor(s/60) + ":" + (s%60 < 10 ? "0" : "") + Math.floor(s%60);
     }
 
     function cleanTrackTitle(title, artist) {
         if (!title) return "No Track";
-        let t = title;
-        t = t.replace(/\s*[([].*?(official|music video|lyric|audio).*?[)\]]/gi, "");
+        let t = title.replace(/\s*[([].*?(official|music video|lyric|audio).*?[)\]]/gi, "");
         if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + " - "))
             t = t.substring(artist.length + 3);
         else if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + "-"))
@@ -87,15 +79,14 @@ Rectangle {
         return t.trim() || "No Track";
     }
 
-    function shortenTrackTitle(title, artist, maxWords) {
+    function shortenTitle(title, artist, n) {
         let t = cleanTrackTitle(title, artist);
         if (t === "No Track") return t;
-        let words = t.split(/\s+/);
-        if (words.length > maxWords) return words.slice(0, maxWords).join(" ");
-        return t;
+        let w = t.split(/\s+/);
+        return w.length > n ? w.slice(0, n).join(" ") : t;
     }
 
-    // ── COLLAPSED HEADER ROW ──
+    // ── COLLAPSED HEADER ROW (fades out while pill expands) ──
     Row {
         id: musicHeaderRow
         height: 24
@@ -107,8 +98,9 @@ Rectangle {
         z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 200 } }
+        Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuart } }
 
+        // Art placeholder (real art is floating)
         Item {
             id: smallArtPlaceholder
             width: 22; height: 22
@@ -123,9 +115,10 @@ Rectangle {
             }
         }
 
+        // Track title text (invisible — just reserves layout space for floatingTrackTitle)
         Text {
             id: compactTrackTitle
-            text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
+            text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
             font.family: "Inter, sans-serif"
             font.pixelSize: 11
             font.weight: Font.DemiBold
@@ -134,9 +127,10 @@ Rectangle {
             elide: Text.ElideRight
             maximumLineCount: 1
             width: Math.min(implicitWidth, 180)
-            opacity: 0
+            opacity: 0  // invisible: floating title renders here instead
         }
 
+        // Play/pause placeholder (invisible — just reserves space for floatingPlayButton)
         Item {
             id: smallPlayPausePlaceholder
             width: 22; height: 22
@@ -144,27 +138,27 @@ Rectangle {
         }
     }
 
-    // ── FLOATING ALBUM ART MASK ──
+    // ── FLOATING ALBUM ART (morphs from pill icon → large card art) ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? artMargin : (12 + smallArtPlaceholder.x)
+        x: musicSplitPill.menuExpanded ? artMargin : 12
         y: musicSplitPill.menuExpanded ? artMargin : 4
         width:  musicSplitPill.menuExpanded ? artSize : 22
         height: musicSplitPill.menuExpanded ? artSize : 22
-        radius: musicSplitPill.menuExpanded ? 16 : 11
+        radius: musicSplitPill.menuExpanded ? 14 : 11
         visible: false
-        Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on width  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on radius { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     }
 
     Image {
         id: floatingAlbumArt
         x: floatingArtMask.x; y: floatingArtMask.y
         width: floatingArtMask.width; height: floatingArtMask.height
-        z: 20
+        z: 5
         source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
         fillMode: Image.PreserveAspectCrop
         visible: status === Image.Ready
@@ -172,50 +166,85 @@ Rectangle {
         layer.effect: OpacityMask { maskSource: floatingArtMask }
     }
 
-    // Fallback icon when no art
+    // Art fallback (no album art)
     Rectangle {
         x: floatingArtMask.x; y: floatingArtMask.y
         width: floatingArtMask.width; height: floatingArtMask.height
         radius: floatingArtMask.radius
-        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
-        visible: musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready
-        z: 19
-        Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on width  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
+        visible: floatingAlbumArt.status !== Image.Ready
+        z: 4
+        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         Text {
             anchors.centerIn: parent
             text: "\ueafc"
             font.family: ddMusicFont.name
-            font.pixelSize: 36
+            font.pixelSize: musicSplitPill.menuExpanded ? 36 : 13
             color: Theme.colPrimary
+            Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         }
     }
 
-    // ── FLOATING PLAY/PAUSE ──
+    // ── FLOATING TRACK TITLE (glides from pill → top-right of card) ──
+    // Expanded: rightColX, artMargin (top-right)
+    // Collapsed: over compactTrackTitle position in header row
+    Text {
+        id: floatingTrackTitle
+        text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
+        font.family: "Inter, sans-serif"
+        font.pixelSize: 11
+        font.weight: Font.Bold
+        color: "#FFFFFF"
+        elide: Text.ElideRight
+        z: 10
+
+        // Scale up 11→15px by scaling the element; elide width compensates
+        readonly property real expandedScale: 15.0 / 11.0
+        scale: musicSplitPill.menuExpanded ? expandedScale : 1.0
+        transformOrigin: Item.TopLeft
+        Behavior on scale { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+
+        width: musicSplitPill.menuExpanded
+            ? ((musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin) / expandedScale)
+            : Math.min(compactTrackTitle.implicitWidth, 180)
+
+        x: musicSplitPill.menuExpanded ? musicSplitPill.rightColX : 12
+        y: musicSplitPill.menuExpanded ? artMargin : 4
+        Behavior on x { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+    }
+
+    // ── FLOATING PLAY/PAUSE BUTTON (glides from pill → centre of controls row) ──
+    // Expanded centre of controls row:
+    //   rightColX + (rightColW / 2) - 16  where rightColW = expandedW - rightColX - artMargin
+    readonly property real _rightColW: expandedW - rightColX - artMargin  // ~170
+    readonly property real _playExpandedX: rightColX + (_rightColW - 32) / 2
+    readonly property real _playExpandedY: 57   // empirically centred in controls row
+
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + controlsRow.x + largePlayPausePlaceholder.x + (largePlayPausePlaceholder.width - width) / 2) : (12 + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? (artMargin + controlsRow.y + largePlayPausePlaceholder.y + (largePlayPausePlaceholder.height - height) / 2) : 4
+        x: musicSplitPill.menuExpanded ? musicSplitPill._playExpandedX : (12 + smallPlayPausePlaceholder.x)
+        y: musicSplitPill.menuExpanded ? musicSplitPill._playExpandedY : 4
         width:  musicSplitPill.menuExpanded ? 32 : 22
         height: musicSplitPill.menuExpanded ? 32 : 22
-        radius: musicSplitPill.menuExpanded ? 16 : 11
+        radius: width / 2
         color:  "transparent"
-        z: 20
-        Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on width  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on radius { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        z: 10
+        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
         Text {
             anchors.centerIn: parent
             text: isPlaying ? "\ued45" : "\ued46"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 24 : 14
+            font.pixelSize: musicSplitPill.menuExpanded ? 22 : 14
             color: musicSplitPill.menuExpanded ? "#FFFFFF" : Theme.colPrimary
-            Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+            Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         }
         MouseArea {
             anchors.fill: parent
@@ -224,27 +253,7 @@ Rectangle {
         }
     }
 
-    // ── FLOATING TRACK TITLE ──
-    Text {
-        id: floatingTrackTitle
-        text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
-        font.family: "Inter, sans-serif"
-        font.pixelSize: 11
-        font.weight: Font.Bold
-        color: "#FFFFFF"
-        elide: Text.ElideRight
-        width: musicSplitPill.menuExpanded ? (musicSplitPill.rightColW / (15.0 / 11.0)) : compactTrackTitle.width
-        scale: musicSplitPill.menuExpanded ? (15.0 / 11.0) : 1.0
-        transformOrigin: Item.TopLeft
-        Behavior on scale  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        x: musicSplitPill.menuExpanded ? musicSplitPill.rightColX : (12 + compactTrackTitle.x)
-        y: musicSplitPill.menuExpanded ? artMargin : (musicHeaderRow.y + compactTrackTitle.y)
-        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on y { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        z: 20
-    }
-
-    // ── MOUSE AREA ──
+    // ── CLICK HANDLER ──
     MouseArea {
         id: musicHeaderMa
         anchors.fill: parent
@@ -259,7 +268,7 @@ Rectangle {
         }
     }
 
-    // ── EXPANDED CONTENT (right column only) ──
+    // ── EXPANDED CONTENT (right column: artist, controls, progress) ──
     Item {
         id: expandedContent
         anchors.left: parent.left
@@ -270,40 +279,42 @@ Rectangle {
         anchors.topMargin: artMargin
         anchors.bottom: parent.bottom
         anchors.bottomMargin: artMargin
+        // Delay fade-in slightly so card has expanded before content appears
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 300 } }
+        Behavior on opacity {
+            SequentialAnimation {
+                PauseAnimation { duration: musicSplitPill.menuExpanded ? 180 : 0 }
+                NumberAnimation { duration: 220; easing.type: Easing.OutQuart }
+            }
+        }
 
         ColumnLayout {
             anchors.fill: parent
             spacing: 0
 
-            // 1. Title space (floating title lands here)
-            Item {
-                Layout.fillWidth: true
-                height: 22
-            }
+            // Space reserved for floatingTrackTitle (scaled 15px ≈ 22px rendered)
+            Item { Layout.fillWidth: true; height: 22 }
 
-            // 2. Artist
+            // Artist name
             Text {
                 Layout.fillWidth: true
                 text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
                 font.family: "Inter, sans-serif"
                 font.pixelSize: 13
-                color: Qt.rgba(1, 1, 1, 0.65)
+                color: Qt.rgba(1, 1, 1, 0.6)
                 elide: Text.ElideRight
                 maximumLineCount: 1
             }
 
             Item { Layout.fillHeight: true }
 
-            // 3. Media Controls Row (Previous | Play/Pause Placeholder | Next)
+            // Controls: ⏮  |  [play placeholder]  |  ⏭
             RowLayout {
                 id: controlsRow
                 Layout.alignment: Qt.AlignHCenter
                 spacing: 20
 
-                // Previous
                 MouseArea {
                     width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
@@ -317,13 +328,9 @@ Rectangle {
                     }
                 }
 
-                // Play/Pause placeholder
-                Item {
-                    id: largePlayPausePlaceholder
-                    width: 32; height: 32
-                }
+                // Invisible placeholder — floatingPlayButton floats here
+                Item { id: largePlayPausePlaceholder; width: 32; height: 32 }
 
-                // Next
                 MouseArea {
                     width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
@@ -340,7 +347,7 @@ Rectangle {
 
             Item { height: 10 }
 
-            // 4. Progress bar
+            // Progress bar
             Item {
                 id: progressWrapper
                 Layout.fillWidth: true
@@ -366,7 +373,7 @@ Rectangle {
                         width: parent.width * progressWrapper.progress
                         radius: 3
                         color: Qt.rgba(1, 1, 1, 0.85)
-                        Behavior on width { NumberAnimation { duration: 800 } }
+                        Behavior on width { NumberAnimation { duration: 900; easing.type: Easing.OutQuart } }
                     }
                 }
 
@@ -393,7 +400,7 @@ Rectangle {
 
             Item { height: 4 }
 
-            // 5. Timestamps
+            // Timestamps
             RowLayout {
                 Layout.fillWidth: true
                 Text {
