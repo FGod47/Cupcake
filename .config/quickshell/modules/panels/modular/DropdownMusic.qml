@@ -300,12 +300,14 @@ Rectangle {
             // 2. Media Controls (Prev | Play/Pause | Next)
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
+                height: 32
                 spacing: 12
 
                 // Prev
                 Rectangle {
                     width: 26; height: 26
                     radius: 13
+                    anchors.verticalCenter: parent.verticalCenter
                     color: prevMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
@@ -329,6 +331,7 @@ Rectangle {
                 Rectangle {
                     width: 32; height: 32
                     radius: 16
+                    anchors.verticalCenter: parent.verticalCenter
                     color: Qt.rgba(1, 1, 1, playMa.containsMouse ? 0.22 : 0.14)
                     Behavior on color { ColorAnimation { duration: 150 } }
 
@@ -352,6 +355,7 @@ Rectangle {
                 Rectangle {
                     width: 26; height: 26
                     radius: 13
+                    anchors.verticalCenter: parent.verticalCenter
                     color: nextMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
