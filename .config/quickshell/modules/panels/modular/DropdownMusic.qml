@@ -138,20 +138,15 @@ Rectangle {
         }
     }
 
-    // ── FLOATING ALBUM ART (morphs from pill icon → large card art) ──
+    // ── FLOATING ALBUM ART (only visible when expanded) ──
     Rectangle {
         id: floatingArtMask
-        x: musicSplitPill.menuExpanded ? artMargin : 12
-        y: musicSplitPill.menuExpanded ? artMargin : 4
-        width:  musicSplitPill.menuExpanded ? artSize : 22
-        height: musicSplitPill.menuExpanded ? artSize : 22
-        radius: musicSplitPill.menuExpanded ? 14 : 11
+        x: artMargin
+        y: artMargin
+        width: artSize
+        height: artSize
+        radius: 14
         visible: false
-        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     }
 
     Image {
@@ -161,60 +156,47 @@ Rectangle {
         z: 5
         source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
         fillMode: Image.PreserveAspectCrop
-        visible: status === Image.Ready
+        visible: musicSplitPill.menuExpanded && status === Image.Ready
+        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         layer.enabled: true
         layer.effect: OpacityMask { maskSource: floatingArtMask }
     }
 
-    // Art fallback (no album art)
+    // Art fallback (no album art) — only shown when expanded
     Rectangle {
         x: floatingArtMask.x; y: floatingArtMask.y
         width: floatingArtMask.width; height: floatingArtMask.height
         radius: floatingArtMask.radius
         color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
-        visible: floatingAlbumArt.status !== Image.Ready
+        visible: musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready
+        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         z: 4
-        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         Text {
             anchors.centerIn: parent
             text: "\ueafc"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 36 : 13
+            font.pixelSize: 36
             color: Theme.colPrimary
-            Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         }
     }
 
-    // ── FLOATING TRACK TITLE (glides from pill → top-right of card) ──
-    // Expanded: rightColX, artMargin (top-right)
-    // Collapsed: over compactTrackTitle position in header row
+    // ── FLOATING TRACK TITLE — only shown when expanded ──
     Text {
         id: floatingTrackTitle
         text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         font.family: "Inter, sans-serif"
-        font.pixelSize: 11
+        font.pixelSize: 15
         font.weight: Font.Bold
         color: "#FFFFFF"
         elide: Text.ElideRight
+        width: musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin
+        x: musicSplitPill.rightColX
+        y: artMargin
         z: 10
-
-        // Scale up 11→15px by scaling the element; elide width compensates
-        readonly property real expandedScale: 15.0 / 11.0
-        scale: musicSplitPill.menuExpanded ? expandedScale : 1.0
-        transformOrigin: Item.TopLeft
-        Behavior on scale { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-
-        width: musicSplitPill.menuExpanded
-            ? ((musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin) / expandedScale)
-            : Math.min(compactTrackTitle.implicitWidth, 180)
-
-        x: musicSplitPill.menuExpanded ? musicSplitPill.rightColX : 12
-        y: musicSplitPill.menuExpanded ? artMargin : 4
-        Behavior on x { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     }
 
     // ── FLOATING PLAY/PAUSE BUTTON (glides from pill → centre of controls row) ──
@@ -224,27 +206,22 @@ Rectangle {
     readonly property real _playExpandedX: rightColX + (_rightColW - 32) / 2
     readonly property real _playExpandedY: 57   // empirically centred in controls row
 
-    Rectangle {
-        id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? musicSplitPill._playExpandedX : (12 + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? musicSplitPill._playExpandedY : 4
-        width:  musicSplitPill.menuExpanded ? 32 : 22
-        height: musicSplitPill.menuExpanded ? 32 : 22
-        radius: width / 2
-        color:  "transparent"
+    // Play button — only shown in expanded state (compact pill shows icon in header row)
+    Item {
+        x: musicSplitPill._playExpandedX
+        y: musicSplitPill._playExpandedY
+        width: 32; height: 32
         z: 10
-        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        visible: musicSplitPill.menuExpanded
+        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
         Text {
             anchors.centerIn: parent
             text: isPlaying ? "\ued45" : "\ued46"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 22 : 14
-            color: musicSplitPill.menuExpanded ? "#FFFFFF" : Theme.colPrimary
-            Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+            font.pixelSize: 22
+            color: "#FFFFFF"
         }
         MouseArea {
             anchors.fill: parent
