@@ -100,12 +100,31 @@ Rectangle {
         Item {
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
+
+            Rectangle {
+                id: compactArtMask
+                anchors.fill: parent
+                radius: 11
+                visible: false
+            }
+
+            Image {
+                id: compactArtImg
+                anchors.fill: parent
+                source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
+                fillMode: Image.PreserveAspectCrop
+                visible: status === Image.Ready
+                layer.enabled: true
+                layer.effect: OpacityMask { maskSource: compactArtMask }
+            }
+
             Text {
                 anchors.centerIn: parent
                 text: "\ueafc"
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                visible: compactArtImg.status !== Image.Ready
             }
         }
 
