@@ -124,7 +124,7 @@ Rectangle {
                 width: 24; height: 24
                 anchors.centerIn: parent
                 vendorExtensionsEnabled: false
-                scale: 12 / 24
+                scale: 15 / 24
                 ShapePath {
                     fillColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                     strokeColor: "transparent"
