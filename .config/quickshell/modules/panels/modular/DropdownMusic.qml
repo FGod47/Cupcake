@@ -237,7 +237,7 @@ Rectangle {
         z: 20
 
         x: musicSplitPill.menuExpanded ? (artMargin + artSizeExpanded + 14) : 40
-        y: musicSplitPill.menuExpanded ? 12 : 7
+        y: musicSplitPill.menuExpanded ? 18 : 7
         width: musicSplitPill.menuExpanded
             ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
             : Math.min(compactTitleSpacer.implicitWidth, 120)
@@ -271,7 +271,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 14
         anchors.top: parent.top
-        anchors.topMargin: 12
+        anchors.topMargin: 18
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 12
 
