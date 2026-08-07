@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
@@ -311,12 +312,17 @@ Rectangle {
                     color: prevMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
-                    Text {
+                    Shape {
+                        width: 14; height: 14
                         anchors.centerIn: parent
-                        text: "\uf6a4"
-                        font.family: ddMusicFont.name
-                        font.pixelSize: 16
-                        color: "#FFFFFF"
+                        vendorExtensionsEnabled: false
+                        ShapePath {
+                            fillColor: "#FFFFFF"
+                            strokeColor: "transparent"
+                            PathSvg {
+                                path: "M19.424 4.148a1 1 0 0 0 -1.424 .852v5.172l-9.524 -5.872a1 1 0 0 0 -1.476 .852v14a1 1 0 0 0 1.476 .852l9.524 -5.872v5.172a1 1 0 0 0 1.524 .852l.096 -.007a1 1 0 0 0 .804 -.845v-14a1 1 0 0 0 -1 -1z"
+                            }
+                        }
                     }
                     MouseArea {
                         id: prevMa
@@ -335,12 +341,19 @@ Rectangle {
                     color: Qt.rgba(1, 1, 1, playMa.containsMouse ? 0.22 : 0.14)
                     Behavior on color { ColorAnimation { duration: 150 } }
 
-                    Text {
+                    Shape {
+                        width: 16; height: 16
                         anchors.centerIn: parent
-                        text: isPlaying ? "\ued45" : "\uf6a6"
-                        font.family: ddMusicFont.name
-                        font.pixelSize: 18
-                        color: "#FFFFFF"
+                        vendorExtensionsEnabled: false
+                        ShapePath {
+                            fillColor: "#FFFFFF"
+                            strokeColor: "transparent"
+                            PathSvg {
+                                path: isPlaying
+                                    ? "M7 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2z M15 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2z"
+                                    : "M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z"
+                            }
+                        }
                     }
                     MouseArea {
                         id: playMa
@@ -359,12 +372,17 @@ Rectangle {
                     color: nextMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
-                    Text {
+                    Shape {
+                        width: 14; height: 14
                         anchors.centerIn: parent
-                        text: "\uf6a5"
-                        font.family: ddMusicFont.name
-                        font.pixelSize: 16
-                        color: "#FFFFFF"
+                        vendorExtensionsEnabled: false
+                        ShapePath {
+                            fillColor: "#FFFFFF"
+                            strokeColor: "transparent"
+                            PathSvg {
+                                path: "M4.576 4.148a1 1 0 0 0 -1.576 .852v14a1 1 0 0 0 1.524 .852l.096 -.007a1 1 0 0 0 .804 -.845v-5.172l9.524 5.872a1 1 0 0 0 1.476 -.852v-14a1 1 0 0 0 -1.476 -.852l-9.524 5.872v-5.172a1 1 0 0 0 -1 -1z"
+                            }
+                        }
                     }
                     MouseArea {
                         id: nextMa
