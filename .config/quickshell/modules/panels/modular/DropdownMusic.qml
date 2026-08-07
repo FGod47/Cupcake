@@ -386,27 +386,17 @@ Rectangle {
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width
-                    height: 3
-                    radius: 2
+                    height: 6
+                    radius: 3
                     color: Qt.rgba(1, 1, 1, 0.16)
 
                     // Fill bar
                     Rectangle {
                         height: parent.height
                         width: parent.width * progressWrapper.progress
-                        radius: 2
+                        radius: 3
                         color: "#d3cadb"
                         Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutQuart } }
-
-                        // Handle Dot
-                        Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
-                            anchors.rightMargin: -4
-                            width: 8; height: 8
-                            radius: 4
-                            color: "#FFFFFF"
-                        }
                     }
                 }
 
