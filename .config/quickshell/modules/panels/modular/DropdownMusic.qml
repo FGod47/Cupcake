@@ -18,14 +18,16 @@ Rectangle {
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
     readonly property real headerW: musicHeaderRow.implicitWidth + 20
-    readonly property real expandedW: 300
+    readonly property real expandedW: 320
+    readonly property real expandedH: 136
     property real contentW: menuExpanded ? expandedW : headerW
 
-    // Art is 110px + 14px margin = 124. Right column fills the rest.
-    readonly property real artSize: 110
+    readonly property real artSize: 108
     readonly property real artMargin: 14
+    readonly property real rightColX: artMargin + artSize + 14 // 136px
+    readonly property real rightColW: expandedW - rightColX - artMargin // 170px
 
-    height: menuExpanded ? (artSize + artMargin * 2) : 30
+    height: menuExpanded ? expandedH : 30
     Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
     x: bar.barX
@@ -124,7 +126,7 @@ Rectangle {
         Text {
             id: compactTrackTitle
             text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
-            font.family: Theme.defaultFontFamily
+            font.family: "Inter, sans-serif"
             font.pixelSize: 11
             font.weight: Font.DemiBold
             color: bar.fg
@@ -149,7 +151,7 @@ Rectangle {
         y: musicSplitPill.menuExpanded ? artMargin : 4
         width:  musicSplitPill.menuExpanded ? artSize : 22
         height: musicSplitPill.menuExpanded ? artSize : 22
-        radius: musicSplitPill.menuExpanded ? 14 : 11
+        radius: musicSplitPill.menuExpanded ? 16 : 11
         visible: false
         Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -192,36 +194,28 @@ Rectangle {
     }
 
     // ── FLOATING PLAY/PAUSE ──
-    // In expanded: sits in the controls row (centre of 3 buttons on right column)
-    // right column starts at: artMargin + artSize + 12
-    readonly property real rightColX: artMargin + artSize + 12
-    // Controls row is vertically centred in the right column, roughly 2/3 down
-    readonly property real controlsRowY: artMargin + 52
-
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + 32) : (12 + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? musicSplitPill.controlsRowY : 4
-        width:  musicSplitPill.menuExpanded ? 36 : 22
-        height: musicSplitPill.menuExpanded ? 36 : 22
-        radius: musicSplitPill.menuExpanded ? 18 : 11
-        color:  musicSplitPill.menuExpanded ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + (musicSplitPill.rightColW / 2) - 16) : (12 + smallPlayPausePlaceholder.x)
+        y: musicSplitPill.menuExpanded ? 50 : 4
+        width:  musicSplitPill.menuExpanded ? 32 : 22
+        height: musicSplitPill.menuExpanded ? 32 : 22
+        radius: musicSplitPill.menuExpanded ? 16 : 11
+        color:  "transparent"
         z: 20
         Behavior on x      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on y      { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on width  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on height { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         Behavior on radius { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on color  { ColorAnimation { duration: 250 } }
 
         Text {
             anchors.centerIn: parent
-            text: isPlaying ? "\ued45" : "\ued46"
+            text: isPlaying ? "\uef53" : "\uef54"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 17 : 14
-            color: musicSplitPill.menuExpanded ? bar.fg : Theme.colPrimary
+            font.pixelSize: musicSplitPill.menuExpanded ? 26 : 14
+            color: musicSplitPill.menuExpanded ? "#FFFFFF" : Theme.colPrimary
             Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-            Behavior on color { ColorAnimation { duration: 250 } }
         }
         MouseArea {
             anchors.fill: parent
@@ -234,15 +228,13 @@ Rectangle {
     Text {
         id: floatingTrackTitle
         text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
-        font.family: Theme.defaultFontFamily
+        font.family: "Inter, sans-serif"
         font.pixelSize: 11
         font.weight: Font.Bold
-        color: bar.fg
+        color: "#FFFFFF"
         elide: Text.ElideRight
-        width: musicSplitPill.menuExpanded
-               ? (musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin)
-               : compactTrackTitle.width
-        scale: musicSplitPill.menuExpanded ? (16.0 / 11.0) : 1.0
+        width: musicSplitPill.menuExpanded ? musicSplitPill.rightColW : compactTrackTitle.width
+        scale: musicSplitPill.menuExpanded ? (15.0 / 11.0) : 1.0
         transformOrigin: Item.TopLeft
         Behavior on scale  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         x: musicSplitPill.menuExpanded ? musicSplitPill.rightColX : (12 + compactTrackTitle.x)
@@ -267,7 +259,7 @@ Rectangle {
         }
     }
 
-    // ── EXPANDED CONTENT (right column only, art is handled by floating elements) ──
+    // ── EXPANDED CONTENT (right column only) ──
     Item {
         id: expandedContent
         anchors.left: parent.left
@@ -286,70 +278,70 @@ Rectangle {
             anchors.fill: parent
             spacing: 0
 
-            // Title placeholder (floating title sits here, needs height reserve)
+            // 1. Title space (floating title lands here)
             Item {
                 Layout.fillWidth: true
-                // Reserve space for the scaled-up title (11px * 16/11 scale ≈ 16px + a bit)
                 height: 22
             }
 
-            // Artist
+            // 2. Artist
             Text {
                 Layout.fillWidth: true
                 text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
-                font.family: Theme.defaultFontFamily
+                font.family: "Inter, sans-serif"
                 font.pixelSize: 13
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                color: Qt.rgba(1, 1, 1, 0.65)
                 elide: Text.ElideRight
                 maximumLineCount: 1
             }
 
             Item { Layout.fillHeight: true }
 
-            // Controls: prev | [play/pause placeholder] | next
+            // 3. Media Controls Row (Previous | Play/Pause Placeholder | Next)
             RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 24
 
+                // Previous
                 MouseArea {
-                    width: 28; height: 36
+                    width: 26; height: 26
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.previous()
                     Text {
                         anchors.centerIn: parent
-                        text: "\ued4c"
+                        text: "\uef55"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 18
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                        font.pixelSize: 22
+                        color: "#FFFFFF"
                     }
                 }
 
-                // Play/pause placeholder — floating button goes here
-                Item { width: 36; height: 36 }
+                // Play/Pause placeholder
+                Item { width: 32; height: 32 }
 
+                // Next
                 MouseArea {
-                    width: 28; height: 36
+                    width: 26; height: 26
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.next()
                     Text {
                         anchors.centerIn: parent
-                        text: "\ued4b"
+                        text: "\uef56"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 18
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                        font.pixelSize: 22
+                        color: "#FFFFFF"
                     }
                 }
-
-                Item { Layout.fillWidth: true }
             }
 
-            Item { height: 6 }
+            Item { height: 10 }
 
-            // Progress bar
+            // 4. Progress bar
             Item {
                 id: progressWrapper
                 Layout.fillWidth: true
-                height: 3
+                height: 5
+
                 property real currentPosition: hasPlayer ? player.position : 0
                 property real progress: (hasPlayer && player.length > 0) ? (currentPosition / player.length) : 0
 
@@ -362,13 +354,14 @@ Rectangle {
 
                 Rectangle {
                     anchors.fill: parent
-                    radius: 2
+                    radius: 3
                     color: Qt.rgba(1, 1, 1, 0.15)
+
                     Rectangle {
                         height: parent.height
                         width: parent.width * progressWrapper.progress
-                        radius: 2
-                        color: Theme.colPrimary
+                        radius: 3
+                        color: Qt.rgba(1, 1, 1, 0.85)
                         Behavior on width { NumberAnimation { duration: 800 } }
                     }
                 }
@@ -394,23 +387,23 @@ Rectangle {
                 }
             }
 
-            Item { height: 2 }
+            Item { height: 4 }
 
-            // Timestamps
+            // 5. Timestamps
             RowLayout {
                 Layout.fillWidth: true
                 Text {
                     text: hasPlayer ? formatTime(progressWrapper.currentPosition) : "0:00"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 10
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    font.family: "Inter, sans-serif"
+                    font.pixelSize: 11
+                    color: Qt.rgba(1, 1, 1, 0.5)
                 }
                 Item { Layout.fillWidth: true }
                 Text {
                     text: hasPlayer ? formatRemaining(progressWrapper.currentPosition, player.length) : "-0:00"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 10
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                    font.family: "Inter, sans-serif"
+                    font.pixelSize: 11
+                    color: Qt.rgba(1, 1, 1, 0.5)
                 }
             }
         }
