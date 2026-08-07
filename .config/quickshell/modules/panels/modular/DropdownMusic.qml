@@ -26,8 +26,8 @@ Rectangle {
     readonly property real headerW: musicHeaderRow.implicitWidth + 24
     property real contentW: menuExpanded ? expandedW : headerW
 
-    readonly property int dur: 450
-    readonly property int easingType: Easing.OutQuart
+    readonly property int dur: 650
+    readonly property int easingType: Easing.OutCubic
 
     height: menuExpanded ? expandedH : 30
     Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
