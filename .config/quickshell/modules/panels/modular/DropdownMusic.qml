@@ -121,7 +121,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             Text {
                 anchors.centerIn: parent
-                text: isPlaying ? "\ued45" : "\ued46"
+                text: isPlaying ? "\uf6a7" : "\uf6a6"
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
@@ -313,7 +313,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "\ued4c"
+                        text: "\uf6a4"
                         font.family: ddMusicFont.name
                         font.pixelSize: 16
                         color: "#FFFFFF"
@@ -337,7 +337,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: isPlaying ? "\ued45" : "\ued46"
+                        text: isPlaying ? "\uf6a7" : "\uf6a6"
                         font.family: ddMusicFont.name
                         font.pixelSize: 18
                         color: "#FFFFFF"
@@ -361,7 +361,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "\ued4b"
+                        text: "\uf6a5"
                         font.family: ddMusicFont.name
                         font.pixelSize: 16
                         color: "#FFFFFF"
