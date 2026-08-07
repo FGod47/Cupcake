@@ -34,13 +34,19 @@ Rectangle {
     Behavior on prevArrowOffset {
         SequentialAnimation {
             PauseAnimation { duration: musicSplitPill.menuExpanded ? 350 : 0 }
-            NumberAnimation { duration: 450; easing.type: Easing.OutBack }
+            NumberAnimation {
+                duration: musicSplitPill.menuExpanded ? 450 : 350
+                easing.type: musicSplitPill.menuExpanded ? Easing.OutBack : Easing.InQuad
+            }
         }
     }
     Behavior on nextArrowOffset {
         SequentialAnimation {
             PauseAnimation { duration: musicSplitPill.menuExpanded ? 350 : 0 }
-            NumberAnimation { duration: 450; easing.type: Easing.OutBack }
+            NumberAnimation {
+                duration: musicSplitPill.menuExpanded ? 450 : 350
+                easing.type: musicSplitPill.menuExpanded ? Easing.OutBack : Easing.InQuad
+            }
         }
     }
     Behavior on arrowOpacity {
