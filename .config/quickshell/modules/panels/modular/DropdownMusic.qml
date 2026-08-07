@@ -8,7 +8,7 @@ import Quickshell.Services.Mpris
 import Quickshell.Services.Pipewire
 import "../../../theme"
 
-// ── MUSIC SPLIT PILL & DROPDOWN ──
+// ── MUSIC SPLIT PILL & MORPHING PLAYER ──
 Rectangle {
     id: musicSplitPill
     y: 10
@@ -17,18 +17,15 @@ Rectangle {
     property bool hasPlayer: player !== null
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
-    readonly property real headerW: musicHeaderRow.implicitWidth + 20
-    readonly property real expandedW: 320
-    readonly property real expandedH: 136
+    readonly property real expandedW: 340
+    readonly property real expandedH: 182
+    readonly property real artMargin: 8
+    readonly property real artSizeExpanded: 166
+
+    readonly property real headerW: musicHeaderRow.implicitWidth + 24
     property real contentW: menuExpanded ? expandedW : headerW
 
-    // Art: 108×108, left margin 14. Right column starts at 136.
-    readonly property real artSize: 108
-    readonly property real artMargin: 14
-    readonly property real rightColX: artMargin + artSize + 14   // 136
-
-    // All shared animation duration/easing
-    readonly property int dur: 500
+    readonly property int dur: 450
     readonly property int easingType: Easing.OutQuart
 
     height: menuExpanded ? expandedH : 30
@@ -39,7 +36,7 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
-    radius: menuExpanded ? 20 : 15
+    radius: 20
     Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     clip: true
     color: bar.pillColor
@@ -86,23 +83,21 @@ Rectangle {
         return w.length > n ? w.slice(0, n).join(" ") : t;
     }
 
-    // ── COLLAPSED HEADER ROW (fades out while pill expands) ──
+    // ── COLLAPSED HEADER ROW ──
     Row {
         id: musicHeaderRow
         height: 24
         anchors.left: parent.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: 10
         anchors.verticalCenter: parent.top
         anchors.verticalCenterOffset: 15
         spacing: 8
         z: 10
         opacity: musicSplitPill.menuExpanded ? 0.0 : 1.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuart } }
+        Behavior on opacity { NumberAnimation { duration: 200 } }
 
-        // Art placeholder (real art is floating)
         Item {
-            id: smallArtPlaceholder
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
             Text {
@@ -111,11 +106,9 @@ Rectangle {
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                visible: floatingAlbumArt.status !== Image.Ready
             }
         }
 
-        // Track title text
         Text {
             id: compactTrackTitle
             text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
@@ -126,13 +119,10 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
-            width: Math.min(implicitWidth, 100)
-            opacity: 1.0
+            width: Math.min(implicitWidth, 120)
         }
 
-        // Compact play/pause icon (collapsed pill only)
         Item {
-            id: smallPlayPausePlaceholder
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
             Text {
@@ -150,14 +140,14 @@ Rectangle {
         }
     }
 
-    // ── FLOATING ALBUM ART (only visible when expanded) ──
+    // ── EXPANDED ALBUM ART (LEFT SIDE, 166x166) ──
     Rectangle {
         id: floatingArtMask
         x: artMargin
         y: artMargin
-        width: artSize
-        height: artSize
-        radius: 14
+        width: artSizeExpanded
+        height: artSizeExpanded
+        radius: 16
         visible: false
     }
 
@@ -175,70 +165,56 @@ Rectangle {
         layer.effect: OpacityMask { maskSource: floatingArtMask }
     }
 
-    // Art fallback (no album art) — only shown when expanded
+    // Fallback Gradient + Note Icon + "now playing" doodle badge
     Rectangle {
         x: floatingArtMask.x; y: floatingArtMask.y
         width: floatingArtMask.width; height: floatingArtMask.height
         radius: floatingArtMask.radius
-        color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#ff9ad0" }
+            GradientStop { position: 0.45; color: "#b28bff" }
+            GradientStop { position: 1.0; color: "#4a2f9e" }
+        }
         visible: true
         opacity: (musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready) ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         z: 4
+
+        // Top-right note icon
         Text {
-            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 10
+            anchors.rightMargin: 10
             text: "\ueafc"
             font.family: ddMusicFont.name
-            font.pixelSize: 36
-            color: Theme.colPrimary
-        }
-    }
-
-    // ── FLOATING TRACK TITLE — only shown when expanded ──
-    Text {
-        id: floatingTrackTitle
-        text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
-        font.family: "Inter, sans-serif"
-        font.pixelSize: 15
-        font.weight: Font.Bold
-        color: "#FFFFFF"
-        elide: Text.ElideRight
-        width: musicSplitPill.expandedW - musicSplitPill.rightColX - musicSplitPill.artMargin
-        x: musicSplitPill.rightColX
-        y: artMargin
-        z: 10
-        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-    }
-
-    // ── FLOATING PLAY/PAUSE BUTTON (glides from pill → centre of controls row) ──
-    // Expanded centre of controls row:
-    //   rightColX + (rightColW / 2) - 16  where rightColW = expandedW - rightColX - artMargin
-    readonly property real _rightColW: expandedW - rightColX - artMargin  // ~170
-    readonly property real _playExpandedX: rightColX + (_rightColW - 32) / 2
-    readonly property real _playExpandedY: 57   // empirically centred in controls row
-
-    // Play button — only shown in expanded state (compact pill shows icon in header row)
-    Item {
-        x: musicSplitPill._playExpandedX
-        y: musicSplitPill._playExpandedY
-        width: 32; height: 32
-        z: 10
-        visible: musicSplitPill.menuExpanded
-        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-
-        Text {
-            anchors.centerIn: parent
-            text: isPlaying ? "\ued45" : "\ued46"
-            font.family: ddMusicFont.name
-            font.pixelSize: 22
+            font.pixelSize: 18
             color: "#FFFFFF"
+            opacity: 0.7
         }
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: if (hasPlayer) player.togglePlaying()
+
+        // Bottom-left "now playing" doodle badge
+        Rectangle {
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 10
+            anchors.bottomMargin: 10
+            width: doodleText.implicitWidth + 14
+            height: 20
+            radius: 10
+            color: "transparent"
+            border.color: Qt.rgba(255, 255, 255, 0.85)
+            border.width: 1
+
+            Text {
+                id: doodleText
+                anchors.centerIn: parent
+                text: "now playing"
+                font.family: "Inter, sans-serif"
+                font.pixelSize: 10
+                font.weight: Font.DemiBold
+                color: "#FFFFFF"
+            }
         }
     }
 
@@ -257,24 +233,24 @@ Rectangle {
         }
     }
 
-    // ── EXPANDED CONTENT (right column: artist, controls, progress) ──
+    // ── EXPANDED RIGHT COLUMN ──
     Item {
         id: expandedContent
         anchors.left: parent.left
-        anchors.leftMargin: musicSplitPill.rightColX
+        anchors.leftMargin: artMargin + artSizeExpanded + 14   // 188px
         anchors.right: parent.right
-        anchors.rightMargin: artMargin
+        anchors.rightMargin: 14
         anchors.top: parent.top
-        anchors.topMargin: artMargin
+        anchors.topMargin: 12
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: artMargin
-        // Delay fade-in slightly so card has expanded before content appears
+        anchors.bottomMargin: 12
+
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity {
             SequentialAnimation {
-                PauseAnimation { duration: musicSplitPill.menuExpanded ? 180 : 0 }
-                NumberAnimation { duration: 220; easing.type: Easing.OutQuart }
+                PauseAnimation { duration: musicSplitPill.menuExpanded ? 150 : 0 }
+                NumberAnimation { duration: 250; easing.type: Easing.OutQuart }
             }
         }
 
@@ -282,65 +258,113 @@ Rectangle {
             anchors.fill: parent
             spacing: 0
 
-            // Space reserved for floatingTrackTitle (scaled 15px ≈ 22px rendered)
-            Item { Layout.fillWidth: true; height: 22 }
-
-            // Artist name
+            // 1. Title & Artist Info
             Text {
                 Layout.fillWidth: true
-                text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
+                text: hasPlayer ? (player.trackTitle || "No Track") : "No Track"
                 font.family: "Inter, sans-serif"
                 font.pixelSize: 13
-                color: Qt.rgba(1, 1, 1, 0.6)
+                font.weight: Font.Bold
+                color: "#FFFFFF"
+                elide: Text.ElideRight
+                maximumLineCount: 1
+            }
+
+            Text {
+                Layout.fillWidth: true
+                Layout.topMargin: 2
+                text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
+                font.family: "Inter, sans-serif"
+                font.pixelSize: 11
+                color: Qt.rgba(1, 1, 1, 0.55)
                 elide: Text.ElideRight
                 maximumLineCount: 1
             }
 
             Item { Layout.fillHeight: true }
 
-            // Controls: ⏮  |  [play placeholder]  |  ⏭
+            // 2. Media Controls (Prev | Play/Pause | Next)
             RowLayout {
-                id: controlsRow
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 20
+                spacing: 12
 
-                MouseArea {
-                    width: 32; height: 32
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: if (hasPlayer) player.previous()
+                // Prev
+                Rectangle {
+                    width: 26; height: 26
+                    radius: 13
+                    color: prevMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4c"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 22
+                        font.pixelSize: 16
                         color: "#FFFFFF"
+                    }
+                    MouseArea {
+                        id: prevMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: if (hasPlayer) player.previous()
                     }
                 }
 
-                // Invisible placeholder — floatingPlayButton floats here
-                Item { id: largePlayPausePlaceholder; width: 32; height: 32 }
-
-                MouseArea {
+                // Play / Pause (32x32)
+                Rectangle {
                     width: 32; height: 32
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: if (hasPlayer) player.next()
+                    radius: 16
+                    color: Qt.rgba(1, 1, 1, playMa.containsMouse ? 0.22 : 0.14)
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: isPlaying ? "\ued45" : "\ued46"
+                        font.family: ddMusicFont.name
+                        font.pixelSize: 18
+                        color: "#FFFFFF"
+                    }
+                    MouseArea {
+                        id: playMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: if (hasPlayer) player.togglePlaying()
+                    }
+                }
+
+                // Next
+                Rectangle {
+                    width: 26; height: 26
+                    radius: 13
+                    color: nextMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4b"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 22
+                        font.pixelSize: 16
                         color: "#FFFFFF"
+                    }
+                    MouseArea {
+                        id: nextMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: if (hasPlayer) player.next()
                     }
                 }
             }
 
-            Item { height: 10 }
+            Item { height: 12 }
 
-            // Progress bar
+            // 3. Progress Bar & Slider
             Item {
                 id: progressWrapper
                 Layout.fillWidth: true
-                height: 5
+                height: 8
 
                 property real currentPosition: hasPlayer ? player.position : 0
                 property real progress: (hasPlayer && player.length > 0) ? (currentPosition / player.length) : 0
@@ -352,17 +376,31 @@ Rectangle {
                     onTriggered: { if (hasPlayer) progressWrapper.currentPosition = player.position; }
                 }
 
+                // Track background
                 Rectangle {
-                    anchors.fill: parent
-                    radius: 3
-                    color: Qt.rgba(1, 1, 1, 0.15)
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    height: 3
+                    radius: 2
+                    color: Qt.rgba(1, 1, 1, 0.16)
 
+                    // Fill bar
                     Rectangle {
                         height: parent.height
                         width: parent.width * progressWrapper.progress
-                        radius: 3
-                        color: Qt.rgba(1, 1, 1, 0.85)
-                        Behavior on width { NumberAnimation { duration: 900; easing.type: Easing.OutQuart } }
+                        radius: 2
+                        color: "#d3cadb"
+                        Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutQuart } }
+
+                        // Handle Dot
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: -4
+                            width: 8; height: 8
+                            radius: 4
+                            color: "#FFFFFF"
+                        }
                     }
                 }
 
@@ -389,20 +427,20 @@ Rectangle {
 
             Item { height: 4 }
 
-            // Timestamps
+            // 4. Timestamps
             RowLayout {
                 Layout.fillWidth: true
                 Text {
                     text: hasPlayer ? formatTime(progressWrapper.currentPosition) : "0:00"
                     font.family: "Inter, sans-serif"
-                    font.pixelSize: 11
+                    font.pixelSize: 10
                     color: Qt.rgba(1, 1, 1, 0.5)
                 }
                 Item { Layout.fillWidth: true }
                 Text {
                     text: hasPlayer ? formatRemaining(progressWrapper.currentPosition, player.length) : "-0:00"
                     font.family: "Inter, sans-serif"
-                    font.pixelSize: 11
+                    font.pixelSize: 10
                     color: Qt.rgba(1, 1, 1, 0.5)
                 }
             }
