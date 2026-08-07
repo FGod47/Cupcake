@@ -22,7 +22,7 @@ Rectangle {
 
     Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
     Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-    radius: menuExpanded ? 16 : 15
+    radius: menuExpanded ? 20 : 15
     Behavior on radius { NumberAnimation { duration: 300 } }
     clip: true
 
@@ -136,9 +136,9 @@ Rectangle {
 
             Rectangle {
                 anchors.fill: parent
-                radius: 6
+                radius: height / 2
                 color: itemMa.containsMouse
-                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
+                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
                        : "transparent"
                 Behavior on color { ColorAnimation { duration: 120 } }
             }
