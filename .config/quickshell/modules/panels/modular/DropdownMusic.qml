@@ -250,7 +250,7 @@ Rectangle {
         z: 20
 
         x: musicSplitPill.menuExpanded ? (artMargin + artSizeExpanded + 14) : 40
-        y: musicSplitPill.menuExpanded ? 18 : 9
+        y: musicSplitPill.menuExpanded ? 18 : (musicHeaderRow.y + compactTitleSpacer.y)
         width: musicSplitPill.menuExpanded
             ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
             : Math.min(compactTitleSpacer.implicitWidth + 10, 220)
