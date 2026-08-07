@@ -124,6 +124,7 @@ Rectangle {
                 width: 12; height: 12
                 anchors.centerIn: parent
                 vendorExtensionsEnabled: false
+                scale: 12 / 24
                 ShapePath {
                     fillColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                     strokeColor: "transparent"
@@ -323,6 +324,7 @@ Rectangle {
                         width: 14; height: 14
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
+                        scale: 14 / 24
                         ShapePath {
                             fillColor: "#FFFFFF"
                             strokeColor: "transparent"
@@ -352,6 +354,7 @@ Rectangle {
                         width: 16; height: 16
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
+                        scale: 16 / 24
                         ShapePath {
                             fillColor: "#FFFFFF"
                             strokeColor: "transparent"
@@ -383,6 +386,7 @@ Rectangle {
                         width: 14; height: 14
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
+                        scale: 14 / 24
                         ShapePath {
                             fillColor: "#FFFFFF"
                             strokeColor: "transparent"
