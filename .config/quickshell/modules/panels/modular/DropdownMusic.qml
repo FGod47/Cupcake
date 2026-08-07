@@ -293,7 +293,12 @@ Rectangle {
 
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+        Behavior on opacity { NumberAnimation { duration: 350; easing.type: musicSplitPill.easingType } }
+
+        transform: Translate {
+            y: musicSplitPill.menuExpanded ? 0 : 25
+            Behavior on y { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        }
 
         Column {
             anchors.fill: parent
