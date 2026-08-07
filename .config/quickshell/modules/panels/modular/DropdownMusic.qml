@@ -308,6 +308,14 @@ Rectangle {
                     width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.previous()
+
+                    transform: Translate {
+                        x: musicSplitPill.menuExpanded ? 0 : 52
+                        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+                    }
+                    opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4c"
@@ -328,6 +336,14 @@ Rectangle {
                     width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.next()
+
+                    transform: Translate {
+                        x: musicSplitPill.menuExpanded ? 0 : -52
+                        Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+                    }
+                    opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4b"
