@@ -18,9 +18,9 @@ Rectangle {
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
     readonly property real expandedW: 340
-    readonly property real expandedH: 136
+    readonly property real expandedH: 156
     readonly property real artMargin: 8
-    readonly property real artSizeExpanded: 120
+    readonly property real artSizeExpanded: 140
 
     readonly property real headerW: musicHeaderRow.implicitWidth + 24
     property real contentW: menuExpanded ? expandedW : headerW
@@ -236,10 +236,10 @@ Rectangle {
         maximumLineCount: 1
         z: 20
 
-        x: musicSplitPill.menuExpanded ? (artMargin + artSizeExpanded + 12) : 40
-        y: musicSplitPill.menuExpanded ? 10 : 7
+        x: musicSplitPill.menuExpanded ? (artMargin + artSizeExpanded + 14) : 40
+        y: musicSplitPill.menuExpanded ? 12 : 7
         width: musicSplitPill.menuExpanded
-            ? (expandedW - (artMargin + artSizeExpanded + 12) - 12)
+            ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
             : Math.min(compactTitleSpacer.implicitWidth, 120)
 
         Behavior on x              { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
@@ -267,13 +267,13 @@ Rectangle {
     Item {
         id: expandedContent
         anchors.left: parent.left
-        anchors.leftMargin: artMargin + artSizeExpanded + 12   // 140px
+        anchors.leftMargin: artMargin + artSizeExpanded + 14   // 162px
         anchors.right: parent.right
-        anchors.rightMargin: 12
+        anchors.rightMargin: 14
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: 12
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 12
 
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
