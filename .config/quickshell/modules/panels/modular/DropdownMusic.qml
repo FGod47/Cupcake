@@ -121,7 +121,7 @@ Rectangle {
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
             Shape {
-                width: 12; height: 12
+                width: 24; height: 24
                 anchors.centerIn: parent
                 vendorExtensionsEnabled: false
                 scale: 12 / 24
@@ -321,7 +321,7 @@ Rectangle {
                     Behavior on color { ColorAnimation { duration: 150 } }
 
                     Shape {
-                        width: 14; height: 14
+                        width: 24; height: 24
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
                         scale: 14 / 24
@@ -351,7 +351,7 @@ Rectangle {
                     Behavior on color { ColorAnimation { duration: 150 } }
 
                     Shape {
-                        width: 16; height: 16
+                        width: 24; height: 24
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
                         scale: 16 / 24
@@ -383,7 +383,7 @@ Rectangle {
                     Behavior on color { ColorAnimation { duration: 150 } }
 
                     Shape {
-                        width: 14; height: 14
+                        width: 24; height: 24
                         anchors.centerIn: parent
                         vendorExtensionsEnabled: false
                         scale: 14 / 24
