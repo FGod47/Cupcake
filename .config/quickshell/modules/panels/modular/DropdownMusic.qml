@@ -115,7 +115,7 @@ Rectangle {
             }
         }
 
-        // Track title text (invisible — just reserves layout space for floatingTrackTitle)
+        // Track title text
         Text {
             id: compactTrackTitle
             text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
@@ -126,7 +126,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
-            width: Math.min(implicitWidth, 180)
+            width: Math.min(implicitWidth, 100)
             opacity: 1.0
         }
 
