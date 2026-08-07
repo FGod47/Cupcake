@@ -27,35 +27,6 @@ Rectangle {
     readonly property real rightColX: artMargin + artSize + 14 // 136px
     readonly property real rightColW: expandedW - rightColX - artMargin // 170px
 
-    property real prevArrowOffset: menuExpanded ? 0 : 52
-    property real nextArrowOffset: menuExpanded ? 0 : -52
-    property real arrowOpacity: menuExpanded ? 1.0 : 0.0
-
-    Behavior on prevArrowOffset {
-        SequentialAnimation {
-            PauseAnimation { duration: musicSplitPill.menuExpanded ? 350 : 0 }
-            NumberAnimation {
-                duration: musicSplitPill.menuExpanded ? 450 : 350
-                easing.type: musicSplitPill.menuExpanded ? Easing.OutBack : Easing.InQuad
-            }
-        }
-    }
-    Behavior on nextArrowOffset {
-        SequentialAnimation {
-            PauseAnimation { duration: musicSplitPill.menuExpanded ? 350 : 0 }
-            NumberAnimation {
-                duration: musicSplitPill.menuExpanded ? 450 : 350
-                easing.type: musicSplitPill.menuExpanded ? Easing.OutBack : Easing.InQuad
-            }
-        }
-    }
-    Behavior on arrowOpacity {
-        SequentialAnimation {
-            PauseAnimation { duration: musicSplitPill.menuExpanded ? 350 : 0 }
-            NumberAnimation { duration: 350; easing.type: Easing.OutQuart }
-        }
-    }
-
     height: menuExpanded ? expandedH : 30
     Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
@@ -338,9 +309,6 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.previous()
 
-                    transform: Translate { x: musicSplitPill.prevArrowOffset }
-                    opacity: musicSplitPill.arrowOpacity
-
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4c"
@@ -361,9 +329,6 @@ Rectangle {
                     width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.next()
-
-                    transform: Translate { x: musicSplitPill.nextArrowOffset }
-                    opacity: musicSplitPill.arrowOpacity
 
                     Text {
                         anchors.centerIn: parent
