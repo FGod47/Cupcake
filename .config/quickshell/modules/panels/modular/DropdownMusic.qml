@@ -211,9 +211,9 @@ Rectangle {
 
         Text {
             anchors.centerIn: parent
-            text: isPlaying ? "\uef53" : "\uef54"
+            text: isPlaying ? "\ued45" : "\ued46"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 26 : 14
+            font.pixelSize: musicSplitPill.menuExpanded ? 24 : 14
             color: musicSplitPill.menuExpanded ? "#FFFFFF" : Theme.colPrimary
             Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         }
@@ -227,13 +227,13 @@ Rectangle {
     // ── FLOATING TRACK TITLE ──
     Text {
         id: floatingTrackTitle
-        text: hasPlayer ? cleanTrackTitle(player.trackTitle, player.trackArtist) : "No Track"
+        text: hasPlayer ? shortenTrackTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         font.family: "Inter, sans-serif"
         font.pixelSize: 11
         font.weight: Font.Bold
         color: "#FFFFFF"
         elide: Text.ElideRight
-        width: musicSplitPill.menuExpanded ? musicSplitPill.rightColW : compactTrackTitle.width
+        width: musicSplitPill.menuExpanded ? (musicSplitPill.rightColW / (15.0 / 11.0)) : compactTrackTitle.width
         scale: musicSplitPill.menuExpanded ? (15.0 / 11.0) : 1.0
         transformOrigin: Item.TopLeft
         Behavior on scale  { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
@@ -309,9 +309,9 @@ Rectangle {
                     onClicked: if (hasPlayer) player.previous()
                     Text {
                         anchors.centerIn: parent
-                        text: "\uef55"
+                        text: "\ued4c"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 22
+                        font.pixelSize: 20
                         color: "#FFFFFF"
                     }
                 }
@@ -326,9 +326,9 @@ Rectangle {
                     onClicked: if (hasPlayer) player.next()
                     Text {
                         anchors.centerIn: parent
-                        text: "\uef56"
+                        text: "\ued4b"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 22
+                        font.pixelSize: 20
                         color: "#FFFFFF"
                     }
                 }
