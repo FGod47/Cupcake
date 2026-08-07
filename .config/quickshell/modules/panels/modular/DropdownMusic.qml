@@ -196,8 +196,8 @@ Rectangle {
     // ── FLOATING PLAY/PAUSE ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + (musicSplitPill.rightColW - width) / 2) : 110
-        y: musicSplitPill.menuExpanded ? 54 : 4
+        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + 69) : (50 + compactTrackTitle.width)
+        y: musicSplitPill.menuExpanded ? 62 : 4
         width:  musicSplitPill.menuExpanded ? 32 : 22
         height: musicSplitPill.menuExpanded ? 32 : 22
         radius: musicSplitPill.menuExpanded ? 16 : 11
