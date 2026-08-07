@@ -376,7 +376,7 @@ Rectangle {
                 }
             }
 
-            Item { width: parent.width; height: 10 }
+            Item { width: parent.width; height: 18 }
 
             // 3. Progress Bar & Slider
             Item {
