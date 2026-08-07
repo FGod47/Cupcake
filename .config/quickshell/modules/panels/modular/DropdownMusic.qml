@@ -134,51 +134,17 @@ Rectangle {
         }
     }
 
-    // ── MORPHING ALBUM ART MASK & IMAGE ──
+    // ── MORPHING ALBUM ART CONTAINER (NATIVE FAST CLIPPING, NO FBO) ──
     Rectangle {
-        id: floatingArtMask
+        id: floatingArtContainer
         x: musicSplitPill.menuExpanded ? artMargin : 10
         y: musicSplitPill.menuExpanded ? artMargin : 4
         width:  musicSplitPill.menuExpanded ? artSizeExpanded : 22
         height: musicSplitPill.menuExpanded ? artSizeExpanded : 22
         radius: musicSplitPill.menuExpanded ? 16 : 11
-        visible: false
-
-        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-    }
-
-    Image {
-        id: floatingAlbumArt
-        x: floatingArtMask.x; y: floatingArtMask.y
-        width: floatingArtMask.width; height: floatingArtMask.height
+        color: Qt.rgba(0, 0, 0, 0.2)
+        clip: true
         z: 15
-        source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-        fillMode: Image.PreserveAspectCrop
-        opacity: (hasPlayer && player.trackArtUrl && status === Image.Ready) ? 1.0 : 0.0
-        visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250 } }
-        layer.enabled: true
-        layer.effect: OpacityMask { maskSource: floatingArtMask }
-    }
-
-    // Fallback Gradient + Note Icon + "now playing" doodle badge
-    Rectangle {
-        x: floatingArtMask.x; y: floatingArtMask.y
-        width: floatingArtMask.width; height: floatingArtMask.height
-        radius: floatingArtMask.radius
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: "#ff9ad0" }
-            GradientStop { position: 0.45; color: "#b28bff" }
-            GradientStop { position: 1.0; color: "#4a2f9e" }
-        }
-        opacity: floatingAlbumArt.status !== Image.Ready ? 1.0 : 0.0
-        visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250 } }
-        z: 14
 
         Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
@@ -186,40 +152,63 @@ Rectangle {
         Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
-        // Top-right note icon
-        Text {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: 10
-            anchors.rightMargin: 10
-            text: "\ueafc"
-            font.family: ddMusicFont.name
-            font.pixelSize: 18
-            color: "#FFFFFF"
-            opacity: 0.7
+        Image {
+            id: floatingAlbumArt
+            anchors.fill: parent
+            source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
+            fillMode: Image.PreserveAspectCrop
+            opacity: (hasPlayer && player.trackArtUrl && status === Image.Ready) ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 250 } }
         }
 
-        // Bottom-left "now playing" doodle badge
+        // Fallback Gradient + Note Icon + "now playing" doodle badge
         Rectangle {
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 10
-            anchors.bottomMargin: 10
-            width: doodleText.implicitWidth + 14
-            height: 20
-            radius: 10
-            color: "transparent"
-            border.color: Qt.rgba(255, 255, 255, 0.85)
-            border.width: 1
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#ff9ad0" }
+                GradientStop { position: 0.45; color: "#b28bff" }
+                GradientStop { position: 1.0; color: "#4a2f9e" }
+            }
+            opacity: floatingAlbumArt.status !== Image.Ready ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 250 } }
 
+            // Top-right note icon
             Text {
-                id: doodleText
-                anchors.centerIn: parent
-                text: "now playing"
-                font.family: "Inter, sans-serif"
-                font.pixelSize: 10
-                font.weight: Font.DemiBold
+                visible: parent.width > 50
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: 10
+                anchors.rightMargin: 10
+                text: "\ueafc"
+                font.family: ddMusicFont.name
+                font.pixelSize: 18
                 color: "#FFFFFF"
+                opacity: 0.7
+            }
+
+            // Bottom-left "now playing" doodle badge
+            Rectangle {
+                visible: parent.width > 50
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: 10
+                anchors.bottomMargin: 10
+                width: doodleText.implicitWidth + 14
+                height: 20
+                radius: 10
+                color: "transparent"
+                border.color: Qt.rgba(255, 255, 255, 0.85)
+                border.width: 1
+
+                Text {
+                    id: doodleText
+                    anchors.centerIn: parent
+                    text: "now playing"
+                    font.family: "Inter, sans-serif"
+                    font.pixelSize: 10
+                    font.weight: Font.DemiBold
+                    color: "#FFFFFF"
+                }
             }
         }
     }
