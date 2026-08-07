@@ -118,7 +118,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
-            width: Math.min(implicitWidth, 120)
+            width: Math.min(implicitWidth, 180)
             opacity: 0
         }
 
@@ -253,7 +253,7 @@ Rectangle {
         y: musicSplitPill.menuExpanded ? 18 : 7
         width: musicSplitPill.menuExpanded
             ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
-            : Math.min(compactTitleSpacer.implicitWidth, 120)
+            : Math.min(compactTitleSpacer.implicitWidth + 8, 180)
 
         scale: musicSplitPill.menuExpanded ? 1.0 : 0.9
         transformOrigin: Item.Left
