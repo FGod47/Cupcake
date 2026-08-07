@@ -196,8 +196,8 @@ Rectangle {
     // ── FLOATING PLAY/PAUSE ──
     Rectangle {
         id: floatingPlayButton
-        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + (musicSplitPill.rightColW / 2) - 16) : (12 + smallPlayPausePlaceholder.x)
-        y: musicSplitPill.menuExpanded ? 50 : 4
+        x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + controlsRow.x + largePlayPausePlaceholder.x + (largePlayPausePlaceholder.width - width) / 2) : (12 + smallPlayPausePlaceholder.x)
+        y: musicSplitPill.menuExpanded ? (artMargin + controlsRow.y + largePlayPausePlaceholder.y + (largePlayPausePlaceholder.height - height) / 2) : 4
         width:  musicSplitPill.menuExpanded ? 32 : 22
         height: musicSplitPill.menuExpanded ? 32 : 22
         radius: musicSplitPill.menuExpanded ? 16 : 11
@@ -299,36 +299,40 @@ Rectangle {
 
             // 3. Media Controls Row (Previous | Play/Pause Placeholder | Next)
             RowLayout {
+                id: controlsRow
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 24
+                spacing: 20
 
                 // Previous
                 MouseArea {
-                    width: 26; height: 26
+                    width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.previous()
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4c"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 20
+                        font.pixelSize: 22
                         color: "#FFFFFF"
                     }
                 }
 
                 // Play/Pause placeholder
-                Item { width: 32; height: 32 }
+                Item {
+                    id: largePlayPausePlaceholder
+                    width: 32; height: 32
+                }
 
                 // Next
                 MouseArea {
-                    width: 26; height: 26
+                    width: 32; height: 32
                     cursorShape: Qt.PointingHandCursor
                     onClicked: if (hasPlayer) player.next()
                     Text {
                         anchors.centerIn: parent
                         text: "\ued4b"
                         font.family: ddMusicFont.name
-                        font.pixelSize: 20
+                        font.pixelSize: 22
                         color: "#FFFFFF"
                     }
                 }
