@@ -168,8 +168,8 @@ Rectangle {
         z: 5
         source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
         fillMode: Image.PreserveAspectCrop
-        visible: musicSplitPill.menuExpanded && status === Image.Ready
-        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        visible: true
+        opacity: (musicSplitPill.menuExpanded && status === Image.Ready) ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         layer.enabled: true
         layer.effect: OpacityMask { maskSource: floatingArtMask }
@@ -181,8 +181,8 @@ Rectangle {
         width: floatingArtMask.width; height: floatingArtMask.height
         radius: floatingArtMask.radius
         color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18)
-        visible: musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready
-        opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+        visible: true
+        opacity: (musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready) ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
         z: 4
         Text {
