@@ -235,7 +235,7 @@ Rectangle {
     // ── MORPHING TRACK TITLE ──
     Text {
         id: morphingTrackTitle
-        text: hasPlayer ? (musicSplitPill.menuExpanded ? (player.trackTitle || "No Track") : shortenTitle(player.trackTitle, player.trackArtist, 3)) : "No Track"
+        text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         font.family: "Inter, sans-serif"
         font.pixelSize: musicSplitPill.menuExpanded ? 13 : 11
         font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
