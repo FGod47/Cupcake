@@ -69,12 +69,25 @@ Rectangle {
 
     function cleanTrackTitle(title, artist) {
         if (!title) return "No Track";
-        let t = title.replace(/\s*[([].*?(official|music video|lyric|audio).*?[)\]]/gi, "");
-        if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + " - "))
-            t = t.substring(artist.length + 3);
-        else if (artist && t.toLowerCase().startsWith(artist.toLowerCase() + "-"))
-            t = t.substring(artist.length + 1);
-        return t.trim() || "No Track";
+        let t = title;
+        if (t.indexOf("|") !== -1) t = t.split("|")[0];
+        t = t.replace(/\s*[([].*?[)\]]/gi, "");
+        if (artist) {
+            let a = artist.trim().toLowerCase();
+            let tl = t.trim().toLowerCase();
+            if (tl.startsWith(a + " - ")) {
+                t = t.trim().substring(artist.trim().length + 3);
+            } else if (tl.startsWith(a + "-")) {
+                t = t.trim().substring(artist.trim().length + 1);
+            }
+        }
+        if (t.indexOf(" - ") !== -1) {
+            let parts = t.split(" - ");
+            if (artist && parts[0].trim().toLowerCase() === artist.trim().toLowerCase()) {
+                t = parts.slice(1).join(" - ");
+            }
+        }
+        return t.trim() || title.trim() || "No Track";
     }
 
     function shortenTitle(title, artist, n) {
