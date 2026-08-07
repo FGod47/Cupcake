@@ -121,7 +121,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             Text {
                 anchors.centerIn: parent
-                text: isPlaying ? "\uf6a7" : "\uf6a6"
+                text: isPlaying ? "\ued45" : "\uf6a6"
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
@@ -337,7 +337,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: isPlaying ? "\uf6a7" : "\uf6a6"
+                        text: isPlaying ? "\ued45" : "\uf6a6"
                         font.family: ddMusicFont.name
                         font.pixelSize: 18
                         color: "#FFFFFF"
