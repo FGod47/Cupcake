@@ -104,16 +104,16 @@ Rectangle {
         }
 
         Text {
-            id: compactTrackTitle
+            id: compactTitleSpacer
             text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
             font.family: "Inter, sans-serif"
             font.pixelSize: 11
             font.weight: Font.DemiBold
-            color: bar.fg
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
             width: Math.min(implicitWidth, 120)
+            opacity: 0
         }
 
         Item {
@@ -224,6 +224,30 @@ Rectangle {
         }
     }
 
+    // ── MORPHING TRACK TITLE ──
+    Text {
+        id: morphingTrackTitle
+        text: hasPlayer ? (musicSplitPill.menuExpanded ? (player.trackTitle || "No Track") : shortenTitle(player.trackTitle, player.trackArtist, 3)) : "No Track"
+        font.family: "Inter, sans-serif"
+        font.pixelSize: musicSplitPill.menuExpanded ? 13 : 11
+        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
+        color: "#FFFFFF"
+        elide: Text.ElideRight
+        maximumLineCount: 1
+        z: 20
+
+        x: musicSplitPill.menuExpanded ? (artMargin + artSizeExpanded + 14) : 40
+        y: musicSplitPill.menuExpanded ? 12 : 7
+        width: musicSplitPill.menuExpanded
+            ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
+            : Math.min(compactTitleSpacer.implicitWidth, 120)
+
+        Behavior on x              { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y              { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width          { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+    }
+
     // ── CLICK HANDLER ──
     MouseArea {
         id: musicHeaderMa
@@ -264,16 +288,10 @@ Rectangle {
             anchors.fill: parent
             spacing: 0
 
-            // 1. Title & Artist Info
-            Text {
+            // 1. Reserved space for morphingTrackTitle
+            Item {
                 Layout.fillWidth: true
-                text: hasPlayer ? (player.trackTitle || "No Track") : "No Track"
-                font.family: "Inter, sans-serif"
-                font.pixelSize: 13
-                font.weight: Font.Bold
-                color: "#FFFFFF"
-                elide: Text.ElideRight
-                maximumLineCount: 1
+                height: 16
             }
 
             Text {
