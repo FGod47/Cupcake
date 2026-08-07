@@ -12,7 +12,7 @@ Rectangle {
     y: 10
     property bool menuExpanded: globalState.powerDropdownOpen
     height: menuExpanded ? (powerMenu.implicitHeight + 20) : 30
-    Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
+    Behavior on height { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
 
     readonly property real openGap: 12
     property real contentW: 145
@@ -20,10 +20,10 @@ Rectangle {
     x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
     width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
 
-    Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-    Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+    Behavior on x     { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+    Behavior on width { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
     radius: menuExpanded ? 20 : 15
-    Behavior on radius { NumberAnimation { duration: 300 } }
+    Behavior on radius { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
     clip: true
 
     color: bar.pillColor
