@@ -97,35 +97,10 @@ Rectangle {
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 200 } }
 
+        // Small art layout placeholder (floatingAlbumArt renders over this in collapsed state)
         Item {
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
-
-            Rectangle {
-                id: compactArtMask
-                anchors.fill: parent
-                radius: 11
-                visible: false
-            }
-
-            Image {
-                id: compactArtImg
-                anchors.fill: parent
-                source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
-                fillMode: Image.PreserveAspectCrop
-                visible: status === Image.Ready
-                layer.enabled: true
-                layer.effect: OpacityMask { maskSource: compactArtMask }
-            }
-
-            Text {
-                anchors.centerIn: parent
-                text: "\ueafc"
-                font.family: ddMusicFont.name
-                font.pixelSize: 13
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                visible: compactArtImg.status !== Image.Ready
-            }
         }
 
         Text {
@@ -159,27 +134,33 @@ Rectangle {
         }
     }
 
-    // ── EXPANDED ALBUM ART (LEFT SIDE, 166x166) ──
+    // ── MORPHING ALBUM ART MASK & IMAGE ──
     Rectangle {
         id: floatingArtMask
-        x: artMargin
-        y: artMargin
-        width: artSizeExpanded
-        height: artSizeExpanded
-        radius: 16
+        x: musicSplitPill.menuExpanded ? artMargin : 10
+        y: musicSplitPill.menuExpanded ? artMargin : 4
+        width:  musicSplitPill.menuExpanded ? artSizeExpanded : 22
+        height: musicSplitPill.menuExpanded ? artSizeExpanded : 22
+        radius: musicSplitPill.menuExpanded ? 16 : 11
         visible: false
+
+        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     }
 
     Image {
         id: floatingAlbumArt
         x: floatingArtMask.x; y: floatingArtMask.y
         width: floatingArtMask.width; height: floatingArtMask.height
-        z: 5
+        z: 15
         source: (hasPlayer && player.trackArtUrl) ? player.trackArtUrl : ""
         fillMode: Image.PreserveAspectCrop
-        visible: true
-        opacity: (musicSplitPill.menuExpanded && status === Image.Ready) ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        opacity: (hasPlayer && player.trackArtUrl && status === Image.Ready) ? 1.0 : 0.0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 250 } }
         layer.enabled: true
         layer.effect: OpacityMask { maskSource: floatingArtMask }
     }
@@ -194,10 +175,16 @@ Rectangle {
             GradientStop { position: 0.45; color: "#b28bff" }
             GradientStop { position: 1.0; color: "#4a2f9e" }
         }
-        visible: true
-        opacity: (musicSplitPill.menuExpanded && floatingAlbumArt.status !== Image.Ready) ? 1.0 : 0.0
-        Behavior on opacity { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        z: 4
+        opacity: floatingAlbumArt.status !== Image.Ready ? 1.0 : 0.0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 250 } }
+        z: 14
+
+        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
         // Top-right note icon
         Text {
