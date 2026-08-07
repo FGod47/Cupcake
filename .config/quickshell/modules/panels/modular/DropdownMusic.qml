@@ -110,7 +110,7 @@ Rectangle {
                 text: "\ueafc"
                 font.family: ddMusicFont.name
                 font.pixelSize: 13
-                color: Theme.colPrimary
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
                 visible: floatingAlbumArt.status !== Image.Ready
             }
         }
@@ -127,14 +127,26 @@ Rectangle {
             elide: Text.ElideRight
             maximumLineCount: 1
             width: Math.min(implicitWidth, 180)
-            opacity: 0  // invisible: floating title renders here instead
+            opacity: 1.0
         }
 
-        // Play/pause placeholder (invisible — just reserves space for floatingPlayButton)
+        // Compact play/pause icon (collapsed pill only)
         Item {
             id: smallPlayPausePlaceholder
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
+            Text {
+                anchors.centerIn: parent
+                text: isPlaying ? "\ued45" : "\ued46"
+                font.family: ddMusicFont.name
+                font.pixelSize: 13
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: if (hasPlayer) player.togglePlaying()
+            }
         }
     }
 
