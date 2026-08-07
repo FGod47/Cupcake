@@ -134,23 +134,31 @@ Rectangle {
         }
     }
 
-    // ── MORPHING ALBUM ART CONTAINER (NATIVE FAST CLIPPING, NO FBO) ──
+    // ── HARDWARE-ACCELERATED MORPHING ALBUM ART ──
     Rectangle {
+        id: floatingArtMask
+        width: artSizeExpanded
+        height: artSizeExpanded
+        radius: 16
+        visible: false
+    }
+
+    Item {
         id: floatingArtContainer
-        x: musicSplitPill.menuExpanded ? artMargin : 10
-        y: musicSplitPill.menuExpanded ? artMargin : 4
-        width:  musicSplitPill.menuExpanded ? artSizeExpanded : 22
-        height: musicSplitPill.menuExpanded ? artSizeExpanded : 22
-        radius: musicSplitPill.menuExpanded ? 16 : 11
-        color: Qt.rgba(0, 0, 0, 0.2)
-        clip: true
+        width: artSizeExpanded
+        height: artSizeExpanded
         z: 15
 
-        Behavior on x      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y      { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width  { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        x: musicSplitPill.menuExpanded ? artMargin : 10
+        y: musicSplitPill.menuExpanded ? artMargin : 4
+
+        readonly property real compactScale: 22.0 / artSizeExpanded
+        scale: musicSplitPill.menuExpanded ? 1.0 : compactScale
+        transformOrigin: Item.TopLeft
+
+        Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on scale { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
         Image {
             id: floatingAlbumArt
@@ -159,11 +167,14 @@ Rectangle {
             fillMode: Image.PreserveAspectCrop
             opacity: (hasPlayer && player.trackArtUrl && status === Image.Ready) ? 1.0 : 0.0
             Behavior on opacity { NumberAnimation { duration: 250 } }
+            layer.enabled: true
+            layer.effect: OpacityMask { maskSource: floatingArtMask }
         }
 
         // Fallback Gradient + Note Icon + "now playing" doodle badge
         Rectangle {
             anchors.fill: parent
+            radius: 16
             gradient: Gradient {
                 GradientStop { position: 0.0; color: "#ff9ad0" }
                 GradientStop { position: 0.45; color: "#b28bff" }
@@ -174,7 +185,6 @@ Rectangle {
 
             // Top-right note icon
             Text {
-                visible: parent.width > 50
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.topMargin: 10
@@ -188,7 +198,6 @@ Rectangle {
 
             // Bottom-left "now playing" doodle badge
             Rectangle {
-                visible: parent.width > 50
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.leftMargin: 10
