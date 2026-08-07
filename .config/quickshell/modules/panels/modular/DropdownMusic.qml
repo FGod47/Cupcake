@@ -477,10 +477,29 @@ Rectangle {
 
             Item { width: parent.width; height: 4 }
 
-            // 4. Timestamps
+            // 4. Timestamps (staggered slide-up from below progress bar after expansion)
             Item {
+                id: timestampWrapper
                 width: parent.width
                 height: 14
+
+                opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
+                Behavior on opacity {
+                    SequentialAnimation {
+                        PauseAnimation { duration: musicSplitPill.menuExpanded ? 120 : 0 }
+                        NumberAnimation { duration: 400; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                transform: Translate {
+                    y: musicSplitPill.menuExpanded ? 0 : 16
+                    Behavior on y {
+                        SequentialAnimation {
+                            PauseAnimation { duration: musicSplitPill.menuExpanded ? 120 : 0 }
+                            NumberAnimation { duration: 550; easing.type: Easing.OutCubic }
+                        }
+                    }
+                }
 
                 Text {
                     anchors.left: parent.left
