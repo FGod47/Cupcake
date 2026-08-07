@@ -277,12 +277,7 @@ Rectangle {
 
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity {
-            SequentialAnimation {
-                PauseAnimation { duration: musicSplitPill.menuExpanded ? 150 : 0 }
-                NumberAnimation { duration: 250; easing.type: Easing.OutQuart }
-            }
-        }
+        Behavior on opacity { NumberAnimation { duration: 200 } }
 
         ColumnLayout {
             anchors.fill: parent
