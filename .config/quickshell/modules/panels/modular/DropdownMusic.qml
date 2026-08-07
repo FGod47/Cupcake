@@ -197,7 +197,7 @@ Rectangle {
     Rectangle {
         id: floatingPlayButton
         x: musicSplitPill.menuExpanded ? (musicSplitPill.rightColX + 69) : (50 + compactTrackTitle.width)
-        y: musicSplitPill.menuExpanded ? 62 : 4
+        y: musicSplitPill.menuExpanded ? 57 : 4
         width:  musicSplitPill.menuExpanded ? 32 : 22
         height: musicSplitPill.menuExpanded ? 32 : 22
         radius: musicSplitPill.menuExpanded ? 16 : 11
@@ -213,7 +213,7 @@ Rectangle {
             anchors.centerIn: parent
             text: isPlaying ? "\ued45" : "\ued46"
             font.family: ddMusicFont.name
-            font.pixelSize: musicSplitPill.menuExpanded ? 24 : 14
+            font.pixelSize: musicSplitPill.menuExpanded ? 22 : 14
             color: musicSplitPill.menuExpanded ? "#FFFFFF" : Theme.colPrimary
             Behavior on font.pixelSize { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
         }
