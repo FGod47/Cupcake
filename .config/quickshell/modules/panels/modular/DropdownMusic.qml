@@ -277,26 +277,17 @@ Rectangle {
 
         opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity {
-            SequentialAnimation {
-                PauseAnimation { duration: musicSplitPill.menuExpanded ? 200 : 0 }
-                NumberAnimation { duration: 200; easing.type: Easing.OutQuart }
-            }
-        }
+        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
-        ColumnLayout {
+        Column {
             anchors.fill: parent
             spacing: 0
 
             // 1. Reserved space for morphingTrackTitle
-            Item {
-                Layout.fillWidth: true
-                height: 16
-            }
+            Item { width: parent.width; height: 18 }
 
             Text {
-                Layout.fillWidth: true
-                Layout.topMargin: 2
+                width: parent.width
                 text: hasPlayer ? (player.trackArtist || "Unknown Artist") : "Unknown Artist"
                 font.family: "Inter, sans-serif"
                 font.pixelSize: 11
@@ -305,11 +296,11 @@ Rectangle {
                 maximumLineCount: 1
             }
 
-            Item { Layout.fillHeight: true }
+            Item { width: parent.width; height: 12 }
 
             // 2. Media Controls (Prev | Play/Pause | Next)
-            RowLayout {
-                Layout.alignment: Qt.AlignHCenter
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 12
 
                 // Prev
@@ -382,12 +373,12 @@ Rectangle {
                 }
             }
 
-            Item { height: 12 }
+            Item { width: parent.width; height: 10 }
 
             // 3. Progress Bar & Slider
             Item {
                 id: progressWrapper
-                Layout.fillWidth: true
+                width: parent.width
                 height: 8
 
                 property real currentPosition: hasPlayer ? player.position : 0
@@ -439,19 +430,24 @@ Rectangle {
                 }
             }
 
-            Item { height: 4 }
+            Item { width: parent.width; height: 4 }
 
             // 4. Timestamps
-            RowLayout {
-                Layout.fillWidth: true
+            Item {
+                width: parent.width
+                height: 14
+
                 Text {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
                     text: hasPlayer ? formatTime(progressWrapper.currentPosition) : "0:00"
                     font.family: "Inter, sans-serif"
                     font.pixelSize: 10
                     color: Qt.rgba(1, 1, 1, 0.5)
                 }
-                Item { Layout.fillWidth: true }
                 Text {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
                     text: hasPlayer ? formatRemaining(progressWrapper.currentPosition, player.length) : "-0:00"
                     font.family: "Inter, sans-serif"
                     font.pixelSize: 10
