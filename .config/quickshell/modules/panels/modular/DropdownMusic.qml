@@ -120,12 +120,19 @@ Rectangle {
         Item {
             width: 22; height: 22
             anchors.verticalCenter: parent.verticalCenter
-            Text {
+            Shape {
+                width: 12; height: 12
                 anchors.centerIn: parent
-                text: isPlaying ? "\ued45" : "\uf6a6"
-                font.family: ddMusicFont.name
-                font.pixelSize: 13
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                vendorExtensionsEnabled: false
+                ShapePath {
+                    fillColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                    strokeColor: "transparent"
+                    PathSvg {
+                        path: isPlaying
+                            ? "M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z"
+                            : "M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z"
+                    }
+                }
             }
             MouseArea {
                 anchors.fill: parent
@@ -350,7 +357,7 @@ Rectangle {
                             strokeColor: "transparent"
                             PathSvg {
                                 path: isPlaying
-                                    ? "M7 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2z M15 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2z"
+                                    ? "M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z"
                                     : "M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z"
                             }
                         }
