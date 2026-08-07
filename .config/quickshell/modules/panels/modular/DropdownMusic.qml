@@ -113,12 +113,12 @@ Rectangle {
             id: compactTitleSpacer
             text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
             font.family: "Inter, sans-serif"
-            font.pixelSize: 11
-            font.weight: Font.DemiBold
+            font.pixelSize: 15
+            font.weight: Font.Bold
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
-            width: Math.min(implicitWidth, 180)
+            width: Math.min(implicitWidth, 220) * (11.0 / 15.0)
             opacity: 0
         }
 
@@ -253,7 +253,7 @@ Rectangle {
         y: musicSplitPill.menuExpanded ? 18 : 7
         width: musicSplitPill.menuExpanded
             ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
-            : Math.min(compactTitleSpacer.implicitWidth + 8, 180)
+            : Math.min(compactTitleSpacer.implicitWidth + 10, 220)
 
         scale: musicSplitPill.menuExpanded ? 1.0 : (11.0 / 15.0)
         transformOrigin: Item.Left
