@@ -242,8 +242,8 @@ Rectangle {
         id: morphingTrackTitle
         text: hasPlayer ? shortenTitle(player.trackTitle, player.trackArtist, 3) : "No Track"
         font.family: "Inter, sans-serif"
-        font.pixelSize: musicSplitPill.menuExpanded ? 13 : 11
-        font.weight: musicSplitPill.menuExpanded ? Font.Bold : Font.DemiBold
+        font.pixelSize: 12
+        font.weight: Font.Bold
         color: "#FFFFFF"
         elide: Text.ElideRight
         maximumLineCount: 1
@@ -255,10 +255,13 @@ Rectangle {
             ? (expandedW - (artMargin + artSizeExpanded + 14) - 14)
             : Math.min(compactTitleSpacer.implicitWidth, 120)
 
-        Behavior on x              { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on y              { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on width          { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
-        Behavior on font.pixelSize { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        scale: musicSplitPill.menuExpanded ? 1.0 : 0.9
+        transformOrigin: Item.Left
+
+        Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on y     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
+        Behavior on scale { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     }
 
     // ── CLICK HANDLER ──
