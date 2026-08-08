@@ -135,7 +135,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 40; stepSize: 1
                             value: root.gapsIn
-                            onValueChanged: root.gapsIn = Math.round(value)
+                            onMoved: root.gapsIn = Math.round(value)
                             onPressedChanged: { if (!pressed) root.applyGaps() }
                         }
                     }
@@ -158,7 +158,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 60; stepSize: 1
                             value: root.gapsOut
-                            onValueChanged: root.gapsOut = Math.round(value)
+                            onMoved: root.gapsOut = Math.round(value)
                             onPressedChanged: { if (!pressed) root.applyGaps() }
                         }
                     }
@@ -206,7 +206,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 30; stepSize: 1
                             value: root.rounding
-                            onValueChanged: root.rounding = Math.round(value)
+                            onMoved: root.rounding = Math.round(value)
                             onPressedChanged: { if (!pressed) root.applyRounding() }
                         }
                     }
@@ -229,7 +229,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 10; stepSize: 1
                             value: root.borderSize
-                            onValueChanged: root.borderSize = Math.round(value)
+                            onMoved: root.borderSize = Math.round(value)
                             onPressedChanged: { if (!pressed) root.applyBorder() }
                         }
                     }
@@ -256,7 +256,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 1; to: 20; stepSize: 1
                             value: root.overviewTabs
-                            onValueChanged: { root.overviewTabs = Math.round(value); }
+                            onMoved: { root.overviewTabs = Math.round(value); }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
@@ -283,7 +283,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.05; to: 0.30; stepSize: 0.01
                             value: root.overviewScale
-                            onValueChanged: { root.overviewScale = value; }
+                            onMoved: { root.overviewScale = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);

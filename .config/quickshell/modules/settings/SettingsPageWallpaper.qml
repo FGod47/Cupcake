@@ -563,7 +563,7 @@ Item {
                             }
                         }
 
-                        onValueChanged: {
+                        onMoved: {
                             root.dimOverlay = value;
                             dimDebounce.pendingValue = value;
                             dimDebounce.restart();

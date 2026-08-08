@@ -761,7 +761,7 @@ Item {
                                 border.color: Qt.rgba(0,0,0,0.15); border.width: 1
                             }
                             
-                            onValueChanged: {
+                            onMoved: {
                                 if (pressed) {
                                     nightLightCard.nightTemp = Math.round(value / 100) * 100;
                                     nightLightCard.applyNightLight();
