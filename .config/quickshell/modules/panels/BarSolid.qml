@@ -433,12 +433,12 @@ PanelWindow {
                     }
                 }
 
-                // ── Sleek & Thicker Sliding Active Line Indicator ──
+                // ── Sleek Sliding Active Line Indicator ──
                 Rectangle {
                     id: activeDotIndicator
                     width: 16
-                    height: 5
-                    radius: 2.5
+                    height: 6
+                    radius: 3
                     color: Theme.colPrimary
                     anchors.verticalCenter: workspacesRow.verticalCenter
 
