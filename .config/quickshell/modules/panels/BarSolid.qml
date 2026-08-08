@@ -117,7 +117,7 @@ PanelWindow {
         source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
     }
     property string fontName: "tabler-icons"
-    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
+    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity)
 
     // Hardware data
     property string cpuStr: "0"
@@ -156,17 +156,17 @@ PanelWindow {
                     let parts = data.split("---");
                     if (parts.length >= 3) {
                         let wsJson = JSON.parse(parts[0].trim());
-                        if (wsJson && wsJson.id) root.activeWsId = wsJson.id;
+                        if (wsJson && wsJson.id) bar.activeWsId = wsJson.id;
 
                         let winJson = JSON.parse(parts[1].trim());
-                        if (winJson && winJson.title) root.activeWinTitle = winJson.title;
-                        else if (winJson && winJson.title === "") root.activeWinTitle = "";
+                        if (winJson && winJson.title) bar.activeWinTitle = winJson.title;
+                        else if (winJson && winJson.title === "") bar.activeWinTitle = "";
 
                         let allWsJson = JSON.parse(parts[2].trim());
                         if (Array.isArray(allWsJson)) {
                             let map = {};
                             allWsJson.forEach(w => { map[w.id] = true; });
-                            root.occupiedWsMap = map;
+                            bar.occupiedWsMap = map;
                         }
                     }
                 } catch(e) {}
@@ -328,8 +328,8 @@ PanelWindow {
                             width: isFocused ? 22 : 12
                             height: 30
                             property int wsId: index + 1
-                            property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (root.activeWsId === wsId)
-                            property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (root.occupiedWsMap && root.occupiedWsMap[wsId] ? true : false))
+                            property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
+                            property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
                             
                             Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
 
@@ -352,7 +352,7 @@ PanelWindow {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     console.log("CLICKED WORKSPACE: " + wsId);
-                                    root.activeWsId = wsId;
+                                    bar.activeWsId = wsId;
                                     dispatchProc.cmd = "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'";
                                     dispatchProc.running = true;
                                 }
@@ -366,7 +366,7 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
-                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (root.activeWinTitle && root.activeWinTitle !== "")
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (bar.activeWinTitle && bar.activeWinTitle !== "")
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -379,8 +379,8 @@ PanelWindow {
                 Layout.leftMargin: 12
                 Layout.maximumWidth: 300
                 elide: Text.ElideRight
-                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (root.activeWinTitle && root.activeWinTitle !== "")
-                text: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") ? Hyprland.activeToplevel.title : (root.activeWinTitle ? root.activeWinTitle : "")
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (bar.activeWinTitle && bar.activeWinTitle !== "")
+                text: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") ? Hyprland.activeToplevel.title : (bar.activeWinTitle ? bar.activeWinTitle : "")
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 13
                 font.weight: Theme.defaultFontWeight
