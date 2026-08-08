@@ -424,38 +424,63 @@ Rectangle {
             Item {
                 id: progressWrapper
                 width: parent.width
-                height: 8
+                height: 14
 
                 property real currentPosition: hasPlayer ? player.position : 0
-                property real progress: (hasPlayer && player.length > 0) ? (currentPosition / player.length) : 0
+                property real progress: (hasPlayer && player.length > 0) ? Math.max(0, Math.min(1, currentPosition / player.length)) : 0
+                property bool isHovered: seekMa.containsMouse || seekMa.pressed
 
                 Timer {
                     interval: 1000
-                    running: hasPlayer && isPlaying
+                    running: hasPlayer && isPlaying && !seekMa.pressed
                     repeat: true
                     onTriggered: { if (hasPlayer) progressWrapper.currentPosition = player.position; }
                 }
 
-                // Track background
+                // Track background container
                 Rectangle {
+                    id: progressTrack
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    height: 6
-                    radius: 3
-                    color: Qt.rgba(1, 1, 1, 0.16)
+                    height: progressWrapper.isHovered ? 6 : 4
+                    radius: height / 2
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
+                    clip: true
+
+                    Behavior on height { NumberAnimation { duration: 150 } }
+                    Behavior on radius { NumberAnimation { duration: 150 } }
 
                     // Fill bar
                     Rectangle {
-                        height: parent.height
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
                         width: parent.width * progressWrapper.progress
-                        radius: 3
-                        color: "#d3cadb"
-                        Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.OutQuart } }
+                        radius: parent.radius
+                        color: Theme.colPrimary
+                        Behavior on width { enabled: !seekMa.pressed; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
                     }
                 }
 
+                // Smooth Draggable Knob / Handle
+                Rectangle {
+                    width: 12; height: 12
+                    radius: 6
+                    x: Math.max(0, Math.min(progressWrapper.width - width, (progressWrapper.width * progressWrapper.progress) - (width / 2)))
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: Theme.colPrimary
+                    opacity: progressWrapper.isHovered ? 1.0 : 0.0
+                    scale: progressWrapper.isHovered ? (seekMa.pressed ? 1.25 : 1.0) : 0.4
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                    Behavior on scale   { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
+                    Behavior on x       { enabled: !seekMa.pressed; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+                }
+
                 MouseArea {
+                    id: seekMa
                     anchors.fill: parent
+                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: (mouse) => {
                         if (hasPlayer && player.length > 0) {
