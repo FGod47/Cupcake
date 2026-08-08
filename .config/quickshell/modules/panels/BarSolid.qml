@@ -117,7 +117,7 @@ PanelWindow {
         source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
     }
     property string fontName: "tabler-icons"
-    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity)
+    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
 
     // Hardware data
     property string cpuStr: "0"
