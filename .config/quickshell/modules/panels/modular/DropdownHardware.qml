@@ -45,6 +45,7 @@ import "../../../theme"
         MouseArea {
             id: volBrightSplitPillMa
             anchors.fill: parent
+            enabled: bar.dropdownOpen
             hoverEnabled: true
             cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {

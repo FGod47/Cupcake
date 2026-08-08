@@ -45,6 +45,7 @@ import "../../../theme"
         MouseArea {
             id: clockSplitPillMa
             anchors.fill: parent
+            enabled: globalState.solidBoardOpen
             hoverEnabled: true
             cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {

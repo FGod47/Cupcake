@@ -40,6 +40,7 @@ Rectangle {
     MouseArea {
         id: powerSplitPillMa
         anchors.fill: parent
+        enabled: globalState.powerDropdownOpen
         hoverEnabled: true
         cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {

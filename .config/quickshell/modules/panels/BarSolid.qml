@@ -765,8 +765,9 @@ PanelWindow {
             MouseArea {
                 id: clockMouse
                 Layout.alignment: Qt.AlignVCenter
+                width: clockRow.implicitWidth
                 implicitWidth: clockRow.implicitWidth
-                Layout.preferredWidth: implicitWidth * opacity
+                Layout.preferredWidth: clockRow.implicitWidth * opacity
                 height: 20
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

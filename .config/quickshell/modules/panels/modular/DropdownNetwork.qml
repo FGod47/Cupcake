@@ -354,6 +354,7 @@ Rectangle {
     MouseArea {
         id: netSplitPillMa
         anchors.fill: parent
+        enabled: bar.netDropdownOpen
         hoverEnabled: true
         cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
