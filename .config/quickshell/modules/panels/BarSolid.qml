@@ -396,22 +396,22 @@ PanelWindow {
 
                 Row {
                     id: workspacesRow
-                    spacing: 10
+                    spacing: 12
                     anchors.verticalCenter: parent.verticalCenter
 
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: 14
+                            width: 16
                             height: 30
                             property int wsId: index + 1
                             property bool isOccupied: (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: isOccupied ? 6 : 4
-                                height: 3
-                                radius: 1.5
+                                width: isOccupied ? 6 : 5
+                                height: width
+                                radius: width / 2
                                 color: isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.6) : Qt.rgba(fg.r, fg.g, fg.b, 0.25)
                                 Behavior on color { ColorAnimation { duration: 200 } }
                             }
@@ -433,17 +433,17 @@ PanelWindow {
                     }
                 }
 
-                // ── Thin & Sleek Sliding Active Pill Indicator ──
+                // ── Sleek & Thicker Sliding Active Line Indicator ──
                 Rectangle {
                     id: activeDotIndicator
-                    width: 14
-                    height: 3
-                    radius: 1.5
+                    width: 16
+                    height: 5
+                    radius: 2.5
                     color: Theme.colPrimary
                     anchors.verticalCenter: workspacesRow.verticalCenter
 
                     property int activeIndex: Math.max(0, Math.min(4, ((Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id : bar.activeWsId) - 1))
-                    x: activeIndex * (14 + 10)
+                    x: activeIndex * (16 + 12)
 
                     Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                 }
