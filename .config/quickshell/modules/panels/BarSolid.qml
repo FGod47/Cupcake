@@ -763,24 +763,28 @@ PanelWindow {
             }
 
             // ── RIGHT: Clock ────────
-            MouseArea {
-                id: clockMouse
+            Item {
+                id: clockItem
                 Layout.alignment: Qt.AlignVCenter
-                width: clockRow.implicitWidth
                 implicitWidth: clockRow.implicitWidth
                 Layout.preferredWidth: clockRow.implicitWidth * opacity
                 height: 20
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-                onClicked: {
-                    let cur = globalState.solidBoardOpen;
-                    if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
-                    if (bar.dropdownOpen) bar.dropdownOpen = false;
-                    if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                    globalState.solidBoardOpen = !cur;
+
+                MouseArea {
+                    id: clockMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: (mouse) => {
+                        let cur = globalState.solidBoardOpen;
+                        if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                        if (bar.dropdownOpen) bar.dropdownOpen = false;
+                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                        globalState.solidBoardOpen = !cur;
+                    }
                 }
 
                 Row {
@@ -838,14 +842,25 @@ PanelWindow {
                     }
                 }
                 
-                property bool isHovered: hoverMa.containsMouse || powerMa.containsMouse || logoutMa.containsMouse || restartMa.containsMouse
-                // Note: no auto-collapse since we use the separate PowerDropdown now
+                property bool isHovered: powerMa.containsMouse
 
                 MouseArea {
-                    id: hoverMa
+                    id: powerMa
                     anchors.fill: parent
+                    anchors.leftMargin: -12
+                    anchors.rightMargin: -12
+                    anchors.topMargin: -4
+                    anchors.bottomMargin: -4
+                    z: 10
                     hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: (mouse) => {
+                        let cur = globalState.powerDropdownOpen;
+                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        if (bar.dropdownOpen) bar.dropdownOpen = false;
+                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                        globalState.powerDropdownOpen = !cur;
+                    }
                 }
 
                 Row {
@@ -1012,19 +1027,6 @@ PanelWindow {
                                 rightPadding: 8
                                 Behavior on width   { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
                                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                            }
-                        }
-                        MouseArea {
-                            id: powerMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                let cur = globalState.powerDropdownOpen;
-                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                                if (bar.dropdownOpen) bar.dropdownOpen = false;
-                                if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                                globalState.powerDropdownOpen = !cur;
                             }
                         }
                     }
