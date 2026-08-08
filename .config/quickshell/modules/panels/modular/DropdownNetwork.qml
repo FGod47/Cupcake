@@ -13,7 +13,7 @@ import "../../../theme"
 
 Rectangle {
     id: netSplitPill
-    y: 10
+    y: bar.midY + bar.barHeight + 8
     property bool menuExpanded: bar.netDropdownOpen
     property int activeTab: 1
 
@@ -82,25 +82,27 @@ Rectangle {
         }
     }
 
-    height: menuExpanded ? (netContentCol.implicitHeight + 28) : 30
-    Behavior on height { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+    height: menuExpanded ? (netContentCol.implicitHeight + 28) : 0
+    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
     readonly property real openGap: 16
-    readonly property real headerW: networkIconsRow.implicitWidth + 24
     readonly property real expandedW: 310
-    property real contentW: menuExpanded ? expandedW : headerW
+    property real contentW: expandedW
 
-    x: bar.netDropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
-    width: bar.netDropdownOpen ? contentW : headerW
+    x: bar.barX + bar.barW - contentW - 180
+    width: contentW
 
-    Behavior on x     { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
-    Behavior on width { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+    Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-    radius: menuExpanded ? 24 : 15
-    Behavior on radius { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
+    radius: 16
     clip: true
 
     color: bar.pillColor
+
+    opacity: bar.netDropdownOpen ? 1.0 : 0.0
+    visible: opacity > 0
+    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
     // Instant Event Monitor
     Process {

@@ -9,28 +9,27 @@ import "../../../theme"
 
 Rectangle {
     id: powerSplitPill
-    y: 10
+    y: bar.midY + bar.barHeight + 8
     property bool menuExpanded: globalState.powerDropdownOpen
-    height: menuExpanded ? (powerMenu.implicitHeight + 20) : 30
-    Behavior on height { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+    height: menuExpanded ? (powerMenu.implicitHeight + 20) : 0
+    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
     readonly property real openGap: 12
     property real contentW: 145
 
-    x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
-    width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
+    x: bar.barX + bar.barW - contentW
+    width: contentW
 
-    Behavior on x     { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
-    Behavior on width { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
-    radius: menuExpanded ? 20 : 15
-    Behavior on radius { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
+    Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    radius: 16
     clip: true
 
     color: bar.pillColor
 
-    opacity: (globalState.powerDropdownOpen || globalState.solidBoardOpen) ? 1.0 : 0.0
+    opacity: globalState.powerDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
     FontLoader {
         id: powerIconFont
@@ -40,7 +39,7 @@ Rectangle {
     MouseArea {
         id: powerSplitPillMa
         anchors.fill: parent
-        enabled: (globalState.powerDropdownOpen || globalState.solidBoardOpen)
+        enabled: globalState.powerDropdownOpen
         hoverEnabled: true
         cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {

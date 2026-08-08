@@ -12,7 +12,7 @@ import "../../../theme"
 // ── MUSIC SPLIT PILL & MORPHING PLAYER ──
 Rectangle {
     id: musicSplitPill
-    y: 10
+    y: bar.midY + bar.barHeight + 8
     property bool menuExpanded: bar.musicDropdownOpen
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool hasPlayer: player !== null
@@ -23,13 +23,12 @@ Rectangle {
     readonly property real artMargin: 8
     readonly property real artSizeExpanded: 140
 
-    readonly property real headerW: musicHeaderRow.implicitWidth + 24
-    property real contentW: menuExpanded ? expandedW : headerW
+    property real contentW: expandedW
 
-    readonly property int dur: 1400
-    readonly property int easingType: Easing.OutExpo
+    readonly property int dur: 350
+    readonly property int easingType: Easing.OutQuart
 
-    height: menuExpanded ? expandedH : 30
+    height: menuExpanded ? expandedH : 0
     Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
     x: bar.barX
@@ -37,17 +36,17 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
-    radius: 20
+    radius: 16
     Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     clip: true
     color: bar.pillColor
 
-    HoverHandler { id: pillHover; enabled: bar.keepMusicAlive }
+    HoverHandler { id: pillHover; enabled: true }
     property bool isHovered: (isPlaying || menuExpanded) && (pillHover.hovered || musicHeaderMa.containsMouse)
 
-    opacity: bar.keepMusicAlive ? 1.0 : 0.0
+    opacity: bar.musicDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
     FontLoader {
         id: ddMusicFont

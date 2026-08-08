@@ -13,34 +13,30 @@ import "../../../theme"
 
     Rectangle {
         id: volBrightSplitPill
-        y: 10
+        y: bar.midY + bar.barHeight + 8
         property bool menuExpanded: bar.dropdownOpen
         property bool showSinkList: false
-        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 30
-        Behavior on height { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 0
+        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
         readonly property real openGap: 16
-        readonly property real headerW: volBrightOptionsRow.implicitWidth + 24
         readonly property real expandedW: 260
-        property real contentW: menuExpanded ? expandedW : headerW
+        property real contentW: expandedW
 
-        x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
-        width: bar.dropdownOpen ? contentW : headerW
+        x: bar.barX + bar.barW - contentW - 120
+        width: contentW
 
-        Behavior on x     { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
-        Behavior on width { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+        Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-        radius: menuExpanded ? 16 : 15
-        Behavior on radius { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
+        radius: 16
         clip: true
 
         color: bar.pillColor
 
-
-
         opacity: bar.dropdownOpen ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
+        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: volBrightSplitPillMa
