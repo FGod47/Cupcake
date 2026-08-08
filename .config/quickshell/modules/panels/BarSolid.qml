@@ -402,7 +402,7 @@ PanelWindow {
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: 16
+                            width: 8
                             height: 30
                             property int wsId: index + 1
                             property bool isOccupied: (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
@@ -434,20 +434,20 @@ PanelWindow {
                     }
                 }
 
-                // ── Premium Liquid-Stretch Sliding Active Indicator ──
+                // ── Premium Liquid-Stretch Sliding Active Circular Dot ──
                 Rectangle {
                     id: activeDotIndicator
-                    height: 6
-                    radius: 3
+                    height: 7
+                    radius: width / 2
                     color: Theme.colPrimary
                     anchors.verticalCenter: workspacesRow.verticalCenter
 
                     property int activeIndex: Math.max(0, Math.min(4, ((Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id : bar.activeWsId) - 1))
 
-                    width: slideAnim.running ? 24 : 16
+                    width: slideAnim.running ? 14 : 7
                     Behavior on width { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
-                    x: activeIndex * (16 + 12) - (slideAnim.running ? 4 : 0)
+                    x: activeIndex * (8 + 12) + 0.5 - (slideAnim.running ? 3.5 : 0)
                     Behavior on x {
                         id: slideAnim
                         NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.15 }
