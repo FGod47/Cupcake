@@ -417,7 +417,7 @@ PanelWindow {
                 implicitWidth: networkRowContent.implicitWidth
                 implicitHeight: 20
                 Layout.preferredWidth: implicitWidth * opacity
-                opacity: (hasNotifPopup || bar.netDropdownOpen) ? 0 : 1
+                opacity: bar.netDropdownOpen ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -514,7 +514,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -524,7 +524,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: implicitWidth * opacity
                 spacing: 12
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 
@@ -627,7 +627,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -639,7 +639,7 @@ PanelWindow {
                 Layout.preferredWidth: implicitWidth * opacity
                 height: 20
                 spacing: 8
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -692,7 +692,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
+                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -704,7 +704,7 @@ PanelWindow {
                 implicitWidth: clockRow.implicitWidth
                 Layout.preferredWidth: clockRow.implicitWidth * opacity
                 height: 20
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -764,7 +764,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!hasNotifPopup && !globalState.solidBoardOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
+                opacity: (!globalState.solidBoardOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -776,7 +776,7 @@ PanelWindow {
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
                 Layout.preferredWidth: implicitWidth * opacity
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -988,7 +988,7 @@ PanelWindow {
             sourceSize.height: 24
             width: 67
             fillMode: Image.PreserveAspectFit
-            opacity: hasNotifPopup ? 0.0 : 1.0
+            opacity: 1.0
             Behavior on opacity { NumberAnimation { duration: 250 } }
             layer.enabled: true
             layer.effect: ColorOverlay {
@@ -998,19 +998,19 @@ PanelWindow {
     }
 
     // ── NETWORK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownNetwork { id: netSplitPill; visible: !hasNotifPopup && opacity > 0 }
+    DropdownNetwork { id: netSplitPill; visible: opacity > 0 }
 
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
-    DropdownHardware { id: volBrightSplitPill; visible: !hasNotifPopup && opacity > 0 }
+    DropdownHardware { id: volBrightSplitPill; visible: opacity > 0 }
 
     // ── CLOCK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownClock { id: clockSplitPill; visible: !hasNotifPopup && opacity > 0 }
+    DropdownClock { id: clockSplitPill; visible: opacity > 0 }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    DropdownPower { id: powerSplitPill; visible: !hasNotifPopup && opacity > 0 }
+    DropdownPower { id: powerSplitPill; visible: opacity > 0 }
 
     // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
-    DropdownMusic { id: musicSplitPill; visible: !hasNotifPopup && opacity > 0 }
+    DropdownMusic { id: musicSplitPill; visible: opacity > 0 }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
