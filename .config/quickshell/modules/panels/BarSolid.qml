@@ -402,17 +402,17 @@ PanelWindow {
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: isFocused ? 7 : (isOccupied ? 6 : 5)
+                            width: 14
                             height: 30
                             property int wsId: index + 1
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
                             property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
 
-                            // Clean Round Workspace Dot
+                            // Clean Core Workspace Dot
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: parent.width
-                                height: parent.width
+                                width: isFocused ? 6 : (isOccupied ? 5 : 4)
+                                height: width
                                 radius: width / 2
                                 color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, wsMouse.containsMouse ? 0.45 : 0.25))
 
