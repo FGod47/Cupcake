@@ -441,16 +441,7 @@ PanelWindow {
             }
             
             // ── LEFT: Window Title ────────
-            Text {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 12
-                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (bar.activeWinTitle && bar.activeWinTitle !== "")
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-            }
+
 
             Text {
                 Layout.alignment: Qt.AlignVCenter
