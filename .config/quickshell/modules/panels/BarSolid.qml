@@ -281,7 +281,7 @@ PanelWindow {
 
     Timer {
         id: notifRevealTimer
-        interval: 350 // Wait for bar to shrink into compact pill before revealing notification
+        interval: 600 // Smooth slow glide before revealing notification card
         repeat: false
         onTriggered: {
             if (bar.hasNotifPopup) {
@@ -297,18 +297,18 @@ PanelWindow {
         id: solidBar
         y: bar.midY
         x: expandAnim.running ? bar.startX : (hasNotifPopup ? ((bar.screenW - bar.notifIslandW) / 2) : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX))
-        Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 800; easing.type: Easing.OutExpo } }
         width: hasNotifPopup ? bar.notifIslandW : ((bar.barW) 
                - (bar.keepMusicAlive ? (musicSplitPill.contentW + 8) : 0)
                - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                  (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                  (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
                  (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0)))))
-        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 800; easing.type: Easing.OutExpo } }
         height: hasNotifPopup ? Math.min(320, Math.max(54, notifIslandCol.implicitHeight + 20)) : (bar.baseHeight + bar.extraHeight)
-        Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 800; easing.type: Easing.OutExpo } }
         radius: hasNotifPopup ? 22 : bar.startRadius
-        Behavior on radius { NumberAnimation { duration: 350 } }
+        Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
         color: bar.pillColor
         clip: true
 
@@ -336,7 +336,7 @@ PanelWindow {
             anchors.rightMargin: 10
             spacing: 8
             opacity: showNotifContent ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
             visible: opacity > 0
 
             Repeater {
