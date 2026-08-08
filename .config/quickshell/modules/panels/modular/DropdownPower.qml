@@ -23,7 +23,7 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
     Behavior on width { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
     radius: menuExpanded ? 20 : 15
-    Behavior on radius { NumberAnimation { duration: 450; easing.type: Easing.OutExpo } }
+    Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
     clip: true
 
     color: bar.pillColor
@@ -105,7 +105,7 @@ Rectangle {
         spacing: 3
         opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250 } }
+        Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
         // Category Header
         Item {

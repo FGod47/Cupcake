@@ -17,7 +17,7 @@ import "../../../theme"
         y: 10
         property bool menuExpanded: globalState.solidBoardOpen
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 30
-        Behavior on height { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
+        Behavior on height { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
 
         readonly property real openGap: 16
         readonly property real headerW: clockOptionsRow.implicitWidth + 24
@@ -27,11 +27,11 @@ import "../../../theme"
         x: globalState.solidBoardOpen ? (bar.barX + bar.barW - 36 - 16 - contentW) : (bar.barX + bar.barW - contentW)
         width: contentW
 
-        Behavior on x     { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
-        Behavior on width { NumberAnimation { duration: 700; easing.type: Easing.OutQuart } }
+        Behavior on x     { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+        Behavior on width { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
 
         radius: menuExpanded ? 16 : 15
-        Behavior on radius { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
         clip: true
 
         color: bar.pillColor
@@ -40,7 +40,7 @@ import "../../../theme"
 
         opacity: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+        Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: clockSplitPillMa
@@ -320,7 +320,7 @@ import "../../../theme"
             spacing: 10
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 300 } }
+            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
             // Big Accent Clock Header
             Item {
