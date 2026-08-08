@@ -298,7 +298,10 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Hyprland.dispatch("workspace " + wsId)
+                            onClicked: {
+                                try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
+                                Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
+                            }
                         }
                     }
                 }
