@@ -313,7 +313,7 @@ PanelWindow {
             // ── LEFT: Workspaces ────────
             Item {
                 id: workspacesContainer
-                Layout.preferredWidth: workspacesRow.width
+                Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 Layout.alignment: Qt.AlignVCenter
 
@@ -350,14 +350,11 @@ PanelWindow {
                                 anchors.margins: -4
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                            }
-
-                            TapHandler {
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                onTapped: {
+                                onClicked: {
                                     console.log("CLICKED WORKSPACE: " + wsId);
                                     root.activeWsId = wsId;
-                                    Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})");
+                                    dispatchProc.cmd = "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'";
+                                    dispatchProc.running = true;
                                 }
                             }
                         }
@@ -1061,7 +1058,14 @@ PanelWindow {
 
     // ─────────────────────────────────────────────────────
     //  BACKGROUND DATA POLLING
-    // ─────────────────────────────────────────────────────
+    // ── SYSTEM RESOURCE PROCESSES ───────────────────────────────────────────────
+    Process {
+        id: dispatchProc
+        property string cmd: ""
+        command: ["bash", "-c", cmd]
+        running: false
+    }
+
     // Accurate CPU via /proc/stat delta
     Process {
         id: cpuProc; running: true
