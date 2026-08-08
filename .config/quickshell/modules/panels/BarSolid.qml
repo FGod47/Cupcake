@@ -1081,15 +1081,18 @@ PanelWindow {
         
         onFinished: {
             solidBar.x = Qt.binding(function() {
-                return bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX;
+                return bar.hasNotifPopup ? ((bar.screenW - solidBar.width) / 2) : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX);
             });
             solidBar.width = Qt.binding(function() {
-                return (bar.barW) 
+                return bar.hasNotifPopup ? 380 : ((bar.barW) 
                        - (bar.keepMusicAlive ? (musicSplitPill.contentW + 16) : 0)
                        - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                          (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                          (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
-                         (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0))));
+                         (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0)))));
+            });
+            contentLayout.opacity = Qt.binding(function() {
+                return bar.hasNotifPopup ? 0.0 : 1.0;
             });
         }
     }
