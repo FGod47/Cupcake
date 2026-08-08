@@ -1018,19 +1018,19 @@ PanelWindow {
     }
 
     // ── NETWORK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownNetwork { id: netSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
+    DropdownNetwork { id: netSplitPill; visible: !hasNotifPopup }
 
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
-    DropdownHardware { id: volBrightSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
+    DropdownHardware { id: volBrightSplitPill; visible: !hasNotifPopup }
 
     // ── CLOCK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownClock { id: clockSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
+    DropdownClock { id: clockSplitPill; visible: !hasNotifPopup }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    DropdownPower { id: powerSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
+    DropdownPower { id: powerSplitPill; visible: !hasNotifPopup }
 
     // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
-    DropdownMusic { id: musicSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
+    DropdownMusic { id: musicSplitPill; visible: !hasNotifPopup }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
