@@ -320,7 +320,7 @@ PanelWindow {
                         height: 30
                         property int wsId: index + 1
                         property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (root.activeWsId === wsId)
-                        property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : !!root.occupiedWsMap[wsId])
+                        property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (root.occupiedWsMap && root.occupiedWsMap[wsId] ? true : false))
                         
                         Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
 
@@ -354,7 +354,7 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
-                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || root.activeWinTitle !== ""
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (root.activeWinTitle && root.activeWinTitle !== "")
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -367,8 +367,8 @@ PanelWindow {
                 Layout.leftMargin: 12
                 Layout.maximumWidth: 300
                 elide: Text.ElideRight
-                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || root.activeWinTitle !== ""
-                text: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") ? Hyprland.activeToplevel.title : root.activeWinTitle
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || (root.activeWinTitle && root.activeWinTitle !== "")
+                text: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") ? Hyprland.activeToplevel.title : (root.activeWinTitle ? root.activeWinTitle : "")
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 13
                 font.weight: Theme.defaultFontWeight
