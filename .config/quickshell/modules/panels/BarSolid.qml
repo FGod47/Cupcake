@@ -349,12 +349,12 @@ PanelWindow {
                                 anchors.fill: parent
                                 anchors.margins: -4
                                 hoverEnabled: true
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
+                                onClicked: function(mouse) {
                                     console.log("CLICKED WORKSPACE: " + wsId);
                                     root.activeWsId = wsId;
                                     Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})");
-                                    Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'"]);
                                 }
                             }
                         }
