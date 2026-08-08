@@ -56,7 +56,7 @@ PanelWindow {
     property bool musicDropdownOpen: false
     property var barActivePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool isMusicPlaying: barActivePlayer !== null && (barActivePlayer.playbackState === 1 || barActivePlayer.isPlaying) && (barActivePlayer.trackTitle !== "")
-    property bool keepMusicAlive: !hasNotifPopup && (isMusicPlaying || (musicSplitPill && musicSplitPill.isHovered))
+    property bool keepMusicAlive: !hasNotifPopup && (isMusicPlaying || musicDropdownOpen)
     onKeepMusicAliveChanged: {
         if (!keepMusicAlive) musicDropdownOpen = false;
     }

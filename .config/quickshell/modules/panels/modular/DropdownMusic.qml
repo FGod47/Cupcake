@@ -42,8 +42,8 @@ Rectangle {
     clip: true
     color: bar.pillColor
 
-    HoverHandler { id: pillHover }
-    property bool isHovered: pillHover.hovered || musicHeaderMa.containsMouse
+    HoverHandler { id: pillHover; enabled: bar.keepMusicAlive }
+    property bool isHovered: (isPlaying || menuExpanded) && (pillHover.hovered || musicHeaderMa.containsMouse)
 
     opacity: bar.keepMusicAlive ? 1.0 : 0.0
     visible: opacity > 0
