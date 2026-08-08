@@ -1017,25 +1017,19 @@ PanelWindow {
     }
 
     // ── NETWORK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownNetwork { id: netSplitPill }
+    DropdownNetwork { id: netSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
 
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
-    // Teardown animation: starts collapsed at hardware icons location inside solidBar,
-    // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
-    DropdownHardware { id: volBrightSplitPill }
+    DropdownHardware { id: volBrightSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
 
     // ── CLOCK SPLIT PILL ──────────────────────────────────────────────────
-    // Teardown animation: starts collapsed at the clock location inside solidBar,
-    // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
-    DropdownClock { id: clockSplitPill }
+    DropdownClock { id: clockSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    // Teardown animation: starts collapsed at the power button location inside solidBar,
-    // then physically separates and slides out rightwards into a floating pill with OutBack bounce.
-    DropdownPower { id: powerSplitPill }
+    DropdownPower { id: powerSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
 
     // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
-    DropdownMusic { id: musicSplitPill }
+    DropdownMusic { id: musicSplitPill; opacity: hasNotifPopup ? 0.0 : 1.0; Behavior on opacity { NumberAnimation { duration: 250 } } }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
