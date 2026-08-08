@@ -265,6 +265,7 @@ PanelWindow {
     }
 
     // Dynamic Island Notification state
+    readonly property real notifIslandW: 380
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
 
@@ -274,9 +275,9 @@ PanelWindow {
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: expandAnim.running ? bar.startX : (hasNotifPopup ? (bar.screenW - width) / 2 : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX))
+        x: expandAnim.running ? bar.startX : (hasNotifPopup ? ((bar.screenW - bar.notifIslandW) / 2) : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX))
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
-        width: hasNotifPopup ? 380 : ((bar.barW) 
+        width: hasNotifPopup ? bar.notifIslandW : ((bar.barW) 
                - (bar.keepMusicAlive ? (musicSplitPill.contentW + 8) : 0)
                - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                  (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
@@ -1081,10 +1082,10 @@ PanelWindow {
         
         onFinished: {
             solidBar.x = Qt.binding(function() {
-                return bar.hasNotifPopup ? ((bar.screenW - solidBar.width) / 2) : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX);
+                return bar.hasNotifPopup ? ((bar.screenW - bar.notifIslandW) / 2) : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 16) : bar.barX);
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? 380 : ((bar.barW) 
+                return bar.hasNotifPopup ? bar.notifIslandW : ((bar.barW) 
                        - (bar.keepMusicAlive ? (musicSplitPill.contentW + 16) : 0)
                        - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                          (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
