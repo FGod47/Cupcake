@@ -408,7 +408,7 @@ PanelWindow {
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
                             property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
                             
-                            Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
+                            Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 
                             Rectangle {
                                 id: wsRect
@@ -417,9 +417,9 @@ PanelWindow {
                                 height: isFocused ? 6 : (wsMouse.containsMouse ? 7 : (isOccupied ? 6 : 5))
                                 radius: height / 2
                                 color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, 0.25))
-                                Behavior on color  { ColorAnimation  { duration: 350; easing.type: Easing.OutCubic } }
-                                Behavior on width  { NumberAnimation { duration: 400; easing.type: Easing.OutBack; easing.overshoot: 1.2 } }
-                                Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                                Behavior on color  { ColorAnimation  { duration: 120 } }
+                                Behavior on width  { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                             }
 
                             MouseArea {
