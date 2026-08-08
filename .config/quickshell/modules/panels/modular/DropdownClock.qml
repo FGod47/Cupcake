@@ -388,6 +388,7 @@ import "../../../theme"
 
             // Inline Calendar
             Column {
+                id: calCol
                 Layout.fillWidth: true
                 spacing: 6
 
@@ -397,7 +398,7 @@ import "../../../theme"
                 Row {
                     width: parent.width
                     Text {
-                        text: Qt.formatDateTime(parent.currentDate, "MMMM yyyy")
+                        text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.DemiBold
@@ -410,9 +411,9 @@ import "../../../theme"
                             width: 20; height: 20
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                let d = new Date(parent.parent.currentDate);
+                                let d = new Date(calCol.currentDate);
                                 d.setMonth(d.getMonth() - 1);
-                                parent.parent.currentDate = d;
+                                calCol.currentDate = d;
                             }
                             Text {
                                 anchors.centerIn: parent
@@ -427,9 +428,9 @@ import "../../../theme"
                             width: 20; height: 20
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                let d = new Date(parent.parent.currentDate);
+                                let d = new Date(calCol.currentDate);
                                 d.setMonth(d.getMonth() + 1);
-                                parent.parent.currentDate = d;
+                                calCol.currentDate = d;
                             }
                             Text {
                                 anchors.centerIn: parent
