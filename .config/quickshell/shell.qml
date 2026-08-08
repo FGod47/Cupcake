@@ -98,6 +98,7 @@ ShellRoot {
         property var barMonitors: ["all"]
         property var dockMonitors: ["all"]
         property bool dockAutoHide: false
+        property real dockOpacity: 0.50
         property bool dockReserveSpace: false
         property string dockLauncherPosition: "Start"
         property bool dockShowDots: true
@@ -162,7 +163,7 @@ ShellRoot {
         target: "opacity"
         function setBarTransparency(val: string) { root.barTransparency = (val === "true"); }
         function setBarOpacity(val: real) { root.barOpacity = val; }
-        function setDockOpacity(val: real) { root.dockOpacity = val; }
+        function setDockOpacity(val: real) { globalState.dockOpacity = val; }
         function setOsdOpacity(val: real) { root.osdOpacity = val; }
         function setCcOpacity(val: real) { root.ccOpacity = val; }
         function setOverviewOpacity(val: real) { root.overviewOpacity = val; }
@@ -184,7 +185,7 @@ ShellRoot {
                 if (parts[1]) { let v = parseFloat(parts[1].trim()); if (!isNaN(v)) globalState.notifPanelOpacity = v; }
                 if (parts[2]) { root.barTransparency = (parts[2].trim() === "true"); }
                 if (parts[3]) { let v = parseFloat(parts[3].trim()); if (!isNaN(v)) root.barOpacity = v; }
-                if (parts[4]) { let v = parseFloat(parts[4].trim()); if (!isNaN(v)) root.dockOpacity = v; }
+                if (parts[4]) { let v = parseFloat(parts[4].trim()); if (!isNaN(v)) globalState.dockOpacity = v; }
                 if (parts[5]) { let v = parseFloat(parts[5].trim()); if (!isNaN(v)) root.osdOpacity = v; }
                 if (parts[6]) { let v = parseFloat(parts[6].trim()); if (!isNaN(v)) root.ccOpacity = v; }
                 if (parts[7]) { let v = parseFloat(parts[7].trim()); if (!isNaN(v)) root.overviewOpacity = v; }

@@ -57,7 +57,7 @@ PanelWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
                 height: globalState.dockIconSize + globalState.dockCrossAxisPadding * 2
-                color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.dockOpacity)
+                color: Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, globalState.dockOpacity)
                 radius: globalState.dockRadius
             }
 

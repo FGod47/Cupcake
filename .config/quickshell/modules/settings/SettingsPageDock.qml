@@ -393,7 +393,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 16; to: 128; stepSize: 1
                             value: root.iconSize
-                            onValueChanged: {
+                            onMoved: {
                                 root.iconSize = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_icon_size && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize " + value];
                                 bashProcess.running = true;
@@ -420,7 +420,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.mainAxisPadding
-                            onValueChanged: {
+                            onMoved: {
                                 root.mainAxisPadding = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_main_axis_padding && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding " + value];
                                 bashProcess.running = true;
@@ -447,7 +447,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.crossAxisPadding
-                            onValueChanged: {
+                            onMoved: {
                                 root.crossAxisPadding = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_cross_axis_padding && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding " + value];
                                 bashProcess.running = true;
@@ -474,7 +474,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.itemSpacing
-                            onValueChanged: {
+                            onMoved: {
                                 root.itemSpacing = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_item_spacing && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing " + value];
                                 bashProcess.running = true;
@@ -501,7 +501,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.endsMargin
-                            onValueChanged: {
+                            onMoved: {
                                 root.endsMargin = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_ends_margin && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin " + value];
                                 bashProcess.running = true;
@@ -528,7 +528,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.edgeMargin
-                            onValueChanged: {
+                            onMoved: {
                                 root.edgeMargin = value;
                                 bashProcess.command = ["bash", "-c", "echo '" + value + "' > ~/.config/cupcake/.dock_edge_margin && quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin " + value];
                                 bashProcess.running = true;
@@ -586,7 +586,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 64; stepSize: 1
                             value: root.cornerRadius
-                            onValueChanged: { root.cornerRadius = value; shapeDebounce.restart(); }
+                            onMoved: { root.cornerRadius = value; shapeDebounce.restart(); }
                         }
                         
                     }
@@ -614,7 +614,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 100; stepSize: 1
                             value: root.bgOpacity
-                            onValueChanged: root.bgOpacity = value
+                            onMoved: root.bgOpacity = value
                         }
                         
                     }
