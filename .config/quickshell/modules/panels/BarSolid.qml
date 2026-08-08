@@ -315,13 +315,11 @@ PanelWindow {
         MouseArea {
             anchors.fill: parent
             enabled: anyDropdownOpen
-            propagateComposedEvents: true
-            onClicked: (mouse) => {
+            onClicked: {
                 if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                 if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                 if (bar.dropdownOpen) bar.dropdownOpen = false;
                 if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                mouse.accepted = false;
             }
         }
 
@@ -561,10 +559,11 @@ PanelWindow {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
+                        let cur = bar.netDropdownOpen;
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                         if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                         if (bar.dropdownOpen) bar.dropdownOpen = false;
-                        bar.netDropdownOpen = !bar.netDropdownOpen;
+                        bar.netDropdownOpen = !cur;
                     }
                 }
             }
@@ -605,10 +604,11 @@ PanelWindow {
                     
                     onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
                     onClicked: {
+                        let cur = bar.dropdownOpen;
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                         if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                         if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                        bar.dropdownOpen = !bar.dropdownOpen;
+                        bar.dropdownOpen = !cur;
                     }
                     
                     Row {
@@ -647,10 +647,11 @@ PanelWindow {
                     cursorShape: Qt.PointingHandCursor
                     
                     onClicked: {
+                        let cur = bar.dropdownOpen;
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                         if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                         if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                        bar.dropdownOpen = !bar.dropdownOpen;
+                        bar.dropdownOpen = !cur;
                     }
                     
                     Row {
@@ -775,10 +776,11 @@ PanelWindow {
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 onClicked: {
+                    let cur = globalState.solidBoardOpen;
                     if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                     if (bar.dropdownOpen) bar.dropdownOpen = false;
                     if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                    globalState.solidBoardOpen = !globalState.solidBoardOpen;
+                    globalState.solidBoardOpen = !cur;
                 }
 
                 Row {
@@ -1018,10 +1020,11 @@ PanelWindow {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
+                                let cur = globalState.powerDropdownOpen;
                                 if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                                 if (bar.dropdownOpen) bar.dropdownOpen = false;
                                 if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                                globalState.powerDropdownOpen = !globalState.powerDropdownOpen;
+                                globalState.powerDropdownOpen = !cur;
                             }
                         }
                     }

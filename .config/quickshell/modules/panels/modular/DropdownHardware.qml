@@ -50,12 +50,11 @@ import "../../../theme"
             cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= 30) {
-                    if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                    bar.dropdownOpen = !bar.dropdownOpen;
-                    if (bar.dropdownOpen) {
-                        globalState.solidBoardOpen = false;
-                        globalState.powerDropdownOpen = false;
-                    }
+                    let cur = bar.dropdownOpen;
+                    bar.netDropdownOpen = false;
+                    globalState.solidBoardOpen = false;
+                    globalState.powerDropdownOpen = false;
+                    bar.dropdownOpen = !cur;
                 }
             }
         }

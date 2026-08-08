@@ -359,8 +359,11 @@ Rectangle {
         cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
             if (mouse.y <= 30) {
-                if (bar.dropdownOpen) bar.dropdownOpen = false;
-                bar.netDropdownOpen = !bar.netDropdownOpen;
+                let cur = bar.netDropdownOpen;
+                bar.dropdownOpen = false;
+                globalState.solidBoardOpen = false;
+                globalState.powerDropdownOpen = false;
+                bar.netDropdownOpen = !cur;
             }
         }
     }

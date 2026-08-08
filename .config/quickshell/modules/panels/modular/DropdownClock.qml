@@ -45,19 +45,16 @@ import "../../../theme"
         MouseArea {
             id: clockSplitPillMa
             anchors.fill: parent
-            enabled: globalState.solidBoardOpen
+            enabled: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen)
             hoverEnabled: true
             cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
                 if (mouse.y <= 30) {
-                    if (globalState.solidBoardOpen) {
-                        globalState.solidBoardOpen = false;
-                    } else {
-                        bar.dropdownOpen = false;
-                        bar.netDropdownOpen = false;
-                        globalState.powerDropdownOpen = false;
-                        globalState.solidBoardOpen = true;
-                    }
+                    let cur = globalState.solidBoardOpen;
+                    bar.dropdownOpen = false;
+                    bar.netDropdownOpen = false;
+                    globalState.powerDropdownOpen = false;
+                    globalState.solidBoardOpen = !cur;
                 }
             }
         }
