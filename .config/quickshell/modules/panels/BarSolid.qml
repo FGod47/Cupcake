@@ -142,6 +142,48 @@ PanelWindow {
     property string activeSinkName: ""
     property var sinkList: []
 
+    property int activeWsId: 1
+    property string activeWinTitle: ""
+    property var occupiedWsMap: ({})
+
+    Process {
+        id: hyprStateProc
+        command: ["bash", "-c", "hyprctl activeworkspace -j; echo '---'; hyprctl activewindow -j; echo '---'; hyprctl workspaces -j"]
+        running: false
+        stdout: SplitParser {
+            onRead: (data) => {
+                try {
+                    let parts = data.split("---");
+                    if (parts.length >= 3) {
+                        let wsJson = JSON.parse(parts[0].trim());
+                        if (wsJson && wsJson.id) root.activeWsId = wsJson.id;
+
+                        let winJson = JSON.parse(parts[1].trim());
+                        if (winJson && winJson.title) root.activeWinTitle = winJson.title;
+                        else if (winJson && winJson.title === "") root.activeWinTitle = "";
+
+                        let allWsJson = JSON.parse(parts[2].trim());
+                        if (Array.isArray(allWsJson)) {
+                            let map = {};
+                            allWsJson.forEach(w => { map[w.id] = true; });
+                            root.occupiedWsMap = map;
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    Timer {
+        interval: 300
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            if (!hyprStateProc.running) hyprStateProc.running = true;
+        }
+    }
+
     function getVolumeIcon(volVal, isMuted) {
         if (isMuted) return "";
         var v = parseFloat(volVal) || 0;
@@ -277,8 +319,8 @@ PanelWindow {
                         width: isFocused ? 22 : 12
                         height: 30
                         property int wsId: index + 1
-                        property bool isFocused: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id === wsId : (wsId === 1)
-                        property bool isOccupied: isFocused || (Hyprland.workspaces ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : false)
+                        property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (root.activeWsId === wsId)
+                        property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : !!root.occupiedWsMap[wsId])
                         
                         Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
 
@@ -299,6 +341,7 @@ PanelWindow {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
+                                root.activeWsId = wsId;
                                 try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
                                 Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
                             }
@@ -311,7 +354,7 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
-                visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || root.activeWinTitle !== ""
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
@@ -322,10 +365,10 @@ PanelWindow {
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 12
-                Layout.maximumWidth: 300 // exact length requested
+                Layout.maximumWidth: 300
                 elide: Text.ElideRight
-                visible: Hyprland.activeToplevel && Hyprland.activeToplevel.title !== ""
-                text: Hyprland.activeToplevel ? Hyprland.activeToplevel.title : ""
+                visible: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") || root.activeWinTitle !== ""
+                text: (Hyprland.activeToplevel && Hyprland.activeToplevel.title !== "") ? Hyprland.activeToplevel.title : root.activeWinTitle
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 13
                 font.weight: Theme.defaultFontWeight
