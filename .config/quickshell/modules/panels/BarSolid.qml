@@ -402,7 +402,7 @@ PanelWindow {
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: isFocused ? 18 : 10
+                            width: isFocused ? 8 : (isOccupied ? 6 : 5)
                             height: 30
                             property int wsId: index + 1
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
@@ -414,8 +414,8 @@ PanelWindow {
                                 id: wsRect
                                 anchors.centerIn: parent
                                 width: parent.width
-                                height: 3
-                                radius: 1.5
+                                height: parent.width
+                                radius: width / 2
                                 color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.6) : Qt.rgba(fg.r, fg.g, fg.b, 0.25))
                                 Behavior on color { ColorAnimation { duration: 200 } }
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
