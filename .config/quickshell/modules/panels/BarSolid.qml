@@ -347,13 +347,11 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onPressed: {
                                 root.activeWsId = wsId;
-                                try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
-                                Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
+                                Quickshell.execDetached(["hyprctl", "dispatch", "hl.dsp.focus({workspace = " + wsId + "})"]);
                             }
                             onClicked: {
                                 root.activeWsId = wsId;
-                                try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
-                                Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
+                                Quickshell.execDetached(["hyprctl", "dispatch", "hl.dsp.focus({workspace = " + wsId + "})"]);
                             }
                         }
                     }
