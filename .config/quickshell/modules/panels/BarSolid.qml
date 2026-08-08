@@ -462,8 +462,8 @@ PanelWindow {
                 implicitWidth: networkRowContent.implicitWidth
                 implicitHeight: 20
                 Layout.preferredWidth: implicitWidth * opacity
-                opacity: bar.netDropdownOpen ? 0 : 1
-                visible: true
+                opacity: (hasNotifPopup || bar.netDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 Row {
@@ -558,8 +558,8 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
-                visible: true
+                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
             
@@ -568,8 +568,8 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: implicitWidth * opacity
                 spacing: 12
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
-                visible: true
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 
                 // Brightness
@@ -667,8 +667,8 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
-                visible: true
+                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen && sysTrayRepeater.count > 0) ? 1 : 0
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
@@ -679,8 +679,8 @@ PanelWindow {
                 Layout.preferredWidth: implicitWidth * opacity
                 height: 20
                 spacing: 8
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
-                visible: true
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 Repeater {
@@ -732,8 +732,8 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!bar.dropdownOpen && !bar.netDropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
-                visible: true
+                opacity: (!hasNotifPopup && !bar.dropdownOpen && !bar.netDropdownOpen && !globalState.solidBoardOpen) ? 1 : 0
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
@@ -746,8 +746,8 @@ PanelWindow {
                 height: 20
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
-                visible: true
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
                 onClicked: globalState.solidBoardOpen = !globalState.solidBoardOpen
 
@@ -781,8 +781,8 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
-                visible: true
+                opacity: (!hasNotifPopup && !globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
 
@@ -793,8 +793,8 @@ PanelWindow {
                 height: 26
                 implicitWidth: powerPillInner.implicitWidth
                 Layout.preferredWidth: implicitWidth * opacity
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
-                visible: true
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
                 property bool expanded: false  // always false — expansion now handled by PowerDropdown

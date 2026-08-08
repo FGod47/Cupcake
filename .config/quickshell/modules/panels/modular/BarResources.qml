@@ -9,8 +9,8 @@ Item {
     id: barResources
     implicitWidth: resRow.implicitWidth
     implicitHeight: 20
-    opacity: (bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
-    visible: true
+    opacity: (bar.hasNotifPopup || bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
+    visible: opacity > 0
     Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
     FontLoader {
