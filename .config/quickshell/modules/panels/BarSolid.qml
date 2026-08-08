@@ -1015,18 +1015,15 @@ PanelWindow {
                             Text {
                                 id: powerLabel
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: powerPillItem.expanded ? (shutdownBtn.confirming ? "Sure?" : "Shutdown") : "Power"
+                                text: ""
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
-                                color: powerMa.containsMouse ? Theme.colError : (powerPillItem.expanded ? fg : Theme.colError)
-                                width: (powerPillItem.expanded || powerPillItem.isHovered) ? implicitWidth : 0
-                                opacity: (powerPillItem.expanded || powerPillItem.isHovered) ? 1 : 0
+                                color: Theme.colError
+                                width: 0
+                                opacity: 0
                                 clip: true
-                                visible: opacity > 0 || width > 0
-                                rightPadding: 8
-                                Behavior on width   { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
-                                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                                visible: false
                             }
                         }
                     }
