@@ -340,18 +340,17 @@ PanelWindow {
 
                         MouseArea { 
                             id: wsMouse
-                            anchors.centerIn: parent
-                            width: Math.max(parent.width, 24)
-                            height: 34
+                            anchors.fill: parent
+                            z: 99
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onPressed: {
                                 root.activeWsId = wsId;
-                                Quickshell.execDetached(["hyprctl", "dispatch", "hl.dsp.focus({workspace = " + wsId + "})"]);
+                                Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'"]);
                             }
                             onClicked: {
                                 root.activeWsId = wsId;
-                                Quickshell.execDetached(["hyprctl", "dispatch", "hl.dsp.focus({workspace = " + wsId + "})"]);
+                                Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'"]);
                             }
                         }
                     }
