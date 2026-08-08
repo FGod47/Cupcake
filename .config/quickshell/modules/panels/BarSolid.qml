@@ -20,8 +20,8 @@ PanelWindow {
 
     anchors { top: true; left: true; right: true }
     WlrLayershell.namespace: "quickshell"
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
-    WlrLayershell.keyboardFocus: anyDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     WlrLayershell.layer: WlrLayer.Top
     exclusiveZone: 40
     implicitHeight: bar.screen.height - 40
@@ -349,9 +349,12 @@ PanelWindow {
                                 anchors.fill: parent
                                 anchors.margins: -4
                                 hoverEnabled: true
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: function(mouse) {
+                            }
+
+                            TapHandler {
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onTapped: {
                                     console.log("CLICKED WORKSPACE: " + wsId);
                                     root.activeWsId = wsId;
                                     Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})");
