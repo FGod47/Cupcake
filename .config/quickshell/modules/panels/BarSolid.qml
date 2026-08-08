@@ -268,6 +268,27 @@ PanelWindow {
     readonly property real notifIslandW: 380
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
+    property bool showNotifContent: false
+
+    onHasNotifPopupChanged: {
+        if (hasNotifPopup) {
+            notifRevealTimer.restart();
+        } else {
+            notifRevealTimer.stop();
+            showNotifContent = false;
+        }
+    }
+
+    Timer {
+        id: notifRevealTimer
+        interval: 350 // Wait for bar to shrink into compact pill before revealing notification
+        repeat: false
+        onTriggered: {
+            if (bar.hasNotifPopup) {
+                bar.showNotifContent = true;
+            }
+        }
+    }
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar, morphs into Dynamic Island for notifications)
@@ -314,8 +335,8 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 10
             spacing: 8
-            opacity: hasNotifPopup ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            opacity: showNotifContent ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             visible: opacity > 0
 
             Repeater {
