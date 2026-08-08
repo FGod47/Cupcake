@@ -337,9 +337,16 @@ PanelWindow {
 
                         MouseArea { 
                             id: wsMouse
-                            anchors.fill: parent
+                            anchors.centerIn: parent
+                            width: Math.max(parent.width, 24)
+                            height: 34
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
+                            onPressed: {
+                                root.activeWsId = wsId;
+                                try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
+                                Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
+                            }
                             onClicked: {
                                 root.activeWsId = wsId;
                                 try { Hyprland.dispatch("workspace", wsId.toString()); } catch(e) {}
