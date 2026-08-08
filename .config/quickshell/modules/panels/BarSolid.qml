@@ -251,7 +251,7 @@ PanelWindow {
     readonly property real powerPillGap: 8   // gap between bar and power pill
     property real powerSplitOffset: 0       // grows with OutBack to push bar left
     Behavior on powerSplitOffset {
-        NumberAnimation { duration: 850; easing.type: Easing.OutExpo }
+        NumberAnimation { duration: 1400; easing.type: Easing.OutExpo }
     }
     onPowerSplitOffsetChanged: {
         // keep mask updated
@@ -382,7 +382,7 @@ PanelWindow {
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
             anchors.leftMargin: 13
             anchors.rightMargin: (bar.dropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen || bar.netDropdownOpen) ? 22 : 13
-            Behavior on anchors.rightMargin { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+            Behavior on anchors.rightMargin { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
             height: bar.barHeight
             spacing: 0
             opacity: hasNotifPopup ? 0.0 : 1.0

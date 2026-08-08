@@ -12,7 +12,7 @@ Rectangle {
     y: 10
     property bool menuExpanded: globalState.powerDropdownOpen
     height: menuExpanded ? (powerMenu.implicitHeight + 20) : 30
-    Behavior on height { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+    Behavior on height { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
 
     readonly property real openGap: 12
     property real contentW: 145
@@ -20,10 +20,10 @@ Rectangle {
     x: globalState.powerDropdownOpen ? (bar.barX + bar.barW - contentW) : (globalState.solidBoardOpen ? (bar.barX + bar.barW - 36) : (bar.barX + bar.barW - 40))
     width: globalState.powerDropdownOpen ? contentW : (globalState.solidBoardOpen ? 36 : 30)
 
-    Behavior on x     { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
-    Behavior on width { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+    Behavior on x     { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+    Behavior on width { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
     radius: menuExpanded ? 20 : 15
-    Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+    Behavior on radius { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
     clip: true
 
     color: bar.pillColor
@@ -105,7 +105,7 @@ Rectangle {
         spacing: 3
         opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
 
         // Category Header
         Item {

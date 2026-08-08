@@ -17,7 +17,7 @@ import "../../../theme"
         property bool menuExpanded: bar.dropdownOpen
         property bool showSinkList: false
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 30
-        Behavior on height { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+        Behavior on height { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
 
         readonly property real openGap: 16
         readonly property real headerW: volBrightOptionsRow.implicitWidth + 24
@@ -27,11 +27,11 @@ import "../../../theme"
         x: bar.dropdownOpen ? (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW) : (bar.barX + bar.barW - clockSplitPill.contentW - 16 - contentW)
         width: bar.dropdownOpen ? contentW : headerW
 
-        Behavior on x     { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
-        Behavior on width { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
+        Behavior on x     { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
+        Behavior on width { NumberAnimation { duration: 1400; easing.type: Easing.OutExpo } }
 
         radius: menuExpanded ? 16 : 15
-        Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+        Behavior on radius { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
         clip: true
 
         color: bar.pillColor
@@ -40,7 +40,7 @@ import "../../../theme"
 
         opacity: bar.dropdownOpen ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+        Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.OutQuart } }
 
         MouseArea {
             id: volBrightSplitPillMa
@@ -115,7 +115,7 @@ import "../../../theme"
             spacing: 12
             opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
 
             // Brightness Slider Row
             Row {

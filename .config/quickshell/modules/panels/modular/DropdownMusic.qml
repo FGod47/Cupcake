@@ -26,7 +26,7 @@ Rectangle {
     readonly property real headerW: musicHeaderRow.implicitWidth + 24
     property real contentW: menuExpanded ? expandedW : headerW
 
-    readonly property int dur: 850
+    readonly property int dur: 1400
     readonly property int easingType: Easing.OutExpo
 
     height: menuExpanded ? expandedH : 30
