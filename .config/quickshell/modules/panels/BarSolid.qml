@@ -22,7 +22,7 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell"
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
     WlrLayershell.keyboardFocus: anyDropdownOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.layer: WlrLayer.Top
     exclusiveZone: 40
     implicitHeight: bar.screen.height - 40
     color: "transparent"
