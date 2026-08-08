@@ -282,7 +282,7 @@ PanelWindow {
         height: bar.baseHeight + bar.extraHeight
         radius: bar.startRadius
         color: bar.pillColor
-        clip: true
+        clip: false
 
         MouseArea {
             anchors.fill: parent
@@ -308,7 +308,7 @@ PanelWindow {
             Behavior on anchors.rightMargin { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
             height: bar.barHeight
             spacing: 0
-            opacity: 0
+            opacity: 1
 
             // ── LEFT: Workspaces ────────
             Item {
