@@ -277,8 +277,8 @@ PanelWindow {
                         width: isFocused ? 22 : 12
                         height: 30
                         property int wsId: index + 1
-                        property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-                        property bool isOccupied: isFocused || Hyprland.workspaces.values.some(ws => ws.id === wsId)
+                        property bool isFocused: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id === wsId : (wsId === 1)
+                        property bool isOccupied: isFocused || (Hyprland.workspaces ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : false)
                         
                         Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
 
@@ -298,7 +298,7 @@ PanelWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Hyprland.dispatch("hl.dsp.focus({workspace = " + wsId + "})")
+                            onClicked: Hyprland.dispatch("workspace " + wsId)
                         }
                     }
                 }
