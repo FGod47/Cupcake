@@ -409,11 +409,12 @@ PanelWindow {
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: isOccupied ? 6 : 5
+                                width: wsMouse.containsMouse ? 7 : (isOccupied ? 6 : 5)
                                 height: width
                                 radius: width / 2
-                                color: isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.6) : Qt.rgba(fg.r, fg.g, fg.b, 0.25)
-                                Behavior on color { ColorAnimation { duration: 200 } }
+                                color: isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, wsMouse.containsMouse ? 0.45 : 0.25)
+                                Behavior on color  { ColorAnimation  { duration: 200 } }
+                                Behavior on width  { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                             }
 
                             MouseArea {
@@ -433,19 +434,24 @@ PanelWindow {
                     }
                 }
 
-                // ── Sleek Sliding Active Line Indicator ──
+                // ── Premium Liquid-Stretch Sliding Active Indicator ──
                 Rectangle {
                     id: activeDotIndicator
-                    width: 16
                     height: 6
                     radius: 3
                     color: Theme.colPrimary
                     anchors.verticalCenter: workspacesRow.verticalCenter
 
                     property int activeIndex: Math.max(0, Math.min(4, ((Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id : bar.activeWsId) - 1))
-                    x: activeIndex * (16 + 12)
 
-                    Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                    width: slideAnim.running ? 24 : 16
+                    Behavior on width { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+
+                    x: activeIndex * (16 + 12) - (slideAnim.running ? 4 : 0)
+                    Behavior on x {
+                        id: slideAnim
+                        NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.15 }
+                    }
                 }
             }
             
