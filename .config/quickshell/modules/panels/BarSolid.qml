@@ -769,7 +769,7 @@ PanelWindow {
                 implicitWidth: clockRow.implicitWidth
                 Layout.preferredWidth: clockRow.implicitWidth * opacity
                 height: 20
-                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen || globalState.powerDropdownOpen) ? 0 : 1
+                opacity: (hasNotifPopup || bar.dropdownOpen || bar.netDropdownOpen || globalState.solidBoardOpen) ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
@@ -802,6 +802,18 @@ PanelWindow {
                         font.weight: Theme.defaultFontWeight
                         color: fg
                     }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "• " + Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: Theme.defaultFontSize
+                        font.weight: Theme.defaultFontWeight
+                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        width: clockMouse.containsMouse ? implicitWidth : 0
+                        clip: true
+                        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                    }
                 }
             }
 
@@ -817,7 +829,7 @@ PanelWindow {
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: (!hasNotifPopup && !globalState.solidBoardOpen && !globalState.powerDropdownOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
+                opacity: (!hasNotifPopup && !globalState.solidBoardOpen && !bar.dropdownOpen && !bar.netDropdownOpen) ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
             }
@@ -1051,19 +1063,19 @@ PanelWindow {
     }
 
     // ── NETWORK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownNetwork { id: netSplitPill; visible: !hasNotifPopup }
+    DropdownNetwork { id: netSplitPill; visible: !hasNotifPopup && opacity > 0 }
 
     // ── VOLUME & BRIGHTNESS SPLIT PILL ──────────────────────────────────────────────────
-    DropdownHardware { id: volBrightSplitPill; visible: !hasNotifPopup }
+    DropdownHardware { id: volBrightSplitPill; visible: !hasNotifPopup && opacity > 0 }
 
     // ── CLOCK SPLIT PILL ──────────────────────────────────────────────────
-    DropdownClock { id: clockSplitPill; visible: !hasNotifPopup }
+    DropdownClock { id: clockSplitPill; visible: !hasNotifPopup && opacity > 0 }
 
     // ── POWER SPLIT PILL ──────────────────────────────────────────────────
-    DropdownPower { id: powerSplitPill; visible: !hasNotifPopup }
+    DropdownPower { id: powerSplitPill; visible: !hasNotifPopup && opacity > 0 }
 
     // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
-    DropdownMusic { id: musicSplitPill; visible: !hasNotifPopup }
+    DropdownMusic { id: musicSplitPill; visible: !hasNotifPopup && opacity > 0 }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
