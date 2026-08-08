@@ -311,31 +311,38 @@ PanelWindow {
             opacity: 0
 
             // ── LEFT: Workspaces ────────
-            Row {
-                id: workspacesRow
-                spacing: 8
+            Item {
+                id: workspacesContainer
+                width: workspacesRow.width
+                height: 30
                 Layout.alignment: Qt.AlignVCenter
 
-                Repeater {
-                    model: 5
-                    delegate: Item {
-                        width: isFocused ? 22 : 12
-                        height: 30
-                        property int wsId: index + 1
-                        property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (root.activeWsId === wsId)
-                        property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (root.occupiedWsMap && root.occupiedWsMap[wsId] ? true : false))
-                        
-                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                Row {
+                    id: workspacesRow
+                    spacing: 8
+                    anchors.verticalCenter: parent.verticalCenter
 
-                        Rectangle {
-                            id: wsRect
-                            anchors.centerIn: parent
-                            width: parent.width
-                            height: isFocused ? 6 : (wsGlobalMouse.containsMouse && wsGlobalMouse.hoveredWs === wsId ? 6 : 4)
-                            radius: height / 2
-                            color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
-                            Behavior on color { ColorAnimation { duration: 150 } }
-                            Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                    Repeater {
+                        model: 5
+                        delegate: Item {
+                            width: isFocused ? 22 : 12
+                            height: 30
+                            property int wsId: index + 1
+                            property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (root.activeWsId === wsId)
+                            property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (root.occupiedWsMap && root.occupiedWsMap[wsId] ? true : false))
+                            
+                            Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+
+                            Rectangle {
+                                id: wsRect
+                                anchors.centerIn: parent
+                                width: parent.width
+                                height: isFocused ? 6 : (wsGlobalMouse.containsMouse && wsGlobalMouse.hoveredWs === wsId ? 6 : 4)
+                                radius: height / 2
+                                color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                            }
                         }
                     }
                 }
@@ -343,7 +350,7 @@ PanelWindow {
                 MouseArea {
                     id: wsGlobalMouse
                     anchors.fill: parent
-                    anchors.margins: -6
+                    anchors.margins: -4
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     property int hoveredWs: 0
