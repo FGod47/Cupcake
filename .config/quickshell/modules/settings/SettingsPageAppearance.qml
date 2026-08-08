@@ -697,7 +697,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 1.0; stepSize: 0.01
                             value: root.blurStrength
-                            onMoved: { root.blurStrength = value; }
+                            onValueChanged: { root.blurStrength = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     let size = Math.max(1, Math.round(root.blurStrength * 20));
@@ -728,7 +728,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.globalOpacity
-                            onMoved: { root.globalOpacity = value; }
+                            onValueChanged: { root.globalOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "sed -i 's/^OPACITY=.*/OPACITY=" + root.globalOpacity.toFixed(2) + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
@@ -758,7 +758,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 1; to: 5; stepSize: 1
                             value: root.blurPasses
-                            onMoved: { root.blurPasses = Math.round(value); }
+                            onValueChanged: { root.blurPasses = Math.round(value); }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "sed -i 's/^BLUR_PASSES=.*/BLUR_PASSES=" + Math.round(root.blurPasses) + "/' ~/.config/cupcake/.transparency_values && ~/.local/bin/apply-transparency"]);
@@ -833,7 +833,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.barOpacity
-                            onMoved: { root.barOpacity = value; }
+                            onValueChanged: { root.barOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setBarOpacity " + root.barOpacity + " && ~/.local/bin/apply-transparency"]);
@@ -865,7 +865,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.ccOpacity
-                            onMoved: { root.ccOpacity = value; }
+                            onValueChanged: { root.ccOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.ccOpacity.toFixed(2) + "' > ~/.config/cupcake/.cc_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setCcOpacity " + root.ccOpacity + " && ~/.local/bin/apply-transparency"]);
@@ -894,11 +894,11 @@ Item {
                         StyledSlider {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
-                            value: globalState.dockOpacity
-                            onMoved: { globalState.dockOpacity = value; }
+                            value: root.dockOpacity
+                            onValueChanged: { root.dockOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + globalState.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity"]);
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.dockOpacity.toFixed(2) + "' > ~/.config/cupcake/.dock_opacity && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setDockOpacity " + root.dockOpacity + " && ~/.local/bin/apply-transparency"]);
                                 }
                             }
                         }
@@ -925,7 +925,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.launcherOpacity
-                            onMoved: { root.launcherOpacity = value; }
+                            onValueChanged: { root.launcherOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.launcherOpacity.toFixed(2) + "' > ~/.config/cupcake/.launcher_opacity"]);
@@ -955,7 +955,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.wallpaperOpacity
-                            onMoved: { root.wallpaperOpacity = value; }
+                            onValueChanged: { root.wallpaperOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.wallpaperOpacity.toFixed(2) + "' > ~/.config/cupcake/.wallpaper_opacity"]);
@@ -985,7 +985,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0.1; to: 1.0; stepSize: 0.05
                             value: root.settingsOpacity
-                            onMoved: { root.settingsOpacity = value; }
+                            onValueChanged: { root.settingsOpacity = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c", "echo '" + root.settingsOpacity.toFixed(2) + "' > ~/.config/cupcake/.settings_opacity"]);

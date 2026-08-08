@@ -205,7 +205,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 8; to: 32; stepSize: 1
                             value: Theme.defaultFontSize
-                            onMoved: { Theme.defaultFontSize = value; }
+                            onValueChanged: { Theme.defaultFontSize = value; }
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.font_size"]; bashProcess.running = true; }
                         }
                         
@@ -231,7 +231,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 50; to: 200; stepSize: 5
                             value: Theme.monoFontScale * 100
-                            onMoved: { Theme.monoFontScale = value / 100.0; }
+                            onValueChanged: { Theme.monoFontScale = value / 100.0; }
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.font_mono_scale"]; bashProcess.running = true; }
                         }
                         
@@ -375,7 +375,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 8; to: 32; stepSize: 1
                             value: Theme.appFontSize
-                            onMoved: { Theme.appFontSize = value; }
+                            onValueChanged: { Theme.appFontSize = value; }
                             onPressedChanged: { if (!pressed) Quickshell.execDetached(["bash", "-c", "echo '" + Math.round(value) + "' > ~/.config/cupcake/.app_font_size && ~/.local/bin/apply-fonts"]); }
                         }
                         
@@ -401,7 +401,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 50; to: 200; stepSize: 5
                             value: Theme.appMonoScale * 100
-                            onMoved: { Theme.appMonoScale = value / 100.0; }
+                            onValueChanged: { Theme.appMonoScale = value / 100.0; }
                             onPressedChanged: { if (!pressed) bashProcess.command = ["bash", "-c", "echo '" + (value / 100.0) + "' > ~/.config/cupcake/.app_font_mono_scale && ~/.local/bin/apply-fonts"]; bashProcess.running = true; }
                         }
                         

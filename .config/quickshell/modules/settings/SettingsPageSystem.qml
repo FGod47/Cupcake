@@ -444,7 +444,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 0; to: 100; stepSize: 1
                             value: root.swappiness
-                            onMoved: { root.swappiness = value; }
+                            onValueChanged: { root.swappiness = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["pkexec", "sysctl", "vm.swappiness=" + Math.round(root.swappiness)]);
@@ -539,7 +539,7 @@ Item {
                             Layout.preferredWidth: 220
                             from: 1; to: 30; stepSize: 1
                             value: root.lockTimeout
-                            onMoved: { root.lockTimeout = value; }
+                            onValueChanged: { root.lockTimeout = value; }
                             onPressedChanged: {
                                 if (!pressed) {
                                     Quickshell.execDetached(["bash", "-c",
