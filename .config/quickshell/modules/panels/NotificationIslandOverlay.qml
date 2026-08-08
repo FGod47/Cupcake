@@ -32,7 +32,7 @@ PanelWindow {
 
     // Click-through mask: Only intercept clicks inside the animated island card
     mask: Region {
-        Region { item: islandCard; active: islandWindow.hasPopups && islandCard.opacity > 0 }
+        Region { item: islandCard }
     }
 
     Item {
