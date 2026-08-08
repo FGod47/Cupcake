@@ -331,28 +331,49 @@ PanelWindow {
                             id: wsRect
                             anchors.centerIn: parent
                             width: parent.width
-                            height: isFocused ? 6 : (wsMouse.containsMouse ? 6 : 4)
+                            height: isFocused ? 6 : (wsGlobalMouse.containsMouse && wsGlobalMouse.hoveredWs === wsId ? 6 : 4)
                             radius: height / 2
                             color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
                             Behavior on color { ColorAnimation { duration: 150 } }
                             Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                         }
+                    }
+                }
 
-                        MouseArea { 
-                            id: wsMouse
-                            anchors.fill: parent
-                            z: 99
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onPressed: {
-                                root.activeWsId = wsId;
-                                Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'"]);
+                MouseArea {
+                    id: wsGlobalMouse
+                    anchors.fill: parent
+                    anchors.margins: -6
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    property int hoveredWs: 0
+
+                    function getWsAt(mouseX) {
+                        let totalX = 0;
+                        for (let i = 0; i < 5; i++) {
+                            let itemW = (root.activeWsId === (i + 1)) ? 22 : 12;
+                            if (mouseX >= totalX && mouseX <= (totalX + itemW + 8)) {
+                                return i + 1;
                             }
-                            onClicked: {
-                                root.activeWsId = wsId;
-                                Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + wsId + "})'"]);
-                            }
+                            totalX += itemW + 8;
                         }
+                        return Math.max(1, Math.min(5, Math.ceil(mouseX / 20)));
+                    }
+
+                    onPositionChanged: (mouse) => {
+                        hoveredWs = getWsAt(mouse.x);
+                    }
+
+                    onPressed: (mouse) => {
+                        let targetWs = getWsAt(mouse.x);
+                        root.activeWsId = targetWs;
+                        Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + targetWs + "})'"]);
+                    }
+
+                    onClicked: (mouse) => {
+                        let targetWs = getWsAt(mouse.x);
+                        root.activeWsId = targetWs;
+                        Quickshell.execDetached(["bash", "-c", "hyprctl dispatch 'hl.dsp.focus({workspace = " + targetWs + "})'"]);
                     }
                 }
             }
