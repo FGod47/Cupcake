@@ -402,7 +402,6 @@ ShellRoot {
 
     // Popups & Panels
     NotificationPanel {}
-    NotificationIslandOverlay {}
     Osd {}
     AiPanel {}
 

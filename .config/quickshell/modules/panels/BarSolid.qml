@@ -264,25 +264,31 @@ PanelWindow {
         }
     }
 
+    // Dynamic Island Notification state
+    property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
+    property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
+
     // ─────────────────────────────────────────────────────
-    //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar)
+    //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar, morphs into Dynamic Island for notifications)
     // ─────────────────────────────────────────────────────
     Rectangle {
         id: solidBar
         y: bar.midY
-        x: expandAnim.running ? bar.startX : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX)
-        Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
-        width: (bar.barW) 
+        x: expandAnim.running ? bar.startX : (hasNotifPopup ? (bar.screenW - width) / 2 : (bar.keepMusicAlive ? (bar.barX + musicSplitPill.contentW + 8) : bar.barX))
+        Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        width: hasNotifPopup ? 380 : ((bar.barW) 
                - (bar.keepMusicAlive ? (musicSplitPill.contentW + 8) : 0)
                - (globalState.powerDropdownOpen ? (powerSplitPill.contentW + powerSplitPill.openGap) : 
                  (globalState.solidBoardOpen ? (36 + 16 + clockSplitPill.contentW + clockSplitPill.openGap) : 
                  (bar.dropdownOpen ? (clockSplitPill.contentW + 16 + volBrightSplitPill.contentW + 16) : 
-                 (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0))))
-        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
-        height: bar.baseHeight + bar.extraHeight
-        radius: bar.startRadius
+                 (bar.netDropdownOpen ? (clockSplitPill.contentW + 16 + netSplitPill.contentW + 16) : 0)))))
+        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        height: hasNotifPopup ? Math.min(320, Math.max(54, notifIslandCol.implicitHeight + 20)) : (bar.baseHeight + bar.extraHeight)
+        Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 550; easing.type: globalState.closingIsland ? Easing.InOutCubic : Easing.OutBack; easing.overshoot: 0.4 } }
+        radius: hasNotifPopup ? 22 : bar.startRadius
+        Behavior on radius { NumberAnimation { duration: 350 } }
         color: bar.pillColor
-        clip: false
+        clip: true
 
         MouseArea {
             anchors.fill: parent
@@ -297,9 +303,58 @@ PanelWindow {
             }
         }
 
+        // ── DYNAMIC ISLAND NOTIFICATION CONTENT (Active when notification arrives) ────────
+        Column {
+            id: notifIslandCol
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            spacing: 8
+            opacity: hasNotifPopup ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            visible: opacity > 0
 
+            Repeater {
+                model: hasNotifPopup ? Math.min(notifPopups.length, 3) : 0
+                delegate: Item {
+                    width: notifIslandCol.width
+                    property bool isOverflow: notifPopups.length > 3 && index === 2
+                    height: isOverflow ? 32 : notifItemCard.height
 
-        // Solid Bar Modules (fades in as expansion completes)
+                    NotificationCard {
+                        id: notifItemCard
+                        width: parent.width
+                        notificationData: !parent.isOverflow ? notifPopups[index] : null
+                        inPanel: false
+                        visible: !parent.isOverflow
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 32
+                        radius: 16
+                        color: Qt.rgba(Theme.colSurfaceContainerHigh.r, Theme.colSurfaceContainerHigh.g, Theme.colSurfaceContainerHigh.b, 0.6)
+                        border.color: Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
+                        visible: parent.isOverflow
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "+" + (notifPopups.length - 2) + " more notifications"
+                            color: Theme.colPrimary
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                    }
+                }
+            }
+        }
+
+        // Solid Bar Modules (fades out during notification dynamic island morph)
         RowLayout {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
@@ -308,7 +363,9 @@ PanelWindow {
             Behavior on anchors.rightMargin { NumberAnimation { duration: 850; easing.type: Easing.OutExpo } }
             height: bar.barHeight
             spacing: 0
-            opacity: 1
+            opacity: hasNotifPopup ? 0.0 : 1.0
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            visible: opacity > 0
 
             // ── LEFT: Workspaces ────────
             Item {
