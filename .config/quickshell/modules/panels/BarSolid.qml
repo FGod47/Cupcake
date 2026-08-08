@@ -396,25 +396,29 @@ PanelWindow {
 
                 Row {
                     id: workspacesRow
-                    spacing: 12
+                    spacing: 8
                     anchors.verticalCenter: parent.verticalCenter
 
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: 8
+                            width: isFocused ? 7 : (wsMouse.containsMouse ? 7 : (isOccupied ? 6 : 5))
                             height: 30
                             property int wsId: index + 1
-                            property bool isOccupied: (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
+                            property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
+                            property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
+
+                            Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: wsMouse.containsMouse ? 7 : (isOccupied ? 6 : 5)
-                                height: width
+                                width: parent.width
+                                height: parent.width
                                 radius: width / 2
-                                color: isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, wsMouse.containsMouse ? 0.45 : 0.25)
-                                Behavior on color  { ColorAnimation  { duration: 200 } }
-                                Behavior on width  { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                                color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, wsMouse.containsMouse ? 0.45 : 0.25))
+                                Behavior on color  { ColorAnimation  { duration: 150 } }
+                                Behavior on width  { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                             }
 
                             MouseArea {
@@ -431,26 +435,6 @@ PanelWindow {
                                 }
                             }
                         }
-                    }
-                }
-
-                // ── Premium Liquid-Stretch Sliding Active Circular Dot ──
-                Rectangle {
-                    id: activeDotIndicator
-                    height: 7
-                    radius: width / 2
-                    color: Theme.colPrimary
-                    anchors.verticalCenter: workspacesRow.verticalCenter
-
-                    property int activeIndex: Math.max(0, Math.min(4, ((Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id : bar.activeWsId) - 1))
-
-                    width: slideAnim.running ? 14 : 7
-                    Behavior on width { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-
-                    x: activeIndex * (8 + 12) + 0.5 - (slideAnim.running ? 3.5 : 0)
-                    Behavior on x {
-                        id: slideAnim
-                        NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.15 }
                     }
                 }
             }
