@@ -402,23 +402,24 @@ PanelWindow {
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: isFocused ? 22 : 12
+                            width: isFocused ? 18 : (isOccupied ? 6 : 5)
                             height: 30
                             property int wsId: index + 1
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
                             property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
                             
-                            Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
                             Rectangle {
                                 id: wsRect
                                 anchors.centerIn: parent
                                 width: parent.width
-                                height: isFocused ? 6 : (wsMouse.containsMouse ? 6 : 4)
+                                height: isFocused ? 6 : (wsMouse.containsMouse ? 6 : (isOccupied ? 6 : 5))
                                 radius: height / 2
-                                color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.5) : Qt.rgba(fg.r, fg.g, fg.b, 0.2))
-                                Behavior on color { ColorAnimation { duration: 150 } }
-                                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                                color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.6) : Qt.rgba(fg.r, fg.g, fg.b, 0.25))
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                             }
 
                             MouseArea {
