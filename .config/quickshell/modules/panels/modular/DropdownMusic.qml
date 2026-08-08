@@ -268,6 +268,7 @@ Rectangle {
     MouseArea {
         id: musicHeaderMa
         anchors.fill: parent
+        enabled: bar.keepMusicAlive
         hoverEnabled: true
         cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
