@@ -847,10 +847,9 @@ PanelWindow {
                 MouseArea {
                     id: powerMa
                     anchors.fill: parent
-                    anchors.leftMargin: -12
-                    anchors.rightMargin: -12
                     anchors.topMargin: -4
                     anchors.bottomMargin: -4
+                    anchors.rightMargin: -4
                     z: 10
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
