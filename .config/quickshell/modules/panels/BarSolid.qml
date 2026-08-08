@@ -286,11 +286,14 @@ PanelWindow {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: {
+            enabled: anyDropdownOpen
+            propagateComposedEvents: true
+            onClicked: (mouse) => {
                 if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
                 if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                 if (bar.dropdownOpen) bar.dropdownOpen = false;
                 if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                mouse.accepted = false;
             }
         }
 
