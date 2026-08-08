@@ -387,7 +387,7 @@ PanelWindow {
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             visible: opacity > 0
 
-            // ── LEFT: Workspaces ────────
+            // ── LEFT: Workspaces (Glowing Halo Ring Style) ────────
             Item {
                 id: workspacesContainer
                 Layout.preferredWidth: workspacesRow.implicitWidth
@@ -396,29 +396,44 @@ PanelWindow {
 
                 Row {
                     id: workspacesRow
-                    spacing: 8
+                    spacing: 10
                     anchors.verticalCenter: parent.verticalCenter
 
                     Repeater {
                         model: 5
                         delegate: Item {
-                            width: isFocused ? 7 : (wsMouse.containsMouse ? 7 : (isOccupied ? 6 : 5))
+                            width: 14
                             height: 30
                             property int wsId: index + 1
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
                             property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
 
-                            Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                            // Outer Glowing Halo Ring
+                            Rectangle {
+                                id: haloRing
+                                anchors.centerIn: parent
+                                width: isFocused ? 14 : (wsMouse.containsMouse ? 12 : 0)
+                                height: width
+                                radius: width / 2
+                                color: "transparent"
+                                border.color: Theme.colPrimary
+                                border.width: 1.5
+                                opacity: isFocused ? 1.0 : (wsMouse.containsMouse ? 0.5 : 0.0)
 
+                                Behavior on width   { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            }
+
+                            // Inner Core Dot
                             Rectangle {
                                 anchors.centerIn: parent
-                                width: parent.width
-                                height: parent.width
+                                width: isFocused ? 6 : (isOccupied ? 5 : 4)
+                                height: width
                                 radius: width / 2
                                 color: isFocused ? Theme.colPrimary : (isOccupied ? Qt.rgba(fg.r, fg.g, fg.b, 0.7) : Qt.rgba(fg.r, fg.g, fg.b, wsMouse.containsMouse ? 0.45 : 0.25))
-                                Behavior on color  { ColorAnimation  { duration: 150 } }
-                                Behavior on width  { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                                Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+
+                                Behavior on color  { ColorAnimation  { duration: 180 } }
+                                Behavior on width  { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
                             }
 
                             MouseArea {
