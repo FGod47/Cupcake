@@ -313,8 +313,8 @@ PanelWindow {
             // ── LEFT: Workspaces ────────
             Item {
                 id: workspacesContainer
-                width: workspacesRow.width
-                height: 30
+                Layout.preferredWidth: workspacesRow.width
+                Layout.preferredHeight: 30
                 Layout.alignment: Qt.AlignVCenter
 
                 Row {
