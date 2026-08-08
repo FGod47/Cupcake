@@ -56,7 +56,7 @@ PanelWindow {
     property bool musicDropdownOpen: false
     property var barActivePlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool isMusicPlaying: barActivePlayer !== null && (barActivePlayer.playbackState === 1 || barActivePlayer.isPlaying) && (barActivePlayer.trackTitle !== "")
-    property bool keepMusicAlive: isMusicPlaying || (musicSplitPill && musicSplitPill.isHovered)
+    property bool keepMusicAlive: !hasNotifPopup && (isMusicPlaying || (musicSplitPill && musicSplitPill.isHovered))
     onKeepMusicAliveChanged: {
         if (!keepMusicAlive) musicDropdownOpen = false;
     }
@@ -1007,7 +1007,8 @@ PanelWindow {
             sourceSize.height: 24
             width: 67
             fillMode: Image.PreserveAspectFit
-            opacity: 1.0
+            opacity: hasNotifPopup ? 0.0 : 1.0
+            Behavior on opacity { NumberAnimation { duration: 250 } }
             layer.enabled: true
             layer.effect: ColorOverlay {
                 color: bar.fg
