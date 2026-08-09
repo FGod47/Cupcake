@@ -349,9 +349,7 @@ Rectangle {
 
 
 
-    opacity: bar.netDropdownOpen ? 1.0 : 0.0
-    visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+
 
     MouseArea {
         id: netSplitPillMa
