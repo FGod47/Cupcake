@@ -9,7 +9,7 @@ import "../../../theme"
 
 Rectangle {
     id: powerSplitPill
-    y: bar.midY + bar.barHeight
+    y: bar.midY + bar.barHeight - 6
     property bool menuExpanded: globalState.powerDropdownOpen
     height: menuExpanded ? (powerMenu.implicitHeight + 20) : 0
     Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -22,7 +22,7 @@ Rectangle {
 
     Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
     Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-    radius: 16
+    radius: 20
     clip: true
 
     color: bar.pillColor
@@ -30,6 +30,16 @@ Rectangle {
     opacity: globalState.powerDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+
+    // Flat top cover rectangle to seamlessly merge into top bar without top corner gaps
+    Rectangle {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 16
+        color: parent.color
+        z: 0
+    }
 
     FontLoader {
         id: powerIconFont

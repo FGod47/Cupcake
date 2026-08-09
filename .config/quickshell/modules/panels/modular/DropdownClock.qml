@@ -14,13 +14,13 @@ import "../../../theme"
 
     Rectangle {
         id: clockSplitPill
-        y: bar.midY + bar.barHeight
+        y: bar.midY + bar.barHeight - 6
         property bool menuExpanded: globalState.solidBoardOpen
-        height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 0
+        height: menuExpanded ? (clockContentCol.implicitHeight + 28) : 0
         Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
         readonly property real openGap: 16
-        readonly property real expandedW: 280
+        readonly property real expandedW: 320
         property real contentW: expandedW
 
         x: bar.barX + bar.barW - contentW - 40
@@ -29,7 +29,7 @@ import "../../../theme"
         Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-        radius: 16
+        radius: 20
         clip: true
 
         color: bar.pillColor
@@ -37,6 +37,16 @@ import "../../../theme"
         opacity: globalState.solidBoardOpen ? 1.0 : 0.0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+
+        // Flat top cover rectangle to seamlessly merge into top bar without top corner gaps
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 16
+            color: parent.color
+            z: 0
+        }
 
         MouseArea {
             id: clockSplitPillMa
