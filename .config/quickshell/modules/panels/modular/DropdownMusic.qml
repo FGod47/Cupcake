@@ -12,7 +12,7 @@ import "../../../theme"
 // ── MUSIC SPLIT PILL & MORPHING PLAYER ──
 Rectangle {
     id: musicSplitPill
-    y: bar.midY + bar.barHeight - 6
+    y: bar.midY + bar.barHeight + 8
     property bool menuExpanded: bar.musicDropdownOpen
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool hasPlayer: player !== null
@@ -36,20 +36,10 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
-    radius: 20
+    radius: 16
     Behavior on radius { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     clip: true
     color: bar.pillColor
-
-    // Flat top cover rectangle to seamlessly merge into top bar without top corner gaps
-    Rectangle {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 16
-        color: parent.color
-        z: 0
-    }
 
     HoverHandler { id: pillHover; enabled: true }
     property bool isHovered: (isPlaying || menuExpanded) && (pillHover.hovered || musicHeaderMa.containsMouse)

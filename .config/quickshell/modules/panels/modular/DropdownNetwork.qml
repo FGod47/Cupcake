@@ -13,7 +13,7 @@ import "../../../theme"
 
 Rectangle {
     id: netSplitPill
-    y: bar.midY + bar.barHeight - 6
+    y: bar.midY + bar.barHeight + 8
     property bool menuExpanded: bar.netDropdownOpen
     property int activeTab: 1
 
@@ -95,7 +95,7 @@ Rectangle {
     Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
     Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-    radius: 20
+    radius: 16
     clip: true
 
     color: bar.pillColor
@@ -103,16 +103,6 @@ Rectangle {
     opacity: bar.netDropdownOpen ? 1.0 : 0.0
     visible: opacity > 0
     Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
-
-    // Flat top cover rectangle to seamlessly merge into top bar without top corner gaps
-    Rectangle {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 16
-        color: parent.color
-        z: 0
-    }
 
     // Instant Event Monitor
     Process {
