@@ -1,0 +1,11 @@
+[Unit]
+Description=USB COM Port Audio Notifier
+After=graphical-session.target
+
+[Service]
+ExecStart=/home/code/.local/bin/usb-port-notifier.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
