@@ -14,7 +14,7 @@ import "../../../theme"
 
     Rectangle {
         id: clockSplitPill
-        y: bar.midY + bar.barHeight + 8
+        y: bar.midY + bar.barHeight
         property bool menuExpanded: globalState.solidBoardOpen
         height: menuExpanded ? (clockContentCol.implicitHeight + 24) : 0
         Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }

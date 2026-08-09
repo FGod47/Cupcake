@@ -13,7 +13,7 @@ import "../../../theme"
 
 Rectangle {
     id: netSplitPill
-    y: bar.midY + bar.barHeight + 8
+    y: bar.midY + bar.barHeight
     property bool menuExpanded: bar.netDropdownOpen
     property int activeTab: 1
 

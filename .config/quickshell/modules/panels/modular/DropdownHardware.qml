@@ -13,7 +13,7 @@ import "../../../theme"
 
     Rectangle {
         id: volBrightSplitPill
-        y: bar.midY + bar.barHeight + 8
+        y: bar.midY + bar.barHeight
         property bool menuExpanded: bar.dropdownOpen
         property bool showSinkList: false
         height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 0

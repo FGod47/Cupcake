@@ -9,7 +9,7 @@ import "../../../theme"
 
 Rectangle {
     id: powerSplitPill
-    y: bar.midY + bar.barHeight + 8
+    y: bar.midY + bar.barHeight
     property bool menuExpanded: globalState.powerDropdownOpen
     height: menuExpanded ? (powerMenu.implicitHeight + 20) : 0
     Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -17,7 +17,7 @@ Rectangle {
     readonly property real openGap: 12
     property real contentW: 145
 
-    x: bar.barX + bar.barW - contentW
+    x: bar.barX + bar.barW - contentW - 4
     width: contentW
 
     Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }

@@ -12,7 +12,7 @@ import "../../../theme"
 // ── MUSIC SPLIT PILL & MORPHING PLAYER ──
 Rectangle {
     id: musicSplitPill
-    y: bar.midY + bar.barHeight + 8
+    y: bar.midY + bar.barHeight
     property bool menuExpanded: bar.musicDropdownOpen
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     property bool hasPlayer: player !== null
