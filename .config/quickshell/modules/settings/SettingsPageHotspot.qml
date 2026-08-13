@@ -277,7 +277,7 @@ Item {
 
     Process {
         id: hotspotClientsProcess
-        command: ["python3", "/home/code/.local/bin/quickshell-hotspot-clients.py"]
+        command: ["python3", Quickshell.env("HOME") + "/.local/bin/quickshell-hotspot-clients.py"]
         running: root.hotspotEnabled
         stdout: StdioCollector {
             onStreamFinished: {

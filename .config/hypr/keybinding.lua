@@ -5,6 +5,7 @@ hl.config({
     }
 })
 
+local HOME = os.getenv("HOME") or "/home/zero"
 local apps = require("apps")
 local mainMod = "SUPER"
 local sMod = "SUPER + SHIFT"
@@ -17,7 +18,7 @@ hl.bind(aMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + W", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 hl.bind(mainMod .. " + G", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("obsidian " .. (os.getenv("HOME") or "/home/code") .. "/Obsidian/\\ \\Vault\\ Notes.canvas"))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("obsidian " .. HOME .. "/Obsidian/\\ \\Vault\\ Notes.canvas"))
 hl.bind(sMod .. " + O", hl.dsp.exec_cmd("obsidian"))
 hl.bind(sMod .. " + T", hl.dsp.exec_cmd(apps.terminal, { float = true, size = "1000 500" }))
 
@@ -28,24 +29,24 @@ hl.bind(mainMod .. " + P", hl.dsp.global("quickshell:powermenu_toggle"))
 -- AI Panel Toggle
 hl.bind(mainMod .. " + a", hl.dsp.global("quickshell:aipanel_toggle"))
 -- QuickShell App Launcher
-hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_app_launcher.sh"))
+hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_app_launcher.sh"))
 
 -- Toggle Cupcake Dark/Light Theme
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_theme.sh"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_theme.sh"))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("antigravity-ide"))
 
 -- Screenshots
 hl.bind(sMod .. " + Print", hl.dsp.exec_cmd("bash -c 'mkdir -p $HOME/Pictures/Screenshot && file=\"$HOME/Pictures/Screenshot/$(date +%m-%d-%H-%M-%S).png\" && grim -g \"$(slurp)\" \"$file\" && notify-send \"Screenshot Saved\" \"$file\" -i \"$file\"'"))
-hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("~/.config/cupcake/scripts/screenshot-edit.sh"))
+hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/screenshot-edit.sh"))
 hl.bind(aMod .. " + SHIFT + S", hl.dsp.exec_cmd("bash -c 'mkdir -p $HOME/Pictures/Screenshot && file=\"$HOME/Pictures/Screenshot/$(date +%m-%d-%H-%M-%S).png\" && grim \"$file\" && notify-send \"Screenshot Saved\" \"$file\" -i \"$file\"'"))
 
 -- Screen recording
-hl.bind(sMod .. " + J", hl.dsp.exec_cmd("~/.config/cupcake/scripts/record-screen.sh"))
+hl.bind(sMod .. " + J", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/record-screen.sh"))
 hl.bind(sMod .. " + K", hl.dsp.exec_cmd("pkill wf-recorder"))
 
 -- Toggle bar
-hl.bind("ALT + SHIFT + W", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_bar.sh"))
-hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("~/.config/cupcake/scripts/toggle_bar.sh"))
+hl.bind("ALT + SHIFT + W", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_bar.sh"))
+hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_bar.sh"))
 
 -- Task Manager
 hl.bind("CTRL + SHIFT + tab", hl.dsp.exec_cmd(apps.terminal .. " " .. apps.taskManager))
@@ -54,12 +55,12 @@ hl.bind("CTRL + SHIFT + tab", hl.dsp.exec_cmd(apps.terminal .. " " .. apps.taskM
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(apps.colorpicker .. " -a"))
 
 -- Wallpaper switcher
-hl.bind(sMod .. " + W", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/WallpaperSwitcher.qml"))
+hl.bind(sMod .. " + W", hl.dsp.exec_cmd("quickshell -p " .. HOME .. "/.config/quickshell/WallpaperSwitcher.qml"))
 
 -- Volume Control
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.local/bin/volume.sh up"), { repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.local/bin/volume.sh down"), { repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("~/.local/bin/volume.sh mute"), { repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh up"), { repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh down"), { repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(HOME .. "/.local/bin/volume.sh mute"), { repeating = true })
 
 -- Player Control
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
@@ -67,11 +68,11 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 
 -- Brightness Control
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.local/bin/brightness.sh down"), { repeating = true })
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.local/bin/brightness.sh up"),   { repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(HOME .. "/.local/bin/brightness.sh down"), { repeating = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(HOME .. "/.local/bin/brightness.sh up"),   { repeating = true })
 
 -- Lockscreen
-hl.bind(sMod .. " + L", hl.dsp.exec_cmd("~/.local/share/quickshell-lockscreen/lock.sh"))
+hl.bind(sMod .. " + L", hl.dsp.exec_cmd(HOME .. "/.local/share/quickshell-lockscreen/lock.sh"))
 
 -- Cycling and focus management
 hl.bind("ALT + tab",             hl.dsp.window.cycle_next())
@@ -104,4 +105,4 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Settings App
-hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("quickshell -p ~/.config/quickshell/Settings.qml"))
+hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("quickshell -p " .. HOME .. "/.config/quickshell/Settings.qml"))

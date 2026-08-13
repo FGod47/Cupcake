@@ -1,3 +1,4 @@
+local HOME = os.getenv("HOME") or "/home/zero"
 local palette = require("palette")
 
 hl.config({
@@ -20,7 +21,7 @@ hl.config({
         },
         dim_special = 0.3,
         rounding = 10,
-        screen_shader = "~/.config/hypr/shaders/rounded_corners.glsl",
+        screen_shader = HOME .. "/.config/hypr/shaders/rounded_corners.glsl",
 
         blur = {
             enabled = true,

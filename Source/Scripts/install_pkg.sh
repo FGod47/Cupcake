@@ -116,7 +116,7 @@ handle_aur_package() {
 
 # ──────────────── Pacman Package List ────────────────
 packages=(
-    git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg
+    git nwg-look curl nvim zsh firefox kitty fastfetch btop vlc vlc-plugin-ffmpeg ffmpeg
     wl-clipboard xdg-desktop-portal-hyprland xdg-desktop-portal
     slurp grim android-tools bc cava zenity
     wget pamixer pavucontrol telegram-desktop bat
@@ -125,7 +125,8 @@ packages=(
     python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe brightnessctl
     "$KERNEL_HEADERS_PKG" ${NVIDIA_PACKAGES[@]}
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
-    hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian
+    hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian sddm
+    qt6-5compat cliphist network-manager-applet hypridle matugen inter-font plymouth
     atuin fzf awww starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting bluez bluez-utils
@@ -135,7 +136,7 @@ packages=(
 aur_packages=(
     quickshell
     ttf-firacode-nerd ttf-jetbrains-mono-nerd 
-    matugen-bin bibata-cursor-theme-bin papirus-folders
+    bibata-cursor-theme-bin papirus-folders
     cloudflare-warp-bin google-chrome
 )
 

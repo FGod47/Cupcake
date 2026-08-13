@@ -59,6 +59,7 @@ mkdir -p "$HOME/.local/state/quickshell/user/generated" "$HOME/.cache"
 print_banner CONFIG_INSTALLING_BANNER
 echo -e "${YELLOW}[INFO]${RESET} Installing configs from: ${SOURCE_DIR}"
 
+shopt -s dotglob
 for dir in "${CONFIGS[@]}"; do
   SRC_DIR="$SOURCE_DIR/$dir"
   DEST_DIR="$HOME/.config/$dir"
@@ -66,13 +67,12 @@ for dir in "${CONFIGS[@]}"; do
   if [ -d "$SRC_DIR" ]; then
     echo -e "${GREEN}[INSTALL]${RESET} $dir → ~/.config"
     mkdir -p "$DEST_DIR"
-    cp -r "$SRC_DIR/"* "$DEST_DIR/"
+    cp -a "$SRC_DIR/." "$DEST_DIR/"
   else
     echo -e "${YELLOW}[SKIP]${RESET} $dir not found in source"
   fi
-
-  # ──────────────── (Deprecated components removed) ────────────────
 done
+shopt -u dotglob
 
 # ──────────────── Install starship.toml ────────────────
 STARSHIP_SRC="$SOURCE_DIR/starship/starship.toml"
@@ -129,6 +129,8 @@ if command -v sddm &> /dev/null; then
   sudo cp -r "$HOME/.local/share/qylock-themes/cupcake-sddm/"* /usr/share/sddm/themes/cupcake-sddm/
   sudo mkdir -p /etc/sddm.conf.d
   echo -e "[Theme]\nCurrent=cupcake-sddm\nCursorTheme=Bibata-Modern-Ice" | sudo tee /etc/sddm.conf.d/theme.conf > /dev/null
+  echo -e "${GREEN}[ENABLE]${RESET} Enabling SDDM display manager service..."
+  sudo systemctl enable sddm.service > /dev/null 2>&1 || true
 fi
 
 # ──────────────── Install Cursor Configuration ────────────────
@@ -174,12 +176,17 @@ gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11' 2>/dev/nul
 # ──────────────── Tabler Icons Font ────────────────
 echo -e "${YELLOW}[INFO]${RESET} Installing Tabler Icons font..."
 mkdir -p "$HOME/.local/share/fonts"
-if [ ! -f "$HOME/.local/share/fonts/tabler-icons.ttf" ]; then
+LOCAL_FONT_SRC="$SCRIPT_DIR/../../.local/share/fonts/tabler-icons.ttf"
+if [ -f "$LOCAL_FONT_SRC" ]; then
+  cp "$LOCAL_FONT_SRC" "$HOME/.local/share/fonts/"
+  fc-cache -f "$HOME/.local/share/fonts" 2>/dev/null || true
+  echo -e "${GREEN}[OK]${RESET} Tabler Icons font installed from local bundle"
+elif [ ! -f "$HOME/.local/share/fonts/tabler-icons.ttf" ]; then
   curl -sL "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/fonts/tabler-icons.ttf" \
     -o "$HOME/.local/share/fonts/tabler-icons.ttf" \
-    && echo -e "${GREEN}[OK]${RESET} Tabler Icons font installed" \
+    && echo -e "${GREEN}[OK]${RESET} Tabler Icons font downloaded" \
     || echo -e "${RED}[WARN]${RESET} Failed to download Tabler Icons font"
-  fc-cache -f 2>/dev/null || true
+  fc-cache -f "$HOME/.local/share/fonts" 2>/dev/null || true
 else
   echo -e "${GREEN}[SKIP]${RESET} Tabler Icons font already installed"
 fi
@@ -293,6 +300,23 @@ fi
 # ──────────────── Setup Hotspot Firewall Rules ────────────────
 if [ -f "$SCRIPT_DIR/setup_hotspot_firewall.sh" ]; then
   bash "$SCRIPT_DIR/setup_hotspot_firewall.sh" || true
+fi
+
+# ──────────────── Initialize Wallpaper & Theme ────────────────
+echo -e "${YELLOW}[INFO]${RESET} Setting up initial wallpaper and Material 3 theme..."
+mkdir -p "$HOME/.cache"
+DEFAULT_WALL="$HOME/.config/cupcake/walls/cupcake-wallpaper-bokeh-violet.png"
+if [ -f "$DEFAULT_WALL" ]; then
+  echo "$DEFAULT_WALL" > "$HOME/.cache/current_wallpaper"
+  if command -v matugen &>/dev/null; then
+    matugen image "$DEFAULT_WALL" -m dark -t scheme-tonal-spot --source-color-index 0 2>/dev/null || true
+    echo -e "${GREEN}[DONE]${RESET} Material 3 theme palette generated"
+  fi
+fi
+
+if [ -x "$HOME/.local/bin/cupcake-generate-thumbnails" ]; then
+  "$HOME/.local/bin/cupcake-generate-thumbnails" 2>/dev/null || true
+  echo -e "${GREEN}[DONE]${RESET} Wallpaper thumbnails generated"
 fi
 
 echo -e "\n${GREEN}[SUCCESS]${RESET} Cupcake configuration installed successfully!\n"
