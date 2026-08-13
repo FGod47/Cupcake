@@ -126,7 +126,7 @@ packages=(
     "$KERNEL_HEADERS_PKG" ${NVIDIA_PACKAGES[@]}
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
     hyprland hyprpicker nautilus playerctl wf-recorder obsidian sddm
-    qt6-5compat cliphist network-manager-applet hypridle matugen inter-font plymouth
+    qt6-5compat qt6-multimedia qt6-multimedia-ffmpeg cliphist network-manager-applet hypridle matugen inter-font plymouth
     atuin fzf awww mpv mpvpaper starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting bluez bluez-utils

@@ -117,9 +117,21 @@ PathView {
             radius: root.cornerR
             color:  root.colSub
 
+            readonly property bool isGif: del.fileName.toLowerCase().endsWith(".gif")
+
+            AnimatedImage {
+                anchors.fill:  parent
+                visible:       imgClip.isGif
+                source:        imgClip.isGif ? ("file://" + root.wallDir + "/" + del.fileName) : ""
+                playing:       del.isCurrent
+                fillMode:      Image.PreserveAspectCrop
+                asynchronous:  true
+            }
+
             Image {
                 anchors.fill:  parent
-                source:        "file://" + root.homeDir + "/.cache/cupcake/wall_thumbs/" + del.fileName
+                visible:       !imgClip.isGif
+                source:        "file://" + root.homeDir + "/.cache/cupcake/wall_thumbs/" + del.fileName + ".png"
                 fillMode:      Image.PreserveAspectCrop
                 asynchronous:  true
                 smooth:        !pv.moving
@@ -127,8 +139,12 @@ PathView {
                 sourceSize:    Qt.size(root.wallW * 2, root.wallH * 2)
                 opacity:       status === Image.Ready ? 1.0 : 0.0
                 onStatusChanged: {
-                    if (status === Image.Error && source.toString() !== del.fileUrl.toString()) {
-                        source = del.fileUrl
+                    if (status === Image.Error) {
+                        if (source.toString() === ("file://" + root.homeDir + "/.cache/cupcake/wall_thumbs/" + del.fileName + ".png")) {
+                            source = "file://" + root.homeDir + "/.cache/cupcake/wall_thumbs/" + del.fileName;
+                        } else if (source.toString() !== del.fileUrl.toString()) {
+                            source = del.fileUrl;
+                        }
                     }
                 }
                 Behavior on opacity {

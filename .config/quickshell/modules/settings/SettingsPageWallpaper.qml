@@ -104,26 +104,49 @@ Item {
                             radius: 10
                             visible: false
                         }
+
+                        // Live Animated GIF Player
+                        AnimatedImage {
+                            id: previewAnim
+                            anchors.fill: parent
+                            visible: root.currentWall !== "" && root.currentWall.toLowerCase().endsWith(".gif")
+                            source: (root.currentWall !== "" && root.currentWall.toLowerCase().endsWith(".gif")) ? ("file://" + root.currentWall) : ""
+                            playing: true
+                            fillMode: Image.PreserveAspectCrop
+                            asynchronous: true
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: previewMask
+                            }
+                        }
+
+                        // Static / Video Thumbnail Preview
                         Image {
                             id: previewImg
                             anchors.fill: parent
+                            visible: root.currentWall !== "" && !root.currentWall.toLowerCase().endsWith(".gif")
                             source: {
                                 if (root.currentWall === "") return "";
                                 var parts = root.currentWall.split("/");
                                 var filename = parts[parts.length - 1];
-                                return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename;
+                                return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename + ".png";
                             }
                             sourceSize: Qt.size(360, 240)
                             fillMode: Image.PreserveAspectCrop
-                            visible: root.currentWall !== ""
                             asynchronous: true
                             layer.enabled: true
                             layer.effect: OpacityMask {
                                 maskSource: previewMask
                             }
                             onStatusChanged: {
-                                if (status === Image.Error && root.currentWall !== "" && source.toString() !== ("file://" + root.currentWall)) {
-                                    source = "file://" + root.currentWall
+                                if (status === Image.Error && root.currentWall !== "") {
+                                    var parts = root.currentWall.split("/");
+                                    var filename = parts[parts.length - 1];
+                                    if (source.toString() === ("file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename + ".png")) {
+                                        source = "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename;
+                                    } else if (source.toString() !== ("file://" + root.currentWall)) {
+                                        source = "file://" + root.currentWall;
+                                    }
                                 }
                             }
                         }
@@ -240,6 +263,7 @@ Item {
                             
                             sourceComponent: Component {
                                 Rectangle {
+                                    id: tileBox
                                     anchors.fill: parent
                                     radius: 10; clip: true
                                     color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
@@ -247,14 +271,10 @@ Item {
                                     border.width: 2
                                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                                    readonly property bool isAnimated: {
-                                        let ext = fileName.split(".").pop().toLowerCase();
-                                        return ["gif", "mp4", "webm", "mkv", "mov"].indexOf(ext) !== -1;
-                                    }
-                                    readonly property string mediaType: {
-                                        let ext = fileName.split(".").pop().toLowerCase();
-                                        return (ext === "gif" ? "GIF" : (["mp4", "webm", "mkv", "mov"].indexOf(ext) !== -1 ? "VIDEO" : "IMG"));
-                                    }
+                                    readonly property bool isGif: fileName.toLowerCase().endsWith(".gif")
+                                    readonly property bool isVideo: ["mp4", "webm", "mkv", "mov"].indexOf(fileName.split(".").pop().toLowerCase()) !== -1
+                                    readonly property bool isAnimated: isGif || isVideo
+                                    readonly property string mediaType: isGif ? "GIF" : (isVideo ? "VIDEO" : "IMG")
 
                                     Rectangle {
                                         id: tileMask
@@ -279,18 +299,35 @@ Item {
                                             maskSource: tileMask
                                         }
 
+                                        // Live Animated GIF player in tile
+                                        AnimatedImage {
+                                            id: animImg
+                                            anchors.fill: parent
+                                            visible: tileBox.isGif
+                                            source: tileBox.isGif ? ("file://" + filePath) : ""
+                                            playing: tileBox.hovered || root.currentWall === filePath
+                                            fillMode: Image.PreserveAspectCrop
+                                            asynchronous: true
+                                        }
+
+                                        // Static Image / Video Thumbnail
                                         Image {
                                             id: img
                                             anchors.fill: parent
-                                            source: "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName
+                                            visible: !tileBox.isGif
+                                            source: "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png"
                                             sourceSize: Qt.size(250, 150)
                                             fillMode: Image.PreserveAspectCrop
                                             asynchronous: true
                                             opacity: status === Image.Ready ? 1 : 0
                                             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                             onStatusChanged: {
-                                                if (status === Image.Error && source.toString() !== fileUrl.toString()) {
-                                                    source = fileUrl
+                                                if (status === Image.Error) {
+                                                    if (source.toString() === ("file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png")) {
+                                                        source = "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName;
+                                                    } else if (source.toString() !== fileUrl.toString()) {
+                                                        source = fileUrl;
+                                                    }
                                                 }
                                             }
                                         }
@@ -352,7 +389,7 @@ Item {
                                             anchors.fill: parent
                                             cursorShape: Qt.PointingHandCursor
                                             onClicked: {
-                                                Quickshell.execDetached(["bash", "-c", "rm '" + filePath + "' && rm -f '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + "'"])
+                                                Quickshell.execDetached(["bash", "-c", "rm '" + filePath + "' && rm -f '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + "' '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png'"])
                                             }
                                         }
                                     }
