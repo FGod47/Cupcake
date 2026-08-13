@@ -17,9 +17,6 @@ Item {
     property color cDivider: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cIconBg:  Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
 
-    // Active sub-tab
-    property string activeTab: "Layout"
-
     // Layout & Style Properties
     property int gapsIn:       3
     property int gapsOut:      8
@@ -254,441 +251,418 @@ Item {
             width: parent.width
             spacing: 20
 
-            // --- Top Sub-Navigation Tabs ---
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.topMargin: 2
-                Layout.bottomMargin: 4
-                spacing: 12
-
-                SegmentedControl {
-                    options: ["Layout", "Animations"]
-                    current: root.activeTab
-                    onSelected: (v) => { root.activeTab = v; }
-                }
-
-                Item { Layout.fillWidth: true }
-            }
-
             // =========================================================
-            // TAB 1: LAYOUT & STYLE
+            // 1. WINDOW GAPS
             // =========================================================
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 20
-                visible: root.activeTab === "Layout"
+            NCard {
+                sectionTitle: "Window Gaps"
 
-                NCard {
-                    sectionTitle: "Window Gaps"
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueae9" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Inner gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Space between tiled windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 0; to: 40; stepSize: 1
-                                value: root.gapsIn
-                                onValueChanged: root.gapsIn = Math.round(value)
-                                onPressedChanged: { if (!pressed) root.applyGaps() }
-                            }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueae9" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Inner gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Space between tiled windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb19" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Outer gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Space between windows and screen edges"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 0; to: 60; stepSize: 1
-                                value: root.gapsOut
-                                onValueChanged: root.gapsOut = Math.round(value)
-                                onPressedChanged: { if (!pressed) root.applyGaps() }
-                            }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0; to: 40; stepSize: 1
+                            value: root.gapsIn
+                            onValueChanged: root.gapsIn = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyGaps() }
                         }
                     }
                 }
 
-                NCard {
-                    sectionTitle: "Window Style"
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb45" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Window borders"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Show borders around windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        NToggle {
-                            id: borderSwitch
-                            checked: root.bordersEnabled
-                            onToggled: {
-                                root.bordersEnabled = checked
-                                root.applyBorder()
-                            }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb19" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Outer gaps"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Space between windows and screen edges"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb7a" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Corner rounding"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Radius applied to all window corners"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 0; to: 30; stepSize: 1
-                                value: root.rounding
-                                onValueChanged: root.rounding = Math.round(value)
-                                onPressedChanged: { if (!pressed) root.applyRounding() }
-                            }
-                        }
-                    }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb45" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Border size"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Thickness of window borders"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 0; to: 10; stepSize: 1
-                                value: root.borderSize
-                                onValueChanged: root.borderSize = Math.round(value)
-                                onPressedChanged: { if (!pressed) root.applyBorder() }
-                            }
-                        }
-                    }
-                }
-
-                NCard {
-                    sectionTitle: "Overview"
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\uea41" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Workspace tabs"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Amount of workspaces to show in overview"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 1; to: 20; stepSize: 1
-                                value: root.overviewTabs
-                                onValueChanged: { root.overviewTabs = Math.round(value); }
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\uea61" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Tabs scale"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Adjust the size of the overview tabs"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 0.05; to: 0.30; stepSize: 0.01
-                                value: root.overviewScale
-                                onValueChanged: { root.overviewScale = value; }
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);
-                                    }
-                                }
-                            }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0; to: 60; stepSize: 1
+                            value: root.gapsOut
+                            onValueChanged: root.gapsOut = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyGaps() }
                         }
                     }
                 }
             }
 
             // =========================================================
-            // TAB 2: HYPRLAND WINDOW ANIMATIONS
+            // 2. WINDOW STYLE
             // =========================================================
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 20
-                visible: root.activeTab === "Animations"
+            NCard {
+                sectionTitle: "Window Style"
 
-                // Master Toggle
-                NCard {
-                    sectionTitle: "Hyprland Animations"
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\uea12" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Enable Animations"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Master switch for all Hyprland window motion and transitions"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb45" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Window borders"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show borders around windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
-                        Item { Layout.fillWidth: true }
-                        NToggle {
-                            checked: root.animationsEnabled
-                            onToggled: (v) => {
-                                root.animationsEnabled = v;
-                                root.applyAnimations();
-                            }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        id: borderSwitch
+                        checked: root.bordersEnabled
+                        onToggled: {
+                            root.bordersEnabled = checked
+                            root.applyBorder()
                         }
                     }
                 }
 
-                // Animation Presets
-                NCard {
-                    sectionTitle: "Animation Presets"
-                    visible: root.animationsEnabled
-
-                    Item { Layout.preferredHeight: 6 }
-
-                    Item {
-                        Layout.fillWidth: true
-                        implicitHeight: flowPresets.implicitHeight
-
-                        Flow {
-                            id: flowPresets
-                            anchors.fill: parent
-                            spacing: 8
-
-                            Repeater {
-                                model: root.availablePresets
-                                delegate: Rectangle {
-                                    id: presetPill
-                                    required property string modelData
-                                    property bool active: root.animationPreset === modelData
-                                    property bool hovered: presetMa.containsMouse
-
-                                    radius: 8
-                                    height: 28
-                                    width: presetText.implicitWidth + 26
-                                    color: active ? root.cAccent : (hovered ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : root.cBgCard)
-                                    border.color: active ? root.cAccent : root.cBorder
-                                    border.width: 1
-
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-
-                                    Text {
-                                        id: presetText
-                                        anchors.centerIn: parent
-                                        text: presetPill.modelData
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 12
-                                        font.weight: Font.Medium
-                                        color: presetPill.active ? Theme.colOnPrimary : root.cTextDim
-                                    }
-
-                                    MouseArea {
-                                        id: presetMa
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: root.setPreset(presetPill.modelData)
-                                    }
-                                }
-                            }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb7a" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Corner rounding"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Radius applied to all window corners"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
-                    Item { Layout.preferredHeight: 8 }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0; to: 30; stepSize: 1
+                            value: root.rounding
+                            onValueChanged: root.rounding = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyRounding() }
+                        }
+                    }
                 }
 
-                // Windows & Workspaces Motion
-                NCard {
-                    sectionTitle: "Window Motion & Physics"
-                    visible: root.animationsEnabled
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueaf4" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Window Animation Style"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Visual transition style when windows open or change"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        SegmentedControl {
-                            options: ["Slide", "Popin", "SlideVert"]
-                            current: root.animStyle
-                            onSelected: (v) => {
-                                root.animStyle = v;
-                                root.animationPreset = "Custom";
-                                root.applyAnimations();
-                            }
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb45" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Border size"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Thickness of window borders"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueaf2" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Window Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Duration and responsiveness for opening & closing windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0; to: 10; stepSize: 1
+                            value: root.borderSize
+                            onValueChanged: root.borderSize = Math.round(value)
+                            onPressedChanged: { if (!pressed) root.applyBorder() }
                         }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 1.0; to: 10.0; stepSize: 0.5
-                                value: root.animWindowsSpeed
-                                onValueChanged: root.animWindowsSpeed = value
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        root.animationPreset = "Custom";
-                                        root.applyAnimations();
-                                    }
+                    }
+                }
+            }
+
+            // =========================================================
+            // 3. HYPRLAND ANIMATIONS & MOTION
+            // =========================================================
+            NCard {
+                sectionTitle: "Hyprland Animations"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea12" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Enable Animations"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Master switch for all Hyprland window motion and transitions"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.animationsEnabled
+                        onToggled: (v) => {
+                            root.animationsEnabled = v;
+                            root.applyAnimations();
+                        }
+                    }
+                }
+            }
+
+            // Presets
+            NCard {
+                sectionTitle: "Animation Presets"
+                visible: root.animationsEnabled
+
+                Item { Layout.preferredHeight: 6 }
+
+                Item {
+                    Layout.fillWidth: true
+                    implicitHeight: flowPresets.implicitHeight
+
+                    Flow {
+                        id: flowPresets
+                        anchors.fill: parent
+                        spacing: 8
+
+                        Repeater {
+                            model: root.availablePresets
+                            delegate: Rectangle {
+                                id: presetPill
+                                required property string modelData
+                                property bool active: root.animationPreset === modelData
+                                property bool hovered: presetMa.containsMouse
+
+                                radius: 8
+                                height: 28
+                                width: presetText.implicitWidth + 26
+                                color: active ? root.cAccent : (hovered ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : root.cBgCard)
+                                border.color: active ? root.cAccent : root.cBorder
+                                border.width: 1
+
+                                Behavior on color { ColorAnimation { duration: 150 } }
+
+                                Text {
+                                    id: presetText
+                                    anchors.centerIn: parent
+                                    text: presetPill.modelData
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 12
+                                    font.weight: Font.Medium
+                                    color: presetPill.active ? Theme.colOnPrimary : root.cTextDim
                                 }
-                            }
-                        }
-                    }
 
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\uea41" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Workspace Slide Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Transition duration when switching between virtual desktops"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 1.0; to: 10.0; stepSize: 0.5
-                                value: root.animWorkspacesSpeed
-                                onValueChanged: root.animWorkspacesSpeed = value
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        root.animationPreset = "Custom";
-                                        root.applyAnimations();
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb13" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Fade Transition Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Cross-fade opacity speed for surfaces and overlays"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                            }
-                        }
-                        Item { Layout.fillWidth: true }
-                        RowLayout {
-                            spacing: 10
-                            StyledSlider {
-                                Layout.preferredWidth: 220
-                                from: 1.0; to: 8.0; stepSize: 0.5
-                                value: root.animFadeSpeed
-                                onValueChanged: root.animFadeSpeed = value
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        root.animationPreset = "Custom";
-                                        root.applyAnimations();
-                                    }
+                                MouseArea {
+                                    id: presetMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.setPreset(presetPill.modelData)
                                 }
                             }
                         }
                     }
                 }
 
-                // Animation Curves (Beziers)
-                NCard {
-                    sectionTitle: "Animation Curves (Beziers)"
-                    visible: root.animationsEnabled
+                Item { Layout.preferredHeight: 8 }
+            }
 
-                    NRow {
-                        RowLayout {
-                            spacing: 12
-                            NIconBadge { icon: "\ueb00" }
-                            ColumnLayout {
-                                spacing: 1
-                                Text { text: "Easing Curve"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                                Text { text: "Mathematical Bezier curve controlling acceleration and damping"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+            // Window Motion & Physics Sliders
+            NCard {
+                sectionTitle: "Window Motion & Physics"
+                visible: root.animationsEnabled
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueaf4" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Window Animation Style"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Visual transition style when windows open or change"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Slide", "Popin", "SlideVert"]
+                        current: root.animStyle
+                        onSelected: (v) => {
+                            root.animStyle = v;
+                            root.animationPreset = "Custom";
+                            root.applyAnimations();
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueaf2" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Window Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Duration and responsiveness for opening & closing windows"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 1.0; to: 10.0; stepSize: 0.5
+                            value: root.animWindowsSpeed
+                            onValueChanged: root.animWindowsSpeed = value
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    root.animationPreset = "Custom";
+                                    root.applyAnimations();
+                                }
                             }
                         }
-                        Item { Layout.fillWidth: true }
-                        StyledComboBox {
-                            model: root.availableBeziers
-                            currentIndex: {
-                                for (let i = 0; i < root.availableBeziers.length; i++) {
-                                    if (root.availableBeziers[i] === root.animBezier) return i;
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea41" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Workspace Slide Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Transition duration when switching between virtual desktops"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 1.0; to: 10.0; stepSize: 0.5
+                            value: root.animWorkspacesSpeed
+                            onValueChanged: root.animWorkspacesSpeed = value
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    root.animationPreset = "Custom";
+                                    root.applyAnimations();
                                 }
-                                return 0;
                             }
-                            onActivated: (idx) => {
-                                root.animBezier = model[idx];
-                                root.animationPreset = "Custom";
-                                root.applyAnimations();
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb13" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Fade Transition Speed"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Cross-fade opacity speed for surfaces and overlays"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 1.0; to: 8.0; stepSize: 0.5
+                            value: root.animFadeSpeed
+                            onValueChanged: root.animFadeSpeed = value
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    root.animationPreset = "Custom";
+                                    root.applyAnimations();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Animation Curves (Beziers)
+            NCard {
+                sectionTitle: "Animation Curves (Beziers)"
+                visible: root.animationsEnabled
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb00" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Easing Curve"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Mathematical Bezier curve controlling acceleration and damping"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledComboBox {
+                        model: root.availableBeziers
+                        currentIndex: {
+                            for (let i = 0; i < root.availableBeziers.length; i++) {
+                                if (root.availableBeziers[i] === root.animBezier) return i;
+                            }
+                            return 0;
+                        }
+                        onActivated: (idx) => {
+                            root.animBezier = model[idx];
+                            root.animationPreset = "Custom";
+                            root.applyAnimations();
+                        }
+                    }
+                }
+            }
+
+            // =========================================================
+            // 4. OVERVIEW
+            // =========================================================
+            NCard {
+                sectionTitle: "Overview"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea41" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Workspace tabs"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Amount of workspaces to show in overview"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 1; to: 20; stepSize: 1
+                            value: root.overviewTabs
+                            onValueChanged: { root.overviewTabs = Math.round(value); }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea61" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Tabs scale"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Adjust the size of the overview tabs"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 10
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0.05; to: 0.30; stepSize: 0.01
+                            value: root.overviewScale
+                            onValueChanged: { root.overviewScale = value; }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);
+                                }
                             }
                         }
                     }
