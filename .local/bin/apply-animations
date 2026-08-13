@@ -1,0 +1,102 @@
+#!/bin/bash
+# Cupcake Animation Manager for Hyprland (Lua)
+
+STATE_DIR="$HOME/.config/cupcake"
+HYPR_ANIM="$HOME/.config/hypr/animation.lua"
+
+mkdir -p "$STATE_DIR" "$(dirname "$HYPR_ANIM")"
+
+ENABLED=$(cat "$STATE_DIR/.animations_enabled" 2>/dev/null || echo "true")
+PRESET=$(cat "$STATE_DIR/.animation_preset" 2>/dev/null || echo "Balanced")
+WIN_SPEED=$(cat "$STATE_DIR/.anim_windows_speed" 2>/dev/null || echo "5")
+WS_SPEED=$(cat "$STATE_DIR/.anim_workspaces_speed" 2>/dev/null || echo "3.5")
+BEZIER=$(cat "$STATE_DIR/.anim_bezier" 2>/dev/null || echo "overshot")
+STYLE=$(cat "$STATE_DIR/.anim_style" 2>/dev/null || echo "slide")
+FADE_SPEED=$(cat "$STATE_DIR/.anim_fade_speed" 2>/dev/null || echo "2.5")
+
+if [ "$ENABLED" = "false" ]; then
+cat > "$HYPR_ANIM" << 'EOF'
+hl.config({
+    animations = {
+        enabled = false
+    }
+})
+EOF
+    hyprctl reload config-only >/dev/null 2>&1 || true
+    exit 0
+fi
+
+# Apply preset overrides if a named preset is chosen
+case "$PRESET" in
+    "Fast")
+        WIN_SPEED="2.5"
+        WS_SPEED="2.5"
+        FADE_SPEED="2.0"
+        BEZIER="easeOutExpo"
+        STYLE="popin 85%"
+        ;;
+    "Bouncy")
+        WIN_SPEED="5.5"
+        WS_SPEED="4.0"
+        FADE_SPEED="3.0"
+        BEZIER="crazyshot"
+        STYLE="popin 75%"
+        ;;
+    "Smooth")
+        WIN_SPEED="4.0"
+        WS_SPEED="4.5"
+        FADE_SPEED="3.0"
+        BEZIER="fluent_decel"
+        STYLE="slide"
+        ;;
+    "Minimal")
+        WIN_SPEED="3.0"
+        WS_SPEED="3.0"
+        FADE_SPEED="2.5"
+        BEZIER="smoothOut"
+        STYLE="slide"
+        ;;
+    "Balanced"|*)
+        # Keep current/custom values or default balanced
+        [ -z "$WIN_SPEED" ] && WIN_SPEED="5"
+        [ -z "$WS_SPEED" ] && WS_SPEED="3.5"
+        [ -z "$BEZIER" ] && BEZIER="overshot"
+        [ -z "$STYLE" ] && STYLE="slide"
+        ;;
+esac
+
+cat > "$HYPR_ANIM" << EOF
+hl.config({
+    animations = {
+        enabled = true
+    }
+})
+
+-- Animation Beziers / Curves
+hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
+hl.curve("md3_standard",   { type = "bezier", points = { {0.2, 0},     {0, 1}       } })
+hl.curve("md3_decel",      { type = "bezier", points = { {0.05, 0.7},   {0.1, 1}     } })
+hl.curve("md3_accel",      { type = "bezier", points = { {0.3, 0},     {0.8, 0.15}  } })
+hl.curve("overshot",       { type = "bezier", points = { {0.05, 0.9},   {0.1, 1.1}   } })
+hl.curve("crazyshot",      { type = "bezier", points = { {0.1, 1.5},    {0.76, 0.92} } })
+hl.curve("hyprnostretch",  { type = "bezier", points = { {0.05, 0.9},   {0.1, 1.0}   } })
+hl.curve("fluent_decel",   { type = "bezier", points = { {0.1, 1},     {0, 1}       } })
+hl.curve("easeInOutCirc",  { type = "bezier", points = { {0.85, 0},    {0.15, 1}    } })
+hl.curve("easeOutCirc",    { type = "bezier", points = { {0, 0.55},    {0.45, 1}    } })
+hl.curve("easeOutExpo",    { type = "bezier", points = { {0.16, 1},    {0.3, 1}     } })
+hl.curve("smoothOut",      { type = "bezier", points = { {0.5, 0},     {0.99, 0.99} } })
+hl.curve("smoothIn",       { type = "bezier", points = { {0.5, -0.5},   {0.68, 1.5}  } })
+
+-- Hyprland Animation Configs
+hl.animation({ leaf = "border",           enabled = true,  speed = 10,           bezier = "default" })
+hl.animation({ leaf = "fade",             enabled = true,  speed = ${FADE_SPEED}, bezier = "md3_decel" })
+hl.animation({ leaf = "workspaces",       enabled = true,  speed = ${WS_SPEED},   bezier = "${BEZIER}", style = "slide" })
+hl.animation({ leaf = "specialWorkspace",  enabled = true,  speed = 3,            bezier = "md3_decel", style = "slidevert" })
+hl.animation({ leaf = "windows",          enabled = true,  speed = ${WIN_SPEED},  bezier = "${BEZIER}", style = "${STYLE}" })
+hl.animation({ leaf = "windowsIn",        enabled = true,  speed = ${WIN_SPEED},  bezier = "${BEZIER}", style = "${STYLE}" })
+hl.animation({ leaf = "windowsOut",       enabled = true,  speed = 3,            bezier = "smoothOut" })
+hl.animation({ leaf = "windowsMove",      enabled = true,  speed = 4,            bezier = "smoothIn",  style = "slide" })
+hl.animation({ leaf = "layers",           enabled = false, bezier = "default" })
+EOF
+
+hyprctl reload config-only >/dev/null 2>&1 || true

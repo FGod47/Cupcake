@@ -225,6 +225,13 @@ _write_default ".dock_magnification_scale"      "1.5"
 _write_default ".dock_launcher_position"        "left"
 _write_default ".dock_pinned_apps_enabled"      "true"
 _write_default ".dock_pinned_apps"              "[]"
+_write_default ".animations_enabled"            "true"
+_write_default ".animation_preset"              "Balanced"
+_write_default ".anim_windows_speed"            "5.0"
+_write_default ".anim_workspaces_speed"         "3.5"
+_write_default ".anim_fade_speed"               "2.5"
+_write_default ".anim_bezier"                   "overshot"
+_write_default ".anim_style"                    "slide"
 
 # Write default transparency values file (key=value format expected by scripts)
 if [ ! -f "$CUPCAKE_STATE/.transparency_values" ]; then
