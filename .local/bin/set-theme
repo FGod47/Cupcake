@@ -80,7 +80,7 @@ case "$EXT" in
         if command -v mpvpaper &>/dev/null; then
             echo "Playing live video wallpaper with mpvpaper..."
             killall mpvpaper 2>/dev/null || true
-            mpvpaper -o "no-audio --loop --hwdec=auto --pause=no --cache=no --demuxer-max-bytes=10M --demuxer-max-back-bytes=5M --vd-lavc-threads=2" '*' "$WALLPAPER" &
+            mpvpaper -o "no-audio --loop --hwdec=auto-safe --pause=no --cache=no --demuxer-max-bytes=8M --demuxer-max-back-bytes=4M --vd-lavc-threads=2" '*' "$WALLPAPER" &
         else
             echo "mpvpaper not installed; falling back to extracted frame with awww..."
             killall mpvpaper 2>/dev/null || true
