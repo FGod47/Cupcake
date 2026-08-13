@@ -4,13 +4,19 @@ THUMB_DIR="$HOME/.cache/cupcake/wall_thumbs"
 
 mkdir -p "$THUMB_DIR"
 
-for img in "$WALL_DIR"/*.{png,jpg,jpeg,webp}; do
-    [ -e "$img" ] || continue
+shopt -s nullglob nocaseglob
+
+for img in "$WALL_DIR"/*.{png,jpg,jpeg,webp,gif,mp4,webm,mkv,mov}; do
+    [ -f "$img" ] || continue
     filename=$(basename "$img")
     thumb="$THUMB_DIR/$filename"
     if [ ! -f "$thumb" ]; then
         echo "Generating thumbnail for $filename..."
-        ffmpeg -y -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
+        ffmpeg -y -ss 00:00:01 -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
+            -update 1 -frames:v 1 "$thumb" 2>/dev/null \
+            || ffmpeg -y -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
             -update 1 -frames:v 1 "$thumb" 2>/dev/null
     fi
 done
+
+shopt -u nullglob nocaseglob

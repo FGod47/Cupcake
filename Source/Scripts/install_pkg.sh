@@ -127,7 +127,7 @@ packages=(
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
     hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian sddm
     qt6-5compat cliphist network-manager-applet hypridle matugen inter-font plymouth
-    atuin fzf awww starship zip unzip
+    atuin fzf awww mpv mpvpaper starship zip unzip
     zsh-history-substring-search zsh-completions
     zsh-autosuggestions zsh-syntax-highlighting bluez bluez-utils
 )

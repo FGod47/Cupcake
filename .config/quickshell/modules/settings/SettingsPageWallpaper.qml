@@ -67,32 +67,6 @@ Item {
     }
 
     // =====================================================================
-    // Inline components
-    // =====================================================================
-
-
-
-    component SettingsRow: ColumnLayout {
-        default property alias content: innerRow.data
-        Layout.fillWidth: true
-        Layout.topMargin: Theme.rowSpacing
-        Layout.bottomMargin: Theme.rowSpacing
-        spacing: 12
-        RowLayout {
-            id: innerRow
-            Layout.fillWidth: true
-            spacing: 12
-        }
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
-            visible: Theme.showDividers
-        }
-    }
-
-
-    // =====================================================================
     // UI
     // =====================================================================
 
@@ -165,14 +139,43 @@ Item {
                         Layout.fillWidth: true
                         spacing: 6
 
-                        Text {
-                            text: root.currentWall !== "" ? root.currentWall.split("/").pop().replace(/\.[^.]+$/, "") : "No wallpaper"
-                            color: Theme.colOnSurface; font.family: Theme.monoFontFamily
-                            font.pixelSize: 16; font.weight: Font.Bold
-                            elide: Text.ElideRight; Layout.fillWidth: true
+                        RowLayout {
+                            spacing: 8
+                            Text {
+                                text: root.currentWall !== "" ? root.currentWall.split("/").pop().replace(/\.[^.]+$/, "") : "No wallpaper"
+                                color: Theme.colOnSurface; font.family: Theme.monoFontFamily
+                                font.pixelSize: 16; font.weight: Font.Bold
+                                elide: Text.ElideRight; Layout.fillWidth: true
+                            }
+
+                            // Live / Video tag
+                            Rectangle {
+                                visible: {
+                                    if (root.currentWall === "") return false;
+                                    let ext = root.currentWall.split(".").pop().toLowerCase();
+                                    return ["gif", "mp4", "webm", "mkv", "mov"].indexOf(ext) !== -1;
+                                }
+                                width: liveTxt.implicitWidth + 14; height: 20; radius: 10
+                                color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2)
+                                border.color: Theme.colPrimary
+                                border.width: 1
+                                Text {
+                                    id: liveTxt
+                                    anchors.centerIn: parent
+                                    text: {
+                                        let ext = root.currentWall.split(".").pop().toLowerCase();
+                                        return (ext === "gif" ? "LIVE GIF" : "VIDEO");
+                                    }
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 10
+                                    font.weight: Font.Bold
+                                    color: Theme.colPrimary
+                                }
+                            }
                         }
+
                         Text {
-                            text: "Applied to Built-in Display"
+                            text: "Applied to Desktop (Images, Live GIFs, Video Wallpapers supported)"
                             color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily
                             font.pixelSize: 12; opacity: 0.8
                         }
@@ -191,7 +194,7 @@ Item {
                                 }
                                 MouseArea {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Images | *.png *.jpg *.jpeg *.webp' 2>/dev/null | xargs -I{} " + Theme.homeDir + "/.local/bin/set-theme {}"])
+                                    onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} " + Theme.homeDir + "/.local/bin/set-theme {}"])
                                 }
                             }
 
@@ -205,7 +208,7 @@ Item {
                                 }
                                 MouseArea {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: Quickshell.execDetached(["bash", "-c", "ls " + root.wallDir + "/*.{png,jpg,jpeg} 2>/dev/null | shuf -n1 | xargs " + Theme.homeDir + "/.local/bin/set-theme"])
+                                    onClicked: Quickshell.execDetached(["bash", "-c", "ls " + root.wallDir + "/*.{png,jpg,jpeg,webp,gif,mp4,webm} 2>/dev/null | shuf -n1 | xargs " + Theme.homeDir + "/.local/bin/set-theme"])
                                 }
                             }
                         }
@@ -226,7 +229,7 @@ Item {
                     Repeater {
                         model: FolderListModel {
                             folder: "file://" + root.wallDir
-                            nameFilters: ["*.png", "*.jpg", "*.jpeg", "*.webp"]
+                            nameFilters: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.mp4", "*.webm", "*.mkv", "*.mov"]
                             showDirs: false
                         }
 
@@ -244,6 +247,15 @@ Item {
                                     border.width: 2
                                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
+                                    readonly property bool isAnimated: {
+                                        let ext = fileName.split(".").pop().toLowerCase();
+                                        return ["gif", "mp4", "webm", "mkv", "mov"].indexOf(ext) !== -1;
+                                    }
+                                    readonly property string mediaType: {
+                                        let ext = fileName.split(".").pop().toLowerCase();
+                                        return (ext === "gif" ? "GIF" : (["mp4", "webm", "mkv", "mov"].indexOf(ext) !== -1 ? "VIDEO" : "IMG"));
+                                    }
+
                                     Rectangle {
                                         id: tileMask
                                         anchors.fill: parent
@@ -253,14 +265,12 @@ Item {
                                     }
                                     Text {
                                         anchors.centerIn: parent
-                                        text: "\ueb0a" // tabler-icons 'photo'
+                                        text: isAnimated ? "\ueb29" : "\ueb0a"
                                         font.family: "tabler-icons"
                                         font.pixelSize: 24
                                         color: Theme.colOnSurfaceVariant
                                         opacity: 0.2
                                     }
-
-
 
                                     Item {
                                         anchors.fill: parent
@@ -303,6 +313,7 @@ Item {
                                         }
                                     }
 
+                                    // Active selected check
                                     Rectangle {
                                         visible: root.currentWall === filePath
                                         width: 22; height: 22; radius: 11
@@ -311,6 +322,24 @@ Item {
                                         Text { anchors.centerIn: parent; text: "\uea5e"; color: Theme.colSurface; font.family: "tabler-icons"; font.pixelSize: 13 }
                                     }
 
+                                    // Animated/Video Badge
+                                    Rectangle {
+                                        visible: isAnimated && root.currentWall !== filePath
+                                        width: mediaBadgeText.implicitWidth + 10; height: 18; radius: 9
+                                        anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 7
+                                        color: Qt.rgba(0, 0, 0, 0.65)
+                                        Text {
+                                            id: mediaBadgeText
+                                            anchors.centerIn: parent
+                                            text: mediaType
+                                            color: "white"
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 9
+                                            font.weight: Font.Bold
+                                        }
+                                    }
+
+                                    // Delete button
                                     Rectangle {
                                         z: 1
                                         width: 28; height: 28; radius: 14
@@ -363,7 +392,7 @@ Item {
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Images | *.png *.jpg *.jpeg' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails'"])
+                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails'"])
                         }
                     }
                 }
@@ -375,7 +404,7 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Wallpaper directory"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Location where your wallpaper images are stored"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Location where your wallpaper images & live videos are stored"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -400,7 +429,6 @@ Item {
             // ── Fit & display ──────────────────────────────────────────────
             NCard {
                 sectionTitle: "Fit & display"
-
 
                 NRow {
                     RowLayout {
@@ -576,7 +604,6 @@ Item {
                             }
                         }
                     }
-                    
                 }
 
                 NRow {

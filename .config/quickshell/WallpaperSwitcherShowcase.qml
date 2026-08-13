@@ -162,12 +162,17 @@ Item {
 
                         Image {
                             anchors.fill: parent
-                            source: del.fileUrl
+                            source: "file://" + root.homeDir + "/.cache/cupcake/wall_thumbs/" + del.fileName
                             fillMode: Image.PreserveAspectCrop
                             asynchronous: true
                             cache: true
                             sourceSize: Qt.size(root.wallW * 2, root.wallH * 2)
                             opacity: status === Image.Ready ? 1.0 : 0.0
+                            onStatusChanged: {
+                                if (status === Image.Error && source.toString() !== del.fileUrl.toString()) {
+                                    source = del.fileUrl
+                                }
+                            }
                             Behavior on opacity {
                                 NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
                             }

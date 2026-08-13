@@ -132,7 +132,7 @@ PanelWindow {
     FolderListModel {
         id:           wallModel
         folder:       "file://" + root.wallDir
-        nameFilters:  ["*.png", "*.jpg", "*.jpeg", "*.webp"]
+        nameFilters:  ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.mp4", "*.webm", "*.mkv", "*.mov"]
         showDirs:     false
         sortField:    FolderListModel.Name
 
