@@ -6,16 +6,26 @@ mkdir -p "$THUMB_DIR"
 
 shopt -s nullglob nocaseglob
 
-for img in "$WALL_DIR"/*.{png,jpg,jpeg,webp,gif,mp4,webm,mkv,mov}; do
+for img in "$WALL_DIR"/*; do
     [ -f "$img" ] || continue
     filename=$(basename "$img")
-    thumb="$THUMB_DIR/$filename"
-    if [ ! -f "$thumb" ]; then
+    thumb_png="$THUMB_DIR/${filename}.png"
+    thumb_raw="$THUMB_DIR/${filename}"
+    
+    if [ ! -f "$thumb_png" ] && [ ! -f "$thumb_raw" ]; then
         echo "Generating thumbnail for $filename..."
         ffmpeg -y -ss 00:00:01 -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
-            -update 1 -frames:v 1 "$thumb" 2>/dev/null \
+            -update 1 -frames:v 1 "$thumb_png" 2>/dev/null \
             || ffmpeg -y -i "$img" -vf "scale=250:150:force_original_aspect_ratio=increase,crop=250:150" \
-            -update 1 -frames:v 1 "$thumb" 2>/dev/null
+            -update 1 -frames:v 1 "$thumb_png" 2>/dev/null
+            
+        if [ -f "$thumb_png" ]; then
+            cp -f "$thumb_png" "$thumb_raw" 2>/dev/null || true
+        fi
+    elif [ -f "$thumb_png" ] && [ ! -f "$thumb_raw" ]; then
+        cp -f "$thumb_png" "$thumb_raw" 2>/dev/null || true
+    elif [ -f "$thumb_raw" ] && [ ! -f "$thumb_png" ]; then
+        cp -f "$thumb_raw" "$thumb_png" 2>/dev/null || true
     fi
 done
 

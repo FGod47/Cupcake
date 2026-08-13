@@ -72,13 +72,21 @@ EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
 # Dispatch wallpaper engine based on format (video vs animation vs image)
 case "$EXT" in
     mp4|mkv|webm|mov|avi)
-        echo "Setting video wallpaper with mpvpaper: $WALLPAPER..."
+        echo "Processing video wallpaper: $WALLPAPER..."
+        # Extract high-res frame for static fallback & color generation
+        ffmpeg -y -ss 00:00:01 -i "$WALLPAPER" -vframes 1 /tmp/current_wall_frame.png 2>/dev/null \
+            || ffmpeg -y -i "$WALLPAPER" -vframes 1 /tmp/current_wall_frame.png 2>/dev/null
+            
         if command -v mpvpaper &>/dev/null; then
+            echo "Playing live video wallpaper with mpvpaper..."
             killall mpvpaper 2>/dev/null || true
             mpvpaper -o "no-audio --loop hwdec=auto pause=no" '*' "$WALLPAPER" &
-        elif command -v awww &>/dev/null; then
+        else
+            echo "mpvpaper not installed; falling back to extracted frame with awww..."
             killall mpvpaper 2>/dev/null || true
-            awww img "$WALLPAPER" --transition-type "$TRANSITION" --transition-fps 60 --transition-duration 1.5 2>/dev/null &
+            if [ -f /tmp/current_wall_frame.png ]; then
+                awww img /tmp/current_wall_frame.png --transition-type "$TRANSITION" --transition-fps 60 --transition-duration 1.5 &
+            fi
         fi
         ;;
     gif|webp)
@@ -99,16 +107,17 @@ mkdir -p ~/.local/state/quickshell/user/generated ~/.cache ~/.config/gtk-3.0 ~/.
 
 # Extract representative frame for Matugen color generation
 echo "Generating color palettes with matugen in $MODE mode using scheme-$SCHEME..."
-if command -v ffmpeg &>/dev/null; then
+if [ -f /tmp/current_wall_frame.png ] && [ "$EXT" = "mp4" -o "$EXT" = "webm" -o "$EXT" = "mkv" -o "$EXT" = "mov" ]; then
+    matugen image /tmp/current_wall_frame.png -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+elif command -v ffmpeg &>/dev/null; then
     ffmpeg -y -ss 00:00:01 -i "$WALLPAPER" -vframes 1 -vf scale=400:400 /tmp/matugen_input.png 2>/dev/null \
         || ffmpeg -y -i "$WALLPAPER" -vframes 1 -vf scale=400:400 /tmp/matugen_input.png 2>/dev/null \
         || cp "$WALLPAPER" /tmp/matugen_input.png 2>/dev/null
-else
-    cp "$WALLPAPER" /tmp/matugen_input.png 2>/dev/null
-fi
-
-if [ -f /tmp/matugen_input.png ]; then
-    matugen image /tmp/matugen_input.png -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+    if [ -f /tmp/matugen_input.png ]; then
+        matugen image /tmp/matugen_input.png -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+    else
+        matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+    fi
 else
     matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
 fi
