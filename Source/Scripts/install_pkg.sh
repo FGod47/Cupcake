@@ -125,7 +125,7 @@ packages=(
     python-pipx ccache erofs-utils jq ddcutil i2c-tools loupe brightnessctl
     "$KERNEL_HEADERS_PKG" ${NVIDIA_PACKAGES[@]}
     papirus-icon-theme adw-gtk-theme dnsmasq hyprsunset
-    hyprland hyprpaper hyprpicker nautilus playerctl wf-recorder obsidian sddm
+    hyprland hyprpicker nautilus playerctl wf-recorder obsidian sddm
     qt6-5compat cliphist network-manager-applet hypridle matugen inter-font plymouth
     atuin fzf awww mpv mpvpaper starship zip unzip
     zsh-history-substring-search zsh-completions
