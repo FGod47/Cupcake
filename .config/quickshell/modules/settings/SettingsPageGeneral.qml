@@ -268,14 +268,15 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 40; stepSize: 1
-                            value: root.gapsIn
-                            onValueChanged: root.gapsIn = Math.round(value)
-                            onPressedChanged: { if (!pressed) root.applyGaps() }
+                    StepperCounter {
+                        from: 0
+                        to: 40
+                        stepSize: 1
+                        suffix: "px"
+                        value: root.gapsIn
+                        onValueModified: (v) => {
+                            root.gapsIn = v;
+                            root.applyGaps();
                         }
                     }
                 }
@@ -291,14 +292,15 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 60; stepSize: 1
-                            value: root.gapsOut
-                            onValueChanged: root.gapsOut = Math.round(value)
-                            onPressedChanged: { if (!pressed) root.applyGaps() }
+                    StepperCounter {
+                        from: 0
+                        to: 60
+                        stepSize: 1
+                        suffix: "px"
+                        value: root.gapsOut
+                        onValueModified: (v) => {
+                            root.gapsOut = v;
+                            root.applyGaps();
                         }
                     }
                 }
@@ -342,14 +344,15 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 30; stepSize: 1
-                            value: root.rounding
-                            onValueChanged: root.rounding = Math.round(value)
-                            onPressedChanged: { if (!pressed) root.applyRounding() }
+                    StepperCounter {
+                        from: 0
+                        to: 30
+                        stepSize: 1
+                        suffix: "px"
+                        value: root.rounding
+                        onValueModified: (v) => {
+                            root.rounding = v;
+                            root.applyRounding();
                         }
                     }
                 }
@@ -365,14 +368,15 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 10; stepSize: 1
-                            value: root.borderSize
-                            onValueChanged: root.borderSize = Math.round(value)
-                            onPressedChanged: { if (!pressed) root.applyBorder() }
+                    StepperCounter {
+                        from: 0
+                        to: 10
+                        stepSize: 1
+                        suffix: "px"
+                        value: root.borderSize
+                        onValueModified: (v) => {
+                            root.borderSize = v;
+                            root.applyBorder();
                         }
                     }
                 }
@@ -463,7 +467,7 @@ Item {
                 Item { Layout.preferredHeight: 8 }
             }
 
-            // Window Motion & Physics Sliders
+            // Window Motion & Physics Steppers
             NCard {
                 sectionTitle: "Window Motion & Physics"
                 visible: root.animationsEnabled
@@ -501,19 +505,16 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 1.0; to: 10.0; stepSize: 0.5
-                            value: root.animWindowsSpeed
-                            onValueChanged: root.animWindowsSpeed = value
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    root.animationPreset = "Custom";
-                                    root.applyAnimations();
-                                }
-                            }
+                    StepperCounter {
+                        from: 1.0
+                        to: 10.0
+                        stepSize: 0.5
+                        suffix: "s"
+                        value: root.animWindowsSpeed
+                        onValueModified: (v) => {
+                            root.animWindowsSpeed = v;
+                            root.animationPreset = "Custom";
+                            root.applyAnimations();
                         }
                     }
                 }
@@ -529,19 +530,16 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 1.0; to: 10.0; stepSize: 0.5
-                            value: root.animWorkspacesSpeed
-                            onValueChanged: root.animWorkspacesSpeed = value
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    root.animationPreset = "Custom";
-                                    root.applyAnimations();
-                                }
-                            }
+                    StepperCounter {
+                        from: 1.0
+                        to: 10.0
+                        stepSize: 0.5
+                        suffix: "s"
+                        value: root.animWorkspacesSpeed
+                        onValueModified: (v) => {
+                            root.animWorkspacesSpeed = v;
+                            root.animationPreset = "Custom";
+                            root.applyAnimations();
                         }
                     }
                 }
@@ -557,19 +555,16 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 1.0; to: 8.0; stepSize: 0.5
-                            value: root.animFadeSpeed
-                            onValueChanged: root.animFadeSpeed = value
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    root.animationPreset = "Custom";
-                                    root.applyAnimations();
-                                }
-                            }
+                    StepperCounter {
+                        from: 1.0
+                        to: 8.0
+                        stepSize: 0.5
+                        suffix: "s"
+                        value: root.animFadeSpeed
+                        onValueModified: (v) => {
+                            root.animFadeSpeed = v;
+                            root.animationPreset = "Custom";
+                            root.applyAnimations();
                         }
                     }
                 }
@@ -625,18 +620,14 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 1; to: 20; stepSize: 1
-                            value: root.overviewTabs
-                            onValueChanged: { root.overviewTabs = Math.round(value); }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
-                                }
-                            }
+                    StepperCounter {
+                        from: 1
+                        to: 20
+                        stepSize: 1
+                        value: root.overviewTabs
+                        onValueModified: (v) => {
+                            root.overviewTabs = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewTabs + "' > ~/.config/cupcake/.overview_tabs && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewTabs " + root.overviewTabs]);
                         }
                     }
                 }
@@ -652,18 +643,14 @@ Item {
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 10
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0.05; to: 0.30; stepSize: 0.01
-                            value: root.overviewScale
-                            onValueChanged: { root.overviewScale = value; }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);
-                                }
-                            }
+                    StepperCounter {
+                        from: 0.05
+                        to: 0.30
+                        stepSize: 0.01
+                        value: root.overviewScale
+                        onValueModified: (v) => {
+                            root.overviewScale = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.overviewScale + "' > ~/.config/cupcake/.overview_scale && quickshell ipc -p ~/.config/quickshell/shell.qml call opacity setOverviewScale " + root.overviewScale]);
                         }
                     }
                 }
