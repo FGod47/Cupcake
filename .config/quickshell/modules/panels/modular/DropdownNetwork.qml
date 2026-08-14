@@ -87,9 +87,9 @@ Item {
     readonly property real expandedW: 300
     property real contentW: expandedW
 
-    readonly property real padTop: isAttached ? 22 : 12
-    readonly property real padSide: isAttached ? 22 : 12
-    readonly property real padBottom: isAttached ? 20 : 12
+    readonly property real padTop: isAttached ? 8 : 6
+    readonly property real padSide: isAttached ? 16 : 8
+    readonly property real padBottom: isAttached ? 14 : 8
 
     readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
 
@@ -512,7 +512,7 @@ Item {
                 // ── Single Enclosing Card Container for All Content ──
                 Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: cardInnerCol.implicitHeight + 28
+                    implicitHeight: cardInnerCol.implicitHeight + 24
                     radius: 14
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
                     border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.11)
@@ -523,8 +523,8 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.margins: 14
-                        spacing: 12
+                        anchors.margins: 12
+                        spacing: 10
 
                         // ═════════════════════════════════════════════════════
                         //  TAB 1: WI-FI CARD
@@ -532,12 +532,12 @@ Item {
                         ColumnLayout {
                             visible: netSplitPill.currentTab === 1
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 10
 
                             // Category Header
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 18
+                                height: 16
                                 spacing: 6
 
                                 Text {
@@ -558,7 +558,7 @@ Item {
                                 }
 
                                 Item {
-                                    width: 20; height: 20
+                                    width: 18; height: 18
                                     Text {
                                         anchors.centerIn: parent
                                         text: "\ueb13"
@@ -630,7 +630,7 @@ Item {
                                 visible: bar.isWifi
                                 Layout.fillWidth: true
                                 width: parent.width
-                                spacing: 6
+                                spacing: 5
 
                                 Repeater {
                                     model: netSplitPill.wifiList.slice(0, 3)
@@ -640,7 +640,7 @@ Item {
                                         property bool isConn: modelData.connected
                                         property bool isSelected: netSplitPill.showPassInput && netSplitPill.selectedSSID === modelData.ssid
 
-                                        height: isSelected ? 80 : 44
+                                        height: isSelected ? 76 : 42
                                         radius: 10
                                         clip: true
                                         color: isConn
@@ -656,16 +656,16 @@ Item {
 
                                         ColumnLayout {
                                             anchors.fill: parent
-                                            anchors.leftMargin: 12
-                                            anchors.rightMargin: 12
-                                            anchors.topMargin: 8
-                                            anchors.bottomMargin: 8
+                                            anchors.leftMargin: 10
+                                            anchors.rightMargin: 10
+                                            anchors.topMargin: 6
+                                            anchors.bottomMargin: 6
                                             spacing: 6
 
                                             // Header Row
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                height: 28
+                                                height: 26
                                                 spacing: 8
 
                                                 Text {
@@ -696,8 +696,8 @@ Item {
 
                                                 // Join / Disconnect Button
                                                 Rectangle {
-                                                    width: isConn ? 74 : 46
-                                                    height: 26
+                                                    width: isConn ? 72 : 44
+                                                    height: 24
                                                     radius: 6
                                                     color: isConn ? Qt.rgba(1, 0.35, 0.35, 0.15) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.14)
                                                     border.color: isConn ? Qt.rgba(1, 0.35, 0.35, 0.30) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.20)
@@ -843,7 +843,7 @@ Item {
                             // Footer Row
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 20
+                                height: 18
 
                                 Text {
                                     text: "Wi-Fi settings"
@@ -880,12 +880,12 @@ Item {
                         ColumnLayout {
                             visible: netSplitPill.currentTab === 3
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 10
 
                             // Category Header
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 18
+                                height: 16
                                 spacing: 6
 
                                 Text {
@@ -906,7 +906,7 @@ Item {
                                 }
 
                                 Item {
-                                    width: 20; height: 20
+                                    width: 18; height: 18
                                     Text {
                                         anchors.centerIn: parent
                                         text: "\ueb13"
@@ -988,8 +988,8 @@ Item {
 
                                         RowLayout {
                                             anchors.fill: parent
-                                            anchors.leftMargin: 12
-                                            anchors.rightMargin: 12
+                                            anchors.leftMargin: 10
+                                            anchors.rightMargin: 10
                                             spacing: 8
 
                                             Text {
@@ -1020,7 +1020,7 @@ Item {
                                             }
 
                                             Rectangle {
-                                                width: isConn ? 74 : 54
+                                                width: isConn ? 72 : 52
                                                 height: 24
                                                 radius: 6
                                                 color: isConn ? Qt.rgba(1, 0.35, 0.35, 0.15) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.14)
@@ -1071,7 +1071,7 @@ Item {
                             // Footer Row
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 20
+                                height: 18
 
                                 Text {
                                     text: "Bluetooth settings"
@@ -1108,12 +1108,12 @@ Item {
                         ColumnLayout {
                             visible: netSplitPill.currentTab === 2
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 10
 
                             // Category Header
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 18
+                                height: 16
                                 spacing: 6
 
                                 Text {
@@ -1178,7 +1178,7 @@ Item {
                             // Details Rows
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                spacing: 7
                                 Layout.leftMargin: 2
                                 Layout.rightMargin: 2
 
@@ -1229,7 +1229,7 @@ Item {
                             // Footer Row
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 20
+                                height: 18
 
                                 Text {
                                     text: "Hotspot settings"
@@ -1266,12 +1266,12 @@ Item {
                         ColumnLayout {
                             visible: netSplitPill.currentTab === 0
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 10
 
                             // Category Header
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 18
+                                height: 16
                                 spacing: 6
 
                                 Text {
@@ -1328,7 +1328,7 @@ Item {
                             // Details Rows
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 7
+                                spacing: 6
                                 Layout.leftMargin: 2
                                 Layout.rightMargin: 2
 
@@ -1368,7 +1368,7 @@ Item {
                             // Footer Row
                             RowLayout {
                                 Layout.fillWidth: true
-                                height: 20
+                                height: 18
 
                                 Text {
                                     text: "Network settings"
