@@ -256,38 +256,32 @@ Item {
             anchors.rightMargin: padSide
             spacing: 12
 
-            // 1. Header Row
+            // 1. Minimal Header Row
             RowLayout {
                 Layout.fillWidth: true
-                height: 26
+                height: 20
                 spacing: 8
 
                 Text {
-                    text: "\uea6d"
-                    font.family: bar.fontName
-                    font.pixelSize: 18
-                    color: bar.fg
-                }
-
-                Text {
-                    text: "Clipboard History"
+                    text: "CLIPBOARD"
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: 10
                     font.weight: Font.Bold
-                    color: bar.fg
+                    font.letterSpacing: 0.5
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     Layout.fillWidth: true
                 }
 
                 // Clear unpinned button
                 Rectangle {
-                    width: 26; height: 26; radius: 13
-                    color: clearMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.2) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                    width: 24; height: 24; radius: 12
+                    color: clearMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.2) : "transparent"
                     Text {
                         anchors.centerIn: parent
                         text: "\ueb41" // trash icon
                         font.family: bar.fontName
-                        font.pixelSize: 14
-                        color: clearMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                        font.pixelSize: 13
+                        color: clearMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
                     }
                     MouseArea {
                         id: clearMa
@@ -299,14 +293,14 @@ Item {
 
                 // Close button
                 Rectangle {
-                    width: 26; height: 26; radius: 13
-                    color: closeMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                    width: 24; height: 24; radius: 12
+                    color: closeMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : "transparent"
                     Text {
                         anchors.centerIn: parent
                         text: "\ueb55" // x close icon
                         font.family: bar.fontName
-                        font.pixelSize: 13
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                        font.pixelSize: 12
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
                     }
                     MouseArea {
                         id: closeMa
