@@ -23,13 +23,13 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
-    readonly property real expandedW: 240
+    readonly property real expandedW: 260
     property real contentW: expandedW
     
     // Balanced compact padding constants
-    readonly property real padTop: isAttached ? 18 : 12
-    readonly property real padSide: isAttached ? 22 : 12
-    readonly property real padBottom: isAttached ? 16 : 12
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
 
     readonly property real targetH: clockContentCol.implicitHeight + padTop + padBottom
 
