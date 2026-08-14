@@ -433,20 +433,20 @@ PanelWindow {
                         
                         visible: forceVisible || bar.netDropdownOpen
                         width: 22
-                        height: 20
-                        radius: 5
+                        height: 22
+                        radius: 11
+                        anchors.verticalCenter: parent.verticalCenter
                         property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
-                        color: isSelected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : (netIconMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent")
-                        border.color: isSelected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4) : "transparent"
-                        border.width: 1
+                        color: isSelected ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : (netIconMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                        border.width: 0
                         Behavior on color { ColorAnimation { duration: 150 } }
 
                         Text {
                             anchors.centerIn: parent
                             text: iconCode
                             font.family: fontName
-                            font.pixelSize: 14
-                            color: isSelected ? Theme.colPrimary : iconColor
+                            font.pixelSize: 13
+                            color: isSelected ? fg : (netIconMa.containsMouse ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.65))
                         }
 
                         MouseArea {
