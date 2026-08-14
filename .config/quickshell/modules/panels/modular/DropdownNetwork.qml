@@ -390,7 +390,7 @@ Item {
                                     return "Wi-Fi Disabled";
                                 }
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12.5
+                                font.pixelSize: 13
                                 font.weight: Font.Bold
                                 color: bar.fg
                                 elide: Text.ElideRight
@@ -405,7 +405,7 @@ Item {
                                     return "Turn on Wi-Fi to connect";
                                 }
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10.5
+                                font.pixelSize: 11
                                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
                                 elide: Text.ElideRight
                                 width: parent.width
@@ -621,7 +621,7 @@ Item {
                                     Layout.fillWidth: true
                                     text: modelData.ssid
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11.5
+                                    font.pixelSize: 12
                                     font.weight: isConn ? Font.Bold : Font.Normal
                                     color: isConn ? Theme.colPrimary : bar.fg
                                     elide: Text.ElideRight
@@ -630,7 +630,7 @@ Item {
                                 Text {
                                     text: isConn ? "Disconnect" : (modelData.security && modelData.security !== "--" ? "5GHz" : "open")
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 10.5
+                                    font.pixelSize: 11
                                     font.weight: isConn ? Font.Medium : Font.Normal
                                     color: isConn ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
 
@@ -731,23 +731,32 @@ Item {
                     Item { Layout.fillWidth: true }
 
                     // Settings Link
-                    Row {
-                        spacing: 4
-                        Text {
-                            text: "Settings"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: Font.Medium
-                            color: settingsMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                    Item {
+                        width: settingsRow.implicitWidth
+                        height: 24
+
+                        Row {
+                            id: settingsRow
                             anchors.verticalCenter: parent.verticalCenter
+                            spacing: 4
+
+                            Text {
+                                text: "Settings"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.Medium
+                                color: settingsMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            Text {
+                                text: "\ueb20"
+                                font.family: fontName
+                                font.pixelSize: 12
+                                color: settingsMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
                         }
-                        Text {
-                            text: "\ueb20"
-                            font.family: fontName
-                            font.pixelSize: 12
-                            color: settingsMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
+
                         MouseArea {
                             id: settingsMa
                             anchors.fill: parent
