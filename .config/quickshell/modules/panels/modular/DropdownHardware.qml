@@ -171,6 +171,24 @@ Item {
                 width: parent.width - (volBrightSplitPill.padSide * 2)
                 spacing: 14
 
+                // Clean Category Header
+                Item {
+                    Layout.fillWidth: true
+                    height: 16
+
+                    Text {
+                        text: "VOLUME & BRIGHTNESS"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        anchors.left: parent.left
+                        anchors.leftMargin: 2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
                 // Brightness Slider Row
                 Row {
                     Layout.fillWidth: true
