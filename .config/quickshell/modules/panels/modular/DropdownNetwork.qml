@@ -472,23 +472,15 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Rectangle {
-                                width: 36
-                                height: 36
-                                radius: 18
-                                color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
-                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                       : Qt.rgba(1, 1, 1, 0.08)
-                                border.color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
-                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                              : "transparent"
-                                border.width: 1
+                            Item {
+                                width: 24
+                                height: 24
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "\ueb52"
                                     font.family: fontName
-                                    font.pixelSize: 16
+                                    font.pixelSize: 18
                                     color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
                                            ? Theme.colPrimary
                                            : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -798,23 +790,15 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Rectangle {
-                                width: 36
-                                height: 36
-                                radius: 18
-                                color: bar.isBluetooth
-                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                       : Qt.rgba(1, 1, 1, 0.08)
-                                border.color: bar.isBluetooth
-                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                              : "transparent"
-                                border.width: 1
+                            Item {
+                                width: 24
+                                height: 24
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "\uea37"
                                     font.family: fontName
-                                    font.pixelSize: 16
+                                    font.pixelSize: 18
                                     color: bar.isBluetooth
                                            ? Theme.colPrimary
                                            : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -1034,23 +1018,15 @@ Item {
                             anchors.rightMargin: 10
                             spacing: 10
 
-                            Rectangle {
-                                width: 34
-                                height: 34
-                                radius: 17
-                                color: bar.isHotspot
-                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                       : Qt.rgba(1, 1, 1, 0.08)
-                                border.color: bar.isHotspot
-                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                              : "transparent"
-                                border.width: 1
+                            Item {
+                                width: 24
+                                height: 24
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "\ued1b"
                                     font.family: fontName
-                                    font.pixelSize: 16
+                                    font.pixelSize: 18
                                     color: bar.isHotspot
                                            ? Theme.colPrimary
                                            : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -1189,23 +1165,15 @@ Item {
                             anchors.rightMargin: 10
                             spacing: 10
 
-                            Rectangle {
-                                width: 34
-                                height: 34
-                                radius: 17
-                                color: bar.isWired
-                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                       : Qt.rgba(1, 1, 1, 0.08)
-                                border.color: bar.isWired
-                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                              : "transparent"
-                                border.width: 1
+                            Item {
+                                width: 24
+                                height: 24
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "\uebd9"
                                     font.family: fontName
-                                    font.pixelSize: 16
+                                    font.pixelSize: 18
                                     color: bar.isWired
                                            ? Theme.colPrimary
                                            : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
