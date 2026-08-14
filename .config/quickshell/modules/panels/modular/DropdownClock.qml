@@ -202,7 +202,7 @@ Item {
                         spacing: 8
 
                         Text {
-                            text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
+                            text: Qt.formatDateTime(timeClock.date, "HH")
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 34
                             font.weight: Font.Bold
@@ -226,23 +226,16 @@ Item {
                             color: Theme.colOnSurface
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Column {
+                        Item { width: 4; height: 1 }
+                        Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 2
-                            Text {
-                                text: Qt.formatDateTime(timeClock.date, "AP")
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Bold
-                                color: Theme.colPrimary
-                            }
-                            Text {
-                                text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                color: Theme.colOnSurface
-                                opacity: 0.55
-                            }
+                            text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                            opacity: 0.65
+                        }
                         }
                     }
                 }

@@ -725,7 +725,7 @@ PanelWindow {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
+                        text: Qt.formatDateTime(timeClock.date, "HH:mm")
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: Theme.defaultFontSize
                         font.weight: Theme.defaultFontWeight
