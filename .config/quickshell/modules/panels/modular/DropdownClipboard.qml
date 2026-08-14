@@ -94,6 +94,7 @@ Item {
         execProc.command = ["python3", Quickshell.env("HOME") + "/.config/quickshell/scripts/clip_daemon.py", "delete", clipId];
         execProc.running = true;
         refreshTimer.start();
+        triggerToast("Clip deleted");
     }
 
     function clearAll() {
@@ -446,6 +447,7 @@ Item {
                 }
 
                 delegate: Rectangle {
+                    id: itemCard
                     width: clipListView.width
                     height: 50
                     radius: 10
@@ -455,11 +457,25 @@ Item {
                     border.color: modelData.pinned ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
                     border.width: 1
 
+                    // Background Click Area for Copying
+                    MouseArea {
+                        id: itemMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            copyClip(modelData.id);
+                            globalState.clipboardOpen = false;
+                        }
+                    }
+
                     RowLayout {
                         anchors.fill: parent
                         anchors.leftMargin: 10
                         anchors.rightMargin: 10
                         spacing: 10
+                        z: 5
 
                         Rectangle {
                             width: 32; height: 32
@@ -494,6 +510,7 @@ Item {
 
                         RowLayout {
                             spacing: 4
+                            z: 10
 
                             Rectangle {
                                 width: 24; height: 24; radius: 12
@@ -511,8 +528,14 @@ Item {
 
                                 MouseArea {
                                     id: pinMa
-                                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                    onClicked: togglePin(modelData.id)
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    acceptedButtons: Qt.LeftButton
+                                    onClicked: (mouse) => {
+                                        mouse.accepted = true;
+                                        togglePin(modelData.id);
+                                    }
                                 }
 
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -532,22 +555,18 @@ Item {
 
                                 MouseArea {
                                     id: delMa
-                                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                    onClicked: deleteClip(modelData.id)
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    acceptedButtons: Qt.LeftButton
+                                    onClicked: (mouse) => {
+                                        mouse.accepted = true;
+                                        deleteClip(modelData.id);
+                                    }
                                 }
 
                                 Behavior on color { ColorAnimation { duration: 150 } }
                             }
-                        }
-                    }
-
-                    MouseArea {
-                        id: itemMa
-                        anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                        acceptedButtons: Qt.LeftButton
-                        onClicked: {
-                            copyClip(modelData.id);
-                            globalState.clipboardOpen = false;
                         }
                     }
 
