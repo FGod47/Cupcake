@@ -85,7 +85,6 @@ Item {
         }
     }
 
-    property bool menuExpanded: bar.netDropdownOpen
     readonly property real expandedW: 330
     property real contentW: expandedW
 
