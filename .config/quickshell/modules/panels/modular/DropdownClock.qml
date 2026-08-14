@@ -16,8 +16,11 @@ import "../../../theme"
 Item {
     id: clockSplitPill
     
-    // Attach directly to the bottom edge of the top bar
-    y: bar.midY + bar.barHeight
+    readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
+
+    // Multi-mode Y position: Flush with bar for Attached, 8px gap for Floating
+    y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
+    Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
     readonly property real expandedW: 320
@@ -39,18 +42,19 @@ Item {
     opacity: openProgress
     visible: opacity > 0.01
 
-    // ── Dropdown Container with Top-Down Curtain Unfolding ──────────
+    // ── Dropdown Container ──────────────────────────────────────────
     Item {
         id: animContainer
         anchors.fill: parent
-        transformOrigin: Item.Top
-        scale: clockSplitPill.scaleProgress
+        transformOrigin: clockSplitPill.isAttached ? Item.Top : Item.Center
+        scale: clockSplitPill.isAttached ? clockSplitPill.scaleProgress : 1.0
         opacity: clockSplitPill.openProgress
 
-        // ── Seamless Minflair Inverted Notch Cutout ─────────────────
+        // ── Attached Mode: Seamless Inverted Notch Cutout ──────────
         Shape {
             id: bgShape
             anchors.fill: parent
+            visible: clockSplitPill.isAttached
             property color shapeColor: bar.pillColor
             readonly property real r: 14
             readonly property real w: width
@@ -63,7 +67,7 @@ Item {
                 startX: 0
                 startY: 0
 
-                // Top-Left Inverted Concave Arc (Flushes with Bar bottom)
+                // Top-Left Inverted Concave Arc
                 PathArc {
                     x: bgShape.r
                     y: bgShape.r
@@ -106,7 +110,7 @@ Item {
                     y: bgShape.r
                 }
 
-                // Top-Right Inverted Concave Arc (Flushes with Bar bottom)
+                // Top-Right Inverted Concave Arc
                 PathArc {
                     x: bgShape.w
                     y: 0
@@ -123,13 +127,22 @@ Item {
             }
         }
 
+        // ── Floating Mode: Floating Rounded Rectangle Pill ────────
+        Rectangle {
+            id: bgRect
+            anchors.fill: parent
+            visible: !clockSplitPill.isAttached
+            radius: 16
+            color: bar.pillColor
+        }
+
         MouseArea {
             id: clockSplitPillMa
             anchors.fill: parent
             enabled: globalState.solidBoardOpen
             hoverEnabled: true
             onClicked: {
-                // Prevent click-through closing when interacting inside the calendar
+                // Keep open on interaction
             }
         }
 

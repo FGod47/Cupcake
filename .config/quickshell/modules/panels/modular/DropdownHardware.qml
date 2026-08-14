@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
@@ -11,107 +12,132 @@ import Quickshell.Wayland
 import "../../common"
 import "../../../theme"
 
-    Rectangle {
-        id: volBrightSplitPill
-        y: bar.midY + bar.barHeight + 8
-        property bool menuExpanded: bar.dropdownOpen
-        property bool showSinkList: false
-        height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 0
-        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+Item {
+    id: volBrightSplitPill
 
-        readonly property real openGap: 16
-        readonly property real expandedW: 260
-        property real contentW: expandedW
+    readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
+    y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
+    Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
 
-        x: bar.barX + bar.barW - contentW - 120
-        width: contentW
+    property bool menuExpanded: bar.dropdownOpen
+    property bool showSinkList: false
+    readonly property real expandedW: 260
+    property real contentW: expandedW
 
-        Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    x: bar.barX + bar.barW - contentW - 120
+    width: contentW
+    height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 0
 
-        radius: 16
-        clip: true
+    Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
-        color: bar.pillColor
+    property real openProgress: menuExpanded ? 1.0 : 0.0
+    property real scaleProgress: menuExpanded ? 1.0 : 0.0
+    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
 
-        opacity: bar.dropdownOpen ? 1.0 : 0.0
-        visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+    opacity: openProgress
+    visible: opacity > 0.01
+
+    Item {
+        id: animContainer
+        anchors.fill: parent
+        transformOrigin: volBrightSplitPill.isAttached ? Item.Top : Item.Center
+        scale: volBrightSplitPill.isAttached ? volBrightSplitPill.scaleProgress : 1.0
+        opacity: volBrightSplitPill.openProgress
+
+        // ── Attached Mode Shape ──────────────────────────────────
+        Shape {
+            id: bgShape
+            anchors.fill: parent
+            visible: volBrightSplitPill.isAttached
+            property color shapeColor: bar.pillColor
+            readonly property real r: 14
+            readonly property real w: width
+            readonly property real h: Math.max(height, 1)
+
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: bgShape.shapeColor
+                startX: 0
+                startY: 0
+
+                PathArc {
+                    x: bgShape.r
+                    y: bgShape.r
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+                PathLine {
+                    x: bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                }
+                PathQuad {
+                    x: 2 * bgShape.r
+                    y: bgShape.h
+                    controlX: bgShape.r
+                    controlY: bgShape.h
+                }
+                PathLine {
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    y: bgShape.h
+                }
+                PathQuad {
+                    x: bgShape.w - bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                    controlX: bgShape.w - bgShape.r
+                    controlY: bgShape.h
+                }
+                PathLine {
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
+                }
+                PathArc {
+                    x: bgShape.w
+                    y: 0
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+                PathLine {
+                    x: 0
+                    y: 0
+                }
+            }
+        }
+
+        // ── Floating Mode Shape ──────────────────────────────────
+        Rectangle {
+            id: bgRect
+            anchors.fill: parent
+            visible: !volBrightSplitPill.isAttached
+            radius: 16
+            color: bar.pillColor
+        }
 
         MouseArea {
             id: volBrightSplitPillMa
             anchors.fill: parent
             enabled: bar.dropdownOpen
             hoverEnabled: true
-            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: {
-                if (mouse.y <= 30) {
-                    let cur = bar.dropdownOpen;
-                    bar.netDropdownOpen = false;
-                    globalState.solidBoardOpen = false;
-                    globalState.powerDropdownOpen = false;
-                    bar.dropdownOpen = !cur;
-                }
-            }
-        }
-
-        // ── Header (Brightness & Volume Icons + %) ──────────────────────────────
-        Row {
-            id: volBrightOptionsRow
-            anchors.horizontalCenter: parent.horizontalCenter
-            y: (30 - height) / 2
-            spacing: 12
-            opacity: volBrightSplitPill.menuExpanded ? 0.0 : 1.0
-            visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 250 } }
-
-            Row {
-                spacing: 4
-                anchors.verticalCenter: parent.verticalCenter
-                Text {
-                    text: bar.getBrightnessIcon(bar.brightStr)
-                    font.family: fontName
-                    font.pixelSize: Theme.defaultFontSize
-                    color: bar.fg
-                }
-                Text {
-                    text: bar.brightStr + "%"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: Theme.defaultFontSize
-                    font.weight: Theme.defaultFontWeight
-                    color: bar.fg
-                }
-            }
-            Row {
-                spacing: 4
-                anchors.verticalCenter: parent.verticalCenter
-                Text {
-                    text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                    font.family: fontName
-                    font.pixelSize: Theme.defaultFontSize
-                    color: bar.isVolMuted ? Theme.colError : bar.fg
-                }
-                Text {
-                    text: bar.volStr + "%"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: Theme.defaultFontSize
-                    font.weight: Theme.defaultFontWeight
-                    color: bar.isVolMuted ? Theme.colError : bar.fg
-                }
+                // Keep open on interaction
             }
         }
 
         // ── Expanded Sliders View ────────────────────────────────
         ColumnLayout {
             id: volBrightContentCol
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: 14
+            x: 14
+            y: 10
+            width: parent.width - 28
             spacing: 12
             opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Brightness Slider Row
             Row {
@@ -341,3 +367,4 @@ import "../../../theme"
             }
         }
     }
+}

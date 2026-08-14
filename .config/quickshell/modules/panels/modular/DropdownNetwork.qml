@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
@@ -11,9 +12,11 @@ import Quickshell.Wayland
 import "../../common"
 import "../../../theme"
 
-Rectangle {
+Item {
     id: netSplitPill
-    y: bar.midY + bar.barHeight + 8
+    readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
+    y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
+    Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
     property bool menuExpanded: bar.netDropdownOpen
     property int activeTab: 1
 
@@ -83,7 +86,7 @@ Rectangle {
     }
 
     height: menuExpanded ? (netContentCol.implicitHeight + 28) : 0
-    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
     readonly property real openGap: 16
     readonly property real expandedW: 310
@@ -92,17 +95,94 @@ Rectangle {
     x: bar.barX + bar.barW - contentW - 180
     width: contentW
 
-    Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-    Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    Behavior on x     { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
-    radius: 16
-    clip: true
+    property real openProgress: menuExpanded ? 1.0 : 0.0
+    property real scaleProgress: menuExpanded ? 1.0 : 0.0
+    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
 
-    color: bar.pillColor
+    opacity: openProgress
+    visible: opacity > 0.01
 
-    opacity: bar.netDropdownOpen ? 1.0 : 0.0
-    visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
+    Item {
+        id: animContainer
+        anchors.fill: parent
+        transformOrigin: netSplitPill.isAttached ? Item.Top : Item.Center
+        scale: netSplitPill.isAttached ? netSplitPill.scaleProgress : 1.0
+        opacity: netSplitPill.openProgress
+
+        // ── Attached Mode Shape ──────────────────────────────────
+        Shape {
+            id: bgShape
+            anchors.fill: parent
+            visible: netSplitPill.isAttached
+            property color shapeColor: bar.pillColor
+            readonly property real r: 14
+            readonly property real w: width
+            readonly property real h: Math.max(height, 1)
+
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: bgShape.shapeColor
+                startX: 0
+                startY: 0
+
+                PathArc {
+                    x: bgShape.r
+                    y: bgShape.r
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+                PathLine {
+                    x: bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                }
+                PathQuad {
+                    x: 2 * bgShape.r
+                    y: bgShape.h
+                    controlX: bgShape.r
+                    controlY: bgShape.h
+                }
+                PathLine {
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    y: bgShape.h
+                }
+                PathQuad {
+                    x: bgShape.w - bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                    controlX: bgShape.w - bgShape.r
+                    controlY: bgShape.h
+                }
+                PathLine {
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
+                }
+                PathArc {
+                    x: bgShape.w
+                    y: 0
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+                PathLine {
+                    x: 0
+                    y: 0
+                }
+            }
+        }
+
+        // ── Floating Mode Shape ──────────────────────────────────
+        Rectangle {
+            id: bgRect
+            anchors.fill: parent
+            visible: !netSplitPill.isAttached
+            radius: 16
+            color: bar.pillColor
+        }
 
     // Instant Event Monitor
     Process {
@@ -1341,4 +1421,5 @@ Rectangle {
             }
         }
     }
+}
 }

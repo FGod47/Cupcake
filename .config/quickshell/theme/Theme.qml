@@ -42,6 +42,26 @@ Item {
                 if (p[19] && p[19].trim() !== "") themeSingleton.wallpaperSwitcherStyle = p[19].trim();
                 if (p[20] && p[20].trim() === "false") themeSingleton.showDividers = false;
                 if (p[21]) { let v = parseFloat(p[21].trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; }
+                if (p[22] && p[22].trim() !== "") themeSingleton.barDropdownStyle = p[22].trim();
+            }
+        }
+    }
+
+    FileView {
+        id: barDropdownStyleFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_dropdown_style"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.barDropdownStyle = t.trim();
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.barDropdownStyle = t.trim();
             }
         }
     }
@@ -100,6 +120,8 @@ Item {
     property string appLauncherStyle: "Hover"
 
     property string wallpaperSwitcherStyle: "Carousel"
+
+    property string barDropdownStyle: "Attached"
 
     property bool showDividers: true
 

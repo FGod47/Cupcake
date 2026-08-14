@@ -150,6 +150,19 @@ Item {
         }
     }
 
+    property string barDropdownStyle: "Attached"
+    
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_dropdown_style"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let s = text.trim();
+                if (s !== "") root.barDropdownStyle = s;
+            }
+        }
+    }
+
     property string toggleStyle: "Android"
     property bool backgroundBlur: true
     property real blurStrength: 0.77
@@ -647,6 +660,28 @@ Item {
                         onSelected: (v) => {
                             root.wallpaperSwitcherStyle = v;
                             Quickshell.execDetached(["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.wallpaper_switcher_style"]);
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueaf4" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar dropdown style"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Choose between attached notch and floating split pill"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    SegmentedControl {
+                        options: ["Attached", "Floating"]
+                        current: root.barDropdownStyle
+                        onSelected: (v) => {
+                            root.barDropdownStyle = v;
+                            Theme.barDropdownStyle = v;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + v + "' > ~/.config/cupcake/.bar_dropdown_style"]);
                         }
                     }
                 }
