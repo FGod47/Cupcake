@@ -183,35 +183,42 @@ Item {
                     y: bgShape.r
                     radiusX: bgShape.r
                     radiusY: bgShape.r
-                    direction: ShapePath.Counterclockwise
+                    direction: PathArc.Clockwise
                 }
 
                 // Left Wall
-                PathLine { x: bgShape.r; y: Math.max(bgShape.r, bgShape.h - bgShape.r) }
-
-                // Bottom-Left Rounded Corner
-                PathArc {
-                    x: bgShape.r * 2
-                    y: bgShape.h
-                    radiusX: bgShape.r
-                    radiusY: bgShape.r
-                    direction: ShapePath.Counterclockwise
+                PathLine {
+                    x: bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
                 }
 
-                // Bottom Edge
-                PathLine { x: Math.max(bgShape.r * 2, bgShape.w - bgShape.r * 2); y: bgShape.h }
+                // Bottom-Left Smooth Curve
+                PathQuad {
+                    x: 2 * bgShape.r
+                    y: bgShape.h
+                    controlX: bgShape.r
+                    controlY: bgShape.h
+                }
 
-                // Bottom-Right Rounded Corner
-                PathArc {
+                // Bottom Line
+                PathLine {
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    y: bgShape.h
+                }
+
+                // Bottom-Right Smooth Curve
+                PathQuad {
                     x: bgShape.w - bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    radiusX: bgShape.r
-                    radiusY: bgShape.r
-                    direction: ShapePath.Counterclockwise
+                    controlX: bgShape.w - bgShape.r
+                    controlY: bgShape.h
                 }
 
                 // Right Wall
-                PathLine { x: bgShape.w - bgShape.r; y: bgShape.r }
+                PathLine {
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
+                }
 
                 // Top-Right Inverted Concave Arc
                 PathArc {
@@ -219,11 +226,14 @@ Item {
                     y: 0
                     radiusX: bgShape.r
                     radiusY: bgShape.r
-                    direction: ShapePath.Counterclockwise
+                    direction: PathArc.Clockwise
                 }
 
-                // Top Edge (Closing Path)
-                PathLine { x: 0; y: 0 }
+                // Top Edge Connection
+                PathLine {
+                    x: 0
+                    y: 0
+                }
             }
         }
 
