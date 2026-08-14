@@ -85,7 +85,11 @@ Item {
         }
     }
 
-    height: menuExpanded ? (netContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
+
+    height: menuExpanded ? (netContentCol.implicitHeight + padTop + padBottom) : 0
     Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
     readonly property real openGap: 16
@@ -491,9 +495,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.leftMargin: netSplitPill.isAttached ? 22 : 14
-        anchors.rightMargin: netSplitPill.isAttached ? 22 : 14
-        anchors.topMargin: netSplitPill.isAttached ? 16 : 12
+        anchors.leftMargin: netSplitPill.padSide
+        anchors.rightMargin: netSplitPill.padSide
+        anchors.topMargin: netSplitPill.padTop
         spacing: 12
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0

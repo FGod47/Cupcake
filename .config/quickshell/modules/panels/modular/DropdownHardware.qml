@@ -24,9 +24,13 @@ Item {
     readonly property real expandedW: 280
     property real contentW: expandedW
 
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
+
     x: bar.barX + bar.barW - contentW - 130
     width: contentW
-    height: menuExpanded ? (volBrightContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
+    height: menuExpanded ? (volBrightContentCol.implicitHeight + padTop + padBottom) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -131,10 +135,10 @@ Item {
         // ── Expanded Sliders View ────────────────────────────────
         ColumnLayout {
             id: volBrightContentCol
-            x: volBrightSplitPill.isAttached ? 22 : 14
-            y: volBrightSplitPill.isAttached ? 16 : 10
-            width: parent.width - (volBrightSplitPill.isAttached ? 44 : 28)
-            spacing: 12
+            x: volBrightSplitPill.padSide
+            y: volBrightSplitPill.padTop
+            width: parent.width - (volBrightSplitPill.padSide * 2)
+            spacing: 14
             opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

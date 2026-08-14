@@ -23,16 +23,18 @@ Item {
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
     readonly property real expandedW: 360
-    readonly property real expandedH: 156
-    readonly property real artMargin: isAttached ? 14 : 8
-    readonly property real artSizeExpanded: 130
+    readonly property real expandedH: 140
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
+    readonly property real artSizeExpanded: 120
 
     property real contentW: expandedW
 
     readonly property int dur: 280
     readonly property int easingType: Easing.OutExpo
 
-    height: menuExpanded ? (expandedH + (isAttached ? 10 : 0)) : 0
+    height: menuExpanded ? (expandedH + padTop + padBottom) : 0
     Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
     x: bar.barX + 16
@@ -177,8 +179,8 @@ Item {
             width: artSizeExpanded
             height: artSizeExpanded
             z: 15
-            x: musicSplitPill.isAttached ? 22 : 12
-            y: musicSplitPill.isAttached ? 16 : 10
+            x: musicSplitPill.padSide
+            y: musicSplitPill.padTop
 
             Image {
                 id: floatingAlbumArt
@@ -251,9 +253,9 @@ Item {
             elide: Text.ElideRight
             maximumLineCount: 1
             z: 20
-            x: (musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14
-            y: musicSplitPill.isAttached ? 16 : 10
-            width: expandedW - ((musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14) - (musicSplitPill.isAttached ? 22 : 12)
+            x: musicSplitPill.padSide + artSizeExpanded + 14
+            y: musicSplitPill.padTop + 4
+            width: expandedW - (musicSplitPill.padSide + artSizeExpanded + 14) - musicSplitPill.padSide
         }
 
         // ── CLICK HANDLER ──
@@ -271,13 +273,13 @@ Item {
         Item {
             id: expandedContent
             anchors.left: parent.left
-            anchors.leftMargin: (musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14
+            anchors.leftMargin: musicSplitPill.padSide + artSizeExpanded + 14
             anchors.right: parent.right
-            anchors.rightMargin: musicSplitPill.isAttached ? 22 : 12
+            anchors.rightMargin: musicSplitPill.padSide
             anchors.top: parent.top
-            anchors.topMargin: musicSplitPill.isAttached ? 16 : 10
+            anchors.topMargin: musicSplitPill.padTop + 4
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: musicSplitPill.isAttached ? 16 : 10
+            anchors.bottomMargin: musicSplitPill.padBottom
 
             opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
@@ -300,7 +302,7 @@ Item {
                     maximumLineCount: 1
                 }
 
-                Item { width: parent.width; height: 12 }
+                Item { width: parent.width; height: 10 }
 
                 // 2. Media Controls
                 Row {
@@ -401,7 +403,7 @@ Item {
                     }
                 }
 
-                Item { width: parent.width; height: 18 }
+                Item { width: parent.width; height: 14 }
 
                 // 3. Progress Bar & Slider
                 Item {

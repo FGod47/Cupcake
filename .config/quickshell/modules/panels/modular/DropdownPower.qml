@@ -16,13 +16,17 @@ Item {
     Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real expandedW: 160
+    readonly property real expandedW: 165
     property real contentW: expandedW
 
-    // Positioned safely away from the bar's 15px rounded end cap (16px from bar edge)
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
+
+    // Positioned safely away from the bar's 15px rounded end cap
     x: bar.barX + bar.barW - contentW - 16
     width: contentW
-    height: menuExpanded ? (powerMenu.implicitHeight + 32) : 0
+    height: menuExpanded ? (powerMenu.implicitHeight + padTop + padBottom) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -132,10 +136,10 @@ Item {
         // ── Expanded Power Menu ─────────────────────────────────────
         Column {
             id: powerMenu
-            x: powerSplitPill.isAttached ? 22 : 12
-            y: powerSplitPill.isAttached ? 16 : 12
-            width: parent.width - (powerSplitPill.isAttached ? 44 : 24)
-            spacing: 3
+            x: powerSplitPill.padSide
+            y: powerSplitPill.padTop
+            width: parent.width - (powerSplitPill.padSide * 2)
+            spacing: 4
             opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

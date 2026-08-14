@@ -26,10 +26,15 @@ Item {
     readonly property real expandedW: 340
     property real contentW: expandedW
     
+    // Balanced padding constants
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padSide: isAttached ? 28 : 16
+    readonly property real padBottom: isAttached ? 22 : 14
+
     // Positioned aligned with clock widget and safely away from bar edge
     x: bar.barX + bar.barW - contentW - 20
     width: contentW
-    height: menuExpanded ? (clockContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
+    height: menuExpanded ? (clockContentCol.implicitHeight + padTop + padBottom) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -150,9 +155,9 @@ Item {
         // ── Expanded Calendar & Clock View ────────────────────────────────
         ColumnLayout {
             id: clockContentCol
-            x: clockSplitPill.isAttached ? 24 : 14
-            y: clockSplitPill.isAttached ? 16 : 10
-            width: parent.width - (clockSplitPill.isAttached ? 48 : 28)
+            x: clockSplitPill.padSide
+            y: clockSplitPill.padTop
+            width: parent.width - (clockSplitPill.padSide * 2)
             spacing: 12
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
@@ -167,7 +172,7 @@ Item {
                 Row {
                     id: bigClockRow
                     anchors.centerIn: parent
-                    spacing: 6
+                    spacing: 8
 
                     Text {
                         text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
@@ -196,7 +201,7 @@ Item {
                     }
                     Column {
                         anchors.verticalCenter: parent.verticalCenter
-                        spacing: 1
+                        spacing: 2
                         Text {
                             text: Qt.formatDateTime(timeClock.date, "AP")
                             font.family: Theme.defaultFontFamily
@@ -226,7 +231,7 @@ Item {
             Column {
                 id: calCol
                 Layout.fillWidth: true
-                spacing: 6
+                spacing: 8
 
                 property date currentDate: new Date()
 
@@ -236,7 +241,7 @@ Item {
                     Text {
                         text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: 13
                         font.weight: Font.DemiBold
                         color: Theme.colOnSurface
                         width: parent.width - 48
@@ -244,7 +249,7 @@ Item {
                     Row {
                         spacing: 4
                         MouseArea {
-                            width: 20; height: 20
+                            width: 22; height: 22
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 let d = new Date(calCol.currentDate);
@@ -255,13 +260,13 @@ Item {
                                 anchors.centerIn: parent
                                 text: "\uea60"
                                 font.family: "tabler-icons"
-                                font.pixelSize: 13
+                                font.pixelSize: 14
                                 color: Theme.colOnSurface
                                 opacity: 0.6
                             }
                         }
                         MouseArea {
-                            width: 20; height: 20
+                            width: 22; height: 22
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 let d = new Date(calCol.currentDate);
@@ -272,7 +277,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: "\uea61"
                                 font.family: "tabler-icons"
-                                font.pixelSize: 13
+                                font.pixelSize: 14
                                 color: Theme.colOnSurface
                                 opacity: 0.6
                             }
@@ -286,12 +291,12 @@ Item {
                     Repeater {
                         model: ["Su","Mo","Tu","We","Th","Fr","Sa"]
                         Text {
-                            width: (clockContentCol.width) / 7
+                            width: clockContentCol.width / 7
                             text: modelData
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 10
                             color: Theme.colOnSurface
-                            opacity: 0.4
+                            opacity: 0.45
                             horizontalAlignment: Text.AlignHCenter
                         }
                     }
@@ -347,7 +352,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: cellDay
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10
+                                font.pixelSize: 11
                                 font.weight: isToday ? Font.Bold : Font.Normal
                                 color: isToday ? Theme.colOnPrimary : (isCurrentMonth ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25))
                                 horizontalAlignment: Text.AlignHCenter
