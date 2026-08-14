@@ -1193,7 +1193,6 @@ PanelWindow {
         solidBar.x = bar.startX;
         solidBar.width = bar.startW;
         bar.baseHeight = bar.startHeight;
-        solidBar.radius = bar.startRadius;
         contentLayout.opacity = 0.0;
     }
 
