@@ -89,33 +89,42 @@ Item {
     readonly property real padSide: isAttached ? 26 : 14
     readonly property real padBottom: isAttached ? 22 : 14
 
-    height: menuExpanded ? (netContentCol.implicitHeight + padTop + padBottom) : 0
-    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-
-    readonly property real openGap: 16
-    readonly property real expandedW: 330
-    property real contentW: expandedW
-
-    x: bar.barX + bar.barW - contentW - 140
-    width: contentW
-
-    Behavior on x     { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-    Behavior on width { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
+    Behavior on height {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on width {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on x {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
 
     property real openProgress: menuExpanded ? 1.0 : 0.0
-    property real scaleProgress: menuExpanded ? 1.0 : 0.0
-    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
-    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on openProgress {
+        NumberAnimation {
+            duration: 350
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+        }
+    }
 
     opacity: openProgress
-    visible: opacity > 0.01
+    visible: height > 0 || opacity > 0.01
 
     Item {
         id: animContainer
         anchors.fill: parent
-        transformOrigin: netSplitPill.isAttached ? Item.Top : Item.Center
-        scale: netSplitPill.isAttached ? netSplitPill.scaleProgress : 1.0
-        opacity: netSplitPill.openProgress
+        clip: true
 
         // ── Attached Mode Shape ──────────────────────────────────
         Shape {
@@ -489,19 +498,26 @@ Item {
         }
     }
 
-    // Expanded View Dashboard
-    ColumnLayout {
-        id: netContentCol
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.leftMargin: netSplitPill.padSide
-        anchors.rightMargin: netSplitPill.padSide
-        anchors.topMargin: netSplitPill.padTop
-        spacing: 12
+    // Inner Content Wrapper (Reveals smoothly without squishing)
+    Item {
+        id: contentWrapper
+        anchors.fill: parent
+        clip: true
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
-        visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+        Behavior on opacity {
+            NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
+        }
+
+        // Expanded View Dashboard
+        ColumnLayout {
+            id: netContentCol
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.leftMargin: netSplitPill.padSide
+            anchors.rightMargin: netSplitPill.padSide
+            anchors.topMargin: netSplitPill.padTop
+            spacing: 12
 
         // ── 1. Top Segmented Tab Bar ──
         Rectangle {
@@ -1427,5 +1443,6 @@ Item {
             }
         }
     }
+}
 }
 }

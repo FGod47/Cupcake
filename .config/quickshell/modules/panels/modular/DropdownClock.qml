@@ -20,7 +20,7 @@ Item {
 
     // Multi-mode Y position
     y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
-    Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
     readonly property real expandedW: 340
@@ -31,30 +31,50 @@ Item {
     readonly property real padSide: isAttached ? 28 : 16
     readonly property real padBottom: isAttached ? 22 : 14
 
+    readonly property real targetH: clockContentCol.implicitHeight + padTop + padBottom
+
     // Positioned aligned with clock widget and safely away from bar edge
     x: bar.barX + bar.barW - contentW - 20
     width: contentW
-    height: menuExpanded ? (clockContentCol.implicitHeight + padTop + padBottom) : 0
+    height: menuExpanded ? targetH : 0
 
-    Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-    Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
+    Behavior on height {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on width {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on x {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
 
     property real openProgress: menuExpanded ? 1.0 : 0.0
-    property real scaleProgress: menuExpanded ? 1.0 : 0.0
-    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
-    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on openProgress {
+        NumberAnimation {
+            duration: 350
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+        }
+    }
 
     opacity: openProgress
-    visible: opacity > 0.01
+    visible: height > 0 || opacity > 0.01
 
     // ── Dropdown Container ──────────────────────────────────────────
     Item {
         id: animContainer
         anchors.fill: parent
-        transformOrigin: clockSplitPill.isAttached ? Item.Top : Item.Center
-        scale: clockSplitPill.isAttached ? clockSplitPill.scaleProgress : 1.0
-        opacity: clockSplitPill.openProgress
+        clip: true
 
         // ── Attached Mode: Seamless Inverted Notch Cutout ──────────
         Shape {
@@ -152,210 +172,218 @@ Item {
             }
         }
 
-        // ── Expanded Calendar & Clock View ────────────────────────────────
-        ColumnLayout {
-            id: clockContentCol
-            x: clockSplitPill.padSide
-            y: clockSplitPill.padTop
-            width: parent.width - (clockSplitPill.padSide * 2)
-            spacing: 12
+        // ── Inner Content Wrapper (Reveals smoothly without squishing) ──
+        Item {
+            id: contentWrapper
+            anchors.fill: parent
+            clip: true
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
-            visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
+            }
 
-            // Big Accent Clock Header
-            Item {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter
-                implicitHeight: bigClockRow.implicitHeight
+            // ── Expanded Calendar & Clock View ────────────────────────────────
+            ColumnLayout {
+                id: clockContentCol
+                x: clockSplitPill.padSide
+                y: clockSplitPill.padTop
+                width: parent.width - (clockSplitPill.padSide * 2)
+                spacing: 12
 
-                Row {
-                    id: bigClockRow
-                    anchors.centerIn: parent
-                    spacing: 8
+                // Big Accent Clock Header
+                Item {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
+                    implicitHeight: bigClockRow.implicitHeight
 
-                    Text {
-                        text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 34
-                        font.weight: Font.Bold
-                        color: Theme.colPrimary
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Text {
-                        text: ":"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 34
-                        font.weight: Font.Bold
-                        color: Theme.colOnSurface
-                        opacity: 0.4
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Text {
-                        text: Qt.formatDateTime(timeClock.date, "mm")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 34
-                        font.weight: Font.Bold
-                        color: Theme.colOnSurface
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Column {
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 2
+                    Row {
+                        id: bigClockRow
+                        anchors.centerIn: parent
+                        spacing: 8
+
                         Text {
-                            text: Qt.formatDateTime(timeClock.date, "AP")
+                            text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: 34
                             font.weight: Font.Bold
                             color: Theme.colPrimary
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                         Text {
-                            text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
+                            text: ":"
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
+                            font.pixelSize: 34
+                            font.weight: Font.Bold
                             color: Theme.colOnSurface
-                            opacity: 0.55
+                            opacity: 0.4
+                            anchors.verticalCenter: parent.verticalCenter
                         }
-                    }
-                }
-            }
-
-            // Separator
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-            }
-
-            // Inline Calendar
-            Column {
-                id: calCol
-                Layout.fillWidth: true
-                spacing: 8
-
-                property date currentDate: new Date()
-
-                // Month header
-                Row {
-                    width: parent.width
-                    Text {
-                        text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 13
-                        font.weight: Font.DemiBold
-                        color: Theme.colOnSurface
-                        width: parent.width - 48
-                    }
-                    Row {
-                        spacing: 4
-                        MouseArea {
-                            width: 22; height: 22
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                let d = new Date(calCol.currentDate);
-                                d.setMonth(d.getMonth() - 1);
-                                calCol.currentDate = d;
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uea60"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 14
-                                color: Theme.colOnSurface
-                                opacity: 0.6
-                            }
-                        }
-                        MouseArea {
-                            width: 22; height: 22
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                let d = new Date(calCol.currentDate);
-                                d.setMonth(d.getMonth() + 1);
-                                calCol.currentDate = d;
-                            }
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\uea61"
-                                font.family: "tabler-icons"
-                                font.pixelSize: 14
-                                color: Theme.colOnSurface
-                                opacity: 0.6
-                            }
-                        }
-                    }
-                }
-
-                // Day of week header
-                Row {
-                    width: parent.width
-                    Repeater {
-                        model: ["Su","Mo","Tu","We","Th","Fr","Sa"]
                         Text {
-                            width: clockContentCol.width / 7
-                            text: modelData
+                            text: Qt.formatDateTime(timeClock.date, "mm")
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: 34
+                            font.weight: Font.Bold
                             color: Theme.colOnSurface
-                            opacity: 0.45
-                            horizontalAlignment: Text.AlignHCenter
+                            anchors.verticalCenter: parent.verticalCenter
                         }
-                    }
-                }
-
-                // Calendar grid
-                Grid {
-                    id: clockCalGrid
-                    width: parent.width
-                    columns: 7
-                    spacing: 2
-
-                    property date currentDate: parent.currentDate
-                    property int month: currentDate.getMonth()
-                    property int year: currentDate.getFullYear()
-                    property int firstDayOfWeek: new Date(year, month, 1).getDay()
-                    property int daysInMonth: new Date(year, month + 1, 0).getDate()
-                    property int daysInPrevMonth: new Date(year, month, 0).getDate()
-                    property int totalCells: Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7
-
-                    Repeater {
-                        model: clockCalGrid.totalCells
-                        delegate: Item {
-                            width: (clockContentCol.width - 12) / 7
-                            height: width
-
-                            property int cellDay: {
-                                let idx = index - clockCalGrid.firstDayOfWeek;
-                                if (idx < 0) return clockCalGrid.daysInPrevMonth + idx + 1;
-                                if (idx >= clockCalGrid.daysInMonth) return idx - clockCalGrid.daysInMonth + 1;
-                                return idx + 1;
-                            }
-                            property bool isCurrentMonth: {
-                                let idx = index - clockCalGrid.firstDayOfWeek;
-                                return idx >= 0 && idx < clockCalGrid.daysInMonth;
-                            }
-                            property bool isToday: {
-                                let now = new Date();
-                                return isCurrentMonth &&
-                                       cellDay === now.getDate() &&
-                                       clockCalGrid.month === now.getMonth() &&
-                                       clockCalGrid.year === now.getFullYear();
-                            }
-
-                            Rectangle {
-                                anchors.centerIn: parent
-                                width: parent.width - 2
-                                height: width
-                                radius: width / 2
-                                color: isToday ? Theme.colPrimary : "transparent"
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 2
+                            Text {
+                                text: Qt.formatDateTime(timeClock.date, "AP")
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Bold
+                                color: Theme.colPrimary
                             }
                             Text {
-                                anchors.centerIn: parent
-                                text: cellDay
+                                text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 11
-                                font.weight: isToday ? Font.Bold : Font.Normal
-                                color: isToday ? Theme.colOnPrimary : (isCurrentMonth ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25))
+                                color: Theme.colOnSurface
+                                opacity: 0.55
+                            }
+                        }
+                    }
+                }
+
+                // Separator
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 1
+                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                }
+
+                // Inline Calendar
+                Column {
+                    id: calCol
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    property date currentDate: new Date()
+
+                    // Month header
+                    Row {
+                        width: parent.width
+                        Text {
+                            text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.DemiBold
+                            color: Theme.colOnSurface
+                            width: parent.width - 48
+                        }
+                        Row {
+                            spacing: 4
+                            MouseArea {
+                                width: 22; height: 22
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    let d = new Date(calCol.currentDate);
+                                    d.setMonth(d.getMonth() - 1);
+                                    calCol.currentDate = d;
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uea60"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 14
+                                    color: Theme.colOnSurface
+                                    opacity: 0.6
+                                }
+                            }
+                            MouseArea {
+                                width: 22; height: 22
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    let d = new Date(calCol.currentDate);
+                                    d.setMonth(d.getMonth() + 1);
+                                    calCol.currentDate = d;
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uea61"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 14
+                                    color: Theme.colOnSurface
+                                    opacity: 0.6
+                                }
+                            }
+                        }
+                    }
+
+                    // Day of week header
+                    Row {
+                        width: parent.width
+                        Repeater {
+                            model: ["Su","Mo","Tu","We","Th","Fr","Sa"]
+                            Text {
+                                width: clockContentCol.width / 7
+                                text: modelData
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 10
+                                color: Theme.colOnSurface
+                                opacity: 0.45
                                 horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+                    }
+
+                    // Calendar grid
+                    Grid {
+                        id: clockCalGrid
+                        width: parent.width
+                        columns: 7
+                        spacing: 2
+
+                        property date currentDate: parent.currentDate
+                        property int month: currentDate.getMonth()
+                        property int year: currentDate.getFullYear()
+                        property int firstDayOfWeek: new Date(year, month, 1).getDay()
+                        property int daysInMonth: new Date(year, month + 1, 0).getDate()
+                        property int daysInPrevMonth: new Date(year, month, 0).getDate()
+                        property int totalCells: Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7
+
+                        Repeater {
+                            model: clockCalGrid.totalCells
+                            delegate: Item {
+                                width: (clockContentCol.width - 12) / 7
+                                height: width
+
+                                property int cellDay: {
+                                    let idx = index - clockCalGrid.firstDayOfWeek;
+                                    if (idx < 0) return clockCalGrid.daysInPrevMonth + idx + 1;
+                                    if (idx >= clockCalGrid.daysInMonth) return idx - clockCalGrid.daysInMonth + 1;
+                                    return idx + 1;
+                                }
+                                property bool isCurrentMonth: {
+                                    let idx = index - clockCalGrid.firstDayOfWeek;
+                                    return idx >= 0 && idx < clockCalGrid.daysInMonth;
+                                }
+                                property bool isToday: {
+                                    let now = new Date();
+                                    return isCurrentMonth &&
+                                           cellDay === now.getDate() &&
+                                           clockCalGrid.month === now.getMonth() &&
+                                           clockCalGrid.year === now.getFullYear();
+                                }
+
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: parent.width - 2
+                                    height: width
+                                    radius: width / 2
+                                    color: isToday ? Theme.colPrimary : "transparent"
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: cellDay
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: isToday ? Font.Bold : Font.Normal
+                                    color: isToday ? Theme.colOnPrimary : (isCurrentMonth ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25))
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
                             }
                         }
                     }

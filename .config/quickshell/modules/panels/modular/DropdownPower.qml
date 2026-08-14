@@ -13,7 +13,7 @@ Item {
 
     readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
     y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
-    Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
+    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
     readonly property real expandedW: 165
@@ -23,22 +23,44 @@ Item {
     readonly property real padSide: isAttached ? 26 : 14
     readonly property real padBottom: isAttached ? 22 : 14
 
+    readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
+
     // Positioned safely away from the bar's 15px rounded end cap
     x: bar.barX + bar.barW - contentW - 16
     width: contentW
-    height: menuExpanded ? (powerMenu.implicitHeight + padTop + padBottom) : 0
+    height: menuExpanded ? targetH : 0
 
-    Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-    Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
-    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
+    Behavior on height {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on width {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
+    Behavior on x {
+        NumberAnimation {
+            duration: 400
+            easing.type: Easing.InOutExpo
+        }
+    }
 
     property real openProgress: menuExpanded ? 1.0 : 0.0
-    property real scaleProgress: menuExpanded ? 1.0 : 0.0
-    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
-    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on openProgress {
+        NumberAnimation {
+            duration: 350
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+        }
+    }
 
     opacity: openProgress
-    visible: opacity > 0.01
+    visible: height > 0 || opacity > 0.01
 
     FontLoader {
         id: powerIconFont
@@ -48,9 +70,7 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        transformOrigin: powerSplitPill.isAttached ? Item.Top : Item.Center
-        scale: powerSplitPill.isAttached ? powerSplitPill.scaleProgress : 1.0
-        opacity: powerSplitPill.openProgress
+        clip: true
 
         // ── Attached Mode Shape ──────────────────────────────────
         Shape {
@@ -133,169 +153,177 @@ Item {
             }
         }
 
-        // ── Expanded Power Menu ─────────────────────────────────────
-        Column {
-            id: powerMenu
-            x: powerSplitPill.padSide
-            y: powerSplitPill.padTop
-            width: parent.width - (powerSplitPill.padSide * 2)
-            spacing: 4
+        // ── Inner Content Wrapper (Reveals smoothly without squishing) ──
+        Item {
+            id: contentWrapper
+            anchors.fill: parent
+            clip: true
             opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
-            visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-
-            // Category Header
-            Item {
-                width: parent.width
-                height: 20
-
-                Text {
-                    text: "POWER"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 10
-                    font.weight: Font.Bold
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
-                    anchors.left: parent.left
-                    anchors.leftMargin: 6
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
             }
 
-            component PowerMenuItem: Item {
-                id: itemRoot
-                property string icon: ""
-                property string label: ""
-                property bool isCancel: false
-                signal triggered()
+            // ── Expanded Power Menu ─────────────────────────────────────
+            Column {
+                id: powerMenu
+                x: powerSplitPill.padSide
+                y: powerSplitPill.padTop
+                width: parent.width - (powerSplitPill.padSide * 2)
+                spacing: 4
 
-                width: parent.width
-                height: 30
+                // Category Header
+                Item {
+                    width: parent.width
+                    height: 20
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: height / 2
-                    color: itemMa.containsMouse
-                           ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                           : "transparent"
-                    Behavior on color { ColorAnimation { duration: 120 } }
+                    Text {
+                        text: "POWER"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
-                // Normal Item with Icon + Text
-                Row {
-                    visible: !itemRoot.isCancel
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    spacing: 10
+                component PowerMenuItem: Item {
+                    id: itemRoot
+                    property string icon: ""
+                    property string label: ""
+                    property bool isCancel: false
+                    signal triggered()
 
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: itemRoot.icon
-                        font.family: powerIconFont.name
-                        font.pixelSize: 14
-                        color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
+                    width: parent.width
+                    height: 30
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: height / 2
+                        color: itemMa.containsMouse
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                               : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
                     }
-                    Text {
+
+                    // Normal Item with Icon + Text
+                    Row {
+                        visible: !itemRoot.isCancel
                         anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        spacing: 10
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: itemRoot.icon
+                            font.family: powerIconFont.name
+                            font.pixelSize: 14
+                            color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                        }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: itemRoot.label
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Medium
+                            color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                        }
+                    }
+
+                    // Cancel Item (Centered)
+                    Text {
+                        visible: itemRoot.isCancel
+                        anchors.centerIn: parent
                         text: itemRoot.label
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 12
                         font.weight: Font.Medium
-                        color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                        color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                         Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+
+                    MouseArea {
+                        id: itemMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: itemRoot.triggered()
                     }
                 }
 
-                // Cancel Item (Centered)
-                Text {
-                    visible: itemRoot.isCancel
-                    anchors.centerIn: parent
-                    text: itemRoot.label
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 12
-                    font.weight: Font.Medium
-                    color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                    Behavior on color { ColorAnimation { duration: 120 } }
+                // Section 1: Lock & Sleep
+                PowerMenuItem {
+                    icon: "\ueae2"
+                    label: "Lock"
+                    onTriggered: {
+                        globalState.powerDropdownOpen = false;
+                        Quickshell.execDetached(["bash", "-c", "hyprlock"]);
+                    }
                 }
 
-                MouseArea {
-                    id: itemMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: itemRoot.triggered()
+                PowerMenuItem {
+                    icon: "\ueb0d"
+                    label: "Sleep"
+                    onTriggered: {
+                        globalState.powerDropdownOpen = false;
+                        Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+                    }
                 }
-            }
 
-            // Section 1: Lock & Sleep
-            PowerMenuItem {
-                icon: "\ueae2"
-                label: "Lock"
-                onTriggered: {
-                    globalState.powerDropdownOpen = false;
-                    Quickshell.execDetached(["bash", "-c", "hyprlock"]);
+                // Separator 1
+                Item {
+                    width: parent.width
+                    height: 7
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width - 8
+                        height: 1
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    }
                 }
-            }
 
-            PowerMenuItem {
-                icon: "\ueb0d"
-                label: "Sleep"
-                onTriggered: {
-                    globalState.powerDropdownOpen = false;
-                    Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+                // Section 2: Restart & Shut Down
+                PowerMenuItem {
+                    icon: "\ueb13"
+                    label: "Restart"
+                    onTriggered: {
+                        globalState.powerDropdownOpen = false;
+                        Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
+                    }
                 }
-            }
 
-            // Separator 1
-            Item {
-                width: parent.width
-                height: 7
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width - 8
-                    height: 1
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                PowerMenuItem {
+                    icon: "\ueb0d"
+                    label: "Shut Down"
+                    onTriggered: {
+                        globalState.powerDropdownOpen = false;
+                        Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
+                    }
                 }
-            }
 
-            // Section 2: Restart & Shut Down
-            PowerMenuItem {
-                icon: "\ueb13"
-                label: "Restart"
-                onTriggered: {
-                    globalState.powerDropdownOpen = false;
-                    Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
+                // Separator 2
+                Item {
+                    width: parent.width
+                    height: 7
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width - 8
+                        height: 1
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    }
                 }
-            }
 
-            PowerMenuItem {
-                icon: "\ueb0d"
-                label: "Shut Down"
-                onTriggered: {
-                    globalState.powerDropdownOpen = false;
-                    Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                }
-            }
-
-            // Separator 2
-            Item {
-                width: parent.width
-                height: 7
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width - 8
-                    height: 1
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                }
-            }
-
-            // Section 3: Cancel
-            PowerMenuItem {
-                label: "Cancel"
-                isCancel: true
-                onTriggered: {
-                    globalState.powerDropdownOpen = false;
+                // Section 3: Cancel
+                PowerMenuItem {
+                    label: "Cancel"
+                    isCancel: true
+                    onTriggered: {
+                        globalState.powerDropdownOpen = false;
+                    }
                 }
             }
         }
