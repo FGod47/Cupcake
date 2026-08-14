@@ -1,12 +1,12 @@
 return {
-    primary = "rgba(a9d291ff)",
-    primary_container = "rgba(2d4f1dff)",
-    secondary = "rgba(bccbb0ff)",
-    secondary_container = "rgba(3e4a36ff)",
-    tertiary = "rgba(a0cfd0ff)",
-    tertiary_container = "rgba(1e4e4fff)",
-    surface = "rgba(11140fff)",
-    surface_variant = "rgba(43483eff)",
-    background = "rgba(11140fff)",
-    outline = "rgba(8d9286ff)"
+    primary = "rgba(e5b6f2ff)",
+    primary_container = "rgba(5e386aff)",
+    secondary = "rgba(d5c0d7ff)",
+    secondary_container = "rgba(514254ff)",
+    tertiary = "rgba(f5b7b3ff)",
+    tertiary_container = "rgba(663b38ff)",
+    surface = "rgba(161217ff)",
+    surface_variant = "rgba(4c444dff)",
+    background = "rgba(161217ff)",
+    outline = "rgba(988e97ff)"
 }
