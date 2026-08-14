@@ -71,7 +71,7 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: true
+        clip: false
 
         // ── Attached Mode Shape (Left Concave Notch, Flush Right Edge) ────
         Shape {
@@ -122,10 +122,10 @@ Item {
                     controlX: bgShape.w
                     controlY: bgShape.h
                 }
-                // 6. Right edge straight up flush with the bar
+                // 6. Right edge extending up to fill bar's bottom-right corner gap
                 PathLine {
                     x: bgShape.w
-                    y: 0
+                    y: -15
                 }
                 // 7. Close path to top-left
                 PathLine {
