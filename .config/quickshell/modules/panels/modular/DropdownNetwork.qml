@@ -594,16 +594,17 @@ Item {
                     }
 
                     // Available Wi-Fi Items (with Inline In-Place Password Expansion)
-                    ColumnLayout {
+                    Column {
                         visible: bar.isWifi
                         Layout.fillWidth: true
+                        width: parent.width
                         spacing: 4
 
                         Repeater {
                             model: netSplitPill.wifiList.slice(0, 5)
                             delegate: Rectangle {
                                 id: wifiItemRoot
-                                Layout.fillWidth: true
+                                width: parent.width
                                 property bool isConn: modelData.connected
                                 property bool isSelected: netSplitPill.showPassInput && netSplitPill.selectedSSID === modelData.ssid
                                 
