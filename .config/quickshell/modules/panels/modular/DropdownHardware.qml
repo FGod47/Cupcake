@@ -30,8 +30,8 @@ Item {
 
     readonly property real targetH: volBrightContentCol.implicitHeight + padTop + padBottom
 
-    // Align dropdown right edge with the Hardware section's right edge
-    x: hardwareContainer.x + hardwareContainer.width + contentLayout.x + solidBar.x - contentW
+    // Align dropdown right edge to next section boundary (Tray or Clock)
+    x: (sysTrayRepeater.count > 0 ? sysTrayRow.x : clockItem.x) + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
