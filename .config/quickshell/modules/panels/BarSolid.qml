@@ -421,8 +421,7 @@ PanelWindow {
                 Row {
                     id: networkRowContent
                     height: 20
-                    spacing: bar.netDropdownOpen ? 5 : 4
-                    Behavior on spacing { NumberAnimation { duration: 250; easing.type: Easing.OutSine } }
+                    spacing: 5
                     anchors.verticalCenter: parent.verticalCenter
 
                     // Helper component for interactive top bar connectivity icon
@@ -441,9 +440,8 @@ PanelWindow {
 
                         Behavior on width {
                             NumberAnimation {
-                                duration: 320
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+                                duration: 280
+                                easing.type: Easing.OutCubic
                             }
                         }
 
@@ -455,19 +453,18 @@ PanelWindow {
                             radius: 11
                             property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
                             color: isSelected ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : (netIconMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
-                            scale: parent.isShown ? 1.0 : 0.5
+                            scale: parent.isShown ? 1.0 : 0.7
                             opacity: parent.isShown ? 1.0 : 0.0
 
                             Behavior on scale {
                                 NumberAnimation {
-                                    duration: 350
-                                    easing.type: Easing.OutBack
-                                    easing.overshoot: 1.35
+                                    duration: 250
+                                    easing.type: Easing.OutCubic
                                 }
                             }
                             Behavior on opacity {
                                 NumberAnimation {
-                                    duration: 250
+                                    duration: 220
                                     easing.type: Easing.OutQuad
                                 }
                             }
