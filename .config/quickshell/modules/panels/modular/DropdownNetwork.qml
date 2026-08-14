@@ -457,19 +457,15 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Wi-Fi Card
-                    Rectangle {
+                    // Active Wi-Fi Row (Flat & seamless)
+                    Item {
                         Layout.fillWidth: true
-                        height: 58
-                        radius: 14
-                        color: Qt.rgba(1, 1, 1, 0.06)
-                        border.color: Qt.rgba(1, 1, 1, 0.08)
-                        border.width: 1
+                        height: 48
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 12
-                            anchors.rightMargin: 12
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 4
                             spacing: 12
 
                             Item {
@@ -775,19 +771,15 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Bluetooth Card
-                    Rectangle {
+                    // Active Bluetooth Row (Flat & seamless)
+                    Item {
                         Layout.fillWidth: true
-                        height: 58
-                        radius: 14
-                        color: Qt.rgba(1, 1, 1, 0.06)
-                        border.color: Qt.rgba(1, 1, 1, 0.08)
-                        border.width: 1
+                        height: 48
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 12
-                            anchors.rightMargin: 12
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 4
                             spacing: 12
 
                             Item {
@@ -1003,19 +995,15 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Hotspot Card
-                    Rectangle {
+                    // Active Hotspot Row (Flat & seamless)
+                    Item {
                         Layout.fillWidth: true
-                        height: 56
-                        radius: 12
-                        color: Qt.rgba(1, 1, 1, 0.06)
-                        border.color: Qt.rgba(1, 1, 1, 0.08)
-                        border.width: 1
+                        height: 48
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 4
                             spacing: 10
 
                             Item {
@@ -1089,54 +1077,46 @@ Item {
                         }
                     }
 
-                    // Hotspot Details Card
-                    Rectangle {
+                    // Hotspot Details (Flat & seamless)
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        height: 70
-                        radius: 10
-                        color: Qt.rgba(1, 1, 1, 0.05)
-                        border.color: Qt.rgba(1, 1, 1, 0.07)
-                        border.width: 1
+                        spacing: 8
+                        Layout.leftMargin: 4
+                        Layout.rightMargin: 4
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            spacing: 6
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text {
-                                    text: "Network Name"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                                }
-                                Item { Layout.fillWidth: true }
-                                Text {
-                                    text: netSplitPill.hsName
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    font.weight: Font.Bold
-                                    color: bar.fg
-                                }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text {
+                                text: "Network Name"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                             }
+                            Item { Layout.fillWidth: true }
+                            Text {
+                                text: netSplitPill.hsName
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.Bold
+                                color: bar.fg
+                            }
+                        }
 
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text {
-                                    text: "Password"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                                }
-                                Item { Layout.fillWidth: true }
-                                Text {
-                                    text: netSplitPill.hsPass
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    font.weight: Font.Bold
-                                    color: Theme.colPrimary
-                                }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text {
+                                text: "Password"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                            }
+                            Item { Layout.fillWidth: true }
+                            Text {
+                                text: netSplitPill.hsPass
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.Bold
+                                color: Theme.colPrimary
                             }
                         }
                     }
@@ -1150,19 +1130,15 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Ethernet Card
-                    Rectangle {
+                    // Active Ethernet Row (Flat & seamless)
+                    Item {
                         Layout.fillWidth: true
-                        height: 56
-                        radius: 12
-                        color: Qt.rgba(1, 1, 1, 0.06)
-                        border.color: Qt.rgba(1, 1, 1, 0.08)
-                        border.width: 1
+                        height: 48
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 4
                             spacing: 10
 
                             Item {
@@ -1204,44 +1180,36 @@ Item {
                         }
                     }
 
-                    // Ethernet Details Table
-                    Rectangle {
+                    // Ethernet Details Table (Flat & seamless)
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        height: 100
-                        radius: 10
-                        color: Qt.rgba(1, 1, 1, 0.05)
-                        border.color: Qt.rgba(1, 1, 1, 0.07)
-                        border.width: 1
+                        spacing: 6
+                        Layout.leftMargin: 4
+                        Layout.rightMargin: 4
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            spacing: 6
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Interface"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                Item { Layout.fillWidth: true }
-                                Text { text: netSplitPill.wiredIface; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
-                            }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text { text: "IPv4 Address"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                Item { Layout.fillWidth: true }
-                                Text { text: netSplitPill.wiredIp || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
-                            }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Gateway"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                Item { Layout.fillWidth: true }
-                                Text { text: netSplitPill.wiredGateway || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
-                            }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                Text { text: "Hardware MAC"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
-                                Item { Layout.fillWidth: true }
-                                Text { text: netSplitPill.wiredMac || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
-                            }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text { text: "Interface"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: netSplitPill.wiredIface; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text { text: "IPv4 Address"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: netSplitPill.wiredIp || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text { text: "Gateway"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: netSplitPill.wiredGateway || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Text { text: "Hardware MAC"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                            Item { Layout.fillWidth: true }
+                            Text { text: netSplitPill.wiredMac || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
                         }
                     }
                 }
