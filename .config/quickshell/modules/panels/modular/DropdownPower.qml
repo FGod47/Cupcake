@@ -73,7 +73,7 @@ Item {
         anchors.fill: parent
         clip: false
 
-        // ── Attached Mode Shape (Zero-Overlap Precision Contour) ──
+        // ── Attached Mode Shape (Flat Top & Flush Right Edge) ────
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -88,7 +88,7 @@ Item {
                 strokeColor: "transparent"
                 fillColor: bgShape.shapeColor
                 startX: 0
-                startY: -1
+                startY: 0
 
                 // 1. Left concave notch merging with bar flat underside
                 PathArc {
@@ -122,23 +122,15 @@ Item {
                     controlX: bgShape.w
                     controlY: bgShape.h
                 }
-                // 6. Right vertical edge goes up into the bar right cap
+                // 6. Right vertical straight edge going directly up to the bar
                 PathLine {
                     x: bgShape.w
-                    y: -16
+                    y: 0
                 }
-                // 7. Arc seamlessly sealing the bar's bottom-right corner anti-aliasing seam
-                PathArc {
-                    x: bgShape.w - 16
-                    y: -1
-                    radiusX: 16
-                    radiusY: 16
-                    direction: PathArc.CounterClockwise
-                }
-                // 8. Straight horizontal line at y=-1 to seal horizontal seam
+                // 7. Top horizontal flat edge back to (0, 0)
                 PathLine {
                     x: 0
-                    y: -1
+                    y: 0
                 }
             }
         }

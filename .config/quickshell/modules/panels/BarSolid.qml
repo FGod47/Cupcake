@@ -296,7 +296,7 @@ PanelWindow {
     // ─────────────────────────────────────────────────────
     // MAIN TOP BAR (Rock-Solid Fixed Full Width Geometry)
     // ─────────────────────────────────────────────────────
-    Rectangle {
+    Item {
         id: solidBar
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
@@ -305,10 +305,47 @@ PanelWindow {
         Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         height: (bar.baseHeight + bar.extraHeight)
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        radius: bar.startRadius
-        Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-        color: bar.pillColor
-        clip: true
+        clip: false
+
+        Shape {
+            id: solidBarBg
+            anchors.fill: parent
+            property color shapeColor: bar.pillColor
+            readonly property real r: bar.startRadius
+            readonly property real w: width
+            readonly property real h: height
+            readonly property bool squareBR: globalState.powerDropdownOpen && Theme.barDropdownStyle === "Attached"
+
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: solidBarBg.shapeColor
+                startX: solidBarBg.r
+                startY: 0
+
+                // Top edge to top-right corner
+                PathLine { x: solidBarBg.w - solidBarBg.r; y: 0 }
+                // Top-right corner
+                PathQuad { x: solidBarBg.w; y: solidBarBg.r; controlX: solidBarBg.w; controlY: 0 }
+                // Right edge to bottom-right corner
+                PathLine { x: solidBarBg.w; y: solidBarBg.squareBR ? solidBarBg.h : (solidBarBg.h - solidBarBg.r) }
+                // Bottom-right corner (square when power dropdown is open, rounded otherwise)
+                PathQuad {
+                    x: solidBarBg.squareBR ? solidBarBg.w : (solidBarBg.w - solidBarBg.r)
+                    y: solidBarBg.h
+                    controlX: solidBarBg.w
+                    controlY: solidBarBg.h
+                }
+                // Bottom edge to bottom-left corner
+                PathLine { x: solidBarBg.r; y: solidBarBg.h }
+                // Bottom-left corner
+                PathQuad { x: 0; y: solidBarBg.h - solidBarBg.r; controlX: 0; controlY: solidBarBg.h }
+                // Left edge to top-left corner
+                PathLine { x: 0; y: solidBarBg.r }
+                // Top-left corner
+                PathQuad { x: solidBarBg.r; y: 0; controlX: 0; controlY: 0 }
+            }
+        }
 
         MouseArea {
             anchors.fill: parent
