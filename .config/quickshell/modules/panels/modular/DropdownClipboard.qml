@@ -283,7 +283,7 @@ Item {
                     color: clearMa.containsMouse ? Qt.rgba(1, 0.3, 0.3, 0.2) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uea8c"
+                        text: "\ueb41" // trash icon
                         font.family: bar.fontName
                         font.pixelSize: 14
                         color: clearMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
@@ -302,7 +302,7 @@ Item {
                     color: closeMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
                     Text {
                         anchors.centerIn: parent
-                        text: "\uea76"
+                        text: "\ueb55" // x close icon
                         font.family: bar.fontName
                         font.pixelSize: 13
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
@@ -331,7 +331,7 @@ Item {
                     spacing: 8
 
                     Text {
-                        text: "\ueb1c"
+                        text: "\ueb1c" // search
                         font.family: bar.fontName
                         font.pixelSize: 14
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
@@ -365,7 +365,7 @@ Item {
 
                     Text {
                         visible: searchInput.text !== ""
-                        text: "\uea76"
+                        text: "\ueb55" // x close icon
                         font.family: bar.fontName
                         font.pixelSize: 13
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
@@ -387,7 +387,7 @@ Item {
                         { "id": "all", "label": "All" },
                         { "id": "text", "label": "Text" },
                         { "id": "image", "label": "Images" },
-                        { "id": "pinned", "label": "Pinned 📌" }
+                        { "id": "pinned", "label": "Pinned" }
                     ]
 
                     Rectangle {
@@ -468,7 +468,7 @@ Item {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: modelData.type === "image" ? "\uea02" : "\uea6d"
+                                text: modelData.type === "image" ? "\ueb0a" : "\uea6f"
                                 font.family: bar.fontName
                                 font.pixelSize: 15
                                 color: modelData.pinned ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
@@ -503,9 +503,9 @@ Item {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "\ueae2"
+                                    text: modelData.pinned ? "\uf68d" : "\uec9c"
                                     font.family: bar.fontName
-                                    font.pixelSize: 12
+                                    font.pixelSize: 13
                                     color: modelData.pinned ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
                                 }
 
@@ -524,7 +524,7 @@ Item {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "\uea76"
+                                    text: "\ueb55"
                                     font.family: bar.fontName
                                     font.pixelSize: 12
                                     color: delMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
