@@ -16,17 +16,18 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real expandedW: 165
+    readonly property real expandedW: 155
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padLeft: isAttached ? 24 : 14
+    readonly property real padRight: isAttached ? 14 : 14
     readonly property real padBottom: isAttached ? 22 : 14
 
     readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Positioned safely away from the bar's 15px rounded end cap
-    x: bar.barX + bar.barW - contentW - 16
+    // Flush and level with the bar's right edge
+    x: bar.barX + bar.barW - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
@@ -72,7 +73,7 @@ Item {
         anchors.fill: parent
         clip: true
 
-        // ── Attached Mode Shape ──────────────────────────────────
+        // ── Attached Mode Shape (Left Concave Notch, Flush Right Edge) ────
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -89,6 +90,7 @@ Item {
                 startX: 0
                 startY: 0
 
+                // 1. Left concave notch from bar underside
                 PathArc {
                     x: bgShape.r
                     y: bgShape.r
@@ -96,37 +98,36 @@ Item {
                     radiusY: bgShape.r
                     direction: PathArc.Clockwise
                 }
+                // 2. Left straight edge
                 PathLine {
                     x: bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
                 }
+                // 3. Bottom-Left rounded corner
                 PathQuad {
                     x: 2 * bgShape.r
                     y: bgShape.h
                     controlX: bgShape.r
                     controlY: bgShape.h
                 }
+                // 4. Bottom straight edge
                 PathLine {
-                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
                     y: bgShape.h
                 }
+                // 5. Bottom-Right rounded corner
                 PathQuad {
-                    x: bgShape.w - bgShape.r
+                    x: bgShape.w
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w - bgShape.r
+                    controlX: bgShape.w
                     controlY: bgShape.h
                 }
+                // 6. Right edge straight up flush with the bar
                 PathLine {
-                    x: bgShape.w - bgShape.r
-                    y: bgShape.r
-                }
-                PathArc {
                     x: bgShape.w
                     y: 0
-                    radiusX: bgShape.r
-                    radiusY: bgShape.r
-                    direction: PathArc.Clockwise
                 }
+                // 7. Close path to top-left
                 PathLine {
                     x: 0
                     y: 0
@@ -166,9 +167,9 @@ Item {
             // ── Expanded Power Menu ─────────────────────────────────────
             Column {
                 id: powerMenu
-                x: powerSplitPill.padSide
+                x: powerSplitPill.padLeft
                 y: powerSplitPill.padTop
-                width: parent.width - (powerSplitPill.padSide * 2)
+                width: parent.width - powerSplitPill.padLeft - powerSplitPill.padRight
                 spacing: 4
 
                 // Category Header
