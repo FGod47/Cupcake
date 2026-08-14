@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
@@ -12,309 +13,136 @@ import Quickshell.Wayland
 import "../../common"
 import "../../../theme"
 
-    Rectangle {
-        id: clockSplitPill
-        y: bar.midY + bar.barHeight + 8
-        property bool menuExpanded: globalState.solidBoardOpen
-        height: menuExpanded ? (clockContentCol.implicitHeight + 28) : 0
-        Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+Item {
+    id: clockSplitPill
+    
+    // Attach directly to the bottom edge of the top bar
+    y: bar.midY + bar.barHeight
+    
+    property bool menuExpanded: globalState.solidBoardOpen
+    readonly property real expandedW: 320
+    property real contentW: expandedW
+    
+    x: bar.barX + bar.barW - contentW - 40
+    width: contentW
+    height: menuExpanded ? (clockContentCol.implicitHeight + 28) : 0
 
-        readonly property real openGap: 16
-        readonly property real expandedW: 320
-        property real contentW: expandedW
+    Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
+    Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
-        x: bar.barX + bar.barW - contentW - 40
-        width: contentW
+    property real openProgress: menuExpanded ? 1.0 : 0.0
+    property real scaleProgress: menuExpanded ? 1.0 : 0.0
+    Behavior on openProgress  { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+    Behavior on scaleProgress { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
 
-        Behavior on x     { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
-        Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    opacity: openProgress
+    visible: opacity > 0.01
 
-        radius: 16
-        clip: true
+    // ── Dropdown Container with Top-Down Curtain Unfolding ──────────
+    Item {
+        id: animContainer
+        anchors.fill: parent
+        transformOrigin: Item.Top
+        scale: clockSplitPill.scaleProgress
+        opacity: clockSplitPill.openProgress
 
-        color: bar.pillColor
-
-        opacity: globalState.solidBoardOpen ? 1.0 : 0.0
-        visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
-
-        MouseArea {
-            id: clockSplitPillMa
+        // ── Seamless Minflair Inverted Notch Cutout ─────────────────
+        Shape {
+            id: bgShape
             anchors.fill: parent
-            enabled: (globalState.solidBoardOpen || bar.dropdownOpen || bar.netDropdownOpen)
-            hoverEnabled: true
-            cursorShape: (mouseY <= 30) ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: {
-                if (mouse.y <= 30) {
-                    let cur = globalState.solidBoardOpen;
-                    bar.dropdownOpen = false;
-                    bar.netDropdownOpen = false;
-                    globalState.powerDropdownOpen = false;
-                    globalState.solidBoardOpen = !cur;
+            property color shapeColor: bar.pillColor
+            readonly property real r: 14
+            readonly property real w: width
+            readonly property real h: Math.max(height, 1)
+
+            ShapePath {
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: bgShape.shapeColor
+                startX: 0
+                startY: 0
+
+                // Top-Left Inverted Concave Arc (Flushes with Bar bottom)
+                PathArc {
+                    x: bgShape.r
+                    y: bgShape.r
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+
+                // Left Wall
+                PathLine {
+                    x: bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                }
+
+                // Bottom-Left Smooth Curve
+                PathQuad {
+                    x: 2 * bgShape.r
+                    y: bgShape.h
+                    controlX: bgShape.r
+                    controlY: bgShape.h
+                }
+
+                // Bottom Line
+                PathLine {
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    y: bgShape.h
+                }
+
+                // Bottom-Right Smooth Curve
+                PathQuad {
+                    x: bgShape.w - bgShape.r
+                    y: Math.max(bgShape.r, bgShape.h - bgShape.r)
+                    controlX: bgShape.w - bgShape.r
+                    controlY: bgShape.h
+                }
+
+                // Right Wall
+                PathLine {
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
+                }
+
+                // Top-Right Inverted Concave Arc (Flushes with Bar bottom)
+                PathArc {
+                    x: bgShape.w
+                    y: 0
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+
+                // Top Edge Connection
+                PathLine {
+                    x: 0
+                    y: 0
                 }
             }
         }
 
-        // ── Header (Tray + Clock & Date Text + Power Icon when dropdown open) ──────
-        Row {
-            id: clockOptionsRow
-            anchors.horizontalCenter: parent.horizontalCenter
-            y: (30 - height) / 2
-            spacing: 4
-            opacity: clockSplitPill.menuExpanded ? 0.0 : 1.0
-            visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 250 } }
-
-            // Hardware Icons (Brightness & Volume) — shown in this pill when Network separates
-            Row {
-                id: hwRow
-                spacing: 12
-                anchors.verticalCenter: parent.verticalCenter
-                opacity: bar.netDropdownOpen ? 1.0 : 0.0
-                visible: opacity > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-
-                MouseArea {
-                    id: bMouseClock
-                    width: childrenRect.width
-                    height: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        bar.netDropdownOpen = false;
-                        bar.dropdownOpen = true;
-                    }
-
-                    Row {
-                        height: 20
-                        spacing: bMouseClock.containsMouse ? 4 : 0
-                        Behavior on spacing { NumberAnimation { duration: 200 } }
-
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.getBrightnessIcon(bar.brightStr)
-                            font.family: fontName
-                            font.pixelSize: Theme.defaultFontSize
-                            color: bar.fg
-                        }
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.brightStr + "%"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: Theme.defaultFontSize
-                            font.weight: Theme.defaultFontWeight
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                            width: bMouseClock.containsMouse ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                        }
-                    }
-                }
-
-                MouseArea {
-                    id: vMouseClock
-                    width: childrenRect.width
-                    height: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        bar.netDropdownOpen = false;
-                        bar.dropdownOpen = true;
-                    }
-
-                    Row {
-                        height: 20
-                        spacing: vMouseClock.containsMouse ? 4 : 0
-                        Behavior on spacing { NumberAnimation { duration: 200 } }
-
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                            font.family: fontName
-                            font.pixelSize: Theme.defaultFontSize
-                            color: bar.isVolMuted ? Theme.colError : bar.fg
-                        }
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.volStr + "%"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: Theme.defaultFontSize
-                            font.weight: Theme.defaultFontWeight
-                            color: bar.isVolMuted ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                            width: vMouseClock.containsMouse ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                        }
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                opacity: bar.netDropdownOpen ? 1.0 : 0.0
-                visible: opacity > 0
-            }
-
-            // System Tray — shown in this pill when Vol/Bright or Network separates
-            Row {
-                spacing: 6
-                anchors.verticalCenter: parent.verticalCenter
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
-                visible: opacity > 0 && sysTrayRepeaterClock.count > 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-
-                Repeater {
-                    id: sysTrayRepeaterClock
-                    model: SystemTray.items
-                    delegate: Item {
-                        width: 13
-                        height: 20
-                        anchors.verticalCenter: parent.verticalCenter
-                        IconImage {
-                            anchors.centerIn: parent
-                            source: modelData.icon || ""
-                            width: 13
-                            height: 13
-                            layer.enabled: true
-                            layer.effect: ColorOverlay { color: bar.fg }
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            onClicked: (mouse) => {
-                                if (mouse.button === Qt.LeftButton) modelData.activate();
-                                else if (mouse.button === Qt.RightButton && modelData.hasMenu) {
-                                    var pos = mapToItem(bar.contentItem, mouse.x, mouse.y);
-                                    modelData.display(bar, pos.x, pos.y);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) && sysTrayRepeaterClock.count > 0 ? 1.0 : 0.0
-                visible: opacity > 0
-            }
-
-            MouseArea {
-                id: clockSplitMouse
-                width: childrenRect.width
-                height: 20
-                anchors.verticalCenter: parent.verticalCenter
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    bar.dropdownOpen = false;
-                    bar.netDropdownOpen = false;
-                    globalState.solidBoardOpen = true;
-                }
-                
-                Row {
-                    height: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: clockSplitMouse.containsMouse ? 4 : 0
-                    Behavior on spacing { NumberAnimation { duration: 200 } }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Qt.formatDateTime(timeClock.date, "MMM dd")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                        width: clockSplitMouse.containsMouse ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "•"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 15
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                        width: clockSplitMouse.containsMouse ? implicitWidth : 0
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Qt.formatDateTime(timeClock.date, "hh:mm AP")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: bar.fg
-                    }
-                }
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
-                visible: opacity > 0
-            }
-
-            Item {
-                width: 22; height: 26
-                anchors.verticalCenter: parent.verticalCenter
-                opacity: (bar.dropdownOpen || bar.netDropdownOpen) ? 1.0 : 0.0
-                visible: opacity > 0
-                Text {
-                    anchors.centerIn: parent
-                    text: "\ueb0d"
-                    font.family: bar.fontName
-                    font.pixelSize: 15
-                    color: pma.containsMouse ? Theme.colError : bar.fg
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                }
-                MouseArea {
-                    id: pma
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        bar.dropdownOpen = false;
-                        bar.netDropdownOpen = false;
-                        globalState.powerDropdownOpen = true;
-                    }
-                }
+        MouseArea {
+            id: clockSplitPillMa
+            anchors.fill: parent
+            enabled: globalState.solidBoardOpen
+            hoverEnabled: true
+            onClicked: {
+                // Prevent click-through closing when interacting inside the calendar
             }
         }
 
         // ── Expanded Calendar & Clock View ────────────────────────────────
         ColumnLayout {
             id: clockContentCol
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: 12
+            x: 18
+            y: 10
+            width: parent.width - 36
             spacing: 10
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
-            Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
             // Big Accent Clock Header
             Item {
@@ -330,7 +158,7 @@ import "../../../theme"
                     Text {
                         text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 36
+                        font.pixelSize: 34
                         font.weight: Font.Bold
                         color: Theme.colPrimary
                         anchors.verticalCenter: parent.verticalCenter
@@ -338,7 +166,7 @@ import "../../../theme"
                     Text {
                         text: ":"
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 36
+                        font.pixelSize: 34
                         font.weight: Font.Bold
                         color: Theme.colOnSurface
                         opacity: 0.4
@@ -347,7 +175,7 @@ import "../../../theme"
                     Text {
                         text: Qt.formatDateTime(timeClock.date, "mm")
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 36
+                        font.pixelSize: 34
                         font.weight: Font.Bold
                         color: Theme.colOnSurface
                         anchors.verticalCenter: parent.verticalCenter
@@ -444,7 +272,7 @@ import "../../../theme"
                     Repeater {
                         model: ["Su","Mo","Tu","We","Th","Fr","Sa"]
                         Text {
-                            width: (clockContentCol.width - 24) / 7
+                            width: (clockContentCol.width) / 7
                             text: modelData
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 10
@@ -473,7 +301,7 @@ import "../../../theme"
                     Repeater {
                         model: clockCalGrid.totalCells
                         delegate: Item {
-                            width: (clockContentCol.width - 24) / 7
+                            width: (clockContentCol.width - 12) / 7
                             height: width
 
                             property int cellDay: {
@@ -516,3 +344,4 @@ import "../../../theme"
             }
         }
     }
+}
