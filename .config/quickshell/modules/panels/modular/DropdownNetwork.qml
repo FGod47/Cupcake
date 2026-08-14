@@ -83,12 +83,12 @@ Item {
         }
     }
 
-    readonly property real expandedW: 300
+    readonly property real expandedW: 320
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padSide: isAttached ? 20 : 14
-    readonly property real padBottom: isAttached ? 20 : 14
+    readonly property real padSide: isAttached ? 26 : 14
+    readonly property real padBottom: isAttached ? 22 : 14
 
     readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
 
@@ -459,22 +459,22 @@ Item {
                     // Active Wi-Fi Card
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 56
-                        radius: 12
+                        height: 58
+                        radius: 14
                         color: Qt.rgba(1, 1, 1, 0.06)
                         border.color: Qt.rgba(1, 1, 1, 0.08)
                         border.width: 1
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
-                            spacing: 10
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            spacing: 12
 
                             Rectangle {
-                                width: 34
-                                height: 34
-                                radius: 17
+                                width: 36
+                                height: 36
+                                radius: 18
                                 color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
                                        ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
                                        : Qt.rgba(1, 1, 1, 0.08)
@@ -788,22 +788,22 @@ Item {
                     // Active Bluetooth Card
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 56
-                        radius: 12
+                        height: 58
+                        radius: 14
                         color: Qt.rgba(1, 1, 1, 0.06)
                         border.color: Qt.rgba(1, 1, 1, 0.08)
                         border.width: 1
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
-                            spacing: 10
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            spacing: 12
 
                             Rectangle {
-                                width: 34
-                                height: 34
-                                radius: 17
+                                width: 36
+                                height: 36
+                                radius: 18
                                 color: bar.isBluetooth
                                        ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
                                        : Qt.rgba(1, 1, 1, 0.08)
