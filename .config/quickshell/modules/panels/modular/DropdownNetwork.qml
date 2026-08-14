@@ -85,7 +85,7 @@ Item {
         }
     }
 
-    readonly property real expandedW: 300
+    readonly property real expandedW: 310
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 24 : 14
@@ -99,7 +99,6 @@ Item {
     width: contentW
     height: menuExpanded ? targetH : 0
 
-    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
     Behavior on height {
         NumberAnimation {
             duration: 500
@@ -131,42 +130,64 @@ Item {
     opacity: openProgress
     visible: height > 0 || opacity > 0.01
 
-    // ── Modern Minimal Toggle Switch Component ───────────────────
-    component CleanToggle: Rectangle {
-        id: toggleRoot
+    // ── Signature Luxury Pill Switch Component ───────────────────
+    component LuxurySwitch: Rectangle {
+        id: switchRoot
         property bool checked: false
         signal toggled()
 
-        width: 36
-        height: 20
-        radius: 10
+        width: 42
+        height: 22
+        radius: 11
         color: checked
-               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.22)
-               : (toggleMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04))
-        border.color: checked ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.3) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.1)
+               ? bar.fg
+               : (switchMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10))
+        border.color: checked ? "transparent" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
         border.width: 1
 
         Rectangle {
-            width: 14
-            height: 14
-            radius: 7
+            width: 16
+            height: 16
+            radius: 8
             anchors.verticalCenter: parent.verticalCenter
-            x: toggleRoot.checked ? (parent.width - width - 3) : 3
-            color: toggleRoot.checked ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+            x: switchRoot.checked ? (parent.width - width - 3) : 3
+            color: switchRoot.checked ? bar.pillColor : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
             Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
             Behavior on color { ColorAnimation { duration: 150 } }
         }
 
         MouseArea {
-            id: toggleMa
+            id: switchMa
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: toggleRoot.toggled()
+            onClicked: switchRoot.toggled()
         }
 
         Behavior on color { ColorAnimation { duration: 150 } }
         Behavior on border.color { ColorAnimation { duration: 150 } }
+    }
+
+    // ── Tag Badge Component ──────────────────────────────────────
+    component StatusTag: Rectangle {
+        property alias tagText: tagLabel.text
+        property color textColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
+        property color badgeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+
+        height: 18
+        width: tagLabel.implicitWidth + 12
+        radius: 5
+        color: badgeColor
+
+        Text {
+            id: tagLabel
+            anchors.centerIn: parent
+            font.family: Theme.defaultFontFamily
+            font.pixelSize: 9
+            font.weight: Font.Bold
+            font.letterSpacing: 0.5
+            color: parent.textColor
+        }
     }
 
     Item {
@@ -493,6 +514,19 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     height: 18
+                    spacing: 6
+
+                    Text {
+                        text: {
+                            if (netSplitPill.currentTab === 1) return "\ueb52";
+                            if (netSplitPill.currentTab === 3) return "\uea37";
+                            if (netSplitPill.currentTab === 2) return "\ued1b";
+                            return "\uebd9";
+                        }
+                        font.family: netSplitPill.fontName
+                        font.pixelSize: 13
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                    }
 
                     Text {
                         text: {
@@ -504,7 +538,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 10
                         font.weight: Font.Bold
-                        font.letterSpacing: 0.5
+                        font.letterSpacing: 0.8
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                         Layout.fillWidth: true
                     }
@@ -546,14 +580,20 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Wi-Fi Card Container
+                    // Active Wi-Fi Master Card (Inspiration Luxury Style)
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 52
-                        radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
-                        border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        height: 60
+                        radius: 14
+                        color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                               : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        border.color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                                      ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                                      : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
                         border.width: 1
+                        Behavior on color { ColorAnimation { duration: 180 } }
+                        Behavior on border.color { ColorAnimation { duration: 180 } }
 
                         RowLayout {
                             anchors.fill: parent
@@ -561,29 +601,45 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Text {
-                                text: netSplitPill.getSignalIcon(netSplitPill.wifiSignal)
-                                font.family: netSplitPill.fontName
-                                font.pixelSize: 18
-                                color: bar.isWifi ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                            // Squircle Icon Badge
+                            Rectangle {
+                                width: 38
+                                height: 38
+                                radius: 10
+                                color: bar.isWifi ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05)
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: netSplitPill.getSignalIcon(netSplitPill.wifiSignal)
+                                    font.family: netSplitPill.fontName
+                                    font.pixelSize: 18
+                                    color: bar.isWifi ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                                }
                             }
 
                             Column {
                                 Layout.fillWidth: true
                                 spacing: 2
 
-                                Text {
-                                    text: {
-                                        if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return netSplitPill.wifiSSID;
-                                        if (bar.isWifi) return "Wi-Fi Scanning...";
-                                        return "Wi-Fi Disabled";
+                                RowLayout {
+                                    spacing: 6
+                                    Text {
+                                        text: {
+                                            if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return netSplitPill.wifiSSID;
+                                            if (bar.isWifi) return "Wi-Fi Scanning...";
+                                            return "Wi-Fi Disabled";
+                                        }
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        color: bar.fg
+                                        elide: Text.ElideRight
                                     }
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 13
-                                    font.weight: Font.DemiBold
-                                    color: bar.fg
-                                    elide: Text.ElideRight
-                                    width: parent.width
+
+                                    StatusTag {
+                                        visible: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                                        tagText: "ACTIVE"
+                                    }
                                 }
 
                                 Text {
@@ -593,14 +649,14 @@ Item {
                                         return "Turn on Wi-Fi to connect";
                                     }
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                                     elide: Text.ElideRight
                                     width: parent.width
                                 }
                             }
 
-                            CleanToggle {
+                            LuxurySwitch {
                                 checked: bar.isWifi
                                 onToggled: {
                                     Quickshell.execDetached(["nmcli", "radio", "wifi", bar.isWifi ? "off" : "on"]);
@@ -617,7 +673,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 10
                         font.weight: Font.Bold
-                        font.letterSpacing: 0.5
+                        font.letterSpacing: 0.8
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     }
 
@@ -626,7 +682,7 @@ Item {
                         visible: bar.isWifi
                         Layout.fillWidth: true
                         width: parent.width
-                        spacing: 4
+                        spacing: 5
 
                         Repeater {
                             model: netSplitPill.wifiList.slice(0, 5)
@@ -636,15 +692,15 @@ Item {
                                 property bool isConn: modelData.connected
                                 property bool isSelected: netSplitPill.showPassInput && netSplitPill.selectedSSID === modelData.ssid
 
-                                height: isSelected ? 76 : 38
+                                height: isSelected ? 80 : 40
                                 radius: 10
                                 clip: true
                                 color: isConn
-                                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
-                                       : (isSelected ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08) : (wifiRowMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.03)))
+                                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.09)
+                                       : (isSelected ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : (wifiRowMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.025)))
                                 border.color: isConn
-                                              ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.18)
-                                              : (isSelected ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25) : "transparent")
+                                              ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                                              : (isSelected ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.22) : "transparent")
                                 border.width: 1
 
                                 Behavior on height { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
@@ -661,14 +717,23 @@ Item {
                                     // Header Row
                                     RowLayout {
                                         Layout.fillWidth: true
-                                        height: 24
+                                        height: 26
                                         spacing: 8
 
-                                        Text {
-                                            text: netSplitPill.getSignalIcon(modelData.signal)
-                                            font.family: netSplitPill.fontName
-                                            font.pixelSize: 14
-                                            color: isConn ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                        // Mini Squircle Icon
+                                        Rectangle {
+                                            width: 26
+                                            height: 26
+                                            radius: 7
+                                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
+
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: netSplitPill.getSignalIcon(modelData.signal)
+                                                font.family: netSplitPill.fontName
+                                                font.pixelSize: 13
+                                                color: isConn ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                            }
                                         }
 
                                         Text {
@@ -817,14 +882,20 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Bluetooth Card Container
+                    // Active Bluetooth Master Card (Inspiration Luxury Style)
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 52
-                        radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
-                        border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        height: 60
+                        radius: 14
+                        color: bar.isBluetooth
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                               : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        border.color: bar.isBluetooth
+                                      ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                                      : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
                         border.width: 1
+                        Behavior on color { ColorAnimation { duration: 180 } }
+                        Behavior on border.color { ColorAnimation { duration: 180 } }
 
                         RowLayout {
                             anchors.fill: parent
@@ -832,23 +903,40 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Text {
-                                text: "\uea37"
-                                font.family: netSplitPill.fontName
-                                font.pixelSize: 18
-                                color: bar.isBluetooth ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                            // Squircle Icon Badge
+                            Rectangle {
+                                width: 38
+                                height: 38
+                                radius: 10
+                                color: bar.isBluetooth ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05)
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uea37"
+                                    font.family: netSplitPill.fontName
+                                    font.pixelSize: 18
+                                    color: bar.isBluetooth ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                                }
                             }
 
                             Column {
                                 Layout.fillWidth: true
                                 spacing: 2
 
-                                Text {
-                                    text: "Bluetooth"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 13
-                                    font.weight: Font.DemiBold
-                                    color: bar.fg
+                                RowLayout {
+                                    spacing: 6
+                                    Text {
+                                        text: "Bluetooth"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        color: bar.fg
+                                    }
+
+                                    StatusTag {
+                                        visible: bar.isBluetooth
+                                        tagText: netSplitPill.btDeviceName !== "" ? "PAIRED" : "READY"
+                                    }
                                 }
 
                                 Text {
@@ -858,14 +946,14 @@ Item {
                                         return "Bluetooth Disabled";
                                     }
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                                     elide: Text.ElideRight
                                     width: parent.width
                                 }
                             }
 
-                            CleanToggle {
+                            LuxurySwitch {
                                 checked: bar.isBluetooth
                                 onToggled: {
                                     Quickshell.execDetached(["bluetoothctl", "power", bar.isBluetooth ? "off" : "on"]);
@@ -882,7 +970,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 10
                         font.weight: Font.Bold
-                        font.letterSpacing: 0.5
+                        font.letterSpacing: 0.8
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     }
 
@@ -890,19 +978,19 @@ Item {
                     ColumnLayout {
                         visible: bar.isBluetooth
                         Layout.fillWidth: true
-                        spacing: 4
+                        spacing: 5
 
                         Repeater {
                             model: netSplitPill.btList.slice(0, 5)
                             delegate: Rectangle {
                                 Layout.fillWidth: true
-                                height: 38
+                                height: 40
                                 radius: 10
                                 property bool isConn: modelData.connected
                                 color: isConn
-                                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
-                                       : (btRowMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.03))
-                                border.color: isConn ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.18) : "transparent"
+                                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.09)
+                                       : (btRowMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.025))
+                                border.color: isConn ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
                                 border.width: 1
                                 Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -912,11 +1000,19 @@ Item {
                                     anchors.rightMargin: 10
                                     spacing: 8
 
-                                    Text {
-                                        text: (modelData.name && (modelData.name.includes("head") || modelData.name.includes("WH-") || modelData.name.includes("AirPods"))) ? "\uea76" : "\uea37"
-                                        font.family: netSplitPill.fontName
-                                        font.pixelSize: 14
-                                        color: isConn ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                    Rectangle {
+                                        width: 26
+                                        height: 26
+                                        radius: 7
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: (modelData.name && (modelData.name.includes("head") || modelData.name.includes("WH-") || modelData.name.includes("AirPods"))) ? "\uea76" : "\uea37"
+                                            font.family: netSplitPill.fontName
+                                            font.pixelSize: 13
+                                            color: isConn ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                        }
                                     }
 
                                     Column {
@@ -994,14 +1090,20 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Hotspot Card Container
+                    // Active Hotspot Master Card
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 52
-                        radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
-                        border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        height: 60
+                        radius: 14
+                        color: bar.isHotspot
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                               : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        border.color: bar.isHotspot
+                                      ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                                      : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
                         border.width: 1
+                        Behavior on color { ColorAnimation { duration: 180 } }
+                        Behavior on border.color { ColorAnimation { duration: 180 } }
 
                         RowLayout {
                             anchors.fill: parent
@@ -1009,36 +1111,52 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Text {
-                                text: "\ued1b"
-                                font.family: netSplitPill.fontName
-                                font.pixelSize: 18
-                                color: bar.isHotspot ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                            Rectangle {
+                                width: 38
+                                height: 38
+                                radius: 10
+                                color: bar.isHotspot ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05)
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ued1b"
+                                    font.family: netSplitPill.fontName
+                                    font.pixelSize: 18
+                                    color: bar.isHotspot ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                                }
                             }
 
                             Column {
                                 Layout.fillWidth: true
                                 spacing: 2
 
-                                Text {
-                                    text: "Personal Hotspot"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 13
-                                    font.weight: Font.DemiBold
-                                    color: bar.fg
+                                RowLayout {
+                                    spacing: 6
+                                    Text {
+                                        text: "Personal Hotspot"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        color: bar.fg
+                                    }
+
+                                    StatusTag {
+                                        visible: bar.isHotspot
+                                        tagText: "BROADCAST"
+                                    }
                                 }
 
                                 Text {
                                     text: bar.isHotspot ? (netSplitPill.hsName + " • " + netSplitPill.hsClientList.length + " connected") : "Hotspot Disabled"
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                                     elide: Text.ElideRight
                                     width: parent.width
                                 }
                             }
 
-                            CleanToggle {
+                            LuxurySwitch {
                                 checked: bar.isHotspot
                                 onToggled: {
                                     if (bar.isHotspot) {
@@ -1059,7 +1177,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 10
                         font.weight: Font.Bold
-                        font.letterSpacing: 0.5
+                        font.letterSpacing: 0.8
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     }
 
@@ -1067,7 +1185,7 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.035)
                         border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
                         border.width: 1
 
@@ -1141,13 +1259,17 @@ Item {
                     Layout.fillWidth: true
                     spacing: 12
 
-                    // Active Ethernet Card Container
+                    // Active Ethernet Master Card
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 52
-                        radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
-                        border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        height: 60
+                        radius: 14
+                        color: bar.isWired
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                               : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        border.color: bar.isWired
+                                      ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                                      : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
                         border.width: 1
 
                         RowLayout {
@@ -1156,30 +1278,46 @@ Item {
                             anchors.rightMargin: 12
                             spacing: 12
 
-                            Text {
-                                text: "\uebd9"
-                                font.family: netSplitPill.fontName
-                                font.pixelSize: 18
-                                color: bar.isWired ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                            Rectangle {
+                                width: 38
+                                height: 38
+                                radius: 10
+                                color: bar.isWired ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05)
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uebd9"
+                                    font.family: netSplitPill.fontName
+                                    font.pixelSize: 18
+                                    color: bar.isWired ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                                }
                             }
 
                             Column {
                                 Layout.fillWidth: true
                                 spacing: 2
 
-                                Text {
-                                    text: "Wired Ethernet"
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 13
-                                    font.weight: Font.DemiBold
-                                    color: bar.fg
+                                RowLayout {
+                                    spacing: 6
+                                    Text {
+                                        text: "Wired Ethernet"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        color: bar.fg
+                                    }
+
+                                    StatusTag {
+                                        visible: bar.isWired
+                                        tagText: "GIGABIT"
+                                    }
                                 }
 
                                 Text {
                                     text: bar.isWired ? ("Connected • " + netSplitPill.wiredIp) : "Cable Disconnected"
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                                     elide: Text.ElideRight
                                     width: parent.width
                                 }
@@ -1193,7 +1331,7 @@ Item {
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: 10
                         font.weight: Font.Bold
-                        font.letterSpacing: 0.5
+                        font.letterSpacing: 0.8
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     }
 
@@ -1201,7 +1339,7 @@ Item {
                     Rectangle {
                         Layout.fillWidth: true
                         radius: 12
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04)
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.035)
                         border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
                         border.width: 1
 
