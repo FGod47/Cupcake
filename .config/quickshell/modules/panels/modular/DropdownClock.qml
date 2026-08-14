@@ -23,13 +23,13 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
-    readonly property real expandedW: 260
+    readonly property real expandedW: 275
     property real contentW: expandedW
     
-    // Balanced compact padding constants
-    readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padSide: isAttached ? 26 : 14
-    readonly property real padBottom: isAttached ? 22 : 14
+    // Balanced spacious padding constants
+    readonly property real padTop: isAttached ? 24 : 16
+    readonly property real padSide: isAttached ? 30 : 16
+    readonly property real padBottom: isAttached ? 24 : 16
 
     readonly property real targetH: clockContentCol.implicitHeight + padTop + padBottom
 
@@ -188,24 +188,24 @@ Item {
                 x: clockSplitPill.padSide
                 y: clockSplitPill.padTop
                 width: parent.width - (clockSplitPill.padSide * 2)
-                spacing: 8
+                spacing: 12
 
-                // Compact Header (Time + Date)
+                // Spacious Header (Time + Date)
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 6
+                    spacing: 8
 
                     Text {
                         text: Qt.formatDateTime(timeClock.date, "hh:mm")
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 20
+                        font.pixelSize: 22
                         font.weight: Font.Bold
                         color: bar.fg
                     }
 
                     Rectangle {
                         width: 1
-                        height: 14
+                        height: 16
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25)
                     }
 
@@ -213,7 +213,7 @@ Item {
                         Layout.fillWidth: true
                         text: Qt.formatDateTime(timeClock.date, "ddd, dd MMM").toUpperCase()
                         font.family: Theme.defaultFontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: 11
                         font.weight: Font.DemiBold
                         font.letterSpacing: 0.5
                         color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
@@ -232,7 +232,7 @@ Item {
                 Column {
                     id: calCol
                     Layout.fillWidth: true
-                    spacing: 5
+                    spacing: 8
 
                     property date currentDate: new Date()
 
@@ -244,15 +244,15 @@ Item {
                             Layout.fillWidth: true
                             text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
+                            font.pixelSize: 12
                             font.weight: Font.DemiBold
                             color: bar.fg
                         }
 
                         Row {
-                            spacing: 2
+                            spacing: 4
                             MouseArea {
-                                width: 20; height: 20
+                                width: 22; height: 22
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     let d = new Date(calCol.currentDate);
@@ -263,13 +263,13 @@ Item {
                                     anchors.centerIn: parent
                                     text: "\uea60"
                                     font.family: "tabler-icons"
-                                    font.pixelSize: 12
+                                    font.pixelSize: 13
                                     color: bar.fg
-                                    opacity: 0.6
+                                    opacity: 0.65
                                 }
                             }
                             MouseArea {
-                                width: 20; height: 20
+                                width: 22; height: 22
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     let d = new Date(calCol.currentDate);
@@ -280,9 +280,9 @@ Item {
                                     anchors.centerIn: parent
                                     text: "\uea61"
                                     font.family: "tabler-icons"
-                                    font.pixelSize: 12
+                                    font.pixelSize: 13
                                     color: bar.fg
-                                    opacity: 0.6
+                                    opacity: 0.65
                                 }
                             }
                         }
@@ -297,10 +297,10 @@ Item {
                                 width: clockContentCol.width / 7
                                 text: modelData
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 9
+                                font.pixelSize: 10
                                 font.weight: Font.Medium
                                 color: bar.fg
-                                opacity: 0.40
+                                opacity: 0.45
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }
@@ -325,7 +325,7 @@ Item {
                             model: clockCalGrid.totalCells
                             delegate: Item {
                                 width: clockContentCol.width / 7
-                                height: 22
+                                height: 25
 
                                 property int cellDay: {
                                     let idx = index - clockCalGrid.firstDayOfWeek;
@@ -347,16 +347,16 @@ Item {
 
                                 Rectangle {
                                     anchors.centerIn: parent
-                                    width: 20
-                                    height: 20
-                                    radius: 10
+                                    width: 22
+                                    height: 22
+                                    radius: 11
                                     color: isToday ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.20) : "transparent"
                                 }
                                 Text {
                                     anchors.centerIn: parent
                                     text: cellDay
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: 11
                                     font.weight: isToday ? Font.Bold : Font.Normal
                                     color: isToday ? bar.fg : (isCurrentMonth ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25))
                                     horizontalAlignment: Text.AlignHCenter
