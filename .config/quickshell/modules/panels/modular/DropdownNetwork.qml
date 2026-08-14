@@ -87,9 +87,9 @@ Item {
     readonly property real expandedW: 300
     property real contentW: expandedW
 
-    readonly property real padTop: isAttached ? 8 : 6
-    readonly property real padSide: isAttached ? 16 : 8
-    readonly property real padBottom: isAttached ? 14 : 8
+    readonly property real padTop: isAttached ? 2 : 2
+    readonly property real padSide: isAttached ? 14 : 8
+    readonly property real padBottom: isAttached ? 10 : 8
 
     readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
 
@@ -512,7 +512,7 @@ Item {
                 // ── Single Enclosing Card Container for All Content ──
                 Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: cardInnerCol.implicitHeight + 24
+                    implicitHeight: cardInnerCol.implicitHeight + 20
                     radius: 14
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
                     border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.11)
@@ -523,8 +523,8 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.margins: 12
-                        spacing: 10
+                        anchors.margins: 10
+                        spacing: 9
 
                         // ═════════════════════════════════════════════════════
                         //  TAB 1: WI-FI CARD
