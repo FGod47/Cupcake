@@ -30,7 +30,8 @@ Item {
 
     readonly property real targetH: volBrightContentCol.implicitHeight + padTop + padBottom
 
-    x: bar.barX + bar.barW - contentW - 130
+    // Align dropdown right edge with the Hardware section's right edge
+    x: hardwareContainer.x + hardwareContainer.width + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 

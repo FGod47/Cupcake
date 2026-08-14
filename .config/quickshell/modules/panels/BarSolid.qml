@@ -629,6 +629,7 @@ PanelWindow {
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
             Item {
+                id: hardwareContainer
                 Layout.alignment: Qt.AlignVCenter
                 implicitWidth: hardwareRow.implicitWidth + 12
                 Layout.preferredWidth: implicitWidth

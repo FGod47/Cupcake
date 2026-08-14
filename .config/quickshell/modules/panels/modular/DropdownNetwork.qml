@@ -92,7 +92,8 @@ Item {
 
     readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
 
-    x: bar.barX + bar.barW - contentW - 140
+    // Align dropdown right edge with the Network section's right edge
+    x: networkContainer.x + networkContainer.width + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 

@@ -20,14 +20,13 @@ Item {
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padLeft: isAttached ? 24 : 14
-    readonly property real padRight: isAttached ? 14 : 14
+    readonly property real padSide: isAttached ? 24 : 14
     readonly property real padBottom: isAttached ? 20 : 14
 
     readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Positioned flush with the right edge of the bar
-    x: bar.barX + bar.barW - contentW
+    // Align dropdown right edge with the power button's right edge in the bar
+    x: powerPillItem.x + powerPillItem.width + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
@@ -71,9 +70,9 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: false
+        clip: true
 
-        // ── Attached Mode Shape (Flat Top & Flush Right Edge) ────
+        // ── Attached Mode Shape (Symmetric Concave Notch Curves) ──
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -112,22 +111,30 @@ Item {
                 }
                 // 4. Bottom horizontal edge
                 PathLine {
-                    x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
                     y: bgShape.h
                 }
                 // 5. Bottom-Right rounded corner
                 PathQuad {
-                    x: bgShape.w
+                    x: bgShape.w - bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w
+                    controlX: bgShape.w - bgShape.r
                     controlY: bgShape.h
                 }
-                // 6. Right vertical straight edge going directly up to the bar
+                // 6. Right vertical edge
                 PathLine {
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
+                }
+                // 7. Right concave notch merging with bar flat underside
+                PathArc {
                     x: bgShape.w
                     y: 0
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
                 }
-                // 7. Top horizontal flat edge back to (0, 0)
+                // 8. Top horizontal flat edge back to (0, 0)
                 PathLine {
                     x: 0
                     y: 0
@@ -166,9 +173,9 @@ Item {
 
             Column {
                 id: powerMenu
-                x: powerSplitPill.padLeft
+                x: powerSplitPill.padSide
                 y: powerSplitPill.padTop
-                width: parent.width - powerSplitPill.padLeft - powerSplitPill.padRight
+                width: parent.width - (powerSplitPill.padSide * 2)
                 spacing: 4
 
                 // Clean Category Header
