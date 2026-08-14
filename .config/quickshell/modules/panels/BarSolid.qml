@@ -859,7 +859,7 @@ PanelWindow {
                     text: "\uea6d"
                     font.family: fontName
                     font.pixelSize: 14
-                    color: globalState.clipboardOpen ? Theme.colPrimary : fg
+                    color: fg
                     Behavior on color { ColorAnimation { duration: 150 } }
                 }
 

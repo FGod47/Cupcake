@@ -266,7 +266,7 @@ Item {
                     text: "\uea6d"
                     font.family: bar.fontName
                     font.pixelSize: 18
-                    color: Theme.colPrimary
+                    color: bar.fg
                 }
 
                 Text {
@@ -323,7 +323,7 @@ Item {
                 height: 36
                 radius: 10
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
-                border.color: searchInput.activeFocus ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.5) : "transparent"
+                border.color: searchInput.activeFocus ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.3) : "transparent"
                 border.width: 1
 
                 RowLayout {
@@ -396,8 +396,8 @@ Item {
                         width: filterText.implicitWidth + 18
                         radius: 13
                         color: activeFilter === modelData.id
-                               ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                               : (filterMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05))
+                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                               : (filterMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.09) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04))
 
                         Text {
                             id: filterText
@@ -406,7 +406,7 @@ Item {
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
                             font.weight: activeFilter === modelData.id ? Font.Bold : Font.Normal
-                            color: activeFilter === modelData.id ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                            color: activeFilter === modelData.id ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
                         }
 
                         MouseArea {
@@ -453,8 +453,8 @@ Item {
                     radius: 10
                     color: itemMa.containsMouse
                            ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
-                           : (modelData.pinned ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.08) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.04))
-                    border.color: modelData.pinned ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                           : (modelData.pinned ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.03))
+                    border.color: modelData.pinned ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.22) : "transparent"
                     border.width: 1
 
                     // Background Click Area for Copying
@@ -487,7 +487,7 @@ Item {
                                 text: modelData.type === "image" ? "\ueb0a" : "\uea6f"
                                 font.family: bar.fontName
                                 font.pixelSize: 15
-                                color: modelData.pinned ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                             }
                         }
 
@@ -515,15 +515,15 @@ Item {
                             Rectangle {
                                 width: 24; height: 24; radius: 12
                                 color: modelData.pinned
-                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25)
-                                       : (pinMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15) : "transparent")
+                                       ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.18)
+                                       : (pinMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10) : "transparent")
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: modelData.pinned ? "\uf68d" : "\uec9c"
                                     font.family: bar.fontName
                                     font.pixelSize: 13
-                                    color: modelData.pinned ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    color: modelData.pinned ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                                 }
 
                                 MouseArea {
@@ -583,7 +583,9 @@ Item {
             height: 26
             width: toastText.implicitWidth + 20
             radius: 13
-            color: Theme.colPrimary
+            color: bar.pillColor
+            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25)
+            border.width: 1
             opacity: showToast ? 1 : 0
             visible: opacity > 0
             z: 100
@@ -595,7 +597,7 @@ Item {
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 11
                 font.weight: Font.Bold
-                color: "#FFFFFF"
+                color: bar.fg
             }
 
             Behavior on opacity { NumberAnimation { duration: 200 } }
