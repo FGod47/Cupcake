@@ -16,17 +16,18 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real expandedW: 180
+    readonly property real expandedW: 160
     property real contentW: expandedW
 
-    readonly property real padTop: isAttached ? 20 : 12
-    readonly property real padSide: isAttached ? 24 : 12
-    readonly property real padBottom: isAttached ? 14 : 12
+    readonly property real padTop: isAttached ? 22 : 14
+    readonly property real padLeft: isAttached ? 24 : 14
+    readonly property real padRight: isAttached ? 14 : 14
+    readonly property real padBottom: isAttached ? 20 : 14
 
-    readonly property real targetH: powerRowLayout.implicitHeight + padTop + padBottom
+    readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Positioned cleanly under the bar's right section with symmetric concave curves
-    x: bar.barX + bar.barW - contentW - 10
+    // Positioned flush with the right edge of the bar
+    x: bar.barX + bar.barW - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
@@ -70,9 +71,9 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: true
+        clip: false
 
-        // ── Attached Mode Shape (Symmetric Concave Curves) ───────
+        // ── Attached Mode Shape (Zero-Overlap Precision Contour) ──
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -89,7 +90,7 @@ Item {
                 startX: 0
                 startY: 0
 
-                // 1. Left concave notch
+                // 1. Left concave notch merging with bar flat underside
                 PathArc {
                     x: bgShape.r
                     y: bgShape.r
@@ -111,30 +112,30 @@ Item {
                 }
                 // 4. Bottom horizontal edge
                 PathLine {
-                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
                     y: bgShape.h
                 }
                 // 5. Bottom-Right rounded corner
                 PathQuad {
-                    x: bgShape.w - bgShape.r
+                    x: bgShape.w
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w - bgShape.r
+                    controlX: bgShape.w
                     controlY: bgShape.h
                 }
-                // 6. Right vertical straight edge
+                // 6. Right vertical edge goes up flush with bar's rightmost point
                 PathLine {
-                    x: bgShape.w - bgShape.r
-                    y: bgShape.r
-                }
-                // 7. Right concave notch
-                PathArc {
                     x: bgShape.w
-                    y: 0
-                    radiusX: bgShape.r
-                    radiusY: bgShape.r
-                    direction: PathArc.Clockwise
+                    y: -15
                 }
-                // 8. Top flat edge closing
+                // 7. Counter-clockwise arc following the exact curvature of the bar's bottom-right corner
+                PathArc {
+                    x: bgShape.w - 15
+                    y: 0
+                    radiusX: 15
+                    radiusY: 15
+                    direction: PathArc.CounterClockwise
+                }
+                // 8. Straight horizontal line at y=0 under the bar flat bottom
                 PathLine {
                     x: 0
                     y: 0
@@ -161,7 +162,7 @@ Item {
             }
         }
 
-        // ── Inner Content Wrapper (Horizontal Row of 4 Circular Buttons) ──
+        // ── Inner Content Wrapper ────────────────────────────────
         Item {
             id: contentWrapper
             anchors.fill: parent
@@ -171,64 +172,88 @@ Item {
                 NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
             }
 
-            Row {
-                id: powerRowLayout
-                anchors.top: parent.top
-                anchors.topMargin: powerSplitPill.padTop
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
+            Column {
+                id: powerMenu
+                x: powerSplitPill.padLeft
+                y: powerSplitPill.padTop
+                width: parent.width - powerSplitPill.padLeft - powerSplitPill.padRight
+                spacing: 4
 
-                component PowerCircleBtn: Item {
-                    id: btnRoot
+                // Clean Category Header
+                Item {
+                    width: parent.width
+                    height: 18
+
+                    Text {
+                        text: "POWER"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                component CleanPowerItem: Rectangle {
+                    id: itemRoot
                     property string iconCode: ""
-                    property string tooltipText: ""
+                    property string labelText: ""
                     property bool isDestructive: false
                     signal triggered()
 
-                    width: 32
+                    width: parent.width
                     height: 32
+                    radius: 8
+                    color: itemMa.containsMouse
+                           ? (isDestructive ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.15) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10))
+                           : "transparent"
+                    Behavior on color { ColorAnimation { duration: 130 } }
 
-                    Rectangle {
-                        id: btnBg
+                    RowLayout {
                         anchors.fill: parent
-                        radius: 16
-                        color: btnMa.containsMouse
-                               ? (isDestructive ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.22) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16))
-                               : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
-                        border.color: btnMa.containsMouse
-                                      ? (isDestructive ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.4) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2))
-                                      : "transparent"
-                        border.width: 1
-                        scale: btnMa.containsMouse ? 1.08 : 1.0
-
-                        Behavior on color { ColorAnimation { duration: 130 } }
-                        Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack; easing.overshoot: 1.3 } }
+                        anchors.leftMargin: 8
+                        anchors.rightMargin: 8
+                        spacing: 9
 
                         Text {
-                            anchors.centerIn: parent
-                            text: btnRoot.iconCode
+                            text: itemRoot.iconCode
                             font.family: powerIconFont.name
-                            font.pixelSize: 15
-                            color: btnMa.containsMouse
+                            font.pixelSize: 14
+                            color: itemMa.containsMouse
                                    ? (isDestructive ? Theme.colError : bar.fg)
-                                   : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
+                                   : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
+                            Behavior on color { ColorAnimation { duration: 130 } }
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            text: itemRoot.labelText
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Medium
+                            color: itemMa.containsMouse
+                                   ? (isDestructive ? Theme.colError : bar.fg)
+                                   : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
                             Behavior on color { ColorAnimation { duration: 130 } }
                         }
                     }
 
                     MouseArea {
-                        id: btnMa
+                        id: itemMa
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: btnRoot.triggered()
+                        onClicked: itemRoot.triggered()
                     }
                 }
 
                 // 1. Lock
-                PowerCircleBtn {
+                CleanPowerItem {
                     iconCode: "\ueae2"
-                    tooltipText: "Lock"
+                    labelText: "Lock"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "hyprlock"]);
@@ -236,9 +261,9 @@ Item {
                 }
 
                 // 2. Suspend / Sleep
-                PowerCircleBtn {
+                CleanPowerItem {
                     iconCode: "\uea1e"
-                    tooltipText: "Sleep"
+                    labelText: "Suspend"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
@@ -246,9 +271,9 @@ Item {
                 }
 
                 // 3. Restart
-                PowerCircleBtn {
+                CleanPowerItem {
                     iconCode: "\ueb13"
-                    tooltipText: "Restart"
+                    labelText: "Restart"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
@@ -256,9 +281,9 @@ Item {
                 }
 
                 // 4. Power Off
-                PowerCircleBtn {
+                CleanPowerItem {
                     iconCode: "\ueb0d"
-                    tooltipText: "Shut Down"
+                    labelText: "Power Off"
                     isDestructive: true
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
