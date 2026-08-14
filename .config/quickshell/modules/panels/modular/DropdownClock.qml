@@ -237,7 +237,7 @@ Item {
                                 color: Theme.colPrimary
                             }
                             Text {
-                                text: Qt.formatDateTime(timeClock.date, "ddd, MMM dd")
+                                text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 11
                                 color: Theme.colOnSurface
