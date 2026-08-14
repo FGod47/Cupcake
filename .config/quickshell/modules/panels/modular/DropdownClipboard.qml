@@ -27,8 +27,8 @@ Item {
     
     // Balanced padding constants
     readonly property real padTop: isAttached ? 24 : 16
-    readonly property real padSide: isAttached ? 24 : 16
-    readonly property real padBottom: isAttached ? 20 : 16
+    readonly property real padSide: isAttached ? 30 : 18
+    readonly property real padBottom: isAttached ? 24 : 18
 
     readonly property real targetH: expandedH
 
@@ -253,17 +253,18 @@ Item {
             anchors.bottomMargin: padBottom
             anchors.leftMargin: padSide
             anchors.rightMargin: padSide
-            spacing: 10
+            spacing: 12
 
             // 1. Header Row
             RowLayout {
                 Layout.fillWidth: true
+                height: 26
                 spacing: 8
 
                 Text {
                     text: "\uea6d"
                     font.family: bar.fontName
-                    font.pixelSize: 17
+                    font.pixelSize: 18
                     color: Theme.colPrimary
                 }
 
@@ -318,7 +319,7 @@ Item {
             // 2. Search Bar
             Rectangle {
                 Layout.fillWidth: true
-                height: 34
+                height: 36
                 radius: 10
                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
                 border.color: searchInput.activeFocus ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.5) : "transparent"
@@ -326,7 +327,7 @@ Item {
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: 10; anchors.rightMargin: 10
+                    anchors.leftMargin: 12; anchors.rightMargin: 12
                     spacing: 8
 
                     Text {
@@ -390,9 +391,9 @@ Item {
                     ]
 
                     Rectangle {
-                        height: 24
-                        width: filterText.implicitWidth + 16
-                        radius: 12
+                        height: 26
+                        width: filterText.implicitWidth + 18
+                        radius: 13
                         color: activeFilter === modelData.id
                                ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
                                : (filterMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05))
@@ -402,7 +403,7 @@ Item {
                             anchors.centerIn: parent
                             text: modelData.label
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: 11
                             font.weight: activeFilter === modelData.id ? Font.Bold : Font.Normal
                             color: activeFilter === modelData.id ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
                         }
@@ -424,7 +425,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                spacing: 5
+                spacing: 6
                 model: getFilteredData()
 
                 ScrollBar.vertical: ScrollBar {
@@ -446,7 +447,7 @@ Item {
 
                 delegate: Rectangle {
                     width: clipListView.width
-                    height: 48
+                    height: 50
                     radius: 10
                     color: itemMa.containsMouse
                            ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
@@ -456,9 +457,9 @@ Item {
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 8
-                        anchors.rightMargin: 8
-                        spacing: 8
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 10
 
                         Rectangle {
                             width: 32; height: 32
