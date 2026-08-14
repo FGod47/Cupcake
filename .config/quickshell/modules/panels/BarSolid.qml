@@ -748,11 +748,12 @@ PanelWindow {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: Qt.formatDateTime(timeClock.date, "ddd, d MMM")
+                            text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: 11
                             font.weight: Font.Normal
-                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                            font.letterSpacing: 0.5
+                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.65)
                         }
                     }
                 }
