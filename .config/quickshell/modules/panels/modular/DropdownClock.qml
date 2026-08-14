@@ -202,7 +202,7 @@ Item {
                         spacing: 8
 
                         Text {
-                            text: Qt.formatDateTime(timeClock.date, "HH")
+                            text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 34
                             font.weight: Font.Bold
