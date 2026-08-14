@@ -421,49 +421,85 @@ PanelWindow {
                 Row {
                     id: networkRowContent
                     height: 20
-                    spacing: 4
+                    spacing: bar.netDropdownOpen ? 5 : 4
+                    Behavior on spacing { NumberAnimation { duration: 250; easing.type: Easing.OutSine } }
                     anchors.verticalCenter: parent.verticalCenter
 
                     // Helper component for interactive top bar connectivity icon
-                    component NetBarIcon: Rectangle {
+                    component NetBarIcon: Item {
                         property int tabId: 1
                         property string iconCode: "\ueb52"
                         property bool forceVisible: false
                         property color iconColor: fg
                         
-                        visible: forceVisible || bar.netDropdownOpen
-                        width: 22
+                        readonly property bool isShown: forceVisible || bar.netDropdownOpen
+                        visible: width > 0 || opacity > 0.01
+                        width: isShown ? 22 : 0
                         height: 22
-                        radius: 11
                         anchors.verticalCenter: parent.verticalCenter
-                        property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
-                        color: isSelected ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : (netIconMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
-                        border.width: 0
-                        Behavior on color { ColorAnimation { duration: 150 } }
+                        clip: true
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: iconCode
-                            font.family: fontName
-                            font.pixelSize: 13
-                            color: isSelected ? fg : (netIconMa.containsMouse ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.65))
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 320
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
+                            }
                         }
 
-                        MouseArea {
-                            id: netIconMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                                if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
-                                if (bar.dropdownOpen) bar.dropdownOpen = false;
+                        Rectangle {
+                            id: iconBg
+                            anchors.centerIn: parent
+                            width: 22
+                            height: 22
+                            radius: 11
+                            property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
+                            color: isSelected ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : (netIconMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                            scale: parent.isShown ? 1.0 : 0.5
+                            opacity: parent.isShown ? 1.0 : 0.0
 
-                                if (bar.netDropdownOpen && bar.netDropdownTab === tabId) {
-                                    bar.netDropdownOpen = false;
-                                } else {
-                                    bar.netDropdownTab = tabId;
-                                    bar.netDropdownOpen = true;
+                            Behavior on scale {
+                                NumberAnimation {
+                                    duration: 350
+                                    easing.type: Easing.OutBack
+                                    easing.overshoot: 1.35
+                                }
+                            }
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 250
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: iconCode
+                                font.family: fontName
+                                font.pixelSize: 13
+                                color: iconBg.isSelected ? fg : (netIconMa.containsMouse ? fg : Qt.rgba(fg.r, fg.g, fg.b, 0.65))
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                            }
+
+                            MouseArea {
+                                id: netIconMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                                    if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                                    if (bar.dropdownOpen) bar.dropdownOpen = false;
+
+                                    if (bar.netDropdownOpen && bar.netDropdownTab === tabId) {
+                                        bar.netDropdownOpen = false;
+                                    } else {
+                                        bar.netDropdownTab = tabId;
+                                        bar.netDropdownOpen = true;
+                                    }
                                 }
                             }
                         }
