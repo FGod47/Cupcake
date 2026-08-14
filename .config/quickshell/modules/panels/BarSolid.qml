@@ -628,96 +628,112 @@ PanelWindow {
             }
             
             // ── RIGHT: Hardware Icons (Brightness & Sound) ────────
-            Row {
+            Item {
                 Layout.alignment: Qt.AlignVCenter
+                implicitWidth: hardwareRow.implicitWidth + 12
                 Layout.preferredWidth: implicitWidth
-                spacing: 12
+                height: 22
                 opacity: 1.0
                 visible: true
-                
-                // Brightness
-                MouseArea {
-                    id: bMouse
-                    width: childrenRect.width
-                    height: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    
-                    onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
-                    onClicked: {
-                        let cur = bar.dropdownOpen;
-                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                        if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
-                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                        bar.dropdownOpen = !cur;
-                    }
-                    
-                    Row {
-                        height: 20
-                        spacing: bMouse.containsMouse ? 4 : 0
-                        Behavior on spacing { NumberAnimation { duration: 200 } }
 
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.getBrightnessIcon(bar.brightStr)
-                            font.family: fontName
-                            font.pixelSize: 15
-                            color: fg
-                        }
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.brightStr + "%"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Theme.defaultFontWeight
-                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: bMouse.containsMouse ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                        }
-                    }
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 11
+                    color: bar.dropdownOpen
+                           ? Qt.rgba(fg.r, fg.g, fg.b, 0.16)
+                           : ((bMouse.containsMouse || vMouse.containsMouse) ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
 
-                // Volume
-                MouseArea {
-                    id: vMouse
-                    width: childrenRect.width
-                    height: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    
-                    onClicked: {
-                        let cur = bar.dropdownOpen;
-                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                        if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
-                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
-                        bar.dropdownOpen = !cur;
-                    }
-                    
-                    Row {
-                        height: 20
-                        spacing: vMouse.containsMouse ? 4 : 0
-                        Behavior on spacing { NumberAnimation { duration: 200 } }
+                Row {
+                    id: hardwareRow
+                    anchors.centerIn: parent
+                    spacing: 10
 
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                            font.family: fontName
-                            font.pixelSize: 15
-                            color: bar.isVolMuted ? Theme.colError : fg
+                    // Brightness
+                    MouseArea {
+                        id: bMouse
+                        width: childrenRect.width
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        
+                        onEntered: { if (bar.brightStr === "0") lightProc.running = true; }
+                        onClicked: {
+                            let cur = bar.dropdownOpen;
+                            if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                            if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                            if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                            bar.dropdownOpen = !cur;
                         }
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: bar.volStr + "%"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Theme.defaultFontWeight
-                            color: bar.isVolMuted ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                            width: vMouse.containsMouse ? implicitWidth : 0
-                            clip: true
-                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                        
+                        Row {
+                            height: 20
+                            spacing: bMouse.containsMouse ? 4 : 0
+                            Behavior on spacing { NumberAnimation { duration: 200 } }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: bar.getBrightnessIcon(bar.brightStr)
+                                font.family: fontName
+                                font.pixelSize: 14
+                                color: fg
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: bar.brightStr + "%"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Theme.defaultFontWeight
+                                color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                                width: bMouse.containsMouse ? implicitWidth : 0
+                                clip: true
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                            }
+                        }
+                    }
+
+                    // Volume
+                    MouseArea {
+                        id: vMouse
+                        width: childrenRect.width
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        
+                        onClicked: {
+                            let cur = bar.dropdownOpen;
+                            if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                            if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                            if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                            bar.dropdownOpen = !cur;
+                        }
+                        
+                        Row {
+                            height: 20
+                            spacing: vMouse.containsMouse ? 4 : 0
+                            Behavior on spacing { NumberAnimation { duration: 200 } }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
+                                font.family: fontName
+                                font.pixelSize: 14
+                                color: bar.isVolMuted ? Theme.colError : fg
+                            }
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: bar.volStr + "%"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Theme.defaultFontWeight
+                                color: bar.isVolMuted ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                                width: vMouse.containsMouse ? implicitWidth : 0
+                                clip: true
+                                Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+                            }
                         }
                     }
                 }
@@ -788,7 +804,7 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Hardware -> Clock) ────────
+            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
@@ -807,11 +823,20 @@ PanelWindow {
             Item {
                 id: clockItem
                 Layout.alignment: Qt.AlignVCenter
-                implicitWidth: clockRow.implicitWidth
-                Layout.preferredWidth: clockRow.implicitWidth
-                height: 20
+                implicitWidth: clockRow.implicitWidth + 12
+                Layout.preferredWidth: implicitWidth
+                height: 22
                 opacity: 1.0
                 visible: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 11
+                    color: globalState.solidBoardOpen
+                           ? Qt.rgba(fg.r, fg.g, fg.b, 0.16)
+                           : (clockMouse.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
 
                 MouseArea {
                     id: clockMouse
@@ -830,7 +855,7 @@ PanelWindow {
                 Row {
                     id: clockRow
                     height: 20
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.centerIn: parent
                     spacing: clockMouse.containsMouse ? 6 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
 
@@ -886,210 +911,45 @@ PanelWindow {
                 visible: true
             }
 
-            // ── RIGHT: Power Pill ────────
+            // ── RIGHT: Power Button ────────
             Item {
                 id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
-                height: 26
-                implicitWidth: powerPillInner.implicitWidth
-                Layout.preferredWidth: implicitWidth
+                height: 22
+                width: 22
+                Layout.preferredWidth: 22
                 opacity: 1.0
                 visible: true
-                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
 
-                property bool expanded: false  // always false — expansion now handled by PowerDropdown
-                onExpandedChanged: {
-                    if (!expanded) {
-                        logoutBtn.confirming = false
-                        restartBtn.confirming = false
-                        shutdownBtn.confirming = false
-                    }
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 11
+                    color: globalState.powerDropdownOpen
+                           ? Qt.rgba(fg.r, fg.g, fg.b, 0.16)
+                           : (powerMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
-                
-                property bool isHovered: powerMa.containsMouse
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "\ueb0d"
+                    font.family: fontName
+                    font.pixelSize: 14
+                    color: globalState.powerDropdownOpen ? fg : (powerMa.containsMouse ? Theme.colError : fg)
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
 
                 MouseArea {
                     id: powerMa
                     anchors.fill: parent
-                    anchors.leftMargin: -12
-                    anchors.rightMargin: -25
-                    anchors.topMargin: -6
-                    anchors.bottomMargin: -6
-                    z: 10
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: (mouse) => {
+                    onClicked: {
                         let cur = globalState.powerDropdownOpen;
                         if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
                         if (bar.dropdownOpen) bar.dropdownOpen = false;
                         if (bar.netDropdownOpen) bar.netDropdownOpen = false;
                         globalState.powerDropdownOpen = !cur;
-                    }
-                }
-
-                Row {
-                    id: powerPillInner
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 0
-
-                    // ── Expanded: action icons slide in ──
-                    // Logout
-                    Item {
-                        id: logoutBtn
-                        height: 26
-                        width: powerPillItem.expanded ? logoutRow.implicitWidth : 0
-                        opacity: powerPillItem.expanded ? 1 : 0
-                        clip: true
-                        property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
-                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                        Timer { id: logoutTimer; interval: 3000; onTriggered: logoutBtn.confirming = false }
-                        
-                        Row {
-                            id: logoutRow
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            spacing: 0
-                            Item {
-                                width: 26; height: 26
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\ueba8"
-                                    font.family: fontName
-                                    font.pixelSize: 14
-                                    color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                    Behavior on color { ColorAnimation { duration: 120 } }
-                                }
-                            }
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: logoutBtn.confirming ? "Sure?" : "Logout"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: logoutMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                                rightPadding: 8
-                            }
-                        }
-                        MouseArea {
-                            id: logoutMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (logoutBtn.confirming) {
-                                    powerPillItem.expanded = false;
-                                    logoutBtn.confirming = false;
-                                    Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit"]);
-                                } else {
-                                    logoutBtn.confirming = true;
-                                    logoutTimer.restart();
-                                }
-                            }
-                        }
-                    }
-
-                    // Restart
-                    Item {
-                        id: restartBtn
-                        height: 26
-                        width: powerPillItem.expanded ? restartRow.implicitWidth : 0
-                        opacity: powerPillItem.expanded ? 1 : 0
-                        clip: true
-                        property bool confirming: false
-                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
-                        Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
-                        Timer { id: restartTimer; interval: 3000; onTriggered: restartBtn.confirming = false }
-                        
-                        Row {
-                            id: restartRow
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            spacing: 0
-                            Item {
-                                width: 26; height: 26
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\ueb13"
-                                    font.family: fontName
-                                    font.pixelSize: 14
-                                    color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                    Behavior on color { ColorAnimation { duration: 120 } }
-                                }
-                            }
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: restartBtn.confirming ? "Sure?" : "Restart"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: restartMa.containsMouse ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.65)
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                                rightPadding: 8
-                            }
-                        }
-                        MouseArea {
-                            id: restartMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (restartBtn.confirming) {
-                                    powerPillItem.expanded = false;
-                                    restartBtn.confirming = false;
-                                    Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
-                                } else {
-                                    restartBtn.confirming = true;
-                                    restartTimer.restart();
-                                }
-                            }
-                        }
-                    }
-
-                    // ── Power icon (always visible) & Shutdown text ──
-                    Item {
-                        id: shutdownBtn
-                        height: 26
-                        width: shutdownRow.implicitWidth
-                        opacity: 1.0
-                        visible: true
-                        clip: true
-                        Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutSine } }
-                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutSine } }
-                        property bool confirming: false
-                        Timer { id: shutdownTimer; interval: 3000; onTriggered: shutdownBtn.confirming = false }
-                        
-                        Row {
-                            id: shutdownRow
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            spacing: 0
-                            Item {
-                                width: 26; height: 26
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\ueb0d"
-                                    font.family: fontName
-                                    font.pixelSize: 15
-                                    color: (powerPillItem.expanded ? powerMa.containsMouse : powerPillItem.isHovered) ? Theme.colError : fg
-                                    Behavior on color { ColorAnimation { duration: 150 } }
-                                }
-                            }
-                            Text {
-                                id: powerLabel
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: ""
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                color: Theme.colError
-                                width: 0
-                                opacity: 0
-                                clip: true
-                                visible: false
-                            }
-                        }
                     }
                 }
             }
