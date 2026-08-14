@@ -87,7 +87,7 @@ Item {
     readonly property real expandedW: 290
     property real contentW: expandedW
 
-    readonly property real padTop: isAttached ? 12 : 10
+    readonly property real padTop: 0
     readonly property real padSide: isAttached ? 24 : 14
     readonly property real padBottom: isAttached ? 16 : 12
 
