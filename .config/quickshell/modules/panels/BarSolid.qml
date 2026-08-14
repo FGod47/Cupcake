@@ -720,7 +720,7 @@ PanelWindow {
                     id: clockRow
                     height: 20
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: clockMouse.containsMouse ? 4 : 0
+                    spacing: clockMouse.containsMouse ? 6 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
 
                     Text {
@@ -728,20 +728,32 @@ PanelWindow {
                         text: Qt.formatDateTime(timeClock.date, "hh:mm AP").replace(/ (AM|PM)/i, "")
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
+                        font.weight: Font.Bold
                         color: fg
                     }
 
-                    Text {
+                    Row {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: " |  " + Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Theme.defaultFontWeight
-                        color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        spacing: 6
                         width: clockMouse.containsMouse ? implicitWidth : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
+
+                        Rectangle {
+                            width: 1
+                            height: 11
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: Qt.formatDateTime(timeClock.date, "ddd, d MMM")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Normal
+                            color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
+                        }
                     }
                 }
             }

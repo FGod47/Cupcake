@@ -234,12 +234,12 @@ Item {
                         }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
+                            text: Qt.formatDateTime(timeClock.date, "ddd, d MMM")
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: Font.Medium
+                            font.pixelSize: 12
+                            font.weight: Font.Normal
                             color: Theme.colOnSurface
-                            opacity: 0.65
+                            opacity: 0.7
                         }
                     }
                 }
