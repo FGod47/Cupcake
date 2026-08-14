@@ -16,17 +16,18 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real expandedW: 165
+    readonly property real expandedW: 160
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padSide: isAttached ? 26 : 14
-    readonly property real padBottom: isAttached ? 22 : 14
+    readonly property real padLeft: isAttached ? 24 : 14
+    readonly property real padRight: isAttached ? 14 : 14
+    readonly property real padBottom: isAttached ? 18 : 14
 
     readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Positioned smoothly with symmetric concave curves connecting to the bar
-    x: bar.barX + bar.barW - contentW - 10
+    // Positioned flush with the right edge of the bar
+    x: bar.barX + bar.barW - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
@@ -70,9 +71,9 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: true
+        clip: false
 
-        // ── Attached Mode Shape (Symmetric Concave Curves) ───────
+        // ── Attached Mode Shape (Unibody Right Edge Integration) ──
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -81,6 +82,8 @@ Item {
             readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
+            readonly property real barH: bar.barHeight
+            readonly property real barR: 15
 
             ShapePath {
                 strokeWidth: 0
@@ -89,7 +92,7 @@ Item {
                 startX: 0
                 startY: 0
 
-                // 1. Left concave notch
+                // 1. Left concave notch merging with bar flat underside
                 PathArc {
                     x: bgShape.r
                     y: bgShape.r
@@ -97,7 +100,7 @@ Item {
                     radiusY: bgShape.r
                     direction: PathArc.Clockwise
                 }
-                // 2. Left vertical edge
+                // 2. Left vertical straight edge
                 PathLine {
                     x: bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
@@ -109,32 +112,37 @@ Item {
                     controlX: bgShape.r
                     controlY: bgShape.h
                 }
-                // 4. Bottom flat edge
+                // 4. Bottom horizontal edge
                 PathLine {
-                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
+                    x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
                     y: bgShape.h
                 }
                 // 5. Bottom-Right rounded corner
                 PathQuad {
-                    x: bgShape.w - bgShape.r
+                    x: bgShape.w
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w - bgShape.r
+                    controlX: bgShape.w
                     controlY: bgShape.h
                 }
-                // 6. Right vertical edge
+                // 6. Right vertical straight edge going all the way up through the bar
                 PathLine {
-                    x: bgShape.w - bgShape.r
-                    y: bgShape.r
-                }
-                // 7. Right concave notch
-                PathArc {
                     x: bgShape.w
-                    y: 0
-                    radiusX: bgShape.r
-                    radiusY: bgShape.r
-                    direction: PathArc.Clockwise
+                    y: -bgShape.barH + bgShape.barR
                 }
-                // 8. Top flat edge closing
+                // 7. Top-Right corner rounded arc of the bar
+                PathArc {
+                    x: bgShape.w - bgShape.barR
+                    y: -bgShape.barH
+                    radiusX: bgShape.barR
+                    radiusY: bgShape.barR
+                    direction: PathArc.CounterClockwise
+                }
+                // 8. Top horizontal line back across the top of the bar
+                PathLine {
+                    x: 0
+                    y: -bgShape.barH
+                }
+                // 9. Close path back to (0, 0)
                 PathLine {
                     x: 0
                     y: 0
@@ -173,10 +181,28 @@ Item {
 
             Column {
                 id: powerMenu
-                x: powerSplitPill.padSide
+                x: powerSplitPill.padLeft
                 y: powerSplitPill.padTop
-                width: parent.width - (powerSplitPill.padSide * 2)
+                width: parent.width - powerSplitPill.padLeft - powerSplitPill.padRight
                 spacing: 3
+
+                // Clean Category Header
+                Item {
+                    width: parent.width
+                    height: 18
+
+                    Text {
+                        text: "POWER"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
 
                 component CleanPowerItem: Rectangle {
                     id: itemRoot
@@ -261,7 +287,7 @@ Item {
                     }
                 }
 
-                // 4. Power Off (Destructive Accent)
+                // 4. Power Off
                 CleanPowerItem {
                     iconCode: "\ueb0d"
                     labelText: "Power Off"
