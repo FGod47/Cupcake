@@ -22,7 +22,7 @@ PanelWindow {
     anchors { top: true; left: true; right: true }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen
+    property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen || globalState.clipboardOpen
     WlrLayershell.layer: WlrLayer.Top
     exclusiveZone: 40
     implicitHeight: bar.screen.height - 40
@@ -34,6 +34,7 @@ PanelWindow {
         Region { item: volBrightSplitPill }
         Region { item: netSplitPill }
         Region { item: musicSplitPill }
+        Region { item: clipboardSplitPill }
     }
 
     onAnyDropdownOpenChanged: {
@@ -48,6 +49,7 @@ PanelWindow {
             bar.musicDropdownOpen = false;
             globalState.powerDropdownOpen = false;
             globalState.solidBoardOpen = false;
+            globalState.clipboardOpen = false;
         }
     }
 
@@ -70,6 +72,7 @@ PanelWindow {
                 bar.dropdownOpen = false;
                 bar.netDropdownOpen = false;
                 globalState.powerDropdownOpen = false;
+                globalState.clipboardOpen = false;
             }
         }
         function onPowerDropdownOpenChanged() {
@@ -77,6 +80,15 @@ PanelWindow {
                 bar.dropdownOpen = false;
                 bar.netDropdownOpen = false;
                 globalState.solidBoardOpen = false;
+                globalState.clipboardOpen = false;
+            }
+        }
+        function onClipboardOpenChanged() {
+            if (globalState.clipboardOpen) {
+                bar.dropdownOpen = false;
+                bar.netDropdownOpen = false;
+                globalState.solidBoardOpen = false;
+                globalState.powerDropdownOpen = false;
             }
         }
     }
@@ -86,6 +98,7 @@ PanelWindow {
             netDropdownOpen = false;
             globalState.solidBoardOpen = false;
             globalState.powerDropdownOpen = false;
+            globalState.clipboardOpen = false;
         }
     }
 
@@ -94,6 +107,7 @@ PanelWindow {
             dropdownOpen = false;
             globalState.solidBoardOpen = false;
             globalState.powerDropdownOpen = false;
+            globalState.clipboardOpen = false;
         }
     }
 
@@ -106,6 +120,7 @@ PanelWindow {
                 bar.musicDropdownOpen = false;
                 globalState.powerDropdownOpen = false;
                 globalState.solidBoardOpen = false;
+                globalState.clipboardOpen = false;
             }
         }
     }
@@ -805,7 +820,66 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Clock) ────────
+            // ── RIGHT: Dot Separator (Tray -> Clipboard) ────────
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
+                Layout.preferredWidth: implicitWidth
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                opacity: 1.0
+                visible: true
+            }
+
+            // ── RIGHT: Clipboard Pill ────────
+            Item {
+                id: clipboardItem
+                Layout.alignment: Qt.AlignVCenter
+                height: 22
+                width: 22
+                Layout.preferredWidth: 22
+                opacity: 1.0
+                visible: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 11
+                    color: globalState.clipboardOpen
+                           ? Qt.rgba(fg.r, fg.g, fg.b, 0.16)
+                           : (clipMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "\uea6d"
+                    font.family: fontName
+                    font.pixelSize: 14
+                    color: globalState.clipboardOpen ? Theme.colPrimary : fg
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                MouseArea {
+                    id: clipMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        let cur = globalState.clipboardOpen;
+                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                        if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                        if (bar.dropdownOpen) bar.dropdownOpen = false;
+                        if (bar.netDropdownOpen) bar.netDropdownOpen = false;
+                        globalState.clipboardOpen = !cur;
+                    }
+                }
+            }
+
+            // ── RIGHT: Dot Separator (Clipboard -> Clock) ────────
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
@@ -989,6 +1063,9 @@ PanelWindow {
 
     // ── MUSIC SPLIT PILL ──────────────────────────────────────────────────
     DropdownMusic { id: musicSplitPill; visible: opacity > 0 }
+
+    // ── CLIPBOARD SPLIT PILL ──────────────────────────────────────────────
+    DropdownClipboard { id: clipboardSplitPill; visible: opacity > 0 }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)

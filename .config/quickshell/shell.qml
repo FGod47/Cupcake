@@ -133,6 +133,7 @@ ShellRoot {
         property bool overviewOpen: false
         property bool solidBoardOpen: false
         property bool powerDropdownOpen: false
+        property bool clipboardOpen: false
         property real dimOverlay: 0.0
         property real notifPanelOpacity: 0.90
         property bool popupHovered: false
@@ -366,8 +367,22 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "clipboard"
+        function toggle() {
+            globalState.clipboardOpen = !globalState.clipboardOpen;
+        }
+    }
+
+    GlobalShortcut {
+        name: "clipboard_toggle"
+        onPressed: {
+            globalState.clipboardOpen = !globalState.clipboardOpen;
+        }
+    }
+
+    IpcHandler {
         target: "notifpanel"
-        function toggle(): void {
+        function toggle() {
             globalState.notifPanelVisible = !globalState.notifPanelVisible;
         }
     }
