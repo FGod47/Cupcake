@@ -138,6 +138,7 @@ PanelWindow {
     property bool isBluetooth: false
     property bool isBluetoothConnected: false
     property bool isHotspot: false
+    property int netDropdownTab: 1 // 1: Wi-Fi, 3: Bluetooth, 2: Hotspot, 0: Ethernet
     property bool isVolMuted: false
     property string activeSinkName: ""
     property var sinkList: []
@@ -407,9 +408,7 @@ PanelWindow {
                 Layout.rightMargin: 10
             }
 
-
-
-
+            // ── RIGHT: Network & Connectivity Pill ──────────────────
             Item {
                 id: networkContainer
                 Layout.alignment: Qt.AlignVCenter
@@ -422,45 +421,87 @@ PanelWindow {
                 Row {
                     id: networkRowContent
                     height: 20
-                    spacing: 8
+                    spacing: 4
                     anchors.verticalCenter: parent.verticalCenter
 
-                    Text {
-                        visible: isHotspot
-                        text: "\ued1b" // tabler icon for hotspot
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: fg
-                        anchors.verticalCenter: parent.verticalCenter
+                    // Helper component for interactive top bar connectivity icon
+                    component NetBarIcon: Rectangle {
+                        property int tabId: 1
+                        property string iconCode: "\ueb52"
+                        property bool forceVisible: false
+                        property color iconColor: fg
+                        
+                        visible: forceVisible || bar.netDropdownOpen
+                        width: 22
+                        height: 20
+                        radius: 5
+                        property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
+                        color: isSelected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : (netIconMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent")
+                        border.color: isSelected ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4) : "transparent"
+                        border.width: 1
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: iconCode
+                            font.family: fontName
+                            font.pixelSize: 14
+                            color: isSelected ? Theme.colPrimary : iconColor
+                        }
+
+                        MouseArea {
+                            id: netIconMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                                if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                                if (bar.dropdownOpen) bar.dropdownOpen = false;
+
+                                if (bar.netDropdownOpen && bar.netDropdownTab === tabId) {
+                                    bar.netDropdownOpen = false;
+                                } else {
+                                    bar.netDropdownTab = tabId;
+                                    bar.netDropdownOpen = true;
+                                }
+                            }
+                        }
                     }
 
-                    Text {
-                        visible: isBluetooth
-                        text: isBluetoothConnected ? "\uecea" : "\uea37" // tabler icon for bluetooth connected/on
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: fg
-                        anchors.verticalCenter: parent.verticalCenter
+                    // 1. Wi-Fi
+                    NetBarIcon {
+                        tabId: 1
+                        iconCode: "\ueb52"
+                        forceVisible: isWifi || (!isWired && !isHotspot)
+                        iconColor: (netSplitPill && netSplitPill.wifiSSID !== "Disconnected" && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
                     }
 
-                    Text {
-                        visible: isWired
-                        text: "\uebd9" // tabler icon for wired
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: (netSplitPill && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
-                        anchors.verticalCenter: parent.verticalCenter
+                    // 2. Bluetooth
+                    NetBarIcon {
+                        tabId: 3
+                        iconCode: isBluetoothConnected ? "\uecea" : "\uea37"
+                        forceVisible: isBluetooth
+                        iconColor: fg
                     }
 
-                    Text {
-                        visible: isWifi && !isWired && !isHotspot
-                        text: "\ueb52" // tabler icon for wifi
-                        font.family: fontName
-                        font.pixelSize: 15
-                        color: (netSplitPill && netSplitPill.wifiSSID !== "Disconnected" && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
-                        anchors.verticalCenter: parent.verticalCenter
+                    // 3. Hotspot
+                    NetBarIcon {
+                        tabId: 2
+                        iconCode: "\ued1b"
+                        forceVisible: isHotspot
+                        iconColor: fg
                     }
 
+                    // 4. Ethernet
+                    NetBarIcon {
+                        tabId: 0
+                        iconCode: "\uebd9"
+                        forceVisible: isWired
+                        iconColor: (netSplitPill && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
+                    }
+
+                    // 5. Network Speed / Status Text
                     Text {
                         text: {
                             let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
@@ -485,18 +526,17 @@ PanelWindow {
                             return noInt ? "#ff6b6b" : Qt.rgba(fg.r, fg.g, fg.b, 0.7);
                         }
                         anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        let cur = bar.netDropdownOpen;
-                        if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
-                        if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
-                        if (bar.dropdownOpen) bar.dropdownOpen = false;
-                        bar.netDropdownOpen = !cur;
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (globalState.solidBoardOpen) globalState.solidBoardOpen = false;
+                                if (globalState.powerDropdownOpen) globalState.powerDropdownOpen = false;
+                                if (bar.dropdownOpen) bar.dropdownOpen = false;
+                                bar.netDropdownOpen = !bar.netDropdownOpen;
+                            }
+                        }
                     }
                 }
             }

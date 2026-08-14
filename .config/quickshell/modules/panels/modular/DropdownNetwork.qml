@@ -20,8 +20,10 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: bar.netDropdownOpen
+    readonly property int currentTab: bar.netDropdownTab // 1: Wi-Fi, 3: Bluetooth, 2: Hotspot, 0: Ethernet
 
     property var wifiList: []
+    property var btList: []
     property var savedWifiList: []
     property var hsClientList: []
 
@@ -33,6 +35,13 @@ Item {
 
     property string wiredIface: "enp6s0"
     property string wiredIp: "192.168.1.42"
+    property string wiredGateway: "192.168.1.1"
+    property string wiredDns: "1.1.1.1"
+    property string wiredMac: "00:00:00:00:00:00"
+
+    property string btDeviceName: ""
+    property int btBattery: 0
+    property bool isScanning: false
 
     property string hsName: "Cupcake_AP"
     property string hsPass: "12345678"
@@ -42,7 +51,7 @@ Item {
     property string selectedSSID: ""
     property string passInputText: ""
     property bool showPassInput: false
-    property bool isScanning: false
+    property bool showSavedWifi: false
 
     function getSignalIcon(sig) {
         let s = parseInt(sig) || 0;
@@ -52,10 +61,21 @@ Item {
         return "\ueba3";
     }
 
+    onCurrentTabChanged: {
+        showPassInput = false;
+        passInputText = "";
+        if (currentTab === 3 && bar.isBluetooth) {
+            btScanProc.running = true;
+        } else if (currentTab === 1 && bar.isWifi) {
+            wifiScanProc.running = true;
+        }
+    }
+
     onMenuExpandedChanged: {
         if (menuExpanded) {
             statusProc.running = true;
             wifiScanProc.running = true;
+            btScanProc.running = true;
             hsProc.running = true;
         } else {
             showPassInput = false;
@@ -213,6 +233,14 @@ Item {
                     let passM = nmOut.match(/802-11-wireless-security.psk:\s*(.+)/);
                     if (passM && passM[1].trim()) netSplitPill.hsPass = passM[1].trim();
 
+                    let bandM = nmOut.match(/802-11-wireless.band:\s*(.+)/);
+                    if (bandM) {
+                        let b = bandM[1].trim();
+                        if (b === "bg") netSplitPill.hsBand = "2.4 GHz";
+                        else if (b === "a") netSplitPill.hsBand = "5 GHz";
+                        else netSplitPill.hsBand = "Auto";
+                    }
+
                     let clines = clientOut.trim().split('\n');
                     let clients = [];
                     for (let l of clines) {
@@ -225,9 +253,26 @@ Item {
         }
 
         Process {
+            id: savedProc
+            command: ["bash", "-c", "nmcli -t -f NAME,TYPE con show | grep 802-11-wireless | cut -d: -f1"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (!text) return;
+                    let lines = text.trim().split('\n');
+                    let res = [];
+                    for (let l of lines) {
+                        let name = l.trim();
+                        if (name && name !== "Hotspot") res.push(name);
+                    }
+                    netSplitPill.savedWifiList = res;
+                }
+            }
+        }
+
+        Process {
             id: statusProc
             running: netSplitPill.menuExpanded
-            command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check"]
+            command: ["bash", "-c", "nmcli -t -f DEVICE,TYPE,STATE dev; echo '---ip---'; ip -4 addr show; echo '---conn---'; nmcli networking connectivity check; echo '---bt---'; bluetoothctl devices Connected; echo '---eth---'; nmcli dev show $(nmcli -t -f DEVICE,TYPE dev | grep ':ethernet$' | cut -d: -f1 | head -n1) 2>/dev/null"]
             stdout: StdioCollector {
                 onStreamFinished: {
                     if (!text) return;
@@ -236,7 +281,13 @@ Item {
                     let rest = parts[1] || "";
                     let restParts = rest.split("---conn---");
                     let ipOut = restParts[0] || "";
-                    let nmConnState = (restParts[1] || "").trim();
+                    let connRest = restParts[1] || "";
+                    let connParts = connRest.split("---bt---");
+                    let nmConnState = (connParts[0] || "").trim();
+                    let btRest = connParts[1] || "";
+                    let btParts = btRest.split("---eth---");
+                    let btOut = btParts[0] || "";
+                    let ethOut = btParts[1] || "";
 
                     netSplitPill.hasInternet = nmConnState === "full";
 
@@ -255,6 +306,26 @@ Item {
                                 }
                             }
                         }
+                    }
+
+                    let btMatch = btOut.match(/Device\s+([0-9A-Fa-f:]+)\s+(.+)/);
+                    if (btMatch) {
+                        netSplitPill.btDeviceName = btMatch[2].trim();
+                        if (netSplitPill.btBattery === 0) netSplitPill.btBattery = 85;
+                    } else {
+                        netSplitPill.btDeviceName = "";
+                        netSplitPill.btBattery = 0;
+                    }
+
+                    if (ethOut) {
+                        let gwMatch = ethOut.match(/IP4\.GATEWAY:\s*(.+)/);
+                        if (gwMatch && gwMatch[1].trim() !== "--") netSplitPill.wiredGateway = gwMatch[1].trim();
+                        let dnsMatch = ethOut.match(/IP4\.DNS\[1\]:\s*(.+)/);
+                        if (dnsMatch && dnsMatch[1].trim() !== "--") netSplitPill.wiredDns = dnsMatch[1].trim();
+                        let macMatch = ethOut.match(/GENERAL\.HWADDR:\s*(.+)/);
+                        if (macMatch && macMatch[1].trim() !== "--") netSplitPill.wiredMac = macMatch[1].trim();
+                        let ip4Match = ethOut.match(/IP4\.ADDRESS\[1\]:\s*([0-9\.]+)/);
+                        if (ip4Match) netSplitPill.wiredIp = ip4Match[1].trim();
                     }
                 }
             }
@@ -307,6 +378,46 @@ Item {
             }
         }
 
+        Process {
+            id: btScanProc
+            command: ["bash", "-c", "bluetoothctl devices; echo '---conn---'; bluetoothctl devices Connected; echo '---scan---'; bluetoothctl --timeout 2 scan on 2>/dev/null; bluetoothctl devices"]
+            onStarted: netSplitPill.isScanning = true
+            onExited: netSplitPill.isScanning = false
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (!text) return;
+                    let lines = text.trim().split('\n');
+                    let res = [];
+                    let seen = new Set();
+                    let connMacs = new Set();
+                    let section = "paired";
+
+                    for (let l of lines) {
+                        if (l.includes("---conn---")) { section = "conn"; continue; }
+                        if (l.includes("---scan---")) { section = "scan"; continue; }
+
+                        let m = l.match(/Device\s+([0-9A-Fa-f:]+)\s+(.+)/);
+                        if (m) {
+                            let mac = m[1];
+                            let name = m[2];
+                            if (section === "conn") {
+                                connMacs.add(mac);
+                                netSplitPill.btDeviceName = name;
+                            } else {
+                                if (!seen.has(mac)) {
+                                    seen.add(mac);
+                                    res.push({ mac: mac, name: name, connected: false });
+                                }
+                            }
+                        }
+                    }
+
+                    for (let dev of res) dev.connected = connMacs.has(dev.mac);
+                    netSplitPill.btList = res;
+                }
+            }
+        }
+
         MouseArea {
             id: netSplitPillMa
             anchors.fill: parent
@@ -317,7 +428,7 @@ Item {
             }
         }
 
-        // ── Inner Content Wrapper (Reveals smoothly without squishing) ──
+        // ── Inner Content Wrapper ────────────────────────────────
         Item {
             id: contentWrapper
             anchors.fill: parent
@@ -327,7 +438,6 @@ Item {
                 NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
             }
 
-            // ── Clean Uncluttered Network Layout ─────────────────────
             ColumnLayout {
                 id: netContentCol
                 anchors.left: parent.left
@@ -338,327 +448,328 @@ Item {
                 anchors.topMargin: netSplitPill.padTop
                 spacing: 12
 
-                // ── 1. Top Active Connection Hero Card ─────────────────
-                Rectangle {
+                // ═════════════════════════════════════════════════════
+                //  TAB 1: WI-FI VIEW
+                // ═════════════════════════════════════════════════════
+                ColumnLayout {
+                    visible: netSplitPill.currentTab === 1
                     Layout.fillWidth: true
-                    height: 56
-                    radius: 12
-                    color: Qt.rgba(1, 1, 1, 0.06)
-                    border.color: Qt.rgba(1, 1, 1, 0.08)
-                    border.width: 1
+                    spacing: 12
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        spacing: 10
-
-                        // Active Icon Badge
-                        Rectangle {
-                            width: 34
-                            height: 34
-                            radius: 17
-                            color: (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") || bar.isWired
-                                   ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                   : Qt.rgba(1, 1, 1, 0.08)
-                            border.color: (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") || bar.isWired
-                                          ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
-                                          : "transparent"
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: bar.isWired ? "\uebd9" : "\ueb52"
-                                font.family: fontName
-                                font.pixelSize: 16
-                                color: (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") || bar.isWired
-                                       ? Theme.colPrimary
-                                       : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
-                            }
-                        }
-
-                        // Status Info
-                        Column {
-                            Layout.fillWidth: true
-                            spacing: 1
-
-                            Text {
-                                text: {
-                                    if (bar.isWired) return "Wired Connection";
-                                    if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return netSplitPill.wifiSSID;
-                                    if (bar.isWifi) return "Wi-Fi Scanning...";
-                                    return "Wi-Fi Disabled";
-                                }
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 13
-                                font.weight: Font.Bold
-                                color: bar.fg
-                                elide: Text.ElideRight
-                                width: parent.width
-                            }
-
-                            Text {
-                                text: {
-                                    if (bar.isWired) return "Connected • " + netSplitPill.wiredIp;
-                                    if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return "Connected • " + netSplitPill.wifiIp;
-                                    if (bar.isWifi) return "Not connected";
-                                    return "Turn on Wi-Fi to connect";
-                                }
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-                                elide: Text.ElideRight
-                                width: parent.width
-                            }
-                        }
-
-                        // Nordic Toggle Switch
-                        Rectangle {
-                            width: 38
-                            height: 22
-                            radius: 11
-                            color: bar.isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
-                            Behavior on color { ColorAnimation { duration: 200 } }
-
-                            Rectangle {
-                                width: 18
-                                height: 18
-                                radius: 9
-                                anchors.verticalCenter: parent.verticalCenter
-                                x: bar.isWifi ? (parent.width - width - 2) : 2
-                                color: "#FFFFFF"
-                                Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Quickshell.execDetached(["nmcli", "radio", "wifi", bar.isWifi ? "off" : "on"]);
-                                    bar.isWifi = !bar.isWifi;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // ── 2. Nearby Networks Section Header ──────────────────
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: bar.isWifi
-
-                    Text {
-                        text: "NEARBY NETWORKS"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    // Refresh / Scan Button
-                    Item {
-                        width: 20
-                        height: 20
-                        Text {
-                            id: scanIcon
-                            anchors.centerIn: parent
-                            text: "\ueb13"
-                            font.family: fontName
-                            font.pixelSize: 13
-                            color: scanMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            rotation: netSplitPill.isScanning ? 360 : 0
-                            Behavior on rotation { NumberAnimation { duration: 800; loops: Animation.Infinite } }
-                        }
-                        MouseArea {
-                            id: scanMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: wifiScanProc.running = true
-                        }
-                    }
-                }
-
-                // ── 3. Password Entry Card (When Connecting) ───────────
-                Rectangle {
-                    visible: netSplitPill.showPassInput && bar.isWifi
-                    Layout.fillWidth: true
-                    height: 74
-                    radius: 10
-                    color: Qt.rgba(1, 1, 1, 0.08)
-                    border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35)
-                    border.width: 1
-
-                    Column {
-                        anchors.fill: parent
-                        anchors.margins: 8
-                        spacing: 6
-
-                        Text {
-                            text: "Connect to " + netSplitPill.selectedSSID
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: Font.Bold
-                            color: bar.fg
-                        }
+                    // Active Wi-Fi Card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 56
+                        radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.06)
+                        border.color: Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
 
                         RowLayout {
-                            width: parent.width
-                            spacing: 6
-
-                            TextField {
-                                id: passInputField
-                                Layout.fillWidth: true
-                                height: 26
-                                placeholderText: "Password..."
-                                echoMode: TextInput.Password
-                                color: bar.fg
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                background: Rectangle {
-                                    radius: 6
-                                    color: Qt.rgba(1, 1, 1, 0.12)
-                                }
-                                onAccepted: connectBtn.triggered()
-                            }
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
 
                             Rectangle {
-                                id: connectBtn
-                                width: 50
-                                height: 26
-                                radius: 6
-                                color: Theme.colPrimary
-                                signal triggered()
-                                onTriggered: {
-                                    Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", netSplitPill.selectedSSID, "password", passInputField.text]);
-                                    netSplitPill.showPassInput = false;
-                                    passInputField.text = "";
-                                    wifiScanProc.running = true;
-                                }
+                                width: 34
+                                height: 34
+                                radius: 17
+                                color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
+                                       : Qt.rgba(1, 1, 1, 0.08)
+                                border.color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
+                                              : "transparent"
+                                border.width: 1
+
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "Join"
+                                    text: "\ueb52"
+                                    font.family: fontName
+                                    font.pixelSize: 16
+                                    color: bar.isWifi && netSplitPill.wifiSSID !== "Disconnected"
+                                           ? Theme.colPrimary
+                                           : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                            }
+
+                            Column {
+                                Layout.fillWidth: true
+                                spacing: 1
+
+                                Text {
+                                    text: {
+                                        if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return netSplitPill.wifiSSID;
+                                        if (bar.isWifi) return "Wi-Fi Scanning...";
+                                        return "Wi-Fi Disabled";
+                                    }
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 13
+                                    font.weight: Font.Bold
+                                    color: bar.fg
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: {
+                                        if (bar.isWifi && netSplitPill.wifiSSID !== "Disconnected") return "Connected • " + netSplitPill.wifiIp;
+                                        if (bar.isWifi) return "Not connected";
+                                        return "Turn on Wi-Fi to connect";
+                                    }
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 11
-                                    font.weight: Font.Bold
-                                    color: "#FFFFFF"
-                                }
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: connectBtn.triggered()
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                    elide: Text.ElideRight
+                                    width: parent.width
                                 }
                             }
 
                             Rectangle {
-                                width: 26
-                                height: 26
-                                radius: 6
-                                color: Qt.rgba(1, 1, 1, 0.08)
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\uea76"
-                                    font.family: fontName
-                                    font.pixelSize: 12
-                                    color: bar.fg
+                                width: 38
+                                height: 22
+                                radius: 11
+                                color: bar.isWifi ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                Behavior on color { ColorAnimation { duration: 200 } }
+
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 9
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    x: bar.isWifi ? (parent.width - width - 2) : 2
+                                    color: "#FFFFFF"
+                                    Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                                 }
+
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        netSplitPill.showPassInput = false;
-                                        passInputField.text = "";
+                                        Quickshell.execDetached(["nmcli", "radio", "wifi", bar.isWifi ? "off" : "on"]);
+                                        bar.isWifi = !bar.isWifi;
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                // ── 4. Wi-Fi List Rows ─────────────────────────────────
-                ColumnLayout {
-                    visible: bar.isWifi
-                    Layout.fillWidth: true
-                    spacing: 3
+                    // Section Header
+                    RowLayout {
+                        Layout.fillWidth: true
+                        visible: bar.isWifi
 
-                    Repeater {
-                        model: netSplitPill.wifiList.slice(0, 5)
-                        delegate: Rectangle {
-                            Layout.fillWidth: true
-                            height: 34
-                            radius: 8
-                            property bool isConn: modelData.connected
-                            color: isConn
-                                   ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
-                                   : (wifiRowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
-                            Behavior on color { ColorAnimation { duration: 120 } }
+                        Text {
+                            text: "NEARBY NETWORKS"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 10
+                            font.weight: Font.Bold
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Item {
+                            width: 20
+                            height: 20
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb13"
+                                font.family: fontName
+                                font.pixelSize: 13
+                                color: scanMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                rotation: netSplitPill.isScanning ? 360 : 0
+                                Behavior on rotation { NumberAnimation { duration: 800; loops: Animation.Infinite } }
+                            }
+                            MouseArea {
+                                id: scanMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: wifiScanProc.running = true
+                            }
+                        }
+                    }
+
+                    // Password Card
+                    Rectangle {
+                        visible: netSplitPill.showPassInput && bar.isWifi
+                        Layout.fillWidth: true
+                        height: 74
+                        radius: 10
+                        color: Qt.rgba(1, 1, 1, 0.08)
+                        border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35)
+                        border.width: 1
+
+                        Column {
+                            anchors.fill: parent
+                            anchors.margins: 8
+                            spacing: 6
+
+                            Text {
+                                text: "Connect to " + netSplitPill.selectedSSID
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.Bold
+                                color: bar.fg
+                            }
 
                             RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 8
-                                anchors.rightMargin: 8
-                                spacing: 8
+                                width: parent.width
+                                spacing: 6
 
-                                Text {
-                                    text: netSplitPill.getSignalIcon(modelData.signal)
-                                    font.family: fontName
-                                    font.pixelSize: 13
-                                    color: isConn ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
-                                }
-
-                                Text {
-                                    visible: modelData.security && modelData.security !== "--" && !isConn
-                                    text: "\ueae2"
-                                    font.family: fontName
-                                    font.pixelSize: 11
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                                }
-
-                                Text {
+                                TextField {
+                                    id: passInputField
                                     Layout.fillWidth: true
-                                    text: modelData.ssid
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 12
-                                    font.weight: isConn ? Font.Bold : Font.Normal
-                                    color: isConn ? Theme.colPrimary : bar.fg
-                                    elide: Text.ElideRight
-                                }
-
-                                Text {
-                                    text: isConn ? "Disconnect" : (modelData.security && modelData.security !== "--" ? "5GHz" : "open")
+                                    height: 26
+                                    placeholderText: "Password..."
+                                    echoMode: TextInput.Password
+                                    color: bar.fg
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 11
-                                    font.weight: isConn ? Font.Medium : Font.Normal
-                                    color: isConn ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                                    background: Rectangle {
+                                        radius: 6
+                                        color: Qt.rgba(1, 1, 1, 0.12)
+                                    }
+                                    onAccepted: connectBtn.triggered()
+                                }
 
+                                Rectangle {
+                                    id: connectBtn
+                                    width: 50
+                                    height: 26
+                                    radius: 6
+                                    color: Theme.colPrimary
+                                    signal triggered()
+                                    onTriggered: {
+                                        Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", netSplitPill.selectedSSID, "password", passInputField.text]);
+                                        netSplitPill.showPassInput = false;
+                                        passInputField.text = "";
+                                        wifiScanProc.running = true;
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Join"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        font.weight: Font.Bold
+                                        color: "#FFFFFF"
+                                    }
                                     MouseArea {
                                         anchors.fill: parent
-                                        enabled: isConn
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: connectBtn.triggered()
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 26
+                                    height: 26
+                                    radius: 6
+                                    color: Qt.rgba(1, 1, 1, 0.08)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\uea76"
+                                        font.family: fontName
+                                        font.pixelSize: 12
+                                        color: bar.fg
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            Quickshell.execDetached(["nmcli", "dev", "disconnect", "wlan0"]);
-                                            wifiScanProc.running = true;
+                                            netSplitPill.showPassInput = false;
+                                            passInputField.text = "";
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
 
-                            MouseArea {
-                                id: wifiRowMa
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (isConn) return;
-                                    if (modelData.security === "--" || modelData.security === "Open") {
-                                        Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", modelData.ssid]);
-                                        wifiScanProc.running = true;
-                                    } else {
-                                        netSplitPill.selectedSSID = modelData.ssid;
-                                        netSplitPill.showPassInput = true;
+                    // Available Wi-Fi Items
+                    ColumnLayout {
+                        visible: bar.isWifi
+                        Layout.fillWidth: true
+                        spacing: 3
+
+                        Repeater {
+                            model: netSplitPill.wifiList.slice(0, 5)
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                height: 34
+                                radius: 8
+                                property bool isConn: modelData.connected
+                                color: isConn
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                                       : (wifiRowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                                Behavior on color { ColorAnimation { duration: 120 } }
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 8
+                                    anchors.rightMargin: 8
+                                    spacing: 8
+
+                                    Text {
+                                        text: netSplitPill.getSignalIcon(modelData.signal)
+                                        font.family: fontName
+                                        font.pixelSize: 13
+                                        color: isConn ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
+                                    }
+
+                                    Text {
+                                        visible: modelData.security && modelData.security !== "--" && !isConn
+                                        text: "\ueae2"
+                                        font.family: fontName
+                                        font.pixelSize: 11
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                                    }
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: modelData.ssid
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 12
+                                        font.weight: isConn ? Font.Bold : Font.Normal
+                                        color: isConn ? Theme.colPrimary : bar.fg
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        text: isConn ? "Disconnect" : (modelData.security && modelData.security !== "--" ? "5GHz" : "open")
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        font.weight: isConn ? Font.Medium : Font.Normal
+                                        color: isConn ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            enabled: isConn
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                Quickshell.execDetached(["nmcli", "dev", "disconnect", "wlan0"]);
+                                                wifiScanProc.running = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: wifiRowMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (isConn) return;
+                                        if (modelData.security === "--" || modelData.security === "Open") {
+                                            Quickshell.execDetached(["nmcli", "dev", "wifi", "connect", modelData.ssid]);
+                                            wifiScanProc.running = true;
+                                        } else {
+                                            netSplitPill.selectedSSID = modelData.ssid;
+                                            netSplitPill.showPassInput = true;
+                                        }
                                     }
                                 }
                             }
@@ -666,71 +777,534 @@ Item {
                     }
                 }
 
-                // ── 5. Subtle Bottom Divider ───────────────────────────
+                // ═════════════════════════════════════════════════════
+                //  TAB 3: BLUETOOTH VIEW
+                // ═════════════════════════════════════════════════════
+                ColumnLayout {
+                    visible: netSplitPill.currentTab === 3
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Active Bluetooth Card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 56
+                        radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.06)
+                        border.color: Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
+
+                            Rectangle {
+                                width: 34
+                                height: 34
+                                radius: 17
+                                color: bar.isBluetooth
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
+                                       : Qt.rgba(1, 1, 1, 0.08)
+                                border.color: bar.isBluetooth
+                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
+                                              : "transparent"
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uea37"
+                                    font.family: fontName
+                                    font.pixelSize: 16
+                                    color: bar.isBluetooth
+                                           ? Theme.colPrimary
+                                           : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                            }
+
+                            Column {
+                                Layout.fillWidth: true
+                                spacing: 1
+
+                                Text {
+                                    text: "Bluetooth"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 13
+                                    font.weight: Font.Bold
+                                    color: bar.fg
+                                }
+
+                                Text {
+                                    text: {
+                                        if (bar.isBluetooth && netSplitPill.btDeviceName !== "") return netSplitPill.btDeviceName + (netSplitPill.btBattery > 0 ? " • " + netSplitPill.btBattery + "%" : "");
+                                        if (bar.isBluetooth) return "Active • Ready to pair";
+                                        return "Bluetooth Disabled";
+                                    }
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+                            }
+
+                            Rectangle {
+                                width: 38
+                                height: 22
+                                radius: 11
+                                color: bar.isBluetooth ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                Behavior on color { ColorAnimation { duration: 200 } }
+
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 9
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    x: bar.isBluetooth ? (parent.width - width - 2) : 2
+                                    color: "#FFFFFF"
+                                    Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bluetoothctl", "power", bar.isBluetooth ? "off" : "on"]);
+                                        bar.isBluetooth = !bar.isBluetooth;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Section Header
+                    RowLayout {
+                        Layout.fillWidth: true
+                        visible: bar.isBluetooth
+
+                        Text {
+                            text: "PAIRED & NEARBY DEVICES"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 10
+                            font.weight: Font.Bold
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Item {
+                            width: 20
+                            height: 20
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb13"
+                                font.family: fontName
+                                font.pixelSize: 13
+                                color: btScanMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                rotation: netSplitPill.isScanning ? 360 : 0
+                                Behavior on rotation { NumberAnimation { duration: 800; loops: Animation.Infinite } }
+                            }
+                            MouseArea {
+                                id: btScanMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: btScanProc.running = true
+                            }
+                        }
+                    }
+
+                    // Bluetooth Devices List
+                    ColumnLayout {
+                        visible: bar.isBluetooth
+                        Layout.fillWidth: true
+                        spacing: 3
+
+                        Repeater {
+                            model: netSplitPill.btList.slice(0, 5)
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                height: 38
+                                radius: 8
+                                property bool isConn: modelData.connected
+                                color: isConn
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                                       : (btRowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                                Behavior on color { ColorAnimation { duration: 120 } }
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 8
+                                    anchors.rightMargin: 8
+                                    spacing: 8
+
+                                    Text {
+                                        text: (modelData.name && (modelData.name.includes("head") || modelData.name.includes("WH-") || modelData.name.includes("AirPods"))) ? "\uea76" : "\uea37"
+                                        font.family: fontName
+                                        font.pixelSize: 14
+                                        color: isConn ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
+                                    }
+
+                                    Column {
+                                        Layout.fillWidth: true
+                                        spacing: 1
+                                        Text {
+                                            text: modelData.name || modelData.mac
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 12
+                                            font.weight: isConn ? Font.Bold : Font.Normal
+                                            color: isConn ? Theme.colPrimary : bar.fg
+                                            elide: Text.ElideRight
+                                            width: parent.width
+                                        }
+                                        Text {
+                                            text: isConn ? "connected" : "paired • trusted"
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 10
+                                            color: isConn ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                        }
+                                    }
+
+                                    Text {
+                                        text: isConn ? "Disconnect" : "Connect"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        font.weight: Font.Medium
+                                        color: isConn ? Theme.colError : Theme.colPrimary
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                Quickshell.execDetached(["bash", "-c", "bluetoothctl " + (isConn ? "disconnect " : "connect ") + modelData.mac]);
+                                                btScanProc.running = true;
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        text: "\uea6a"
+                                        font.family: fontName
+                                        font.pixelSize: 12
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                Quickshell.execDetached(["bash", "-c", "bluetoothctl remove " + modelData.mac]);
+                                                btScanProc.running = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: btRowMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["bash", "-c", "bluetoothctl " + (modelData.connected ? "disconnect " : "connect ") + modelData.mac]);
+                                        btScanProc.running = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ═════════════════════════════════════════════════════
+                //  TAB 2: HOTSPOT VIEW
+                // ═════════════════════════════════════════════════════
+                ColumnLayout {
+                    visible: netSplitPill.currentTab === 2
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Active Hotspot Card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 56
+                        radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.06)
+                        border.color: Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
+
+                            Rectangle {
+                                width: 34
+                                height: 34
+                                radius: 17
+                                color: bar.isHotspot
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
+                                       : Qt.rgba(1, 1, 1, 0.08)
+                                border.color: bar.isHotspot
+                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
+                                              : "transparent"
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ued1b"
+                                    font.family: fontName
+                                    font.pixelSize: 16
+                                    color: bar.isHotspot
+                                           ? Theme.colPrimary
+                                           : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                            }
+
+                            Column {
+                                Layout.fillWidth: true
+                                spacing: 1
+
+                                Text {
+                                    text: "Personal Hotspot"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 13
+                                    font.weight: Font.Bold
+                                    color: bar.fg
+                                }
+
+                                Text {
+                                    text: bar.isHotspot ? (netSplitPill.hsName + " • " + netSplitPill.hsClientList.length + " connected") : "Hotspot Disabled"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+                            }
+
+                            Rectangle {
+                                width: 38
+                                height: 22
+                                radius: 11
+                                color: bar.isHotspot ? Theme.colPrimary : Qt.rgba(1, 1, 1, 0.15)
+                                Behavior on color { ColorAnimation { duration: 200 } }
+
+                                Rectangle {
+                                    width: 18
+                                    height: 18
+                                    radius: 9
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    x: bar.isHotspot ? (parent.width - width - 2) : 2
+                                    color: "#FFFFFF"
+                                    Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (bar.isHotspot) {
+                                            Quickshell.execDetached(["nmcli", "con", "down", "Hotspot"]);
+                                            bar.isHotspot = false;
+                                        } else {
+                                            Quickshell.execDetached(["bash", "-c", "nmcli con up Hotspot 2>/dev/null || nmcli dev wifi hotspot ssid " + netSplitPill.hsName + " password " + netSplitPill.hsPass]);
+                                            bar.isHotspot = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Hotspot Details Card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 70
+                        radius: 10
+                        color: Qt.rgba(1, 1, 1, 0.05)
+                        border.color: Qt.rgba(1, 1, 1, 0.07)
+                        border.width: 1
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            spacing: 6
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text {
+                                    text: "Network Name"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                                Item { Layout.fillWidth: true }
+                                Text {
+                                    text: netSplitPill.hsName
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: Font.Bold
+                                    color: bar.fg
+                                }
+                            }
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text {
+                                    text: "Password"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                                Item { Layout.fillWidth: true }
+                                Text {
+                                    text: netSplitPill.hsPass
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: Font.Bold
+                                    color: Theme.colPrimary
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ═════════════════════════════════════════════════════
+                //  TAB 0: ETHERNET VIEW
+                // ═════════════════════════════════════════════════════
+                ColumnLayout {
+                    visible: netSplitPill.currentTab === 0
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    // Active Ethernet Card
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 56
+                        radius: 12
+                        color: Qt.rgba(1, 1, 1, 0.06)
+                        border.color: Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
+
+                            Rectangle {
+                                width: 34
+                                height: 34
+                                radius: 17
+                                color: bar.isWired
+                                       ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
+                                       : Qt.rgba(1, 1, 1, 0.08)
+                                border.color: bar.isWired
+                                              ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
+                                              : "transparent"
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\uebd9"
+                                    font.family: fontName
+                                    font.pixelSize: 16
+                                    color: bar.isWired
+                                           ? Theme.colPrimary
+                                           : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6)
+                                }
+                            }
+
+                            Column {
+                                Layout.fillWidth: true
+                                spacing: 1
+
+                                Text {
+                                    text: "Wired Ethernet"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 13
+                                    font.weight: Font.Bold
+                                    color: bar.fg
+                                }
+
+                                Text {
+                                    text: bar.isWired ? ("Connected • " + netSplitPill.wiredIp) : "Cable Disconnected"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+                            }
+                        }
+                    }
+
+                    // Ethernet Details Table
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 100
+                        radius: 10
+                        color: Qt.rgba(1, 1, 1, 0.05)
+                        border.color: Qt.rgba(1, 1, 1, 0.07)
+                        border.width: 1
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            spacing: 6
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text { text: "Interface"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                Item { Layout.fillWidth: true }
+                                Text { text: netSplitPill.wiredIface; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                            }
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text { text: "IPv4 Address"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                Item { Layout.fillWidth: true }
+                                Text { text: netSplitPill.wiredIp || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                            }
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text { text: "Gateway"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                Item { Layout.fillWidth: true }
+                                Text { text: netSplitPill.wiredGateway || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                            }
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text { text: "Hardware MAC"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.6) }
+                                Item { Layout.fillWidth: true }
+                                Text { text: netSplitPill.wiredMac || "--"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: bar.fg }
+                            }
+                        }
+                    }
+                }
+
+                // ── Subtle Bottom Divider ────────────────────────────
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
                     color: Qt.rgba(1, 1, 1, 0.08)
                 }
 
-                // ── 6. Bottom Actions (Hotspot + Settings) ─────────────
+                // ── Bottom Utility Bar (Settings Link) ───────────────
                 RowLayout {
                     Layout.fillWidth: true
 
-                    // Hotspot Pill Toggle
-                    Rectangle {
-                        height: 26
-                        width: hsRow.implicitWidth + 16
-                        radius: 13
-                        color: bar.isHotspot
-                               ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                               : (hsPillMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.06))
-                        border.color: bar.isHotspot ? Theme.colPrimary : "transparent"
-                        border.width: 1
-                        Behavior on color { ColorAnimation { duration: 150 } }
-
-                        Row {
-                            id: hsRow
-                            anchors.centerIn: parent
-                            spacing: 5
-
-                            Text {
-                                text: "\ued1b"
-                                font.family: fontName
-                                font.pixelSize: 11
-                                color: bar.isHotspot ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-                            Text {
-                                text: "Hotspot"
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 11
-                                font.weight: Font.Medium
-                                color: bar.isHotspot ? Theme.colPrimary : bar.fg
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                    Text {
+                        text: {
+                            if (netSplitPill.currentTab === 1) return "Wi-Fi Settings";
+                            if (netSplitPill.currentTab === 3) return "Bluetooth Settings";
+                            if (netSplitPill.currentTab === 2) return "Hotspot Settings";
+                            return "Network Settings";
                         }
-
-                        MouseArea {
-                            id: hsPillMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (bar.isHotspot) {
-                                    Quickshell.execDetached(["nmcli", "con", "down", "Hotspot"]);
-                                    bar.isHotspot = false;
-                                } else {
-                                    Quickshell.execDetached(["bash", "-c", "nmcli con up Hotspot 2>/dev/null || nmcli dev wifi hotspot ssid " + netSplitPill.hsName + " password " + netSplitPill.hsPass]);
-                                    bar.isHotspot = true;
-                                }
-                            }
-                        }
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
                     }
 
                     Item { Layout.fillWidth: true }
 
-                    // Settings Link
                     Item {
                         width: settingsRow.implicitWidth
                         height: 24
@@ -741,7 +1315,7 @@ Item {
                             spacing: 4
 
                             Text {
-                                text: "Settings"
+                                text: "Configure"
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 11
                                 font.weight: Font.Medium
