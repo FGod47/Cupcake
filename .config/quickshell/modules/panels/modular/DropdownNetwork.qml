@@ -87,9 +87,9 @@ Item {
     readonly property real expandedW: 300
     property real contentW: expandedW
 
-    readonly property real padTop: isAttached ? 18 : 8
-    readonly property real padSide: isAttached ? 18 : 8
-    readonly property real padBottom: isAttached ? 18 : 8
+    readonly property real padTop: isAttached ? 22 : 12
+    readonly property real padSide: isAttached ? 22 : 12
+    readonly property real padBottom: isAttached ? 20 : 12
 
     readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
 
@@ -513,14 +513,16 @@ Item {
                 Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: cardInnerCol.implicitHeight + 28
-                    radius: 16
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    radius: 14
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07)
+                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.11)
                     border.width: 1
 
                     ColumnLayout {
                         id: cardInnerCol
-                        anchors.fill: parent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
                         anchors.margins: 14
                         spacing: 12
 
