@@ -88,7 +88,7 @@ Item {
                 strokeColor: "transparent"
                 fillColor: bgShape.shapeColor
                 startX: 0
-                startY: 0
+                startY: -1
 
                 // 1. Left concave notch merging with bar flat underside
                 PathArc {
@@ -122,23 +122,23 @@ Item {
                     controlX: bgShape.w
                     controlY: bgShape.h
                 }
-                // 6. Right vertical edge goes up flush with bar's rightmost point
+                // 6. Right vertical edge goes up into the bar right cap
                 PathLine {
                     x: bgShape.w
-                    y: -15
+                    y: -16
                 }
-                // 7. Counter-clockwise arc following the exact curvature of the bar's bottom-right corner
+                // 7. Arc seamlessly sealing the bar's bottom-right corner anti-aliasing seam
                 PathArc {
-                    x: bgShape.w - 15
-                    y: 0
-                    radiusX: 15
-                    radiusY: 15
+                    x: bgShape.w - 16
+                    y: -1
+                    radiusX: 16
+                    radiusY: 16
                     direction: PathArc.CounterClockwise
                 }
-                // 8. Straight horizontal line at y=0 under the bar flat bottom
+                // 8. Straight horizontal line at y=-1 to seal horizontal seam
                 PathLine {
                     x: 0
-                    y: 0
+                    y: -1
                 }
             }
         }
