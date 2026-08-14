@@ -16,25 +16,24 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real expandedW: 155
+    readonly property real expandedW: 165
     property real contentW: expandedW
 
     readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padLeft: isAttached ? 24 : 14
-    readonly property real padRight: isAttached ? 14 : 14
+    readonly property real padSide: isAttached ? 26 : 14
     readonly property real padBottom: isAttached ? 22 : 14
 
     readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Flush and level with the bar's right edge
-    x: bar.barX + bar.barW - contentW
+    // Positioned smoothly with symmetric concave curves connecting to the bar
+    x: bar.barX + bar.barW - contentW - 10
     width: contentW
     height: menuExpanded ? targetH : 0
 
-    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
+    // Signature smooth animations
     Behavior on height {
         NumberAnimation {
-            duration: 500
+            duration: 450
             easing.type: Easing.InOutExpo
         }
     }
@@ -54,7 +53,7 @@ Item {
     property real openProgress: menuExpanded ? 1.0 : 0.0
     Behavior on openProgress {
         NumberAnimation {
-            duration: 350
+            duration: 320
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
         }
@@ -71,9 +70,9 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: false
+        clip: true
 
-        // ── Attached Mode Shape (Left Concave Notch, Flush Right Edge) ────
+        // ── Attached Mode Shape (Symmetric Concave Curves) ───────
         Shape {
             id: bgShape
             anchors.fill: parent
@@ -90,7 +89,7 @@ Item {
                 startX: 0
                 startY: 0
 
-                // 1. Left concave notch from bar underside
+                // 1. Left concave notch
                 PathArc {
                     x: bgShape.r
                     y: bgShape.r
@@ -98,7 +97,7 @@ Item {
                     radiusY: bgShape.r
                     direction: PathArc.Clockwise
                 }
-                // 2. Left straight edge
+                // 2. Left vertical edge
                 PathLine {
                     x: bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
@@ -110,24 +109,32 @@ Item {
                     controlX: bgShape.r
                     controlY: bgShape.h
                 }
-                // 4. Bottom straight edge
+                // 4. Bottom flat edge
                 PathLine {
-                    x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
+                    x: Math.max(2 * bgShape.r, bgShape.w - 2 * bgShape.r)
                     y: bgShape.h
                 }
                 // 5. Bottom-Right rounded corner
                 PathQuad {
-                    x: bgShape.w
+                    x: bgShape.w - bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w
+                    controlX: bgShape.w - bgShape.r
                     controlY: bgShape.h
                 }
-                // 6. Right edge extending up to fill bar's bottom-right corner gap
+                // 6. Right vertical edge
                 PathLine {
-                    x: bgShape.w
-                    y: -15
+                    x: bgShape.w - bgShape.r
+                    y: bgShape.r
                 }
-                // 7. Close path to top-left
+                // 7. Right concave notch
+                PathArc {
+                    x: bgShape.w
+                    y: 0
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Clockwise
+                }
+                // 8. Top flat edge closing
                 PathLine {
                     x: 0
                     y: 0
@@ -154,97 +161,65 @@ Item {
             }
         }
 
-        // ── Inner Content Wrapper (Reveals smoothly without squishing) ──
+        // ── Inner Content Wrapper ────────────────────────────────
         Item {
             id: contentWrapper
             anchors.fill: parent
             clip: true
             opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
             Behavior on opacity {
-                NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
             }
 
-            // ── Expanded Power Menu ─────────────────────────────────────
             Column {
                 id: powerMenu
-                x: powerSplitPill.padLeft
+                x: powerSplitPill.padSide
                 y: powerSplitPill.padTop
-                width: parent.width - powerSplitPill.padLeft - powerSplitPill.padRight
-                spacing: 4
+                width: parent.width - (powerSplitPill.padSide * 2)
+                spacing: 3
 
-                // Category Header
-                Item {
-                    width: parent.width
-                    height: 20
-
-                    Text {
-                        text: "POWER"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
-
-                component PowerMenuItem: Item {
+                component CleanPowerItem: Rectangle {
                     id: itemRoot
-                    property string icon: ""
-                    property string label: ""
-                    property bool isCancel: false
+                    property string iconCode: ""
+                    property string labelText: ""
+                    property bool isDestructive: false
                     signal triggered()
 
                     width: parent.width
-                    height: 30
+                    height: 32
+                    radius: 8
+                    color: itemMa.containsMouse
+                           ? (isDestructive ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.15) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10))
+                           : "transparent"
+                    Behavior on color { ColorAnimation { duration: 130 } }
 
-                    Rectangle {
+                    RowLayout {
                         anchors.fill: parent
-                        radius: height / 2
-                        color: itemMa.containsMouse
-                               ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                               : "transparent"
-                        Behavior on color { ColorAnimation { duration: 120 } }
-                    }
-
-                    // Normal Item with Icon + Text
-                    Row {
-                        visible: !itemRoot.isCancel
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
                         anchors.leftMargin: 8
-                        spacing: 10
+                        anchors.rightMargin: 8
+                        spacing: 9
 
                         Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: itemRoot.icon
+                            text: itemRoot.iconCode
                             font.family: powerIconFont.name
                             font.pixelSize: 14
-                            color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8)
-                            Behavior on color { ColorAnimation { duration: 120 } }
+                            color: itemMa.containsMouse
+                                   ? (isDestructive ? Theme.colError : bar.fg)
+                                   : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.75)
+                            Behavior on color { ColorAnimation { duration: 130 } }
                         }
+
                         Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: itemRoot.label
+                            Layout.fillWidth: true
+                            text: itemRoot.labelText
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 12
                             font.weight: Font.Medium
-                            color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
-                            Behavior on color { ColorAnimation { duration: 120 } }
+                            color: itemMa.containsMouse
+                                   ? (isDestructive ? Theme.colError : bar.fg)
+                                   : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                            Behavior on color { ColorAnimation { duration: 130 } }
                         }
-                    }
-
-                    // Cancel Item (Centered)
-                    Text {
-                        visible: itemRoot.isCancel
-                        anchors.centerIn: parent
-                        text: itemRoot.label
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Medium
-                        color: itemMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                        Behavior on color { ColorAnimation { duration: 120 } }
                     }
 
                     MouseArea {
@@ -256,74 +231,44 @@ Item {
                     }
                 }
 
-                // Section 1: Lock & Sleep
-                PowerMenuItem {
-                    icon: "\ueae2"
-                    label: "Lock"
+                // 1. Lock
+                CleanPowerItem {
+                    iconCode: "\ueae2"
+                    labelText: "Lock"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "hyprlock"]);
                     }
                 }
 
-                PowerMenuItem {
-                    icon: "\ueb0d"
-                    label: "Sleep"
+                // 2. Suspend / Sleep
+                CleanPowerItem {
+                    iconCode: "\uea1e"
+                    labelText: "Suspend"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
                     }
                 }
 
-                // Separator 1
-                Item {
-                    width: parent.width
-                    height: 7
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width - 8
-                        height: 1
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                    }
-                }
-
-                // Section 2: Restart & Shut Down
-                PowerMenuItem {
-                    icon: "\ueb13"
-                    label: "Restart"
+                // 3. Restart
+                CleanPowerItem {
+                    iconCode: "\ueb13"
+                    labelText: "Restart"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "systemctl reboot"]);
                     }
                 }
 
-                PowerMenuItem {
-                    icon: "\ueb0d"
-                    label: "Shut Down"
+                // 4. Power Off (Destructive Accent)
+                CleanPowerItem {
+                    iconCode: "\ueb0d"
+                    labelText: "Power Off"
+                    isDestructive: true
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
                         Quickshell.execDetached(["bash", "-c", "systemctl poweroff"]);
-                    }
-                }
-
-                // Separator 2
-                Item {
-                    width: parent.width
-                    height: 7
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width - 8
-                        height: 1
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                    }
-                }
-
-                // Section 3: Cancel
-                PowerMenuItem {
-                    label: "Cancel"
-                    isCancel: true
-                    onTriggered: {
-                        globalState.powerDropdownOpen = false;
                     }
                 }
             }
