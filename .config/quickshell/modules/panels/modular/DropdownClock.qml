@@ -226,7 +226,12 @@ Item {
                             color: Theme.colOnSurface
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Item { width: 4; height: 1 }
+                        Rectangle {
+                            width: 1
+                            height: 22
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.2)
+                        }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()

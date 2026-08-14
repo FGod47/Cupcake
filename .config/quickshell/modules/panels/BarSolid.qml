@@ -734,7 +734,7 @@ PanelWindow {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "• " + Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
+                        text: " |  " + Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
                         font.family: Theme.defaultFontFamily
                         font.pixelSize: Theme.defaultFontSize
                         font.weight: Theme.defaultFontWeight
