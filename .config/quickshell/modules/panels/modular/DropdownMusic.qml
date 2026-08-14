@@ -22,20 +22,20 @@ Item {
     property bool hasPlayer: player !== null
     property bool isPlaying: hasPlayer ? (player.playbackState === 1 || player.isPlaying) : false
 
-    readonly property real expandedW: 340
+    readonly property real expandedW: 360
     readonly property real expandedH: 156
-    readonly property real artMargin: 8
-    readonly property real artSizeExpanded: 140
+    readonly property real artMargin: isAttached ? 14 : 8
+    readonly property real artSizeExpanded: 130
 
     property real contentW: expandedW
 
     readonly property int dur: 280
     readonly property int easingType: Easing.OutExpo
 
-    height: menuExpanded ? expandedH : 0
+    height: menuExpanded ? (expandedH + (isAttached ? 10 : 0)) : 0
     Behavior on height { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
 
-    x: bar.barX + 4
+    x: bar.barX + 16
     width: contentW
     Behavior on x     { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
     Behavior on width { NumberAnimation { duration: musicSplitPill.dur; easing.type: musicSplitPill.easingType } }
@@ -98,7 +98,7 @@ Item {
             anchors.fill: parent
             visible: musicSplitPill.isAttached
             property color shapeColor: bar.pillColor
-            readonly property real r: 14
+            readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
@@ -177,8 +177,8 @@ Item {
             width: artSizeExpanded
             height: artSizeExpanded
             z: 15
-            x: artMargin
-            y: artMargin
+            x: musicSplitPill.isAttached ? 22 : 12
+            y: musicSplitPill.isAttached ? 16 : 10
 
             Image {
                 id: floatingAlbumArt
@@ -251,9 +251,9 @@ Item {
             elide: Text.ElideRight
             maximumLineCount: 1
             z: 20
-            x: artMargin + artSizeExpanded + 14
-            y: 18
-            width: expandedW - (artMargin + artSizeExpanded + 14) - 14
+            x: (musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14
+            y: musicSplitPill.isAttached ? 16 : 10
+            width: expandedW - ((musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14) - (musicSplitPill.isAttached ? 22 : 12)
         }
 
         // ── CLICK HANDLER ──
@@ -271,13 +271,13 @@ Item {
         Item {
             id: expandedContent
             anchors.left: parent.left
-            anchors.leftMargin: artMargin + artSizeExpanded + 14
+            anchors.leftMargin: (musicSplitPill.isAttached ? 22 : 12) + artSizeExpanded + 14
             anchors.right: parent.right
-            anchors.rightMargin: 14
+            anchors.rightMargin: musicSplitPill.isAttached ? 22 : 12
             anchors.top: parent.top
-            anchors.topMargin: 18
+            anchors.topMargin: musicSplitPill.isAttached ? 16 : 10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 12
+            anchors.bottomMargin: musicSplitPill.isAttached ? 16 : 10
 
             opacity: musicSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0

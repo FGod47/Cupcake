@@ -85,14 +85,14 @@ Item {
         }
     }
 
-    height: menuExpanded ? (netContentCol.implicitHeight + 28) : 0
+    height: menuExpanded ? (netContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
     Behavior on height { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
 
     readonly property real openGap: 16
-    readonly property real expandedW: 310
+    readonly property real expandedW: 330
     property real contentW: expandedW
 
-    x: bar.barX + bar.barW - contentW - 180
+    x: bar.barX + bar.barW - contentW - 140
     width: contentW
 
     Behavior on x     { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -119,7 +119,7 @@ Item {
             anchors.fill: parent
             visible: netSplitPill.isAttached
             property color shapeColor: bar.pillColor
-            readonly property real r: 14
+            readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
@@ -491,11 +491,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 14
+        anchors.leftMargin: netSplitPill.isAttached ? 22 : 14
+        anchors.rightMargin: netSplitPill.isAttached ? 22 : 14
+        anchors.topMargin: netSplitPill.isAttached ? 16 : 12
         spacing: 12
         opacity: netSplitPill.menuExpanded ? 1.0 : 0.0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
         // ── 1. Top Segmented Tab Bar ──
         Rectangle {

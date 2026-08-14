@@ -18,17 +18,18 @@ Item {
     
     readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
 
-    // Multi-mode Y position: Flush with bar for Attached, 8px gap for Floating
+    // Multi-mode Y position
     y: isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8)
     Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
-    readonly property real expandedW: 320
+    readonly property real expandedW: 340
     property real contentW: expandedW
     
-    x: bar.barX + bar.barW - contentW - 40
+    // Positioned aligned with clock widget and safely away from bar edge
+    x: bar.barX + bar.barW - contentW - 20
     width: contentW
-    height: menuExpanded ? (clockContentCol.implicitHeight + 28) : 0
+    height: menuExpanded ? (clockContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -56,7 +57,7 @@ Item {
             anchors.fill: parent
             visible: clockSplitPill.isAttached
             property color shapeColor: bar.pillColor
-            readonly property real r: 14
+            readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
@@ -149,10 +150,10 @@ Item {
         // ── Expanded Calendar & Clock View ────────────────────────────────
         ColumnLayout {
             id: clockContentCol
-            x: 18
-            y: 10
-            width: parent.width - 36
-            spacing: 10
+            x: clockSplitPill.isAttached ? 24 : 14
+            y: clockSplitPill.isAttached ? 16 : 10
+            width: parent.width - (clockSplitPill.isAttached ? 48 : 28)
+            spacing: 12
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }

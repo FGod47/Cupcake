@@ -21,12 +21,12 @@ Item {
 
     property bool menuExpanded: bar.dropdownOpen
     property bool showSinkList: false
-    readonly property real expandedW: 260
+    readonly property real expandedW: 280
     property real contentW: expandedW
 
-    x: bar.barX + bar.barW - contentW - 120
+    x: bar.barX + bar.barW - contentW - 130
     width: contentW
-    height: menuExpanded ? (volBrightContentCol.implicitHeight + 28) : 0
+    height: menuExpanded ? (volBrightContentCol.implicitHeight + (isAttached ? 34 : 24)) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -53,7 +53,7 @@ Item {
             anchors.fill: parent
             visible: volBrightSplitPill.isAttached
             property color shapeColor: bar.pillColor
-            readonly property real r: 14
+            readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
@@ -131,9 +131,9 @@ Item {
         // ── Expanded Sliders View ────────────────────────────────
         ColumnLayout {
             id: volBrightContentCol
-            x: 14
-            y: 10
-            width: parent.width - 28
+            x: volBrightSplitPill.isAttached ? 22 : 14
+            y: volBrightSplitPill.isAttached ? 16 : 10
+            width: parent.width - (volBrightSplitPill.isAttached ? 44 : 28)
             spacing: 12
             opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0

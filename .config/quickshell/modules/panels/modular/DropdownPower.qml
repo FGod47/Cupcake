@@ -16,12 +16,13 @@ Item {
     Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
 
     property bool menuExpanded: globalState.powerDropdownOpen
-    readonly property real openGap: 12
-    property real contentW: 145
+    readonly property real expandedW: 160
+    property real contentW: expandedW
 
-    x: bar.barX + bar.barW - contentW - 4
+    // Positioned safely away from the bar's 15px rounded end cap (16px from bar edge)
+    x: bar.barX + bar.barW - contentW - 16
     width: contentW
-    height: menuExpanded ? (powerMenu.implicitHeight + 20) : 0
+    height: menuExpanded ? (powerMenu.implicitHeight + 32) : 0
 
     Behavior on x      { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
     Behavior on width  { NumberAnimation { duration: 280; easing.type: Easing.OutExpo } }
@@ -53,7 +54,7 @@ Item {
             anchors.fill: parent
             visible: powerSplitPill.isAttached
             property color shapeColor: bar.pillColor
-            readonly property real r: 14
+            readonly property real r: 16
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
@@ -131,12 +132,9 @@ Item {
         // ── Expanded Power Menu ─────────────────────────────────────
         Column {
             id: powerMenu
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
+            x: powerSplitPill.isAttached ? 22 : 12
+            y: powerSplitPill.isAttached ? 16 : 12
+            width: parent.width - (powerSplitPill.isAttached ? 44 : 24)
             spacing: 3
             opacity: powerSplitPill.menuExpanded ? 1.0 : 0.0
             visible: opacity > 0
@@ -145,7 +143,7 @@ Item {
             // Category Header
             Item {
                 width: parent.width
-                height: 18
+                height: 20
 
                 Text {
                     text: "POWER"
