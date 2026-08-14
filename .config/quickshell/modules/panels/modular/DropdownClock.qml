@@ -33,8 +33,8 @@ Item {
 
     readonly property real targetH: clockContentCol.implicitHeight + padTop + padBottom
 
-    // Positioned aligned with clock section right edge
-    x: clockItem.x + clockItem.width + contentLayout.x + solidBar.x - contentW
+    // Positioned aligned with clock section end (before power button) as requested
+    x: clockBulletMain.x + clockBulletMain.width + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
