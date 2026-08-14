@@ -236,7 +236,6 @@ Item {
                             color: Theme.colOnSurface
                             opacity: 0.65
                         }
-                        }
                     }
                 }
 
