@@ -85,9 +85,19 @@ Item {
         }
     }
 
+    property bool menuExpanded: bar.netDropdownOpen
+    readonly property real expandedW: 330
+    property real contentW: expandedW
+
     readonly property real padTop: isAttached ? 22 : 14
     readonly property real padSide: isAttached ? 26 : 14
     readonly property real padBottom: isAttached ? 22 : 14
+
+    readonly property real targetH: netContentCol.implicitHeight + padTop + padBottom
+
+    x: bar.barX + bar.barW - contentW - 140
+    width: contentW
+    height: menuExpanded ? targetH : 0
 
     // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
     Behavior on height {
