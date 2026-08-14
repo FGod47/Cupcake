@@ -23,13 +23,13 @@ Item {
     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen
-    readonly property real expandedW: 340
+    readonly property real expandedW: 240
     property real contentW: expandedW
     
-    // Balanced padding constants
-    readonly property real padTop: isAttached ? 22 : 14
-    readonly property real padSide: isAttached ? 28 : 16
-    readonly property real padBottom: isAttached ? 22 : 14
+    // Balanced compact padding constants
+    readonly property real padTop: isAttached ? 18 : 12
+    readonly property real padSide: isAttached ? 22 : 12
+    readonly property real padBottom: isAttached ? 16 : 12
 
     readonly property real targetH: clockContentCol.implicitHeight + padTop + padBottom
 
@@ -38,10 +38,10 @@ Item {
     width: contentW
     height: menuExpanded ? targetH : 0
 
-    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
+    // Signature smooth animations
     Behavior on height {
         NumberAnimation {
-            duration: 500
+            duration: 450
             easing.type: Easing.InOutExpo
         }
     }
@@ -61,7 +61,7 @@ Item {
     property real openProgress: menuExpanded ? 1.0 : 0.0
     Behavior on openProgress {
         NumberAnimation {
-            duration: 350
+            duration: 320
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
         }
@@ -179,7 +179,7 @@ Item {
             clip: true
             opacity: clockSplitPill.menuExpanded ? 1.0 : 0.0
             Behavior on opacity {
-                NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
+                NumberAnimation { duration: 250; easing.type: Easing.OutQuad }
             }
 
             // ── Expanded Calendar & Clock View ────────────────────────────────
@@ -188,93 +188,71 @@ Item {
                 x: clockSplitPill.padSide
                 y: clockSplitPill.padTop
                 width: parent.width - (clockSplitPill.padSide * 2)
-                spacing: 12
+                spacing: 8
 
-                // Big Accent Clock Header
-                Item {
+                // Compact Header (Time + Date)
+                RowLayout {
                     Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    implicitHeight: bigClockRow.implicitHeight
+                    spacing: 6
 
-                    Row {
-                        id: bigClockRow
-                        anchors.centerIn: parent
-                        spacing: 8
+                    Text {
+                        text: Qt.formatDateTime(timeClock.date, "hh:mm")
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 20
+                        font.weight: Font.Bold
+                        color: bar.fg
+                    }
 
-                        Text {
-                            text: Qt.formatDateTime(timeClock.date, "hh AP").substring(0, 2)
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 34
-                            font.weight: Font.Bold
-                            color: Theme.colPrimary
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            text: ":"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 34
-                            font.weight: Font.Bold
-                            color: Theme.colOnSurface
-                            opacity: 0.4
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            text: Qt.formatDateTime(timeClock.date, "mm")
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 34
-                            font.weight: Font.Bold
-                            color: Theme.colOnSurface
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Rectangle {
-                            width: 1
-                            height: 22
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.2)
-                        }
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: Qt.formatDateTime(timeClock.date, "ddd , dd MMM / yyyy").toUpperCase()
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            font.weight: Font.Normal
-                            font.letterSpacing: 0.5
-                            color: Theme.colOnSurface
-                            opacity: 0.65
-                        }
+                    Rectangle {
+                        width: 1
+                        height: 14
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25)
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: Qt.formatDateTime(timeClock.date, "ddd, dd MMM").toUpperCase()
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                        elide: Text.ElideRight
                     }
                 }
 
-                // Separator
+                // Subtle divider
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
                 }
 
-                // Inline Calendar
+                // Inline Compact Calendar
                 Column {
                     id: calCol
                     Layout.fillWidth: true
-                    spacing: 8
+                    spacing: 5
 
                     property date currentDate: new Date()
 
-                    // Month header
-                    Row {
+                    // Month header with switch buttons
+                    RowLayout {
                         width: parent.width
+                        
                         Text {
+                            Layout.fillWidth: true
                             text: Qt.formatDateTime(calCol.currentDate, "MMMM yyyy")
                             font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
+                            font.pixelSize: 11
                             font.weight: Font.DemiBold
-                            color: Theme.colOnSurface
-                            width: parent.width - 48
+                            color: bar.fg
                         }
+
                         Row {
-                            spacing: 4
+                            spacing: 2
                             MouseArea {
-                                width: 22; height: 22
+                                width: 20; height: 20
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     let d = new Date(calCol.currentDate);
@@ -285,13 +263,13 @@ Item {
                                     anchors.centerIn: parent
                                     text: "\uea60"
                                     font.family: "tabler-icons"
-                                    font.pixelSize: 14
-                                    color: Theme.colOnSurface
+                                    font.pixelSize: 12
+                                    color: bar.fg
                                     opacity: 0.6
                                 }
                             }
                             MouseArea {
-                                width: 22; height: 22
+                                width: 20; height: 20
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     let d = new Date(calCol.currentDate);
@@ -302,8 +280,8 @@ Item {
                                     anchors.centerIn: parent
                                     text: "\uea61"
                                     font.family: "tabler-icons"
-                                    font.pixelSize: 14
-                                    color: Theme.colOnSurface
+                                    font.pixelSize: 12
+                                    color: bar.fg
                                     opacity: 0.6
                                 }
                             }
@@ -319,9 +297,10 @@ Item {
                                 width: clockContentCol.width / 7
                                 text: modelData
                                 font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10
-                                color: Theme.colOnSurface
-                                opacity: 0.45
+                                font.pixelSize: 9
+                                font.weight: Font.Medium
+                                color: bar.fg
+                                opacity: 0.40
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }
@@ -332,7 +311,7 @@ Item {
                         id: clockCalGrid
                         width: parent.width
                         columns: 7
-                        spacing: 2
+                        spacing: 0
 
                         property date currentDate: parent.currentDate
                         property int month: currentDate.getMonth()
@@ -345,8 +324,8 @@ Item {
                         Repeater {
                             model: clockCalGrid.totalCells
                             delegate: Item {
-                                width: (clockContentCol.width - 12) / 7
-                                height: width
+                                width: clockContentCol.width / 7
+                                height: 22
 
                                 property int cellDay: {
                                     let idx = index - clockCalGrid.firstDayOfWeek;
@@ -368,18 +347,18 @@ Item {
 
                                 Rectangle {
                                     anchors.centerIn: parent
-                                    width: parent.width - 2
-                                    height: width
-                                    radius: width / 2
-                                    color: isToday ? Theme.colPrimary : "transparent"
+                                    width: 20
+                                    height: 20
+                                    radius: 10
+                                    color: isToday ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.20) : "transparent"
                                 }
                                 Text {
                                     anchors.centerIn: parent
                                     text: cellDay
                                     font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
+                                    font.pixelSize: 10
                                     font.weight: isToday ? Font.Bold : Font.Normal
-                                    color: isToday ? Theme.colOnPrimary : (isCurrentMonth ? Theme.colOnSurface : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25))
+                                    color: isToday ? bar.fg : (isCurrentMonth ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25))
                                     horizontalAlignment: Text.AlignHCenter
                                 }
                             }
