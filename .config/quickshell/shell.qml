@@ -431,69 +431,16 @@ ShellRoot {
         onPressed: { globalState.overviewOpen = !globalState.overviewOpen }
     }
 
-    Timer {
-        id: islandTimer
-        interval: 5000 // Informational toasts disappear after 5s
-        repeat: false
-        onTriggered: {
-            if (globalState.popups.length > 0) {
-                let hasWarnings = false;
-                let newPopups = [];
-                for (let i = 0; i < globalState.popups.length; i++) {
-                    let n = globalState.popups[i];
-                    let sum = n.summary ? n.summary.toLowerCase() : "";
-                    let app = n.appName ? n.appName.toLowerCase() : "";
-                    let isWarning = n.urgency === 2 || sum.includes("battery") || app.includes("power") || sum.includes("fail") || sum.includes("error");
-                    if (isWarning) newPopups.push(n);
-                }
-                
-                if (newPopups.length === 0) {
-                    globalState.closingIsland = true;
-                    islandHideTimer.start();
-                    islandCloseTimer.start();
-                } else {
-                    globalState.popups = newPopups;
-                }
-            }
-        }
-    }
-
-    Timer {
-        id: islandHideTimer
-        interval: 50
-        repeat: false
-        onTriggered: {
-            globalState.hideIsland = true;
-        }
-    }
-
-    Timer {
-        id: islandCloseTimer
-        interval: 450
-        repeat: false
-        onTriggered: {
-            globalState.popups = [];
-            globalState.closingIsland = false;
-            globalState.hideIsland = false;
-        }
-    }
-    
     // Initialize Quickshell services
     NotificationServer {
         id: notifServer
         onNotification: notif => {
             notif.tracked = true;
-
-            // Reset closing state if a new notification arrives
             globalState.closingIsland = false;
             globalState.hideIsland = false;
-            islandHideTimer.stop();
-            islandCloseTimer.stop();
 
-            // Add to popup array using concat to create a new array reference so the UI actually updates
+            // Add to popup array using concat to create a new array reference so the UI updates
             globalState.popups = [notif].concat(globalState.popups);
-            
-            islandTimer.restart();
         }
     }
 
