@@ -1294,11 +1294,21 @@ PanelWindow {
                     }
 
                     property bool isHovered: cardMa.containsMouse || dismissCardMa.containsMouse
+                    property real timerProgress: 1.0
+                    property int expireMs: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
+
+                    NumberAnimation on timerProgress {
+                        id: progressAnim
+                        from: 1.0
+                        to: 0.0
+                        duration: cardItem.expireMs
+                        running: !cardItem.isHovered && bar.hasNotifPopup
+                    }
 
                     // Auto-Disappearing Timer per notification (pauses on hover)
                     Timer {
                         id: cardExpireTimer
-                        interval: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
+                        interval: cardItem.expireMs
                         running: !cardItem.isHovered && bar.hasNotifPopup
                         repeat: false
                         onTriggered: {
@@ -1333,22 +1343,33 @@ PanelWindow {
                         }
                     }
 
-                    // 5. Sleek Disappearing Countdown Progress Line
-                    Rectangle {
-                        id: progressLine
+                    // 5. Sleek Disappearing Countdown Progress Line (Track + Fill)
+                    Item {
                         anchors.left: parent.left
+                        anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        height: 1.5
-                        color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.3)
-                        opacity: cardItem.isHovered ? 0.2 : 0.75
-                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        anchors.bottomMargin: 5
+                        height: 2
 
-                        NumberAnimation on width {
-                            id: progressAnim
-                            from: cardItem.width
-                            to: 0
-                            duration: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
-                            running: !cardItem.isHovered && bar.hasNotifPopup
+                        // Track Background
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 1
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.1)
+                        }
+
+                        // Animated Progress Fill
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: parent.width * cardItem.timerProgress
+                            radius: 1
+                            color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                            opacity: cardItem.isHovered ? 0.4 : 0.85
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
                         }
                     }
                 }
