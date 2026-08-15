@@ -1067,113 +1067,60 @@ PanelWindow {
     // ── CLIPBOARD SPLIT PILL ──────────────────────────────────────────────
     DropdownClipboard { id: clipboardSplitPill; visible: opacity > 0 }
 
-    // ── INCOMING NOTIFICATION ATTACHED STRETCH PILL (Right Side) ──────────
+    // ── INCOMING NOTIFICATION DETACHED PILL (Right of Bar after Power Pill) ──
     Item {
         id: notifDetachedPill
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        width: 56
-        height: hasNotif ? 36 : 0
-        x: solidBar.x + solidBar.width - width - 16
-        y: bar.midY + bar.barHeight
+        width: hasNotif ? 34 : 0
+        height: bar.barHeight
+        x: hasNotif ? (solidBar.x + solidBar.width + 6) : (solidBar.x + solidBar.width - 10)
+        y: bar.midY
+        scale: hasNotif ? 1.0 : 0.6
         opacity: hasNotif ? 1.0 : 0.0
-        visible: height > 0 || opacity > 0.01
+        visible: width > 0 || opacity > 0.01
 
-        Behavior on height {
+        Behavior on x {
             NumberAnimation {
-                duration: 450
+                duration: 420
                 easing.type: Easing.OutBack
                 easing.overshoot: 1.25
             }
         }
+        Behavior on width {
+            NumberAnimation {
+                duration: 380
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.2
+            }
+        }
+        Behavior on scale {
+            NumberAnimation {
+                duration: 350
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.15
+            }
+        }
         Behavior on opacity {
             NumberAnimation {
-                duration: 250
+                duration: 220
                 easing.type: Easing.OutQuad
             }
         }
 
-        // Seamless Attached Unibody Stretch Shape
-        Shape {
-            id: notifStretchShape
+        Rectangle {
             anchors.fill: parent
-            property color shapeColor: bar.pillColor
-            readonly property real r: 12
-            readonly property real w: width
-            readonly property real h: Math.max(height, 1)
+            radius: height / 2
+            color: bar.pillColor
+            border.color: notifPillMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+            border.width: 1
 
-            ShapePath {
-                strokeWidth: 0
-                strokeColor: "transparent"
-                fillColor: notifStretchShape.shapeColor
-                startX: 0
-                startY: 0
+            Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                // Concave curve merging with top bar underside on the left
-                PathArc {
-                    x: notifStretchShape.r
-                    y: notifStretchShape.r
-                    radiusX: notifStretchShape.r
-                    radiusY: notifStretchShape.r
-                    direction: PathArc.Clockwise
-                }
-                // Left side going down
-                PathLine {
-                    x: notifStretchShape.r
-                    y: Math.max(notifStretchShape.r, notifStretchShape.h - notifStretchShape.r)
-                }
-                // Rounded bottom-left corner
-                PathQuad {
-                    x: 2 * notifStretchShape.r
-                    y: notifStretchShape.h
-                    controlX: notifStretchShape.r
-                    controlY: notifStretchShape.h
-                }
-                // Bottom edge
-                PathLine {
-                    x: Math.max(2 * notifStretchShape.r, notifStretchShape.w - 2 * notifStretchShape.r)
-                    y: notifStretchShape.h
-                }
-                // Rounded bottom-right corner
-                PathQuad {
-                    x: notifStretchShape.w - notifStretchShape.r
-                    y: Math.max(notifStretchShape.r, notifStretchShape.h - notifStretchShape.r)
-                    controlX: notifStretchShape.w - notifStretchShape.r
-                    controlY: notifStretchShape.h
-                }
-                // Right side going up
-                PathLine {
-                    x: notifStretchShape.w - notifStretchShape.r
-                    y: notifStretchShape.r
-                }
-                // Concave curve merging with top bar underside on the right
-                PathArc {
-                    x: notifStretchShape.w
-                    y: 0
-                    radiusX: notifStretchShape.r
-                    radiusY: notifStretchShape.r
-                    direction: PathArc.Clockwise
-                }
-                // Top edge (flush against bar)
-                PathLine {
-                    x: 0
-                    y: 0
-                }
-            }
-        }
-
-        // Inner Notification Icon & Status
-        Item {
-            anchors.fill: parent
-            clip: true
-            opacity: notifDetachedPill.hasNotif ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 200 } }
-
-            // Centered Notification Icon
+            // Notification Bell Glyph
             Text {
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: 3
                 text: "\uea8c"
                 font.family: bar.fontName
                 font.pixelSize: 14
@@ -1181,15 +1128,15 @@ PanelWindow {
                 Behavior on color { ColorAnimation { duration: 150 } }
             }
 
-            // Notification Glowing Urgency Dot
+            // Notification Indicator Dot (Urgent glow)
             Rectangle {
                 width: 6
                 height: 6
                 radius: 3
                 anchors.top: parent.top
                 anchors.right: parent.right
-                anchors.topMargin: 11
-                anchors.rightMargin: 13
+                anchors.topMargin: 5
+                anchors.rightMargin: 6
                 color: (notifDetachedPill.currentNotif && notifDetachedPill.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
             }
         }
