@@ -1122,10 +1122,15 @@ PanelWindow {
         id: notifDetachedPod
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var popupsList: bar.notifPopups ? bar.notifPopups : []
-        readonly property int cardCount: Math.min(3, popupsList.length)
+        property bool showAllNotifs: false
+        readonly property int cardCount: showAllNotifs ? popupsList.length : Math.min(3, popupsList.length)
 
         readonly property real fullW: 320
         readonly property real fullH: notifStackCol.implicitHeight
+
+        onHasNotifChanged: {
+            if (!hasNotif) showAllNotifs = false;
+        }
 
         width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 34
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
@@ -1190,7 +1195,7 @@ PanelWindow {
             }
         }
 
-        // Stage 2: Stack of up to 3 Notification Cards + More Button
+        // Stage 2: Stack of Notification Cards + In-Place Expand/Collapse
         ColumnLayout {
             id: notifStackCol
             anchors.left: parent.left
@@ -1344,9 +1349,10 @@ PanelWindow {
                 }
             }
 
-            // ── MORE BUTTON (Shown when more than 3 notifications exist) ──
+            // ── IN-PLACE MORE / LESS CONTROLS ──
+            // 1. More Button (Unrolls all notifications in-place right here)
             Rectangle {
-                visible: notifDetachedPod.popupsList.length > 3
+                visible: !notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
                 Layout.fillWidth: true
                 height: 24
                 radius: 12
@@ -1381,7 +1387,101 @@ PanelWindow {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        globalState.notifPanelVisible = !globalState.notifPanelVisible;
+                        notifDetachedPod.showAllNotifs = true;
+                    }
+                }
+            }
+
+            // 2. Expanded Footer: Show Less & Clear All
+            RowLayout {
+                visible: notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
+                Layout.fillWidth: true
+                height: 24
+                spacing: 6
+
+                // Show Less button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 24
+                    radius: 12
+                    color: lessMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    RowLayout {
+                        anchors.centerIn: parent
+                        spacing: 5
+
+                        Text {
+                            text: "\uea5f"
+                            font.family: bar.fontName
+                            font.pixelSize: 11
+                            color: bar.fg
+                        }
+
+                        Text {
+                            text: "Show less"
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 10
+                            font.weight: Font.DemiBold
+                            color: bar.fg
+                        }
+                    }
+
+                    MouseArea {
+                        id: lessMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            notifDetachedPod.showAllNotifs = false;
+                        }
+                    }
+                }
+
+                // Clear All button
+                Rectangle {
+                    Layout.preferredWidth: 80
+                    Layout.preferredHeight: 24
+                    radius: 12
+                    color: clearAllMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    RowLayout {
+                        anchors.centerIn: parent
+                        spacing: 4
+
+                        Text {
+                            text: "\ueb55"
+                            font.family: bar.fontName
+                            font.pixelSize: 10
+                            color: clearAllMa.containsMouse ? Theme.colError : bar.fg
+                        }
+
+                        Text {
+                            text: "Clear all"
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 10
+                            font.weight: Font.DemiBold
+                            color: clearAllMa.containsMouse ? Theme.colError : bar.fg
+                        }
+                    }
+
+                    MouseArea {
+                        id: clearAllMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            for (let i = 0; i < notifDetachedPod.popupsList.length; i++) {
+                                if (notifDetachedPod.popupsList[i]) notifDetachedPod.popupsList[i].dismiss();
+                            }
+                            globalState.popups = [];
+                            notifDetachedPod.showAllNotifs = false;
+                        }
                     }
                 }
             }
