@@ -318,7 +318,7 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - bar.notifIslandW - 8) : bar.barW
+        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW
         Behavior on width {
             enabled: !expandAnim.running
             NumberAnimation {
@@ -1123,10 +1123,10 @@ PanelWindow {
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        width: hasNotif ? bar.notifIslandW : 34
+        width: hasNotif ? Math.min(300, notifRowLayout.implicitWidth + 24) : 34
         height: bar.barHeight
         y: bar.midY
-        x: hasNotif ? (bar.barX + bar.barW - width) : (bar.barX + bar.barW - 34)
+        x: solidBar.x + solidBar.width + 8
         opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
 
@@ -1331,7 +1331,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? (bar.barW - bar.notifIslandW - 8) : bar.barW;
+                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW;
             });
             contentLayout.opacity = 1.0;
         }
