@@ -1160,6 +1160,64 @@ PanelWindow {
                     readonly property int itemIdx: index
                     readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
                     readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
+
+                    function getCleanAppTag(notif) {
+                        if (!notif) return "SYSTEM";
+                        let summary = (notif.summary || "").toLowerCase();
+                        let body = (notif.body || "").toLowerCase();
+                        let app = (notif.appName || "").trim();
+                        if (summary.includes("screenshot") || body.includes("/screenshot/")) return "SCREENSHOT";
+                        if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
+                        return app.toUpperCase();
+                    }
+
+                    function getCompactPreview(notif) {
+                        if (!notif) return "";
+                        let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                        let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                        let app = (notif.appName || "").toLowerCase();
+
+                        // 1. File paths (e.g. screenshots / downloads / images) -> show clean filename only
+                        if (body.startsWith("/") || body.includes("/Screenshot/") || body.includes("/Pictures/") || body.includes("/Downloads/")) {
+                            let parts = body.split('/');
+                            let filename = parts[parts.length - 1] || "";
+                            if (filename.length > 0) {
+                                if (summary.toLowerCase().includes("screenshot") || summary.toLowerCase() === "saved") {
+                                    return "Saved • " + filename;
+                                }
+                                return (summary ? (summary + " • ") : "") + filename;
+                            }
+                        }
+
+                        // 2. Screenshot summary with file in body
+                        if (summary.toLowerCase().includes("screenshot") && body) {
+                            let parts = body.split('/');
+                            let filename = parts[parts.length - 1] || body;
+                            return "Saved • " + filename;
+                        }
+
+                        // 3. Chat / Messenger (e.g. Alex: "Are we still meeting for coffee?")
+                        if (body && summary && body !== summary) {
+                            if (["telegram", "discord", "slack", "signal", "whatsapp", "messages"].indexOf(app) !== -1 || summary.length <= 18) {
+                                return summary + ": " + body;
+                            }
+                            return summary + " • " + body;
+                        }
+
+                        return summary || body;
+                    }
+
+                    function getExpandedHeadline(notif) {
+                        if (!notif) return "";
+                        let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                        let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                        if (summary.toLowerCase().includes("screenshot") && (body.startsWith("/") || body.includes(".png"))) {
+                            let parts = body.split('/');
+                            let filename = parts[parts.length - 1] || "";
+                            return filename ? ("Saved • " + filename) : summary;
+                        }
+                        return summary || body;
+                    }
                     
                     Layout.fillWidth: true
                     Layout.preferredHeight: isCardHovered ? (bar.barHeight + summaryHeadlineText.implicitHeight + expandedDetailsCol.implicitHeight + 20) : bar.barHeight
@@ -1231,12 +1289,7 @@ PanelWindow {
 
                         Text {
                             id: notifAppTag
-                            text: {
-                                if (!cardItem.notifData) return "NOTIFICATION";
-                                let app = cardItem.notifData.appName ? cardItem.notifData.appName.trim() : "";
-                                if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
-                                return app.toUpperCase();
-                            }
+                            text: cardItem.getCleanAppTag(cardItem.notifData)
                             font.family: Theme.appFontMono
                             font.pixelSize: 10
                             font.weight: Font.DemiBold
@@ -1332,10 +1385,7 @@ PanelWindow {
                         y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
                         width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
                         
-                        text: {
-                            if (!cardItem.notifData || !cardItem.notifData.summary) return "";
-                            return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                        }
+                        text: cardItem.isCardHovered ? cardItem.getExpandedHeadline(cardItem.notifData) : cardItem.getCompactPreview(cardItem.notifData)
                         font.family: Theme.appFontMono
                         font.pixelSize: cardItem.isCardHovered ? 12 : 11
                         font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
