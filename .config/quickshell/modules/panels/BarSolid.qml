@@ -674,16 +674,14 @@ PanelWindow {
             }
 
             // ── RIGHT: Dot Separator (Network -> Hardware) ────────
-            Text {
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: implicitWidth
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                width: 3
+                height: 3
+                radius: 1.5
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
                 opacity: 1.0
                 visible: true
             }
@@ -802,16 +800,14 @@ PanelWindow {
             }
 
             // ── RIGHT: Dot Separator (Hardware -> Tray) ────────
-            Text {
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8 * opacity
                 Layout.rightMargin: 8 * opacity
-                Layout.preferredWidth: implicitWidth * opacity
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                width: 3 * opacity
+                height: 3
+                radius: 1.5
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
                 opacity: sysTrayRepeater.count > 0 ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
@@ -867,16 +863,14 @@ PanelWindow {
             }
 
             // ── RIGHT: Dot Separator (Tray -> Clipboard) ────────
-            Text {
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: implicitWidth
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                width: 3
+                height: 3
+                radius: 1.5
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
                 opacity: 1.0
                 visible: true
             }
@@ -904,7 +898,7 @@ PanelWindow {
                     anchors.centerIn: parent
                     text: "\uea6d"
                     font.family: fontName
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     color: fg
                     Behavior on color { ColorAnimation { duration: 150 } }
                 }
@@ -926,16 +920,14 @@ PanelWindow {
             }
 
             // ── RIGHT: Dot Separator (Clipboard -> Clock) ────────
-            Text {
+            Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: implicitWidth
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                width: 3
+                height: 3
+                radius: 1.5
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
                 opacity: 1.0
                 visible: true
             }
@@ -983,9 +975,10 @@ PanelWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: Qt.formatDateTime(timeClock.date, "hh:mm AP").replace(/ (AM|PM)/i, "")
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: Theme.defaultFontSize
-                        font.weight: Font.Bold
+                        font.family: Theme.appFontMono
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 0.8
                         color: fg
                     }
 
@@ -1017,17 +1010,15 @@ PanelWindow {
             }
 
             // ── RIGHT: Dot Separator (Clock -> Power) ────────
-            Text {
+            Rectangle {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: 8
                 Layout.rightMargin: 8
-                Layout.preferredWidth: implicitWidth
-                text: "•"
-                font.family: Theme.defaultFontFamily
-                font.pixelSize: 15
-                font.weight: Theme.defaultFontWeight
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                width: 3
+                height: 3
+                radius: 1.5
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
                 opacity: 1.0
                 visible: true
             }
