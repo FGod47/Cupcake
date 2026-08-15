@@ -282,29 +282,57 @@ PanelWindow {
         }
     }
 
-    // Dynamic Island Notification state
+    // Dynamic Island Notification state & Sequential Async Timing
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
+    property bool notifBarShrunk: false
+    property bool notifPillShown: false
     property bool notifPillExpanded: false
 
     onHasNotifPopupChanged: {
         if (hasNotifPopup) {
-            notifPillExpanded = false;
-            notifExpandTimer.restart();
+            barExpandTimer.stop();
+            notifBarShrunk = true;
+            pillAppearTimer.restart();
+            cardsExpandTimer.restart();
         } else {
-            notifExpandTimer.stop();
+            pillAppearTimer.stop();
+            cardsExpandTimer.stop();
             notifPillExpanded = false;
+            notifPillShown = false;
+            // Delay bar expansion slightly so notification pod collapses/fades out cleanly first
+            barExpandTimer.restart();
         }
     }
 
+    // Step 1 (0ms - 260ms): Bar smoothly contracts leftward
+    // Step 2 (260ms): Compact pill [ 🔔 ] appears beside retracted power button
     Timer {
-        id: notifExpandTimer
-        interval: 220 // Stage 1: small pill detaches first, Stage 2: unrolls to left
+        id: pillAppearTimer
+        interval: 260
         repeat: false
         onTriggered: {
-            if (bar.hasNotifPopup) {
-                bar.notifPillExpanded = true;
-            }
+            if (bar.hasNotifPopup) bar.notifPillShown = true;
+        }
+    }
+
+    // Step 3 (460ms): Notification cards smoothly expand to right and slide down
+    Timer {
+        id: cardsExpandTimer
+        interval: 460
+        repeat: false
+        onTriggered: {
+            if (bar.hasNotifPopup) bar.notifPillExpanded = true;
+        }
+    }
+
+    // Step 4 (On Dismiss): Wait 200ms for pod fadeout, then expand bar back to full size
+    Timer {
+        id: barExpandTimer
+        interval: 200
+        repeat: false
+        onTriggered: {
+            bar.notifBarShrunk = false;
         }
     }
 
@@ -318,11 +346,11 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW
+        width: (bar.hasNotifPopup || bar.notifBarShrunk) ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW
         Behavior on width {
             enabled: !expandAnim.running
             NumberAnimation {
-                duration: 480
+                duration: 420
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
             }
@@ -1136,9 +1164,17 @@ PanelWindow {
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
         y: bar.midY
         x: solidBar.x + solidBar.width + 8
-        opacity: hasNotif ? 1.0 : 0.0
+        opacity: (hasNotif && bar.notifPillShown) ? 1.0 : 0.0
         visible: opacity > 0.01
+        scale: (hasNotif && bar.notifPillShown) ? 1.0 : 0.85
 
+        Behavior on scale {
+            NumberAnimation {
+                duration: 320
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.15
+            }
+        }
         Behavior on width {
             NumberAnimation {
                 duration: 480
@@ -1593,7 +1629,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW;
+                return (bar.hasNotifPopup || bar.notifBarShrunk) ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW;
             });
             contentLayout.opacity = 1.0;
         }
