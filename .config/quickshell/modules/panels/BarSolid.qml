@@ -1229,6 +1229,49 @@ PanelWindow {
 
                             Item { Layout.fillWidth: true }
 
+                            // Circle Countdown Timer Ring
+                            Shape {
+                                width: 14
+                                height: 14
+                                Layout.alignment: Qt.AlignVCenter
+                                layer.enabled: true
+                                layer.samples: 4
+                                opacity: cardItem.isHovered ? 0.35 : 0.9
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                                ShapePath {
+                                    strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                                    strokeWidth: 1.5
+                                    fillColor: "transparent"
+                                    capStyle: ShapePath.RoundCap
+
+                                    PathAngleArc {
+                                        centerX: 7
+                                        centerY: 7
+                                        radiusX: 5
+                                        radiusY: 5
+                                        startAngle: 0
+                                        sweepAngle: 360
+                                    }
+                                }
+
+                                ShapePath {
+                                    strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                                    strokeWidth: 1.5
+                                    fillColor: "transparent"
+                                    capStyle: ShapePath.RoundCap
+
+                                    PathAngleArc {
+                                        centerX: 7
+                                        centerY: 7
+                                        radiusX: 5
+                                        radiusY: 5
+                                        startAngle: -90
+                                        sweepAngle: -360 * cardItem.timerProgress
+                                    }
+                                }
+                            }
+
                             // Dismiss button (✕)
                             Rectangle {
                                 width: 16
