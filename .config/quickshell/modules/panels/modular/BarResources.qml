@@ -9,9 +9,19 @@ Item {
     id: barResources
     implicitWidth: resRow.implicitWidth
     implicitHeight: 20
-    opacity: (bar.netDropdownOpen || bar.dropdownOpen) ? 0 : 1
-    visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutQuart } }
+    readonly property bool isCollapsed: bar.netDropdownOpen || bar.dropdownOpen || bar.hasNotifPopup
+    opacity: isCollapsed ? 0 : 1
+    visible: width > 0 || opacity > 0.01
+    clip: true
+    width: isCollapsed ? 0 : implicitWidth
+    Behavior on width {
+        NumberAnimation {
+            duration: 380
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+        }
+    }
+    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
 
     FontLoader {
         id: resIconFont
