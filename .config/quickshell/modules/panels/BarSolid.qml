@@ -1029,6 +1029,96 @@ PanelWindow {
                 }
             }
 
+            // ── RIGHT: Dot Separator (Power -> Notification) ────────
+            Text {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 4 * opacity
+                Layout.rightMargin: 4 * opacity
+                Layout.preferredWidth: implicitWidth * opacity
+                text: "•"
+                font.family: Theme.defaultFontFamily
+                font.pixelSize: 15
+                font.weight: Theme.defaultFontWeight
+                color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
+                opacity: bar.hasNotifPopup ? 1.0 : 0.0
+                visible: opacity > 0.01
+                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+                Behavior on Layout.preferredWidth { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+            }
+
+            // ── RIGHT: Dynamic Incoming Notification Pill ────────
+            Item {
+                id: notifBarItem
+                Layout.alignment: Qt.AlignVCenter
+                height: 22
+                property real targetW: 22
+                width: bar.hasNotifPopup ? targetW : 0
+                Layout.preferredWidth: width
+                clip: true
+                opacity: bar.hasNotifPopup ? 1.0 : 0.0
+                visible: opacity > 0.01
+
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 380
+                        easing.type: Easing.OutBack
+                        easing.overshoot: 1.15
+                    }
+                }
+                Behavior on Layout.preferredWidth {
+                    NumberAnimation {
+                        duration: 380
+                        easing.type: Easing.OutBack
+                        easing.overshoot: 1.15
+                    }
+                }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 250
+                        easing.type: Easing.OutQuad
+                    }
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 11
+                    color: notifBarMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : Qt.rgba(fg.r, fg.g, fg.b, 0.08)
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "\uea8c"
+                    font.family: fontName
+                    font.pixelSize: 14
+                    color: bar.fg
+                }
+
+                Rectangle {
+                    width: 6
+                    height: 6
+                    radius: 3
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.topMargin: 1
+                    anchors.rightMargin: 1
+                    color: (bar.notifPopups && bar.notifPopups.length > 0 && bar.notifPopups[0].urgency === 2) ? "#E06C75" : "#E5C07B"
+                }
+
+                MouseArea {
+                    id: notifBarMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (bar.notifPopups && bar.notifPopups.length > 0) {
+                            bar.notifPopups[0].dismiss();
+                        }
+                        globalState.popups = [];
+                    }
+                }
+            }
+
         }
         
         Image {
@@ -1066,94 +1156,6 @@ PanelWindow {
 
     // ── CLIPBOARD SPLIT PILL ──────────────────────────────────────────────
     DropdownClipboard { id: clipboardSplitPill; visible: opacity > 0 }
-
-    // ── INCOMING NOTIFICATION DETACHED PILL (Right of Bar after Power Pill) ──
-    Item {
-        id: notifDetachedPill
-        readonly property bool hasNotif: bar.hasNotifPopup
-        readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
-
-        width: hasNotif ? 34 : 0
-        height: bar.barHeight
-        x: hasNotif ? (solidBar.x + solidBar.width + 6) : (solidBar.x + solidBar.width - 10)
-        y: bar.midY
-        scale: hasNotif ? 1.0 : 0.6
-        opacity: hasNotif ? 1.0 : 0.0
-        visible: width > 0 || opacity > 0.01
-
-        Behavior on x {
-            NumberAnimation {
-                duration: 420
-                easing.type: Easing.OutBack
-                easing.overshoot: 1.25
-            }
-        }
-        Behavior on width {
-            NumberAnimation {
-                duration: 380
-                easing.type: Easing.OutBack
-                easing.overshoot: 1.2
-            }
-        }
-        Behavior on scale {
-            NumberAnimation {
-                duration: 350
-                easing.type: Easing.OutBack
-                easing.overshoot: 1.15
-            }
-        }
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 220
-                easing.type: Easing.OutQuad
-            }
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            radius: height / 2
-            color: bar.pillColor
-            border.color: notifPillMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
-            border.width: 1
-
-            Behavior on border.color { ColorAnimation { duration: 150 } }
-
-            // Notification Bell Glyph
-            Text {
-                anchors.centerIn: parent
-                text: "\uea8c"
-                font.family: bar.fontName
-                font.pixelSize: 14
-                color: notifPillMa.containsMouse ? bar.fg : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
-                Behavior on color { ColorAnimation { duration: 150 } }
-            }
-
-            // Notification Indicator Dot (Urgent glow)
-            Rectangle {
-                width: 6
-                height: 6
-                radius: 3
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.topMargin: 5
-                anchors.rightMargin: 6
-                color: (notifDetachedPill.currentNotif && notifDetachedPill.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
-            }
-        }
-
-        MouseArea {
-            id: notifPillMa
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                if (notifDetachedPill.currentNotif) {
-                    notifDetachedPill.currentNotif.dismiss();
-                }
-                globalState.popups = [];
-            }
-        }
-    }
 
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
