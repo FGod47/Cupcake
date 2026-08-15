@@ -1067,6 +1067,86 @@ PanelWindow {
     // ── CLIPBOARD SPLIT PILL ──────────────────────────────────────────────
     DropdownClipboard { id: clipboardSplitPill; visible: opacity > 0 }
 
+    // ── INCOMING NOTIFICATION DETACHED PILL (Right Side) ──────────────────
+    Item {
+        id: notifDetachedPill
+        readonly property bool hasNotif: bar.hasNotifPopup
+        readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
+
+        width: 34
+        height: 28
+        x: solidBar.x + solidBar.width - width - 14
+        y: hasNotif ? (bar.midY + bar.barHeight + 8) : (bar.midY + (bar.barHeight - height) / 2)
+        scale: hasNotif ? 1.0 : 0.6
+        opacity: hasNotif ? 1.0 : 0.0
+        visible: opacity > 0.01
+
+        Behavior on y {
+            NumberAnimation {
+                duration: 420
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.2
+            }
+        }
+        Behavior on scale {
+            NumberAnimation {
+                duration: 350
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.15
+            }
+        }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 220
+                easing.type: Easing.OutQuad
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 14
+            color: bar.pillColor
+            border.color: notifPillMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+            border.width: 1
+
+            Behavior on border.color { ColorAnimation { duration: 150 } }
+
+            // Notification Bell Glyph
+            Text {
+                anchors.centerIn: parent
+                text: "\uea8c"
+                font.family: bar.fontName
+                font.pixelSize: 14
+                color: bar.fg
+            }
+
+            // Notification Indicator Dot (Urgent glow)
+            Rectangle {
+                width: 7
+                height: 7
+                radius: 3.5
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: 4
+                anchors.rightMargin: 4
+                color: (notifDetachedPill.currentNotif && notifDetachedPill.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
+            }
+        }
+
+        MouseArea {
+            id: notifPillMa
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                if (notifDetachedPill.currentNotif) {
+                    notifDetachedPill.currentNotif.dismiss();
+                }
+                globalState.popups = [];
+            }
+        }
+    }
+
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
