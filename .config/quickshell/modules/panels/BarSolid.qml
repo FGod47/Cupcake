@@ -1331,7 +1331,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.barW;
+                return bar.hasNotifPopup ? (bar.barW - bar.notifIslandW - 8) : bar.barW;
             });
             contentLayout.opacity = 1.0;
         }
