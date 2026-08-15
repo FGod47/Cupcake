@@ -1067,29 +1067,19 @@ PanelWindow {
     // ── CLIPBOARD SPLIT PILL ──────────────────────────────────────────────
     DropdownClipboard { id: clipboardSplitPill; visible: opacity > 0 }
 
-    // ── INCOMING NOTIFICATION DETACHED ISLAND POD ──────────────────────────
+    // ── INCOMING NOTIFICATION DETACHED ISLAND PILL (Horizontal Inline) ──
     Item {
         id: notifDetachedPod
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        readonly property real expandedW: 340
-        readonly property real expandedH: Math.max(68, notifCardCol.implicitHeight + 24)
-
-        width: hasNotif ? expandedW : 34
-        height: hasNotif ? expandedH : bar.barHeight
-        y: hasNotif ? (bar.midY + bar.barHeight + 8) : bar.midY
-        x: hasNotif ? (solidBar.x + solidBar.width - width) : (solidBar.x + solidBar.width - 34)
+        width: hasNotif ? Math.min(380, notifRowLayout.implicitWidth + 24) : 34
+        height: bar.barHeight
+        y: bar.midY
+        x: hasNotif ? (solidBar.x + solidBar.width + 8) : (solidBar.x + solidBar.width - 20)
         opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
 
-        Behavior on y {
-            NumberAnimation {
-                duration: 380
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
-            }
-        }
         Behavior on x {
             NumberAnimation {
                 duration: 380
@@ -1104,13 +1094,6 @@ PanelWindow {
                 easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
             }
         }
-        Behavior on height {
-            NumberAnimation {
-                duration: 420
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
-            }
-        }
         Behavior on opacity {
             NumberAnimation {
                 duration: 250
@@ -1119,9 +1102,8 @@ PanelWindow {
         }
 
         Rectangle {
-            id: notifCardBg
             anchors.fill: parent
-            radius: 16
+            radius: height / 2
             color: bar.pillColor
             border.color: notifPodMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
             border.width: 1
@@ -1129,157 +1111,104 @@ PanelWindow {
 
             Behavior on border.color { ColorAnimation { duration: 150 } }
 
-            // Inner Notification Content
-            ColumnLayout {
-                id: notifCardCol
+            // Horizontal Notification Pill Row
+            RowLayout {
+                id: notifRowLayout
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: 14
-                spacing: 5
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 10
+                anchors.rightMargin: 8
+                spacing: 7
                 opacity: notifDetachedPod.hasNotif ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 250 } }
+                Behavior on opacity { NumberAnimation { duration: 200 } }
 
-                // 1. Header Row (App Icon badge, App Name, Urgency dot, Dismiss button)
-                RowLayout {
-                    Layout.fillWidth: true
-                    height: 22
-                    spacing: 8
-
-                    Rectangle {
-                        width: 20
-                        height: 20
-                        radius: 6
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\uea8c"
-                            font.family: bar.fontName
-                            font.pixelSize: 12
-                            color: bar.fg
-                        }
-                    }
+                // 1. Notification Icon with Urgency Dot
+                Item {
+                    width: 16
+                    height: 16
+                    Layout.alignment: Qt.AlignVCenter
 
                     Text {
-                        text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.appName) ? notifDetachedPod.currentNotif.appName.toUpperCase() : "NOTIFICATION"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        font.letterSpacing: 0.8
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                        anchors.centerIn: parent
+                        text: "\uea8c"
+                        font.family: bar.fontName
+                        font.pixelSize: 13
+                        color: bar.fg
                     }
 
-                    // Urgency Indicator Dot
                     Rectangle {
-                        width: 6
-                        height: 6
-                        radius: 3
+                        width: 5
+                        height: 5
+                        radius: 2.5
+                        anchors.top: parent.top
+                        anchors.right: parent.right
                         color: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    // Dismiss Button (✕)
-                    Rectangle {
-                        width: 20
-                        height: 20
-                        radius: 10
-                        color: closeNotifMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.14) : "transparent"
-                        Behavior on color { ColorAnimation { duration: 120 } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueb55"
-                            font.family: bar.fontName
-                            font.pixelSize: 11
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                        }
-
-                        MouseArea {
-                            id: closeNotifMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (notifDetachedPod.currentNotif) {
-                                    notifDetachedPod.currentNotif.dismiss();
-                                }
-                                globalState.popups = [];
-                            }
-                        }
                     }
                 }
 
-                // 2. Summary & Title
+                // 2. Summary / Title
                 Text {
-                    Layout.fillWidth: true
                     text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.summary) ? notifDetachedPod.currentNotif.summary : ""
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: 12
                     font.weight: Font.Bold
                     color: bar.fg
                     elide: Text.ElideRight
+                    Layout.maximumWidth: 160
                 }
 
-                // 3. Body Message Preview
+                // 3. Dot Separator
                 Text {
-                    Layout.fillWidth: true
-                    visible: text !== ""
-                    text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.body) ? notifDetachedPod.currentNotif.body : ""
+                    text: "•"
                     font.family: Theme.defaultFontFamily
-                    font.pixelSize: 11
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
-                    wrapMode: Text.Wrap
-                    maximumLineCount: 2
-                    elide: Text.ElideRight
+                    font.pixelSize: 12
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
                 }
 
-                // 4. Quick Action Buttons (if any)
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.actions && notifDetachedPod.currentNotif.actions.length > 0
-                    spacing: 6
+                // 4. App Name
+                Text {
+                    text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.appName) ? notifDetachedPod.currentNotif.appName.toUpperCase() : ""
+                    font.family: Theme.defaultFontFamily
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                    font.letterSpacing: 0.6
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                }
 
-                    Repeater {
-                        model: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.actions) ? notifDetachedPod.currentNotif.actions : []
-                        delegate: Rectangle {
-                            height: 24
-                            width: actionLabel.implicitWidth + 16
-                            radius: 6
-                            color: actMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                            border.width: 1
+                // 5. Dismiss Button (✕)
+                Rectangle {
+                    width: 18
+                    height: 18
+                    radius: 9
+                    color: closeNotifMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                    Behavior on color { ColorAnimation { duration: 120 } }
 
-                            Text {
-                                id: actionLabel
-                                anchors.centerIn: parent
-                                text: modelData.text || modelData.id
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 10
-                                font.weight: Font.DemiBold
-                                color: bar.fg
+                    Text {
+                        anchors.centerIn: parent
+                        text: "\ueb55"
+                        font.family: bar.fontName
+                        font.pixelSize: 10
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                    }
+
+                    MouseArea {
+                        id: closeNotifMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (notifDetachedPod.currentNotif) {
+                                notifDetachedPod.currentNotif.dismiss();
                             }
-
-                            MouseArea {
-                                id: actMa
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (notifDetachedPod.currentNotif) {
-                                        notifDetachedPod.currentNotif.invokeAction(modelData.id);
-                                    }
-                                    globalState.popups = [];
-                                }
-                            }
+                            globalState.popups = [];
                         }
                     }
                 }
             }
         }
 
-        // Click on background opens/dismisses notification
+        // Click on background opens / dismisses notification
         MouseArea {
             id: notifPodMa
             anchors.fill: parent
