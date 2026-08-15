@@ -1121,16 +1121,20 @@ PanelWindow {
         property bool showAllNotifs: false
         readonly property int cardCount: showAllNotifs ? popupsList.length : Math.min(3, popupsList.length)
 
+        readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
-        readonly property real fullH: notifStackCol.implicitHeight
+        readonly property real targetH: Math.min(maxScreenH, notifStackCol.implicitHeight)
         readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
-            if (!hasNotif) showAllNotifs = false;
+            if (!hasNotif) {
+                showAllNotifs = false;
+                notifFlickable.contentY = 0;
+            }
         }
 
         width: bar.notifAnimWidth
-        height: hasNotif ? fullH : bar.barHeight
+        height: hasNotif ? targetH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
@@ -1145,13 +1149,40 @@ PanelWindow {
             }
         }
 
-        // Stack of Notification Cards + In-Place Expand/Collapse
-        ColumnLayout {
-            id: notifStackCol
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            spacing: 6
+        Flickable {
+            id: notifFlickable
+            anchors.fill: parent
+            contentWidth: width
+            contentHeight: notifStackCol.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+
+            WheelHandler {
+                onWheel: (event) => {
+                    let delta = event.angleDelta.y;
+                    notifFlickable.contentY = Math.max(0, Math.min(notifFlickable.contentHeight - notifFlickable.height, notifFlickable.contentY - delta));
+                }
+            }
+
+            // Scrollbar Indicator
+            Rectangle {
+                anchors.right: parent.right
+                anchors.rightMargin: 2
+                width: 3
+                radius: 1.5
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                visible: notifFlickable.contentHeight > notifFlickable.height
+                y: notifFlickable.contentHeight > notifFlickable.height ? (notifFlickable.contentY * (notifFlickable.height - height) / (notifFlickable.contentHeight - notifFlickable.height)) : 0
+                height: notifFlickable.contentHeight > 0 ? Math.max(20, notifFlickable.height * (notifFlickable.height / notifFlickable.contentHeight)) : 20
+                opacity: (notifFlickable.moving || notifDetachedPod.showAllNotifs) ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+            }
+
+            // Stack of Notification Cards + In-Place Expand/Collapse
+            ColumnLayout {
+                id: notifStackCol
+                width: notifFlickable.width
+                spacing: 6
 
             Repeater {
                 model: notifDetachedPod.cardCount
@@ -1660,6 +1691,7 @@ PanelWindow {
             }
         }
     }
+}
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
