@@ -1386,35 +1386,6 @@ PanelWindow {
                         }
                     }
 
-                    // 5. Sleek Disappearing Countdown Progress Line (Track + Fill)
-                    Item {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
-                        anchors.bottomMargin: 5
-                        height: 2
-
-                        // Track Background
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.1)
-                        }
-
-                        // Animated Progress Fill
-                        Rectangle {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-                            width: parent.width * cardItem.timerProgress
-                            radius: 1
-                            color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
-                            opacity: cardItem.isHovered ? 0.4 : 0.85
-                            Behavior on opacity { NumberAnimation { duration: 150 } }
-                        }
-                    }
                 }
             }
 
