@@ -1112,7 +1112,13 @@ PanelWindow {
         readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
-            if (!hasNotif) showAllNotifs = false;
+            if (!hasNotif) {
+                showAllNotifs = false;
+                bar.notifHovered = false;
+            } else {
+                compactTimerProgress = 1.0;
+                compactExpireTimer.restart();
+            }
         }
 
         width: bar.notifAnimWidth
@@ -1134,13 +1140,6 @@ PanelWindow {
         // Primary compact notification countdown timer
         property real compactTimerProgress: 1.0
         property int compactExpireMs: (popupsList.length > 0 && popupsList[0].expireTimeout > 0) ? popupsList[0].expireTimeout : 6000
-
-        onHasNotifChanged: {
-            if (hasNotif) {
-                compactTimerProgress = 1.0;
-                compactExpireTimer.restart();
-            }
-        }
 
         NumberAnimation on compactTimerProgress {
             id: compactProgressAnim
