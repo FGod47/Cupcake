@@ -1139,7 +1139,7 @@ PanelWindow {
 
         Behavior on height {
             NumberAnimation {
-                duration: 380
+                duration: 720
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
             }
@@ -1201,13 +1201,13 @@ PanelWindow {
                     }
                     Behavior on Layout.preferredHeight {
                         NumberAnimation {
-                            duration: 380
+                            duration: 720
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
                     }
-                    Behavior on radius { NumberAnimation { duration: 250 } }
-                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                    Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                    Behavior on border.color { ColorAnimation { duration: 250 } }
 
                     // 1. Header & Compact Row (Directly anchored to 30px height for true vertical alignment)
                     RowLayout {
@@ -1272,7 +1272,7 @@ PanelWindow {
                             layer.enabled: true
                             layer.samples: 4
                             opacity: cardItem.isCardHovered ? 0.35 : 0.9
-                            Behavior on opacity { NumberAnimation { duration: 150 } }
+                            Behavior on opacity { NumberAnimation { duration: 250 } }
 
                             ShapePath {
                                 strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
@@ -1351,7 +1351,13 @@ PanelWindow {
                         spacing: 6
                         visible: cardItem.isCardHovered
                         opacity: cardItem.isCardHovered ? 1.0 : 0.0
-                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 500
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                            }
+                        }
 
                         // Full Summary Headline
                         Text {
