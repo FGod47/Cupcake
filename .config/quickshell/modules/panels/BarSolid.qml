@@ -283,7 +283,7 @@ PanelWindow {
     }
 
     // Dynamic Island Notification state
-    readonly property real notifIslandW: 380
+    readonly property real notifIslandW: 260
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
     property bool showNotifContent: false
@@ -318,7 +318,7 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.targetW - 8) : bar.barW
+        width: bar.hasNotifPopup ? (bar.barW - bar.notifIslandW - 8) : bar.barW
         Behavior on width {
             enabled: !expandAnim.running
             NumberAnimation {
@@ -465,8 +465,22 @@ PanelWindow {
 
             // ── CENTER-RIGHT: System Resource Monitor ────────
             BarResources {
+                id: resMonitorItem
                 Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 10
+                Layout.rightMargin: bar.hasNotifPopup ? 0 : 10
+                Layout.preferredWidth: bar.hasNotifPopup ? 0 : implicitWidth
+                clip: true
+                opacity: bar.hasNotifPopup ? 0.0 : 1.0
+                visible: opacity > 0.01
+
+                Behavior on Layout.preferredWidth {
+                    NumberAnimation {
+                        duration: 380
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+                    }
+                }
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
             }
 
             // ── RIGHT: Network & Connectivity Pill ──────────────────
@@ -475,9 +489,17 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 implicitWidth: networkRowContent.implicitWidth
                 implicitHeight: 20
-                Layout.preferredWidth: implicitWidth
+                Layout.preferredWidth: bar.hasNotifPopup ? 22 : implicitWidth
                 opacity: 1.0
                 visible: true
+
+                Behavior on Layout.preferredWidth {
+                    NumberAnimation {
+                        duration: 380
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+                    }
+                }
 
                 Row {
                     id: networkRowContent
@@ -1101,8 +1123,7 @@ PanelWindow {
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        readonly property real targetW: Math.min(260, notifRowLayout.implicitWidth + 24)
-        width: hasNotif ? targetW : 34
+        width: hasNotif ? bar.notifIslandW : 34
         height: bar.barHeight
         y: bar.midY
         x: hasNotif ? (bar.barX + bar.barW - width) : (bar.barX + bar.barW - 34)
