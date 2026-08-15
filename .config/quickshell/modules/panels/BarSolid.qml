@@ -1145,7 +1145,7 @@ PanelWindow {
                     readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
                     
                     Layout.fillWidth: true
-                    implicitHeight: cardInnerCol.implicitHeight + 20
+                    implicitHeight: cardInnerCol.implicitHeight + 28
                     radius: 14
                     color: notifDetachedPod.cardBg
                     border.color: cardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
@@ -1195,8 +1195,8 @@ PanelWindow {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.margins: 10
-                        spacing: 5
+                        anchors.margins: 14
+                        spacing: 8
 
                         // 1. Header: Urgency Dot + Tracked App/Sender Tag + Index Badge + Dismiss (✕)
                         RowLayout {
