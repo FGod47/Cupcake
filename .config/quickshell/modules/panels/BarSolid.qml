@@ -290,9 +290,9 @@ PanelWindow {
     property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
-            duration: 450
+            duration: 820
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
     }
 
@@ -1122,14 +1122,14 @@ PanelWindow {
 
         Behavior on height {
             NumberAnimation {
-                duration: 450
+                duration: 800
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: 180
+                duration: 400
                 easing.type: Easing.OutQuad
             }
         }
@@ -1143,7 +1143,7 @@ PanelWindow {
             spacing: 6
             opacity: (bar.notifAnimWidth > 20) ? 1.0 : 0.0
             visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
+            Behavior on opacity { NumberAnimation { duration: 550; easing.type: Easing.OutCubic } }
 
             Repeater {
                 model: notifDetachedPod.cardCount
@@ -1161,7 +1161,7 @@ PanelWindow {
                     clip: true
 
                     // Staggered Cascade Slide From Top + Fan-Out Animation
-                    property real slideOffsetY: -18
+                    property real slideOffsetY: -24
                     transform: Translate {
                         y: cardItem.slideOffsetY
                     }
@@ -1175,7 +1175,7 @@ PanelWindow {
 
                     Timer {
                         id: appearTimer
-                        interval: index * 50 // Staggered cascade per card
+                        interval: index * 80 // Staggered cascade per card
                         running: true
                         repeat: false
                         onTriggered: {
@@ -1187,29 +1187,29 @@ PanelWindow {
 
                     Behavior on slideOffsetY {
                         NumberAnimation {
-                            duration: 460
+                            duration: 820
                             easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
                     }
                     Behavior on opacity {
                         NumberAnimation {
-                            duration: 320
+                            duration: 650
                             easing.type: Easing.OutCubic
                         }
                     }
                     Behavior on scale {
                         NumberAnimation {
-                            duration: 450
+                            duration: 820
                             easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
                     }
                     Behavior on implicitHeight {
                         NumberAnimation {
-                            duration: 350
+                            duration: 600
                             easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
                     }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
