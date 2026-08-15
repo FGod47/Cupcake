@@ -282,43 +282,28 @@ PanelWindow {
         }
     }
 
-    // Dynamic Island Notification state & Exact Physical Geometry Lock
+    // Dynamic Island Notification state & Synchronized Push-Pull Motion
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
-    
-    // Physics check: Is the bar 100% finished shrinking to clear notification space?
-    readonly property bool isBarShrunk: hasNotifPopup && (Math.abs(solidBar.width - (bar.barW - notifDetachedPod.fullW - 8)) < 2.0)
-    
-    property bool notifPillShown: false
     property bool notifPillExpanded: false
 
     onHasNotifPopupChanged: {
-        if (!hasNotifPopup) {
-            notifPillShown = false;
+        if (hasNotifPopup) {
             notifPillExpanded = false;
-            cardsExpandTimer.stop();
+            expandCardsTimer.restart();
+        } else {
+            expandCardsTimer.stop();
+            notifPillExpanded = false;
         }
     }
 
-    onIsBarShrunkChanged: {
-        if (isBarShrunk && hasNotifPopup) {
-            // Bar has physically finished contracting across the screen!
-            notifPillShown = true;
-            cardsExpandTimer.restart();
-        } else if (!hasNotifPopup) {
-            notifPillShown = false;
-            notifPillExpanded = false;
-            cardsExpandTimer.stop();
-        }
-    }
-
-    // Step 2: Smoothly unroll cards once pill is in place
+    // Step 2: Smoothly unroll cards in synchronized push-pull motion
     Timer {
-        id: cardsExpandTimer
-        interval: 160
+        id: expandCardsTimer
+        interval: 120
         repeat: false
         onTriggered: {
-            if (bar.hasNotifPopup && bar.isBarShrunk) {
+            if (bar.hasNotifPopup) {
                 bar.notifPillExpanded = true;
             }
         }
@@ -334,11 +319,11 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW
+        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW
         Behavior on width {
             enabled: !expandAnim.running
             NumberAnimation {
-                duration: 380
+                duration: 480
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
             }
@@ -1148,21 +1133,13 @@ PanelWindow {
             if (!hasNotif) showAllNotifs = false;
         }
 
-        width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 34
+        width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 0
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
         y: bar.midY
         x: solidBar.x + solidBar.width + 8
-        opacity: (hasNotif && bar.isBarShrunk && bar.notifPillShown) ? 1.0 : 0.0
+        opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
-        scale: (hasNotif && bar.isBarShrunk && bar.notifPillShown) ? 1.0 : 0.85
 
-        Behavior on scale {
-            NumberAnimation {
-                duration: 320
-                easing.type: Easing.OutBack
-                easing.overshoot: 1.15
-            }
-        }
         Behavior on width {
             NumberAnimation {
                 duration: 480
@@ -1617,7 +1594,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW;
+                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW;
             });
             contentLayout.opacity = 1.0;
         }
