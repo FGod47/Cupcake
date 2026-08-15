@@ -1293,6 +1293,25 @@ PanelWindow {
                         }
                     }
 
+                    property bool isHovered: cardMa.containsMouse || dismissCardMa.containsMouse
+
+                    // Auto-Disappearing Timer per notification (pauses on hover)
+                    Timer {
+                        id: cardExpireTimer
+                        interval: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
+                        running: !cardItem.isHovered && bar.hasNotifPopup
+                        repeat: false
+                        onTriggered: {
+                            if (!cardItem.isHovered && cardItem.notifData) {
+                                cardItem.notifData.dismiss();
+                                let curList = notifDetachedPod.popupsList.slice();
+                                let idx = curList.indexOf(cardItem.notifData);
+                                if (idx >= 0) curList.splice(idx, 1);
+                                globalState.popups = curList;
+                            }
+                        }
+                    }
+
                     // Click to activate / open
                     MouseArea {
                         id: cardMa
@@ -1311,6 +1330,25 @@ PanelWindow {
                             let curList = notifDetachedPod.popupsList.slice();
                             curList.splice(cardItem.itemIdx, 1);
                             globalState.popups = curList;
+                        }
+                    }
+
+                    // 5. Sleek Disappearing Countdown Progress Line
+                    Rectangle {
+                        id: progressLine
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        height: 1.5
+                        color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.3)
+                        opacity: cardItem.isHovered ? 0.2 : 0.75
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                        NumberAnimation on width {
+                            id: progressAnim
+                            from: cardItem.width
+                            to: 0
+                            duration: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
+                            running: !cardItem.isHovered && bar.hasNotifPopup
                         }
                     }
                 }
