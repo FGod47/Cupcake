@@ -1162,7 +1162,7 @@ PanelWindow {
                     readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
                     
                     Layout.fillWidth: true
-                    Layout.preferredHeight: isCardHovered ? (bar.barHeight + expandedBodyCol.implicitHeight + 14) : bar.barHeight
+                    Layout.preferredHeight: isCardHovered ? (bar.barHeight + summaryHeadlineText.implicitHeight + expandedDetailsCol.implicitHeight + 20) : bar.barHeight
                     implicitHeight: Layout.preferredHeight
                     radius: isCardHovered ? 15 : bar.startRadius
                     color: notifDetachedPod.cardBg
@@ -1209,7 +1209,7 @@ PanelWindow {
                     Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                     Behavior on border.color { ColorAnimation { duration: 250 } }
 
-                    // 1. Header & Compact Row (Directly anchored to 30px height for true vertical alignment)
+                    // 1. Header & Controls Row
                     RowLayout {
                         id: headerRow
                         anchors.left: parent.left
@@ -1221,6 +1221,7 @@ PanelWindow {
                         spacing: 8
 
                         Rectangle {
+                            id: urgencyDot
                             width: 6
                             height: 6
                             radius: 3
@@ -1229,6 +1230,7 @@ PanelWindow {
                         }
 
                         Text {
+                            id: notifAppTag
                             text: {
                                 if (!cardItem.notifData) return "NOTIFICATION";
                                 let app = cardItem.notifData.appName ? cardItem.notifData.appName.trim() : "";
@@ -1243,25 +1245,9 @@ PanelWindow {
                             Layout.alignment: Qt.AlignVCenter
                         }
 
-                        // Compact 1-line summary preview (only shown in compact state)
-                        Text {
-                            Layout.fillWidth: true
-                            visible: !cardItem.isCardHovered
-                            text: {
-                                if (!cardItem.notifData || !cardItem.notifData.summary) return "";
-                                return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            }
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
-                            color: bar.fg
-                            elide: Text.ElideRight
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
+                        // Flexible space for morphing headline
                         Item {
                             Layout.fillWidth: true
-                            visible: cardItem.isCardHovered
                         }
 
                         // Circle Countdown Timer Ring
@@ -1339,38 +1325,78 @@ PanelWindow {
                         }
                     }
 
-                    // 2. Expanded Content Section (Revealed on Hover)
+                    // 2. Continuous Morphing Summary Headline (Smoothly shifts between compact row and expanded title)
+                    Text {
+                        id: summaryHeadlineText
+                        x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
+                        y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
+                        width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
+                        
+                        text: {
+                            if (!cardItem.notifData || !cardItem.notifData.summary) return "";
+                            return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                        }
+                        font.family: Theme.appFontMono
+                        font.pixelSize: cardItem.isCardHovered ? 12 : 11
+                        font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
+                        color: bar.fg
+                        elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
+                        wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
+
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 720
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                            }
+                        }
+                        Behavior on y {
+                            NumberAnimation {
+                                duration: 720
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                            }
+                        }
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 720
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                            }
+                        }
+                        Behavior on font.pixelSize { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                    }
+
+                    // 3. Expanded Details Section (Divider Line + Body Text)
                     ColumnLayout {
-                        id: expandedBodyCol
+                        id: expandedDetailsCol
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.top: headerRow.bottom
+                        anchors.top: summaryHeadlineText.bottom
                         anchors.leftMargin: 13
                         anchors.rightMargin: 13
-                        anchors.topMargin: 2
+                        anchors.topMargin: 6
                         spacing: 6
-                        visible: cardItem.isCardHovered
+                        visible: cardItem.isCardHovered || opacity > 0.01
                         opacity: cardItem.isCardHovered ? 1.0 : 0.0
+
+                        transform: Translate {
+                            y: cardItem.isCardHovered ? 0 : -8
+                            Behavior on y {
+                                NumberAnimation {
+                                    duration: 720
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                }
+                            }
+                        }
+
                         Behavior on opacity {
                             NumberAnimation {
                                 duration: 500
                                 easing.type: Easing.BezierSpline
                                 easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                             }
-                        }
-
-                        // Full Summary Headline
-                        Text {
-                            Layout.fillWidth: true
-                            text: {
-                                if (!cardItem.notifData || !cardItem.notifData.summary) return "";
-                                return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            }
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 12
-                            font.weight: Font.Bold
-                            color: bar.fg
-                            wrapMode: Text.Wrap
                         }
 
                         // Divider Line
