@@ -1238,6 +1238,26 @@ PanelWindow {
                         Layout.alignment: Qt.AlignVCenter
                     }
 
+                    // Stacked Count Badge (e.g. +2 more)
+                    Rectangle {
+                        visible: bar.notifPopups && bar.notifPopups.length > 1
+                        height: 14
+                        width: badgeText.implicitWidth + 8
+                        radius: 7
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                        Layout.alignment: Qt.AlignVCenter
+
+                        Text {
+                            id: badgeText
+                            anchors.centerIn: parent
+                            text: "+" + (bar.notifPopups.length - 1)
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 9
+                            font.weight: Font.Bold
+                            color: bar.fg
+                        }
+                    }
+
                     Item { Layout.fillWidth: true }
 
                     // Micro Dismiss button (✕)
@@ -1265,7 +1285,11 @@ PanelWindow {
                                 if (notifDetachedPod.currentNotif) {
                                     notifDetachedPod.currentNotif.dismiss();
                                 }
-                                globalState.popups = [];
+                                if (bar.notifPopups && bar.notifPopups.length > 1) {
+                                    globalState.popups = bar.notifPopups.slice(1);
+                                } else {
+                                    globalState.popups = [];
+                                }
                             }
                         }
                     }
@@ -1320,7 +1344,11 @@ PanelWindow {
                         notifDetachedPod.currentNotif.dismiss();
                     }
                 }
-                globalState.popups = [];
+                if (bar.notifPopups && bar.notifPopups.length > 1) {
+                    globalState.popups = bar.notifPopups.slice(1);
+                } else {
+                    globalState.popups = [];
+                }
             }
         }
     }
