@@ -317,8 +317,15 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.barW
-        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+        width: bar.hasNotifPopup ? (bar.barW - 42) : bar.barW
+        Behavior on width {
+            enabled: !expandAnim.running
+            NumberAnimation {
+                duration: 380
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+            }
+        }
         height: (bar.baseHeight + bar.extraHeight)
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -974,16 +981,18 @@ PanelWindow {
             Text {
                 id: clockBulletMain
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
-                Layout.preferredWidth: implicitWidth
+                Layout.leftMargin: bar.hasNotifPopup ? 0 : 8
+                Layout.rightMargin: bar.hasNotifPopup ? 0 : 8
+                Layout.preferredWidth: bar.hasNotifPopup ? 0 : implicitWidth
                 text: "•"
                 font.family: Theme.defaultFontFamily
                 font.pixelSize: 15
                 font.weight: Theme.defaultFontWeight
                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.4)
-                opacity: 1.0
-                visible: true
+                opacity: bar.hasNotifPopup ? 0.0 : 1.0
+                visible: opacity > 0.01
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+                Behavior on Layout.preferredWidth { NumberAnimation { duration: 250 } }
             }
 
             // ── RIGHT: Power Button ────────
@@ -991,10 +1000,15 @@ PanelWindow {
                 id: powerPillItem
                 Layout.alignment: Qt.AlignVCenter
                 height: 22
-                width: 22
-                Layout.preferredWidth: 22
-                opacity: 1.0
-                visible: true
+                width: bar.hasNotifPopup ? 0 : 22
+                Layout.preferredWidth: width
+                opacity: bar.hasNotifPopup ? 0.0 : 1.0
+                visible: opacity > 0.01
+                clip: true
+
+                Behavior on width { NumberAnimation { duration: 250 } }
+                Behavior on Layout.preferredWidth { NumberAnimation { duration: 250 } }
+                Behavior on opacity { NumberAnimation { duration: 250 } }
 
                 Rectangle {
                     anchors.fill: parent
