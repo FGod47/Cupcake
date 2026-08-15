@@ -496,4 +496,11 @@ ShellRoot {
             islandTimer.restart();
         }
     }
+
+    // ── Clipboard Notification Watcher (PIBBLE) ──
+    Process {
+        id: clipNotifProcess
+        command: ["bash", Quickshell.env("HOME") + "/.config/quickshell/scripts/clip_notify.sh"]
+        running: true
+    }
 }
