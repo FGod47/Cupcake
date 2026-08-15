@@ -1130,13 +1130,6 @@ PanelWindow {
         opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
 
-        Behavior on x {
-            NumberAnimation {
-                duration: 380
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
-            }
-        }
         Behavior on width {
             NumberAnimation {
                 duration: 380
