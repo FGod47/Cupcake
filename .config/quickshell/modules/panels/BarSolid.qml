@@ -1136,7 +1136,7 @@ PanelWindow {
         width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 0
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
         y: bar.midY
-        x: solidBar.x + solidBar.width + 8
+        x: (bar.barX + bar.barW) - width
         opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
 
