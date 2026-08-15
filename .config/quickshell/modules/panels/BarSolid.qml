@@ -1161,7 +1161,7 @@ PanelWindow {
                     readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
                     
                     Layout.fillWidth: true
-                    Layout.preferredHeight: isCardHovered ? (cardInnerCol.implicitHeight + 16) : bar.barHeight
+                    Layout.preferredHeight: isCardHovered ? (bar.barHeight + expandedBodyCol.implicitHeight + 14) : bar.barHeight
                     implicitHeight: Layout.preferredHeight
                     radius: isCardHovered ? 15 : bar.startRadius
                     color: notifDetachedPod.cardBg
@@ -1208,176 +1208,183 @@ PanelWindow {
                     Behavior on radius { NumberAnimation { duration: 250 } }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                    ColumnLayout {
-                        id: cardInnerCol
+                    // 1. Header & Compact Row (Directly anchored to 30px height for true vertical alignment)
+                    RowLayout {
+                        id: headerRow
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.topMargin: cardItem.isCardHovered ? 8 : 0
+                        height: bar.barHeight
                         anchors.leftMargin: 13
                         anchors.rightMargin: 13
-                        spacing: cardItem.isCardHovered ? 6 : 0
+                        spacing: 8
 
-                        // 1. Header: Urgency Dot + App Tag + (Compact Summary) + Circle Ring Timer + Dismiss (✕)
-                        RowLayout {
+                        Rectangle {
+                            width: 6
+                            height: 6
+                            radius: 3
+                            color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        Text {
+                            text: {
+                                if (!cardItem.notifData) return "NOTIFICATION";
+                                let app = cardItem.notifData.appName ? cardItem.notifData.appName.trim() : "";
+                                if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
+                                return app.toUpperCase();
+                            }
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 10
+                            font.weight: Font.DemiBold
+                            font.letterSpacing: 1.4
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        // Compact 1-line summary preview (only shown in compact state)
+                        Text {
                             Layout.fillWidth: true
-                            height: cardItem.isCardHovered ? 18 : bar.barHeight
-                            spacing: 8
-
-                            Rectangle {
-                                width: 6
-                                height: 6
-                                radius: 3
-                                color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
-                                Layout.alignment: Qt.AlignVCenter
+                            visible: !cardItem.isCardHovered
+                            text: {
+                                if (!cardItem.notifData || !cardItem.notifData.summary) return "";
+                                return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
                             }
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 11
+                            font.weight: Font.DemiBold
+                            color: bar.fg
+                            elide: Text.ElideRight
+                            Layout.alignment: Qt.AlignVCenter
+                        }
 
-                            Text {
-                                text: {
-                                    if (!cardItem.notifData) return "NOTIFICATION";
-                                    let app = cardItem.notifData.appName ? cardItem.notifData.appName.trim() : "";
-                                    if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
-                                    return app.toUpperCase();
-                                }
-                                font.family: Theme.appFontMono
-                                font.pixelSize: 10
-                                font.weight: Font.DemiBold
-                                font.letterSpacing: 1.4
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-                                Layout.alignment: Qt.AlignVCenter
-                            }
+                        Item {
+                            Layout.fillWidth: true
+                            visible: cardItem.isCardHovered
+                        }
 
-                            // Compact 1-line summary preview (only shown in compact state)
-                            Text {
-                                Layout.fillWidth: true
-                                visible: !cardItem.isCardHovered
-                                text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
-                                font.family: Theme.appFontMono
-                                font.pixelSize: 11
-                                font.weight: Font.DemiBold
-                                color: bar.fg
-                                elide: Text.ElideRight
-                                Layout.alignment: Qt.AlignVCenter
-                            }
+                        // Circle Countdown Timer Ring
+                        Shape {
+                            width: 14
+                            height: 14
+                            Layout.alignment: Qt.AlignVCenter
+                            layer.enabled: true
+                            layer.samples: 4
+                            opacity: cardItem.isCardHovered ? 0.35 : 0.9
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
 
-                            Item {
-                                Layout.fillWidth: true
-                                visible: cardItem.isCardHovered
-                            }
+                            ShapePath {
+                                strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                                strokeWidth: 1.5
+                                fillColor: "transparent"
+                                capStyle: ShapePath.RoundCap
 
-                            // Circle Countdown Timer Ring
-                            Shape {
-                                width: 14
-                                height: 14
-                                Layout.alignment: Qt.AlignVCenter
-                                layer.enabled: true
-                                layer.samples: 4
-                                opacity: cardItem.isCardHovered ? 0.35 : 0.9
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                                ShapePath {
-                                    strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
-                                    strokeWidth: 1.5
-                                    fillColor: "transparent"
-                                    capStyle: ShapePath.RoundCap
-
-                                    PathAngleArc {
-                                        centerX: 7
-                                        centerY: 7
-                                        radiusX: 5
-                                        radiusY: 5
-                                        startAngle: 0
-                                        sweepAngle: 360
-                                    }
-                                }
-
-                                ShapePath {
-                                    strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
-                                    strokeWidth: 1.5
-                                    fillColor: "transparent"
-                                    capStyle: ShapePath.RoundCap
-
-                                    PathAngleArc {
-                                        centerX: 7
-                                        centerY: 7
-                                        radiusX: 5
-                                        radiusY: 5
-                                        startAngle: -90
-                                        sweepAngle: -360 * cardItem.timerProgress
-                                    }
+                                PathAngleArc {
+                                    centerX: 7
+                                    centerY: 7
+                                    radiusX: 5
+                                    radiusY: 5
+                                    startAngle: 0
+                                    sweepAngle: 360
                                 }
                             }
 
-                            // Dismiss button (✕)
-                            Rectangle {
-                                width: 16
-                                height: 16
-                                radius: 8
-                                color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
-                                Behavior on color { ColorAnimation { duration: 120 } }
+                            ShapePath {
+                                strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                                strokeWidth: 1.5
+                                fillColor: "transparent"
+                                capStyle: ShapePath.RoundCap
 
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "\ueb55"
-                                    font.family: bar.fontName
-                                    font.pixelSize: 9
-                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                                }
-
-                                MouseArea {
-                                    id: dismissCardMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        if (cardItem.notifData) cardItem.notifData.dismiss();
-                                        let curList = notifDetachedPod.popupsList.slice();
-                                        curList.splice(cardItem.itemIdx, 1);
-                                        globalState.popups = curList;
-                                    }
+                                PathAngleArc {
+                                    centerX: 7
+                                    centerY: 7
+                                    radiusX: 5
+                                    radiusY: 5
+                                    startAngle: -90
+                                    sweepAngle: -360 * cardItem.timerProgress
                                 }
                             }
                         }
 
-                        // Expanded Content Section (Revealed on Hover)
-                        ColumnLayout {
+                        // Dismiss button (✕)
+                        Rectangle {
+                            width: 16
+                            height: 16
+                            radius: 8
+                            color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueb55"
+                                font.family: bar.fontName
+                                font.pixelSize: 9
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                            }
+
+                            MouseArea {
+                                id: dismissCardMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (cardItem.notifData) cardItem.notifData.dismiss();
+                                    let curList = notifDetachedPod.popupsList.slice();
+                                    curList.splice(cardItem.itemIdx, 1);
+                                    globalState.popups = curList;
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Expanded Content Section (Revealed on Hover)
+                    ColumnLayout {
+                        id: expandedBodyCol
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: headerRow.bottom
+                        anchors.leftMargin: 13
+                        anchors.rightMargin: 13
+                        anchors.topMargin: 2
+                        spacing: 6
+                        visible: cardItem.isCardHovered
+                        opacity: cardItem.isCardHovered ? 1.0 : 0.0
+                        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
+
+                        // Full Summary Headline
+                        Text {
                             Layout.fillWidth: true
-                            spacing: 6
-                            visible: cardItem.isCardHovered
-                            opacity: cardItem.isCardHovered ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
-
-                            // 2. Full Summary Headline
-                            Text {
-                                Layout.fillWidth: true
-                                text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
-                                font.family: Theme.appFontMono
-                                font.pixelSize: 12
-                                font.weight: Font.Bold
-                                color: bar.fg
-                                wrapMode: Text.Wrap
+                            text: {
+                                if (!cardItem.notifData || !cardItem.notifData.summary) return "";
+                                return cardItem.notifData.summary.replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
                             }
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 12
+                            font.weight: Font.Bold
+                            color: bar.fg
+                            wrapMode: Text.Wrap
+                        }
 
-                            // 3. Divider Line
-                            Rectangle {
-                                Layout.fillWidth: true
-                                height: 1
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                            }
+                        // Divider Line
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 1
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        }
 
-                            // 4. Full Body Description Text
-                            Text {
-                                Layout.fillWidth: true
-                                visible: text !== ""
-                                text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
-                                font.family: Theme.appFontMono
-                                font.pixelSize: 11
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                                wrapMode: Text.Wrap
-                                maximumLineCount: 3
-                                elide: Text.ElideRight
-                                lineHeight: 1.25
-                            }
+                        // Full Body Description Text
+                        Text {
+                            Layout.fillWidth: true
+                            visible: text !== ""
+                            text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 11
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                            wrapMode: Text.Wrap
+                            maximumLineCount: 3
+                            elide: Text.ElideRight
+                            lineHeight: 1.25
                         }
                     }
 
