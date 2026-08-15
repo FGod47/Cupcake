@@ -1121,10 +1121,11 @@ PanelWindow {
     Item {
         id: notifDetachedPod
         readonly property bool hasNotif: bar.hasNotifPopup
-        readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
+        readonly property var popupsList: bar.notifPopups ? bar.notifPopups : []
+        readonly property int cardCount: Math.min(3, popupsList.length)
 
         readonly property real fullW: 320
-        readonly property real fullH: Math.max(68, notifCardCol.implicitHeight + 24)
+        readonly property real fullH: notifStackCol.implicitHeight
 
         width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 34
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
@@ -1154,26 +1155,21 @@ PanelWindow {
             }
         }
 
+        // Stage 1: Compact Detached Pill Icon
         Rectangle {
-            id: notifBgRect
             anchors.fill: parent
-            radius: bar.notifPillExpanded ? 14 : (height / 2)
+            radius: height / 2
             color: bar.pillColor
-            border.color: notifPodMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
             border.width: 1
-            clip: true
+            visible: !bar.notifPillExpanded
+            opacity: !bar.notifPillExpanded ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 180 } }
 
-            Behavior on radius { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-            Behavior on border.color { ColorAnimation { duration: 150 } }
-
-            // Stage 1: Compact Detached Pill Icon
             Item {
                 anchors.centerIn: parent
                 width: 16
                 height: 16
-                visible: !bar.notifPillExpanded
-                opacity: !bar.notifPillExpanded ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 180 } }
 
                 Text {
                     anchors.centerIn: parent
@@ -1189,165 +1185,204 @@ PanelWindow {
                     radius: 2.5
                     anchors.top: parent.top
                     anchors.right: parent.right
-                    color: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
-                }
-            }
-
-            // Stage 2: Full Detailed Notification Card (Styled after 08-15-21-55-37.png)
-            ColumnLayout {
-                id: notifCardCol
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: 12
-                spacing: 6
-                opacity: bar.notifPillExpanded ? 1.0 : 0.0
-                visible: opacity > 0.01
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
-
-                // 1. Header: Dot + Tracked Monospace App Name + Close button
-                RowLayout {
-                    Layout.fillWidth: true
-                    height: 18
-                    spacing: 6
-
-                    // Urgency Indicator Dot
-                    Rectangle {
-                        width: 6
-                        height: 6
-                        radius: 3
-                        color: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.urgency === 2) ? "#E06C75" : "#E5C07B"
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-
-                    // App / Sender Tag (PIBBLE style tracked monospace uppercase)
-                    Text {
-                        text: {
-                            if (!notifDetachedPod.currentNotif) return "NOTIFICATION";
-                            let app = notifDetachedPod.currentNotif.appName ? notifDetachedPod.currentNotif.appName.trim() : "";
-                            if (app.toLowerCase() === "notify-send" || app === "") {
-                                return "SYSTEM";
-                            }
-                            return app.toUpperCase();
-                        }
-                        font.family: Theme.appFontMono
-                        font.pixelSize: 10
-                        font.weight: Font.DemiBold
-                        font.letterSpacing: 1.4
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-
-                    // Stacked Count Badge (e.g. +2 more)
-                    Rectangle {
-                        visible: bar.notifPopups && bar.notifPopups.length > 1
-                        height: 14
-                        width: badgeText.implicitWidth + 8
-                        radius: 7
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                        Layout.alignment: Qt.AlignVCenter
-
-                        Text {
-                            id: badgeText
-                            anchors.centerIn: parent
-                            text: "+" + (bar.notifPopups.length - 1)
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 9
-                            font.weight: Font.Bold
-                            color: bar.fg
-                        }
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    // Micro Dismiss button (✕)
-                    Rectangle {
-                        width: 18
-                        height: 18
-                        radius: 9
-                        color: closeNotifMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
-                        Behavior on color { ColorAnimation { duration: 120 } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\ueb55"
-                            font.family: bar.fontName
-                            font.pixelSize: 10
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                        }
-
-                        MouseArea {
-                            id: closeNotifMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (notifDetachedPod.currentNotif) {
-                                    notifDetachedPod.currentNotif.dismiss();
-                                }
-                                if (bar.notifPopups && bar.notifPopups.length > 1) {
-                                    globalState.popups = bar.notifPopups.slice(1);
-                                } else {
-                                    globalState.popups = [];
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // 2. Summary Title (Copied to clipboard style)
-                Text {
-                    Layout.fillWidth: true
-                    text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.summary) ? notifDetachedPod.currentNotif.summary : ""
-                    font.family: Theme.appFontMono
-                    font.pixelSize: 13
-                    font.weight: Font.Bold
-                    color: bar.fg
-                    elide: Text.ElideRight
-                }
-
-                // 3. Thin Subtle Divider Line
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 1
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                }
-
-                // 4. Body Description Text (Multi-line monospace preview)
-                Text {
-                    Layout.fillWidth: true
-                    visible: text !== ""
-                    text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.body) ? notifDetachedPod.currentNotif.body : ""
-                    font.family: Theme.appFontMono
-                    font.pixelSize: 11
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                    wrapMode: Text.Wrap
-                    maximumLineCount: 3
-                    elide: Text.ElideRight
-                    lineHeight: 1.25
+                    color: (notifDetachedPod.popupsList.length > 0 && notifDetachedPod.popupsList[0].urgency === 2) ? "#E06C75" : "#E5C07B"
                 }
             }
         }
 
-        // Click on background opens / dismisses notification
-        MouseArea {
-            id: notifPodMa
-            anchors.fill: parent
-            z: -1
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                if (notifDetachedPod.currentNotif) {
-                    if (notifDetachedPod.currentNotif.actions && notifDetachedPod.currentNotif.actions.length > 0) {
-                        notifDetachedPod.currentNotif.invokeAction(notifDetachedPod.currentNotif.actions[0].id);
-                    } else {
-                        notifDetachedPod.currentNotif.dismiss();
+        // Stage 2: Stack of up to 3 Notification Cards + More Button
+        ColumnLayout {
+            id: notifStackCol
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            spacing: 6
+            opacity: bar.notifPillExpanded ? 1.0 : 0.0
+            visible: opacity > 0.01
+            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
+
+            Repeater {
+                model: notifDetachedPod.cardCount
+                delegate: Rectangle {
+                    id: cardItem
+                    readonly property int itemIdx: index
+                    readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
+                    
+                    Layout.fillWidth: true
+                    implicitHeight: cardInnerCol.implicitHeight + 20
+                    radius: 14
+                    color: bar.pillColor
+                    border.color: cardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                    border.width: 1
+                    clip: true
+
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                    ColumnLayout {
+                        id: cardInnerCol
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: 10
+                        spacing: 5
+
+                        // 1. Header: Urgency Dot + Tracked App/Sender Tag + Index Badge + Dismiss (✕)
+                        RowLayout {
+                            Layout.fillWidth: true
+                            height: 16
+                            spacing: 6
+
+                            Rectangle {
+                                width: 6
+                                height: 6
+                                radius: 3
+                                color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            Text {
+                                text: {
+                                    if (!cardItem.notifData) return "NOTIFICATION";
+                                    let app = cardItem.notifData.appName ? cardItem.notifData.appName.trim() : "";
+                                    if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
+                                    return app.toUpperCase();
+                                }
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 10
+                                font.weight: Font.DemiBold
+                                font.letterSpacing: 1.4
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            Item { Layout.fillWidth: true }
+
+                            // Dismiss button (✕)
+                            Rectangle {
+                                width: 16
+                                height: 16
+                                radius: 8
+                                color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                                Behavior on color { ColorAnimation { duration: 120 } }
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueb55"
+                                    font.family: bar.fontName
+                                    font.pixelSize: 9
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                }
+
+                                MouseArea {
+                                    id: dismissCardMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (cardItem.notifData) cardItem.notifData.dismiss();
+                                        let curList = notifDetachedPod.popupsList.slice();
+                                        curList.splice(cardItem.itemIdx, 1);
+                                        globalState.popups = curList;
+                                    }
+                                }
+                            }
+                        }
+
+                        // 2. Summary Title
+                        Text {
+                            Layout.fillWidth: true
+                            text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 12
+                            font.weight: Font.Bold
+                            color: bar.fg
+                            elide: Text.ElideRight
+                        }
+
+                        // 3. Divider Line
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 1
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                        }
+
+                        // 4. Body Description Text
+                        Text {
+                            Layout.fillWidth: true
+                            visible: text !== ""
+                            text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
+                            font.family: Theme.appFontMono
+                            font.pixelSize: 11
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                            wrapMode: Text.Wrap
+                            maximumLineCount: 2
+                            elide: Text.ElideRight
+                            lineHeight: 1.2
+                        }
+                    }
+
+                    // Click to activate / open
+                    MouseArea {
+                        id: cardMa
+                        anchors.fill: parent
+                        z: -1
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (cardItem.notifData) {
+                                if (cardItem.notifData.actions && cardItem.notifData.actions.length > 0) {
+                                    cardItem.notifData.invokeAction(cardItem.notifData.actions[0].id);
+                                } else {
+                                    cardItem.notifData.dismiss();
+                                }
+                            }
+                            let curList = notifDetachedPod.popupsList.slice();
+                            curList.splice(cardItem.itemIdx, 1);
+                            globalState.popups = curList;
+                        }
                     }
                 }
-                if (bar.notifPopups && bar.notifPopups.length > 1) {
-                    globalState.popups = bar.notifPopups.slice(1);
-                } else {
-                    globalState.popups = [];
+            }
+
+            // ── MORE BUTTON (Shown when more than 3 notifications exist) ──
+            Rectangle {
+                visible: notifDetachedPod.popupsList.length > 3
+                Layout.fillWidth: true
+                height: 24
+                radius: 12
+                color: moreMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                border.width: 1
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 6
+
+                    Text {
+                        text: "\uea60"
+                        font.family: bar.fontName
+                        font.pixelSize: 11
+                        color: bar.fg
+                    }
+
+                    Text {
+                        text: "+" + (notifDetachedPod.popupsList.length - 3) + " more notifications"
+                        font.family: Theme.appFontMono
+                        font.pixelSize: 10
+                        font.weight: Font.DemiBold
+                        color: bar.fg
+                    }
+                }
+
+                MouseArea {
+                    id: moreMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        globalState.notifPanelVisible = !globalState.notifPanelVisible;
+                    }
                 }
             }
         }
