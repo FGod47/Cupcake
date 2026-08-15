@@ -26,7 +26,7 @@ Item {
     property real contentW: expandedW
     
     // Balanced padding constants
-    readonly property real padTop: isAttached ? 24 : 16
+    readonly property real padTop: isAttached ? 0 : 16
     readonly property real padSide: isAttached ? 30 : 18
     readonly property real padBottom: isAttached ? 24 : 18
 
