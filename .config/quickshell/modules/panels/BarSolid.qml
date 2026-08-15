@@ -1345,28 +1345,28 @@ PanelWindow {
             Rectangle {
                 visible: !notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
                 Layout.fillWidth: true
-                height: 24
-                radius: 12
-                color: moreMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                height: 28
+                radius: 14
+                color: bar.pillColor
+                border.color: moreMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                 border.width: 1
-                Behavior on color { ColorAnimation { duration: 150 } }
+                Behavior on border.color { ColorAnimation { duration: 150 } }
 
                 RowLayout {
                     anchors.centerIn: parent
                     spacing: 6
 
                     Text {
-                        text: "\uea60"
+                        text: "\uea5f" // chevron-down in tabler
                         font.family: bar.fontName
-                        font.pixelSize: 11
+                        font.pixelSize: 12
                         color: bar.fg
                     }
 
                     Text {
                         text: "+" + (notifDetachedPod.popupsList.length - 3) + " more notifications"
                         font.family: Theme.appFontMono
-                        font.pixelSize: 10
+                        font.pixelSize: 11
                         font.weight: Font.DemiBold
                         color: bar.fg
                     }
@@ -1387,34 +1387,34 @@ PanelWindow {
             RowLayout {
                 visible: notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
                 Layout.fillWidth: true
-                height: 24
+                height: 28
                 spacing: 6
 
                 // Show Less button
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 24
-                    radius: 12
-                    color: lessMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    Layout.preferredHeight: 28
+                    radius: 14
+                    color: bar.pillColor
+                    border.color: lessMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
-                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     RowLayout {
                         anchors.centerIn: parent
                         spacing: 5
 
                         Text {
-                            text: "\uea5f"
+                            text: "\uea62" // chevron-up in tabler
                             font.family: bar.fontName
-                            font.pixelSize: 11
+                            font.pixelSize: 12
                             color: bar.fg
                         }
 
                         Text {
                             text: "Show less"
                             font.family: Theme.appFontMono
-                            font.pixelSize: 10
+                            font.pixelSize: 11
                             font.weight: Font.DemiBold
                             color: bar.fg
                         }
@@ -1433,29 +1433,29 @@ PanelWindow {
 
                 // Clear All button
                 Rectangle {
-                    Layout.preferredWidth: 80
-                    Layout.preferredHeight: 24
-                    radius: 12
-                    color: clearAllMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                    border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    Layout.preferredWidth: 88
+                    Layout.preferredHeight: 28
+                    radius: 14
+                    color: bar.pillColor
+                    border.color: clearAllMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
-                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     RowLayout {
                         anchors.centerIn: parent
                         spacing: 4
 
                         Text {
-                            text: "\ueb55"
+                            text: "\ueb55" // x in tabler
                             font.family: bar.fontName
-                            font.pixelSize: 10
+                            font.pixelSize: 11
                             color: clearAllMa.containsMouse ? Theme.colError : bar.fg
                         }
 
                         Text {
                             text: "Clear all"
                             font.family: Theme.appFontMono
-                            font.pixelSize: 10
+                            font.pixelSize: 11
                             font.weight: Font.DemiBold
                             color: clearAllMa.containsMouse ? Theme.colError : bar.fg
                         }
