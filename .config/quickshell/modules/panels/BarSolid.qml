@@ -1117,7 +1117,7 @@ PanelWindow {
         height: hasNotif ? fullH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
-        opacity: (hasNotif && bar.notifAnimWidth > 5) ? 1.0 : 0.0
+        opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
         visible: opacity > 0.01
         clip: true
 
@@ -1128,12 +1128,6 @@ PanelWindow {
                 easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
             }
         }
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 400
-                easing.type: Easing.OutQuad
-            }
-        }
 
         // Stack of Notification Cards + In-Place Expand/Collapse
         ColumnLayout {
@@ -1142,9 +1136,6 @@ PanelWindow {
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 6
-            opacity: (bar.notifAnimWidth > 20) ? 1.0 : 0.0
-            visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: 550; easing.type: Easing.OutCubic } }
 
             Repeater {
                 model: notifDetachedPod.cardCount
@@ -1160,14 +1151,13 @@ PanelWindow {
                     border.color: cardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
                     clip: true
+                    opacity: 1.0
 
-                    // Staggered Cascade Slide From Top + Fan-Out Animation
-                    property real slideOffsetY: -24
+                    // Staggered Cascade Slide From Top Animation
+                    property real slideOffsetY: -20
                     transform: Translate {
                         y: cardItem.slideOffsetY
                     }
-                    opacity: 0.0
-                    scale: 0.94
                     transformOrigin: Item.Top
 
                     Component.onCompleted: {
@@ -1176,30 +1166,15 @@ PanelWindow {
 
                     Timer {
                         id: appearTimer
-                        interval: index * 80 // Staggered cascade per card
+                        interval: index * 60 // Staggered cascade per card
                         running: true
                         repeat: false
                         onTriggered: {
                             cardItem.slideOffsetY = 0;
-                            cardItem.opacity = 1.0;
-                            cardItem.scale = 1.0;
                         }
                     }
 
                     Behavior on slideOffsetY {
-                        NumberAnimation {
-                            duration: 820
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                        }
-                    }
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: 650
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                    Behavior on scale {
                         NumberAnimation {
                             duration: 820
                             easing.type: Easing.BezierSpline
