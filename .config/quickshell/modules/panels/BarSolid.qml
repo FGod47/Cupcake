@@ -285,11 +285,9 @@ PanelWindow {
     // Dynamic Island Notification state & Synchronized Single-Driver Motion
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
-    property bool notifHovered: false
 
     // ── THE SINGLE DRIVER FOR SYNCHRONIZED LIQUID MOTION ──
-    // Compact circular pill (36px) by default, smoothly expands to 320px on hover
-    property real notifAnimWidth: hasNotifPopup ? (notifHovered ? 320 : 36) : 0
+    property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
             duration: 820
@@ -1112,17 +1110,11 @@ PanelWindow {
         readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
-            if (!hasNotif) {
-                showAllNotifs = false;
-                bar.notifHovered = false;
-            } else {
-                compactTimerProgress = 1.0;
-                compactExpireTimer.restart();
-            }
+            if (!hasNotif) showAllNotifs = false;
         }
 
         width: bar.notifAnimWidth
-        height: hasNotif ? (bar.notifHovered ? fullH : bar.barHeight) : bar.barHeight
+        height: hasNotif ? fullH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
@@ -1131,117 +1123,19 @@ PanelWindow {
 
         Behavior on height {
             NumberAnimation {
-                duration: 800
+                duration: 380
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
             }
         }
 
-        // Primary compact notification countdown timer
-        property real compactTimerProgress: 1.0
-        property int compactExpireMs: (popupsList.length > 0 && popupsList[0].expireTimeout > 0) ? popupsList[0].expireTimeout : 6000
-
-        NumberAnimation on compactTimerProgress {
-            id: compactProgressAnim
-            from: 1.0
-            to: 0.0
-            duration: notifDetachedPod.compactExpireMs
-            running: !bar.notifHovered && notifDetachedPod.hasNotif
-        }
-
-        Timer {
-            id: compactExpireTimer
-            interval: notifDetachedPod.compactExpireMs
-            running: !bar.notifHovered && notifDetachedPod.hasNotif
-            repeat: false
-            onTriggered: {
-                if (!bar.notifHovered && notifDetachedPod.popupsList.length > 0) {
-                    let first = notifDetachedPod.popupsList[0];
-                    if (first) first.dismiss();
-                    let curList = notifDetachedPod.popupsList.slice();
-                    curList.shift();
-                    globalState.popups = curList;
-                }
-            }
-        }
-
-        // ── STAGE 1: COMPACT CIRCULAR RING PILL (Shown when collapsed) ──
-        Rectangle {
-            id: compactPillRect
-            anchors.fill: parent
-            radius: height / 2
-            color: notifDetachedPod.cardBg
-            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, podHoverArea.containsMouse ? 0.28 : 0.16)
-            border.width: 1
-            opacity: bar.notifHovered ? 0.0 : 1.0
-            visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
-
-            Item {
-                anchors.centerIn: parent
-                width: 22
-                height: 22
-
-                // Circular Countdown Ring
-                Shape {
-                    anchors.fill: parent
-                    layer.enabled: true
-                    layer.samples: 4
-
-                    ShapePath {
-                        strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
-                        strokeWidth: 1.5
-                        fillColor: "transparent"
-                        capStyle: ShapePath.RoundCap
-
-                        PathAngleArc {
-                            centerX: 11
-                            centerY: 11
-                            radiusX: 8.5
-                            radiusY: 8.5
-                            startAngle: 0
-                            sweepAngle: 360
-                        }
-                    }
-
-                    ShapePath {
-                        strokeColor: (notifDetachedPod.popupsList.length > 0 && notifDetachedPod.popupsList[0].urgency === 2) ? "#E06C75" : Theme.colPrimary
-                        strokeWidth: 1.5
-                        fillColor: "transparent"
-                        capStyle: ShapePath.RoundCap
-
-                        PathAngleArc {
-                            centerX: 11
-                            centerY: 11
-                            radiusX: 8.5
-                            radiusY: 8.5
-                            startAngle: -90
-                            sweepAngle: -360 * notifDetachedPod.compactTimerProgress
-                        }
-                    }
-                }
-
-                // Inner Bell Icon
-                Text {
-                    anchors.centerIn: parent
-                    text: "\uea35" // bell
-                    font.family: bar.fontName
-                    font.pixelSize: 11
-                    color: (notifDetachedPod.popupsList.length > 0 && notifDetachedPod.popupsList[0].urgency === 2) ? "#E06C75" : bar.fg
-                }
-            }
-        }
-
-        // ── STAGE 2: EXPANDED NOTIFICATION CARDS (Shown on Hover) ──
+        // Stack of Notification Cards + In-Place Expand/Collapse
         ColumnLayout {
             id: notifStackCol
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 6
-            opacity: bar.notifHovered ? 1.0 : 0.0
-            visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
 
             Repeater {
                 model: notifDetachedPod.cardCount
@@ -1249,12 +1143,13 @@ PanelWindow {
                     id: cardItem
                     readonly property int itemIdx: index
                     readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
+                    readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
                     
                     Layout.fillWidth: true
-                    implicitHeight: cardInnerCol.implicitHeight + 28
+                    implicitHeight: isCardHovered ? (cardInnerCol.implicitHeight + 20) : 38
                     radius: 14
                     color: notifDetachedPod.cardBg
-                    border.color: cardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
+                    border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
                     clip: true
                     opacity: 1.0
@@ -1289,7 +1184,7 @@ PanelWindow {
                     }
                     Behavior on implicitHeight {
                         NumberAnimation {
-                            duration: 600
+                            duration: 380
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
@@ -1301,13 +1196,15 @@ PanelWindow {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.margins: 14
-                        spacing: 8
+                        anchors.margins: 10
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        spacing: 6
 
-                        // 1. Header: Urgency Dot + Tracked App/Sender Tag + Index Badge + Dismiss (✕)
+                        // 1. Header: Urgency Dot + App Tag + (Compact Summary) + Circle Ring Timer + Dismiss (✕)
                         RowLayout {
                             Layout.fillWidth: true
-                            height: 16
+                            height: 18
                             spacing: 6
 
                             Rectangle {
@@ -1333,7 +1230,23 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                             }
 
-                            Item { Layout.fillWidth: true }
+                            // Compact 1-line summary preview (only shown in compact state)
+                            Text {
+                                Layout.fillWidth: true
+                                visible: !cardItem.isCardHovered
+                                text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
+                                color: bar.fg
+                                elide: Text.ElideRight
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                                visible: cardItem.isCardHovered
+                            }
 
                             // Circle Countdown Timer Ring
                             Shape {
@@ -1342,7 +1255,7 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                                 layer.enabled: true
                                 layer.samples: 4
-                                opacity: cardItem.isHovered ? 0.35 : 0.9
+                                opacity: cardItem.isCardHovered ? 0.35 : 0.9
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
 
                                 ShapePath {
@@ -1409,40 +1322,48 @@ PanelWindow {
                             }
                         }
 
-                        // 2. Summary Title
-                        Text {
+                        // Expanded Content Section (Revealed on Hover)
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 12
-                            font.weight: Font.Bold
-                            color: bar.fg
-                            elide: Text.ElideRight
-                        }
+                            spacing: 6
+                            visible: cardItem.isCardHovered || opacity > 0.01
+                            opacity: cardItem.isCardHovered ? 1.0 : 0.0
+                            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
 
-                        // 3. Divider Line
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                        }
+                            // 2. Full Summary Headline
+                            Text {
+                                Layout.fillWidth: true
+                                text: (cardItem.notifData && cardItem.notifData.summary) ? cardItem.notifData.summary : ""
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 12
+                                font.weight: Font.Bold
+                                color: bar.fg
+                                wrapMode: Text.Wrap
+                            }
 
-                        // 4. Body Description Text
-                        Text {
-                            Layout.fillWidth: true
-                            visible: text !== ""
-                            text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                            wrapMode: Text.Wrap
-                            maximumLineCount: 2
-                            elide: Text.ElideRight
-                            lineHeight: 1.2
+                            // 3. Divider Line
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 1
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                            }
+
+                            // 4. Full Body Description Text
+                            Text {
+                                Layout.fillWidth: true
+                                visible: text !== ""
+                                text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 11
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 3
+                                elide: Text.ElideRight
+                                lineHeight: 1.25
+                            }
                         }
                     }
 
-                    property bool isHovered: cardMa.containsMouse || dismissCardMa.containsMouse
                     property real timerProgress: 1.0
                     property int expireMs: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
 
@@ -1451,17 +1372,17 @@ PanelWindow {
                         from: 1.0
                         to: 0.0
                         duration: cardItem.expireMs
-                        running: !cardItem.isHovered && bar.hasNotifPopup
+                        running: !cardItem.isCardHovered && bar.hasNotifPopup
                     }
 
                     // Auto-Disappearing Timer per notification (pauses on hover)
                     Timer {
                         id: cardExpireTimer
                         interval: cardItem.expireMs
-                        running: !cardItem.isHovered && bar.hasNotifPopup
+                        running: !cardItem.isCardHovered && bar.hasNotifPopup
                         repeat: false
                         onTriggered: {
-                            if (!cardItem.isHovered && cardItem.notifData) {
+                            if (!cardItem.isCardHovered && cardItem.notifData) {
                                 cardItem.notifData.dismiss();
                                 let curList = notifDetachedPod.popupsList.slice();
                                 let idx = curList.indexOf(cardItem.notifData);
@@ -1491,7 +1412,6 @@ PanelWindow {
                             globalState.popups = curList;
                         }
                     }
-
                 }
             }
 
@@ -1632,45 +1552,7 @@ PanelWindow {
                 }
             }
         }
-
-        // Hover Detector over the entire pod
-        MouseArea {
-            id: podHoverArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            z: bar.notifHovered ? -1 : 10
-            onEntered: {
-                collapseDelayTimer.stop();
-                bar.notifHovered = true;
-            }
-            onClicked: {
-                bar.notifHovered = true;
-            }
-        }
-
-        // Collapse Detector when cursor leaves the expanded pod
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            z: -2
-            onExited: {
-                collapseDelayTimer.restart();
-            }
-        }
-
-        Timer {
-            id: collapseDelayTimer
-            interval: 220
-            repeat: false
-            onTriggered: {
-                if (!podHoverArea.containsMouse) {
-                    bar.notifHovered = false;
-                }
-            }
-        }
     }
-
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
