@@ -1146,8 +1146,8 @@ PanelWindow {
                     readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
                     
                     Layout.fillWidth: true
-                    implicitHeight: isCardHovered ? (cardInnerCol.implicitHeight + 20) : 38
-                    radius: 14
+                    implicitHeight: isCardHovered ? (cardInnerCol.implicitHeight + 20) : bar.barHeight
+                    radius: isCardHovered ? 16 : (bar.barHeight / 2)
                     color: notifDetachedPod.cardBg
                     border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
@@ -1189,16 +1189,18 @@ PanelWindow {
                             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                         }
                     }
+                    Behavior on radius { NumberAnimation { duration: 250 } }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     ColumnLayout {
                         id: cardInnerCol
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.margins: 10
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
+                        anchors.top: cardItem.isCardHovered ? parent.top : undefined
+                        anchors.verticalCenter: cardItem.isCardHovered ? undefined : parent.verticalCenter
+                        anchors.topMargin: cardItem.isCardHovered ? 10 : 0
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
                         spacing: 6
 
                         // 1. Header: Urgency Dot + App Tag + (Compact Summary) + Circle Ring Timer + Dismiss (✕)
