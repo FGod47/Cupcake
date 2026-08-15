@@ -484,7 +484,8 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 implicitWidth: networkRowContent.implicitWidth
                 implicitHeight: 20
-                Layout.preferredWidth: bar.hasNotifPopup ? 22 : implicitWidth
+                Layout.preferredWidth: implicitWidth
+                clip: true
                 opacity: 1.0
                 visible: true
 
