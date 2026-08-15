@@ -1220,9 +1220,16 @@ PanelWindow {
                         Layout.alignment: Qt.AlignVCenter
                     }
 
-                    // App Name (PIBBLE style tracked monospace uppercase)
+                    // App / Sender Tag (PIBBLE style tracked monospace uppercase)
                     Text {
-                        text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.appName) ? notifDetachedPod.currentNotif.appName.toUpperCase() : "NOTIFICATION"
+                        text: {
+                            if (!notifDetachedPod.currentNotif) return "NOTIFICATION";
+                            let app = notifDetachedPod.currentNotif.appName ? notifDetachedPod.currentNotif.appName.trim() : "";
+                            if (app.toLowerCase() === "notify-send" || app === "") {
+                                return "SYSTEM";
+                            }
+                            return app.toUpperCase();
+                        }
                         font.family: Theme.appFontMono
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
