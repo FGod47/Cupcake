@@ -285,32 +285,9 @@ PanelWindow {
     // Dynamic Island Notification state & Synchronized Single-Driver Motion
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
-    property bool notifPillExpanded: false
-
-    onHasNotifPopupChanged: {
-        if (hasNotifPopup) {
-            notifPillExpanded = false;
-            expandCardsTimer.restart();
-        } else {
-            expandCardsTimer.stop();
-            notifPillExpanded = false;
-        }
-    }
-
-    // Step 2: Smoothly unroll cards in synchronized push-pull motion
-    Timer {
-        id: expandCardsTimer
-        interval: 140
-        repeat: false
-        onTriggered: {
-            if (bar.hasNotifPopup) {
-                bar.notifPillExpanded = true;
-            }
-        }
-    }
 
     // ── THE SINGLE DRIVER FOR SYNCHRONIZED LIQUID MOTION ──
-    property real notifAnimWidth: hasNotifPopup ? (notifPillExpanded ? 320 : 34) : 0
+    property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
             duration: 450
@@ -1136,11 +1113,12 @@ PanelWindow {
         }
 
         width: bar.notifAnimWidth
-        height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
+        height: hasNotif ? fullH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: (hasNotif && bar.notifAnimWidth > 5) ? 1.0 : 0.0
         visible: opacity > 0.01
+        clip: true
 
         Behavior on height {
             NumberAnimation {
@@ -1156,42 +1134,7 @@ PanelWindow {
             }
         }
 
-        // Stage 1: Compact Detached Pill Icon
-        Rectangle {
-            anchors.fill: parent
-            radius: height / 2
-            color: bar.pillColor
-            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
-            border.width: 1
-            visible: !bar.notifPillExpanded
-            opacity: !bar.notifPillExpanded ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 180 } }
-
-            Item {
-                anchors.centerIn: parent
-                width: 16
-                height: 16
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "\uea8c"
-                    font.family: bar.fontName
-                    font.pixelSize: 13
-                    color: bar.fg
-                }
-
-                Rectangle {
-                    width: 5
-                    height: 5
-                    radius: 2.5
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    color: (notifDetachedPod.popupsList.length > 0 && notifDetachedPod.popupsList[0].urgency === 2) ? "#E06C75" : "#E5C07B"
-                }
-            }
-        }
-
-        // Stage 2: Stack of Notification Cards + In-Place Expand/Collapse
+        // Stack of Notification Cards + In-Place Expand/Collapse
         ColumnLayout {
             id: notifStackCol
             anchors.left: parent.left
