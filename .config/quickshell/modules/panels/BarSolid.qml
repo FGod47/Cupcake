@@ -1107,7 +1107,7 @@ PanelWindow {
 
         readonly property real fullW: 320
         readonly property real fullH: notifStackCol.implicitHeight
-        readonly property color cardBg: Theme.isDark ? Qt.rgba(0.08, 0.08, 0.11, 0.95) : Qt.rgba(0.96, 0.96, 0.98, 0.96)
+        readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
             if (!hasNotif) showAllNotifs = false;
