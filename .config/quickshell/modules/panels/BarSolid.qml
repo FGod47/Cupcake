@@ -282,48 +282,43 @@ PanelWindow {
         }
     }
 
-    // Dynamic Island Notification state & Exact Sequential Async Timing
+    // Dynamic Island Notification state & Exact Physical Geometry Lock
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
+    
+    // Physics check: Is the bar 100% finished shrinking to clear notification space?
+    readonly property bool isBarShrunk: hasNotifPopup && (Math.abs(solidBar.width - (bar.barW - notifDetachedPod.fullW - 8)) < 2.0)
+    
     property bool notifPillShown: false
     property bool notifPillExpanded: false
 
     onHasNotifPopupChanged: {
-        if (hasNotifPopup) {
+        if (!hasNotifPopup) {
             notifPillShown = false;
             notifPillExpanded = false;
-            // Bar shrinks first for 380ms until notification space is 100% cleared
-            pillAppearTimer.interval = 380;
-            pillAppearTimer.restart();
-        } else {
-            pillAppearTimer.stop();
             cardsExpandTimer.stop();
-            notifPillExpanded = false;
+        }
+    }
+
+    onIsBarShrunkChanged: {
+        if (isBarShrunk && hasNotifPopup) {
+            // Bar has physically finished contracting across the screen!
+            notifPillShown = true;
+            cardsExpandTimer.restart();
+        } else if (!hasNotifPopup) {
             notifPillShown = false;
+            notifPillExpanded = false;
+            cardsExpandTimer.stop();
         }
     }
 
-    // Step 2: EXACTLY when bar shrink finishes (380ms), pill pops into the cleared space
-    Timer {
-        id: pillAppearTimer
-        interval: 380
-        repeat: false
-        onTriggered: {
-            if (bar.hasNotifPopup) {
-                bar.notifPillShown = true;
-                cardsExpandTimer.interval = 180;
-                cardsExpandTimer.restart();
-            }
-        }
-    }
-
-    // Step 3: Pill unrolls to the right & cards slide down
+    // Step 2: Smoothly unroll cards once pill is in place
     Timer {
         id: cardsExpandTimer
-        interval: 180
+        interval: 160
         repeat: false
         onTriggered: {
-            if (bar.hasNotifPopup) {
+            if (bar.hasNotifPopup && bar.isBarShrunk) {
                 bar.notifPillExpanded = true;
             }
         }
@@ -1157,9 +1152,9 @@ PanelWindow {
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
         y: bar.midY
         x: solidBar.x + solidBar.width + 8
-        opacity: (hasNotif && bar.notifPillShown) ? 1.0 : 0.0
+        opacity: (hasNotif && bar.isBarShrunk && bar.notifPillShown) ? 1.0 : 0.0
         visible: opacity > 0.01
-        scale: (hasNotif && bar.notifPillShown) ? 1.0 : 0.85
+        scale: (hasNotif && bar.isBarShrunk && bar.notifPillShown) ? 1.0 : 0.85
 
         Behavior on scale {
             NumberAnimation {
