@@ -1107,6 +1107,7 @@ PanelWindow {
 
         readonly property real fullW: 320
         readonly property real fullH: notifStackCol.implicitHeight
+        readonly property color cardBg: Theme.isDark ? Qt.rgba(0.08, 0.08, 0.11, 0.95) : Qt.rgba(0.96, 0.96, 0.98, 0.96)
 
         onHasNotifChanged: {
             if (!hasNotif) showAllNotifs = false;
@@ -1155,7 +1156,7 @@ PanelWindow {
                     Layout.fillWidth: true
                     implicitHeight: cardInnerCol.implicitHeight + 20
                     radius: 14
-                    color: bar.pillColor
+                    color: notifDetachedPod.cardBg
                     border.color: cardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
                     clip: true
@@ -1347,7 +1348,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 height: 28
                 radius: 14
-                color: bar.pillColor
+                color: notifDetachedPod.cardBg
                 border.color: moreMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                 border.width: 1
                 Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -1395,7 +1396,7 @@ PanelWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 28
                     radius: 14
-                    color: bar.pillColor
+                    color: notifDetachedPod.cardBg
                     border.color: lessMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.28) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
                     Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -1436,7 +1437,7 @@ PanelWindow {
                     Layout.preferredWidth: 88
                     Layout.preferredHeight: 28
                     radius: 14
-                    color: bar.pillColor
+                    color: notifDetachedPod.cardBg
                     border.color: clearAllMa.containsMouse ? Theme.colError : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16)
                     border.width: 1
                     Behavior on border.color { ColorAnimation { duration: 150 } }
