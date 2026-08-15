@@ -1141,9 +1141,9 @@ PanelWindow {
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 6
-            opacity: bar.notifPillExpanded ? 1.0 : 0.0
+            opacity: (bar.notifAnimWidth > 20) ? 1.0 : 0.0
             visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
+            Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutQuad } }
 
             Repeater {
                 model: notifDetachedPod.cardCount
