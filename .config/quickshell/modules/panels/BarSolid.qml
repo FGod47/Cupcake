@@ -283,27 +283,27 @@ PanelWindow {
     }
 
     // Dynamic Island Notification state
-    readonly property real notifIslandW: 260
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
-    property bool showNotifContent: false
+    property bool notifPillExpanded: false
 
     onHasNotifPopupChanged: {
         if (hasNotifPopup) {
-            notifRevealTimer.restart();
+            notifPillExpanded = false;
+            notifExpandTimer.restart();
         } else {
-            notifRevealTimer.stop();
-            showNotifContent = false;
+            notifExpandTimer.stop();
+            notifPillExpanded = false;
         }
     }
 
     Timer {
-        id: notifRevealTimer
-        interval: 600 // Smooth slow glide before revealing notification card
+        id: notifExpandTimer
+        interval: 220 // Stage 1: small pill detaches first, Stage 2: unrolls to left
         repeat: false
         onTriggered: {
             if (bar.hasNotifPopup) {
-                bar.showNotifContent = true;
+                bar.notifPillExpanded = true;
             }
         }
     }
@@ -1123,7 +1123,8 @@ PanelWindow {
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        width: hasNotif ? Math.min(300, notifRowLayout.implicitWidth + 24) : 34
+        readonly property real fullW: Math.min(300, notifRowLayout.implicitWidth + 24)
+        width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 34
         height: bar.barHeight
         y: bar.midY
         x: solidBar.x + solidBar.width + 8
@@ -1132,14 +1133,14 @@ PanelWindow {
 
         Behavior on width {
             NumberAnimation {
-                duration: 380
+                duration: 420
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: 250
+                duration: 200
                 easing.type: Easing.OutQuad
             }
         }
@@ -1166,7 +1167,7 @@ PanelWindow {
                 opacity: notifDetachedPod.hasNotif ? 1.0 : 0.0
                 Behavior on opacity { NumberAnimation { duration: 200 } }
 
-                // 1. Notification Icon with Urgency Dot
+                // 1. Notification Icon with Urgency Dot (Always visible in detached pill)
                 Item {
                     width: 16
                     height: 16
@@ -1190,7 +1191,7 @@ PanelWindow {
                     }
                 }
 
-                // 2. Summary / Title
+                // 2. Summary / Title (Fades in when expanded)
                 Text {
                     text: (notifDetachedPod.currentNotif && notifDetachedPod.currentNotif.summary) ? notifDetachedPod.currentNotif.summary : ""
                     font.family: Theme.defaultFontFamily
@@ -1199,6 +1200,9 @@ PanelWindow {
                     color: bar.fg
                     elide: Text.ElideRight
                     Layout.maximumWidth: 140
+                    opacity: bar.notifPillExpanded ? 1.0 : 0.0
+                    visible: opacity > 0.01
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
                 }
 
                 // 3. Dot Separator
@@ -1207,6 +1211,9 @@ PanelWindow {
                     font.family: Theme.defaultFontFamily
                     font.pixelSize: 12
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
+                    opacity: bar.notifPillExpanded ? 1.0 : 0.0
+                    visible: opacity > 0.01
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
                 }
 
                 // 4. App Name
@@ -1217,6 +1224,9 @@ PanelWindow {
                     font.weight: Font.Bold
                     font.letterSpacing: 0.6
                     color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                    opacity: bar.notifPillExpanded ? 1.0 : 0.0
+                    visible: opacity > 0.01
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
                 }
 
                 // 5. Dismiss Button (✕)
@@ -1225,6 +1235,9 @@ PanelWindow {
                     height: 18
                     radius: 9
                     color: closeNotifMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                    opacity: bar.notifPillExpanded ? 1.0 : 0.0
+                    visible: opacity > 0.01
+                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
                     Behavior on color { ColorAnimation { duration: 120 } }
 
                     Text {
