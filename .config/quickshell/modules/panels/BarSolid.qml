@@ -1221,6 +1221,46 @@ PanelWindow {
                     border.width: 1
                     clip: true
 
+                    // Staggered Cascade Fan-Out Animation
+                    opacity: 0.0
+                    scale: 0.94
+                    transformOrigin: Item.Top
+
+                    Component.onCompleted: {
+                        appearTimer.start();
+                    }
+
+                    Timer {
+                        id: appearTimer
+                        interval: index * 50 // Staggered cascade per card
+                        running: true
+                        repeat: false
+                        onTriggered: {
+                            cardItem.opacity = 1.0;
+                            cardItem.scale = 1.0;
+                        }
+                    }
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 320
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 450
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                        }
+                    }
+                    Behavior on implicitHeight {
+                        NumberAnimation {
+                            duration: 350
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                        }
+                    }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     ColumnLayout {
