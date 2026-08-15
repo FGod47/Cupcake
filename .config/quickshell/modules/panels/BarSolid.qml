@@ -282,7 +282,7 @@ PanelWindow {
         }
     }
 
-    // Dynamic Island Notification state & Synchronized Push-Pull Motion
+    // Dynamic Island Notification state & Synchronized Single-Driver Motion
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
     property bool notifPillExpanded: false
@@ -300,12 +300,22 @@ PanelWindow {
     // Step 2: Smoothly unroll cards in synchronized push-pull motion
     Timer {
         id: expandCardsTimer
-        interval: 120
+        interval: 140
         repeat: false
         onTriggered: {
             if (bar.hasNotifPopup) {
                 bar.notifPillExpanded = true;
             }
+        }
+    }
+
+    // ── THE SINGLE DRIVER FOR SYNCHRONIZED LIQUID MOTION ──
+    property real notifAnimWidth: hasNotifPopup ? (notifPillExpanded ? 320 : 34) : 0
+    Behavior on notifAnimWidth {
+        NumberAnimation {
+            duration: 450
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
         }
     }
 
@@ -319,15 +329,7 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW
-        Behavior on width {
-            enabled: !expandAnim.running
-            NumberAnimation {
-                duration: 480
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
-            }
-        }
+        width: bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0)
         height: (bar.baseHeight + bar.extraHeight)
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1133,30 +1135,23 @@ PanelWindow {
             if (!hasNotif) showAllNotifs = false;
         }
 
-        width: hasNotif ? (bar.notifPillExpanded ? fullW : 34) : 0
+        width: bar.notifAnimWidth
         height: hasNotif ? (bar.notifPillExpanded ? fullH : bar.barHeight) : bar.barHeight
         y: bar.midY
-        x: (bar.barX + bar.barW) - width
-        opacity: hasNotif ? 1.0 : 0.0
+        x: (bar.barX + bar.barW) - bar.notifAnimWidth
+        opacity: (hasNotif && bar.notifAnimWidth > 5) ? 1.0 : 0.0
         visible: opacity > 0.01
 
-        Behavior on width {
-            NumberAnimation {
-                duration: 480
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
-            }
-        }
         Behavior on height {
             NumberAnimation {
-                duration: 480
+                duration: 450
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: 200
+                duration: 180
                 easing.type: Easing.OutQuad
             }
         }
@@ -1594,7 +1589,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW;
+                return bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0);
             });
             contentLayout.opacity = 1.0;
         }
