@@ -1221,7 +1221,11 @@ PanelWindow {
                     border.width: 1
                     clip: true
 
-                    // Staggered Cascade Fan-Out Animation
+                    // Staggered Cascade Slide From Top + Fan-Out Animation
+                    property real slideOffsetY: -18
+                    transform: Translate {
+                        y: cardItem.slideOffsetY
+                    }
                     opacity: 0.0
                     scale: 0.94
                     transformOrigin: Item.Top
@@ -1236,11 +1240,19 @@ PanelWindow {
                         running: true
                         repeat: false
                         onTriggered: {
+                            cardItem.slideOffsetY = 0;
                             cardItem.opacity = 1.0;
                             cardItem.scale = 1.0;
                         }
                     }
 
+                    Behavior on slideOffsetY {
+                        NumberAnimation {
+                            duration: 460
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
+                        }
+                    }
                     Behavior on opacity {
                         NumberAnimation {
                             duration: 320
