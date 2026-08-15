@@ -1123,7 +1123,10 @@ PanelWindow {
 
         readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
-        readonly property real targetH: Math.min(maxScreenH, notifStackCol.implicitHeight)
+        readonly property real footerH: (notifDetachedPod.popupsList.length > 3) ? 34 : 0
+        readonly property real maxListH: maxScreenH - footerH
+        readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
+        readonly property real targetTotalH: targetListH + (hasNotif ? footerH : 0)
         readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
@@ -1134,7 +1137,7 @@ PanelWindow {
         }
 
         width: bar.notifAnimWidth
-        height: hasNotif ? targetH : bar.barHeight
+        height: hasNotif ? targetTotalH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
@@ -1149,258 +1152,398 @@ PanelWindow {
             }
         }
 
-        Flickable {
-            id: notifFlickable
+        ColumnLayout {
+            id: podMainCol
             anchors.fill: parent
-            contentWidth: width
-            contentHeight: notifStackCol.implicitHeight
-            boundsBehavior: Flickable.StopAtBounds
-            clip: true
+            spacing: 6
 
-            WheelHandler {
-                onWheel: (event) => {
-                    let delta = event.angleDelta.y;
-                    notifFlickable.contentY = Math.max(0, Math.min(notifFlickable.contentHeight - notifFlickable.height, notifFlickable.contentY - delta));
-                }
-            }
+            // 1. SCROLLABLE LIST OF CARDS
+            Flickable {
+                id: notifFlickable
+                Layout.fillWidth: true
+                Layout.preferredHeight: notifDetachedPod.targetListH
+                contentWidth: width
+                contentHeight: notifStackCol.implicitHeight
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
 
-            // Scrollbar Indicator
-            Rectangle {
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                width: 3
-                radius: 1.5
-                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                visible: notifFlickable.contentHeight > notifFlickable.height
-                y: notifFlickable.contentHeight > notifFlickable.height ? (notifFlickable.contentY * (notifFlickable.height - height) / (notifFlickable.contentHeight - notifFlickable.height)) : 0
-                height: notifFlickable.contentHeight > 0 ? Math.max(20, notifFlickable.height * (notifFlickable.height / notifFlickable.contentHeight)) : 20
-                opacity: (notifFlickable.moving || notifDetachedPod.showAllNotifs) ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
-            }
-
-            // Stack of Notification Cards + In-Place Expand/Collapse
-            ColumnLayout {
-                id: notifStackCol
-                width: notifFlickable.width
-                spacing: 6
-
-            Repeater {
-                model: notifDetachedPod.cardCount
-                delegate: Rectangle {
-                    id: cardItem
-                    readonly property int itemIdx: index
-                    readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
-                    readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
-
-                    function getCleanAppTag(notif) {
-                        if (!notif) return "SYSTEM";
-                        let summary = (notif.summary || "").toLowerCase();
-                        let body = (notif.body || "").toLowerCase();
-                        let app = (notif.appName || "").trim();
-                        if (summary.includes("screenshot") || body.includes("/screenshot/")) return "SCREENSHOT";
-                        if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
-                        return app.toUpperCase();
+                WheelHandler {
+                    onWheel: (event) => {
+                        let delta = event.angleDelta.y;
+                        notifFlickable.contentY = Math.max(0, Math.min(notifFlickable.contentHeight - notifFlickable.height, notifFlickable.contentY - delta));
                     }
+                }
 
-                    function getCompactPreview(notif) {
-                        if (!notif) return "";
-                        let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                        let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                        let app = (notif.appName || "").toLowerCase();
+                // Scrollbar Indicator
+                Rectangle {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 2
+                    width: 3
+                    radius: 1.5
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
+                    visible: notifFlickable.contentHeight > notifFlickable.height
+                    y: notifFlickable.contentHeight > notifFlickable.height ? (notifFlickable.contentY * (notifFlickable.height - height) / (notifFlickable.contentHeight - notifFlickable.height)) : 0
+                    height: notifFlickable.contentHeight > 0 ? Math.max(20, notifFlickable.height * (notifFlickable.height / notifFlickable.contentHeight)) : 20
+                    opacity: (notifFlickable.moving || notifDetachedPod.showAllNotifs) ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                }
 
-                        // 1. File paths (e.g. screenshots / downloads / images) -> show clean filename only
-                        if (body.startsWith("/") || body.includes("/Screenshot/") || body.includes("/Pictures/") || body.includes("/Downloads/")) {
-                            let parts = body.split('/');
-                            let filename = parts[parts.length - 1] || "";
-                            if (filename.length > 0) {
-                                if (summary.toLowerCase().includes("screenshot") || summary.toLowerCase() === "saved") {
+                // Stack of Notification Cards
+                ColumnLayout {
+                    id: notifStackCol
+                    width: notifFlickable.width
+                    spacing: 6
+
+                    Repeater {
+                        model: notifDetachedPod.cardCount
+                        delegate: Rectangle {
+                            id: cardItem
+                            readonly property int itemIdx: index
+                            readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
+                            readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
+
+                            function getCleanAppTag(notif) {
+                                if (!notif) return "SYSTEM";
+                                let summary = (notif.summary || "").toLowerCase();
+                                let body = (notif.body || "").toLowerCase();
+                                let app = (notif.appName || "").trim();
+                                if (summary.includes("screenshot") || body.includes("/screenshot/")) return "SCREENSHOT";
+                                if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
+                                return app.toUpperCase();
+                            }
+
+                            function getCompactPreview(notif) {
+                                if (!notif) return "";
+                                let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                                let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                                let app = (notif.appName || "").toLowerCase();
+
+                                // 1. File paths (e.g. screenshots / downloads / images) -> show clean filename only
+                                if (body.startsWith("/") || body.includes("/Screenshot/") || body.includes("/Pictures/") || body.includes("/Downloads/")) {
+                                    let parts = body.split('/');
+                                    let filename = parts[parts.length - 1] || "";
+                                    if (filename.length > 0) {
+                                        if (summary.toLowerCase().includes("screenshot") || summary.toLowerCase() === "saved") {
+                                            return "Saved • " + filename;
+                                        }
+                                        return (summary ? (summary + " • ") : "") + filename;
+                                    }
+                                }
+
+                                // 2. Screenshot summary with file in body
+                                if (summary.toLowerCase().includes("screenshot") && body) {
+                                    let parts = body.split('/');
+                                    let filename = parts[parts.length - 1] || body;
                                     return "Saved • " + filename;
                                 }
-                                return (summary ? (summary + " • ") : "") + filename;
+
+                                // 3. Chat / Messenger (e.g. Alex: "Are we still meeting for coffee?")
+                                if (body && summary && body !== summary) {
+                                    if (["telegram", "discord", "slack", "signal", "whatsapp", "messages"].indexOf(app) !== -1 || summary.length <= 18) {
+                                        return summary + ": " + body;
+                                    }
+                                    return summary + " • " + body;
+                                }
+
+                                return summary || body;
                             }
-                        }
 
-                        // 2. Screenshot summary with file in body
-                        if (summary.toLowerCase().includes("screenshot") && body) {
-                            let parts = body.split('/');
-                            let filename = parts[parts.length - 1] || body;
-                            return "Saved • " + filename;
-                        }
-
-                        // 3. Chat / Messenger (e.g. Alex: "Are we still meeting for coffee?")
-                        if (body && summary && body !== summary) {
-                            if (["telegram", "discord", "slack", "signal", "whatsapp", "messages"].indexOf(app) !== -1 || summary.length <= 18) {
-                                return summary + ": " + body;
+                            function getExpandedHeadline(notif) {
+                                if (!notif) return "";
+                                let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                                let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                                if (summary.toLowerCase().includes("screenshot") && (body.startsWith("/") || body.includes(".png"))) {
+                                    let parts = body.split('/');
+                                    let filename = parts[parts.length - 1] || "";
+                                    return filename ? ("Saved • " + filename) : summary;
+                                }
+                                return summary || body;
                             }
-                            return summary + " • " + body;
-                        }
-
-                        return summary || body;
-                    }
-
-                    function getExpandedHeadline(notif) {
-                        if (!notif) return "";
-                        let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                        let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                        if (summary.toLowerCase().includes("screenshot") && (body.startsWith("/") || body.includes(".png"))) {
-                            let parts = body.split('/');
-                            let filename = parts[parts.length - 1] || "";
-                            return filename ? ("Saved • " + filename) : summary;
-                        }
-                        return summary || body;
-                    }
-                    
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: isCardHovered ? (bar.barHeight + summaryHeadlineText.implicitHeight + expandedDetailsCol.implicitHeight + 20) : bar.barHeight
-                    implicitHeight: Layout.preferredHeight
-                    radius: isCardHovered ? 15 : bar.startRadius
-                    color: notifDetachedPod.cardBg
-                    border.width: isCardHovered ? 1 : 0
-                    border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25) : "transparent"
-                    clip: true
-                    opacity: 1.0
-
-                    // Staggered Cascade Slide From Top Animation
-                    property real slideOffsetY: -20
-                    transform: Translate {
-                        y: cardItem.slideOffsetY
-                    }
-                    transformOrigin: Item.Top
-
-                    Component.onCompleted: {
-                        appearTimer.start();
-                    }
-
-                    Timer {
-                        id: appearTimer
-                        interval: index * 60 // Staggered cascade per card
-                        running: true
-                        repeat: false
-                        onTriggered: {
-                            cardItem.slideOffsetY = 0;
-                        }
-                    }
-
-                    Behavior on slideOffsetY {
-                        NumberAnimation {
-                            duration: 820
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                        }
-                    }
-                    Behavior on Layout.preferredHeight {
-                        NumberAnimation {
-                            duration: 720
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                        }
-                    }
-                    Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                    Behavior on border.color { ColorAnimation { duration: 250 } }
-
-                    // 1. Header & Controls Row
-                    RowLayout {
-                        id: headerRow
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        height: bar.barHeight
-                        anchors.leftMargin: 13
-                        anchors.rightMargin: 13
-                        spacing: 8
-
-                        Rectangle {
-                            id: urgencyDot
-                            width: 6
-                            height: 6
-                            radius: 3
-                            color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            id: notifAppTag
-                            text: cardItem.getCleanAppTag(cardItem.notifData)
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 10
-                            font.weight: Font.DemiBold
-                            font.letterSpacing: 1.4
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        // Flexible space for morphing headline
-                        Item {
+                            
                             Layout.fillWidth: true
-                        }
+                            Layout.preferredHeight: isCardHovered ? (bar.barHeight + summaryHeadlineText.implicitHeight + expandedDetailsCol.implicitHeight + 20) : bar.barHeight
+                            implicitHeight: Layout.preferredHeight
+                            radius: isCardHovered ? 15 : bar.startRadius
+                            color: notifDetachedPod.cardBg
+                            border.width: isCardHovered ? 1 : 0
+                            border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25) : "transparent"
+                            clip: true
+                            opacity: 1.0
 
-                        // Circle Countdown Timer Ring
-                        Shape {
-                            width: 14
-                            height: 14
-                            Layout.alignment: Qt.AlignVCenter
-                            layer.enabled: true
-                            layer.samples: 4
-                            opacity: cardItem.isCardHovered ? 0.35 : 0.9
-                            Behavior on opacity { NumberAnimation { duration: 250 } }
+                            // Staggered Cascade Slide From Top Animation
+                            property real slideOffsetY: -20
+                            transform: Translate {
+                                y: cardItem.slideOffsetY
+                            }
+                            transformOrigin: Item.Top
 
-                            ShapePath {
-                                strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
-                                strokeWidth: 1.5
-                                fillColor: "transparent"
-                                capStyle: ShapePath.RoundCap
+                            Component.onCompleted: {
+                                appearTimer.start();
+                            }
 
-                                PathAngleArc {
-                                    centerX: 7
-                                    centerY: 7
-                                    radiusX: 5
-                                    radiusY: 5
-                                    startAngle: 0
-                                    sweepAngle: 360
+                            Timer {
+                                id: appearTimer
+                                interval: index * 60 // Staggered cascade per card
+                                running: true
+                                repeat: false
+                                onTriggered: {
+                                    cardItem.slideOffsetY = 0;
                                 }
                             }
 
-                            ShapePath {
-                                strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
-                                strokeWidth: 1.5
-                                fillColor: "transparent"
-                                capStyle: ShapePath.RoundCap
-
-                                PathAngleArc {
-                                    centerX: 7
-                                    centerY: 7
-                                    radiusX: 5
-                                    radiusY: 5
-                                    startAngle: -90
-                                    sweepAngle: -360 * cardItem.timerProgress
+                            Behavior on slideOffsetY {
+                                NumberAnimation {
+                                    duration: 820
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                                 }
                             }
-                        }
+                            Behavior on Layout.preferredHeight {
+                                NumberAnimation {
+                                    duration: 720
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                }
+                            }
+                            Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                            Behavior on border.color { ColorAnimation { duration: 250 } }
 
-                        // Dismiss button (✕)
-                        Rectangle {
-                            width: 16
-                            height: 16
-                            radius: 8
-                            color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            Layout.alignment: Qt.AlignVCenter
+                            // 1. Header & Controls Row
+                            RowLayout {
+                                id: headerRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                height: bar.barHeight
+                                anchors.leftMargin: 13
+                                anchors.rightMargin: 13
+                                spacing: 8
 
+                                Rectangle {
+                                    id: urgencyDot
+                                    width: 6
+                                    height: 6
+                                    radius: 3
+                                    color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
+                                    Layout.alignment: Qt.AlignVCenter
+                                }
+
+                                Text {
+                                    id: notifAppTag
+                                    text: cardItem.getCleanAppTag(cardItem.notifData)
+                                    font.family: Theme.appFontMono
+                                    font.pixelSize: 10
+                                    font.weight: Font.DemiBold
+                                    font.letterSpacing: 1.4
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                    Layout.alignment: Qt.AlignVCenter
+                                }
+
+                                // Flexible space for morphing headline
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                // Circle Countdown Timer Ring
+                                Shape {
+                                    width: 14
+                                    height: 14
+                                    Layout.alignment: Qt.AlignVCenter
+                                    layer.enabled: true
+                                    layer.samples: 4
+                                    opacity: cardItem.isCardHovered ? 0.35 : 0.9
+                                    Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                                    ShapePath {
+                                        strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                                        strokeWidth: 1.5
+                                        fillColor: "transparent"
+                                        capStyle: ShapePath.RoundCap
+
+                                        PathAngleArc {
+                                            centerX: 7
+                                            centerY: 7
+                                            radiusX: 5
+                                            radiusY: 5
+                                            startAngle: 0
+                                            sweepAngle: 360
+                                        }
+                                    }
+
+                                    ShapePath {
+                                        strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                                        strokeWidth: 1.5
+                                        fillColor: "transparent"
+                                        capStyle: ShapePath.RoundCap
+
+                                        PathAngleArc {
+                                            centerX: 7
+                                            centerY: 7
+                                            radiusX: 5
+                                            radiusY: 5
+                                            startAngle: -90
+                                            sweepAngle: -360 * cardItem.timerProgress
+                                        }
+                                    }
+                                }
+
+                                // Dismiss button (✕)
+                                Rectangle {
+                                    width: 16
+                                    height: 16
+                                    radius: 8
+                                    color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                                    Behavior on color { ColorAnimation { duration: 120 } }
+                                    Layout.alignment: Qt.AlignVCenter
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\ueb55"
+                                        font.family: bar.fontName
+                                        font.pixelSize: 9
+                                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    }
+
+                                    MouseArea {
+                                        id: dismissCardMa
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            if (cardItem.notifData) cardItem.notifData.dismiss();
+                                            let curList = notifDetachedPod.popupsList.slice();
+                                            curList.splice(cardItem.itemIdx, 1);
+                                            globalState.popups = curList;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 2. Continuous Morphing Summary Headline (Smoothly shifts between compact row and expanded title)
                             Text {
-                                anchors.centerIn: parent
-                                text: "\ueb55"
-                                font.family: bar.fontName
-                                font.pixelSize: 9
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                id: summaryHeadlineText
+                                x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
+                                y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
+                                width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
+                                
+                                text: cardItem.isCardHovered ? cardItem.getExpandedHeadline(cardItem.notifData) : cardItem.getCompactPreview(cardItem.notifData)
+                                font.family: Theme.appFontMono
+                                font.pixelSize: cardItem.isCardHovered ? 12 : 11
+                                font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
+                                color: bar.fg
+                                elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
+                                wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
+
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 720
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+                                Behavior on y {
+                                    NumberAnimation {
+                                        duration: 720
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+                                Behavior on width {
+                                    NumberAnimation {
+                                        duration: 720
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+                                Behavior on font.pixelSize { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                            }
+
+                            // 3. Expanded Details Section (Divider Line + Body Text)
+                            ColumnLayout {
+                                id: expandedDetailsCol
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.top: summaryHeadlineText.bottom
+                                anchors.leftMargin: 13
+                                anchors.rightMargin: 13
+                                anchors.topMargin: 6
+                                spacing: 6
+                                visible: cardItem.isCardHovered || opacity > 0.01
+                                opacity: cardItem.isCardHovered ? 1.0 : 0.0
+
+                                transform: Translate {
+                                    y: cardItem.isCardHovered ? 0 : -8
+                                    Behavior on y {
+                                        NumberAnimation {
+                                            duration: 720
+                                            easing.type: Easing.BezierSpline
+                                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                        }
+                                    }
+                                }
+
+                                Behavior on opacity {
+                                    NumberAnimation {
+                                        duration: 500
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+
+                                // Divider Line
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 1
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                                }
+
+                                // Full Body Description Text
+                                Text {
+                                    Layout.fillWidth: true
+                                    visible: text !== ""
+                                    text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
+                                    font.family: Theme.appFontMono
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                    wrapMode: Text.Wrap
+                                    maximumLineCount: 3
+                                    elide: Text.ElideRight
+                                    lineHeight: 1.25
+                                }
+                            }
+
+                            property real timerProgress: 1.0
+                            property int expireMs: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
+
+                            NumberAnimation on timerProgress {
+                                id: progressAnim
+                                from: 1.0
+                                to: 0.0
+                                duration: cardItem.expireMs
+                                running: true
+                                onFinished: {
+                                    if (cardItem.notifData) {
+                                        cardItem.notifData.dismiss();
+                                    }
+                                    let curList = notifDetachedPod.popupsList.slice();
+                                    curList.splice(cardItem.itemIdx, 1);
+                                    globalState.popups = curList;
+                                }
                             }
 
                             MouseArea {
-                                id: dismissCardMa
+                                id: cardMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (cardItem.notifData) cardItem.notifData.dismiss();
+                                propagateComposedEvents: true
+                                onClicked: (mouse) => {
+                                    if (cardItem.notifData) {
+                                        if (cardItem.notifData.actions && cardItem.notifData.actions.length > 0) {
+                                            cardItem.notifData.actions[0].trigger();
+                                        }
+                                        cardItem.notifData.dismiss();
+                                    }
                                     let curList = notifDetachedPod.popupsList.slice();
                                     curList.splice(cardItem.itemIdx, 1);
                                     globalState.popups = curList;
@@ -1408,153 +1551,11 @@ PanelWindow {
                             }
                         }
                     }
-
-                    // 2. Continuous Morphing Summary Headline (Smoothly shifts between compact row and expanded title)
-                    Text {
-                        id: summaryHeadlineText
-                        x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
-                        y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
-                        width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
-                        
-                        text: cardItem.isCardHovered ? cardItem.getExpandedHeadline(cardItem.notifData) : cardItem.getCompactPreview(cardItem.notifData)
-                        font.family: Theme.appFontMono
-                        font.pixelSize: cardItem.isCardHovered ? 12 : 11
-                        font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
-                        color: bar.fg
-                        elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
-                        wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
-
-                        Behavior on x {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on y {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on font.pixelSize { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                    }
-
-                    // 3. Expanded Details Section (Divider Line + Body Text)
-                    ColumnLayout {
-                        id: expandedDetailsCol
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: summaryHeadlineText.bottom
-                        anchors.leftMargin: 13
-                        anchors.rightMargin: 13
-                        anchors.topMargin: 6
-                        spacing: 6
-                        visible: cardItem.isCardHovered || opacity > 0.01
-                        opacity: cardItem.isCardHovered ? 1.0 : 0.0
-
-                        transform: Translate {
-                            y: cardItem.isCardHovered ? 0 : -8
-                            Behavior on y {
-                                NumberAnimation {
-                                    duration: 720
-                                    easing.type: Easing.BezierSpline
-                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                                }
-                            }
-                        }
-
-                        Behavior on opacity {
-                            NumberAnimation {
-                                duration: 500
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-
-                        // Divider Line
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                        }
-
-                        // Full Body Description Text
-                        Text {
-                            Layout.fillWidth: true
-                            visible: text !== ""
-                            text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                            wrapMode: Text.Wrap
-                            maximumLineCount: 3
-                            elide: Text.ElideRight
-                            lineHeight: 1.25
-                        }
-                    }
-
-                    property real timerProgress: 1.0
-                    property int expireMs: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
-
-                    NumberAnimation on timerProgress {
-                        id: progressAnim
-                        from: 1.0
-                        to: 0.0
-                        duration: cardItem.expireMs
-                        running: !cardItem.isCardHovered && bar.hasNotifPopup
-                    }
-
-                    // Auto-Disappearing Timer per notification (pauses on hover)
-                    Timer {
-                        id: cardExpireTimer
-                        interval: cardItem.expireMs
-                        running: !cardItem.isCardHovered && bar.hasNotifPopup
-                        repeat: false
-                        onTriggered: {
-                            if (!cardItem.isCardHovered && cardItem.notifData) {
-                                cardItem.notifData.dismiss();
-                                let curList = notifDetachedPod.popupsList.slice();
-                                let idx = curList.indexOf(cardItem.notifData);
-                                if (idx >= 0) curList.splice(idx, 1);
-                                globalState.popups = curList;
-                            }
-                        }
-                    }
-
-                    // Click to activate / open
-                    MouseArea {
-                        id: cardMa
-                        anchors.fill: parent
-                        z: -1
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            if (cardItem.notifData) {
-                                if (cardItem.notifData.actions && cardItem.notifData.actions.length > 0) {
-                                    cardItem.notifData.invokeAction(cardItem.notifData.actions[0].id);
-                                } else {
-                                    cardItem.notifData.dismiss();
-                                }
-                            }
-                            let curList = notifDetachedPod.popupsList.slice();
-                            curList.splice(cardItem.itemIdx, 1);
-                            globalState.popups = curList;
-                        }
-                    }
                 }
             }
 
-            // ── IN-PLACE MORE / LESS CONTROLS ──
-            // 1. More Button (Unrolls all notifications in-place right here)
+            // 2. PINNED / CONSTANT CONTROLS (ALWAYS VISIBLE - NEVER SCROLLED AWAY!)
+            // 2a. More Button (Unrolls all notifications in-place)
             Rectangle {
                 visible: !notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
                 Layout.fillWidth: true
@@ -1596,7 +1597,7 @@ PanelWindow {
                 }
             }
 
-            // 2. Expanded Footer: Show Less & Clear All
+            // 2b. Expanded Fixed Footer: Show Less & Clear All (Pinned at bottom, zero scrolling required!)
             RowLayout {
                 visible: notifDetachedPod.showAllNotifs && notifDetachedPod.popupsList.length > 3
                 Layout.fillWidth: true
@@ -1691,7 +1692,6 @@ PanelWindow {
             }
         }
     }
-}
     // ─────────────────────────────────────────────────────
     //  1. FORWARD EXPANSION ANIMATION (Cupcake Pill -> Solid Bar)
     // ─────────────────────────────────────────────────────
