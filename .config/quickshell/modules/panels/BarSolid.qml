@@ -318,13 +318,13 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW
+        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW
         Behavior on width {
             enabled: !expandAnim.running
             NumberAnimation {
-                duration: 380
+                duration: 480
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+                easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
             }
         }
         height: (bar.baseHeight + bar.extraHeight)
@@ -1133,9 +1133,9 @@ PanelWindow {
 
         Behavior on width {
             NumberAnimation {
-                duration: 420
+                duration: 520
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+                easing.bezierCurve: [0.2, 0.0, 0.0, 1.0, 1.0, 1.0]
             }
         }
         Behavior on opacity {
@@ -1337,7 +1337,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW;
+                return bar.hasNotifPopup ? (bar.barW - notifDetachedPod.fullW - 8) : bar.barW;
             });
             contentLayout.opacity = 1.0;
         }
