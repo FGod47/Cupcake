@@ -317,8 +317,15 @@ PanelWindow {
         y: bar.midY
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.barW
-        Behavior on width { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+        width: bar.hasNotifPopup ? (bar.barW - notifDetachedPod.width - 8) : bar.barW
+        Behavior on width {
+            enabled: !expandAnim.running
+            NumberAnimation {
+                duration: 380
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+            }
+        }
         height: (bar.baseHeight + bar.extraHeight)
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1073,10 +1080,11 @@ PanelWindow {
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var currentNotif: bar.notifPopups && bar.notifPopups.length > 0 ? bar.notifPopups[0] : null
 
-        width: hasNotif ? Math.min(380, notifRowLayout.implicitWidth + 24) : 34
+        readonly property real targetW: Math.min(280, notifRowLayout.implicitWidth + 24)
+        width: hasNotif ? targetW : 34
         height: bar.barHeight
         y: bar.midY
-        x: hasNotif ? (solidBar.x + solidBar.width + 8) : (solidBar.x + solidBar.width - 20)
+        x: hasNotif ? (bar.barX + bar.barW - width) : (bar.barX + bar.barW - 34)
         opacity: hasNotif ? 1.0 : 0.0
         visible: opacity > 0.01
 
