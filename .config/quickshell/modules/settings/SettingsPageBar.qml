@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import "../../theme"
 import Quickshell
 import Quickshell.Io
@@ -176,64 +177,79 @@ Item {
                 color: "#121316"
                 border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
                 border.width: 1
-                clip: true
 
-                // Background wallpaper image / poster
-                Image {
-                    id: wallImg
-                    anchors.fill: parent
-                    source: root.getWallpaperPreviewSource(root.wallpaperPath)
-                    fillMode: Image.PreserveAspectCrop
-                    asynchronous: true
-                    opacity: 0.88
-                    onStatusChanged: {
-                        if (status === Image.Error && root.wallpaperPath) {
-                            let parts = root.wallpaperPath.split('/');
-                            let fname = parts[parts.length - 1];
-                            let altSource = "file://" + Quickshell.env("HOME") + "/.cache/cupcake/wall_thumbs/" + fname;
-                            if (source.toString() !== altSource) {
-                                source = altSource;
-                            }
-                        }
-                    }
-                }
-
-                // Fallback / artistic gradient backdrop matching reference screenshot
+                // Rounded corner mask to ensure 100% smooth clipping on all backends
                 Rectangle {
+                    id: previewMask
                     anchors.fill: parent
-                    visible: !wallImg.visible
-                    gradient: Gradient {
-                        orientation: Gradient.Horizontal
-                        GradientStop { position: 0.0; color: "#16384C" }
-                        GradientStop { position: 0.45; color: "#544642" }
-                        GradientStop { position: 0.80; color: "#8E2B24" }
-                        GradientStop { position: 1.0; color: "#2B1115" }
-                    }
-
-                    Canvas {
-                        anchors.fill: parent
-                        opacity: 0.18
-                        onPaint: {
-                            let ctx = getContext("2d");
-                            ctx.strokeStyle = "rgba(255,255,255,0.4)";
-                            ctx.lineWidth = 1;
-                            for (let x = -400; x < width + 400; x += 8) {
-                                ctx.beginPath();
-                                ctx.moveTo(x, 0);
-                                ctx.lineTo(x + 400, height);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-                }
-
-                // Inner dark vignette for realistic depth
-                Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                    border.color: Qt.rgba(0, 0, 0, 0.4)
-                    border.width: 1
                     radius: 18
+                    visible: false
+                    layer.enabled: true
+                }
+
+                Item {
+                    anchors.fill: parent
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: previewMask
+                    }
+
+                    // Background wallpaper image / poster
+                    Image {
+                        id: wallImg
+                        anchors.fill: parent
+                        source: root.getWallpaperPreviewSource(root.wallpaperPath)
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        opacity: 0.88
+                        onStatusChanged: {
+                            if (status === Image.Error && root.wallpaperPath) {
+                                let parts = root.wallpaperPath.split('/');
+                                let fname = parts[parts.length - 1];
+                                let altSource = "file://" + Quickshell.env("HOME") + "/.cache/cupcake/wall_thumbs/" + fname;
+                                if (source.toString() !== altSource) {
+                                    source = altSource;
+                                }
+                            }
+                        }
+                    }
+
+                    // Fallback / artistic gradient backdrop matching reference screenshot
+                    Rectangle {
+                        anchors.fill: parent
+                        visible: !wallImg.visible || wallImg.status !== Image.Ready
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: "#16384C" }
+                            GradientStop { position: 0.45; color: "#544642" }
+                            GradientStop { position: 0.80; color: "#8E2B24" }
+                            GradientStop { position: 1.0; color: "#2B1115" }
+                        }
+
+                        Canvas {
+                            anchors.fill: parent
+                            opacity: 0.18
+                            onPaint: {
+                                let ctx = getContext("2d");
+                                ctx.strokeStyle = "rgba(255,255,255,0.4)";
+                                ctx.lineWidth = 1;
+                                for (let x = -400; x < width + 400; x += 8) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(x, 0);
+                                    ctx.lineTo(x + 400, height);
+                                    ctx.stroke();
+                                }
+                            }
+                        }
+                    }
+
+                    // Inner dark vignette for realistic depth
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "transparent"
+                        border.color: Qt.rgba(0, 0, 0, 0.4)
+                        border.width: 1
+                    }
                 }
 
                 // ── LIVE FULL-WIDTH CUPCAKE SOLID BAR ──────────────────────
@@ -268,13 +284,6 @@ Item {
                         anchors.rightMargin: 12
                         visible: root.barPosition === "Above" || root.barPosition === "Below"
                         spacing: 8
-
-                        // Cupcake Logo Pill
-                        Text {
-                            text: "🧁"
-                            font.pixelSize: 13
-                            Layout.alignment: Qt.AlignVCenter
-                        }
 
                         // Workspaces halo dots
                         Row {
