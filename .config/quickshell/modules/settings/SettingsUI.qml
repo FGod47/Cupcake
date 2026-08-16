@@ -417,6 +417,7 @@ Item {
                     
                     GroupLabel { label: "Preferences" }
                     RailItem { icon: "\ueb01"; label: "Appearance"; pageIndex: 1 }    // palette
+                    RailItem { icon: "\uead7"; label: "Bar"; pageIndex: 6 }           // layout-navbar
                     RailItem { icon: "\uf28e"; label: "Dock"; pageIndex: 4 }          // layout-navbar-expand
                     RailItem { icon: "\uebc5"; label: "Fonts"; pageIndex: 2 }         // typography
                     RailItem { icon: "\ueb20"; label: "General"; pageIndex: 0 }       // settings
@@ -603,6 +604,7 @@ Item {
                                     case 2: return "SettingsPageFonts.qml";
                                     case 4: return "SettingsPageDock.qml";
                                     case 5: return "SettingsPageWallpaper.qml";
+                                    case 6: return "SettingsPageBar.qml";
                                     case 7: return "SettingsPageSound.qml";
                                     case 10: return "SettingsPageSystem.qml";
                                     case 11: return "SettingsPageUpdates.qml";
