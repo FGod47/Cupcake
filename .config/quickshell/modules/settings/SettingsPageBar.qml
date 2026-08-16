@@ -385,9 +385,6 @@ Item {
                                 }
                             }
 
-                            // Dot Separator
-                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
-
                             // Clipboard
                             Text {
                                 text: "\uea6d"

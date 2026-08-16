@@ -913,23 +913,11 @@ PanelWindow {
                 }
             }
 
-            // ── RIGHT: Dot Separator (Tray -> Clipboard) ────────
-            Rectangle {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 8
-                Layout.rightMargin: 8
-                width: 3
-                height: 3
-                radius: 1.5
-                color: Qt.rgba(fg.r, fg.g, fg.b, 0.3)
-                opacity: 1.0
-                visible: true
-            }
-
             // ── RIGHT: Clipboard Pill ────────
             Item {
                 id: clipboardItem
                 Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: sysTrayRepeater.count > 0 ? 6 : 0
                 height: 22
                 width: 22
                 Layout.preferredWidth: 22
