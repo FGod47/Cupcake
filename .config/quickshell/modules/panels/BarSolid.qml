@@ -142,8 +142,25 @@ PanelWindow {
     }
     property string fontName: "tabler-icons"
 
-    property real barOpacity: 0.50
-    property bool barTransparency: true
+    property real barOpacity: 1.0
+    property bool barTransparency: false
+
+    Process {
+        id: initBarConfigs
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let p = text.trim().split('---');
+                if (p[0] && p[0].trim() !== "") bar.barTransparency = (p[0].trim() !== "false");
+                if (p[1] && p[1].trim() !== "") {
+                    let v = parseFloat(p[1].trim());
+                    if (!isNaN(v)) bar.barOpacity = v;
+                }
+            }
+        }
+    }
 
     FileView {
         id: barOpacityFileView
@@ -185,7 +202,7 @@ PanelWindow {
 
     property color pillColor: Theme.isPitchBlack
         ? "#000000"
-        : (bar.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : bg)
+        : (bar.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : Qt.rgba(bg.r, bg.g, bg.b, 1.0))
 
     // Hardware data
     property string cpuStr: "0"
