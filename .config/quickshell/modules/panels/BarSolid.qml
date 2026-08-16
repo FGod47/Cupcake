@@ -134,7 +134,51 @@ PanelWindow {
         source: Qt.resolvedUrl("file://" + Quickshell.env("HOME") + "/.local/share/fonts/tabler-icons.ttf")
     }
     property string fontName: "tabler-icons"
-    property color pillColor: Qt.rgba(bg.r, bg.g, bg.b, root.barOpacity)
+
+    property real barOpacity: 0.50
+    property bool barTransparency: true
+
+    FileView {
+        id: barOpacityFileView
+        path: Quickshell.env("HOME") + "/.config/cupcake/.bar_opacity"
+        watchChanges: true
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseFloat(t.trim());
+                if (!isNaN(v)) bar.barOpacity = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseFloat(t.trim());
+                if (!isNaN(v)) bar.barOpacity = v;
+            }
+        }
+    }
+
+    FileView {
+        id: barTransFileView
+        path: Quickshell.env("HOME") + "/.config/cupcake/.bar_transparency"
+        watchChanges: true
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                bar.barTransparency = (t.trim() !== "false");
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                bar.barTransparency = (t.trim() !== "false");
+            }
+        }
+    }
+
+    property color pillColor: Theme.isPitchBlack
+        ? "#000000"
+        : (bar.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : bg)
 
     // Hardware data
     property string cpuStr: "0"

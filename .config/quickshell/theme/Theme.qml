@@ -66,6 +66,8 @@ Item {
         }
     }
 
+    property bool isPitchBlack: false
+
     FileView {
         id: colorModeFileView
         path: themeSingleton.homeDir + "/.config/cupcake/.color_mode"
@@ -76,15 +78,19 @@ Item {
         onTextChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
-                themeSingleton.isDark = (t.trim() !== "light");
-                    console.log("Theme.isDark updated to: " + themeSingleton.isDark);
+                let s = t.trim().toLowerCase();
+                themeSingleton.isDark = (s !== "light");
+                themeSingleton.isPitchBlack = (s === "pitch-black" || s === "pitch black" || s === "black");
+                themeSingleton.readColorsImmediately();
             }
         }
         onLoadedChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
-                themeSingleton.isDark = (t.trim() !== "light");
-                    console.log("Theme.isDark updated to: " + themeSingleton.isDark);
+                let s = t.trim().toLowerCase();
+                themeSingleton.isDark = (s !== "light");
+                themeSingleton.isPitchBlack = (s === "pitch-black" || s === "pitch black" || s === "black");
+                themeSingleton.readColorsImmediately();
             }
         }
     }
@@ -136,6 +142,20 @@ Item {
     }
 
     function readColorsImmediately() {
+        if (themeSingleton.isPitchBlack) {
+            themeSingleton.colBackground = "#000000";
+            themeSingleton.colSurface = "#000000";
+            themeSingleton.colSurfaceContainer = "#000000";
+            themeSingleton.colSurfaceContainerHigh = "#0d0d0d";
+            themeSingleton.colSurfaceVariant = "#151515";
+            themeSingleton.colOnBackground = "#FFFFFF";
+            themeSingleton.colOnSurface = "#FFFFFF";
+            themeSingleton.colOnSurfaceVariant = "#B0B0B0";
+            themeSingleton.colOutline = "#2c2c2c";
+            themeSingleton.colPrimary = "#FFFFFF";
+            themeSingleton.colOnPrimary = "#000000";
+            return;
+        }
         var text = colorsFileView.text();
         if (text && text.trim().length > 0) {
             try {
