@@ -550,9 +550,9 @@ PanelWindow {
                 id: networkContainer
                 Layout.alignment: Qt.AlignVCenter
                 implicitWidth: networkRowContent.implicitWidth
-                implicitHeight: 20
+                implicitHeight: 26
                 Layout.preferredWidth: implicitWidth
-                clip: true
+                clip: false
                 opacity: 1.0
                 visible: true
 
@@ -566,7 +566,7 @@ PanelWindow {
 
                 Row {
                     id: networkRowContent
-                    height: 20
+                    height: 26
                     spacing: 5
                     anchors.verticalCenter: parent.verticalCenter
 
@@ -579,10 +579,10 @@ PanelWindow {
                         
                         readonly property bool isShown: forceVisible || bar.netDropdownOpen
                         visible: width > 0 || opacity > 0.01
-                        width: isShown ? 22 : 0
-                        height: 22
+                        width: isShown ? 24 : 0
+                        height: 24
                         anchors.verticalCenter: parent.verticalCenter
-                        clip: true
+                        clip: false
 
                         Behavior on width {
                             NumberAnimation {
