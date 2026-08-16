@@ -567,7 +567,7 @@ PanelWindow {
                 Row {
                     id: networkRowContent
                     height: 26
-                    spacing: 5
+                    spacing: 2
                     anchors.verticalCenter: parent.verticalCenter
 
                     // Helper component for interactive top bar connectivity icon
@@ -579,8 +579,8 @@ PanelWindow {
                         
                         readonly property bool isShown: forceVisible || bar.netDropdownOpen
                         visible: width > 0 || opacity > 0.01
-                        width: isShown ? 24 : 0
-                        height: 24
+                        width: isShown ? 20 : 0
+                        height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         clip: false
 
@@ -594,9 +594,9 @@ PanelWindow {
                         Rectangle {
                             id: iconBg
                             anchors.centerIn: parent
-                            width: 22
-                            height: 22
-                            radius: 11
+                            width: 20
+                            height: 20
+                            radius: 10
                             property bool isSelected: bar.netDropdownOpen && bar.netDropdownTab === tabId
                             color: isSelected ? Qt.rgba(fg.r, fg.g, fg.b, 0.16) : (netIconMa.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
                             scale: parent.isShown ? 1.0 : 0.7
