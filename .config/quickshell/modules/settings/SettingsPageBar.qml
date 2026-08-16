@@ -258,7 +258,7 @@ Item {
                     id: liveBar
                     x: root.barPosition === "Right" ? (parent.width - width - 14) : 14
                     y: root.barPosition === "Below" ? (parent.height - height - 14) : 14
-                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? 32 : (parent.width - 28 - (root.hideIsland ? 0 : 136))
+                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? 32 : (root.barPosition === "Below" ? (parent.width - 28) : (parent.width - 28 - (root.hideIsland ? 0 : 136)))
                     height: (root.barPosition === "Left" || root.barPosition === "Right") ? (parent.height - 28) : 32
                     radius: 16
 
@@ -436,18 +436,16 @@ Item {
                 // ── LIVE NOTIFICATION ISLAND CAPSULE (Right Side) ─────────
                 Rectangle {
                     x: parent.width - width - 14
-                    y: root.barPosition === "Below" ? (parent.height - height - 14) : 14
+                    y: 14
                     width: 120
                     height: 32
                     radius: 16
-                    visible: !root.hideIsland && (root.barPosition === "Above" || root.barPosition === "Below")
+                    visible: !root.hideIsland
                     color: root.barTransparency
                            ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.barOpacity)
                            : Theme.colSurfaceContainer
                     border.color: Qt.rgba(255, 255, 255, 0.12)
                     border.width: 1
-
-                    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
                     RowLayout {
                         anchors.fill: parent

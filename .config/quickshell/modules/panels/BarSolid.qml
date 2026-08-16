@@ -357,7 +357,7 @@ PanelWindow {
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        width: bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0)
+        width: bar.isBottom ? bar.barW : (bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0))
         height: (bar.baseHeight + bar.extraHeight)
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1155,7 +1155,7 @@ PanelWindow {
 
         width: bar.notifAnimWidth
         height: (hasNotif || bar.notifAnimWidth > 0.5) ? targetTotalH : bar.barHeight
-        y: bar.isBottom ? (solidBar.y + bar.barHeight - height) : bar.midY
+        y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: bar.notifAnimWidth > 2 ? 1.0 : 0.0
         visible: bar.notifAnimWidth > 0.5
