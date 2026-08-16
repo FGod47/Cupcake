@@ -335,17 +335,7 @@ Item {
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
                             }
 
-                            Rectangle {
-                                anchors.centerIn: previewDockRow
-                                width: previewDockRow.width + 8
-                                height: 22
-                                radius: 11
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
-                                border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.10)
-                                border.width: 1
-                                visible: root.barPosition === "Below"
-                                opacity: previewDockRow.opacity
-                            }
+
 
                             Row {
                                 id: previewDockRow
