@@ -15,8 +15,8 @@ Item {
     id: root
     readonly property string homeDir: Quickshell.env("HOME")
     property int windowRadius: 10
-    width: 868
-    height: 768
+    width: 1200
+    height: 900
     signal requestClose()
     
     property var font: {"family": Theme.monoFontFamily}

@@ -10,12 +10,12 @@ import "modules/common"
 Window {
     id: settingsWindow
     visible: true
-    width: 977
-    height: 806
+    width: 1200
+    height: 900
     minimumWidth: 800
     minimumHeight: 600
-    maximumWidth: 1200
-    maximumHeight: 900
+    maximumWidth: 1600
+    maximumHeight: 1200
     title: "Cupcake Settings"
     color: "transparent"
     flags: Qt.Window | Qt.FramelessWindowHint
