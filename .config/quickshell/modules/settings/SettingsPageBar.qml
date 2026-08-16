@@ -49,6 +49,19 @@ Item {
     property string wallpaperPath: ""
     property string currentTimeStr: ""
 
+    function getWallpaperPreviewSource(path) {
+        if (!path) return "";
+        let trimmed = path.trim();
+        if (trimmed === "") return "";
+        let isVideo = [".mp4", ".webm", ".mkv", ".mov", ".gif"].some(ext => trimmed.toLowerCase().endsWith(ext));
+        if (isVideo) {
+            let parts = trimmed.split('/');
+            let fname = parts[parts.length - 1];
+            return "file://" + Quickshell.env("HOME") + "/.cache/cupcake/wall_thumbs/" + fname + ".png";
+        }
+        return "file://" + trimmed;
+    }
+
     // Live clock updater
     Timer {
         interval: 1000
@@ -165,14 +178,24 @@ Item {
                 border.width: 1
                 clip: true
 
-                // Background wallpaper image / gradient
+                // Background wallpaper image / poster
                 Image {
                     id: wallImg
                     anchors.fill: parent
-                    source: (root.wallpaperPath && !root.wallpaperPath.endsWith(".mp4")) ? ("file://" + root.wallpaperPath) : ""
+                    source: root.getWallpaperPreviewSource(root.wallpaperPath)
                     fillMode: Image.PreserveAspectCrop
-                    visible: source !== ""
-                    opacity: 0.85
+                    asynchronous: true
+                    opacity: 0.88
+                    onStatusChanged: {
+                        if (status === Image.Error && root.wallpaperPath) {
+                            let parts = root.wallpaperPath.split('/');
+                            let fname = parts[parts.length - 1];
+                            let altSource = "file://" + Quickshell.env("HOME") + "/.cache/cupcake/wall_thumbs/" + fname;
+                            if (source.toString() !== altSource) {
+                                source = altSource;
+                            }
+                        }
+                    }
                 }
 
                 // Fallback / artistic gradient backdrop matching reference screenshot
