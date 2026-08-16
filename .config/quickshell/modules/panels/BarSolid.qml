@@ -1230,11 +1230,17 @@ PanelWindow {
                             return summary || body;
                         }
 
-                        function getExpandedHeadline(notif) {
+                        function getExpandedBody(notif) {
                             if (!notif) return "";
-                            let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
                             let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            return summary ? summary : body;
+                            let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                            if (body.startsWith("/") && (body.includes(".png") || body.includes(".jpg") || body.includes(".jpeg"))) {
+                                let lastSlash = body.lastIndexOf('/');
+                                let dir = body.substring(0, lastSlash);
+                                return dir ? ("Location: " + dir) : body;
+                            }
+                            if (body === summary) return "";
+                            return body;
                         }
                         
                         Layout.fillWidth: true
@@ -1303,125 +1309,93 @@ PanelWindow {
                                 opacity: cardItem.isCardHovered ? 0.35 : 0.9
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
 
-                            ShapePath {
-                                strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
-                                strokeWidth: 1.5
-                                fillColor: "transparent"
-                                capStyle: ShapePath.RoundCap
+                                ShapePath {
+                                    strokeColor: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                                    strokeWidth: 1.5
+                                    fillColor: "transparent"
+                                    capStyle: ShapePath.RoundCap
 
-                                PathAngleArc {
-                                    centerX: 7
-                                    centerY: 7
-                                    radiusX: 5
-                                    radiusY: 5
-                                    startAngle: 0
-                                    sweepAngle: 360
+                                    PathAngleArc {
+                                        centerX: 7
+                                        centerY: 7
+                                        radiusX: 5
+                                        radiusY: 5
+                                        startAngle: 0
+                                        sweepAngle: 360
+                                    }
+                                }
+
+                                ShapePath {
+                                    strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                                    strokeWidth: 1.5
+                                    fillColor: "transparent"
+                                    capStyle: ShapePath.RoundCap
+
+                                    PathAngleArc {
+                                        centerX: 7
+                                        centerY: 7
+                                        radiusX: 5
+                                        radiusY: 5
+                                        startAngle: -90
+                                        sweepAngle: -360 * cardItem.timerProgress
+                                    }
                                 }
                             }
 
-                            ShapePath {
-                                strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
-                                strokeWidth: 1.5
-                                fillColor: "transparent"
-                                capStyle: ShapePath.RoundCap
+                            // Dismiss button (✕)
+                            Rectangle {
+                                width: 16
+                                height: 16
+                                radius: 8
+                                color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
+                                Behavior on color { ColorAnimation { duration: 120 } }
+                                Layout.alignment: Qt.AlignVCenter
 
-                                PathAngleArc {
-                                    centerX: 7
-                                    centerY: 7
-                                    radiusX: 5
-                                    radiusY: 5
-                                    startAngle: -90
-                                    sweepAngle: -360 * cardItem.timerProgress
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "\ueb55"
+                                    font.family: bar.fontName
+                                    font.pixelSize: 9
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                }
+
+                                MouseArea {
+                                    id: dismissCardMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (cardItem.notifData) cardItem.notifData.dismiss();
+                                        let curList = notifDetachedPod.popupsList.slice();
+                                        curList.splice(cardItem.itemIdx, 1);
+                                        globalState.popups = curList;
+                                    }
                                 }
                             }
                         }
 
-                        // Dismiss button (✕)
-                        Rectangle {
-                            width: 16
-                            height: 16
-                            radius: 8
-                            color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
-                            Behavior on color { ColorAnimation { duration: 120 } }
-                            Layout.alignment: Qt.AlignVCenter
+                        // 2. Continuous Morphing Summary Headline (Same PNG text physically glides into place on expand/collapse)
+                        Text {
+                            id: summaryHeadlineText
+                            x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
+                            y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
+                            width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
+                            
+                            text: cardItem.getCompactPreview(cardItem.notifData)
+                            font.family: Theme.appFontMono
+                            font.pixelSize: cardItem.isCardHovered ? 12 : 11
+                            font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
+                            color: bar.fg
+                            elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
+                            wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
 
-                            Text {
-                                anchors.centerIn: parent
-                                text: "\ueb55"
-                                font.family: bar.fontName
-                                font.pixelSize: 9
-                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                            }
-
-                            MouseArea {
-                                id: dismissCardMa
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (cardItem.notifData) cardItem.notifData.dismiss();
-                                    let curList = notifDetachedPod.popupsList.slice();
-                                    curList.splice(cardItem.itemIdx, 1);
-                                    globalState.popups = curList;
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 720
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                                 }
                             }
-                        }
-                    }
-
-                    // 2. Continuous Morphing Summary Headline (Smoothly shifts between compact row and expanded title)
-                    Text {
-                        id: summaryHeadlineText
-                        x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
-                        y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
-                        width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (notifAppTag.x + notifAppTag.width + 8) - 52))
-                        
-                        text: cardItem.isCardHovered ? cardItem.getExpandedHeadline(cardItem.notifData) : cardItem.getCompactPreview(cardItem.notifData)
-                        font.family: Theme.appFontMono
-                        font.pixelSize: cardItem.isCardHovered ? 12 : 11
-                        font.weight: cardItem.isCardHovered ? Font.Bold : Font.DemiBold
-                        color: bar.fg
-                        elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
-                        wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
-
-                        Behavior on x {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on y {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                            }
-                        }
-                        Behavior on font.pixelSize { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                    }
-
-                    // 3. Expanded Details Section (Divider Line + Body Text)
-                    ColumnLayout {
-                        id: expandedDetailsCol
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: summaryHeadlineText.bottom
-                        anchors.leftMargin: 13
-                        anchors.rightMargin: 13
-                        anchors.topMargin: 6
-                        spacing: 6
-                        visible: cardItem.isCardHovered || opacity > 0.01
-                        opacity: cardItem.isCardHovered ? 1.0 : 0.0
-
-                        transform: Translate {
-                            y: cardItem.isCardHovered ? 0 : -8
                             Behavior on y {
                                 NumberAnimation {
                                     duration: 720
@@ -1429,37 +1403,69 @@ PanelWindow {
                                     easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                                 }
                             }
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 720
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                }
+                            }
+                            Behavior on font.pixelSize { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                         }
 
-                        Behavior on opacity {
-                            NumberAnimation {
-                                duration: 500
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                        // 3. Expanded Details Section (Divider Line + Body Text)
+                        ColumnLayout {
+                            id: expandedDetailsCol
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: summaryHeadlineText.bottom
+                            anchors.leftMargin: 13
+                            anchors.rightMargin: 13
+                            anchors.topMargin: 6
+                            spacing: 6
+                            visible: cardItem.isCardHovered || opacity > 0.01
+                            opacity: cardItem.isCardHovered ? 1.0 : 0.0
+
+                            transform: Translate {
+                                y: cardItem.isCardHovered ? 0 : -8
+                                Behavior on y {
+                                    NumberAnimation {
+                                        duration: 720
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+                            }
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                }
+                            }
+
+                            // Divider Line
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 1
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                            }
+
+                            // Full Body Description Text
+                            Text {
+                                Layout.fillWidth: true
+                                visible: text !== ""
+                                text: cardItem.getExpandedBody(cardItem.notifData)
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 11
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 3
+                                elide: Text.ElideRight
+                                lineHeight: 1.25
                             }
                         }
-
-                        // Divider Line
-                        Rectangle {
-                            Layout.fillWidth: true
-                            height: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
-                        }
-
-                        // Full Body Description Text
-                        Text {
-                            Layout.fillWidth: true
-                            visible: text !== ""
-                            text: (cardItem.notifData && cardItem.notifData.body) ? cardItem.notifData.body : ""
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
-                            wrapMode: Text.Wrap
-                            maximumLineCount: 3
-                            elide: Text.ElideRight
-                            lineHeight: 1.25
-                        }
-                    }
 
                     property real timerProgress: 1.0
                     property int expireMs: (cardItem.notifData && cardItem.notifData.expireTimeout > 0) ? cardItem.notifData.expireTimeout : 6000
