@@ -15,7 +15,7 @@ Item {
 
     readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
     y: bar.isBottom ? (solidBar.y - height - (isAttached ? 0 : 8)) : (isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8))
-    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
+    Behavior on y { enabled: !bar.isBottom; NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: bar.musicDropdownOpen
     property var player: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null

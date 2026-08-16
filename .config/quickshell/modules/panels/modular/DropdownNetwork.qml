@@ -19,7 +19,7 @@ Item {
     readonly property string fontName: bar.fontName
 
     y: bar.isBottom ? (solidBar.y - height - (isAttached ? 0 : 8)) : (isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8))
-    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
+    Behavior on y { enabled: !bar.isBottom; NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
 
     property bool menuExpanded: bar.netDropdownOpen
     readonly property int currentTab: bar.netDropdownTab // 1: Wi-Fi, 3: Bluetooth, 2: Hotspot, 0: Ethernet
