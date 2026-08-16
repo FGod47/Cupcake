@@ -15,7 +15,7 @@ Item {
     // Read saved configuration state
     Process {
         id: initBarSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_gap 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_gap 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_window_gap 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -37,6 +37,10 @@ Item {
                         let g = parseInt(parts[9].trim());
                         if (!isNaN(g)) root.barGap = g;
                     }
+                    if (parts[10] && parts[10].trim() !== "") {
+                        let wg = parseInt(parts[10].trim());
+                        if (!isNaN(wg)) root.barWindowGap = wg;
+                    }
                 }
             }
         }
@@ -46,6 +50,7 @@ Item {
     property bool barEnabled: true
     property string barPosition: "Above" // "Above", "Below", "Left", "Right"
     property int barGap: Theme.barGap !== undefined ? Theme.barGap : 10
+    property int barWindowGap: Theme.barWindowGap !== undefined ? Theme.barWindowGap : 0
     property string barMonitors: "all"
     property string dropdownStyle: Theme.barDropdownStyle !== "" ? Theme.barDropdownStyle : "Detached"
     property bool barTransparency: true
@@ -130,7 +135,7 @@ Item {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barPosition + "' > ~/.config/cupcake/.bar_position && echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap && echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barPosition + "' > ~/.config/cupcake/.bar_position && echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap && echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap && echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
                             statusCaptionAnim.restart();
                         }
                     }
@@ -164,13 +169,15 @@ Item {
                             root.barPosition = "Above";
                             root.barGap = 10;
                             Theme.barGap = 10;
+                            root.barWindowGap = 0;
+                            Theme.barWindowGap = 0;
                             root.dropdownStyle = "Detached";
                             root.barTransparency = true;
                             root.barOpacity = 0.50;
                             root.hideIsland = false;
                             root.clock24h = true;
                             root.showSeconds = false;
-                            Quickshell.execDetached(["bash", "-c", "echo 'Above' > ~/.config/cupcake/.bar_position && echo '10' > ~/.config/cupcake/.bar_gap && echo 'Detached' > ~/.config/cupcake/.bar_dropdown_style && echo 'true' > ~/.config/cupcake/.bar_transparency && echo '0.50' > ~/.config/cupcake/.bar_opacity && echo 'false' > ~/.config/cupcake/.hide_island && ~/.local/bin/apply-transparency"]);
+                            Quickshell.execDetached(["bash", "-c", "echo 'Above' > ~/.config/cupcake/.bar_position && echo '10' > ~/.config/cupcake/.bar_gap && echo '0' > ~/.config/cupcake/.bar_window_gap && echo 'Detached' > ~/.config/cupcake/.bar_dropdown_style && echo 'true' > ~/.config/cupcake/.bar_transparency && echo '0.50' > ~/.config/cupcake/.bar_opacity && echo 'false' > ~/.config/cupcake/.hide_island && ~/.local/bin/apply-transparency"]);
                             statusCaptionAnim.restart();
                         }
                     }
@@ -791,6 +798,46 @@ Item {
                         onPressedChanged: {
                             if (!pressed) {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap"]);
+                            }
+                        }
+                    }
+                }
+
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Bar Window Gap"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Extra distance between tiled windows and the bar (" + root.barWindowGap + "px)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 0; to: 40; stepSize: 1
+                        value: root.barWindowGap
+                        onMoved: {
+                            root.barWindowGap = Math.round(value);
+                            Theme.barWindowGap = root.barWindowGap;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap"]);
+                        }
+                        onValueChanged: {
+                            root.barWindowGap = Math.round(value);
+                            Theme.barWindowGap = root.barWindowGap;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap"]);
                             }
                         }
                     }

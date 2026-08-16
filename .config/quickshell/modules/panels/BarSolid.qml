@@ -31,7 +31,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen || globalState.clipboardOpen
     WlrLayershell.layer: WlrLayer.Top
-    exclusiveZone: bar.barHeight + bar.midY + (bar.midY > 0 ? 4 : 0)
+    exclusiveZone: Math.max(0, bar.barHeight + bar.midY + (Theme.barWindowGap !== undefined ? Theme.barWindowGap : 0))
     implicitHeight: bar.screen.height - 40
     color: "transparent"
     mask: Region {
