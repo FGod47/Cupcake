@@ -1470,6 +1470,7 @@ PanelWindow {
                         to: 0.0
                         duration: cardItem.expireMs
                         running: true
+                        paused: cardItem.isCardHovered || notifFlickable.moving
                         onFinished: {
                             if (cardItem.notifData) {
                                 cardItem.notifData.dismiss();
