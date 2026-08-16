@@ -47,13 +47,8 @@ Item {
     property bool clock24h: true
     property bool showSeconds: false
     property string wallpaperPath: ""
-    property string selectedTextColor: "#FFFFFF"
+    property string selectedTextColor: Theme.colOnSurface
     property string selectedAccentColor: Theme.colPrimary
-
-    // Text color palette presets (matching screenshot: White, Soft, Gold, Mint, Sky, Pink)
-    readonly property var textColors: ["#FFFFFF", "#E5E5E5", "#E5C07B", "#98C379", "#61AFEF", "#F4B8E4"]
-    // Accent color palette presets (matching screenshot: Royal Blue, Mint Green, Gold Orange, Crimson Red, Lavender Purple, Cyan)
-    readonly property var accentColors: ["#3E82F7", "#52C41A", "#FA8C16", "#F5222D", "#9254DE", "#13C2C2"]
 
     Flickable {
         anchors.fill: parent
@@ -561,107 +556,6 @@ Item {
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
                         }
-                    }
-                }
-
-                // ── CARD B: COLOURS & ACCENTS (MATCHING SCREENSHOT PALETTES) ──
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 180
-                    radius: 16
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.12)
-                    border.width: 1
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 16
-                        spacing: 12
-
-                        Text {
-                            text: "COLOURS"
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.45)
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 10
-                            font.weight: Font.Bold
-                            font.letterSpacing: 1.0
-                        }
-
-                        // Text Color Selection Row
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 12
-
-                            Text {
-                                text: "Text"
-                                color: Theme.colOnSurface
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                Layout.preferredWidth: 60
-                            }
-
-                            Row {
-                                spacing: 10
-                                Repeater {
-                                    model: root.textColors
-                                    delegate: Rectangle {
-                                        required property var modelData
-                                        width: 24; height: 24; radius: 12
-                                        color: modelData
-                                        border.color: root.selectedTextColor === modelData ? Theme.colPrimary : Qt.rgba(255, 255, 255, 0.15)
-                                        border.width: root.selectedTextColor === modelData ? 2 : 1
-                                        scale: root.selectedTextColor === modelData ? 1.15 : 1.0
-                                        Behavior on scale { NumberAnimation { duration: 150 } }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: root.selectedTextColor = parent.modelData
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Accent Color Selection Row
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 12
-
-                            Text {
-                                text: "Accent"
-                                color: Theme.colOnSurface
-                                font.family: Theme.defaultFontFamily
-                                font.pixelSize: 12
-                                font.weight: Font.Medium
-                                Layout.preferredWidth: 60
-                            }
-
-                            Row {
-                                spacing: 10
-                                Repeater {
-                                    model: root.accentColors
-                                    delegate: Rectangle {
-                                        required property var modelData
-                                        width: 24; height: 24; radius: 12
-                                        color: modelData
-                                        border.color: root.selectedAccentColor === modelData ? "#FFFFFF" : Qt.rgba(255, 255, 255, 0.15)
-                                        border.width: root.selectedAccentColor === modelData ? 2 : 1
-                                        scale: root.selectedAccentColor === modelData ? 1.15 : 1.0
-                                        Behavior on scale { NumberAnimation { duration: 150 } }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: root.selectedAccentColor = parent.modelData
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Item { Layout.fillHeight: true }
                     }
                 }
             }
