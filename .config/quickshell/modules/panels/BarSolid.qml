@@ -1754,7 +1754,7 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                return bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0);
+                return bar.isBottom ? bar.barW : (bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0));
             });
             contentLayout.opacity = 1.0;
         }
