@@ -509,7 +509,7 @@ PanelWindow {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "\uea99"
+                    text: "\ueaad"
                     font.family: root.iconFontName
                     font.pixelSize: 18
                     color: root.colOnSurface
