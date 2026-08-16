@@ -762,6 +762,11 @@ Item {
                         font.pixelSize: 11
                     }
                 }
+            }
+
+            // ── 5. BAR GAPS & MARGINS ─────────────────────────────────────
+            NCard {
+                sectionTitle: "Gaps & Margins"
 
                 NRow {
                     ColumnLayout {
@@ -844,7 +849,7 @@ Item {
                 }
             }
 
-            // ── 5. ADDITIONAL CONTROLS: STYLE & DYNAMIC ISLAND ────────────
+            // ── 6. ADDITIONAL CONTROLS: STYLE & DYNAMIC ISLAND ────────────
             NCard {
                 sectionTitle: "Dropdown Style & Dynamic Island"
 
@@ -958,7 +963,7 @@ Item {
                 }
             }
 
-            // ── 6. TRANSPARENCY & OPACITY ─────────────────────────────
+            // ── 7. TRANSPARENCY & OPACITY ─────────────────────────────
             NCard {
                 sectionTitle: "Transparency & Opacity"
 
