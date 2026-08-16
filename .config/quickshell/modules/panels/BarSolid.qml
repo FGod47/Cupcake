@@ -290,9 +290,8 @@ PanelWindow {
     property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
-            duration: 1700
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.05, 0.95, 0.15, 1.0, 1.0, 1.0]
+            duration: 1200
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -1131,16 +1130,9 @@ PanelWindow {
         height: hasNotif ? targetTotalH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
-        opacity: hasNotif ? Math.min(1.0, bar.notifAnimWidth / 60) : 0.0
-        visible: opacity > 0.001
+        opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
+        visible: opacity > 0.01
         clip: false
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 700
-                easing.type: Easing.OutQuad
-            }
-        }
 
         // 1. SCROLLABLE LIST OF CARDS (Anchored rigidly to parent.top to match status bar top line)
         Flickable {
@@ -1296,13 +1288,6 @@ PanelWindow {
                             anchors.leftMargin: 13
                             anchors.rightMargin: 13
                             spacing: 8
-                            opacity: Math.min(1.0, Math.max(0.0, (cardItem.width - 80) / 140))
-                            Behavior on opacity {
-                                NumberAnimation {
-                                    duration: 600
-                                    easing.type: Easing.OutQuad
-                                }
-                            }
 
                             Rectangle {
                                 id: urgencyDot
