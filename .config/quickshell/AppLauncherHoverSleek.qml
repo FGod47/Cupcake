@@ -50,6 +50,12 @@ PanelWindow {
 
     property real bgOpacity: 0.80
 
+    FontLoader {
+        id: tablerIconsFont
+        source: "file://" + Theme.homeDir + "/.local/share/fonts/tabler-icons.ttf"
+    }
+    readonly property string iconFontName: (tablerIconsFont.name && tablerIconsFont.name !== "") ? tablerIconsFont.name : "tabler-icons"
+
     Process {
         id: initLauncherOpacity
         command: ["cat", Theme.homeDir + "/.config/cupcake/.launcher_opacity"]
@@ -503,9 +509,9 @@ PanelWindow {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "folder"
-                    font.family: "Material Symbols Rounded"
-                    font.pixelSize: 20
+                    text: "\uea99"
+                    font.family: root.iconFontName
+                    font.pixelSize: 18
                     color: root.colOnSurface
                     opacity: card.isModeFiles ? 1.0 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
@@ -570,9 +576,9 @@ PanelWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: "search" // material icon
-                    font.family: "Material Symbols Rounded"
-                    font.weight: Theme.defaultFontWeight; font.pixelSize: 42
+                    text: "\ueb1c"
+                    font.family: root.iconFontName
+                    font.pixelSize: 36
                     color: root.colOnSurfaceVariant
                 }
                 Text {
@@ -917,10 +923,9 @@ PanelWindow {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "close"
-                        font.family: "Material Symbols Rounded"
-                        font.weight: Theme.defaultFontWeight
-                        font.pixelSize: 14
+                        text: "\ueb55"
+                        font.family: root.iconFontName
+                        font.pixelSize: 13
                         color: root.colOnSurfaceVariant
                     }
 
