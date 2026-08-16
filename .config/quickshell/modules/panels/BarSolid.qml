@@ -1154,6 +1154,21 @@ PanelWindow {
                 Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
             }
 
+            // ── BOTTOM BAR: DOCK POD CAPSULE BACKGROUND ──
+            Rectangle {
+                anchors.centerIn: barDockRow
+                width: barDockRow.width + 12
+                height: 28
+                radius: 14
+                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.05)
+                border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
+                border.width: 1
+                visible: bar.isBottom && barDockRow.opacity > 0.01
+                opacity: barDockRow.opacity
+                Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+            }
+
             // ── BOTTOM BAR: EMBEDDED DOCK ICONS (Slides IN from bottom when bar is at bottom) ──
             Row {
                 id: barDockRow
@@ -1202,7 +1217,7 @@ PanelWindow {
                         Rectangle {
                             id: iconTile
                             anchors.centerIn: parent
-                            width: 26; height: 26; radius: 6
+                            width: 26; height: 26; radius: 13
                             color: barPinnedItem.isActive
                                    ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
                                    : (barPinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : "transparent")
@@ -1305,7 +1320,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: 26; height: 26; radius: 6
+                            width: 26; height: 26; radius: 13
                             color: barUnpinnedItem.modelData.activated
                                    ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
                                    : (barUnpinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : "transparent")
