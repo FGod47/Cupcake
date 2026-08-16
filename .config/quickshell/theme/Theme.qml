@@ -98,6 +98,29 @@ Item {
         }
     }
 
+    property int barGap: 10
+
+    FileView {
+        id: themeBarGapFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_gap"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barGap = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barGap = v;
+            }
+        }
+    }
+
     property string barPosition: "Above"
 
     FileView {

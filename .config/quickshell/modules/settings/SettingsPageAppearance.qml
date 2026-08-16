@@ -172,6 +172,7 @@ Item {
     property bool barTransparency: true
     property bool xrayBlur: true
     property real barOpacity: 0.50
+    property int barGap: Theme.barGap !== undefined ? Theme.barGap : 10
     property real dockOpacity: 0.50
     property real launcherOpacity: 0.80
     property real wallpaperOpacity: 0.80
@@ -197,6 +198,16 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
+            }
+        }
+    }
+
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_gap"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.barGap = v; }
             }
         }
     }
@@ -902,6 +913,42 @@ Item {
                         }
                         
                         
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea08" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Edge Gap (Margin)"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Distance from top/bottom screen edge (" + root.barGap + "px)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    RowLayout {
+                        spacing: 16
+                        
+                        StyledSlider {
+                            Layout.preferredWidth: 220
+                            from: 0; to: 40; stepSize: 1
+                            value: root.barGap
+                            onMoved: {
+                                root.barGap = Math.round(value);
+                                Theme.barGap = root.barGap;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap"]);
+                            }
+                            onValueChanged: {
+                                root.barGap = Math.round(value);
+                                Theme.barGap = root.barGap;
+                            }
+                            onPressedChanged: {
+                                if (!pressed) {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap"]);
+                                }
+                            }
+                        }
                     }
                 }
 
