@@ -132,27 +132,22 @@ PanelWindow {
                     id: ddBrightSlider
                     width: parent.width - 40
                     anchors.verticalCenter: parent.verticalCenter
-                    clip: true
-                    handle: Rectangle {
-                        x: ddBrightSlider.leftPadding + ddBrightSlider.visualPosition * (ddBrightSlider.availableWidth - width)
-                        y: ddBrightSlider.height / 2 - height / 2
-                        width: 16; height: 16; radius: 8
-                        color: Theme.colPrimary
-                    }
+                    leftPadding: 0
+                    rightPadding: 0
+                    handle: Item { width: 0; height: 0; visible: false }
                     background: Rectangle {
-                        x: ddBrightSlider.leftPadding
-                        y: ddBrightSlider.height / 2 - height / 2
-                        implicitWidth: 100
-                        implicitHeight: 8
-                        width: ddBrightSlider.availableWidth
-                        height: implicitHeight
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width
+                        height: 8
                         radius: 4
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.2)
+                        clip: true
                         Rectangle {
-                            width: ddBrightSlider.visualPosition * parent.width
+                            width: Math.max(0, ddBrightSlider.visualPosition * parent.width)
                             height: parent.height
                             color: Theme.colPrimary
                             radius: 4
+                            visible: width > 0
                         }
                     }
                     from: 0; to: 100
@@ -188,27 +183,22 @@ PanelWindow {
                     id: ddVolSlider
                     width: parent.width - 40
                     anchors.verticalCenter: parent.verticalCenter
-                    clip: true
-                    handle: Rectangle {
-                        x: ddVolSlider.leftPadding + ddVolSlider.visualPosition * (ddVolSlider.availableWidth - width)
-                        y: ddVolSlider.height / 2 - height / 2
-                        width: 16; height: 16; radius: 8
-                        color: Theme.colPrimary
-                    }
+                    leftPadding: 0
+                    rightPadding: 0
+                    handle: Item { width: 0; height: 0; visible: false }
                     background: Rectangle {
-                        x: ddVolSlider.leftPadding
-                        y: ddVolSlider.height / 2 - height / 2
-                        implicitWidth: 100
-                        implicitHeight: 8
-                        width: ddVolSlider.availableWidth
-                        height: implicitHeight
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width
+                        height: 8
                         radius: 4
                         color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.2)
+                        clip: true
                         Rectangle {
-                            width: ddVolSlider.visualPosition * parent.width
+                            width: Math.max(0, ddVolSlider.visualPosition * parent.width)
                             height: parent.height
                             color: Theme.colPrimary
                             radius: 4
+                            visible: width > 0
                         }
                     }
                     from: 0; to: 100

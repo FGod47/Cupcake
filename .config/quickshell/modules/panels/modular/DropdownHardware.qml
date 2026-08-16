@@ -204,27 +204,22 @@ Item {
                         id: ddBrightSlider
                         width: parent.width - 34
                         anchors.verticalCenter: parent.verticalCenter
-                        clip: true
-                        handle: Rectangle {
-                            x: ddBrightSlider.leftPadding + ddBrightSlider.visualPosition * (ddBrightSlider.availableWidth - width)
-                            y: ddBrightSlider.height / 2 - height / 2
-                            width: 14; height: 14; radius: 7
-                            color: Theme.colPrimary
-                        }
+                        leftPadding: 0
+                        rightPadding: 0
+                        handle: Item { width: 0; height: 0; visible: false }
                         background: Rectangle {
-                            x: ddBrightSlider.leftPadding
-                            y: ddBrightSlider.height / 2 - height / 2
-                            implicitWidth: 100
-                            implicitHeight: 6
-                            width: ddBrightSlider.availableWidth
-                            height: implicitHeight
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width
+                            height: 6
                             radius: 3
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                            clip: true
                             Rectangle {
-                                width: ddBrightSlider.visualPosition * parent.width
+                                width: Math.max(0, ddBrightSlider.visualPosition * parent.width)
                                 height: parent.height
                                 color: Theme.colPrimary
                                 radius: 3
+                                visible: width > 0
                             }
                         }
                         from: 0; to: 100
@@ -275,27 +270,22 @@ Item {
                         id: ddVolSlider
                         width: parent.width - 56
                         anchors.verticalCenter: parent.verticalCenter
-                        clip: true
-                        handle: Rectangle {
-                            x: ddVolSlider.leftPadding + ddVolSlider.visualPosition * (ddVolSlider.availableWidth - width)
-                            y: ddVolSlider.height / 2 - height / 2
-                            width: 14; height: 14; radius: 7
-                            color: bar.isVolMuted ? Theme.colError : Theme.colPrimary
-                        }
+                        leftPadding: 0
+                        rightPadding: 0
+                        handle: Item { width: 0; height: 0; visible: false }
                         background: Rectangle {
-                            x: ddVolSlider.leftPadding
-                            y: ddVolSlider.height / 2 - height / 2
-                            implicitWidth: 100
-                            implicitHeight: 6
-                            width: ddVolSlider.availableWidth
-                            height: implicitHeight
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width
+                            height: 6
                             radius: 3
                             color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                            clip: true
                             Rectangle {
-                                width: ddVolSlider.visualPosition * parent.width
+                                width: Math.max(0, ddVolSlider.visualPosition * parent.width)
                                 height: parent.height
                                 color: bar.isVolMuted ? Theme.colError : Theme.colPrimary
                                 radius: 3
+                                visible: width > 0
                             }
                         }
                         from: 0; to: 100
