@@ -648,44 +648,46 @@ PanelWindow {
                         }
                     }
 
-                    // 1. Network Speed / Status Text (at left of icons)
+                    // 1. Network Speed / Status Text (at left of icons, fixed width to prevent icon bounce)
                     Item {
                         anchors.verticalCenter: parent.verticalCenter
                         height: 20
                         readonly property bool isNetCollapsed: bar.hasNotifPopup
-                        width: isNetCollapsed ? 0 : netSpeedText.implicitWidth
+                        width: isNetCollapsed ? 0 : 58
                         clip: true
                         opacity: isNetCollapsed ? 0 : 1
                         visible: width > 0 || opacity > 0.01
 
                         Behavior on width {
                             NumberAnimation {
-                                duration: 380
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
+                                duration: 300
+                                easing.type: Easing.OutCubic
                             }
                         }
                         Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
 
                         Text {
                             id: netSpeedText
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.fill: parent
+                            horizontalAlignment: Text.AlignRight
+                            verticalAlignment: Text.AlignVCenter
+                            anchors.rightMargin: 3
                             text: {
                                 let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
                                 let hasInt = netSplitPill ? netSplitPill.hasInternet : true;
                                 if (isWired) {
-                                    return hasInt ? netStr : "No Internet";
+                                    return hasInt ? netStr : "No Net";
                                 } else if (isWifi && isWifiConn) {
-                                    return hasInt ? netStr : "No Internet";
+                                    return hasInt ? netStr : "No Net";
                                 } else if (isHotspot) {
                                     return netStr;
                                 } else {
-                                    return "Disconnected";
+                                    return "Off";
                                 }
                             }
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Theme.defaultFontWeight
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 11
+                            font.weight: Font.Medium
                             color: {
                                 let isWifiConn = netSplitPill ? netSplitPill.wifiSSID !== "Disconnected" : false;
                                 let hasInt = netSplitPill ? netSplitPill.hasInternet : true;
