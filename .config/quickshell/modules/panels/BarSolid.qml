@@ -1108,15 +1108,22 @@ PanelWindow {
         id: notifDetachedPod
         readonly property bool hasNotif: bar.hasNotifPopup
         readonly property var popupsList: bar.notifPopups ? bar.notifPopups : []
+        property var cachedPopups: []
+        onPopupsListChanged: {
+            if (popupsList && popupsList.length > 0) {
+                cachedPopups = popupsList;
+            }
+        }
+        readonly property var effectivePopups: (popupsList && popupsList.length > 0) ? popupsList : cachedPopups
         property bool showAllNotifs: false
-        readonly property int cardCount: showAllNotifs ? popupsList.length : Math.min(3, popupsList.length)
+        readonly property int cardCount: (effectivePopups.length > 0 && bar.notifAnimWidth > 0.5) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
-        readonly property real footerH: (notifDetachedPod.popupsList.length > 3) ? 34 : 0
+        readonly property real footerH: (effectivePopups.length > 3) ? 34 : 0
         readonly property real maxListH: maxScreenH - footerH
         readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
-        readonly property real targetTotalH: targetListH + (hasNotif ? footerH : 0)
+        readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifAnimWidth > 0.5) ? footerH : 0)
         readonly property color cardBg: bar.pillColor
 
         onHasNotifChanged: {
@@ -1127,11 +1134,11 @@ PanelWindow {
         }
 
         width: bar.notifAnimWidth
-        height: hasNotif ? targetTotalH : bar.barHeight
+        height: (hasNotif || bar.notifAnimWidth > 0.5) ? targetTotalH : bar.barHeight
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
-        opacity: (hasNotif && bar.notifAnimWidth > 2) ? 1.0 : 0.0
-        visible: opacity > 0.01
+        opacity: bar.notifAnimWidth > 2 ? 1.0 : 0.0
+        visible: bar.notifAnimWidth > 0.5
         clip: false
 
         // 1. SCROLLABLE LIST OF CARDS (Anchored rigidly to parent.top to match status bar top line)
@@ -1180,7 +1187,7 @@ PanelWindow {
                     delegate: Rectangle {
                         id: cardItem
                         readonly property int itemIdx: index
-                        readonly property var notifData: (notifDetachedPod.popupsList && itemIdx < notifDetachedPod.popupsList.length) ? notifDetachedPod.popupsList[itemIdx] : null
+                        readonly property var notifData: (notifDetachedPod.effectivePopups && itemIdx < notifDetachedPod.effectivePopups.length) ? notifDetachedPod.effectivePopups[itemIdx] : null
                         readonly property bool isCardHovered: cardMa.containsMouse || dismissCardMa.containsMouse
 
                         function getCleanAppTag(notif) {
