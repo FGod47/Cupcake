@@ -290,9 +290,9 @@ PanelWindow {
     property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
-            duration: 1050
+            duration: 1700
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.08, 0.95, 0.2, 1.0, 1.0, 1.0]
+            easing.bezierCurve: [0.05, 0.95, 0.15, 1.0, 1.0, 1.0]
         }
     }
 
@@ -1137,7 +1137,7 @@ PanelWindow {
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 450
+                duration: 700
                 easing.type: Easing.OutQuad
             }
         }
@@ -1296,10 +1296,10 @@ PanelWindow {
                             anchors.leftMargin: 13
                             anchors.rightMargin: 13
                             spacing: 8
-                            opacity: Math.min(1.0, Math.max(0.0, (cardItem.width - 90) / 100))
+                            opacity: Math.min(1.0, Math.max(0.0, (cardItem.width - 80) / 140))
                             Behavior on opacity {
                                 NumberAnimation {
-                                    duration: 350
+                                    duration: 600
                                     easing.type: Easing.OutQuad
                                 }
                             }
