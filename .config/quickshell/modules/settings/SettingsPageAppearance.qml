@@ -887,7 +887,12 @@ Item {
                             value: root.barOpacity
                             onMoved: {
                                 root.barOpacity = value;
-                                Quickshell.execDetached(["quickshell", "ipc", "-p", Theme.homeDir + "/.config/quickshell/shell.qml", "call", "opacity", "setBarOpacity", value.toString()]);
+                                Theme.barOpacity = value;
+                                Quickshell.execDetached(["bash", "-c", "echo '" + value.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                            }
+                            onValueChanged: {
+                                root.barOpacity = value;
+                                Theme.barOpacity = value;
                             }
                             onPressedChanged: {
                                 if (!pressed) {

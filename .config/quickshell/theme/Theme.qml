@@ -14,7 +14,7 @@ Item {
     
     Process {
         id: initThemeConfigs
-        command: ["bash", "-c", "cat ~/.config/cupcake/.color_mode 2>/dev/null; echo '---'; cat ~/.config/cupcake/.transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.slider_thickness 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_slider_thumb 2>/dev/null; echo '---'; cat ~/.config/cupcake/.liquidify 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_card_background 2>/dev/null; echo '---'; cat ~/.config/cupcake/.applauncher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.wallpaper_switcher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_dividers 2>/dev/null; echo '---'; cat ~/.config/cupcake/.row_spacing 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.color_mode 2>/dev/null; echo '---'; cat ~/.config/cupcake/.transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_default_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_default 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_mono_scale 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_size 2>/dev/null; echo '---'; cat ~/.config/cupcake/.app_font_weight 2>/dev/null; echo '---'; cat ~/.config/cupcake/.slider_thickness 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_slider_thumb 2>/dev/null; echo '---'; cat ~/.config/cupcake/.liquidify 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_card_background 2>/dev/null; echo '---'; cat ~/.config/cupcake/.applauncher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.wallpaper_switcher_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.show_dividers 2>/dev/null; echo '---'; cat ~/.config/cupcake/.row_spacing 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -22,7 +22,11 @@ Item {
                 let p = text.trim().split('---');
                 if (p[0] && p[0].trim() !== "") themeSingleton.isDark = (p[0].trim() !== "light");
                 if (p[1] && p[1].trim() === "false") themeSingleton.globalTransparency = false;
-                if (p[2] && p[2].trim() === "false") themeSingleton.quickshellTransparency = false;
+                if (p[2]) {
+                    let bt = (p[2].trim() !== "false");
+                    themeSingleton.quickshellTransparency = bt;
+                    themeSingleton.barTransparency = bt;
+                }
                 if (p[3] && p[3].trim() !== "") themeSingleton.defaultFontFamily = p[3].trim();
                 if (p[4] && p[4].trim() !== "") themeSingleton.monoFontFamily = p[4].trim();
                 if (p[5]) { let v = parseFloat(p[5].trim()); if (!isNaN(v)) themeSingleton.defaultFontScale = v; }
@@ -44,6 +48,52 @@ Item {
                 if (p[21]) { let v = parseFloat(p[21].trim()); if (!isNaN(v)) themeSingleton.rowSpacing = v; }
                 if (p[22] && p[22].trim() !== "") themeSingleton.barDropdownStyle = p[22].trim();
                 if (p[23] && p[23].trim() !== "") themeSingleton.barPosition = p[23].trim();
+                if (p[24]) { let v = parseFloat(p[24].trim()); if (!isNaN(v)) themeSingleton.barOpacity = v; }
+            }
+        }
+    }
+
+    property real barOpacity: 1.0
+    property bool barTransparency: false
+
+    FileView {
+        id: themeBarOpacityFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_opacity"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseFloat(t.trim());
+                if (!isNaN(v)) themeSingleton.barOpacity = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseFloat(t.trim());
+                if (!isNaN(v)) themeSingleton.barOpacity = v;
+            }
+        }
+    }
+
+    FileView {
+        id: themeBarTransFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_transparency"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.barTransparency = (t.trim() !== "false");
+                themeSingleton.quickshellTransparency = themeSingleton.barTransparency;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                themeSingleton.barTransparency = (t.trim() !== "false");
+                themeSingleton.quickshellTransparency = themeSingleton.barTransparency;
             }
         }
     }

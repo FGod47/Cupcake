@@ -201,8 +201,8 @@ PanelWindow {
     }
 
     property color pillColor: Theme.isPitchBlack
-        ? "#000000"
-        : (bar.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : Qt.rgba(bg.r, bg.g, bg.b, 1.0))
+        ? (bar.barOpacity < 1.0 ? Qt.rgba(0, 0, 0, bar.barOpacity) : "#000000")
+        : (bar.barOpacity < 1.0 ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : (bar.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, bar.barOpacity) : Qt.rgba(bg.r, bg.g, bg.b, 1.0)))
 
     // Hardware data
     property string cpuStr: "0"
