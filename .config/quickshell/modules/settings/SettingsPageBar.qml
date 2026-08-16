@@ -66,35 +66,10 @@ Item {
             width: parent.width
             spacing: 16
 
-            // ── 1. HEADER ROW: Breadcrumb Title + Apply / Reset Actions ───
+            // ── 1. HEADER ROW: Apply / Reset Actions ───
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 12
-
-                // Breadcrumb title (Panacea • Pill style)
-                RowLayout {
-                    spacing: 8
-                    Text {
-                        text: "Panacea"
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.45)
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 13
-                        font.weight: Font.Medium
-                    }
-                    Text {
-                        text: "•"
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25)
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 13
-                    }
-                    Text {
-                        text: "Pill"
-                        color: Theme.colOnSurface
-                        font.family: Theme.monoFontFamily
-                        font.pixelSize: 13
-                        font.weight: Font.DemiBold
-                    }
-                }
 
                 Item { Layout.fillWidth: true }
 
