@@ -172,8 +172,6 @@ Item {
     property bool barTransparency: true
     property bool xrayBlur: true
     property real barOpacity: 0.50
-    property int barGap: Theme.barGap !== undefined ? Theme.barGap : 10
-    property int barWindowGap: Theme.barWindowGap !== undefined ? Theme.barWindowGap : 0
     property real dockOpacity: 0.50
     property real launcherOpacity: 0.80
     property real wallpaperOpacity: 0.80
@@ -199,26 +197,6 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.barOpacity = v; }
-            }
-        }
-    }
-
-    Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_gap"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.barGap = v; }
-            }
-        }
-    }
-
-    Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.bar_window_gap"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { let v = parseInt(text.trim()); if (!isNaN(v)) root.barWindowGap = v; }
             }
         }
     }
@@ -927,77 +905,7 @@ Item {
                     }
                 }
 
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea08" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Bar Edge Gap (Margin)"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Distance from top/bottom screen edge (" + root.barGap + "px)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 40; stepSize: 1
-                            value: root.barGap
-                            onMoved: {
-                                root.barGap = Math.round(value);
-                                Theme.barGap = root.barGap;
-                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap"]);
-                            }
-                            onValueChanged: {
-                                root.barGap = Math.round(value);
-                                Theme.barGap = root.barGap;
-                            }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap"]);
-                                }
-                            }
-                        }
-                    }
-                }
 
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uebc0" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Bar Window Gap"; color: cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Extra distance between tiled windows and the bar (" + root.barWindowGap + "px)"; color: cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    RowLayout {
-                        spacing: 16
-                        
-                        StyledSlider {
-                            Layout.preferredWidth: 220
-                            from: 0; to: 40; stepSize: 1
-                            value: root.barWindowGap
-                            onMoved: {
-                                root.barWindowGap = Math.round(value);
-                                Theme.barWindowGap = root.barWindowGap;
-                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap"]);
-                            }
-                            onValueChanged: {
-                                root.barWindowGap = Math.round(value);
-                                Theme.barWindowGap = root.barWindowGap;
-                            }
-                            onPressedChanged: {
-                                if (!pressed) {
-                                    Quickshell.execDetached(["bash", "-c", "echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap"]);
-                                }
-                            }
-                        }
-                    }
-                }
 
                 NRow {
                     RowLayout {
