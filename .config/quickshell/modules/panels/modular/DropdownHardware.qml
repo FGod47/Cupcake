@@ -203,12 +203,14 @@ Item {
                     Slider {
                         id: ddBrightSlider
                         width: parent.width - 34
+                        height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         leftPadding: 0
                         rightPadding: 0
                         handle: Item { width: 0; height: 0; visible: false }
                         background: Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
+                            x: 0
+                            y: (parent.height - 6) / 2
                             width: parent.width
                             height: 6
                             radius: 3
@@ -269,12 +271,14 @@ Item {
                     Slider {
                         id: ddVolSlider
                         width: parent.width - 56
+                        height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         leftPadding: 0
                         rightPadding: 0
                         handle: Item { width: 0; height: 0; visible: false }
                         background: Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
+                            x: 0
+                            y: (parent.height - 6) / 2
                             width: parent.width
                             height: 6
                             radius: 3

@@ -131,12 +131,14 @@ PanelWindow {
                 Slider {
                     id: ddBrightSlider
                     width: parent.width - 40
+                    height: 24
                     anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 0
                     rightPadding: 0
                     handle: Item { width: 0; height: 0; visible: false }
                     background: Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
+                        x: 0
+                        y: (parent.height - 8) / 2
                         width: parent.width
                         height: 8
                         radius: 4
@@ -182,12 +184,14 @@ PanelWindow {
                 Slider {
                     id: ddVolSlider
                     width: parent.width - 40
+                    height: 24
                     anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 0
                     rightPadding: 0
                     handle: Item { width: 0; height: 0; visible: false }
                     background: Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
+                        x: 0
+                        y: (parent.height - 8) / 2
                         width: parent.width
                         height: 8
                         radius: 4
