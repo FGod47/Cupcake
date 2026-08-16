@@ -821,6 +821,80 @@ Item {
                     }
                 }
             }
+
+            // ── 6. TRANSPARENCY & OPACITY ─────────────────────────────
+            NCard {
+                sectionTitle: "Transparency & Opacity"
+
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Bar Transparency"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Enable translucency for the status bar and island"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    NToggle {
+                        checked: root.barTransparency
+                        onToggled: (val) => {
+                            root.barTransparency = val;
+                            Theme.barTransparency = val;
+                            Quickshell.execDetached(["bash", "-c", "echo " + val + " > ~/.config/cupcake/.bar_transparency && ~/.local/bin/apply-transparency"]);
+                        }
+                    }
+                }
+
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Bar Opacity"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Adjust background fill opacity (" + Math.round(root.barOpacity * 100) + "%)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 0.1; to: 1.0; stepSize: 0.05
+                        value: root.barOpacity
+                        onMoved: {
+                            root.barOpacity = value;
+                            Theme.barOpacity = value;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + value.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                        }
+                        onValueChanged: {
+                            root.barOpacity = value;
+                            Theme.barOpacity = value;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity"]);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

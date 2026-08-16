@@ -142,8 +142,8 @@ PanelWindow {
     }
     property string fontName: "tabler-icons"
 
-    property real barOpacity: 1.0
-    property bool barTransparency: false
+    property real barOpacity: Theme.barOpacity
+    property bool barTransparency: Theme.barTransparency
 
     Process {
         id: initBarConfigs
@@ -153,10 +153,17 @@ PanelWindow {
             onStreamFinished: {
                 if (!text) return;
                 let p = text.trim().split('---');
-                if (p[0] && p[0].trim() !== "") bar.barTransparency = (p[0].trim() !== "false");
+                if (p[0] && p[0].trim() !== "") {
+                    let bt = (p[0].trim() !== "false");
+                    bar.barTransparency = bt;
+                    Theme.barTransparency = bt;
+                }
                 if (p[1] && p[1].trim() !== "") {
                     let v = parseFloat(p[1].trim());
-                    if (!isNaN(v)) bar.barOpacity = v;
+                    if (!isNaN(v)) {
+                        bar.barOpacity = v;
+                        Theme.barOpacity = v;
+                    }
                 }
             }
         }
@@ -166,18 +173,25 @@ PanelWindow {
         id: barOpacityFileView
         path: Quickshell.env("HOME") + "/.config/cupcake/.bar_opacity"
         watchChanges: true
+        onFileChanged: { reload(); }
         onTextChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
                 let v = parseFloat(t.trim());
-                if (!isNaN(v)) bar.barOpacity = v;
+                if (!isNaN(v)) {
+                    bar.barOpacity = v;
+                    Theme.barOpacity = v;
+                }
             }
         }
         onLoadedChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
                 let v = parseFloat(t.trim());
-                if (!isNaN(v)) bar.barOpacity = v;
+                if (!isNaN(v)) {
+                    bar.barOpacity = v;
+                    Theme.barOpacity = v;
+                }
             }
         }
     }
@@ -186,16 +200,21 @@ PanelWindow {
         id: barTransFileView
         path: Quickshell.env("HOME") + "/.config/cupcake/.bar_transparency"
         watchChanges: true
+        onFileChanged: { reload(); }
         onTextChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
-                bar.barTransparency = (t.trim() !== "false");
+                let bt = (t.trim() !== "false");
+                bar.barTransparency = bt;
+                Theme.barTransparency = bt;
             }
         }
         onLoadedChanged: {
             let t = text();
             if (t && t.trim().length > 0) {
-                bar.barTransparency = (t.trim() !== "false");
+                let bt = (t.trim() !== "false");
+                bar.barTransparency = bt;
+                Theme.barTransparency = bt;
             }
         }
     }
