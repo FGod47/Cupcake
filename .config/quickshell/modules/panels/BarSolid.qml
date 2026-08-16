@@ -1130,7 +1130,7 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             width: bar.isBottom ? Math.max(cupcakeLogo.width, barDockRow.implicitWidth) : cupcakeLogo.width
             height: bar.barHeight
-            clip: true
+            clip: false
 
             Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
@@ -1153,9 +1153,10 @@ PanelWindow {
             }
 
             // ── BOTTOM BAR: EMBEDDED DOCK ICONS (Slides IN from bottom when bar is at bottom) ──
-            RowLayout {
+            Row {
                 id: barDockRow
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
                 y: bar.isBottom ? ((parent.height - height) / 2) : 36
                 opacity: bar.isBottom ? 1.0 : 0.0
                 visible: opacity > 0.01
@@ -1172,7 +1173,6 @@ PanelWindow {
                         id: barPinnedItem
                         required property var modelData
                         width: 26; height: 26
-                        Layout.alignment: Qt.AlignVCenter
 
                         property var toplevel: null
 
@@ -1242,15 +1242,10 @@ PanelWindow {
                     }
                 }
 
-                // 3. Divider before unpinned running apps
-                Rectangle {
-                    width: 1
-                    height: 14
-                    radius: 0.5
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.leftMargin: 2
-                    Layout.rightMargin: 2
+                // Divider before unpinned running apps
+                Item {
+                    width: 5
+                    height: 26
                     visible: {
                         var hasUnpinned = false;
                         var pinnedIds = [];
@@ -1269,9 +1264,17 @@ PanelWindow {
                         }
                         return hasUnpinned;
                     }
+
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 1
+                        height: 14
+                        radius: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                    }
                 }
 
-                // 4. Unpinned Running Apps
+                // Unpinned Running Apps
                 Repeater {
                     model: ToplevelManager ? ToplevelManager.toplevels : []
 
@@ -1290,7 +1293,6 @@ PanelWindow {
                         visible: !isPinned
                         width: visible ? 26 : 0
                         height: 26
-                        Layout.alignment: Qt.AlignVCenter
 
                         Rectangle {
                             anchors.centerIn: parent
