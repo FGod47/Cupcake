@@ -1202,29 +1202,36 @@ PanelWindow {
                         Rectangle {
                             id: iconTile
                             anchors.centerIn: parent
-                            width: 24; height: 24; radius: 12
+                            width: 26; height: 26; radius: 6
                             color: barPinnedItem.isActive
-                                   ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                   : (barPinnedItem.isRunning
-                                      ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10)
-                                      : (barPinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : "transparent"))
-                            border.color: barPinnedItem.isActive
-                                          ? Theme.colPrimary
-                                          : (barPinnedItem.isRunning
-                                             ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35)
-                                             : (barPinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2) : "transparent"))
-                            border.width: barPinnedItem.isActive ? 1.5 : (barPinnedItem.isRunning ? 1 : (barPinnedMa.containsMouse ? 1 : 0))
-                            scale: barPinnedMa.containsMouse ? 1.15 : 1.0
+                                   ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                                   : (barPinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : "transparent")
+                            scale: barPinnedMa.containsMouse ? 1.10 : 1.0
                             Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                             Behavior on color { ColorAnimation { duration: 150 } }
-                            Behavior on border.color { ColorAnimation { duration: 150 } }
 
                             Image {
                                 anchors.centerIn: parent
-                                width: 16; height: 16
+                                anchors.verticalCenterOffset: barPinnedItem.isRunning ? -1 : 0
+                                width: 18; height: 18
                                 source: "image://icon/" + barPinnedItem.modelData.appId
                                 fillMode: Image.PreserveAspectFit
                                 asynchronous: true
+                            }
+
+                            // Minimalist Active / Running Indicator
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 1
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: barPinnedItem.isActive ? 10 : (barPinnedItem.isRunning ? 3 : 0)
+                                height: barPinnedItem.isActive ? 2 : (barPinnedItem.isRunning ? 3 : 0)
+                                radius: height / 2
+                                color: barPinnedItem.isActive ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                                visible: barPinnedItem.isRunning
+                                opacity: barPinnedItem.isRunning ? 1.0 : 0.0
+                                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                                Behavior on color { ColorAnimation { duration: 150 } }
                             }
 
                             MouseArea {
@@ -1270,9 +1277,9 @@ PanelWindow {
                     Rectangle {
                         anchors.centerIn: parent
                         width: 1
-                        height: 14
+                        height: 10
                         radius: 0.5
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
                     }
                 }
 
@@ -1298,25 +1305,34 @@ PanelWindow {
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: 24; height: 24; radius: 12
+                            width: 26; height: 26; radius: 6
                             color: barUnpinnedItem.modelData.activated
-                                   ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.22)
-                                   : (barUnpinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.14) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10))
-                            border.color: barUnpinnedItem.modelData.activated
-                                          ? Theme.colPrimary
-                                          : (barUnpinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.35))
-                            border.width: barUnpinnedItem.modelData.activated ? 1.5 : 1
-                            scale: barUnpinnedMa.containsMouse ? 1.15 : 1.0
+                                   ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                                   : (barUnpinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.07) : "transparent")
+                            scale: barUnpinnedMa.containsMouse ? 1.10 : 1.0
                             Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
                             Behavior on color { ColorAnimation { duration: 150 } }
-                            Behavior on border.color { ColorAnimation { duration: 150 } }
 
                             Image {
                                 anchors.centerIn: parent
-                                width: 16; height: 16
+                                anchors.verticalCenterOffset: -1
+                                width: 18; height: 18
                                 source: barUnpinnedItem.modelData.appId ? ("image://icon/" + barUnpinnedItem.modelData.appId) : ""
                                 fillMode: Image.PreserveAspectFit
                                 asynchronous: true
+                            }
+
+                            // Minimalist Active / Running Indicator
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 1
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: barUnpinnedItem.modelData.activated ? 10 : 3
+                                height: barUnpinnedItem.modelData.activated ? 2 : 3
+                                radius: height / 2
+                                color: barUnpinnedItem.modelData.activated ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                                Behavior on color { ColorAnimation { duration: 150 } }
                             }
 
                             MouseArea {

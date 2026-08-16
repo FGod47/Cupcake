@@ -343,9 +343,9 @@ Item {
                                 Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
 
-                                Rectangle { width: 18; height: 18; radius: 9; color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2); border.color: Theme.colPrimary; border.width: 1; Text { anchors.centerIn: parent; text: "🌐"; font.pixelSize: 10 } }
-                                Rectangle { width: 18; height: 18; radius: 9; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08); border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25); border.width: 1; Text { anchors.centerIn: parent; text: ">_"; font.pixelSize: 8; color: Theme.colPrimary } }
-                                Rectangle { width: 18; height: 18; radius: 9; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08); border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.25); border.width: 1; Text { anchors.centerIn: parent; text: "📁"; font.pixelSize: 10 } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15); Text { anchors.centerIn: parent; text: "🌐"; font.pixelSize: 10 } Rectangle { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; width: 8; height: 1.5; radius: 0.75; color: Theme.colPrimary } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: "transparent"; Text { anchors.centerIn: parent; text: ">_"; font.pixelSize: 8; color: Theme.colPrimary } Rectangle { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; width: 2.5; height: 2.5; radius: 1.25; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.45) } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: "transparent"; Text { anchors.centerIn: parent; text: "📁"; font.pixelSize: 10 } }
                             }
                         }
 
