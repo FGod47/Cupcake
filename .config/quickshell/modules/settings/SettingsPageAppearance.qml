@@ -389,8 +389,17 @@ Item {
                         current: root.colorMode
                         onSelected: (v) => {
                             root.colorMode = v;
-                            let modeVal = v === "Pitch Black" ? "pitch-black" : v.toLowerCase();
-                            Quickshell.execDetached(["bash", "-c", "echo '" + modeVal + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                            if (v === "Pitch Black") {
+                                root.accent = "Pitch Black";
+                                Quickshell.execDetached(["bash", "-c", "echo 'pitch-black' > ~/.config/cupcake/.color_mode && echo 'Pitch Black' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                            } else {
+                                if (root.accent === "Pitch Black") {
+                                    root.accent = "Tonal Spot";
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && echo 'Tonal Spot' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                                } else {
+                                    Quickshell.execDetached(["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                                }
+                            }
                         }
                     }
                 }
@@ -497,7 +506,7 @@ Item {
                         z: 2
 
                         Repeater {
-                            model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
+                            model: ["Pitch Black", "Tonal Spot", "Monochrome", "Neutral", "Content", "Expressive", "Fidelity", "Fruit Salad", "Rainbow"]
                             delegate: Rectangle {
                                 id: pillDel
                                 required property string modelData
@@ -527,7 +536,13 @@ Item {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         root.accent = pillDel.modelData;
-                                        Quickshell.execDetached(["bash", "-c", "echo '" + pillDel.modelData + "' > ~/.config/cupcake/.color_scheme && ~/.local/bin/set-theme"]);
+                                        if (pillDel.modelData === "Pitch Black") {
+                                            root.colorMode = "Pitch Black";
+                                            Quickshell.execDetached(["bash", "-c", "echo 'Pitch Black' > ~/.config/cupcake/.color_scheme && echo 'pitch-black' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                                        } else {
+                                            if (root.colorMode === "Pitch Black") root.colorMode = "Dark";
+                                            Quickshell.execDetached(["bash", "-c", "echo '" + pillDel.modelData + "' > ~/.config/cupcake/.color_scheme && ([ $(cat ~/.config/cupcake/.color_mode 2>/dev/null) = 'pitch-black' ] && echo 'dark' > ~/.config/cupcake/.color_mode || true) && ~/.local/bin/set-theme"]);
+                                        }
                                     }
                                 }
                                 
