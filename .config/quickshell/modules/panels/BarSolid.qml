@@ -1234,12 +1234,7 @@ PanelWindow {
                             if (!notif) return "";
                             let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
                             let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            if (summary.toLowerCase().includes("screenshot") && (body.startsWith("/") || body.includes(".png"))) {
-                                let parts = body.split('/');
-                                let filename = parts[parts.length - 1] || "";
-                                return filename ? ("Saved • " + filename) : summary;
-                            }
-                            return summary || body;
+                            return summary ? summary : body;
                         }
                         
                         Layout.fillWidth: true
