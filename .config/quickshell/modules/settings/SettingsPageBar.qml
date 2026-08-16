@@ -47,8 +47,20 @@ Item {
     property bool clock24h: true
     property bool showSeconds: false
     property string wallpaperPath: ""
-    property string selectedTextColor: Theme.colOnSurface
-    property string selectedAccentColor: Theme.colPrimary
+    property string currentTimeStr: ""
+
+    // Live clock updater
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            let d = new Date();
+            let fmt = root.clock24h ? (root.showSeconds ? "hh:mm:ss" : "hh:mm") : (root.showSeconds ? "hh:mm:ss AP" : "hh:mm AP");
+            root.currentTimeStr = Qt.formatDateTime(d, fmt);
+        }
+    }
 
     Flickable {
         anchors.fill: parent
@@ -66,7 +78,7 @@ Item {
             width: parent.width
             spacing: 16
 
-            // ── 1. HEADER ROW: Apply / Reset Actions ───
+            // ── 1. HEADER ROW: Apply / Reset Actions ───────────────────────
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 12
@@ -142,7 +154,7 @@ Item {
                 }
             }
 
-            // ── 2. CINEMATIC LARGE DESKTOP PREVIEW WINDOW ─────────────────
+            // ── 2. FULL LIVE CUPCAKE BAR PREVIEW CANVAS ───────────────────
             Rectangle {
                 id: previewFrame
                 Layout.fillWidth: true
@@ -175,7 +187,6 @@ Item {
                         GradientStop { position: 1.0; color: "#2B1115" }
                     }
 
-                    // Diagonal linear grain texture
                     Canvas {
                         anchors.fill: parent
                         opacity: 0.18
@@ -193,7 +204,7 @@ Item {
                     }
                 }
 
-                // Top Vignette Overlay
+                // Inner dark vignette for realistic depth
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
@@ -202,38 +213,32 @@ Item {
                     radius: 18
                 }
 
-                // ── MOCKUP BAR CAPSULE AT SCREEN TOP ───────────────────────
+                // ── LIVE FULL-WIDTH CUPCAKE SOLID BAR ──────────────────────
                 Rectangle {
                     id: liveBar
                     anchors.top: root.barPosition === "Above" ? parent.top : undefined
                     anchors.bottom: root.barPosition === "Below" ? parent.bottom : undefined
-                    anchors.left: root.barPosition === "Right" ? undefined : (root.barPosition === "Left" ? parent.left : undefined)
-                    anchors.right: root.barPosition === "Left" ? undefined : (root.barPosition === "Right" ? parent.right : undefined)
-                    anchors.horizontalCenter: (root.barPosition === "Above" || root.barPosition === "Below") ? parent.horizontalCenter : undefined
-                    anchors.verticalCenter: (root.barPosition === "Left" || root.barPosition === "Right") ? parent.verticalCenter : undefined
+                    anchors.left: root.barPosition === "Right" ? undefined : parent.left
+                    anchors.right: root.barPosition === "Left" ? undefined : parent.right
+                    anchors.topMargin: root.barPosition === "Above" ? 14 : 0
+                    anchors.bottomMargin: root.barPosition === "Below" ? 14 : 0
+                    anchors.leftMargin: root.barPosition === "Left" ? 14 : (root.barPosition === "Right" ? 0 : 16)
+                    anchors.rightMargin: root.barPosition === "Right" ? 14 : (root.hideIsland ? 16 : 144)
 
-                    anchors.topMargin: root.barPosition === "Above" ? 0 : 0
-                    anchors.bottomMargin: root.barPosition === "Below" ? 0 : 0
-                    anchors.leftMargin: root.barPosition === "Left" ? 0 : 0
-                    anchors.rightMargin: root.barPosition === "Right" ? 0 : 0
-
-                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? 32 : 180
-                    height: (root.barPosition === "Left" || root.barPosition === "Right") ? 180 : 28
-                    
-                    bottomLeftRadius: (root.barPosition === "Above") ? 14 : 0
-                    bottomRightRadius: (root.barPosition === "Above") ? 14 : 0
-                    topLeftRadius: (root.barPosition === "Below") ? 14 : 0
-                    topRightRadius: (root.barPosition === "Below") ? 14 : 0
+                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? 32 : undefined
+                    height: (root.barPosition === "Left" || root.barPosition === "Right") ? (parent.height - 28) : 32
+                    radius: 16
 
                     color: root.barTransparency
-                           ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, Math.max(0.7, root.barOpacity))
+                           ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.barOpacity)
                            : Theme.colSurfaceContainer
                     border.color: Qt.rgba(255, 255, 255, 0.12)
                     border.width: 1
 
+                    Behavior on anchors.rightMargin { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                     Behavior on color { ColorAnimation { duration: 250 } }
 
-                    // Horizontal bar content (matching screenshot: Tue 23:24 4 RU 🔒 45%)
+                    // Horizontal Solid Bar Content Layout
                     RowLayout {
                         anchors.fill: parent
                         anchors.leftMargin: 12
@@ -241,55 +246,200 @@ Item {
                         visible: root.barPosition === "Above" || root.barPosition === "Below"
                         spacing: 8
 
+                        // Cupcake Logo Pill
                         Text {
-                            text: "Tue"
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 10
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+                            text: "🧁"
+                            font.pixelSize: 13
                             Layout.alignment: Qt.AlignVCenter
                         }
 
+                        // Workspaces halo dots
+                        Row {
+                            spacing: 6
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Rectangle {
+                                width: 14; height: 6; radius: 3
+                                color: Theme.colPrimary
+                            }
+                            Rectangle {
+                                width: 5; height: 5; radius: 2.5
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+                            }
+                            Rectangle {
+                                width: 5; height: 5; radius: 2.5
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+                            }
+                        }
+
+                        // Active Window Title
                         Text {
-                            text: root.clock24h ? "23:24" : "11:24"
-                            font.family: Theme.monoFontFamily
+                            text: "Cupcake Settings"
+                            font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
+                            font.weight: Font.Medium
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.55)
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.leftMargin: 4
+                            elide: Text.ElideRight
+                            Layout.maximumWidth: 160
+                        }
+
+                        // Spacer
+                        Item { Layout.fillWidth: true }
+
+                        // ── Right Side Status Controls ─────────────────────
+                        RowLayout {
+                            spacing: 7
+                            Layout.alignment: Qt.AlignVCenter
+
+                            // Wi-Fi
+                            Text {
+                                text: "\ueb52"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colOnSurface
+                                opacity: 0.85
+                            }
+
+                            // Network Speed
+                            Text {
+                                text: "1.2 MB/s"
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 10
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                            }
+
+                            // Dot Separator
+                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
+
+                            // Volume
+                            RowLayout {
+                                spacing: 3
+                                Text {
+                                    text: "\ueb51"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 13
+                                    color: Theme.colOnSurface
+                                    opacity: 0.85
+                                }
+                                Text {
+                                    text: "65%"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                                }
+                            }
+
+                            // Dot Separator
+                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
+
+                            // Battery
+                            RowLayout {
+                                spacing: 3
+                                Text {
+                                    text: "\uef3b"
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 13
+                                    color: Theme.colOnSurface
+                                    opacity: 0.85
+                                }
+                                Text {
+                                    text: "98%"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                                }
+                            }
+
+                            // Dot Separator
+                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
+
+                            // Clipboard
+                            Text {
+                                text: "\uea6d"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colOnSurface
+                                opacity: 0.85
+                            }
+
+                            // Dot Separator
+                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
+
+                            // Real-time Live Clock
+                            Text {
+                                text: root.currentTimeStr !== "" ? root.currentTimeStr : (root.clock24h ? "22:25" : "10:25 PM")
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
+                                color: Theme.colOnSurface
+                            }
+
+                            // Dot Separator
+                            Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.colOnSurface; opacity: 0.25 }
+
+                            // Power Button
+                            Text {
+                                text: "\ueb2c"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colOnSurface
+                                opacity: 0.85
+                            }
+                        }
+                    }
+
+                    // Vertical Bar Content Layout (for Left / Right orientation)
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        visible: root.barPosition === "Left" || root.barPosition === "Right"
+                        spacing: 8
+
+                        Text { text: "🧁"; font.pixelSize: 12; Layout.alignment: Qt.AlignHCenter }
+                        Rectangle { width: 6; height: 14; radius: 3; color: Theme.colPrimary; Layout.alignment: Qt.AlignHCenter }
+                        Item { Layout.fillHeight: true }
+                        Text { text: "\ueb52"; font.family: "tabler-icons"; font.pixelSize: 12; color: Theme.colOnSurface; Layout.alignment: Qt.AlignHCenter }
+                        Text { text: "\ueb51"; font.family: "tabler-icons"; font.pixelSize: 12; color: Theme.colOnSurface; Layout.alignment: Qt.AlignHCenter }
+                        Text { text: "\ueb2c"; font.family: "tabler-icons"; font.pixelSize: 12; color: Theme.colOnSurface; Layout.alignment: Qt.AlignHCenter }
+                    }
+                }
+
+                // ── LIVE NOTIFICATION ISLAND CAPSULE (Right Side) ─────────
+                Rectangle {
+                    anchors.top: root.barPosition === "Above" ? parent.top : undefined
+                    anchors.bottom: root.barPosition === "Below" ? parent.bottom : undefined
+                    anchors.right: parent.right
+                    anchors.topMargin: root.barPosition === "Above" ? 14 : 0
+                    anchors.bottomMargin: root.barPosition === "Below" ? 14 : 0
+                    anchors.rightMargin: 16
+                    width: 120
+                    height: 32
+                    radius: 16
+                    visible: !root.hideIsland && (root.barPosition === "Above" || root.barPosition === "Below")
+                    color: root.barTransparency
+                           ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.barOpacity)
+                           : Theme.colSurfaceContainer
+                    border.color: Qt.rgba(255, 255, 255, 0.12)
+                    border.width: 1
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 6
+
+                        Rectangle { width: 5; height: 5; radius: 2.5; color: "#E5C07B" }
+                        Text {
+                            text: "SCREENSHOT"
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 9
                             font.weight: Font.Bold
-                            color: root.selectedTextColor
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            text: "4"
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 10
-                            font.weight: Font.Bold
-                            color: root.selectedAccentColor
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            text: "RU"
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 9
-                            font.weight: Font.SemiBold
-                            color: root.selectedAccentColor
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            text: "\uf023"
-                            font.family: "tabler-icons"
-                            font.pixelSize: 9
-                            color: root.selectedAccentColor
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        Text {
-                            text: "45%"
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 9
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
-                            Layout.alignment: Qt.AlignVCenter
+                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.65)
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
                         }
                     }
                 }
@@ -314,222 +464,329 @@ Item {
                 }
             }
 
-            // ── 4. BOTTOM DUAL-CARD GRID (EXACT SCREENSHOT LAYOUT) ────────
-            RowLayout {
+            // ── 4. SCREEN POSITION SELECTOR CARD ──────────────────────────
+            Rectangle {
                 Layout.fillWidth: true
-                spacing: 16
+                Layout.preferredHeight: 160
+                radius: 16
+                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
+                border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.12)
+                border.width: 1
 
-                // ── CARD A: SCREEN POSITION ───────────────────────────────
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 180
-                    radius: 16
-                    color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.03)
-                    border.color: Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.12)
-                    border.width: 1
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 10
 
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 16
-                        spacing: 10
+                    Text {
+                        text: "SCREEN POSITION"
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.45)
+                        font.family: Theme.monoFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 1.0
+                    }
 
-                        Text {
-                            text: "SCREEN POSITION"
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.45)
-                            font.family: Theme.monoFontFamily
-                            font.pixelSize: 10
-                            font.weight: Font.Bold
-                            font.letterSpacing: 1.0
-                        }
+                    // 4 Position Selectors (Above, Below, Left, Right)
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
 
-                        // 4 Position Selectors (Above, Below, Left, Right)
-                        RowLayout {
+                        // 1. Above
+                        Rectangle {
                             Layout.fillWidth: true
-                            spacing: 8
+                            Layout.preferredHeight: 68
+                            radius: 10
+                            color: root.barPosition === "Above" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            border.color: root.barPosition === "Above" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                            border.width: root.barPosition === "Above" ? 2 : 1
 
-                            // 1. Above
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 74
-                                radius: 10
-                                color: root.barPosition === "Above" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
-                                border.color: root.barPosition === "Above" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-                                border.width: root.barPosition === "Above" ? 2 : 1
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
 
-                                ColumnLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
+                                Rectangle {
+                                    width: 28; height: 18; radius: 3
+                                    color: "transparent"
+                                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
+                                    border.width: 1
+                                    Layout.alignment: Qt.AlignHCenter
 
-                                    // Diagram: Bar on top
                                     Rectangle {
-                                        width: 28; height: 18; radius: 3
-                                        color: "transparent"
-                                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
-                                        border.width: 1
-                                        Layout.alignment: Qt.AlignHCenter
-
-                                        Rectangle {
-                                            anchors.top: parent.top
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            width: 14; height: 3; radius: 1.5
-                                            color: root.barPosition === "Above" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
-                                        }
-                                    }
-                                    Text {
-                                        text: "Above"
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: root.barPosition === "Above" ? Font.Bold : Font.Normal
-                                        color: root.barPosition === "Above" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                        Layout.alignment: Qt.AlignHCenter
+                                        anchors.top: parent.top
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        width: 14; height: 3; radius: 1.5
+                                        color: root.barPosition === "Above" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
                                     }
                                 }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.barPosition = "Above"
+                                Text {
+                                    text: "Above"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: root.barPosition === "Above" ? Font.Bold : Font.Normal
+                                    color: root.barPosition === "Above" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    Layout.alignment: Qt.AlignHCenter
                                 }
                             }
 
-                            // 2. Below
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 74
-                                radius: 10
-                                color: root.barPosition === "Below" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
-                                border.color: root.barPosition === "Below" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-                                border.width: root.barPosition === "Below" ? 2 : 1
-
-                                ColumnLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-
-                                    Rectangle {
-                                        width: 28; height: 18; radius: 3
-                                        color: "transparent"
-                                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
-                                        border.width: 1
-                                        Layout.alignment: Qt.AlignHCenter
-
-                                        Rectangle {
-                                            anchors.bottom: parent.bottom
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            width: 14; height: 3; radius: 1.5
-                                            color: root.barPosition === "Below" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
-                                        }
-                                    }
-                                    Text {
-                                        text: "Below"
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: root.barPosition === "Below" ? Font.Bold : Font.Normal
-                                        color: root.barPosition === "Below" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                        Layout.alignment: Qt.AlignHCenter
-                                    }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.barPosition = "Below"
-                                }
-                            }
-
-                            // 3. Left
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 74
-                                radius: 10
-                                color: root.barPosition === "Left" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
-                                border.color: root.barPosition === "Left" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-                                border.width: root.barPosition === "Left" ? 2 : 1
-
-                                ColumnLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-
-                                    Rectangle {
-                                        width: 28; height: 18; radius: 3
-                                        color: "transparent"
-                                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
-                                        border.width: 1
-                                        Layout.alignment: Qt.AlignHCenter
-
-                                        Rectangle {
-                                            anchors.left: parent.left
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 3; height: 12; radius: 1.5
-                                            color: root.barPosition === "Left" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
-                                        }
-                                    }
-                                    Text {
-                                        text: "Left"
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: root.barPosition === "Left" ? Font.Bold : Font.Normal
-                                        color: root.barPosition === "Left" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                        Layout.alignment: Qt.AlignHCenter
-                                    }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.barPosition = "Left"
-                                }
-                            }
-
-                            // 4. Right
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 74
-                                radius: 10
-                                color: root.barPosition === "Right" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
-                                border.color: root.barPosition === "Right" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
-                                border.width: root.barPosition === "Right" ? 2 : 1
-
-                                ColumnLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-
-                                    Rectangle {
-                                        width: 28; height: 18; radius: 3
-                                        color: "transparent"
-                                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
-                                        border.width: 1
-                                        Layout.alignment: Qt.AlignHCenter
-
-                                        Rectangle {
-                                            anchors.right: parent.right
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            width: 3; height: 12; radius: 1.5
-                                            color: root.barPosition === "Right" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
-                                        }
-                                    }
-                                    Text {
-                                        text: "Right"
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: root.barPosition === "Right" ? Font.Bold : Font.Normal
-                                        color: root.barPosition === "Right" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
-                                        Layout.alignment: Qt.AlignHCenter
-                                    }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: root.barPosition = "Right"
-                                }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.barPosition = "Above"
                             }
                         }
 
+                        // 2. Below
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 68
+                            radius: 10
+                            color: root.barPosition === "Below" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            border.color: root.barPosition === "Below" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                            border.width: root.barPosition === "Below" ? 2 : 1
+
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+
+                                Rectangle {
+                                    width: 28; height: 18; radius: 3
+                                    color: "transparent"
+                                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
+                                    border.width: 1
+                                    Layout.alignment: Qt.AlignHCenter
+
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        width: 14; height: 3; radius: 1.5
+                                        color: root.barPosition === "Below" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
+                                    }
+                                }
+                                Text {
+                                    text: "Below"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: root.barPosition === "Below" ? Font.Bold : Font.Normal
+                                    color: root.barPosition === "Below" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.barPosition = "Below"
+                            }
+                        }
+
+                        // 3. Left
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 68
+                            radius: 10
+                            color: root.barPosition === "Left" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            border.color: root.barPosition === "Left" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                            border.width: root.barPosition === "Left" ? 2 : 1
+
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+
+                                Rectangle {
+                                    width: 28; height: 18; radius: 3
+                                    color: "transparent"
+                                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
+                                    border.width: 1
+                                    Layout.alignment: Qt.AlignHCenter
+
+                                    Rectangle {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 3; height: 12; radius: 1.5
+                                        color: root.barPosition === "Left" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
+                                    }
+                                }
+                                Text {
+                                    text: "Left"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: root.barPosition === "Left" ? Font.Bold : Font.Normal
+                                    color: root.barPosition === "Left" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.barPosition = "Left"
+                            }
+                        }
+
+                        // 4. Right
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 68
+                            radius: 10
+                            color: root.barPosition === "Right" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                            border.color: root.barPosition === "Right" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.1)
+                            border.width: root.barPosition === "Right" ? 2 : 1
+
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+
+                                Rectangle {
+                                    width: 28; height: 18; radius: 3
+                                    color: "transparent"
+                                    border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.18)
+                                    border.width: 1
+                                    Layout.alignment: Qt.AlignHCenter
+
+                                    Rectangle {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 3; height: 12; radius: 1.5
+                                        color: root.barPosition === "Right" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.4)
+                                    }
+                                }
+                                Text {
+                                    text: "Right"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: root.barPosition === "Right" ? Font.Bold : Font.Normal
+                                    color: root.barPosition === "Right" ? Theme.colOnSurface : Theme.colOnSurfaceVariant
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.barPosition = "Right"
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "It always opens towards the centre."
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 11
+                    }
+                }
+            }
+
+            // ── 5. ADDITIONAL CONTROLS: STYLE & DYNAMIC ISLAND ────────────
+            NCard {
+                sectionTitle: "Dropdown Style & Dynamic Island"
+
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
                         Text {
-                            text: "It always opens towards the centre."
-                            color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.35)
+                            text: "Dropdown Menus Style"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Attached tab vs floating detached magnetic pods"
                             font.family: Theme.defaultFontFamily
                             font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    RowLayout {
+                        spacing: 6
+
+                        Rectangle {
+                            height: 30
+                            width: attTxt.implicitWidth + 20
+                            radius: 8
+                            color: root.dropdownStyle === "Attached" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                            Behavior on color { ColorAnimation { duration: 150 } }
+
+                            Text {
+                                id: attTxt
+                                anchors.centerIn: parent
+                                text: "Attached"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: root.dropdownStyle === "Attached" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.dropdownStyle = "Attached";
+                                    Theme.barDropdownStyle = "Attached";
+                                    Quickshell.execDetached(["bash", "-c", "echo 'Attached' > ~/.config/cupcake/.bar_dropdown_style"]);
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            height: 30
+                            width: detTxt.implicitWidth + 20
+                            radius: 8
+                            color: root.dropdownStyle === "Detached" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                            Behavior on color { ColorAnimation { duration: 150 } }
+
+                            Text {
+                                id: detTxt
+                                anchors.centerIn: parent
+                                text: "Detached"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                color: root.dropdownStyle === "Detached" ? Theme.colOnPrimary : Theme.colOnSurfaceVariant
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.dropdownStyle = "Detached";
+                                    Theme.barDropdownStyle = "Detached";
+                                    Quickshell.execDetached(["bash", "-c", "echo 'Detached' > ~/.config/cupcake/.bar_dropdown_style"]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Dynamic Island Notification Pill"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Show morphing notification capsule on the right side of the bar"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    NToggle {
+                        checked: !root.hideIsland
+                        onToggled: (val) => {
+                            root.hideIsland = !val;
+                            globalState.hideIsland = !val;
+                            Quickshell.execDetached(["bash", "-c", "echo " + (!val) + " > ~/.config/cupcake/.hide_island"]);
                         }
                     }
                 }
