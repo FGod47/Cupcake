@@ -30,8 +30,17 @@ fi
 export PATH=$PATH:$HOME/.local/bin:$HOME/.cargo/bin
 
 MODE="dark"
+IS_PITCH_BLACK=false
 if [ -f ~/.config/cupcake/.color_mode ]; then
-    MODE=$(cat ~/.config/cupcake/.color_mode)
+    RAW_MODE=$(cat ~/.config/cupcake/.color_mode | tr '[:upper:]' '[:lower:]')
+    if [ "$RAW_MODE" = "light" ]; then
+        MODE="light"
+    elif [ "$RAW_MODE" = "pitch-black" ] || [ "$RAW_MODE" = "pitch black" ] || [ "$RAW_MODE" = "black" ]; then
+        MODE="dark"
+        IS_PITCH_BLACK=true
+    else
+        MODE="dark"
+    fi
 fi
 
 # Read Color Scheme Preset
@@ -39,6 +48,10 @@ SCHEME="tonal-spot"
 if [ -f ~/.config/cupcake/.color_scheme ]; then
     SCHEME_RAW=$(cat ~/.config/cupcake/.color_scheme)
     SCHEME=$(echo "$SCHEME_RAW" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+    if [ "$SCHEME" = "pitch-black" ] || [ "$SCHEME" = "pitch black" ] || [ "$SCHEME" = "black" ]; then
+        IS_PITCH_BLACK=true
+        SCHEME="monochrome"
+    fi
 fi
 
 # Validate matugen scheme type against supported Material 3 schemes
@@ -120,6 +133,53 @@ elif command -v ffmpeg &>/dev/null; then
     fi
 else
     matugen image "$WALLPAPER" -m "$MODE" -t "scheme-$SCHEME" --source-color-index 0
+fi
+
+if [ "$IS_PITCH_BLACK" = "true" ]; then
+    echo "Applying Pure Pitch Black (#000000) OLED overrides..."
+    python3 -c '
+import json, os
+
+cache_file = os.path.expanduser("~/.cache/quickshell_colors.json")
+if os.path.exists(cache_file):
+    try:
+        with open(cache_file, "r") as f:
+            data = json.load(f)
+    except:
+        data = {}
+else:
+    data = {}
+
+data.update({
+    "background": "#000000",
+    "onBackground": "#FFFFFF",
+    "surface": "#000000",
+    "surfaceDim": "#000000",
+    "surfaceBright": "#1c1c1c",
+    "surfaceContainerLowest": "#000000",
+    "surfaceContainerLow": "#050505",
+    "surfaceContainer": "#000000",
+    "surfaceContainerHigh": "#0d0d0d",
+    "surfaceContainerHighest": "#171717",
+    "onSurface": "#FFFFFF",
+    "surfaceVariant": "#151515",
+    "onSurfaceVariant": "#B0B0B0",
+    "outline": "#2c2c2c",
+    "outlineVariant": "#1a1a1a",
+    "primary": "#FFFFFF",
+    "onPrimary": "#000000",
+    "primaryContainer": "#222222",
+    "onPrimaryContainer": "#FFFFFF",
+    "secondary": "#CCCCCC",
+    "onSecondary": "#000000"
+})
+
+with open(cache_file, "w") as f:
+    json.dump(data, f, indent=2)
+'
+    if [ -f ~/.config/kitty/kitty.conf ]; then
+        sed -i 's/^background .*/background #000000/' ~/.config/kitty/kitty.conf 2>/dev/null || true
+    fi
 fi
 
 # Apply KDE colors dynamically

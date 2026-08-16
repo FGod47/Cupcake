@@ -26,6 +26,7 @@ Item {
             onStreamFinished: {
                 let s = text.trim().toLowerCase();
                 if (s === "light") root.colorMode = "Light";
+                else if (s === "pitch-black" || s === "pitch black" || s === "black") root.colorMode = "Pitch Black";
                 else root.colorMode = "Dark";
             }
         }
@@ -384,11 +385,12 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     SegmentedControl {
-                        options: ["Light", "Dark"]
+                        options: ["Light", "Dark", "Pitch Black"]
                         current: root.colorMode
                         onSelected: (v) => {
                             root.colorMode = v;
-                            Quickshell.execDetached(["bash", "-c", "echo '" + v.toLowerCase() + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
+                            let modeVal = v === "Pitch Black" ? "pitch-black" : v.toLowerCase();
+                            Quickshell.execDetached(["bash", "-c", "echo '" + modeVal + "' > ~/.config/cupcake/.color_mode && ~/.local/bin/set-theme"]);
                         }
                     }
                 }
@@ -495,7 +497,7 @@ Item {
                         z: 2
 
                         Repeater {
-                            model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
+                            model: ["Tonal Spot", "Pitch Black", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
                             delegate: Rectangle {
                                 id: pillDel
                                 required property string modelData
