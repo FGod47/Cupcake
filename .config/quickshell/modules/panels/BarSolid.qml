@@ -1164,50 +1164,7 @@ PanelWindow {
                 Behavior on y { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                 Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
 
-                // 1. App Launcher Icon
-                Item {
-                    width: 26; height: 26
-                    Layout.alignment: Qt.AlignVCenter
-
-                    Rectangle {
-                        id: launcherBtn
-                        anchors.centerIn: parent
-                        width: 24; height: 24; radius: 12
-                        color: launcherMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.18) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
-                        scale: launcherMa.containsMouse ? 1.12 : 1.0
-                        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                        Behavior on color { ColorAnimation { duration: 150 } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "\uebb6"
-                            font.family: "tabler-icons"
-                            font.pixelSize: 13
-                            color: Theme.colPrimary
-                        }
-
-                        MouseArea {
-                            id: launcherMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached([Quickshell.env("HOME") + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
-                        }
-                    }
-                }
-
-                // Vertical Micro Divider
-                Rectangle {
-                    width: 1
-                    height: 14
-                    radius: 0.5
-                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.leftMargin: 2
-                    Layout.rightMargin: 2
-                }
-
-                // 2. Pinned Apps
+                // Pinned Apps
                 Repeater {
                     model: (globalState && globalState.dockPinnedAppsEnabled && globalState.dockPinnedApps) ? globalState.dockPinnedApps : []
 
