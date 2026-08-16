@@ -497,7 +497,7 @@ Item {
                         z: 2
 
                         Repeater {
-                            model: ["Tonal Spot", "Pitch Black", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
+                            model: ["Tonal Spot", "Content", "Expressive", "Fidelity", "Fruit Salad", "Monochrome", "Neutral", "Rainbow"]
                             delegate: Rectangle {
                                 id: pillDel
                                 required property string modelData
