@@ -15,7 +15,7 @@ Item {
     // Read saved configuration state
     Process {
         id: initBarSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -32,6 +32,7 @@ Item {
                     if (parts[5]) root.clock24h = (parts[5].trim() !== "false");
                     if (parts[6]) root.showSeconds = (parts[6].trim() === "true");
                     if (parts[7] && parts[7].trim() !== "") root.wallpaperPath = parts[7].trim();
+                    if (parts[8] && parts[8].trim() !== "") root.barPosition = parts[8].trim();
                 }
             }
         }
@@ -124,7 +125,7 @@ Item {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Quickshell.execDetached(["bash", "-c", "echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barPosition + "' > ~/.config/cupcake/.bar_position && echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
                             statusCaptionAnim.restart();
                         }
                     }
@@ -564,7 +565,11 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: root.barPosition = "Above"
+                                onClicked: {
+                                    root.barPosition = "Above";
+                                    Theme.barPosition = "Above";
+                                    Quickshell.execDetached(["bash", "-c", "echo 'Above' > ~/.config/cupcake/.bar_position"]);
+                                }
                             }
                         }
 
@@ -608,7 +613,11 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: root.barPosition = "Below"
+                                onClicked: {
+                                    root.barPosition = "Below";
+                                    Theme.barPosition = "Below";
+                                    Quickshell.execDetached(["bash", "-c", "echo 'Below' > ~/.config/cupcake/.bar_position"]);
+                                }
                             }
                         }
 

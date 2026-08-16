@@ -19,7 +19,14 @@ PanelWindow {
     property var modelData
     screen: modelData
 
-    anchors { top: true; left: true; right: true }
+    readonly property bool isBottom: Theme.barPosition === "Below" || Theme.barPosition === "bottom" || Theme.barPosition === "Bottom"
+
+    anchors { 
+        top: !bar.isBottom
+        bottom: bar.isBottom
+        left: true
+        right: true 
+    }
     WlrLayershell.namespace: "quickshell"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     property bool anyDropdownOpen: bar.dropdownOpen || bar.netDropdownOpen || bar.musicDropdownOpen || globalState.powerDropdownOpen || globalState.solidBoardOpen || globalState.clipboardOpen
@@ -346,7 +353,8 @@ PanelWindow {
     // ─────────────────────────────────────────────────────
     Item {
         id: solidBar
-        y: bar.midY
+        y: bar.isBottom ? (bar.height - (bar.baseHeight + bar.extraHeight) - bar.midY) : bar.midY
+        Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         width: bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0)
@@ -1179,7 +1187,7 @@ PanelWindow {
 
         width: bar.notifAnimWidth
         height: (hasNotif || bar.notifAnimWidth > 0.5) ? targetTotalH : bar.barHeight
-        y: bar.midY
+        y: bar.isBottom ? (solidBar.y + bar.barHeight - height) : bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: bar.notifAnimWidth > 2 ? 1.0 : 0.0
         visible: bar.notifAnimWidth > 0.5
