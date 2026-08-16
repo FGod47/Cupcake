@@ -1205,21 +1205,11 @@ PanelWindow {
                                 let parts = body.split('/');
                                 let filename = parts[parts.length - 1] || "";
                                 if (filename.length > 0) {
-                                    if (summary.toLowerCase().includes("screenshot") || summary.toLowerCase() === "saved") {
-                                        return "Saved • " + filename;
-                                    }
-                                    return (summary ? (summary + " • ") : "") + filename;
+                                    return "Saved • " + filename;
                                 }
                             }
 
-                            // 2. Screenshot summary with file in body
-                            if (summary.toLowerCase().includes("screenshot") && body) {
-                                let parts = body.split('/');
-                                let filename = parts[parts.length - 1] || body;
-                                return "Saved • " + filename;
-                            }
-
-                            // 3. Chat / Messenger (e.g. Alex: "Are we still meeting for coffee?")
+                            // 2. Chat / Messenger (e.g. Alex: "Are we still meeting for coffee?")
                             if (body && summary && body !== summary) {
                                 if (["telegram", "discord", "slack", "signal", "whatsapp", "messages"].indexOf(app) !== -1 || summary.length <= 18) {
                                     return summary + ": " + body;
@@ -1228,19 +1218,6 @@ PanelWindow {
                             }
 
                             return summary || body;
-                        }
-
-                        function getCollapsedSavedTag(notif) {
-                            if (!notif) return "";
-                            let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            if (summary.toLowerCase().includes("screenshot") || body.includes("/Screenshot/") || summary.toLowerCase() === "saved") {
-                                return "Saved";
-                            }
-                            if (body && summary && body !== summary) {
-                                return summary;
-                            }
-                            return summary || "Notification";
                         }
 
                         function getExpandedHeading(notif) {
@@ -1253,32 +1230,37 @@ PanelWindow {
                             return summary || "Notification";
                         }
 
-                        function getCollapsedFilename(notif) {
-                            if (!notif) return "";
-                            let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
-                            if (body.startsWith("/") || body.includes("/Screenshot/") || body.includes("/Pictures/") || body.includes("/Downloads/")) {
-                                let parts = body.split('/');
-                                let filename = parts[parts.length - 1] || "";
-                                if (filename.length > 0) return filename;
-                            }
-                            if (body && summary && body !== summary) return body;
-                            return body || summary;
-                        }
-
-                        function getLocationPrefix(notif) {
+                        function getLocationDir(notif) {
                             if (!notif) return "";
                             let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
                             if (body.startsWith("/") && (body.includes(".png") || body.includes(".jpg") || body.includes(".jpeg"))) {
                                 let lastSlash = body.lastIndexOf('/');
                                 let dir = body.substring(0, lastSlash);
-                                return dir ? ("Location: " + dir + "/") : "";
+                                return dir ? (dir + "/") : "";
                             }
                             return "";
                         }
+
+                        function getFilename(notif) {
+                            if (!notif) return "";
+                            let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                            if (body.startsWith("/") && (body.includes(".png") || body.includes(".jpg") || body.includes(".jpeg"))) {
+                                let parts = body.split('/');
+                                return parts[parts.length - 1] || body;
+                            }
+                            return "";
+                        }
+
+                        function getRegularBody(notif) {
+                            if (!notif) return "";
+                            let body = (notif.body || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                            let summary = (notif.summary || "").replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{2600}-\u{27BF}]/gu, '').trim();
+                            if (body === summary) return "";
+                            return body;
+                        }
                         
                         Layout.fillWidth: true
-                        Layout.preferredHeight: isCardHovered ? (bar.barHeight + savedHeadingText.implicitHeight + (cardItem.getLocationPrefix(cardItem.notifData) !== "" ? 42 : 28)) : bar.barHeight
+                        Layout.preferredHeight: isCardHovered ? (bar.barHeight + expandedDetailsCol.implicitHeight + 14) : bar.barHeight
                         implicitHeight: Layout.preferredHeight
                         radius: isCardHovered ? 15 : bar.startRadius
                         color: notifDetachedPod.cardBg
@@ -1297,7 +1279,7 @@ PanelWindow {
                         Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                         Behavior on border.color { ColorAnimation { duration: 250 } }
 
-                        // 1. Header & Controls Row
+                        // 1. Header & Controls Row (Clean RowLayout - 100% immune to collisions!)
                         RowLayout {
                             id: headerRow
                             anchors.left: parent.left
@@ -1328,9 +1310,19 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                             }
 
-                            // Flexible space for morphing headline
-                            Item {
+                            // Compact Preview Text (Saved • 08-16-09-27-43.png)
+                            Text {
+                                id: inlinePreviewText
                                 Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                text: cardItem.getCompactPreview(cardItem.notifData)
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 11
+                                font.weight: Font.DemiBold
+                                color: bar.fg
+                                elide: Text.ElideRight
+                                opacity: cardItem.isCardHovered ? 0.0 : 1.0
+                                Behavior on opacity { NumberAnimation { duration: 250 } }
                             }
 
                             // Circle Countdown Timer Ring
@@ -1408,123 +1400,93 @@ PanelWindow {
                             }
                         }
 
-                        // 2. Element A: "Saved" text physically glides down to become the Heading Title on expand
-                        Text {
-                            id: savedHeadingText
-                            x: cardItem.isCardHovered ? 13 : (headerRow.x + notifAppTag.x + notifAppTag.width + 8)
-                            y: cardItem.isCardHovered ? (bar.barHeight + 2) : ((bar.barHeight - implicitHeight) / 2)
-                            width: cardItem.isCardHovered ? (cardItem.width - 26) : implicitWidth
-                            
-                            text: cardItem.isCardHovered ? cardItem.getExpandedHeading(cardItem.notifData) : cardItem.getCollapsedSavedTag(cardItem.notifData)
-                            font.family: Theme.appFontMono
-                            font.pixelSize: cardItem.isCardHovered ? 12 : 11
-                            font.weight: Font.Bold
-                            color: bar.fg
-
-                            Behavior on x {
-                                NumberAnimation {
-                                    duration: 720
-                                    easing.type: Easing.BezierSpline
-                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                                }
-                            }
-                            Behavior on y {
-                                NumberAnimation {
-                                    duration: 720
-                                    easing.type: Easing.BezierSpline
-                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                                }
-                            }
-                            Behavior on font.pixelSize { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                        }
-
-                        // 3. Dot separator between "Saved" and filename in collapsed row (fades out on expand)
-                        Text {
-                            id: dotSeparator
-                            x: savedHeadingText.x + savedHeadingText.implicitWidth + 4
-                            y: (bar.barHeight - implicitHeight) / 2
-                            text: "•"
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.4)
-                            opacity: cardItem.isCardHovered ? 0.0 : 1.0
-                            visible: opacity > 0.01
-                            Behavior on opacity { NumberAnimation { duration: 250 } }
-                        }
-
-                        // 4. Expanded Divider Line (fades in on expand)
-                        Rectangle {
-                            id: expandedDivider
+                        // 2. Expanded Details Section (Smooth downward reveal on hover, pristine collapse!)
+                        ColumnLayout {
+                            id: expandedDetailsCol
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.top: parent.top
+                            anchors.top: headerRow.bottom
                             anchors.leftMargin: 13
                             anchors.rightMargin: 13
-                            anchors.topMargin: bar.barHeight + savedHeadingText.implicitHeight + 5
-                            height: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                            anchors.topMargin: 2
+                            spacing: 6
                             visible: opacity > 0.01
                             opacity: cardItem.isCardHovered ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 400 } }
-                        }
 
-                        // 5. Location Directory Prefix ("Location: /home/zero/Pictures/Screenshot/")
-                        Text {
-                            id: locationPrefixText
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: expandedDivider.bottom
-                            anchors.leftMargin: 13
-                            anchors.rightMargin: 13
-                            anchors.topMargin: 5
-                            visible: text !== "" && opacity > 0.01
-                            text: cardItem.getLocationPrefix(cardItem.notifData)
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 10
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                            opacity: cardItem.isCardHovered ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 450 } }
-                        }
+                            transform: Translate {
+                                y: cardItem.isCardHovered ? 0 : -8
+                                Behavior on y {
+                                    NumberAnimation {
+                                        duration: 650
+                                        easing.type: Easing.BezierSpline
+                                        easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                    }
+                                }
+                            }
 
-                        // 6. Element B: PNG Filename physically glides down to Location below divider line on expand
-                        Text {
-                            id: filenameLocationText
-                            x: cardItem.isCardHovered ? 13 : (savedHeadingText.x + savedHeadingText.implicitWidth + 12)
-                            y: cardItem.isCardHovered
-                               ? (bar.barHeight + savedHeadingText.implicitHeight + (cardItem.getLocationPrefix(cardItem.notifData) !== "" ? 22 : 12))
-                               : ((bar.barHeight - implicitHeight) / 2)
-                            width: cardItem.isCardHovered ? (cardItem.width - 26) : Math.max(0, (headerRow.width - (savedHeadingText.x + savedHeadingText.implicitWidth + 12) - 52))
-                            
-                            text: cardItem.getCollapsedFilename(cardItem.notifData)
-                            font.family: Theme.appFontMono
-                            font.pixelSize: 11
-                            font.weight: cardItem.isCardHovered ? Font.Normal : Font.DemiBold
-                            color: cardItem.isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.8) : bar.fg
-                            elide: cardItem.isCardHovered ? Text.ElideNone : Text.ElideRight
-                            wrapMode: cardItem.isCardHovered ? Text.Wrap : Text.NoWrap
-
-                            Behavior on x {
+                            Behavior on opacity {
                                 NumberAnimation {
-                                    duration: 720
+                                    duration: 400
                                     easing.type: Easing.BezierSpline
                                     easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
                                 }
                             }
-                            Behavior on y {
-                                NumberAnimation {
-                                    duration: 720
-                                    easing.type: Easing.BezierSpline
-                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+
+                            // Heading Title (Screenshot Saved / App Title)
+                            Text {
+                                Layout.fillWidth: true
+                                text: cardItem.getExpandedHeading(cardItem.notifData)
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 12
+                                font.weight: Font.Bold
+                                color: bar.fg
+                            }
+
+                            // Divider Line
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 1
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.08)
+                            }
+
+                            // Location Section (Location path + Filename)
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+                                visible: cardItem.getLocationDir(cardItem.notifData) !== ""
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: "Location: " + cardItem.getLocationDir(cardItem.notifData)
+                                    font.family: Theme.appFontMono
+                                    font.pixelSize: 10
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: cardItem.getFilename(cardItem.notifData)
+                                    font.family: Theme.appFontMono
+                                    font.pixelSize: 11
+                                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.85)
+                                    elide: Text.ElideRight
                                 }
                             }
-                            Behavior on width {
-                                NumberAnimation {
-                                    duration: 720
-                                    easing.type: Easing.BezierSpline
-                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                                }
+
+                            // Regular Body Text (for messages, chat, system alerts)
+                            Text {
+                                Layout.fillWidth: true
+                                visible: cardItem.getLocationDir(cardItem.notifData) === "" && text !== ""
+                                text: cardItem.getRegularBody(cardItem.notifData)
+                                font.family: Theme.appFontMono
+                                font.pixelSize: 11
+                                color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.65)
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 3
+                                elide: Text.ElideRight
+                                lineHeight: 1.25
                             }
-                            Behavior on color { ColorAnimation { duration: 300 } }
                         }
 
                     property real timerProgress: 1.0
