@@ -1,6 +1,6 @@
 #!/bin/bash
-TRANS=$(cat ~/.config/cupcake/.transparency 2>/dev/null)
-BAR_TRANS=$(cat ~/.config/cupcake/.bar_transparency 2>/dev/null)
+TRANS=$(cat ~/.config/cupcake/.transparency 2>/dev/null || echo true)
+BAR_TRANS=$(cat ~/.config/cupcake/.bar_transparency 2>/dev/null || echo true)
 source ~/.config/cupcake/.transparency_values 2>/dev/null
 
 OPACITY=${OPACITY:-0.90}
@@ -11,14 +11,29 @@ INACTIVE_OPACITY=$OPACITY
 XRAY_BLUR=$(cat ~/.config/cupcake/.xray_blur 2>/dev/null || echo true)
 [ -z "$XRAY_BLUR" ] && XRAY_BLUR=true
 
+# If either window transparency OR quickshell transparency is enabled, blur MUST be enabled in Hyprland
+BLUR_ENABLED=false
+if [ "$TRANS" = "true" ] || [ "$BAR_TRANS" = "true" ]; then
+    BLUR_ENABLED=true
+fi
+
+WIN_ACT_OP="1.0"
+WIN_INACT_OP="1.0"
 if [ "$TRANS" = "true" ]; then
-    cat <<EOF > ~/.config/hypr/transparency.lua
+    WIN_ACT_OP="$OPACITY"
+    WIN_INACT_OP="$INACTIVE_OPACITY"
+    sed -i "s/^background_opacity.*/background_opacity $OPACITY/g" ~/.config/kitty/kitty.conf 2>/dev/null || true
+else
+    sed -i 's/^background_opacity.*/background_opacity 1.0/g' ~/.config/kitty/kitty.conf 2>/dev/null || true
+fi
+
+cat <<EOF > ~/.config/hypr/transparency.lua
 hl.config({
     decoration = {
-        active_opacity = $OPACITY,
-        inactive_opacity = $INACTIVE_OPACITY,
+        active_opacity = $WIN_ACT_OP,
+        inactive_opacity = $WIN_INACT_OP,
         blur = {
-            enabled = true,
+            enabled = $BLUR_ENABLED,
             size = $BLUR_SIZE,
             passes = $BLUR_PASSES,
             xray = $XRAY_BLUR,
@@ -28,46 +43,13 @@ hl.config({
     }
 })
 EOF
-    sed -i "s/^background_opacity.*/background_opacity $OPACITY/g" ~/.config/kitty/kitty.conf
-else
-    cat <<EOF > ~/.config/hypr/transparency.lua
-hl.config({
-    decoration = {
-        active_opacity = 1.0,
-        inactive_opacity = 1.0,
-        blur = {
-            enabled = false
-        }
-    }
-})
-EOF
-    sed -i 's/^background_opacity.*/background_opacity 1.0/g' ~/.config/kitty/kitty.conf
-fi
 
 if [ "$BAR_TRANS" = "true" ]; then
-    # Calculate the minimum opacity across all widgets to set the optimal ignore_alpha threshold
-    BAR_OP=$(cat ~/.config/cupcake/.bar_opacity 2>/dev/null || echo 1.0)
-    DOCK_OP=$(cat ~/.config/cupcake/.dock_opacity 2>/dev/null || echo 1.0)
-    CC_OP=$(cat ~/.config/cupcake/.cc_opacity 2>/dev/null || echo 1.0)
-    NOTIF_OP=$(cat ~/.config/cupcake/.notif_panel_opacity 2>/dev/null || echo 1.0)
-    
-    [ -z "$BAR_OP" ] && BAR_OP=1.0
-    [ -z "$DOCK_OP" ] && DOCK_OP=1.0
-    [ -z "$CC_OP" ] && CC_OP=1.0
-    [ -z "$NOTIF_OP" ] && NOTIF_OP=1.0
-    
-    MIN_OP=$(echo -e "$BAR_OP\n$DOCK_OP\n$CC_OP\n$NOTIF_OP" | sort -n | head -n 1)
-    
-    # Subtract 0.05 from the lowest opacity to allow the main body to blur, 
-    # but block the soft anti-aliased edges from blurring (prevents the square bleed halo)
-    IGNORE_ALPHA=$(echo "$MIN_OP - 0.05" | bc)
-    if (( $(echo "$IGNORE_ALPHA <= 0.0" | bc -l) )); then
-        IGNORE_ALPHA="0.01"
-    fi
-
-    if (( $(echo "$IGNORE_ALPHA <= 0.0" | bc -l) )); then
-        IGNORE_ALPHA="0.01"
-    fi
+    # Use a robust ignore_alpha threshold (0.05).
+    # In Quickshell, transparent margins and outer bounds have alpha=0.00.
+    # Setting ignore_alpha=0.05 blocks empty transparency from blurring (preventing square box bleed)
+    # while allowing ANY user-chosen opacity level (0.10 to 1.00) to blur reliably without breaking.
+    IGNORE_ALPHA="0.05"
 
     cat <<EOF >> ~/.config/hypr/transparency.lua
 hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true })
