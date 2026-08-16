@@ -1135,6 +1135,12 @@ PanelWindow {
 
         width: bar.notifAnimWidth
         height: (hasNotif || bar.notifAnimWidth > 0.5) ? targetTotalH : bar.barHeight
+        Behavior on height {
+            NumberAnimation {
+                duration: 550
+                easing.type: Easing.OutCubic
+            }
+        }
         y: bar.midY
         x: (bar.barX + bar.barW) - bar.notifAnimWidth
         opacity: bar.notifAnimWidth > 2 ? 1.0 : 0.0
@@ -1148,6 +1154,12 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             height: notifDetachedPod.targetListH
+            Behavior on height {
+                NumberAnimation {
+                    duration: 550
+                    easing.type: Easing.OutCubic
+                }
+            }
             contentWidth: width
             contentHeight: notifStackCol.implicitHeight
             boundsBehavior: Flickable.StopAtBounds
@@ -1265,6 +1277,39 @@ PanelWindow {
                             return body;
                         }
                         
+                        property bool isDismissing: false
+
+                        function triggerDismiss() {
+                            if (isDismissing) return;
+                            isDismissing = true;
+                            dismissTimer.start();
+                        }
+
+                        Timer {
+                            id: dismissTimer
+                            interval: 320
+                            repeat: false
+                            onTriggered: {
+                                if (cardItem.notifData) {
+                                    cardItem.notifData.dismiss();
+                                }
+                                let curList = notifDetachedPod.popupsList.slice();
+                                let targetIdx = -1;
+                                for (let i = 0; i < curList.length; i++) {
+                                    if (curList[i] === cardItem.notifData) {
+                                        targetIdx = i;
+                                        break;
+                                    }
+                                }
+                                if (targetIdx !== -1) {
+                                    curList.splice(targetIdx, 1);
+                                } else if (cardItem.itemIdx < curList.length) {
+                                    curList.splice(cardItem.itemIdx, 1);
+                                }
+                                globalState.popups = curList;
+                            }
+                        }
+
                         Layout.fillWidth: true
                         Layout.preferredHeight: isCardHovered ? (bar.barHeight + expandedDetailsCol.implicitHeight + 14) : bar.barHeight
                         implicitHeight: Layout.preferredHeight
@@ -1273,7 +1318,31 @@ PanelWindow {
                         border.width: isCardHovered ? 1 : 0
                         border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25) : "transparent"
                         clip: true
-                        opacity: 1.0
+                        opacity: cardItem.isDismissing ? 0.0 : 1.0
+
+                        transform: [
+                            Translate {
+                                id: stackSlideX
+                                x: cardItem.isDismissing ? (cardItem.width + 30) : 0
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 320
+                                        easing.type: Easing.InCubic
+                                    }
+                                }
+                            },
+                            Scale {
+                                id: stackScale
+                                origin.x: cardItem.width / 2
+                                origin.y: cardItem.height / 2
+                                xScale: cardItem.isDismissing ? 0.85 : 1.0
+                                yScale: cardItem.isDismissing ? 0.85 : 1.0
+                                Behavior on xScale { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
+                                Behavior on yScale { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
+                            }
+                        ]
+
+                        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
@@ -1397,10 +1466,7 @@ PanelWindow {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (cardItem.notifData) cardItem.notifData.dismiss();
-                                        let curList = notifDetachedPod.popupsList.slice();
-                                        curList.splice(cardItem.itemIdx, 1);
-                                        globalState.popups = curList;
+                                        cardItem.triggerDismiss();
                                     }
                                 }
                             }
@@ -1506,12 +1572,7 @@ PanelWindow {
                         running: true
                         paused: cardItem.isCardHovered || notifFlickable.moving
                         onFinished: {
-                            if (cardItem.notifData) {
-                                cardItem.notifData.dismiss();
-                            }
-                            let curList = notifDetachedPod.popupsList.slice();
-                            curList.splice(cardItem.itemIdx, 1);
-                            globalState.popups = curList;
+                            cardItem.triggerDismiss();
                         }
                     }
 
@@ -1526,11 +1587,8 @@ PanelWindow {
                                 if (cardItem.notifData.actions && cardItem.notifData.actions.length > 0) {
                                     cardItem.notifData.actions[0].trigger();
                                 }
-                                cardItem.notifData.dismiss();
                             }
-                            let curList = notifDetachedPod.popupsList.slice();
-                            curList.splice(cardItem.itemIdx, 1);
-                            globalState.popups = curList;
+                            cardItem.triggerDismiss();
                         }
                     }
                 }
