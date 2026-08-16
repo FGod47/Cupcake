@@ -357,6 +357,14 @@ Item {
                             spacing: 7
                             Layout.alignment: Qt.AlignVCenter
 
+                            // Network Speed
+                            Text {
+                                text: "1.2 MB/s"
+                                font.family: Theme.monoFontFamily
+                                font.pixelSize: 10
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
+                            }
+
                             // Wi-Fi
                             Text {
                                 text: "\ueb52"
@@ -364,14 +372,6 @@ Item {
                                 font.pixelSize: 13
                                 color: Theme.colOnSurface
                                 opacity: 0.85
-                            }
-
-                            // Network Speed
-                            Text {
-                                text: "1.2 MB/s"
-                                font.family: Theme.monoFontFamily
-                                font.pixelSize: 10
-                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.7)
                             }
 
                             // Dot Separator

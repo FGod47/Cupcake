@@ -648,39 +648,7 @@ PanelWindow {
                         }
                     }
 
-                    // 1. Wi-Fi
-                    NetBarIcon {
-                        tabId: 1
-                        iconCode: "\ueb52"
-                        forceVisible: isWifi || (!isWired && !isHotspot)
-                        iconColor: (netSplitPill && netSplitPill.wifiSSID !== "Disconnected" && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
-                    }
-
-                    // 2. Bluetooth
-                    NetBarIcon {
-                        tabId: 3
-                        iconCode: isBluetoothConnected ? "\uecea" : "\uea37"
-                        forceVisible: isBluetooth
-                        iconColor: fg
-                    }
-
-                    // 3. Hotspot
-                    NetBarIcon {
-                        tabId: 2
-                        iconCode: "\ued1b"
-                        forceVisible: isHotspot
-                        iconColor: fg
-                    }
-
-                    // 4. Ethernet
-                    NetBarIcon {
-                        tabId: 0
-                        iconCode: "\uebd9"
-                        forceVisible: isWired
-                        iconColor: (netSplitPill && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
-                    }
-
-                    // 5. Network Speed / Status Text
+                    // 1. Network Speed / Status Text (at left of icons)
                     Item {
                         anchors.verticalCenter: parent.verticalCenter
                         height: 20
@@ -736,6 +704,38 @@ PanelWindow {
                                 bar.netDropdownOpen = !bar.netDropdownOpen;
                             }
                         }
+                    }
+
+                    // 2. Wi-Fi
+                    NetBarIcon {
+                        tabId: 1
+                        iconCode: "\ueb52"
+                        forceVisible: isWifi || (!isWired && !isHotspot)
+                        iconColor: (netSplitPill && netSplitPill.wifiSSID !== "Disconnected" && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
+                    }
+
+                    // 3. Bluetooth
+                    NetBarIcon {
+                        tabId: 3
+                        iconCode: isBluetoothConnected ? "\uecea" : "\uea37"
+                        forceVisible: isBluetooth
+                        iconColor: fg
+                    }
+
+                    // 4. Hotspot
+                    NetBarIcon {
+                        tabId: 2
+                        iconCode: "\ued1b"
+                        forceVisible: isHotspot
+                        iconColor: fg
+                    }
+
+                    // 5. Ethernet
+                    NetBarIcon {
+                        tabId: 0
+                        iconCode: "\uebd9"
+                        forceVisible: isWired
+                        iconColor: (netSplitPill && !netSplitPill.hasInternet) ? "#ff6b6b" : fg
                     }
                 }
             }
