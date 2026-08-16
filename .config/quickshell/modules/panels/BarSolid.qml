@@ -1123,20 +1123,258 @@ PanelWindow {
 
         }
         
-        Image {
-            id: cupcakeLogo
+        // ── BAR CENTER: CUPCAKE LOGO (TOP) / EMBEDDED DOCK ICONS (BOTTOM) ──
+        Item {
+            id: barCenterContainer
             x: (bar.screenW / 2) - solidBar.x - (width / 2)
-            anchors.top: parent.top
-            anchors.topMargin: (bar.barHeight - 24) / 2
-            source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-            sourceSize.height: 24
-            width: 67
-            fillMode: Image.PreserveAspectFit
-            opacity: 1.0
-            Behavior on opacity { NumberAnimation { duration: 250 } }
-            layer.enabled: true
-            layer.effect: ColorOverlay {
-                color: bar.fg
+            anchors.verticalCenter: parent.verticalCenter
+            width: bar.isBottom ? Math.max(cupcakeLogo.width, barDockRow.implicitWidth) : cupcakeLogo.width
+            height: bar.barHeight
+            clip: true
+
+            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+
+            // ── TOP BAR: CUPCAKE WORD LOGO (Slides UP when bar is at bottom) ──
+            Image {
+                id: cupcakeLogo
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: bar.isBottom ? -36 : ((parent.height - height) / 2)
+                opacity: bar.isBottom ? 0.0 : 1.0
+                source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                sourceSize.height: 22
+                width: 67
+                height: 22
+                fillMode: Image.PreserveAspectFit
+                layer.enabled: true
+                layer.effect: ColorOverlay { color: bar.fg }
+
+                Behavior on y { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
+            }
+
+            // ── BOTTOM BAR: EMBEDDED DOCK ICONS (Slides IN from bottom when bar is at bottom) ──
+            RowLayout {
+                id: barDockRow
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: bar.isBottom ? ((parent.height - height) / 2) : 36
+                opacity: bar.isBottom ? 1.0 : 0.0
+                visible: opacity > 0.01
+                spacing: 6
+
+                Behavior on y { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuad } }
+
+                // 1. App Launcher Icon
+                Item {
+                    width: 26; height: 26
+                    Layout.alignment: Qt.AlignVCenter
+
+                    Rectangle {
+                        id: launcherBtn
+                        anchors.centerIn: parent
+                        width: 24; height: 24; radius: 12
+                        color: launcherMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.18) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.06)
+                        scale: launcherMa.containsMouse ? 1.12 : 1.0
+                        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\uebb6"
+                            font.family: "tabler-icons"
+                            font.pixelSize: 13
+                            color: Theme.colPrimary
+                        }
+
+                        MouseArea {
+                            id: launcherMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached([Quickshell.env("HOME") + "/.config/cupcake/scripts/toggle_app_launcher.sh"])
+                        }
+                    }
+                }
+
+                // Vertical Micro Divider
+                Rectangle {
+                    width: 1
+                    height: 14
+                    radius: 0.5
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.leftMargin: 2
+                    Layout.rightMargin: 2
+                }
+
+                // 2. Pinned Apps
+                Repeater {
+                    model: (globalState && globalState.dockPinnedAppsEnabled && globalState.dockPinnedApps) ? globalState.dockPinnedApps : []
+
+                    delegate: Item {
+                        id: barPinnedItem
+                        required property var modelData
+                        width: 26; height: 26
+                        Layout.alignment: Qt.AlignVCenter
+
+                        property var toplevel: null
+
+                        Instantiator {
+                            model: ToplevelManager.toplevels
+                            delegate: QtObject {
+                                required property var modelData
+                                property var tl: modelData
+                                Component.onCompleted: {
+                                    if (tl && tl.appId === barPinnedItem.modelData.appId) {
+                                        barPinnedItem.toplevel = tl;
+                                    }
+                                }
+                                Component.onDestruction: {
+                                    if (barPinnedItem.toplevel === tl) {
+                                        barPinnedItem.toplevel = null;
+                                    }
+                                }
+                            }
+                        }
+
+                        readonly property bool isRunning: toplevel !== null
+                        readonly property bool isActive: isRunning && toplevel.activated
+
+                        Rectangle {
+                            id: iconTile
+                            anchors.centerIn: parent
+                            width: 24; height: 24; radius: 6
+                            color: barPinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : "transparent"
+                            scale: barPinnedMa.containsMouse ? 1.15 : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                            Behavior on color { ColorAnimation { duration: 120 } }
+
+                            Image {
+                                anchors.centerIn: parent
+                                width: 18; height: 18
+                                source: "image://icon/" + barPinnedItem.modelData.appId
+                                fillMode: Image.PreserveAspectFit
+                                asynchronous: true
+                            }
+
+                            // Running / Active Dot Indicator
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 1
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: barPinnedItem.isActive ? 12 : (barPinnedItem.isRunning ? 4 : 0)
+                                height: 2.5
+                                radius: 1.25
+                                color: barPinnedItem.isActive ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                visible: barPinnedItem.isRunning
+                                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            }
+
+                            MouseArea {
+                                id: barPinnedMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (barPinnedItem.isRunning && barPinnedItem.toplevel) {
+                                        barPinnedItem.toplevel.activate();
+                                    } else {
+                                        Quickshell.execDetached(["bash", "-c", barPinnedItem.modelData.exec]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 3. Divider before unpinned running apps
+                Rectangle {
+                    width: 1
+                    height: 14
+                    radius: 0.5
+                    color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.2)
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.leftMargin: 2
+                    Layout.rightMargin: 2
+                    visible: {
+                        var hasUnpinned = false;
+                        var pinnedIds = [];
+                        if (globalState && globalState.dockPinnedAppsEnabled && globalState.dockPinnedApps) {
+                            for (var j = 0; j < globalState.dockPinnedApps.length; j++) {
+                                pinnedIds.push(globalState.dockPinnedApps[j].appId);
+                            }
+                        }
+                        if (ToplevelManager && ToplevelManager.toplevels) {
+                            for (var i = 0; i < ToplevelManager.toplevels.length; i++) {
+                                if (!pinnedIds.includes(ToplevelManager.toplevels[i].appId)) {
+                                    hasUnpinned = true;
+                                    break;
+                                }
+                            }
+                        }
+                        return hasUnpinned;
+                    }
+                }
+
+                // 4. Unpinned Running Apps
+                Repeater {
+                    model: ToplevelManager ? ToplevelManager.toplevels : []
+
+                    delegate: Item {
+                        id: barUnpinnedItem
+                        required property var modelData
+
+                        readonly property bool isPinned: {
+                            if (!globalState || !globalState.dockPinnedAppsEnabled || !globalState.dockPinnedApps) return false;
+                            for (var j = 0; j < globalState.dockPinnedApps.length; j++) {
+                                if (globalState.dockPinnedApps[j].appId === modelData.appId) return true;
+                            }
+                            return false;
+                        }
+
+                        visible: !isPinned
+                        width: visible ? 26 : 0
+                        height: 26
+                        Layout.alignment: Qt.AlignVCenter
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: 24; height: 24; radius: 6
+                            color: barUnpinnedMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : "transparent"
+                            scale: barUnpinnedMa.containsMouse ? 1.15 : 1.0
+                            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                            Behavior on color { ColorAnimation { duration: 120 } }
+
+                            Image {
+                                anchors.centerIn: parent
+                                width: 18; height: 18
+                                source: barUnpinnedItem.modelData.appId ? ("image://icon/" + barUnpinnedItem.modelData.appId) : ""
+                                fillMode: Image.PreserveAspectFit
+                                asynchronous: true
+                            }
+
+                            // Active indicator dot
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 1
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: barUnpinnedItem.modelData.activated ? 12 : 4
+                                height: 2.5
+                                radius: 1.25
+                                color: barUnpinnedItem.modelData.activated ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
+                                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            }
+
+                            MouseArea {
+                                id: barUnpinnedMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: barUnpinnedItem.modelData.activate()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

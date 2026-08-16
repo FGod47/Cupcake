@@ -52,7 +52,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: Dock {
-            visible: !!globalState.dockMonitors && (globalState.dockMonitors.includes("all") || (modelData && globalState.dockMonitors.includes(modelData.name)))
+            visible: !(Theme.barPosition === "Below" || Theme.barPosition === "bottom" || Theme.barPosition === "Bottom") && !!globalState.dockMonitors && (globalState.dockMonitors.includes("all") || (modelData && globalState.dockMonitors.includes(modelData.name)))
         }
     }
 

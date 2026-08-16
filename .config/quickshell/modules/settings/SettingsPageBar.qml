@@ -314,6 +314,42 @@ Item {
                             Layout.maximumWidth: 160
                         }
 
+                        // Center: Cupcake Logo (when Above) / Dock Icons (when Below)
+                        Item {
+                            Layout.alignment: Qt.AlignVCenter
+                            width: root.barPosition === "Below" ? 110 : 50
+                            height: 24
+                            clip: true
+                            Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+
+                            Text {
+                                anchors.centerIn: parent
+                                y: root.barPosition === "Below" ? -28 : ((parent.height - height) / 2)
+                                text: "🧁 cupcake"
+                                font.family: Theme.defaultFontFamily
+                                font.pixelSize: 10
+                                font.weight: Font.Bold
+                                color: Theme.colPrimary
+                                opacity: root.barPosition === "Below" ? 0.0 : 0.85
+                                Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                            }
+
+                            Row {
+                                anchors.centerIn: parent
+                                y: root.barPosition === "Below" ? ((parent.height - height) / 2) : 28
+                                opacity: root.barPosition === "Below" ? 1.0 : 0.0
+                                spacing: 5
+                                Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                                Rectangle { width: 18; height: 18; radius: 9; color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2); Text { anchors.centerIn: parent; text: "\uebb6"; font.family: "tabler-icons"; font.pixelSize: 10; color: Theme.colPrimary } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12); Text { anchors.centerIn: parent; text: "🌐"; font.pixelSize: 10 } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12); Text { anchors.centerIn: parent; text: ">_"; font.pixelSize: 8; color: Theme.colPrimary } }
+                                Rectangle { width: 18; height: 18; radius: 4; color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12); Text { anchors.centerIn: parent; text: "📁"; font.pixelSize: 10 } }
+                            }
+                        }
+
                         // Spacer
                         Item { Layout.fillWidth: true }
 
