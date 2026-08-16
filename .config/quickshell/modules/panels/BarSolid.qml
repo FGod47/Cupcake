@@ -509,26 +509,6 @@ PanelWindow {
             // Spacer
             Item { Layout.fillWidth: true }
 
-            // ── CENTER-RIGHT: System Resource Monitor ────────
-            BarResources {
-                id: resMonitorItem
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: bar.hasNotifPopup ? 0 : 10
-                Layout.preferredWidth: bar.hasNotifPopup ? 0 : implicitWidth
-                clip: true
-                opacity: bar.hasNotifPopup ? 0.0 : 1.0
-                visible: opacity > 0.01
-
-                Behavior on Layout.preferredWidth {
-                    NumberAnimation {
-                        duration: 380
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: [0.08, 0.85, 0.2, 1.0, 1.0, 1.0]
-                    }
-                }
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
-            }
-
             // ── RIGHT: Network & Connectivity Pill ──────────────────
             Item {
                 id: networkContainer
