@@ -70,6 +70,12 @@ Item {
         }
     }
 
+    // Properties for consistent styling
+    property color cText: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.88)
+    property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.6)
+    property color cAccent: Theme.colPrimary
+    property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+
     // State properties
     property bool barEnabled: true
     property string barPosition: "Above" // "Above", "Below", "Left", "Right"
@@ -816,24 +822,16 @@ Item {
 
                 // 1. Height / Thickness Slider
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Height (Thickness)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Vertical thickness of the status bar (" + root.barHeight + "px)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb58" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Height (Thickness)"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Vertical thickness of the status bar (" + root.barHeight + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 24; to: 56; stepSize: 1
@@ -857,24 +855,16 @@ Item {
 
                 // 2. Bar Width / Side Gap (Horizontal Inset)
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Width (Side Margin)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: root.barSideGap === 0 ? "Full width edge-to-edge (0px margin)" : ("Floating island width (" + root.barSideGap + "px margin)")
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb57" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Width (Side Margin)"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.barSideGap === 0 ? "Full width edge-to-edge (0px margin)" : ("Floating island width (" + root.barSideGap + "px margin)"); color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0; to: 240; stepSize: 2
@@ -898,24 +888,16 @@ Item {
 
                 // 3. Corner Radius / Roundness
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Corner Radius"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: root.barRadius === 0 ? "Sharp rectangular edges (0px)" : (root.barRadius >= Math.floor(root.barHeight / 2) ? "Full capsule pill (" + root.barRadius + "px)" : "Rounded corners (" + root.barRadius + "px)")
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea42" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Corner Radius"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.barRadius === 0 ? "Sharp rectangular edges (0px)" : (root.barRadius >= Math.floor(root.barHeight / 2) ? "Full capsule pill (" + root.barRadius + "px)" : "Rounded corners (" + root.barRadius + "px)"); color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0; to: 28; stepSize: 1
@@ -939,24 +921,16 @@ Item {
 
                 // 4. Border Thickness / Width
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Border Thickness"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: root.barBorderWidth === 0 ? "No border" : ("Subtle border outline (" + root.barBorderWidth + "px)")
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea43" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Border Thickness"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: root.barBorderWidth === 0 ? "No border" : ("Subtle border outline (" + root.barBorderWidth + "px)"); color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0; to: 4; stepSize: 1
@@ -984,24 +958,16 @@ Item {
                 sectionTitle: "Gaps & Margins"
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Edge Gap (Margin)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Distance from top/bottom screen edge (" + root.barGap + "px)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb56" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Edge Gap (Margin)"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Distance from top/bottom screen edge (" + root.barGap + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0; to: 40; stepSize: 1
@@ -1024,24 +990,16 @@ Item {
                 }
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Window Gap"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Extra distance between tiled windows and the bar (" + root.barWindowGap + "px)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb55" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Window Gap"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Extra distance between tiled windows and the bar (" + root.barWindowGap + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0; to: 40; stepSize: 1
@@ -1065,24 +1023,16 @@ Item {
 
                 // Inner Side Padding
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Inner Side Padding"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Left & right margins inside the bar (" + root.barInnerPadding + "px)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea44" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Inner Side Padding"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Left & right margins inside the bar (" + root.barInnerPadding + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 6; to: 28; stepSize: 1
@@ -1106,24 +1056,16 @@ Item {
 
                 // Module Item Spacing
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Module & Item Spacing"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Distance between icons and status modules (" + root.barItemSpacing + "px)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea45" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Module & Item Spacing"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Distance between icons and status modules (" + root.barItemSpacing + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 2; to: 16; stepSize: 1
@@ -1146,29 +1088,21 @@ Item {
                 }
             }
 
-            // ── 6. ADDITIONAL CONTROLS: STYLE & DYNAMIC ISLAND ────────────
+            // ── 7. ADDITIONAL CONTROLS: STYLE & DYNAMIC ISLAND ────────────
             NCard {
                 sectionTitle: "Dropdown Style & Dynamic Island"
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Dropdown Menus Style"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Attached tab vs floating detached magnetic pods"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uead7" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Dropdown Menus Style"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Attached tab vs floating detached magnetic pods"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     RowLayout {
                         spacing: 6
 
@@ -1231,24 +1165,16 @@ Item {
                 }
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Dynamic Island Notification Pill"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Show morphing notification capsule on the right side of the bar"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea35" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Dynamic Island Notification Pill"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show morphing notification capsule on the right side of the bar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     NToggle {
                         checked: !root.hideIsland
                         onToggled: (val) => {
@@ -1260,29 +1186,21 @@ Item {
                 }
             }
 
-            // ── 7. TRANSPARENCY & OPACITY ─────────────────────────────
+            // ── 8. TRANSPARENCY & OPACITY ─────────────────────────────
             NCard {
                 sectionTitle: "Transparency & Opacity"
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Transparency"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Enable translucency for the status bar and island"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb00" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Transparency"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Enable translucency for the status bar and island"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     NToggle {
                         checked: root.barTransparency
                         onToggled: (val) => {
@@ -1294,24 +1212,16 @@ Item {
                 }
 
                 NRow {
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-                        Text {
-                            text: "Bar Opacity"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.colOnSurface
-                        }
-                        Text {
-                            text: "Adjust background fill opacity (" + Math.round(root.barOpacity * 100) + "%)"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 11
-                            color: Theme.colOnSurfaceVariant
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb01" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Bar Opacity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Adjust background fill opacity (" + Math.round(root.barOpacity * 100) + "%)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
-
+                    Item { Layout.fillWidth: true }
                     StyledSlider {
                         Layout.preferredWidth: 220
                         from: 0.1; to: 1.0; stepSize: 0.05
