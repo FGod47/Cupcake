@@ -440,7 +440,9 @@ PanelWindow {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (cardItem.notifData) cardItem.notifData.dismiss();
+                                        try {
+                                            if (cardItem.notifData && typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss();
+                                        } catch (e) {}
                                         let curList = notifDetachedPod.popupsList.slice();
                                         curList.splice(cardItem.itemIdx, 1);
                                         if (globalState) globalState.popups = curList;
@@ -543,7 +545,7 @@ PanelWindow {
                                                 if (actionBtn.modelData && actionBtn.modelData.invoke) {
                                                     actionBtn.modelData.invoke();
                                                 }
-                                                if (cardItem.notifData) cardItem.notifData.dismiss();
+                                                try { if (cardItem.notifData && typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss(); } catch(e){}
                                             }
                                         }
                                     }
@@ -562,7 +564,7 @@ PanelWindow {
                                     if (cardItem.notifData.defaultAction) {
                                         cardItem.notifData.defaultAction.invoke();
                                     }
-                                    cardItem.notifData.dismiss();
+                                    try { if (typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss(); } catch(e){}
                                 }
                             }
                         }
@@ -579,7 +581,7 @@ PanelWindow {
                                 cardItem.timerProgress = Math.max(0.0, cardItem.timerProgress - (50 / totalMs));
                                 if (cardItem.timerProgress <= 0.001) {
                                     cardCountdownTimer.stop();
-                                    if (cardItem.notifData) cardItem.notifData.dismiss();
+                                    try { if (cardItem.notifData && typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss(); } catch(e){}
                                 }
                             }
                         }
@@ -647,7 +649,7 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             for (let i = 0; i < notifDetachedPod.effectivePopups.length; i++) {
-                                if (notifDetachedPod.effectivePopups[i]) notifDetachedPod.effectivePopups[i].dismiss();
+                                try { if (notifDetachedPod.effectivePopups[i] && typeof notifDetachedPod.effectivePopups[i].dismiss === "function") notifDetachedPod.effectivePopups[i].dismiss(); } catch(e){}
                             }
                             if (globalState) globalState.popups = [];
                         }
