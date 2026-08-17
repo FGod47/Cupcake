@@ -134,7 +134,15 @@ PanelWindow {
                 cachedPopups = popupsList;
             }
         }
-        readonly property var effectivePopups: (popupsList && popupsList.length > 0) ? popupsList : cachedPopups
+        readonly property var effectivePopups: {
+            let list = (popupsList && popupsList.length > 0) ? popupsList : cachedPopups;
+            if (!list || list.length === 0) return [];
+            return list.filter(p => p && (
+                (p.summary && p.summary.toString().trim().length > 0) ||
+                (p.body && p.body.toString().trim().length > 0) ||
+                (p.appName && p.appName.toString().trim().length > 0)
+            ));
+        }
         property bool showAllNotifs: false
         readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
@@ -250,7 +258,7 @@ PanelWindow {
                                 return summary + " • " + body;
                             }
 
-                            return summary || body;
+                            return summary || body || (app ? (app.charAt(0).toUpperCase() + app.slice(1)) : "Notification");
                         }
 
                         function getExpandedHeading(notif) {

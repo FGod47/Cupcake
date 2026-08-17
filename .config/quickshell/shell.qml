@@ -444,8 +444,21 @@ ShellRoot {
             globalState.closingIsland = false;
             globalState.hideIsland = false;
 
-            // Add to popup array using concat to create a new array reference so the UI updates
-            globalState.popups = [notif].concat(globalState.popups);
+            // Automatically clean up popup reference when closed/dismissed
+            if (notif.closed) {
+                notif.closed.connect(() => {
+                    let cur = globalState.popups.filter(p => p !== notif);
+                    globalState.popups = cur;
+                });
+            }
+
+            // Only queue notifications with actual content (filters out blank ghosts)
+            let hasContent = (notif.summary && notif.summary.trim().length > 0) ||
+                             (notif.body && notif.body.trim().length > 0) ||
+                             (notif.appName && notif.appName.trim().length > 0);
+            if (hasContent) {
+                globalState.popups = [notif].concat(globalState.popups.filter(p => p !== notif));
+            }
         }
     }
 
