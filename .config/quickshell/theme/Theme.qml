@@ -220,6 +220,7 @@ Item {
     // Fonts
     property string defaultFontFamily: "Inter"
     property string monoFontFamily: "JetBrainsMono Nerd Font Propo"
+    readonly property string fontMono: monoFontFamily || "JetBrainsMono Nerd Font Propo"
     property real defaultFontScale: 1.0
     property real monoFontScale: 1.0
 
@@ -229,6 +230,7 @@ Item {
     // App Fonts
     property string appFontFamily: "Inter"
     property string appMonoFamily: "JetBrainsMono Nerd Font Propo"
+    readonly property string appFontMono: appMonoFamily || monoFontFamily || "JetBrainsMono Nerd Font Propo"
     property real appMonoScale: 1.0
     property int appFontSize: 14
     property int appFontWeight: 500
