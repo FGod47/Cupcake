@@ -83,6 +83,10 @@ Item {
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
+            layer.enabled: true
+            layer.samples: 8
+            layer.smooth: true
+
             ShapePath {
                 strokeWidth: 0
                 strokeColor: "transparent"
@@ -103,24 +107,26 @@ Item {
                     x: bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
                 }
-                // 3. Bottom-Left rounded corner
-                PathQuad {
+                // 3. Bottom-Left rounded corner (true circular arc)
+                PathArc {
                     x: 2 * bgShape.r
                     y: bgShape.h
-                    controlX: bgShape.r
-                    controlY: bgShape.h
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Counterclockwise
                 }
                 // 4. Bottom horizontal edge
                 PathLine {
                     x: Math.max(2 * bgShape.r, bgShape.w - bgShape.r)
                     y: bgShape.h
                 }
-                // 5. Bottom-Right rounded corner
-                PathQuad {
+                // 5. Bottom-Right rounded corner (true circular arc)
+                PathArc {
                     x: bgShape.w
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w
-                    controlY: bgShape.h
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Counterclockwise
                 }
                 // 6. Right vertical straight edge directly up to the bar
                 PathLine {

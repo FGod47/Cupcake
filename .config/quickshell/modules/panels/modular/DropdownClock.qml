@@ -86,6 +86,10 @@ Item {
             readonly property real w: width
             readonly property real h: Math.max(height, 1)
 
+            layer.enabled: true
+            layer.samples: 8
+            layer.smooth: true
+
             ShapePath {
                 strokeWidth: 0
                 strokeColor: "transparent"
@@ -109,11 +113,12 @@ Item {
                 }
 
                 // Bottom-Left Smooth Curve
-                PathQuad {
+                PathArc {
                     x: 2 * bgShape.r
                     y: bgShape.h
-                    controlX: bgShape.r
-                    controlY: bgShape.h
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Counterclockwise
                 }
 
                 // Bottom Line
@@ -123,11 +128,12 @@ Item {
                 }
 
                 // Bottom-Right Smooth Curve
-                PathQuad {
+                PathArc {
                     x: bgShape.w - bgShape.r
                     y: Math.max(bgShape.r, bgShape.h - bgShape.r)
-                    controlX: bgShape.w - bgShape.r
-                    controlY: bgShape.h
+                    radiusX: bgShape.r
+                    radiusY: bgShape.r
+                    direction: PathArc.Counterclockwise
                 }
 
                 // Right Wall

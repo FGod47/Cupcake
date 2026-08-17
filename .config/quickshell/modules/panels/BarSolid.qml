@@ -415,6 +415,10 @@ PanelWindow {
             readonly property real w: width
             readonly property real h: height
 
+            layer.enabled: true
+            layer.samples: 8
+            layer.smooth: true
+
             ShapePath {
                 strokeWidth: 0
                 strokeColor: "transparent"
