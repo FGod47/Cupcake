@@ -386,13 +386,15 @@ PanelWindow {
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
 
     // ── THE SINGLE DRIVER FOR SYNCHRONIZED LIQUID MOTION ──
-    property real notifAnimWidth: hasNotifPopup ? 320 : 0
-    Behavior on notifAnimWidth {
+    property real notifProgress: hasNotifPopup ? 1.0 : 0.0
+    Behavior on notifProgress {
         NumberAnimation {
-            duration: 500
-            easing.type: Easing.OutCubic
+            duration: 420
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
     }
+    property real notifAnimWidth: notifProgress * 320
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar, morphs into Dynamic Island for notifications)
@@ -1398,15 +1400,19 @@ PanelWindow {
         }
         readonly property var effectivePopups: (popupsList && popupsList.length > 0) ? popupsList : cachedPopups
         property bool showAllNotifs: false
-        readonly property int cardCount: (effectivePopups.length > 0 && bar.notifAnimWidth > 0.5) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
+        readonly property int cardCount: (effectivePopups.length > 0 && bar.notifProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
         readonly property real footerH: (effectivePopups.length > 3) ? 34 : 0
         readonly property real maxListH: maxScreenH - footerH
         readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
-        readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifAnimWidth > 0.5) ? footerH : 0)
+        readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifProgress > 0.01) ? footerH : 0)
         readonly property color cardBg: bar.pillColor
+
+        readonly property real targetRestX: (bar.barX + bar.barW) - fullW
+        readonly property real offscreenX: bar.screenW + 20
+        readonly property real currentX: offscreenX + (targetRestX - offscreenX) * bar.notifProgress
 
         onHasNotifChanged: {
             if (!hasNotif) {
@@ -1415,12 +1421,12 @@ PanelWindow {
             }
         }
 
-        width: bar.notifAnimWidth
-        height: (hasNotif || bar.notifAnimWidth > 0.5) ? targetTotalH : bar.barHeight
+        width: fullW
+        height: (hasNotif || bar.notifProgress > 0.01) ? targetTotalH : bar.barHeight
         y: bar.midY
-        x: (bar.barX + bar.barW) - bar.notifAnimWidth
-        opacity: bar.notifAnimWidth > 2 ? 1.0 : 0.0
-        visible: bar.notifAnimWidth > 0.5
+        x: currentX
+        opacity: Math.min(1.0, bar.notifProgress * 1.5)
+        visible: bar.notifProgress > 0.001
         clip: false
 
         // 1. SCROLLABLE LIST OF CARDS (Anchored rigidly to parent.top to match status bar top line)
