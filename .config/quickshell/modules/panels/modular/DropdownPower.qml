@@ -198,7 +198,7 @@ Item {
 
                     width: parent.width
                     height: 32
-                    radius: 8
+                    radius: height / 2
                     color: itemMa.containsMouse
                            ? (isDestructive ? Qt.rgba(Theme.colError.r, Theme.colError.g, Theme.colError.b, 0.15) : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.10))
                            : "transparent"
@@ -206,8 +206,8 @@ Item {
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 8
-                        anchors.rightMargin: 8
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
                         spacing: 9
 
                         Text {
