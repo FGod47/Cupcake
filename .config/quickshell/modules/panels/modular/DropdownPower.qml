@@ -26,8 +26,8 @@ Item {
 
     readonly property real targetH: powerMenu.implicitHeight + padTop + padBottom
 
-    // Flush and level with the bar's right edge
-    x: bar.barX + bar.barW - contentW
+    // Flush and level with solidBar's right edge (aligned with power button)
+    x: solidBar.x + solidBar.width - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
