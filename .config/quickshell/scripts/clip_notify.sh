@@ -13,6 +13,6 @@ wl-paste --type text --watch bash -c '
     if [ -n "$TRIMMED" ]; then
         # Format body preview: max 3 lines, up to 180 chars
         PREVIEW=$(echo "$CUR" | head -n 3 | cut -c 1-180)
-        notify-send "Copied to clipboard" "$PREVIEW" -a "PIBBLE"
+        notify-send "Copied to clipboard" "$PREVIEW" -a "CLIPBOARD"
     fi
 '

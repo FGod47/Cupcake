@@ -444,7 +444,7 @@ ShellRoot {
         }
     }
 
-    // ── Clipboard Notification Watcher (PIBBLE) ──
+    // ── Clipboard Notification Watcher ──
     Process {
         id: clipNotifProcess
         command: ["bash", Quickshell.env("HOME") + "/.config/quickshell/scripts/clip_notify.sh"]
