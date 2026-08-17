@@ -38,8 +38,9 @@ Item {
     // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
     Behavior on height {
         NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutExpo
+            duration: 380
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
     }
     Behavior on width {
@@ -161,21 +162,19 @@ Item {
 
         // ── Inner Content Wrapper (Reveals smoothly without squishing) ──
         Item {
-            id: contentWrapper
+            id: innerClipWrapper
             anchors.fill: parent
             clip: true
-            opacity: volBrightSplitPill.menuExpanded ? 1.0 : 0.0
-            Behavior on opacity {
-                NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
-            }
 
-            // ── Expanded Sliders View ────────────────────────────────
             ColumnLayout {
                 id: volBrightContentCol
-                x: volBrightSplitPill.padSide
-                y: volBrightSplitPill.padTop
-                width: parent.width - (volBrightSplitPill.padSide * 2)
-                spacing: 14
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.topMargin: volBrightSplitPill.padTop
+                anchors.leftMargin: volBrightSplitPill.padSide
+                anchors.rightMargin: volBrightSplitPill.padSide
+                spacing: 12
 
                 // Clean Category Header
                 Item {
@@ -239,44 +238,31 @@ Item {
                             onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
                         }
                         onMoved: { ddDdcTimer.targetValue = value; ddDdcTimer.restart(); bar.brightStr = Math.round(value).toString() }
-                        onPressedChanged: {
-                            if (!pressed) {
-                                ddDdcTimer.stop()
-                                Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(value).toString()])
-                            }
-                        }
                     }
                 }
 
                 // Volume Slider Row
                 Row {
                     Layout.fillWidth: true
-                    spacing: 8
-
-                    // Mute / Unmute Button
-                    Item {
-                        width: 22; height: 22
+                    spacing: 12
+                    Text {
+                        text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
+                        font.family: fontName
+                        font.pixelSize: 18
+                        color: bar.isVolMuted ? Theme.colError : bar.fg
                         anchors.verticalCenter: parent.verticalCenter
-                        Text {
-                            anchors.centerIn: parent
-                            text: bar.getVolumeIcon(bar.volStr, bar.isVolMuted)
-                            font.family: fontName
-                            font.pixelSize: 18
-                            color: bar.isVolMuted ? Theme.colError : bar.fg
-                        }
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
                                 bar.isVolMuted = !bar.isVolMuted;
+                                Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
                             }
                         }
                     }
-
                     Slider {
                         id: ddVolSlider
-                        width: parent.width - 56
+                        width: parent.width - 66
                         height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         leftPadding: 0
@@ -310,18 +296,32 @@ Item {
                     }
 
                     // Audio Output Sources Dropdown Toggle Button
-                    Item {
-                        width: 22; height: 22
+                    Rectangle {
+                        width: 24; height: 24; radius: 12
                         anchors.verticalCenter: parent.verticalCenter
+                        color: sinkToggleMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
                         Text {
                             anchors.centerIn: parent
-                            text: volBrightSplitPill.showSinkList ? "\uea62" : "\uea5f"
+                            text: "\uea5f"
                             font.family: fontName
-                            font.pixelSize: 16
+                            font.pixelSize: 14
                             color: volBrightSplitPill.showSinkList ? Theme.colPrimary : Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.7)
+                            rotation: volBrightSplitPill.showSinkList ? 180 : 0
+                            Behavior on rotation {
+                                NumberAnimation {
+                                    duration: 320
+                                    easing.type: Easing.BezierSpline
+                                    easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                }
+                            }
+                            Behavior on color { ColorAnimation { duration: 150 } }
                         }
                         MouseArea {
+                            id: sinkToggleMa
                             anchors.fill: parent
+                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 volBrightSplitPill.showSinkList = !volBrightSplitPill.showSinkList;
@@ -334,82 +334,106 @@ Item {
                     }
                 }
 
-                // Audio Output Devices Picker List
-                ColumnLayout {
-                    id: sinkListCol
+                // Audio Output Devices Picker List (Accordion with Smooth Spring Expansion)
+                Item {
+                    id: sinkListContainer
                     Layout.fillWidth: true
-                    spacing: 6
+                    Layout.preferredHeight: volBrightSplitPill.showSinkList ? sinkListCol.implicitHeight : 0
+                    implicitHeight: Layout.preferredHeight
+                    clip: true
                     opacity: volBrightSplitPill.showSinkList ? 1.0 : 0.0
-                    visible: opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: 250 } }
+                    visible: Layout.preferredHeight > 0 || opacity > 0.01
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 1
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.15)
+                    Behavior on Layout.preferredHeight {
+                        NumberAnimation {
+                            duration: 380
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                        }
+                    }
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 280
+                            easing.type: Easing.OutCubic
+                        }
                     }
 
-                    Text {
-                        text: "AUDIO OUTPUT"
-                        font.family: Theme.defaultFontFamily
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.5)
-                        Layout.topMargin: 4
-                    }
+                    ColumnLayout {
+                        id: sinkListCol
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        spacing: 6
 
-                    Repeater {
-                        model: bar.sinkList
-                        delegate: Rectangle {
+                        Rectangle {
                             Layout.fillWidth: true
-                            height: 34
-                            radius: 17
-                            property bool isActiveSink: modelData.name === bar.activeSinkName
-                            color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.20) : Qt.rgba(1, 1, 1, 0.04))
-                            border.color: isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
-                            border.width: 1
-                            Behavior on color { ColorAnimation { duration: 150 } }
+                            height: 1
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                        }
 
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 8
-                                anchors.rightMargin: 8
-                                spacing: 8
+                        Text {
+                            text: "AUDIO OUTPUT"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 10
+                            font.weight: Font.Bold
+                            font.letterSpacing: 0.5
+                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                            Layout.topMargin: 2
+                        }
 
-                                Text {
-                                    text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "")
-                                    font.family: fontName
-                                    font.pixelSize: 15
-                                    color: isActiveSink ? Theme.colPrimary : bar.fg
+                        Repeater {
+                            model: bar.sinkList
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                height: 34
+                                radius: 17
+                                property bool isActiveSink: modelData.name === bar.activeSinkName
+                                color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(1, 1, 1, 0.04))
+                                border.color: isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                                border.width: 1
+                                Behavior on color { ColorAnimation { duration: 150 } }
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 10
+                                    anchors.rightMargin: 10
+                                    spacing: 8
+
+                                    Text {
+                                        text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "")
+                                        font.family: fontName
+                                        font.pixelSize: 15
+                                        color: isActiveSink ? Theme.colPrimary : bar.fg
+                                    }
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: modelData.description || modelData.name
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 11
+                                        font.weight: isActiveSink ? Font.Bold : Font.Normal
+                                        color: isActiveSink ? Theme.colPrimary : bar.fg
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        text: "\uea5e"
+                                        font.family: fontName
+                                        font.pixelSize: 14
+                                        color: Theme.colPrimary
+                                        visible: isActiveSink
+                                    }
                                 }
 
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: modelData.description || modelData.name
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 11
-                                    font.weight: isActiveSink ? Font.Bold : Font.Normal
-                                    color: isActiveSink ? Theme.colPrimary : bar.fg
-                                    elide: Text.ElideRight
-                                }
-
-                                Text {
-                                    text: "\uea5e"
-                                    font.family: fontName
-                                    font.pixelSize: 14
-                                    color: Theme.colPrimary
-                                    visible: isActiveSink
-                                }
-                            }
-
-                            MouseArea {
-                                id: sinkItemMa
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    Quickshell.execDetached(["pactl", "set-default-sink", modelData.name]);
-                                    bar.activeSinkName = modelData.name;
+                                MouseArea {
+                                    id: sinkItemMa
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        Quickshell.execDetached(["pactl", "set-default-sink", modelData.name]);
+                                        bar.activeSinkName = modelData.name;
+                                    }
                                 }
                             }
                         }
