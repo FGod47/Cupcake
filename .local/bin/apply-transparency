@@ -45,11 +45,17 @@ hl.config({
 EOF
 
 if [ "$BAR_TRANS" = "true" ]; then
-    # Use a robust ignore_alpha threshold (0.05).
-    # In Quickshell, transparent margins and outer bounds have alpha=0.00.
-    # Setting ignore_alpha=0.05 blocks empty transparency from blurring (preventing square box bleed)
-    # while allowing ANY user-chosen opacity level (0.10 to 1.00) to blur reliably without breaking.
-    IGNORE_ALPHA="0.05"
+    # Dynamic ignore_alpha threshold tuned to bar opacity.
+    # Setting ignore_alpha to ~70% of bar opacity ensures the translucent body is blurred
+    # while corner antialiasing subpixels are ignored by the compositor's blur filter,
+    # preventing jagged/pixelated staircase artifacts around rounded corners.
+    BAR_OP=$(cat ~/.config/cupcake/.bar_opacity 2>/dev/null || echo "0.85")
+    IGNORE_ALPHA=$(awk -v op="$BAR_OP" 'BEGIN {
+        val = op * 0.70;
+        if (val < 0.15) val = 0.15;
+        if (val > 0.50) val = 0.50;
+        printf "%.2f", val;
+    }')
 
     cat <<EOF >> ~/.config/hypr/transparency.lua
 hl.layer_rule({ match = { namespace = 'quickshell' }, blur = true })

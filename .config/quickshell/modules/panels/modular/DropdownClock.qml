@@ -74,7 +74,10 @@ Item {
     Item {
         id: animContainer
         anchors.fill: parent
-        clip: true
+        clip: false
+        layer.enabled: true
+        layer.samples: 8
+        layer.smooth: true
 
         // ── Attached Mode: Seamless Inverted Notch Cutout ──────────
         Shape {
@@ -166,6 +169,9 @@ Item {
             visible: !clockSplitPill.isAttached
             radius: 16
             color: bar.pillColor
+            antialiasing: true
+            border.width: 1
+            border.color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
         }
 
         MouseArea {
