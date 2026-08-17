@@ -400,22 +400,25 @@ PanelWindow {
                 bar.notifExpandProgress = 0.0;
             }
         }
+        // 1. Yellow dot pill floats up and appears
         NumberAnimation {
             target: bar
             property: "notifDotProgress"
             from: 0.0
             to: 1.0
-            duration: 300
+            duration: 320
             easing.type: Easing.OutBack
-            easing.overshoot: 1.3
+            easing.overshoot: 1.4
         }
-        PauseAnimation { duration: 60 }
+        // 2. Deliberate rest so the yellow dot pill is clearly visible first
+        PauseAnimation { duration: 380 }
+        // 3. Fluidly bloom and expand outward into full notification
         NumberAnimation {
             target: bar
             property: "notifExpandProgress"
             from: 0.0
             to: 1.0
-            duration: 440
+            duration: 460
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
@@ -1460,7 +1463,7 @@ PanelWindow {
         }
         readonly property var effectivePopups: (popupsList && popupsList.length > 0) ? popupsList : cachedPopups
         property bool showAllNotifs: false
-        readonly property int cardCount: (effectivePopups.length > 0 && bar.notifProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
+        readonly property int cardCount: (effectivePopups.length > 0 && bar.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
