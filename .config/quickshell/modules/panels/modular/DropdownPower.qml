@@ -252,13 +252,13 @@ Item {
                     }
                 }
 
-                // 2. Suspend / Sleep
+                // 2. Log Out
                 CleanPowerItem {
-                    iconCode: "\uea1e"
-                    labelText: "Suspend"
+                    iconCode: "\ueba8"
+                    labelText: "Log Out"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
-                        Quickshell.execDetached(["bash", "-c", "systemctl suspend"]);
+                        Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit || loginctl terminate-user $USER"]);
                     }
                 }
 
