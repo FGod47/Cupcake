@@ -28,19 +28,19 @@ Item {
     readonly property real padSide: isAttached ? 26 : 14
     readonly property real padBottom: isAttached ? 22 : 14
 
-    readonly property real targetH: volBrightContentCol.implicitHeight + padTop + padBottom
+    readonly property real collapsedH: 84 + padTop + padBottom
+    readonly property real expandedH: collapsedH + sinkListCol.implicitHeight + 12
+    readonly property real targetH: showSinkList ? expandedH : collapsedH
 
     // Align dropdown right edge to next section boundary (Tray or Clock)
     x: (sysTrayRepeater.count > 0 ? sysTrayRow.x : clockItem.x) + contentLayout.x + solidBar.x - contentW
     width: contentW
     height: menuExpanded ? targetH : 0
 
-    // Carousel Wallpaper Switcher signature InOutExpo & BezierSpline curves
     Behavior on height {
         NumberAnimation {
-            duration: 380
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+            duration: 350
+            easing.type: Easing.OutCubic
         }
     }
     Behavior on width {
@@ -53,7 +53,7 @@ Item {
     property real openProgress: menuExpanded ? 1.0 : 0.0
     Behavior on openProgress {
         NumberAnimation {
-            duration: 350
+            duration: 320
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.05, 0.7, 0.1, 1.0, 1.0, 1.0]
         }
@@ -334,106 +334,89 @@ Item {
                     }
                 }
 
-                // Audio Output Devices Picker List (Accordion with Smooth Spring Expansion)
-                Item {
-                    id: sinkListContainer
+                // Audio Output Devices Picker List
+                ColumnLayout {
+                    id: sinkListCol
                     Layout.fillWidth: true
-                    Layout.preferredHeight: volBrightSplitPill.showSinkList ? sinkListCol.implicitHeight : 0
-                    implicitHeight: Layout.preferredHeight
-                    clip: true
+                    spacing: 6
                     opacity: volBrightSplitPill.showSinkList ? 1.0 : 0.0
-                    visible: Layout.preferredHeight > 0 || opacity > 0.01
+                    visible: opacity > 0.01
 
-                    Behavior on Layout.preferredHeight {
-                        NumberAnimation {
-                            duration: 380
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
-                        }
-                    }
                     Behavior on opacity {
                         NumberAnimation {
-                            duration: 280
+                            duration: 250
                             easing.type: Easing.OutCubic
                         }
                     }
 
-                    ColumnLayout {
-                        id: sinkListCol
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        spacing: 6
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 1
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
+                    }
 
-                        Rectangle {
+                    Text {
+                        text: "AUDIO OUTPUT"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.5
+                        color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
+                        Layout.topMargin: 2
+                    }
+
+                    Repeater {
+                        model: bar.sinkList
+                        delegate: Rectangle {
                             Layout.fillWidth: true
-                            height: 1
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.12)
-                        }
+                            height: 34
+                            radius: 17
+                            property bool isActiveSink: modelData.name === bar.activeSinkName
+                            color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(1, 1, 1, 0.04))
+                            border.color: isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
+                            border.width: 1
+                            Behavior on color { ColorAnimation { duration: 150 } }
 
-                        Text {
-                            text: "AUDIO OUTPUT"
-                            font.family: Theme.defaultFontFamily
-                            font.pixelSize: 10
-                            font.weight: Font.Bold
-                            font.letterSpacing: 0.5
-                            color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.45)
-                            Layout.topMargin: 2
-                        }
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                spacing: 8
 
-                        Repeater {
-                            model: bar.sinkList
-                            delegate: Rectangle {
-                                Layout.fillWidth: true
-                                height: 34
-                                radius: 17
-                                property bool isActiveSink: modelData.name === bar.activeSinkName
-                                color: sinkItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : (isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(1, 1, 1, 0.04))
-                                border.color: isActiveSink ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.35) : "transparent"
-                                border.width: 1
-                                Behavior on color { ColorAnimation { duration: 150 } }
-
-                                RowLayout {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 10
-                                    anchors.rightMargin: 10
-                                    spacing: 8
-
-                                    Text {
-                                        text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "")
-                                        font.family: fontName
-                                        font.pixelSize: 15
-                                        color: isActiveSink ? Theme.colPrimary : bar.fg
-                                    }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: modelData.description || modelData.name
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 11
-                                        font.weight: isActiveSink ? Font.Bold : Font.Normal
-                                        color: isActiveSink ? Theme.colPrimary : bar.fg
-                                        elide: Text.ElideRight
-                                    }
-
-                                    Text {
-                                        text: "\uea5e"
-                                        font.family: fontName
-                                        font.pixelSize: 14
-                                        color: Theme.colPrimary
-                                        visible: isActiveSink
-                                    }
+                                Text {
+                                    text: (modelData.name && (modelData.name.includes("hdmi") || modelData.name.includes("HDMI"))) ? "\ueb92" : ((modelData.name && modelData.name.includes("headphone")) ? "\uea76" : "")
+                                    font.family: fontName
+                                    font.pixelSize: 15
+                                    color: isActiveSink ? Theme.colPrimary : bar.fg
                                 }
 
-                                MouseArea {
-                                    id: sinkItemMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        Quickshell.execDetached(["pactl", "set-default-sink", modelData.name]);
-                                        bar.activeSinkName = modelData.name;
-                                    }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: modelData.description || modelData.name
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: isActiveSink ? Font.Bold : Font.Normal
+                                    color: isActiveSink ? Theme.colPrimary : bar.fg
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    text: "\uea5e"
+                                    font.family: fontName
+                                    font.pixelSize: 14
+                                    color: Theme.colPrimary
+                                    visible: isActiveSink
+                                }
+                            }
+
+                            MouseArea {
+                                id: sinkItemMa
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Quickshell.execDetached(["pactl", "set-default-sink", modelData.name]);
+                                    bar.activeSinkName = modelData.name;
                                 }
                             }
                         }
