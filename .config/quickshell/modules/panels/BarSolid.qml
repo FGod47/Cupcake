@@ -400,24 +400,24 @@ PanelWindow {
                 bar.notifExpandProgress = 0.0;
             }
         }
-        // 1. Yellow dot pill slowly fades and blooms in place
+        // 1. Yellow dot pill slowly fades and blooms in place (Super Slow)
         NumberAnimation {
             target: bar
             property: "notifDotProgress"
             from: 0.0
             to: 1.0
-            duration: 450
+            duration: 900
             easing.type: Easing.OutCubic
         }
-        // 2. Deliberate rest so the glowing yellow dot pill is clearly visible
-        PauseAnimation { duration: 260 }
-        // 3. Fluidly bloom and expand outward into full notification
+        // 2. Deliberate pause so the glowing yellow dot pill is admired
+        PauseAnimation { duration: 650 }
+        // 3. Fluidly bloom and expand outward into full notification (Super Slow Liquid Expansion)
         NumberAnimation {
             target: bar
             property: "notifExpandProgress"
             from: 0.0
             to: 1.0
-            duration: 460
+            duration: 1100
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
@@ -435,14 +435,14 @@ PanelWindow {
             target: bar
             property: "notifExpandProgress"
             to: 0.0
-            duration: 280
+            duration: 750
             easing.type: Easing.InOutCubic
         }
         NumberAnimation {
             target: bar
             property: "notifDotProgress"
             to: 0.0
-            duration: 180
+            duration: 450
             easing.type: Easing.InQuad
         }
     }
