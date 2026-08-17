@@ -19,7 +19,7 @@ Item {
     readonly property bool isAttached: Theme.barDropdownStyle === "Attached"
 
     // Multi-mode Y position
-    y: bar.isBottom ? (solidBar.y - height - (isAttached ? 0 : 8)) : (isAttached ? (bar.midY + bar.barHeight) : (bar.midY + bar.barHeight + 8))
+    y: bar.isBottom ? (solidBar.y - height - (isAttached ? 0 : 8)) : (isAttached ? (solidBar.y + solidBar.height) : (solidBar.y + solidBar.height + 8))
     Behavior on y { enabled: !bar.isBottom; NumberAnimation { duration: 350; easing.type: Easing.InOutExpo } }
     
     property bool menuExpanded: globalState.solidBoardOpen

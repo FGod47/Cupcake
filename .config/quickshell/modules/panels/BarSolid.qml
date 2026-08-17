@@ -393,12 +393,12 @@ PanelWindow {
     // ─────────────────────────────────────────────────────
     Item {
         id: solidBar
-        y: bar.isBottom ? (bar.height - (bar.baseHeight + bar.extraHeight) - bar.midY) : bar.midY
+        y: bar.isBottom ? (bar.height - (expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight) - bar.midY) : bar.midY
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         x: expandAnim.running ? bar.startX : bar.barX
         Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         width: bar.isBottom ? bar.barW : (bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0))
-        height: (bar.baseHeight + bar.extraHeight)
+        height: expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
 
@@ -478,10 +478,10 @@ PanelWindow {
         // Solid Bar Modules (Permanently visible)
         RowLayout {
             id: contentLayout
-            anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
+            anchors.left: parent.left; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: bar.barInnerPadding
             anchors.rightMargin: bar.barInnerPadding
-            height: bar.barHeight
+            height: parent.height
             spacing: 0
             opacity: 1.0
             visible: opacity > 0
@@ -490,7 +490,7 @@ PanelWindow {
             Item {
                 id: workspacesContainer
                 Layout.preferredWidth: workspacesRow.implicitWidth
-                Layout.preferredHeight: 30
+                Layout.fillHeight: true
                 Layout.alignment: Qt.AlignVCenter
 
                 Row {
@@ -502,7 +502,7 @@ PanelWindow {
                         model: 5
                         delegate: Item {
                             width: 14
-                            height: 30
+                            height: workspacesContainer.height
                             property int wsId: index + 1
                             property bool isFocused: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id === wsId : (bar.activeWsId === wsId)
                             property bool isOccupied: isFocused || (Hyprland.workspaces && Hyprland.workspaces.values.length > 0 ? Hyprland.workspaces.values.some(ws => ws.id === wsId) : (bar.occupiedWsMap && bar.occupiedWsMap[wsId] ? true : false))
@@ -1142,7 +1142,7 @@ PanelWindow {
             x: (bar.screenW / 2) - solidBar.x - (width / 2)
             anchors.verticalCenter: parent.verticalCenter
             width: bar.isBottom ? Math.max(cupcakeLogo.width, barDockRow.implicitWidth) : cupcakeLogo.width
-            height: bar.barHeight
+            height: parent.height
             clip: false
 
             Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
@@ -1154,9 +1154,9 @@ PanelWindow {
                 y: bar.isBottom ? -36 : ((parent.height - height) / 2)
                 opacity: bar.isBottom ? 0.0 : 1.0
                 source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
-                sourceSize.height: 22
-                width: 67
-                height: 22
+                sourceSize.height: Math.min(22, Math.max(14, bar.barHeight - 8))
+                width: Math.round(67 * (height / 22))
+                height: Math.min(22, Math.max(14, bar.barHeight - 8))
                 fillMode: Image.PreserveAspectFit
                 layer.enabled: true
                 layer.effect: ColorOverlay { color: bar.fg }
