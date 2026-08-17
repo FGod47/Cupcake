@@ -405,8 +405,9 @@ PanelWindow {
         id: solidBar
         y: bar.isBottom ? (bar.height - (expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight) - bar.midY) : bar.midY
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
+        readonly property real notifRestW: Math.max(100, (notifDetachedPod.targetRestX - 8) - bar.barX)
         x: expandAnim.running ? bar.startX : bar.barX
-        width: bar.isBottom ? bar.barW : (bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0))
+        width: bar.isBottom ? bar.barW : (bar.barW - Math.max(0, (bar.barW - notifRestW) * bar.notifProgress))
         height: expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1410,7 +1411,8 @@ PanelWindow {
         readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifProgress > 0.01) ? footerH : 0)
         readonly property color cardBg: bar.pillColor
 
-        readonly property real targetRestX: (bar.barX + bar.barW) - fullW
+        readonly property real rightCornerMargin: Math.max(8, bar.midY)
+        readonly property real targetRestX: bar.screenW - fullW - rightCornerMargin
         readonly property real offscreenX: bar.screenW + 20
         readonly property real currentX: offscreenX + (targetRestX - offscreenX) * bar.notifProgress
 
