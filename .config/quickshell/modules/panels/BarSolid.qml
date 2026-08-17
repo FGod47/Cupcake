@@ -1689,7 +1689,7 @@ PanelWindow {
                                 font.letterSpacing: 1.4
                                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
                                 Layout.alignment: Qt.AlignVCenter
-                                opacity: Math.max(0.0, (bar.notifExpandProgress - 0.25) / 0.75)
+                                opacity: bar.notifExpandProgress
                             }
 
                             // Compact Preview Text (Saved • 08-16-09-27-43.png)
@@ -1703,7 +1703,7 @@ PanelWindow {
                                 font.weight: Font.DemiBold
                                 color: bar.fg
                                 elide: Text.ElideRight
-                                opacity: cardItem.isCardHovered ? 0.0 : Math.max(0.0, (bar.notifExpandProgress - 0.3) / 0.7)
+                                opacity: cardItem.isCardHovered ? 0.0 : bar.notifExpandProgress
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
                             }
 
@@ -1714,7 +1714,7 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                                 layer.enabled: true
                                 layer.samples: 4
-                                opacity: cardItem.isCardHovered ? 0.35 : Math.max(0.0, (bar.notifExpandProgress - 0.35) / 0.65 * 0.9)
+                                opacity: cardItem.isCardHovered ? 0.35 : (0.9 * bar.notifExpandProgress)
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
 
                                 ShapePath {
@@ -1758,7 +1758,7 @@ PanelWindow {
                                 color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 Layout.alignment: Qt.AlignVCenter
-                                opacity: Math.max(0.0, (bar.notifExpandProgress - 0.35) / 0.65)
+                                opacity: bar.notifExpandProgress
 
                                 Text {
                                     anchors.centerIn: parent
