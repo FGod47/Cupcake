@@ -1478,8 +1478,10 @@ PanelWindow {
 
         readonly property real rightCornerMargin: Math.max(8, bar.midY)
         readonly property real targetRestX: bar.screenW - fullW - rightCornerMargin
-        readonly property real rightEdgeX: bar.screenW - rightCornerMargin
-        readonly property real currentX: rightEdgeX - currentW
+        readonly property real offscreenRightEdge: bar.screenW + 15
+        readonly property real restRightEdge: bar.screenW - rightCornerMargin
+        readonly property real currentRightEdge: offscreenRightEdge + (restRightEdge - offscreenRightEdge) * bar.notifDotProgress
+        readonly property real currentX: currentRightEdge - currentW
 
         onHasNotifChanged: {
             if (!hasNotif) {
@@ -1490,7 +1492,7 @@ PanelWindow {
 
         width: currentW
         height: (hasNotif || bar.notifExpandProgress > 0.01) ? (bar.barHeight + (targetTotalH - bar.barHeight) * bar.notifExpandProgress) : bar.barHeight
-        y: bar.midY + (1.0 - bar.notifDotProgress) * 6
+        y: bar.midY
         x: currentX
         opacity: Math.min(1.0, bar.notifDotProgress * 1.5)
         visible: bar.notifDotProgress > 0.001
