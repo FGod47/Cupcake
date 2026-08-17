@@ -400,18 +400,17 @@ PanelWindow {
                 bar.notifExpandProgress = 0.0;
             }
         }
-        // 1. Yellow dot pill floats up and appears
+        // 1. Yellow dot pill slowly fades and blooms in place
         NumberAnimation {
             target: bar
             property: "notifDotProgress"
             from: 0.0
             to: 1.0
-            duration: 320
-            easing.type: Easing.OutBack
-            easing.overshoot: 1.4
+            duration: 450
+            easing.type: Easing.OutCubic
         }
-        // 2. Deliberate rest so the yellow dot pill is clearly visible first
-        PauseAnimation { duration: 380 }
+        // 2. Deliberate rest so the glowing yellow dot pill is clearly visible
+        PauseAnimation { duration: 260 }
         // 3. Fluidly bloom and expand outward into full notification
         NumberAnimation {
             target: bar
@@ -1478,10 +1477,8 @@ PanelWindow {
 
         readonly property real rightCornerMargin: Math.max(8, bar.midY)
         readonly property real targetRestX: bar.screenW - fullW - rightCornerMargin
-        readonly property real offscreenRightEdge: bar.screenW + 15
-        readonly property real restRightEdge: bar.screenW - rightCornerMargin
-        readonly property real currentRightEdge: offscreenRightEdge + (restRightEdge - offscreenRightEdge) * bar.notifDotProgress
-        readonly property real currentX: currentRightEdge - currentW
+        readonly property real rightEdgeX: bar.screenW - rightCornerMargin
+        readonly property real currentX: rightEdgeX - currentW
 
         onHasNotifChanged: {
             if (!hasNotif) {
@@ -1494,7 +1491,9 @@ PanelWindow {
         height: (hasNotif || bar.notifExpandProgress > 0.01) ? (bar.barHeight + (targetTotalH - bar.barHeight) * bar.notifExpandProgress) : bar.barHeight
         y: bar.midY
         x: currentX
-        opacity: Math.min(1.0, bar.notifDotProgress * 1.5)
+        opacity: bar.notifDotProgress
+        scale: 0.85 + 0.15 * bar.notifDotProgress
+        transformOrigin: Item.Right
         visible: bar.notifDotProgress > 0.001
         clip: true
 
