@@ -381,7 +381,7 @@ PanelWindow {
     property real notifAnimWidth: hasNotifPopup ? 320 : 0
     Behavior on notifAnimWidth {
         NumberAnimation {
-            duration: 1200
+            duration: 500
             easing.type: Easing.OutCubic
         }
     }

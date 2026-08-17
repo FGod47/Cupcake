@@ -48,12 +48,6 @@ Item {
             easing.type: Easing.InOutExpo
         }
     }
-    Behavior on x {
-        NumberAnimation {
-            duration: 400
-            easing.type: Easing.InOutExpo
-        }
-    }
 
     x: bar.barX + 16
     width: contentW

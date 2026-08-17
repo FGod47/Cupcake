@@ -110,12 +110,6 @@ Item {
             easing.type: Easing.InOutExpo
         }
     }
-    Behavior on x {
-        NumberAnimation {
-            duration: 400
-            easing.type: Easing.InOutExpo
-        }
-    }
 
     property real openProgress: menuExpanded ? 1.0 : 0.0
     Behavior on openProgress {
