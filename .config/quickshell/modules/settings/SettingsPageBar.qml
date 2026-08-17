@@ -267,7 +267,8 @@ Item {
                         source: root.getWallpaperPreviewSource(root.wallpaperPath)
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
-                        opacity: 0.88
+                        opacity: status === Image.Ready ? 0.88 : 0.0
+                        Behavior on opacity { NumberAnimation { duration: 200 } }
                         onStatusChanged: {
                             if (status === Image.Error && root.wallpaperPath) {
                                 let parts = root.wallpaperPath.split('/');
@@ -280,33 +281,11 @@ Item {
                         }
                     }
 
-                    // Fallback / artistic gradient backdrop matching reference screenshot
+                    // Neutral dark backdrop while wallpaper loads (no red flash)
                     Rectangle {
                         anchors.fill: parent
                         visible: !wallImg.visible || wallImg.status !== Image.Ready
-                        gradient: Gradient {
-                            orientation: Gradient.Horizontal
-                            GradientStop { position: 0.0; color: "#16384C" }
-                            GradientStop { position: 0.45; color: "#544642" }
-                            GradientStop { position: 0.80; color: "#8E2B24" }
-                            GradientStop { position: 1.0; color: "#2B1115" }
-                        }
-
-                        Canvas {
-                            anchors.fill: parent
-                            opacity: 0.18
-                            onPaint: {
-                                let ctx = getContext("2d");
-                                ctx.strokeStyle = "rgba(255,255,255,0.4)";
-                                ctx.lineWidth = 1;
-                                for (let x = -400; x < width + 400; x += 8) {
-                                    ctx.beginPath();
-                                    ctx.moveTo(x, 0);
-                                    ctx.lineTo(x + 400, height);
-                                    ctx.stroke();
-                                }
-                            }
-                        }
+                        color: "#121316"
                     }
 
                     // Inner dark vignette for realistic depth
