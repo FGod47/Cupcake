@@ -875,7 +875,7 @@ Item {
 
                     StyledSlider {
                         Layout.preferredWidth: 220
-                        from: 0; to: 160; stepSize: 4
+                        from: 0; to: 240; stepSize: 2
                         value: root.barSideGap
                         onMoved: {
                             root.barSideGap = Math.round(value);

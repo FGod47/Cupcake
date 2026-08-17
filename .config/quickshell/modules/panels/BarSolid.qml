@@ -342,7 +342,15 @@ PanelWindow {
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
-    readonly property real barSideGap: Theme.barSideGap !== undefined ? Theme.barSideGap : 0
+    property real targetSideGap: Theme.barSideGap !== undefined ? Theme.barSideGap : 0
+    property real animSideGap: targetSideGap
+    Behavior on animSideGap {
+        NumberAnimation {
+            duration: 350
+            easing.type: Easing.OutCubic
+        }
+    }
+    readonly property real barSideGap: animSideGap
     readonly property real barW: Math.max(200, bar.screenW - (2 * bar.barSideGap))
     readonly property real barX: bar.barSideGap
     readonly property real startW: 100
@@ -396,7 +404,6 @@ PanelWindow {
         y: bar.isBottom ? (bar.height - (expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight) - bar.midY) : bar.midY
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         x: expandAnim.running ? bar.startX : bar.barX
-        Behavior on x { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         width: bar.isBottom ? bar.barW : (bar.barW - (bar.notifAnimWidth > 0 ? (bar.notifAnimWidth + 8) : 0))
         height: expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
