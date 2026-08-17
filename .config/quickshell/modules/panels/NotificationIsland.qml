@@ -26,6 +26,10 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
+    mask: Region {
+        Region { item: notifDetachedPod }
+    }
+
     readonly property real screenW: (screen && screen.width > 0) ? screen.width : 1920
     readonly property real barHeight: Theme.barHeight !== undefined ? Theme.barHeight : 30
     readonly property real topMargin: Math.max(8, Theme.barGap !== undefined ? Theme.barGap : 8)

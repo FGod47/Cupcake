@@ -42,7 +42,6 @@ PanelWindow {
         Region { item: netSplitPill }
         Region { item: musicSplitPill }
         Region { item: clipboardSplitPill }
-        Region { item: notifDetachedPod }
     }
 
     onAnyDropdownOpenChanged: {
