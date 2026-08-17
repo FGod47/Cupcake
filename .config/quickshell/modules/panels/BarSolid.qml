@@ -381,20 +381,79 @@ PanelWindow {
         }
     }
 
-    // Dynamic Island Notification state & Synchronized Single-Driver Motion
+    // Dynamic Island Notification state & Synchronized Multi-Stage Motion
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
 
-    // ── THE SINGLE DRIVER FOR SYNCHRONIZED LIQUID MOTION ──
-    property real notifProgress: hasNotifPopup ? 1.0 : 0.0
-    Behavior on notifProgress {
+    // ── TWO-STAGE CHOREOGRAPHY: YELLOW DOT FLOATS UP -> CARD EXPANDS ──
+    property real notifDotProgress: 0.0
+    property real notifExpandProgress: 0.0
+    readonly property real notifProgress: notifExpandProgress
+
+    SequentialAnimation {
+        id: notifOpenSeq
+        running: false
+        ScriptAction {
+            script: {
+                notifCloseSeq.stop();
+                bar.notifDotProgress = 0.0;
+                bar.notifExpandProgress = 0.0;
+            }
+        }
         NumberAnimation {
-            duration: 420
+            target: bar
+            property: "notifDotProgress"
+            from: 0.0
+            to: 1.0
+            duration: 300
+            easing.type: Easing.OutBack
+            easing.overshoot: 1.3
+        }
+        PauseAnimation { duration: 60 }
+        NumberAnimation {
+            target: bar
+            property: "notifExpandProgress"
+            from: 0.0
+            to: 1.0
+            duration: 440
             easing.type: Easing.BezierSpline
             easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
         }
     }
-    property real notifAnimWidth: notifProgress * 320
+
+    SequentialAnimation {
+        id: notifCloseSeq
+        running: false
+        ScriptAction {
+            script: {
+                notifOpenSeq.stop();
+            }
+        }
+        NumberAnimation {
+            target: bar
+            property: "notifExpandProgress"
+            to: 0.0
+            duration: 280
+            easing.type: Easing.InOutCubic
+        }
+        NumberAnimation {
+            target: bar
+            property: "notifDotProgress"
+            to: 0.0
+            duration: 180
+            easing.type: Easing.InQuad
+        }
+    }
+
+    onHasNotifPopupChanged: {
+        if (hasNotifPopup) {
+            notifCloseSeq.stop();
+            notifOpenSeq.restart();
+        } else {
+            notifOpenSeq.stop();
+            notifCloseSeq.restart();
+        }
+    }
 
     // ─────────────────────────────────────────────────────
     //  MORPHING BAR (Starts from cupcake logo pill, expands into solid bar, morphs into Dynamic Island for notifications)
@@ -1405,16 +1464,19 @@ PanelWindow {
 
         readonly property real maxScreenH: (bar.screen && bar.screen.height > 0) ? (bar.screen.height - bar.midY - 60) : 700
         readonly property real fullW: 320
+        readonly property real minW: bar.barHeight
+        readonly property real currentW: minW + (fullW - minW) * bar.notifExpandProgress
+
         readonly property real footerH: (effectivePopups.length > 3) ? 34 : 0
         readonly property real maxListH: maxScreenH - footerH
         readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
-        readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifProgress > 0.01) ? footerH : 0)
+        readonly property real targetTotalH: targetListH + ((hasNotif || bar.notifExpandProgress > 0.01) ? footerH : 0)
         readonly property color cardBg: bar.pillColor
 
         readonly property real rightCornerMargin: Math.max(8, bar.midY)
         readonly property real targetRestX: bar.screenW - fullW - rightCornerMargin
-        readonly property real offscreenX: bar.screenW + 20
-        readonly property real currentX: offscreenX + (targetRestX - offscreenX) * bar.notifProgress
+        readonly property real rightEdgeX: bar.screenW - rightCornerMargin
+        readonly property real currentX: rightEdgeX - currentW
 
         onHasNotifChanged: {
             if (!hasNotif) {
@@ -1423,13 +1485,13 @@ PanelWindow {
             }
         }
 
-        width: fullW
-        height: (hasNotif || bar.notifProgress > 0.01) ? targetTotalH : bar.barHeight
-        y: bar.midY
+        width: currentW
+        height: (hasNotif || bar.notifExpandProgress > 0.01) ? (bar.barHeight + (targetTotalH - bar.barHeight) * bar.notifExpandProgress) : bar.barHeight
+        y: bar.midY + (1.0 - bar.notifDotProgress) * 6
         x: currentX
-        opacity: Math.min(1.0, bar.notifProgress * 1.5)
-        visible: bar.notifProgress > 0.001
-        clip: false
+        opacity: Math.min(1.0, bar.notifDotProgress * 1.5)
+        visible: bar.notifDotProgress > 0.001
+        clip: true
 
         // 1. SCROLLABLE LIST OF CARDS (Anchored rigidly to parent.top to match status bar top line)
         Flickable {
@@ -1558,7 +1620,7 @@ PanelWindow {
                         Layout.fillWidth: true
                         Layout.preferredHeight: isCardHovered ? (bar.barHeight + expandedDetailsCol.implicitHeight + 14) : bar.barHeight
                         implicitHeight: Layout.preferredHeight
-                        radius: isCardHovered ? 15 : bar.startRadius
+                        radius: bar.notifExpandProgress > 0.6 ? (isCardHovered ? 15 : bar.startRadius) : (bar.barHeight / 2)
                         color: notifDetachedPod.cardBg
                         border.width: isCardHovered ? 1 : 0
                         border.color: isCardHovered ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.25) : "transparent"
@@ -1582,17 +1644,36 @@ PanelWindow {
                             anchors.right: parent.right
                             anchors.top: parent.top
                             height: bar.barHeight
-                            anchors.leftMargin: 13
+                            anchors.leftMargin: Math.round(13 * bar.notifExpandProgress + ((bar.barHeight - 6) / 2) * (1.0 - bar.notifExpandProgress))
                             anchors.rightMargin: 13
                             spacing: 8
 
-                            Rectangle {
-                                id: urgencyDot
+                            Item {
                                 width: 6
                                 height: 6
-                                radius: 3
-                                color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
                                 Layout.alignment: Qt.AlignVCenter
+
+                                // Ambient golden halo glow during float-up
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: 16
+                                    height: 16
+                                    radius: 8
+                                    color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
+                                    opacity: Math.max(0.0, (1.0 - bar.notifExpandProgress) * 0.45 * bar.notifDotProgress)
+                                    scale: 0.8 + 0.4 * bar.notifDotProgress
+                                }
+
+                                // Crisp indicator dot
+                                Rectangle {
+                                    id: urgencyDot
+                                    anchors.centerIn: parent
+                                    width: 6
+                                    height: 6
+                                    radius: 3
+                                    color: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : "#E5C07B"
+                                    scale: 0.6 + 0.4 * bar.notifDotProgress
+                                }
                             }
 
                             Text {
@@ -1604,6 +1685,7 @@ PanelWindow {
                                 font.letterSpacing: 1.4
                                 color: Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.55)
                                 Layout.alignment: Qt.AlignVCenter
+                                opacity: Math.max(0.0, (bar.notifExpandProgress - 0.25) / 0.75)
                             }
 
                             // Compact Preview Text (Saved • 08-16-09-27-43.png)
@@ -1617,7 +1699,7 @@ PanelWindow {
                                 font.weight: Font.DemiBold
                                 color: bar.fg
                                 elide: Text.ElideRight
-                                opacity: cardItem.isCardHovered ? 0.0 : 1.0
+                                opacity: cardItem.isCardHovered ? 0.0 : Math.max(0.0, (bar.notifExpandProgress - 0.3) / 0.7)
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
                             }
 
@@ -1628,7 +1710,7 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                                 layer.enabled: true
                                 layer.samples: 4
-                                opacity: cardItem.isCardHovered ? 0.35 : 0.9
+                                opacity: cardItem.isCardHovered ? 0.35 : Math.max(0.0, (bar.notifExpandProgress - 0.35) / 0.65 * 0.9)
                                 Behavior on opacity { NumberAnimation { duration: 250 } }
 
                                 ShapePath {
@@ -1672,6 +1754,7 @@ PanelWindow {
                                 color: dismissCardMa.containsMouse ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.16) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 Layout.alignment: Qt.AlignVCenter
+                                opacity: Math.max(0.0, (bar.notifExpandProgress - 0.35) / 0.65)
 
                                 Text {
                                     anchors.centerIn: parent
