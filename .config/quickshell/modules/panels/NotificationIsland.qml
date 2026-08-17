@@ -22,7 +22,7 @@ PanelWindow {
     implicitHeight: 750
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "quickshell-notifications"
+    WlrLayershell.namespace: "quickshell"
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
@@ -31,7 +31,12 @@ PanelWindow {
     readonly property real topMargin: Math.max(8, Theme.barGap !== undefined ? Theme.barGap : 8)
     readonly property real rightMargin: Math.max(8, topMargin)
     readonly property color fg: Theme.colOnSurface
-    readonly property color pillColor: Theme.colSurfaceContainer
+    property real barOpacity: Theme.barOpacity !== undefined ? Theme.barOpacity : 0.85
+    property bool barTransparency: Theme.barTransparency !== undefined ? Theme.barTransparency : true
+    property color bg: Theme.colSurfaceContainer
+    readonly property color pillColor: Theme.isPitchBlack
+        ? (notifWindow.barOpacity < 1.0 ? Qt.rgba(0, 0, 0, notifWindow.barOpacity) : "#000000")
+        : (notifWindow.barTransparency ? Qt.rgba(bg.r, bg.g, bg.b, notifWindow.barOpacity) : Qt.rgba(bg.r, bg.g, bg.b, 1.0))
     readonly property real startRadius: Theme.barRadius !== undefined ? Theme.barRadius : 16
     readonly property string fontName: Theme.appFontMono !== "" ? Theme.appFontMono : (globalState ? globalState.tablerIconsFamily : "tabler-icons")
 
