@@ -342,15 +342,19 @@ PanelWindow {
     SystemClock { id: timeClock; precision: SystemClock.Minutes }
 
     readonly property real screenW: bar.screen ? bar.screen.width : (bar.width > 0 ? bar.width : 1920)
-    readonly property real barW: bar.screenW - 200
-    readonly property real barX: 100
+    readonly property real barSideGap: Theme.barSideGap !== undefined ? Theme.barSideGap : 0
+    readonly property real barW: Math.max(200, bar.screenW - (2 * bar.barSideGap))
+    readonly property real barX: bar.barSideGap
     readonly property real startW: 100
     readonly property real startX: (bar.screenW - bar.startW) / 2
     readonly property real midY: Theme.barGap !== undefined ? Theme.barGap : 10
-    readonly property real startHeight: 30
-    readonly property real barHeight: 30
-    readonly property real startRadius: 15
-    readonly property real barRadius: 15
+    property real barHeight: Theme.barHeight !== undefined ? Theme.barHeight : 30
+    readonly property real startHeight: bar.barHeight
+    property real barRadius: Theme.barRadius !== undefined ? Theme.barRadius : 15
+    readonly property real startRadius: bar.barRadius
+    readonly property real barBorderWidth: Theme.barBorderWidth !== undefined ? Theme.barBorderWidth : 0
+    readonly property real barInnerPadding: Theme.barInnerPadding !== undefined ? Theme.barInnerPadding : 13
+    readonly property real barItemSpacing: Theme.barItemSpacing !== undefined ? Theme.barItemSpacing : 7
 
     // Power split pill dimensions
     readonly property real powerPillGap: 8   // gap between bar and power pill
@@ -401,8 +405,11 @@ PanelWindow {
         Rectangle {
             id: solidBarBg
             anchors.fill: parent
-            radius: height / 2
+            radius: bar.barRadius
             color: bar.pillColor
+            antialiasing: true
+            border.width: bar.barBorderWidth
+            border.color: bar.barBorderWidth > 0 ? Qt.rgba(bar.fg.r, bar.fg.g, bar.fg.b, 0.20) : "transparent"
             visible: !squareBR
             readonly property bool squareBR: globalState.powerDropdownOpen && Theme.barDropdownStyle === "Attached"
         }
@@ -411,7 +418,7 @@ PanelWindow {
             id: solidBarAttachedShape
             anchors.fill: parent
             visible: solidBarBg.squareBR
-            readonly property real r: height / 2
+            readonly property real r: bar.barRadius
             readonly property real w: width
             readonly property real h: height
 
@@ -472,8 +479,8 @@ PanelWindow {
         RowLayout {
             id: contentLayout
             anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-            anchors.leftMargin: 13
-            anchors.rightMargin: 13
+            anchors.leftMargin: bar.barInnerPadding
+            anchors.rightMargin: bar.barInnerPadding
             height: bar.barHeight
             spacing: 0
             opacity: 1.0

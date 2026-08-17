@@ -15,7 +15,7 @@ Item {
     // Read saved configuration state
     Process {
         id: initBarSettings
-        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_gap 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_window_gap 2>/dev/null"]
+        command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_dropdown_style 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_transparency 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_opacity 2>/dev/null; echo '---'; cat ~/.config/cupcake/.hide_island 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_24h 2>/dev/null; echo '---'; cat ~/.config/cupcake/.clock_show_seconds 2>/dev/null; echo '---'; cat ~/.cache/current_wallpaper 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_position 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_gap 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_window_gap 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_height 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_radius 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_side_gap 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_border_width 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_padding 2>/dev/null; echo '---'; cat ~/.config/cupcake/.bar_spacing 2>/dev/null"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -41,6 +41,30 @@ Item {
                         let wg = parseInt(parts[10].trim());
                         if (!isNaN(wg)) root.barWindowGap = wg;
                     }
+                    if (parts[11] && parts[11].trim() !== "") {
+                        let bh = parseInt(parts[11].trim());
+                        if (!isNaN(bh)) root.barHeight = bh;
+                    }
+                    if (parts[12] && parts[12].trim() !== "") {
+                        let br = parseInt(parts[12].trim());
+                        if (!isNaN(br)) root.barRadius = br;
+                    }
+                    if (parts[13] && parts[13].trim() !== "") {
+                        let bsg = parseInt(parts[13].trim());
+                        if (!isNaN(bsg)) root.barSideGap = bsg;
+                    }
+                    if (parts[14] && parts[14].trim() !== "") {
+                        let bbw = parseInt(parts[14].trim());
+                        if (!isNaN(bbw)) root.barBorderWidth = bbw;
+                    }
+                    if (parts[15] && parts[15].trim() !== "") {
+                        let bp = parseInt(parts[15].trim());
+                        if (!isNaN(bp)) root.barInnerPadding = bp;
+                    }
+                    if (parts[16] && parts[16].trim() !== "") {
+                        let bs = parseInt(parts[16].trim());
+                        if (!isNaN(bs)) root.barItemSpacing = bs;
+                    }
                 }
             }
         }
@@ -51,6 +75,12 @@ Item {
     property string barPosition: "Above" // "Above", "Below", "Left", "Right"
     property int barGap: Theme.barGap !== undefined ? Theme.barGap : 10
     property int barWindowGap: Theme.barWindowGap !== undefined ? Theme.barWindowGap : 0
+    property int barHeight: Theme.barHeight !== undefined ? Theme.barHeight : 30
+    property int barRadius: Theme.barRadius !== undefined ? Theme.barRadius : 15
+    property int barSideGap: Theme.barSideGap !== undefined ? Theme.barSideGap : 0
+    property int barBorderWidth: Theme.barBorderWidth !== undefined ? Theme.barBorderWidth : 0
+    property int barInnerPadding: Theme.barInnerPadding !== undefined ? Theme.barInnerPadding : 13
+    property int barItemSpacing: Theme.barItemSpacing !== undefined ? Theme.barItemSpacing : 7
     property string barMonitors: "all"
     property string dropdownStyle: Theme.barDropdownStyle !== "" ? Theme.barDropdownStyle : "Detached"
     property bool barTransparency: true
@@ -135,7 +165,7 @@ Item {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barPosition + "' > ~/.config/cupcake/.bar_position && echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap && echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap && echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barPosition + "' > ~/.config/cupcake/.bar_position && echo '" + root.barGap + "' > ~/.config/cupcake/.bar_gap && echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap && echo '" + root.barHeight + "' > ~/.config/cupcake/.bar_height && echo '" + root.barRadius + "' > ~/.config/cupcake/.bar_radius && echo '" + root.barSideGap + "' > ~/.config/cupcake/.bar_side_gap && echo '" + root.barBorderWidth + "' > ~/.config/cupcake/.bar_border_width && echo '" + root.barInnerPadding + "' > ~/.config/cupcake/.bar_padding && echo '" + root.barItemSpacing + "' > ~/.config/cupcake/.bar_spacing && echo '" + root.dropdownStyle + "' > ~/.config/cupcake/.bar_dropdown_style && echo '" + root.barTransparency + "' > ~/.config/cupcake/.bar_transparency && echo '" + root.barOpacity.toFixed(2) + "' > ~/.config/cupcake/.bar_opacity && echo '" + root.hideIsland + "' > ~/.config/cupcake/.hide_island && echo '" + root.clock24h + "' > ~/.config/cupcake/.clock_24h && echo '" + root.showSeconds + "' > ~/.config/cupcake/.clock_show_seconds && ~/.local/bin/apply-transparency"]);
                             statusCaptionAnim.restart();
                         }
                     }
@@ -171,13 +201,25 @@ Item {
                             Theme.barGap = 10;
                             root.barWindowGap = 0;
                             Theme.barWindowGap = 0;
+                            root.barHeight = 30;
+                            Theme.barHeight = 30;
+                            root.barRadius = 15;
+                            Theme.barRadius = 15;
+                            root.barSideGap = 0;
+                            Theme.barSideGap = 0;
+                            root.barBorderWidth = 0;
+                            Theme.barBorderWidth = 0;
+                            root.barInnerPadding = 13;
+                            Theme.barInnerPadding = 13;
+                            root.barItemSpacing = 7;
+                            Theme.barItemSpacing = 7;
                             root.dropdownStyle = "Detached";
                             root.barTransparency = true;
                             root.barOpacity = 0.50;
                             root.hideIsland = false;
                             root.clock24h = true;
                             root.showSeconds = false;
-                            Quickshell.execDetached(["bash", "-c", "echo 'Above' > ~/.config/cupcake/.bar_position && echo '10' > ~/.config/cupcake/.bar_gap && echo '0' > ~/.config/cupcake/.bar_window_gap && echo 'Detached' > ~/.config/cupcake/.bar_dropdown_style && echo 'true' > ~/.config/cupcake/.bar_transparency && echo '0.50' > ~/.config/cupcake/.bar_opacity && echo 'false' > ~/.config/cupcake/.hide_island && ~/.local/bin/apply-transparency"]);
+                            Quickshell.execDetached(["bash", "-c", "echo 'Above' > ~/.config/cupcake/.bar_position && echo '10' > ~/.config/cupcake/.bar_gap && echo '0' > ~/.config/cupcake/.bar_window_gap && echo '30' > ~/.config/cupcake/.bar_height && echo '15' > ~/.config/cupcake/.bar_radius && echo '0' > ~/.config/cupcake/.bar_side_gap && echo '0' > ~/.config/cupcake/.bar_border_width && echo '13' > ~/.config/cupcake/.bar_padding && echo '7' > ~/.config/cupcake/.bar_spacing && echo 'Detached' > ~/.config/cupcake/.bar_dropdown_style && echo 'true' > ~/.config/cupcake/.bar_transparency && echo '0.50' > ~/.config/cupcake/.bar_opacity && echo 'false' > ~/.config/cupcake/.hide_island && ~/.local/bin/apply-transparency"]);
                             statusCaptionAnim.restart();
                         }
                     }
@@ -271,32 +313,34 @@ Item {
                 // ── LIVE FULL-WIDTH CUPCAKE SOLID BAR ──────────────────────
                 Rectangle {
                     id: liveBar
-                    readonly property real previewGap: Math.max(2, root.barGap * 0.7)
-                    x: root.barPosition === "Right" ? (parent.width - width - 14) : 14
+                    readonly property real previewGap: Math.max(2, root.barGap * 0.6)
+                    readonly property real previewSideGap: Math.max(0, root.barSideGap * 0.25)
+                    x: root.barPosition === "Right" ? (parent.width - width - 14) : (14 + previewSideGap)
                     y: root.barPosition === "Below" ? (parent.height - height - liveBar.previewGap) : liveBar.previewGap
-                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? 32 : (root.barPosition === "Below" ? (parent.width - 28) : (parent.width - 28 - (root.hideIsland ? 0 : 136)))
-                    height: (root.barPosition === "Left" || root.barPosition === "Right") ? (parent.height - 28) : 32
-                    radius: 16
+                    width: (root.barPosition === "Left" || root.barPosition === "Right") ? Math.max(24, root.barHeight) : (root.barPosition === "Below" ? (parent.width - 28 - (2 * previewSideGap)) : (parent.width - 28 - (2 * previewSideGap) - (root.hideIsland ? 0 : 136)))
+                    height: (root.barPosition === "Left" || root.barPosition === "Right") ? (parent.height - 28) : Math.max(24, root.barHeight)
+                    radius: Math.min(height / 2, root.barRadius)
 
                     color: root.barTransparency
                            ? Qt.rgba(Theme.colSurfaceContainer.r, Theme.colSurfaceContainer.g, Theme.colSurfaceContainer.b, root.barOpacity)
                            : Theme.colSurfaceContainer
-                    border.color: Qt.rgba(255, 255, 255, 0.12)
-                    border.width: 1
+                    border.color: root.barBorderWidth > 0 ? Qt.rgba(255, 255, 255, 0.28) : Qt.rgba(255, 255, 255, 0.12)
+                    border.width: root.barBorderWidth > 0 ? root.barBorderWidth : 1
 
                     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                     Behavior on x { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                     Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                     Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                    Behavior on radius { NumberAnimation { duration: 200 } }
                     Behavior on color { ColorAnimation { duration: 250 } }
 
                     // Horizontal Solid Bar Content Layout
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
+                        anchors.leftMargin: Math.max(6, root.barInnerPadding)
+                        anchors.rightMargin: Math.max(6, root.barInnerPadding)
                         visible: root.barPosition === "Above" || root.barPosition === "Below"
-                        spacing: 8
+                        spacing: Math.max(2, root.barItemSpacing)
 
                         // Workspaces halo dots
                         Row {
@@ -764,7 +808,176 @@ Item {
                 }
             }
 
-            // ── 5. BAR GAPS & MARGINS ─────────────────────────────────────
+            // ── 5. BAR DIMENSIONS & GEOMETRY ────────────────────────────
+            NCard {
+                sectionTitle: "Dimensions & Size"
+
+                // 1. Height / Thickness Slider
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Bar Height (Thickness)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Vertical thickness of the status bar (" + root.barHeight + "px)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 24; to: 56; stepSize: 1
+                        value: root.barHeight
+                        onMoved: {
+                            root.barHeight = Math.round(value);
+                            Theme.barHeight = root.barHeight;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barHeight + "' > ~/.config/cupcake/.bar_height"]);
+                        }
+                        onValueChanged: {
+                            root.barHeight = Math.round(value);
+                            Theme.barHeight = root.barHeight;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barHeight + "' > ~/.config/cupcake/.bar_height"]);
+                            }
+                        }
+                    }
+                }
+
+                // 2. Bar Width / Side Gap (Horizontal Inset)
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Bar Width (Side Margin)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: root.barSideGap === 0 ? "Full width edge-to-edge (0px margin)" : ("Floating island width (" + root.barSideGap + "px margin)")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 0; to: 160; stepSize: 4
+                        value: root.barSideGap
+                        onMoved: {
+                            root.barSideGap = Math.round(value);
+                            Theme.barSideGap = root.barSideGap;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barSideGap + "' > ~/.config/cupcake/.bar_side_gap"]);
+                        }
+                        onValueChanged: {
+                            root.barSideGap = Math.round(value);
+                            Theme.barSideGap = root.barSideGap;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barSideGap + "' > ~/.config/cupcake/.bar_side_gap"]);
+                            }
+                        }
+                    }
+                }
+
+                // 3. Corner Radius / Roundness
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Corner Radius"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: root.barRadius === 0 ? "Sharp rectangular edges (0px)" : (root.barRadius >= Math.floor(root.barHeight / 2) ? "Full capsule pill (" + root.barRadius + "px)" : "Rounded corners (" + root.barRadius + "px)")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 0; to: 28; stepSize: 1
+                        value: root.barRadius
+                        onMoved: {
+                            root.barRadius = Math.round(value);
+                            Theme.barRadius = root.barRadius;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barRadius + "' > ~/.config/cupcake/.bar_radius"]);
+                        }
+                        onValueChanged: {
+                            root.barRadius = Math.round(value);
+                            Theme.barRadius = root.barRadius;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barRadius + "' > ~/.config/cupcake/.bar_radius"]);
+                            }
+                        }
+                    }
+                }
+
+                // 4. Border Thickness / Width
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Border Thickness"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: root.barBorderWidth === 0 ? "No border" : ("Subtle border outline (" + root.barBorderWidth + "px)")
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 0; to: 4; stepSize: 1
+                        value: root.barBorderWidth
+                        onMoved: {
+                            root.barBorderWidth = Math.round(value);
+                            Theme.barBorderWidth = root.barBorderWidth;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barBorderWidth + "' > ~/.config/cupcake/.bar_border_width"]);
+                        }
+                        onValueChanged: {
+                            root.barBorderWidth = Math.round(value);
+                            Theme.barBorderWidth = root.barBorderWidth;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barBorderWidth + "' > ~/.config/cupcake/.bar_border_width"]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── 6. BAR GAPS, SPACING & MARGINS ───────────────────────────
             NCard {
                 sectionTitle: "Gaps & Margins"
 
@@ -843,6 +1056,88 @@ Item {
                         onPressedChanged: {
                             if (!pressed) {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + root.barWindowGap + "' > ~/.config/cupcake/.bar_window_gap"]);
+                            }
+                        }
+                    }
+                }
+
+                // Inner Side Padding
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Inner Side Padding"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Left & right margins inside the bar (" + root.barInnerPadding + "px)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 6; to: 28; stepSize: 1
+                        value: root.barInnerPadding
+                        onMoved: {
+                            root.barInnerPadding = Math.round(value);
+                            Theme.barInnerPadding = root.barInnerPadding;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barInnerPadding + "' > ~/.config/cupcake/.bar_padding"]);
+                        }
+                        onValueChanged: {
+                            root.barInnerPadding = Math.round(value);
+                            Theme.barInnerPadding = root.barInnerPadding;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barInnerPadding + "' > ~/.config/cupcake/.bar_padding"]);
+                            }
+                        }
+                    }
+                }
+
+                // Module Item Spacing
+                NRow {
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            text: "Module & Item Spacing"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.colOnSurface
+                        }
+                        Text {
+                            text: "Distance between icons and status modules (" + root.barItemSpacing + "px)"
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 11
+                            color: Theme.colOnSurfaceVariant
+                        }
+                    }
+
+                    StyledSlider {
+                        Layout.preferredWidth: 220
+                        from: 2; to: 16; stepSize: 1
+                        value: root.barItemSpacing
+                        onMoved: {
+                            root.barItemSpacing = Math.round(value);
+                            Theme.barItemSpacing = root.barItemSpacing;
+                            Quickshell.execDetached(["bash", "-c", "echo '" + root.barItemSpacing + "' > ~/.config/cupcake/.bar_spacing"]);
+                        }
+                        onValueChanged: {
+                            root.barItemSpacing = Math.round(value);
+                            Theme.barItemSpacing = root.barItemSpacing;
+                        }
+                        onPressedChanged: {
+                            if (!pressed) {
+                                Quickshell.execDetached(["bash", "-c", "echo '" + root.barItemSpacing + "' > ~/.config/cupcake/.bar_spacing"]);
                             }
                         }
                     }

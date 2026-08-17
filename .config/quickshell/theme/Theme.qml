@@ -144,6 +144,144 @@ Item {
         }
     }
 
+    property int barHeight: 30
+
+    FileView {
+        id: themeBarHeightFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_height"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barHeight = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barHeight = v;
+            }
+        }
+    }
+
+    property int barRadius: 15
+
+    FileView {
+        id: themeBarRadiusFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_radius"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barRadius = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barRadius = v;
+            }
+        }
+    }
+
+    property int barSideGap: 0
+
+    FileView {
+        id: themeBarSideGapFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_side_gap"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barSideGap = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barSideGap = v;
+            }
+        }
+    }
+
+    property int barBorderWidth: 0
+
+    FileView {
+        id: themeBarBorderWidthFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_border_width"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barBorderWidth = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barBorderWidth = v;
+            }
+        }
+    }
+
+    property int barInnerPadding: 13
+
+    FileView {
+        id: themeBarInnerPaddingFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_padding"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barInnerPadding = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barInnerPadding = v;
+            }
+        }
+    }
+
+    property int barItemSpacing: 7
+
+    FileView {
+        id: themeBarItemSpacingFileView
+        path: themeSingleton.homeDir + "/.config/cupcake/.bar_spacing"
+        watchChanges: true
+        onFileChanged: { reload(); }
+        onTextChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barItemSpacing = v;
+            }
+        }
+        onLoadedChanged: {
+            let t = text();
+            if (t && t.trim().length > 0) {
+                let v = parseInt(t.trim());
+                if (!isNaN(v)) themeSingleton.barItemSpacing = v;
+            }
+        }
+    }
+
     property string barPosition: "Above"
 
     FileView {
