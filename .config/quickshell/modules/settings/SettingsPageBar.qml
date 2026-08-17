@@ -117,21 +117,23 @@ Item {
         }
     }
 
-    Flickable {
+    ScrollView {
+        id: scrollView
         anchors.fill: parent
-        anchors.leftMargin: 24
-        anchors.rightMargin: 24
-        anchors.topMargin: 16
-        anchors.bottomMargin: 20
-        contentWidth: width
-        contentHeight: mainCol.implicitHeight + 40
+        leftPadding: 32
+        rightPadding: 32
+        topPadding: 16
+        bottomPadding: 40
+        contentWidth: availableWidth
         clip: true
-        boundsBehavior: Flickable.StopAtBounds
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ColumnLayout {
             id: mainCol
-            width: parent.width
-            spacing: 16
+            width: Math.min(parent.width, 1000)
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
 
             // ── 1. HEADER ROW: Apply / Reset Actions ───────────────────────
             RowLayout {
