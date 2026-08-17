@@ -1988,7 +1988,7 @@ PanelWindow {
             easing.type: Easing.OutQuart
         }
         NumberAnimation {
-            target: solidBar
+            target: solidBarBg
             property: "radius"
             from: bar.startRadius
             to: bar.barRadius
