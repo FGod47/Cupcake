@@ -506,7 +506,7 @@ PanelWindow {
                                 Layout.fillWidth: true
                                 Layout.topMargin: 4
                                 spacing: 8
-                                visible: cardItem.notifData && cardItem.notifData.actions && cardItem.notifData.actions.length > 0
+                                visible: !!(cardItem.notifData && cardItem.notifData.actions && cardItem.notifData.actions.length > 0)
 
                                 Repeater {
                                     model: (cardItem.notifData && cardItem.notifData.actions) ? cardItem.notifData.actions : []
