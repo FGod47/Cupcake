@@ -30,13 +30,17 @@ ShellRoot {
     // ⚠️ STRICT DIRECTIVE / AGENT LOCK: PILL BAR (Bar.qml) IS TOTALLY DISABLED & ARCHIVED in modules/panels/archive/
     // DO NOT re-enable or instantiate Bar { ... } unless explicitly instructed by the USER.
 
-
-
     Variants {
         model: Quickshell.screens
         delegate: BarSolid {
             visible: globalState.barVisible && !!globalState.barMonitors && (globalState.barMonitors.includes("all") || (modelData && globalState.barMonitors.includes(modelData.name)))
         }
+    }
+
+    // Standalone Notification Island (Always on Top Right of the screen)
+    Variants {
+        model: Quickshell.screens
+        delegate: NotificationIsland {}
     }
 
     // Control Center for solid bar
@@ -124,6 +128,7 @@ ShellRoot {
         property var popups: []
         property var activePopup: null
         property real activeNotifWidth: 352
+        property real notifProgress: 0.0
         property real clockPillWidth: 150
         property real islandWidth: 150
         property string clockString: ""
