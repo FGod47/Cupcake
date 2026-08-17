@@ -468,7 +468,7 @@ PanelWindow {
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         readonly property real notifRestW: Math.max(100, (notifDetachedPod.targetRestX - 8) - bar.barX)
         x: expandAnim.running ? bar.startX : bar.barX
-        width: bar.isBottom ? bar.barW : (bar.barW - Math.max(0, (bar.barW - notifRestW) * bar.notifProgress))
+        width: bar.barW - Math.max(0, (bar.barW - notifRestW) * bar.notifProgress)
         height: expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1489,7 +1489,7 @@ PanelWindow {
 
         width: currentW
         height: (hasNotif || bar.notifExpandProgress > 0.01) ? (bar.barHeight + (targetTotalH - bar.barHeight) * bar.notifExpandProgress) : bar.barHeight
-        y: bar.midY
+        y: bar.isBottom ? (solidBar.y + bar.barHeight - height) : bar.midY
         x: currentX
         opacity: bar.notifDotProgress
         scale: 0.85 + 0.15 * bar.notifDotProgress
@@ -1497,10 +1497,11 @@ PanelWindow {
         visible: bar.notifDotProgress > 0.001
         clip: true
 
-        // 1. SCROLLABLE LIST OF CARDS (Anchored rigidly to parent.top to match status bar top line)
+        // 1. SCROLLABLE LIST OF CARDS
         Flickable {
             id: notifFlickable
-            anchors.top: parent.top
+            anchors.top: bar.isBottom ? undefined : parent.top
+            anchors.bottom: bar.isBottom ? parent.bottom : undefined
             anchors.left: parent.left
             anchors.right: parent.right
             height: notifDetachedPod.targetListH
@@ -1535,7 +1536,8 @@ PanelWindow {
                 id: notifStackCol
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: parent.top
+                anchors.top: bar.isBottom ? undefined : parent.top
+                anchors.bottom: bar.isBottom ? parent.bottom : undefined
                 spacing: 6
 
                 Repeater {
@@ -1646,7 +1648,8 @@ PanelWindow {
                             id: headerRow
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.top: parent.top
+                            anchors.top: bar.isBottom ? undefined : parent.top
+                            anchors.bottom: bar.isBottom ? parent.bottom : undefined
                             height: bar.barHeight
                             anchors.leftMargin: Math.round(13 * bar.notifExpandProgress + ((bar.barHeight - 6) / 2) * (1.0 - bar.notifExpandProgress))
                             anchors.rightMargin: 13
@@ -2111,7 +2114,6 @@ PanelWindow {
                 return bar.barX;
             });
             solidBar.width = Qt.binding(function() {
-                if (bar.isBottom) return bar.barW;
                 let notifRestW = Math.max(100, (notifDetachedPod.targetRestX - 8) - bar.barX);
                 return bar.barW - Math.max(0, (bar.barW - notifRestW) * bar.notifProgress);
             });
