@@ -56,9 +56,14 @@ Item {
         }
     }
 
-    // Refresh wallpaper path every 10s (only if process isn't already running)
+    // Auto-generate missing thumbnails on page load
+    Component.onCompleted: {
+        Quickshell.execDetached([Theme.homeDir + "/.local/bin/cupcake-generate-thumbnails"]);
+    }
+
+    // Refresh wallpaper path every 5s (only if process isn't already running)
     Timer {
-        interval: 10000
+        interval: 5000
         repeat: true
         running: true
         onTriggered: {
@@ -325,8 +330,8 @@ Item {
                                                 if (status === Image.Error) {
                                                     if (source.toString() === ("file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png")) {
                                                         source = "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName;
-                                                    } else if (source.toString() !== fileUrl.toString()) {
-                                                        source = fileUrl;
+                                                    } else if (source.toString() !== ("file://" + filePath)) {
+                                                        source = "file://" + filePath;
                                                     }
                                                 }
                                             }
@@ -429,7 +434,7 @@ Item {
                         }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails'"])
+                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} bash -c 'cp \"{}\" " + root.wallDir + "/ && ~/.local/bin/cupcake-generate-thumbnails && ~/.local/bin/set-theme \"" + root.wallDir + "/$(basename \"{}\")\"'"])
                         }
                     }
                 }
