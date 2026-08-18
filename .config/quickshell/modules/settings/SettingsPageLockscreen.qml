@@ -215,7 +215,7 @@ Item {
                                     height: prevTimeLabel.implicitHeight
                                     anchors.horizontalCenter: parent.horizontalCenter
 
-                                    // Frosted blurred background clipped to digits
+                                    // Frosted blurred background with specular glass gradient
                                     Item {
                                         anchors.fill: parent
                                         layer.enabled: true
@@ -232,14 +232,21 @@ Item {
 
                                             layer.enabled: true
                                             layer.effect: FastBlur {
-                                                radius: 20
+                                                radius: 28
                                                 cached: true
                                             }
                                         }
 
                                         Rectangle {
                                             anchors.fill: parent
-                                            color: Qt.rgba(1, 1, 1, 0.45)
+                                            gradient: Gradient {
+                                                orientation: Gradient.Vertical
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.50) }
+                                                GradientStop { position: 0.22; color: Qt.rgba(1, 1, 1, 0.18) }
+                                                GradientStop { position: 0.65; color: Qt.rgba(1, 1, 1, 0.10) }
+                                                GradientStop { position: 0.88; color: Qt.rgba(1, 1, 1, 0.22) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
+                                            }
                                         }
                                     }
 
@@ -265,6 +272,45 @@ Item {
                                         }
                                     }
 
+                                    // Top-edge Specular Catchlight
+                                    Text {
+                                        anchors.centerIn: parent
+                                        anchors.verticalCenterOffset: -0.8
+                                        text: {
+                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                            let d = new Date();
+                                            let h = d.getHours() % 12 || 12;
+                                            let m = d.getMinutes();
+                                            return h + ":" + (m < 10 ? "0" + m : m);
+                                        }
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 52
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.5
+                                        color: Qt.rgba(1, 1, 1, 0.65)
+                                        opacity: 0.75
+                                    }
+
+                                    // Bottom-edge Refraction Shadow
+                                    Text {
+                                        anchors.centerIn: parent
+                                        anchors.verticalCenterOffset: 1.0
+                                        text: {
+                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                            let d = new Date();
+                                            let h = d.getHours() % 12 || 12;
+                                            let m = d.getMinutes();
+                                            return h + ":" + (m < 10 ? "0" + m : m);
+                                        }
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 52
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.5
+                                        color: Qt.rgba(0, 0, 0, 0.40)
+                                        opacity: 0.65
+                                    }
+
+                                    // Translucent Glass Face
                                     Text {
                                         id: prevTimeLabel
                                         anchors.centerIn: parent
@@ -279,9 +325,9 @@ Item {
                                         font.pixelSize: 52
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.5
-                                        color: Qt.rgba(1, 1, 1, 0.35)
+                                        color: Qt.rgba(1, 1, 1, 0.20)
                                         style: Text.Raised
-                                        styleColor: Qt.rgba(0, 0, 0, 0.25)
+                                        styleColor: Qt.rgba(1, 1, 1, 0.50)
                                     }
                                 }
                             }
