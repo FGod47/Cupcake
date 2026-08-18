@@ -254,10 +254,14 @@ Item {
     property color cBorder: Theme.isDark ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.4) : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.25)
     property color cBorderSoft: Theme.isDark ? Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.2) : Qt.rgba(Theme.colOutline.r, Theme.colOutline.g, Theme.colOutline.b, 0.15)
     property color cText: Theme.colOnBackground
-    property color cTextDim: Theme.colOnSurfaceVariant
-    property color cTextFaint: Qt.rgba(Theme.colOnSurfaceVariant.r, Theme.colOnSurfaceVariant.g, Theme.colOnSurfaceVariant.b, 0.6)
+    property color cTextDim: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.60)
+    property color cTextFaint: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.38)
     property color cAccent: Theme.colPrimary
     property color cAccentDim: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.14)
+    property color cAccentOn: {
+        let lum = cAccent.r * 0.299 + cAccent.g * 0.587 + cAccent.b * 0.114;
+        return lum > 0.5 ? "#14140c" : "#ffffff";
+    }
 
     Rectangle {
         id: mainWrapper
@@ -310,6 +314,10 @@ Item {
                     Rectangle {
                         id: sidebarHighlight
                         property Item activeItem: null
+                        property bool isVisible: root.currentIndex !== 20 && activeItem !== null
+                        
+                        opacity: isVisible ? 1.0 : 0.0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
                         
                         x: activeItem ? activeItem.x : 0
                         y: activeItem ? activeItem.y : 0
@@ -410,18 +418,18 @@ Item {
                             spacing: 10
                             
                             Text {
-                                text: parent.parent.icon
+                                text: railItemRoot.icon
                                 font.family: "tabler-icons"
                                 font.pixelSize: 17
-                                color: parent.parent.isActive ? Theme.colOnPrimary : cTextDim
+                                color: (railItemRoot.isActive && root.currentIndex !== 20) ? root.cAccentOn : (ma.containsMouse ? cText : cTextDim)
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                             Text {
-                                text: parent.parent.label
+                                text: railItemRoot.label
                                 font.family: Theme.defaultFontFamily
                                 font.pixelSize: 13
-                                font.weight: Font.Medium
-                                color: parent.parent.isActive ? Theme.colOnPrimary : (ma.containsMouse ? cText : cTextDim)
+                                font.weight: (railItemRoot.isActive && root.currentIndex !== 20) ? Font.DemiBold : Font.Medium
+                                color: (railItemRoot.isActive && root.currentIndex !== 20) ? root.cAccentOn : (ma.containsMouse ? cText : cTextDim)
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                             Item { Layout.fillWidth: true }
