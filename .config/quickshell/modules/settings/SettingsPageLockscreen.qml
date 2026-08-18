@@ -121,7 +121,7 @@ Item {
                     // Live Interactive Stage
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 260
+                        Layout.preferredHeight: 300
                         radius: 14
                         color: "#0a0a0c"
                         border.width: 1
@@ -142,6 +142,7 @@ Item {
 
                             // Lockscreen Wallpaper Preview
                             Image {
+                                id: heroLockWallImg
                                 anchors.fill: parent
                                 source: {
                                     var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
@@ -193,7 +194,7 @@ Item {
                             // iOS Style Lockscreen Clock & Date
                             Column {
                                 anchors.top: parent.top
-                                anchors.topMargin: root.isPreviewUnlocked ? 16 : 22
+                                anchors.topMargin: root.isPreviewUnlocked ? 20 : 26
                                 Behavior on anchors.topMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: 2
@@ -228,25 +229,40 @@ Item {
                             // Frosted Glass Avatar & Interactive Slide-Up Login Section
                             Column {
                                 anchors.bottom: parent.bottom
-                                anchors.bottomMargin: root.isPreviewUnlocked ? 30 : 14
+                                anchors.bottomMargin: root.isPreviewUnlocked ? 34 : 16
                                 Behavior on anchors.bottomMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: root.isPreviewUnlocked ? 6 : 3
                                 Behavior on spacing { NumberAnimation { duration: 250 } }
 
                                 Rectangle {
+                                    id: prevAvatarCircle
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    width: root.isPreviewUnlocked ? 32 : 36
+                                    width: root.isPreviewUnlocked ? 34 : 38
                                     height: width
                                     radius: width / 2
                                     Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                     color: Qt.rgba(255, 255, 255, 0.25)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.4)
-                                    clip: true
-                                    Image {
+                                    border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.5)
+
+                                    Rectangle {
+                                        id: prevAvatarMask
                                         anchors.fill: parent
-                                        source: "file://" + Theme.homeDir + "/.local/share/qylock-themes/cupcake-sddm/avatar.png"
-                                        fillMode: Image.PreserveAspectCrop
+                                        radius: prevAvatarCircle.radius
+                                        visible: false
+                                    }
+
+                                    Item {
+                                        anchors.fill: parent
+                                        anchors.margins: 1.5
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask { maskSource: prevAvatarMask }
+
+                                        Image {
+                                            anchors.fill: parent
+                                            source: "file://" + Theme.homeDir + "/.local/share/qylock-themes/cupcake-sddm/avatar.png"
+                                            fillMode: Image.PreserveAspectCrop
+                                        }
                                     }
                                 }
 
@@ -306,6 +322,7 @@ Item {
                             // Interactive click to toggle preview unlock
                             MouseArea {
                                 anchors.fill: parent
+                                z: -1
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: root.isPreviewUnlocked = !root.isPreviewUnlocked
                             }
