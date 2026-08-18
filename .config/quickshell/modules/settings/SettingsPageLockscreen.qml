@@ -279,10 +279,10 @@ Item {
                                                 let m = d.getMinutes();
                                                 return h + ":" + (m < 10 ? "0" + m : m);
                                             }
-                                            font.family: previewClockFont.name || "Nunito"
+                                            font.family: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
                                             font.pixelSize: 56
-                                            font.weight: Font.Bold
-                                            font.letterSpacing: -1.5
+                                            font.weight: Font.DemiBold
+                                            font.letterSpacing: -2.0
                                             color: "#ffffff"
                                         }
                                     }
@@ -297,10 +297,10 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: previewClockFont.name || "Nunito"
+                                        font.family: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
                                         font.pixelSize: 56
-                                        font.weight: Font.Bold
-                                        font.letterSpacing: -1.5
+                                        font.weight: Font.DemiBold
+                                        font.letterSpacing: -2.0
                                         color: Qt.rgba(1, 1, 1, 0.18)
                                         style: Text.Raised
                                         styleColor: Qt.rgba(0, 0, 0, 0.22)

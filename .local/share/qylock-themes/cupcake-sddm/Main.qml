@@ -10,13 +10,8 @@ Rectangle {
     color: "#121214"
     focus: true
 
-    FontLoader {
-        id: roundedClockFont
-        source: "fonts/Nunito.ttf"
-    }
-
-    property string fontName: "Google Sans, Inter, SF Pro Display, -apple-system, sans-serif"
-    property string clockFontFamily: roundedClockFont.name || "Nunito"
+    property string fontName: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
+    property string clockFontFamily: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
     property color textColor: "#ffffff"
     property bool isLoginPromptVisible: false
 
@@ -264,9 +259,9 @@ Rectangle {
                         anchors.centerIn: parent
                         text: root.get12HourTime()
                         font.family: root.clockFontFamily
-                        font.pixelSize: 126
-                        font.weight: Font.Bold
-                        font.letterSpacing: -2.0
+                        font.pixelSize: 124
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: -3.5
                         color: "#ffffff"
                     }
                 }
@@ -277,9 +272,9 @@ Rectangle {
                     anchors.centerIn: parent
                     text: root.get12HourTime()
                     font.family: root.clockFontFamily
-                    font.pixelSize: 126
-                    font.weight: Font.Bold
-                    font.letterSpacing: -2.0
+                    font.pixelSize: 124
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: -3.5
                     color: Qt.rgba(1, 1, 1, 0.18)
                     style: Text.Raised
                     styleColor: Qt.rgba(0, 0, 0, 0.22)
