@@ -26,6 +26,11 @@ Item {
     property string idleTimeout: "10 minutes"
     property string lockTheme: "cupcake-sddm"
 
+    FontLoader {
+        id: previewClockFont
+        source: "file://" + Theme.homeDir + "/.local/share/fonts/Nunito.ttf"
+    }
+
     // Read blur lockscreen preference
     Process {
         command: ["cat", Theme.homeDir + "/.config/cupcake/.blur_lockscreen"]
@@ -262,10 +267,10 @@ Item {
                                                 let m = d.getMinutes();
                                                 return h + ":" + (m < 10 ? "0" + m : m);
                                             }
-                                            font.family: Theme.defaultFontFamily
-                                            font.pixelSize: 54
-                                            font.weight: Font.DemiBold
-                                            font.letterSpacing: -1.8
+                                            font.family: previewClockFont.name || "Nunito"
+                                            font.pixelSize: 56
+                                            font.weight: Font.Bold
+                                            font.letterSpacing: -1.5
                                             color: "#ffffff"
                                         }
                                     }
@@ -280,10 +285,10 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 54
-                                        font.weight: Font.DemiBold
-                                        font.letterSpacing: -1.8
+                                        font.family: previewClockFont.name || "Nunito"
+                                        font.pixelSize: 56
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.5
                                         color: Qt.rgba(1, 1, 1, 0.18)
                                         style: Text.Raised
                                         styleColor: Qt.rgba(0, 0, 0, 0.22)
