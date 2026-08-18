@@ -24,6 +24,27 @@ Item {
     property var barMonitors: ["all"]
     property var dockMonitors: ["all"]
 
+    property string username: Quickshell.env("USER") || "zero"
+    property string hostname: "infinity"
+    property string realName: "Zero"
+    property string userAvatar: ""
+
+    Process {
+        id: userInfoProcess
+        command: ["bash", "-c", "hostname; whoami; getent passwd $USER 2>/dev/null | cut -d ':' -f 5 | cut -d ',' -f 1; ls ~/.face ~/.face.icon ~/.local/share/qylock-themes/cupcake-sddm/avatar.png 2>/dev/null | head -n 1"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!text) return;
+                let lines = text.trim().split("\n");
+                if (lines[0] && lines[0].trim() !== "") root.hostname = lines[0].trim();
+                if (lines[1] && lines[1].trim() !== "") root.username = lines[1].trim();
+                if (lines[2] && lines[2].trim() !== "") root.realName = lines[2].trim();
+                if (lines[3] && lines[3].trim() !== "") root.userAvatar = lines[3].trim();
+            }
+        }
+    }
+
     Process {
         id: settingsMonitorPoll
         command: ["bash", "-c", "cat ~/.config/cupcake/.bar_monitors 2>/dev/null; echo '---'; cat ~/.config/cupcake/.dock_monitors 2>/dev/null"]
@@ -439,10 +460,13 @@ Item {
                     
                     // FOOTER
                     Rectangle {
+                        id: footerUserCard
                         Layout.fillWidth: true
                         Layout.preferredHeight: 46
                         Layout.topMargin: 8
-                        color: "transparent"
+                        color: userFooterMa.containsMouse ? cSurfaceHover : "transparent"
+                        radius: 10
+                        Behavior on color { ColorAnimation { duration: 140 } }
                         
                         Rectangle {
                             anchors.top: parent.top
@@ -454,22 +478,80 @@ Item {
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
-                            spacing: 9
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 10
                             
+                            // User Avatar
                             Rectangle {
-                                width: 26; height: 26; radius: 13
+                                width: 28; height: 28; radius: 14
                                 color: cBgElevated
                                 border.color: cBorder
                                 border.width: 1
+                                clip: true
+
+                                Rectangle {
+                                    id: footerAvatarMask
+                                    anchors.fill: parent
+                                    radius: 14
+                                    visible: false
+                                }
+
+                                Item {
+                                    anchors.fill: parent
+                                    layer.enabled: true
+                                    layer.effect: OpacityMask { maskSource: footerAvatarMask }
+
+                                    Image {
+                                        anchors.fill: parent
+                                        source: root.userAvatar !== "" ? ("file://" + root.userAvatar) : ("file://" + root.homeDir + "/.local/share/qylock-themes/cupcake-sddm/avatar.png")
+                                        fillMode: Image.PreserveAspectCrop
+                                        visible: status === Image.Ready
+                                    }
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        visible: root.userAvatar === ""
+                                        text: root.username.length > 0 ? root.username.charAt(0).toUpperCase() : "U"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 12
+                                        font.weight: Font.Bold
+                                        color: Theme.colPrimary
+                                    }
+                                }
                             }
+
                             ColumnLayout {
                                 spacing: 0
-                                Text { text: "nova"; font.family: Theme.defaultFontFamily; font.pixelSize: 11; font.weight: Font.DemiBold; color: cText }
-                                Text { text: "ryzen-arch"; font.family: Theme.monoFontFamily; font.pixelSize: 10; color: cTextFaint }
+                                Layout.fillWidth: true
+                                Text {
+                                    text: root.realName !== "" ? root.realName : root.username
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 12
+                                    font.weight: Font.DemiBold
+                                    color: cText
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+                                Text {
+                                    text: root.hostname
+                                    font.family: Theme.monoFontFamily
+                                    font.pixelSize: 10
+                                    color: cTextFaint
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
                             }
-                            Item { Layout.fillWidth: true }
+                        }
+
+                        MouseArea {
+                            id: userFooterMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.currentIndex = 21;
+                            }
                         }
                     }
                 }
