@@ -172,18 +172,6 @@ Item {
                                 }
                             }
 
-                            // Simulated Top Camera Notch
-                            Rectangle {
-                                anchors.top: parent.top
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                width: 56; height: 10; radius: 0; bottomLeftRadius: 6; bottomRightRadius: 6
-                                color: "#000000"
-                                Rectangle {
-                                    anchors.centerIn: parent; width: 4; height: 4; radius: 2
-                                    color: "#1f1f23"
-                                }
-                            }
-
                             // iOS Style Lockscreen Clock & Date
                             Column {
                                 anchors.top: parent.top

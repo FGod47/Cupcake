@@ -57,31 +57,7 @@ Rectangle {
         }
     }
 
-    // ── 2. TOP CAMERA NOTCH TAB ──────────────────────────────────────────
-    Rectangle {
-        id: topNotch
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 144
-        height: 28
-        color: "#000000"
-        radius: 0
-        bottomLeftRadius: 14
-        bottomRightRadius: 14
-        z: 10
-
-        Rectangle {
-            anchors.centerIn: parent
-            width: 8
-            height: 8
-            radius: 4
-            color: "#1a1a1a"
-            border.width: 1
-            border.color: "#282828"
-        }
-    }
-
-    // ── 3. TOP RIGHT CONTROLS (Session & Layout) ────────────────────────
+    // ── 2. TOP RIGHT CONTROLS (Session & Layout) ────────────────────────
     Row {
         z: 10
         anchors.top: parent.top
