@@ -1,6 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 import SddmComponents 2.0
+import Qt5Compat.GraphicalEffects
 
 Rectangle {
     id: root
@@ -185,22 +186,35 @@ Rectangle {
             // User Avatar
             Rectangle {
                 id: avatarCircle
-                width: 52
-                height: 52
-                radius: 26
+                width: 54
+                height: 54
+                radius: 27
                 color: "#25000000"
                 border.width: 1.5
                 border.color: avatarMa.containsMouse ? "#70ffffff" : "#40ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
-                clip: true
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                Image {
-                    id: avatarImg
+                Rectangle {
+                    id: avatarMask
                     anchors.fill: parent
-                    source: "avatar.png"
-                    smooth: true
-                    fillMode: Image.PreserveAspectCrop
+                    radius: 27
+                    visible: false
+                }
+
+                Item {
+                    anchors.fill: parent
+                    anchors.margins: 1.5
+                    layer.enabled: true
+                    layer.effect: OpacityMask { maskSource: avatarMask }
+
+                    Image {
+                        id: avatarImg
+                        anchors.fill: parent
+                        source: "avatar.png"
+                        smooth: true
+                        fillMode: Image.PreserveAspectCrop
+                    }
                 }
 
                 MouseArea {
