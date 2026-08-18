@@ -453,11 +453,33 @@ ShellRoot {
             }
 
             // Only queue notifications with actual content (filters out blank ghosts)
-            let hasContent = (notif.summary && notif.summary.trim().length > 0) ||
-                             (notif.body && notif.body.trim().length > 0) ||
-                             (notif.appName && notif.appName.trim().length > 0);
+            let summary = (notif.summary || "").trim();
+            let body = (notif.body || "").trim();
+            let appName = (notif.appName || "").trim();
+            let hasContent = summary.length > 0 || body.length > 0 || appName.length > 0;
+
             if (hasContent) {
-                globalState.popups = [notif].concat(globalState.popups.filter(p => p !== notif));
+                // Deduplicate: If an identical notification already exists in popups, dismiss and replace it
+                let existingIdx = -1;
+                for (let i = 0; i < globalState.popups.length; i++) {
+                    let p = globalState.popups[i];
+                    if (p && (p.summary || "").trim() === summary && (p.body || "").trim() === body) {
+                        existingIdx = i;
+                        break;
+                    }
+                }
+
+                if (existingIdx !== -1) {
+                    try {
+                        let oldNotif = globalState.popups[existingIdx];
+                        if (oldNotif && typeof oldNotif.dismiss === "function") oldNotif.dismiss();
+                    } catch(e) {}
+                    let updated = globalState.popups.slice();
+                    updated.splice(existingIdx, 1);
+                    globalState.popups = [notif].concat(updated);
+                } else {
+                    globalState.popups = [notif].concat(globalState.popups.filter(p => p !== notif));
+                }
             }
         }
     }
