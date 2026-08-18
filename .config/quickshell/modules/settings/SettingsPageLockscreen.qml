@@ -29,7 +29,7 @@ Item {
 
     FontLoader {
         id: previewClockFont
-        source: "file://" + Theme.homeDir + "/.local/share/fonts/Orbitron-Black.ttf"
+        source: "file://" + Theme.homeDir + "/.local/share/fonts/OpenSans.ttf"
     }
 
     // Read real user name from system
@@ -279,9 +279,10 @@ Item {
                                                 let m = d.getMinutes();
                                                 return h + ":" + (m < 10 ? "0" + m : m);
                                             }
-                                            font.family: previewClockFont.name || "Orbitron"
-                                            font.pixelSize: 50
-                                            font.letterSpacing: -0.5
+                                            font.family: previewClockFont.name || "Open Sans"
+                                            font.pixelSize: 54
+                                            font.weight: Font.Bold
+                                            font.letterSpacing: -1.2
                                             color: "#ffffff"
                                         }
                                     }
@@ -296,9 +297,10 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: previewClockFont.name || "Orbitron"
-                                        font.pixelSize: 50
-                                        font.letterSpacing: -0.5
+                                        font.family: previewClockFont.name || "Open Sans"
+                                        font.pixelSize: 54
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.2
                                         color: Qt.rgba(1, 1, 1, 0.18)
                                         style: Text.Raised
                                         styleColor: Qt.rgba(0, 0, 0, 0.22)
