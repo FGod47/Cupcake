@@ -387,13 +387,12 @@ Rectangle {
             Item {
                 id: unlockHint
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 120
-                height: 28
-                visible: opacity > 0.01
-                opacity: !root.isLoginPromptVisible ? 0.85 : 0.0
-                scale: !root.isLoginPromptVisible ? 1.0 : 0.7
-                Behavior on opacity { NumberAnimation { duration: 250 } }
-                Behavior on scale { NumberAnimation { duration: 250 } }
+                width: 140
+                height: root.isLoginPromptVisible ? 0 : 32
+                clip: true
+                opacity: root.isLoginPromptVisible ? 0.0 : 0.85
+                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
                 Column {
                     anchors.centerIn: parent
@@ -429,6 +428,7 @@ Rectangle {
                 MouseArea {
                     id: hintMa
                     anchors.fill: parent
+                    enabled: !root.isLoginPromptVisible
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.showLoginPrompt()
@@ -442,16 +442,15 @@ Rectangle {
                 height: root.isLoginPromptVisible ? 34 : 0
                 radius: 17
                 clip: true
-                visible: opacity > 0.01
                 opacity: root.isLoginPromptVisible ? 1.0 : 0.0
-                scale: root.isLoginPromptVisible ? 1.0 : 0.85
+                scale: root.isLoginPromptVisible ? 1.0 : 0.9
                 color: passwordInput.activeFocus ? "#48000000" : "#30000000"
                 border.width: 1
                 border.color: passwordInput.activeFocus ? "#60ffffff" : "#30ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
-                Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 

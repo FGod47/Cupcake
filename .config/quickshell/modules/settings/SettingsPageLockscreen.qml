@@ -348,12 +348,12 @@ Item {
                                 // Upward Arrow Hint
                                 Item {
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    width: 100; height: 16
-                                    visible: opacity > 0.01
-                                    opacity: !root.isPreviewUnlocked ? 0.85 : 0.0
-                                    scale: !root.isPreviewUnlocked ? 1.0 : 0.7
-                                    Behavior on opacity { NumberAnimation { duration: 250 } }
-                                    Behavior on scale { NumberAnimation { duration: 250 } }
+                                    width: 100
+                                    height: root.isPreviewUnlocked ? 0 : 18
+                                    clip: true
+                                    opacity: root.isPreviewUnlocked ? 0.0 : 0.85
+                                    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
                                     Text {
                                         anchors.centerIn: parent
@@ -372,14 +372,13 @@ Item {
                                     height: root.isPreviewUnlocked ? 26 : 0
                                     radius: 13
                                     clip: true
-                                    visible: opacity > 0.01
                                     opacity: root.isPreviewUnlocked ? 1.0 : 0.0
-                                    scale: root.isPreviewUnlocked ? 1.0 : 0.85
+                                    scale: root.isPreviewUnlocked ? 1.0 : 0.9
                                     color: Qt.rgba(255, 255, 255, 0.15)
                                     border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.35)
-                                    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                                    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+                                    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                    Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                    Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
                                     RowLayout {
                                         anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
