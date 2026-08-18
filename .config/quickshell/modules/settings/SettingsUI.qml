@@ -453,6 +453,7 @@ Item {
                     RailItem { icon: "\ueb51"; label: "Sound"; pageIndex: 7 }         // volume
                     RailItem { icon: "\uef8e"; label: "System"; pageIndex: 10 }       // cpu
                     RailItem { icon: "\ueb1d"; label: "Updates"; pageIndex: 11 }      // download
+                    RailItem { icon: "\ueae5"; label: "Users"; pageIndex: 20 }        // user
                     
                     Item { Layout.fillHeight: true } // spacer
                     
@@ -464,7 +465,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 46
                         Layout.topMargin: 8
-                        color: userFooterMa.containsMouse ? cSurfaceHover : "transparent"
+                        color: (root.currentIndex === 20 || userFooterMa.containsMouse) ? cSurfaceHover : "transparent"
                         radius: 10
                         Behavior on color { ColorAnimation { duration: 140 } }
                         
@@ -486,7 +487,7 @@ Item {
                             Rectangle {
                                 width: 28; height: 28; radius: 14
                                 color: cBgElevated
-                                border.color: cBorder
+                                border.color: root.currentIndex === 20 ? Theme.colPrimary : cBorder
                                 border.width: 1
                                 clip: true
 
@@ -550,7 +551,7 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                root.currentIndex = 21;
+                                root.currentIndex = 20;
                             }
                         }
                     }
@@ -696,6 +697,8 @@ Item {
                                     case 13: return "SettingsPagePower.qml";
                                     case 17: return "SettingsPageNetwork.qml";
                                     case 18: return "SettingsPageDisplay.qml";
+                                    case 20: return "SettingsPageUser.qml";
+                                    case 21: return "SettingsPageSystem.qml";
                                     case 22: return "SettingsPageBluetooth.qml";
                                     case 23: return "SettingsPageHotspot.qml";
                                     case 24: return "SettingsPageLockscreen.qml";

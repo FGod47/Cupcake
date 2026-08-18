@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Cupcake Set User Avatar Script
+
+IMAGE="$1"
+if [ -z "$IMAGE" ] || [ ! -f "$IMAGE" ]; then
+    exit 1
+fi
+
+HOME_DIR="$HOME"
+
+# 1. Update user profile icons
+cp -f "$IMAGE" "$HOME_DIR/.face"
+cp -f "$IMAGE" "$HOME_DIR/.face.icon"
+
+# 2. Update user lockscreen & SDDM themes
+mkdir -p "$HOME_DIR/.local/share/qylock-themes/cupcake-sddm"
+cp -f "$IMAGE" "$HOME_DIR/.local/share/qylock-themes/cupcake-sddm/avatar.png"
+
+if [ -d "$HOME_DIR/Cupcake/.local/share/qylock-themes/cupcake-sddm" ]; then
+    cp -f "$IMAGE" "$HOME_DIR/Cupcake/.local/share/qylock-themes/cupcake-sddm/avatar.png"
+fi
+
+# 3. System SDDM greeter avatar sync
+if [ -d "/usr/share/sddm/themes/cupcake-sddm" ]; then
+    pkexec cp -f "$IMAGE" "/usr/share/sddm/themes/cupcake-sddm/avatar.png" 2>/dev/null || true
+fi
+
+echo "Avatar updated successfully: $IMAGE"
