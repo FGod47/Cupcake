@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import SddmComponents 2.0
 import Qt5Compat.GraphicalEffects
 
