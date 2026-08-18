@@ -177,7 +177,7 @@ Rectangle {
     }
 
     // ── 4. LOCKSCREEN DATE & CLOCK ──────────────────────────────────────
-    // ── 4. LOCKSCREEN DATE & CLOCK (iOS Glassy Translucent Typography) ─
+    // ── 4. LOCKSCREEN DATE & CLOCK (Frosted Glass Masked Typography) ───
     Item {
         id: clockSection
         z: 8
@@ -190,6 +190,7 @@ Rectangle {
         height: 180
 
         Column {
+            id: clockColumn
             anchors.centerIn: parent
             spacing: -6
 
@@ -207,18 +208,76 @@ Rectangle {
                 styleColor: "#40000000"
             }
 
-            // Glassy Translucent Clock ("4:52")
-            Text {
-                id: timeLabel
-                text: root.get12HourTime()
-                font.family: fontName
-                font.pixelSize: 124
-                font.weight: Font.DemiBold
-                font.letterSpacing: -3.0
-                color: Qt.rgba(1, 1, 1, 0.52)
+            // Real Frosted Glass Blurred Clock
+            Item {
+                id: glassClockContainer
+                width: timeLabel.implicitWidth
+                height: timeLabel.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
-                style: Text.Raised
-                styleColor: Qt.rgba(0, 0, 0, 0.22)
+
+                // 1. Pixel-perfect cropped wallpaper from root screen
+                ShaderEffectSource {
+                    id: clockBgSource
+                    anchors.fill: parent
+                    sourceItem: bgImage
+                    sourceRect: {
+                        var pt = glassClockContainer.mapToItem(root, 0, 0);
+                        return Qt.rect(pt.x, pt.y, glassClockContainer.width, glassClockContainer.height);
+                    }
+                    live: true
+                    visible: false
+                }
+
+                // 2. Blurred wallpaper layer masked to text digits
+                Item {
+                    anchors.fill: parent
+                    layer.enabled: true
+                    layer.effect: OpacityMask { maskSource: timeMaskItem }
+
+                    FastBlur {
+                        anchors.fill: parent
+                        source: clockBgSource
+                        radius: 36
+                        cached: true
+                    }
+
+                    // Frosted milky translucent sheen
+                    Rectangle {
+                        anchors.fill: parent
+                        color: Qt.rgba(1, 1, 1, 0.42)
+                    }
+                }
+
+                // 3. Alpha Mask for the digits
+                Item {
+                    id: timeMaskItem
+                    anchors.fill: parent
+                    visible: false
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: root.get12HourTime()
+                        font.family: fontName
+                        font.pixelSize: 124
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: -3.0
+                        color: "#ffffff"
+                    }
+                }
+
+                // 4. Subtle Specular Raised Rim
+                Text {
+                    id: timeLabel
+                    anchors.centerIn: parent
+                    text: root.get12HourTime()
+                    font.family: fontName
+                    font.pixelSize: 124
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: -3.0
+                    color: Qt.rgba(1, 1, 1, 0.18)
+                    style: Text.Raised
+                    styleColor: Qt.rgba(0, 0, 0, 0.22)
+                }
             }
         }
     }
