@@ -371,6 +371,7 @@ PanelWindow {
                                 font.letterSpacing: 1.4
                                 color: Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.55)
                                 Layout.alignment: Qt.AlignVCenter
+                                visible: notifWindow.notifExpandProgress > 0.01
                             }
 
                             // Compact Preview Text (Saved • 08-16-09-27-43.png)
@@ -384,6 +385,7 @@ PanelWindow {
                                 font.weight: Font.DemiBold
                                 color: notifWindow.fg
                                 elide: Text.ElideRight
+                                visible: notifWindow.notifExpandProgress > 0.01
                                 opacity: cardItem.isCardHovered ? 0.0 : 1.0
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
@@ -395,6 +397,7 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                                 layer.enabled: true
                                 layer.samples: 4
+                                visible: notifWindow.notifExpandProgress > 0.01
                                 opacity: cardItem.isCardHovered ? 0.35 : 0.9
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
 
@@ -439,6 +442,7 @@ PanelWindow {
                                 color: dismissCardMa.containsMouse ? Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.16) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 Layout.alignment: Qt.AlignVCenter
+                                visible: notifWindow.notifExpandProgress > 0.01
 
                                 Text {
                                     anchors.centerIn: parent
