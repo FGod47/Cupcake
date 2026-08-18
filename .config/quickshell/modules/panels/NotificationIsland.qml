@@ -447,9 +447,10 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     text: "\ueb55"
-                                    font.family: notifWindow.fontName
-                                    font.pixelSize: 9
-                                    color: Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.5)
+                                    font.family: "tabler-icons"
+                                    font.pixelSize: 11
+                                    color: dismissCardMa.containsMouse ? notifWindow.fg : Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.5)
+                                    Behavior on color { ColorAnimation { duration: 120 } }
                                 }
 
                                 MouseArea {
