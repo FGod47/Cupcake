@@ -214,64 +214,63 @@ Rectangle {
                 styleColor: "#40000000"
             }
 
-            // Real Frosted Glass Blurred Clock
+            // True Frosted Glass Blurred Clock
             Item {
                 id: glassClockContainer
-                width: timeLabel.implicitWidth
-                height: timeLabel.implicitHeight
+                width: timeMaskText.implicitWidth
+                height: timeMaskText.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                // 1. Pixel-perfect cropped wallpaper from root screen
-                ShaderEffectSource {
-                    id: clockBgSource
-                    anchors.fill: parent
-                    sourceItem: bgImage
-                    sourceRect: {
-                        var pt = glassClockContainer.mapToItem(root, 0, 0);
-                        return Qt.rect(pt.x, pt.y, glassClockContainer.width, glassClockContainer.height);
-                    }
-                    live: true
-                    visible: false
-                }
-
-                // 2. Blurred wallpaper layer masked to text digits
                 Item {
                     anchors.fill: parent
                     layer.enabled: true
-                    layer.effect: OpacityMask { maskSource: timeMaskItem }
+                    layer.effect: OpacityMask { maskSource: timeMaskText }
 
-                    FastBlur {
-                        anchors.fill: parent
-                        source: clockBgSource
-                        radius: 36
-                        cached: true
+                    // 1. Pixel-aligned blurred wallpaper layer
+                    Image {
+                        id: clockBlurBg
+                        width: root.width
+                        height: root.height
+                        x: -( (root.width - glassClockContainer.width)/2 + (root.width * 0.02) )
+                        y: -( clockSection.y + clockColumn.y + glassClockContainer.y )
+                        source: bgImage.source
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+
+                        layer.enabled: true
+                        layer.effect: FastBlur {
+                            radius: 48
+                            cached: true
+                        }
                     }
 
-                    // Frosted milky translucent sheen
+                    // 2. Frosted milky specular glass gradient
                     Rectangle {
                         anchors.fill: parent
-                        color: Qt.rgba(1, 1, 1, 0.42)
+                        gradient: Gradient {
+                            orientation: Gradient.Vertical
+                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.48) }
+                            GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, 0.18) }
+                            GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, 0.12) }
+                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.32) }
+                        }
                     }
                 }
 
-                // 3. Alpha Mask for the digits
-                Item {
-                    id: timeMaskItem
-                    anchors.fill: parent
+                // 3. Alpha Mask Source
+                Text {
+                    id: timeMaskText
+                    anchors.centerIn: parent
+                    text: root.get12HourTime()
+                    font.family: root.clockFontFamily
+                    font.pixelSize: 124
+                    font.weight: Font.Bold
+                    font.letterSpacing: -2.0
+                    color: "#ffffff"
                     visible: false
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: root.get12HourTime()
-                        font.family: root.clockFontFamily
-                        font.pixelSize: 124
-                        font.weight: Font.Bold
-                        font.letterSpacing: -2.0
-                        color: "#ffffff"
-                    }
                 }
 
-                // 4. Subtle Specular Raised Rim
+                // 4. Subtle Outer Bevel / Edge Rim
                 Text {
                     id: timeLabel
                     anchors.centerIn: parent
@@ -280,9 +279,9 @@ Rectangle {
                     font.pixelSize: 124
                     font.weight: Font.Bold
                     font.letterSpacing: -2.0
-                    color: Qt.rgba(1, 1, 1, 0.18)
+                    color: Qt.rgba(1, 1, 1, 0.16)
                     style: Text.Raised
-                    styleColor: Qt.rgba(0, 0, 0, 0.22)
+                    styleColor: Qt.rgba(0, 0, 0, 0.28)
                 }
             }
         }

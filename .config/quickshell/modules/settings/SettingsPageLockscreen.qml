@@ -229,62 +229,59 @@ Item {
 
                                 Item {
                                     id: prevGlassClock
-                                    width: prevTimeLabel.implicitWidth
-                                    height: prevTimeLabel.implicitHeight
+                                    width: prevTimeMaskText.implicitWidth
+                                    height: prevTimeMaskText.implicitHeight
                                     anchors.horizontalCenter: parent.horizontalCenter
 
-                                    // Cropped wallpaper behind clock digits
-                                    ShaderEffectSource {
-                                        id: prevClockBgSource
-                                        anchors.fill: parent
-                                        sourceItem: heroLockWallImg
-                                        sourceRect: {
-                                            var pt = prevGlassClock.mapToItem(heroLockWallImg, 0, 0);
-                                            return Qt.rect(pt.x, pt.y, prevGlassClock.width, prevGlassClock.height);
-                                        }
-                                        live: true
-                                        visible: false
-                                    }
-
-                                    // Masked blurred wallpaper layer
                                     Item {
                                         anchors.fill: parent
                                         layer.enabled: true
-                                        layer.effect: OpacityMask { maskSource: prevTimeMaskItem }
+                                        layer.effect: OpacityMask { maskSource: prevTimeMaskText }
 
-                                        FastBlur {
-                                            anchors.fill: parent
-                                            source: prevClockBgSource
-                                            radius: 24
-                                            cached: true
+                                        Image {
+                                            width: heroLockWallImg.width
+                                            height: heroLockWallImg.height
+                                            x: -prevGlassClock.x - (prevClockCol.x)
+                                            y: -prevGlassClock.y - (prevClockCol.y)
+                                            source: heroLockWallImg.source
+                                            fillMode: Image.PreserveAspectCrop
+                                            smooth: true
+
+                                            layer.enabled: true
+                                            layer.effect: FastBlur {
+                                                radius: 32
+                                                cached: true
+                                            }
                                         }
 
                                         Rectangle {
                                             anchors.fill: parent
-                                            color: Qt.rgba(1, 1, 1, 0.42)
+                                            gradient: Gradient {
+                                                orientation: Gradient.Vertical
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.48) }
+                                                GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, 0.18) }
+                                                GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, 0.12) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.32) }
+                                            }
                                         }
                                     }
 
-                                    Item {
-                                        id: prevTimeMaskItem
-                                        anchors.fill: parent
-                                        visible: false
-
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: {
-                                                if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                                let d = new Date();
-                                                let h = d.getHours() % 12 || 12;
-                                                let m = d.getMinutes();
-                                                return h + ":" + (m < 10 ? "0" + m : m);
-                                            }
-                                            font.family: previewClockFont.name || "Open Sans"
-                                            font.pixelSize: 54
-                                            font.weight: Font.Bold
-                                            font.letterSpacing: -1.2
-                                            color: "#ffffff"
+                                    Text {
+                                        id: prevTimeMaskText
+                                        anchors.centerIn: parent
+                                        text: {
+                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                            let d = new Date();
+                                            let h = d.getHours() % 12 || 12;
+                                            let m = d.getMinutes();
+                                            return h + ":" + (m < 10 ? "0" + m : m);
                                         }
+                                        font.family: previewClockFont.name || "Open Sans"
+                                        font.pixelSize: 54
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.2
+                                        color: "#ffffff"
+                                        visible: false
                                     }
 
                                     Text {
@@ -301,9 +298,9 @@ Item {
                                         font.pixelSize: 54
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.2
-                                        color: Qt.rgba(1, 1, 1, 0.18)
+                                        color: Qt.rgba(1, 1, 1, 0.16)
                                         style: Text.Raised
-                                        styleColor: Qt.rgba(0, 0, 0, 0.22)
+                                        styleColor: Qt.rgba(0, 0, 0, 0.28)
                                     }
                                 }
                             }
