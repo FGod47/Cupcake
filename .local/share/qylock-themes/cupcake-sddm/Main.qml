@@ -8,9 +8,11 @@ Rectangle {
     width: 1920
     height: 1080
     color: "#121214"
+    focus: true
 
     property string fontName: "Google Sans, Inter, SF Pro Display, -apple-system, sans-serif"
     property color textColor: "#ffffff"
+    property bool isLoginPromptVisible: false
 
     property int currentUsersIndex: (userModel && userModel.lastIndex !== undefined) ? userModel.lastIndex : 0
     property int currentSessionsIndex: (sessionModel && sessionModel.lastIndex !== undefined) ? sessionModel.lastIndex : 0
@@ -34,6 +36,31 @@ Rectangle {
         else { currentUsersIndex++; }
     }
 
+    function showLoginPrompt() {
+        isLoginPromptVisible = true;
+        passwordInput.forceActiveFocus();
+    }
+
+    function hideLoginPrompt() {
+        isLoginPromptVisible = false;
+        passwordInput.text = "";
+        root.forceActiveFocus();
+    }
+
+    Keys.onPressed: (event) => {
+        if (!isLoginPromptVisible) {
+            if (event.key === Qt.Key_Up || event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                showLoginPrompt();
+                event.accepted = true;
+            }
+        } else {
+            if (event.key === Qt.Key_Escape || (event.key === Qt.Key_Down && passwordInput.text === "")) {
+                hideLoginPrompt();
+                event.accepted = true;
+            }
+        }
+    }
+
     Connections {
         target: sddm
         function onLoginFailed() {
@@ -44,7 +71,7 @@ Rectangle {
         function onLoginSucceeded() { }
     }
 
-    // ── 1. BACKGROUND WALLPAPER ──────────────────────────────────────────
+    // ── 1. BACKGROUND WALLPAPER (With Smooth Dynamic FastBlur) ─────────────
     Item {
         id: bgContainer
         anchors.fill: parent
@@ -55,6 +82,34 @@ Rectangle {
             source: config.background || "background.png"
             smooth: true
             fillMode: Image.PreserveAspectCrop
+        }
+
+        FastBlur {
+            id: bgBlur
+            anchors.fill: bgImage
+            source: bgImage
+            radius: root.isLoginPromptVisible ? 42 : 0
+            cached: true
+            Behavior on radius { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
+        }
+
+        // Dark dim overlay on blur
+        Rectangle {
+            anchors.fill: parent
+            color: "#000000"
+            opacity: root.isLoginPromptVisible ? 0.38 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 380 } }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (!root.isLoginPromptVisible) {
+                    root.showLoginPrompt();
+                } else {
+                    root.hideLoginPrompt();
+                }
+            }
         }
     }
 
@@ -121,12 +176,13 @@ Rectangle {
         return h12 + ":" + mStr;
     }
 
-    // ── 4. LOCKSCREEN DATE & CLOCK (iOS 16 Inspired Typography) ─────────
+    // ── 4. LOCKSCREEN DATE & CLOCK ──────────────────────────────────────
     Item {
         id: clockSection
         z: 8
         anchors.top: parent.top
-        anchors.topMargin: parent.height * 0.09
+        anchors.topMargin: root.isLoginPromptVisible ? (parent.height * 0.065) : (parent.height * 0.09)
+        Behavior on anchors.topMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
         width: 320
@@ -167,38 +223,41 @@ Rectangle {
         }
     }
 
-    // ── 5. USER PROFILE & PASSWORD LOGIN (Bottom Center) ─────────────────
+    // ── 5. USER PROFILE & INTERACTIVE SLIDE-UP LOGIN SECTION ────────────
     Item {
         id: userLoginSection
         z: 8
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height * 0.075
+        anchors.bottomMargin: root.isLoginPromptVisible ? (parent.height * 0.11) : (parent.height * 0.055)
+        Behavior on anchors.bottomMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
-        width: 240
-        height: 160
+        width: 260
+        height: 200
 
         Column {
             anchors.centerIn: parent
-            spacing: 10
+            spacing: root.isLoginPromptVisible ? 10 : 8
+            Behavior on spacing { NumberAnimation { duration: 250 } }
             width: parent.width
 
             // User Avatar
             Rectangle {
                 id: avatarCircle
-                width: 54
-                height: 54
-                radius: 27
+                width: root.isLoginPromptVisible ? 56 : 64
+                height: width
+                radius: width / 2
+                Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                 color: "#25000000"
                 border.width: 1.5
-                border.color: avatarMa.containsMouse ? "#70ffffff" : "#40ffffff"
+                border.color: avatarMa.containsMouse ? "#80ffffff" : "#45ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
                 Rectangle {
                     id: avatarMask
                     anchors.fill: parent
-                    radius: 27
+                    radius: parent.radius
                     visible: false
                 }
 
@@ -222,7 +281,13 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: usersCycleSelectNext()
+                    onClicked: {
+                        if (!root.isLoginPromptVisible) {
+                            root.showLoginPrompt();
+                        } else {
+                            usersCycleSelectNext();
+                        }
+                    }
                 }
             }
 
@@ -232,30 +297,96 @@ Rectangle {
                 text: currentRealName
                 color: "#ffffff"
                 font.family: fontName
-                font.pixelSize: 13
+                font.pixelSize: root.isLoginPromptVisible ? 13 : 14
                 font.weight: Font.DemiBold
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.95
                 style: Text.Raised
                 styleColor: "#40000000"
+                Behavior on font.pixelSize { NumberAnimation { duration: 200 } }
 
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: usersCycleSelectNext()
+                    onClicked: {
+                        if (!root.isLoginPromptVisible) {
+                            root.showLoginPrompt();
+                        } else {
+                            usersCycleSelectNext();
+                        }
+                    }
                 }
             }
 
-            // Pill Password Input Field
+            // Upward Chevron / Unlock Hint (Visible when Resting)
+            Item {
+                id: unlockHint
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 120
+                height: 28
+                visible: opacity > 0.01
+                opacity: !root.isLoginPromptVisible ? 0.85 : 0.0
+                scale: !root.isLoginPromptVisible ? 1.0 : 0.7
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+                Behavior on scale { NumberAnimation { duration: 250 } }
+
+                Column {
+                    anchors.centerIn: parent
+                    spacing: 2
+
+                    // Up Arrow Icon
+                    Image {
+                        source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='18 15 12 9 6 15'></polyline></svg>"
+                        width: 16
+                        height: 16
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        opacity: hintMa.containsMouse ? 1.0 : 0.75
+                        
+                        SequentialAnimation on y {
+                            loops: Animation.Infinite
+                            running: !root.isLoginPromptVisible
+                            NumberAnimation { to: -3; duration: 600; easing.type: Easing.InOutSine }
+                            NumberAnimation { to: 1; duration: 600; easing.type: Easing.InOutSine }
+                        }
+                    }
+
+                    Text {
+                        text: "Swipe up or press Enter"
+                        font.family: fontName
+                        font.pixelSize: 10
+                        font.weight: Font.Medium
+                        color: "#ffffff"
+                        opacity: hintMa.containsMouse ? 0.95 : 0.65
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                }
+
+                MouseArea {
+                    id: hintMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.showLoginPrompt()
+                }
+            }
+
+            // Pill Password Input Field (Revealed on Slide-Up)
             Rectangle {
                 id: passwordContainer
-                width: 174
-                height: 32
-                radius: 16
+                width: 180
+                height: root.isLoginPromptVisible ? 34 : 0
+                radius: 17
+                clip: true
+                visible: opacity > 0.01
+                opacity: root.isLoginPromptVisible ? 1.0 : 0.0
+                scale: root.isLoginPromptVisible ? 1.0 : 0.85
                 color: passwordInput.activeFocus ? "#48000000" : "#30000000"
                 border.width: 1
-                border.color: passwordInput.activeFocus ? "#55ffffff" : "#30ffffff"
+                border.color: passwordInput.activeFocus ? "#60ffffff" : "#30ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
+                Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
@@ -272,8 +403,8 @@ Rectangle {
                 TextInput {
                     id: passwordInput
                     anchors.fill: parent
-                    anchors.leftMargin: 14
-                    anchors.rightMargin: 14
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
                     verticalAlignment: TextInput.AlignVCenter
                     horizontalAlignment: TextInput.AlignHCenter
                     font.family: fontName
@@ -281,7 +412,6 @@ Rectangle {
                     color: "#ffffff"
                     echoMode: TextInput.Password
                     passwordCharacter: "•"
-                    focus: true
                     cursorVisible: activeFocus && text.length > 0
                     clip: true
 

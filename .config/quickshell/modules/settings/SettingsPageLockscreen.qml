@@ -15,11 +15,12 @@ Item {
     property color cAccent: Theme.colPrimary
     property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
-    property string currentLockWall: ""
     property string currentWall: ""
-    property bool syncLockscreen: false
+    property string currentLockWall: ""
+    property bool syncLockscreen: true
     property bool use24h: false
     property bool showSeconds: false
+    property bool isPreviewUnlocked: false
     property bool lockOnSleep: true
     property bool blurLockScreen: true
     property string idleTimeout: "10 minutes"
@@ -161,6 +162,23 @@ Item {
                                 }
                             }
 
+                            // Dynamic Blur on Wallpaper
+                            FastBlur {
+                                anchors.fill: heroLockWallImg
+                                source: heroLockWallImg
+                                radius: root.isPreviewUnlocked ? 28 : 0
+                                cached: true
+                                Behavior on radius { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                            }
+
+                            // Dim Overlay on Blur
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#000000"
+                                opacity: root.isPreviewUnlocked ? 0.35 : 0.0
+                                Behavior on opacity { NumberAnimation { duration: 350 } }
+                            }
+
                             // Subtle Vignette
                             Rectangle {
                                 anchors.fill: parent
@@ -175,7 +193,8 @@ Item {
                             // iOS Style Lockscreen Clock & Date
                             Column {
                                 anchors.top: parent.top
-                                anchors.topMargin: 22
+                                anchors.topMargin: root.isPreviewUnlocked ? 16 : 22
+                                Behavior on anchors.topMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: 2
 
@@ -206,16 +225,21 @@ Item {
                                 }
                             }
 
-                            // Frosted Glass Avatar & Password Pill (Simulated)
+                            // Frosted Glass Avatar & Interactive Slide-Up Login Section
                             Column {
                                 anchors.bottom: parent.bottom
-                                anchors.bottomMargin: 24
+                                anchors.bottomMargin: root.isPreviewUnlocked ? 30 : 14
+                                Behavior on anchors.bottomMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                spacing: 8
+                                spacing: root.isPreviewUnlocked ? 6 : 3
+                                Behavior on spacing { NumberAnimation { duration: 250 } }
 
                                 Rectangle {
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    width: 32; height: 32; radius: 16
+                                    width: root.isPreviewUnlocked ? 32 : 36
+                                    height: width
+                                    radius: width / 2
+                                    Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                     color: Qt.rgba(255, 255, 255, 0.25)
                                     border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.4)
                                     clip: true
@@ -226,17 +250,64 @@ Item {
                                     }
                                 }
 
-                                Rectangle {
+                                Text {
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    width: 140; height: 26; radius: 13
-                                    color: Qt.rgba(255, 255, 255, 0.15)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.25)
-                                    RowLayout {
-                                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
-                                        Text { text: "Password"; color: Qt.rgba(255, 255, 255, 0.6); font.family: Theme.defaultFontFamily; font.pixelSize: 10; Layout.fillWidth: true }
-                                        Text { text: "➔"; color: "#ffffff"; font.pixelSize: 10 }
+                                    text: "Debojyoti Chakraborty"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 11
+                                    font.weight: Font.DemiBold
+                                    color: "#ffffff"
+                                }
+
+                                // Upward Arrow Hint
+                                Item {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: 100; height: 16
+                                    visible: opacity > 0.01
+                                    opacity: !root.isPreviewUnlocked ? 0.85 : 0.0
+                                    scale: !root.isPreviewUnlocked ? 1.0 : 0.7
+                                    Behavior on opacity { NumberAnimation { duration: 250 } }
+                                    Behavior on scale { NumberAnimation { duration: 250 } }
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "▲  Click to unlock"
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 9
+                                        font.weight: Font.Medium
+                                        color: "#ffffff"
                                     }
                                 }
+
+                                // Password Input Pill
+                                Rectangle {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: 140
+                                    height: root.isPreviewUnlocked ? 26 : 0
+                                    radius: 13
+                                    clip: true
+                                    visible: opacity > 0.01
+                                    opacity: root.isPreviewUnlocked ? 1.0 : 0.0
+                                    scale: root.isPreviewUnlocked ? 1.0 : 0.85
+                                    color: Qt.rgba(255, 255, 255, 0.15)
+                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.35)
+                                    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                                    Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                                    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
+
+                                    RowLayout {
+                                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
+                                        Text { text: "••••••••"; color: Qt.rgba(255, 255, 255, 0.8); font.family: Theme.monoFontFamily; font.pixelSize: 11; Layout.fillWidth: true }
+                                        Text { text: "➔"; color: Theme.colPrimary; font.pixelSize: 11 }
+                                    }
+                                }
+                            }
+
+                            // Interactive click to toggle preview unlock
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.isPreviewUnlocked = !root.isPreviewUnlocked
                             }
 
                             // Top Left Tags: System Badges
