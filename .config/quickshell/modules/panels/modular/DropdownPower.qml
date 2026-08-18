@@ -254,7 +254,7 @@ Item {
                     labelText: "Lock"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
-                        Quickshell.execDetached(["bash", "-c", "hyprlock"]);
+                        Quickshell.execDetached([Theme.homeDir + "/.local/share/quickshell-lockscreen/lock.sh"]);
                     }
                 }
 
@@ -264,7 +264,7 @@ Item {
                     labelText: "Log Out"
                     onTriggered: {
                         globalState.powerDropdownOpen = false;
-                        Quickshell.execDetached(["bash", "-c", "hyprctl dispatch exit || loginctl terminate-user $USER"]);
+                        Quickshell.execDetached([Theme.homeDir + "/.local/bin/cupcake-logout"]);
                     }
                 }
 

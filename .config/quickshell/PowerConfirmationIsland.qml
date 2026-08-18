@@ -34,7 +34,7 @@ Item {
                     root.actionIcon = "\ueba8";
                     root.actionTitle = "Log out?";
                     root.actionDesc = "You will be signed out";
-                    root.actionCommand = "loginctl kill-session $XDG_SESSION_ID";
+                    root.actionCommand = Theme.homeDir + "/.local/bin/cupcake-logout";
                     root.actionColor = "#3498db";
                 } else if (act === "sleep") {
                     root.actionIcon = "\ueaf8";
