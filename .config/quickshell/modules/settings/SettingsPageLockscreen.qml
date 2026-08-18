@@ -225,6 +225,8 @@ Item {
                                     font.weight: Font.Medium
                                     color: "#ffffff"
                                     opacity: 0.95
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.45)
                                 }
 
                                 Item {
@@ -298,9 +300,9 @@ Item {
                                         font.pixelSize: 54
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.2
-                                        color: Qt.rgba(1, 1, 1, 0.16)
-                                        style: Text.Raised
-                                        styleColor: Qt.rgba(0, 0, 0, 0.28)
+                                        color: Qt.rgba(1, 1, 1, 0.15)
+                                        style: Text.Outline
+                                        styleColor: Qt.rgba(255, 255, 255, 0.35)
                                     }
                                 }
                             }
@@ -322,7 +324,7 @@ Item {
                                     radius: width / 2
                                     Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                     color: Qt.rgba(255, 255, 255, 0.25)
-                                    border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.5)
+                                    border.width: 2.0; border.color: Qt.rgba(255, 255, 255, 0.65)
 
                                     Rectangle {
                                         id: prevAvatarMask
@@ -333,7 +335,7 @@ Item {
 
                                     Item {
                                         anchors.fill: parent
-                                        anchors.margins: 1.5
+                                        anchors.margins: 2.0
                                         layer.enabled: true
                                         layer.effect: OpacityMask { maskSource: prevAvatarMask }
 
@@ -352,6 +354,8 @@ Item {
                                     font.pixelSize: 11
                                     font.weight: Font.DemiBold
                                     color: "#ffffff"
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.40)
                                 }
 
                                 // Fixed-Height Action Slot (Smooth Cross-Fade)
@@ -377,6 +381,8 @@ Item {
                                             font.pixelSize: 9
                                             font.weight: Font.Medium
                                             color: "#ffffff"
+                                            style: Text.Outline
+                                            styleColor: Qt.rgba(0, 0, 0, 0.35)
                                         }
                                     }
 
@@ -390,7 +396,7 @@ Item {
                                         y: root.isPreviewUnlocked ? 0 : 6
                                         scale: root.isPreviewUnlocked ? 1.0 : 0.92
                                         color: Qt.rgba(255, 255, 255, 0.15)
-                                        border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.35)
+                                        border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.50)
                                         Behavior on opacity { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
                                         Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                         Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
@@ -435,7 +441,7 @@ Item {
                                     height: 20; radius: 10
                                     width: sddmBadgeRow.implicitWidth + 14
                                     color: Qt.rgba(0, 0, 0, 0.45)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.2)
+                                    border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.35)
                                     RowLayout {
                                         id: sddmBadgeRow; anchors.centerIn: parent; spacing: 4
                                         Text { text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 10; color: Theme.colPrimary }
@@ -450,7 +456,7 @@ Item {
                                 height: 20; radius: 10
                                 width: prevSessionRow.implicitWidth + 14
                                 color: Qt.rgba(255, 255, 255, 0.15)
-                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.45)
                                 RowLayout {
                                     id: prevSessionRow; anchors.centerIn: parent; spacing: 4
                                     Text { text: "🖥"; font.pixelSize: 8 }
@@ -466,14 +472,14 @@ Item {
                                 Rectangle {
                                     width: 22; height: 22; radius: 11
                                     color: Qt.rgba(255, 255, 255, 0.15)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                    border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.45)
                                     Text { anchors.centerIn: parent; text: "🔄"; font.pixelSize: 8 }
                                 }
 
                                 Rectangle {
                                     width: 22; height: 22; radius: 11
                                     color: Qt.rgba(255, 255, 255, 0.15)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                    border.width: 1.5; border.color: Qt.rgba(255, 255, 255, 0.45)
                                     Text { anchors.centerIn: parent; text: "⏻"; font.pixelSize: 9; color: "#ffffff" }
                                 }
                             }

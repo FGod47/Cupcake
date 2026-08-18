@@ -159,8 +159,8 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     color: sessionMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
-                    border.width: 1
-                    border.color: sessionMa.containsMouse ? Qt.rgba(1, 1, 1, 0.45) : Qt.rgba(1, 1, 1, 0.22)
+                    border.width: 1.5
+                    border.color: sessionMa.containsMouse ? Qt.rgba(1, 1, 1, 0.70) : Qt.rgba(1, 1, 1, 0.38)
                     radius: 16
                     Behavior on color { ColorAnimation { duration: 150 } }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -245,8 +245,8 @@ Rectangle {
                 color: "#ffffff"
                 opacity: 0.95
                 anchors.horizontalCenter: parent.horizontalCenter
-                style: Text.Raised
-                styleColor: "#40000000"
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.45)
             }
 
             // True Frosted Glass Blurred Clock
@@ -305,7 +305,7 @@ Rectangle {
                     visible: false
                 }
 
-                // 4. Subtle Outer Bevel / Edge Rim
+                // 4. Subtle Outer Bevel / Edge Rim & Crisp Stroke Outline
                 Text {
                     id: timeLabel
                     anchors.centerIn: parent
@@ -314,9 +314,9 @@ Rectangle {
                     font.pixelSize: 124
                     font.weight: Font.Bold
                     font.letterSpacing: -2.0
-                    color: Qt.rgba(1, 1, 1, 0.16)
-                    style: Text.Raised
-                    styleColor: Qt.rgba(0, 0, 0, 0.28)
+                    color: Qt.rgba(1, 1, 1, 0.15)
+                    style: Text.Outline
+                    styleColor: Qt.rgba(255, 255, 255, 0.35)
                 }
             }
         }
@@ -347,8 +347,8 @@ Rectangle {
                 height: 58
                 radius: 29
                 color: "#25000000"
-                border.width: 1.5
-                border.color: avatarMa.containsMouse ? "#80ffffff" : "#45ffffff"
+                border.width: 2.0
+                border.color: avatarMa.containsMouse ? "#ffffff" : Qt.rgba(1, 1, 1, 0.60)
                 anchors.horizontalCenter: parent.horizontalCenter
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
@@ -399,8 +399,8 @@ Rectangle {
                 font.weight: Font.DemiBold
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.95
-                style: Text.Raised
-                styleColor: "#40000000"
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.40)
 
                 MouseArea {
                     anchors.fill: parent
@@ -501,8 +501,8 @@ Rectangle {
                         Rectangle {
                             anchors.fill: parent
                             color: passwordInput.activeFocus ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
-                            border.width: 1
-                            border.color: passwordInput.activeFocus ? Qt.rgba(1, 1, 1, 0.60) : Qt.rgba(1, 1, 1, 0.28)
+                            border.width: 1.5
+                            border.color: passwordInput.activeFocus ? Qt.rgba(1, 1, 1, 0.85) : Qt.rgba(1, 1, 1, 0.42)
                             radius: 17
                             Behavior on color { ColorAnimation { duration: 150 } }
                             Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -652,8 +652,8 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     color: rebootMa.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.12)
-                    border.width: 1
-                    border.color: rebootMa.containsMouse ? Qt.rgba(1, 1, 1, 0.50) : Qt.rgba(1, 1, 1, 0.22)
+                    border.width: 1.5
+                    border.color: rebootMa.containsMouse ? Qt.rgba(1, 1, 1, 0.80) : Qt.rgba(1, 1, 1, 0.38)
                     radius: 19
                     Behavior on color { ColorAnimation { duration: 150 } }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -714,8 +714,8 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     color: powerMa.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.12)
-                    border.width: 1
-                    border.color: powerMa.containsMouse ? Qt.rgba(1, 1, 1, 0.50) : Qt.rgba(1, 1, 1, 0.22)
+                    border.width: 1.5
+                    border.color: powerMa.containsMouse ? Qt.rgba(1, 1, 1, 0.80) : Qt.rgba(1, 1, 1, 0.38)
                     radius: 19
                     Behavior on color { ColorAnimation { duration: 150 } }
                     Behavior on border.color { ColorAnimation { duration: 150 } }
