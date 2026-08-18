@@ -14,15 +14,12 @@ Item {
 
     property string wallDir: Theme.homeDir + "/.config/cupcake/walls"
     property string currentWall: ""
-    property string currentLockWall: ""
-    property bool syncLockscreen: false
     property string fitMode: "Fill"
     property bool perMonitor: false
     property string selectedMonitor: "Global"
     property bool slideshow: true
     property bool shuffleOrder: true
     property real dimOverlay: 0.2
-    property bool blurLockScreen: true
     property string changeInterval: "30 minutes"
 
     Process {
@@ -31,16 +28,6 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text) { let v = parseFloat(text.trim()); if (!isNaN(v)) root.dimOverlay = v; }
-            }
-        }
-    }
-
-    Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.blur_lockscreen"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) { root.blurLockScreen = (text.trim() === "true"); }
             }
         }
     }
@@ -58,30 +45,6 @@ Item {
         }
     }
 
-    // Read current lockscreen wallpaper
-    Process {
-        id: lockWallProcess
-        command: ["bash", "-c", "cat ~/.config/cupcake/.lock_wallpaper_path 2>/dev/null || echo ''"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let p = text.trim();
-                if (p !== "") root.currentLockWall = p;
-            }
-        }
-    }
-
-    // Read sync lockscreen preference
-    Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.sync_lock_wall"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) root.syncLockscreen = (text.trim() === "true");
-            }
-        }
-    }
-
     // Auto-generate missing thumbnails on page load
     Component.onCompleted: {
         Quickshell.execDetached([Theme.homeDir + "/.local/bin/cupcake-generate-thumbnails"]);
@@ -94,7 +57,6 @@ Item {
         running: true
         onTriggered: {
             if (!wallProcess.running) wallProcess.running = true;
-            if (!lockWallProcess.running) lockWallProcess.running = true;
         }
     }
 
@@ -116,25 +78,24 @@ Item {
             width: parent.width
             spacing: 20
 
-            // ── Active Wallpapers (Unified Desktop & Lockscreen Showcase) ──
+            // ── Current Wallpaper Hero Card ──
             NCard {
-                sectionTitle: "Active wallpapers"
+                sectionTitle: "Current wallpaper"
 
-                // Dual Stage Showcase (Desktop & Lockscreen side-by-side)
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.topMargin: 4
-                    Layout.bottomMargin: 14
-                    spacing: 14
+                    Layout.bottomMargin: 4
+                    spacing: 18
 
-                    // ── LEFT: Desktop Showcase ──
+                    // Preview thumbnail box
                     Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 180
+                        Layout.preferredWidth: 260
+                        Layout.preferredHeight: 156
                         radius: 12
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                         border.width: 1
-                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.10)
                         clip: true
 
                         Rectangle {
@@ -169,29 +130,13 @@ Item {
                                     var filename = parts[parts.length - 1];
                                     return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename + ".png";
                                 }
-                                sourceSize: Qt.size(360, 240)
+                                sourceSize: Qt.size(520, 312)
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
                                 onStatusChanged: {
                                     if (status === Image.Error && root.currentWall !== "") {
                                         source = "file://" + root.currentWall;
                                     }
-                                }
-                            }
-
-                            // Top Left Tag: DESKTOP
-                            Rectangle {
-                                anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 10
-                                height: 22; radius: 11
-                                width: deskTagRow.implicitWidth + 16
-                                color: Qt.rgba(0, 0, 0, 0.72)
-                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.15)
-                                RowLayout {
-                                    id: deskTagRow
-                                    anchors.centerIn: parent
-                                    spacing: 5
-                                    Text { text: "\uea4e"; font.family: "tabler-icons"; font.pixelSize: 11; color: Theme.colPrimary }
-                                    Text { text: "DESKTOP"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
                                 }
                             }
 
@@ -215,241 +160,82 @@ Item {
                                     font.pixelSize: 9; font.weight: Font.Bold; color: Theme.colPrimary
                                 }
                             }
-
-                            // Bottom Glass Info Bar
-                            Rectangle {
-                                anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
-                                height: 44
-                                color: Qt.rgba(0, 0, 0, 0.75)
-                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.08)
-
-                                RowLayout {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 12; anchors.rightMargin: 12
-                                    spacing: 8
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: root.currentWall !== "" ? root.currentWall.split("/").pop().replace(/\.[^.]+$/, "") : "No wallpaper"
-                                        color: "#ffffff"
-                                        font.family: Theme.monoFontFamily
-                                        font.pixelSize: 12; font.weight: Font.DemiBold
-                                        elide: Text.ElideRight
-                                    }
-
-                                    // Quick Browse
-                                    Rectangle {
-                                        width: 28; height: 28; radius: 14
-                                        color: deskBrowseMa.containsMouse ? Qt.rgba(255, 255, 255, 0.22) : Qt.rgba(255, 255, 255, 0.10)
-                                        Behavior on color { ColorAnimation { duration: 120 } }
-                                        Text { anchors.centerIn: parent; text: "\uea7b"; font.family: "tabler-icons"; font.pixelSize: 13; color: "#ffffff" }
-                                        MouseArea {
-                                            id: deskBrowseMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} " + Theme.homeDir + "/.local/bin/set-theme {}"])
-                                        }
-                                    }
-
-                                    // Quick Shuffle
-                                    Rectangle {
-                                        width: 28; height: 28; radius: 14
-                                        color: deskShufMa.containsMouse ? Qt.rgba(255, 255, 255, 0.22) : Qt.rgba(255, 255, 255, 0.10)
-                                        Behavior on color { ColorAnimation { duration: 120 } }
-                                        Text { anchors.centerIn: parent; text: "\ueb4c"; font.family: "tabler-icons"; font.pixelSize: 13; color: "#ffffff" }
-                                        MouseArea {
-                                            id: deskShufMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached(["bash", "-c", "ls " + root.wallDir + "/*.{png,jpg,jpeg,webp,gif,mp4,webm} 2>/dev/null | shuf -n1 | xargs " + Theme.homeDir + "/.local/bin/set-theme"])
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
 
-                    // ── CENTER: Interactive Sync Badge ──
-                    Rectangle {
-                        width: 38; height: 38; radius: 19
+                    // Metadata & Actions Column
+                    ColumnLayout {
+                        Layout.fillWidth: true
                         Layout.alignment: Qt.AlignVCenter
-                        color: root.syncLockscreen ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-                        border.width: 1
-                        border.color: root.syncLockscreen ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
-                        scale: syncCenterMa.containsMouse ? 1.08 : 1.0
-                        Behavior on color { ColorAnimation { duration: 180 } }
-                        Behavior on scale { NumberAnimation { duration: 150 } }
+                        spacing: 8
 
                         Text {
-                            anchors.centerIn: parent
-                            text: root.syncLockscreen ? "\uea08" : "\ueae2"
-                            font.family: "tabler-icons"
-                            font.pixelSize: 17
-                            color: root.syncLockscreen ? Theme.colSurface : Theme.colOnSurfaceVariant
+                            text: root.currentWall !== "" ? root.currentWall.split("/").pop().replace(/\.[^.]+$/, "") : "No wallpaper selected"
+                            color: Theme.colOnSurface
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 18
+                            font.weight: Font.Bold
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
                         }
 
-                        MouseArea {
-                            id: syncCenterMa
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                root.syncLockscreen = !root.syncLockscreen;
-                                Quickshell.execDetached(["bash", "-c", "echo " + (root.syncLockscreen ? "true" : "false") + " > ~/.config/cupcake/.sync_lock_wall"]);
-                                if (root.syncLockscreen && root.currentWall !== "") {
-                                    Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
-                                }
-                            }
-                        }
-                    }
-
-                    // ── RIGHT: Lock Screen & SDDM Showcase ──
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 180
-                        radius: 12
-                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04)
-                        border.width: 1
-                        border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
-                        clip: true
-
-                        Rectangle {
-                            id: lockMask
-                            anchors.fill: parent
-                            radius: 12
-                            visible: false
+                        Text {
+                            text: root.currentWall !== "" ? root.currentWall : "Browse or select a wallpaper from the library below"
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.monoFontFamily
+                            font.pixelSize: 11
+                            elide: Text.ElideMiddle
+                            opacity: 0.8
+                            Layout.fillWidth: true
                         }
 
-                        Item {
-                            anchors.fill: parent
-                            layer.enabled: true
-                            layer.effect: OpacityMask { maskSource: lockMask }
+                        Text {
+                            text: "Supports static wallpapers, dynamic high-DPI images, live animated GIFs, and video formats."
+                            color: Theme.colOnSurfaceVariant
+                            font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12
+                            opacity: 0.6
+                            wrapMode: Text.WordWrap
+                            Layout.fillWidth: true
+                            Layout.bottomMargin: 4
+                        }
 
-                            // Lock Screen Wallpaper Preview
-                            Image {
-                                anchors.fill: parent
-                                visible: (root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall)) !== ""
-                                source: {
-                                    var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
-                                    if (wall === "") return "";
-                                    var parts = wall.split("/");
-                                    var filename = parts[parts.length - 1];
-                                    return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename + ".png";
-                                }
-                                sourceSize: Qt.size(360, 240)
-                                fillMode: Image.PreserveAspectCrop
-                                asynchronous: true
-                                onStatusChanged: {
-                                    if (status === Image.Error) {
-                                        var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
-                                        if (wall !== "") source = "file://" + wall;
-                                    }
-                                }
-                            }
+                        RowLayout {
+                            spacing: 10
 
-                            // Subtle Lockscreen Simulation Overlay (Mini Clock + Notch)
+                            // Browse button
                             Rectangle {
-                                anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
-                                width: 34; height: 7; radius: 0; bottomLeftRadius: 4; bottomRightRadius: 4
-                                color: "#000000"; opacity: 0.8
-                            }
-                            Column {
-                                anchors.top: parent.top; anchors.topMargin: 12
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                spacing: 0
-                                Text { text: "9:26"; font.family: Theme.defaultFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: "#ffffff"; opacity: 0.85; anchors.horizontalCenter: parent.horizontalCenter }
-                            }
-
-                            // Top Left Tag: LOCK SCREEN
-                            Rectangle {
-                                anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 10
-                                height: 22; radius: 11
-                                width: lockTagRow.implicitWidth + 16
-                                color: Qt.rgba(0, 0, 0, 0.72)
-                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.15)
+                                height: 34; radius: 8
+                                implicitWidth: browseBtnRow.implicitWidth + 24
+                                color: Theme.colPrimary
+                                scale: browseMa.containsMouse ? 1.02 : 1.0
+                                Behavior on scale { NumberAnimation { duration: 120 } }
                                 RowLayout {
-                                    id: lockTagRow
-                                    anchors.centerIn: parent
-                                    spacing: 5
-                                    Text { text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 11; color: Theme.colPrimary }
-                                    Text { text: root.syncLockscreen ? "SYNCED LOCK" : "LOCK SCREEN"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
+                                    id: browseBtnRow; anchors.centerIn: parent; spacing: 6
+                                    Text { text: "\uea7b"; font.family: "tabler-icons"; font.pixelSize: 14; color: Theme.colSurface }
+                                    Text { text: "Browse Wallpaper"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: Theme.colSurface }
+                                }
+                                MouseArea {
+                                    id: browseMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                    onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} " + Theme.homeDir + "/.local/bin/set-theme {}"])
                                 }
                             }
 
-                            // Bottom Glass Info Bar
+                            // Shuffle button
                             Rectangle {
-                                anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
-                                height: 44
-                                color: Qt.rgba(0, 0, 0, 0.75)
-                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.08)
-
+                                height: 34; radius: 8
+                                implicitWidth: shufBtnRow.implicitWidth + 20
+                                color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08)
+                                border.width: 1; border.color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.15)
                                 RowLayout {
-                                    anchors.fill: parent
-                                    anchors.leftMargin: 12; anchors.rightMargin: 12
-                                    spacing: 8
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: {
-                                            var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
-                                            return wall !== "" ? wall.split("/").pop().replace(/\.[^.]+$/, "") : "Default";
-                                        }
-                                        color: "#ffffff"
-                                        font.family: Theme.monoFontFamily
-                                        font.pixelSize: 12; font.weight: Font.DemiBold
-                                        elide: Text.ElideRight
-                                    }
-
-                                    // Choose Lock Wallpaper
-                                    Rectangle {
-                                        width: 28; height: 28; radius: 14
-                                        color: lockBrowseMa.containsMouse ? Qt.rgba(255, 255, 255, 0.22) : Qt.rgba(255, 255, 255, 0.10)
-                                        Behavior on color { ColorAnimation { duration: 120 } }
-                                        Text { anchors.centerIn: parent; text: "\uea7b"; font.family: "tabler-icons"; font.pixelSize: 13; color: "#ffffff" }
-                                        MouseArea {
-                                            id: lockBrowseMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                            onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} bash -c 'echo false > ~/.config/cupcake/.sync_lock_wall; ~/.local/bin/set-lock-wallpaper \"{}\"'"])
-                                        }
-                                    }
-
-                                    // Match Desktop (if not synced)
-                                    Rectangle {
-                                        visible: !root.syncLockscreen
-                                        width: 28; height: 28; radius: 14
-                                        color: matchDeskMa.containsMouse ? Qt.rgba(255, 255, 255, 0.22) : Qt.rgba(255, 255, 255, 0.10)
-                                        Behavior on color { ColorAnimation { duration: 120 } }
-                                        Text { anchors.centerIn: parent; text: "\uea08"; font.family: "tabler-icons"; font.pixelSize: 13; color: "#ffffff" }
-                                        MouseArea {
-                                            id: matchDeskMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                            onClicked: {
-                                                if (root.currentWall !== "") {
-                                                    Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
-                                                    root.currentLockWall = root.currentWall;
-                                                }
-                                            }
-                                        }
-                                    }
+                                    id: shufBtnRow; anchors.centerIn: parent; spacing: 6
+                                    Text { text: "\ueb4c"; font.family: "tabler-icons"; font.pixelSize: 14; color: Theme.colPrimary }
+                                    Text { text: "Random Shuffle"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: Theme.colOnSurface }
                                 }
-                            }
-                        }
-                    }
-                }
-
-                // Synchronize Toggle Row inside the same card
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\uea08" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Mirror desktop wallpaper to lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Automatically update SDDM login and lockscreen when changing desktop wallpaper"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle {
-                        checked: root.syncLockscreen
-                        onToggled: {
-                            root.syncLockscreen = checked;
-                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.sync_lock_wall"]);
-                            if (checked && root.currentWall !== "") {
-                                Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
+                                MouseArea {
+                                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                    onClicked: Quickshell.execDetached(["bash", "-c", "ls " + root.wallDir + "/*.{png,jpg,jpeg,webp,gif,mp4,webm} 2>/dev/null | shuf -n1 | xargs " + Theme.homeDir + "/.local/bin/set-theme"])
+                                }
                             }
                         }
                     }
@@ -607,33 +393,6 @@ Item {
                                             cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 Quickshell.execDetached(["bash", "-c", "rm '" + filePath + "' && rm -f '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + "' '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png'"])
-                                            }
-                                        }
-                                    }
-
-                                    // Set as Lock Screen Wallpaper button (🔒)
-                                    Rectangle {
-                                        z: 1
-                                        width: 28; height: 28; radius: 14
-                                        anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 7; anchors.leftMargin: 39
-                                        color: (root.currentLockWall === filePath) ? Theme.colPrimary : Qt.rgba(0, 0, 0, 0.65)
-                                        opacity: (parent.hovered || root.currentLockWall === filePath) ? 1 : 0
-                                        Behavior on opacity { NumberAnimation { duration: 150 } }
-                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: "\ueae2"
-                                            color: (root.currentLockWall === filePath) ? Theme.colSurface : "white"
-                                            font.family: "tabler-icons"
-                                            font.pixelSize: 14
-                                        }
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: {
-                                                root.syncLockscreen = false;
-                                                root.currentLockWall = filePath;
-                                                Quickshell.execDetached(["bash", "-c", "echo false > ~/.config/cupcake/.sync_lock_wall; ~/.local/bin/set-lock-wallpaper '" + filePath + "'"]);
                                             }
                                         }
                                     }
@@ -883,26 +642,6 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", "echo '" + value.toFixed(2) + "' > ~/.config/cupcake/.dim_overlay"]);
                                 Quickshell.execDetached(["quickshell", "ipc", "call", "wallpaper", "setDimOverlay", value.toString()]);
                             }
-                        }
-                    }
-                }
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb04" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Apply a blur effect while the screen is locked"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle {
-                        checked: root.blurLockScreen
-                        onToggled: {
-                            root.blurLockScreen = checked
-                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.blur_lockscreen"])
                         }
                     }
                 }

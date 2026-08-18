@@ -21,8 +21,20 @@ Item {
     property bool use24h: false
     property bool showSeconds: false
     property bool lockOnSleep: true
+    property bool blurLockScreen: true
     property string idleTimeout: "10 minutes"
     property string lockTheme: "cupcake-sddm"
+
+    // Read blur lockscreen preference
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.blur_lockscreen"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) root.blurLockScreen = (text.trim() === "true");
+            }
+        }
+    }
 
     // Read current lock wallpaper
     Process {
@@ -425,6 +437,26 @@ Item {
                     NToggle {
                         checked: root.lockOnSleep
                         onToggled: root.lockOnSleep = checked
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb04" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Apply a frosted blur effect behind the lockscreen interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.blurLockScreen
+                        onToggled: {
+                            root.blurLockScreen = checked;
+                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.blur_lockscreen"]);
+                        }
                     }
                 }
 
