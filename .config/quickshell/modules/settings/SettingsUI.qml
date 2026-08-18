@@ -461,13 +461,13 @@ Item {
                     Rectangle {
                         id: footerUserCard
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 52
+                        Layout.preferredHeight: 50
                         Layout.topMargin: 10
                         color: (root.currentIndex === 20) 
                                ? (Theme.isDark ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.16) : Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12))
                                : (userFooterMa.containsMouse ? (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06))
                                                              : (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : Qt.rgba(0, 0, 0, 0.04)))
-                        radius: 12
+                        radius: 25
                         border.width: 1
                         border.color: (root.currentIndex === 20) 
                                       ? Theme.colPrimary 
@@ -477,8 +477,8 @@ Item {
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
+                            anchors.leftMargin: 9
+                            anchors.rightMargin: 14
                             spacing: 10
                             
                             // User Avatar
@@ -540,15 +540,6 @@ Item {
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
-                            }
-
-                            Text {
-                                text: "\uea6e" // chevron-right
-                                font.family: "tabler-icons"
-                                font.pixelSize: 13
-                                color: (root.currentIndex === 20) ? Theme.colPrimary : (userFooterMa.containsMouse ? cText : cTextFaint)
-                                opacity: userFooterMa.containsMouse || root.currentIndex === 20 ? 0.9 : 0.4
-                                Behavior on opacity { NumberAnimation { duration: 140 } }
                             }
                         }
 
