@@ -457,34 +457,42 @@ Item {
                     
                     Item { Layout.fillHeight: true } // spacer
                     
-                    // FOOTER
+                    // FOOTER (USER PROFILE CARD)
                     Rectangle {
                         id: footerUserCard
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 46
-                        Layout.topMargin: 8
-                        color: (root.currentIndex === 20 || userFooterMa.containsMouse) ? cSurfaceHover : "transparent"
-                        radius: 10
-                        Behavior on color { ColorAnimation { duration: 140 } }
+                        Layout.preferredHeight: 52
+                        Layout.topMargin: 10
+                        color: (root.currentIndex === 20) 
+                               ? (Theme.isDark ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.16) : Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12))
+                               : (userFooterMa.containsMouse ? (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06))
+                                                             : (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : Qt.rgba(0, 0, 0, 0.04)))
+                        radius: 12
+                        border.width: 1
+                        border.color: (root.currentIndex === 20) 
+                                      ? Theme.colPrimary 
+                                      : (userFooterMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.16) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08))
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                        Behavior on border.color { ColorAnimation { duration: 150 } }
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 8
-                            anchors.rightMargin: 8
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
                             spacing: 10
                             
                             // User Avatar
                             Rectangle {
-                                width: 28; height: 28; radius: 14
+                                width: 32; height: 32; radius: 16
                                 color: cBgElevated
-                                border.color: root.currentIndex === 20 ? Theme.colPrimary : cBorder
+                                border.color: root.currentIndex === 20 ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                                 border.width: 1
                                 clip: true
 
                                 Rectangle {
                                     id: footerAvatarMask
                                     anchors.fill: parent
-                                    radius: 14
+                                    radius: 16
                                     visible: false
                                 }
 
@@ -505,7 +513,7 @@ Item {
                                         visible: root.userAvatar === ""
                                         text: root.username.length > 0 ? root.username.charAt(0).toUpperCase() : "U"
                                         font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 12
+                                        font.pixelSize: 13
                                         font.weight: Font.Bold
                                         color: Theme.colPrimary
                                     }
@@ -513,14 +521,14 @@ Item {
                             }
 
                             ColumnLayout {
-                                spacing: 0
+                                spacing: 1
                                 Layout.fillWidth: true
                                 Text {
                                     text: root.realName !== "" ? root.realName : root.username
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 12
                                     font.weight: Font.DemiBold
-                                    color: cText
+                                    color: (root.currentIndex === 20) ? Theme.colPrimary : cText
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
@@ -532,6 +540,15 @@ Item {
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
+                            }
+
+                            Text {
+                                text: "\uea6e" // chevron-right
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: (root.currentIndex === 20) ? Theme.colPrimary : (userFooterMa.containsMouse ? cText : cTextFaint)
+                                opacity: userFooterMa.containsMouse || root.currentIndex === 20 ? 0.9 : 0.4
+                                Behavior on opacity { NumberAnimation { duration: 140 } }
                             }
                         }
 
