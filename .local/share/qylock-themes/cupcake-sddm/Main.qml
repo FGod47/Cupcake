@@ -22,7 +22,7 @@ Rectangle {
 
     FontLoader {
         id: astronautClockFont
-        source: "fonts/" + ((config && config.clockFont && config.clockFont !== "") ? config.clockFont : "OpenSans.ttf")
+        source: "fonts/" + ((config && config.clockFont && config.clockFont !== "") ? config.clockFont : "OpenSans-ExtraBold.ttf")
     }
 
     property string fontName: "Open Sans, Inter, sans-serif"
@@ -301,7 +301,8 @@ Rectangle {
                     text: Qt.formatDate(new Date(), "ddd MMM d")
                     font.family: root.clockFontFamily
                     font.pixelSize: Math.round(root.cfgClockFontSize * 0.20)
-                    font.weight: Font.DemiBold
+                    font.weight: Font.Bold
+                    font.bold: true
                     font.letterSpacing: 0.5
                     color: "#ffffff"
                     visible: false
@@ -314,7 +315,8 @@ Rectangle {
                     text: Qt.formatDate(new Date(), "ddd MMM d")
                     font.family: root.clockFontFamily
                     font.pixelSize: Math.round(root.cfgClockFontSize * 0.20)
-                    font.weight: Font.DemiBold
+                    font.weight: Font.Bold
+                    font.bold: true
                     font.letterSpacing: 0.5
                     color: Qt.rgba(1, 1, 1, 0.15)
                 }
@@ -370,7 +372,8 @@ Rectangle {
                     text: root.getDisplayTime()
                     font.family: root.clockFontFamily
                     font.pixelSize: root.cfgClockFontSize
-                    font.weight: Font.Bold
+                    font.weight: Font.ExtraBold
+                    font.bold: true
                     font.letterSpacing: -2.0
                     color: "#ffffff"
                     visible: false
@@ -383,7 +386,8 @@ Rectangle {
                     text: root.getDisplayTime()
                     font.family: root.clockFontFamily
                     font.pixelSize: root.cfgClockFontSize
-                    font.weight: Font.Bold
+                    font.weight: Font.ExtraBold
+                    font.bold: true
                     font.letterSpacing: -2.0
                     color: Qt.rgba(1, 1, 1, 0.12)
                 }

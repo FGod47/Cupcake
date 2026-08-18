@@ -316,7 +316,8 @@ Item {
                                         text: Qt.formatDate(new Date(), "ddd MMM d")
                                         font.family: root.activeClockFontFamily
                                         font.pixelSize: Math.max(10, Math.round(root.clockFontSize * 0.11))
-                                        font.weight: Font.DemiBold
+                                        font.weight: Font.Bold
+                                        font.bold: true
                                         font.letterSpacing: 0.5
                                         color: "#ffffff"
                                         visible: false
@@ -328,7 +329,8 @@ Item {
                                         text: Qt.formatDate(new Date(), "ddd MMM d")
                                         font.family: root.activeClockFontFamily
                                         font.pixelSize: Math.max(10, Math.round(root.clockFontSize * 0.11))
-                                        font.weight: Font.DemiBold
+                                        font.weight: Font.Bold
+                                        font.bold: true
                                         font.letterSpacing: 0.5
                                         color: Qt.rgba(1, 1, 1, 0.15)
                                     }
@@ -386,7 +388,8 @@ Item {
                                         }
                                         font.family: root.activeClockFontFamily
                                         font.pixelSize: Math.round(root.clockFontSize * 0.45)
-                                        font.weight: Font.Bold
+                                        font.weight: Font.ExtraBold
+                                        font.bold: true
                                         font.letterSpacing: -1.2
                                         color: "#ffffff"
                                         visible: false
@@ -404,7 +407,8 @@ Item {
                                         }
                                         font.family: root.activeClockFontFamily
                                         font.pixelSize: Math.round(root.clockFontSize * 0.45)
-                                        font.weight: Font.Bold
+                                        font.weight: Font.ExtraBold
+                                        font.bold: true
                                         font.letterSpacing: -1.2
                                         color: Qt.rgba(1, 1, 1, 0.12)
                                     }
