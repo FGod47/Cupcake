@@ -453,7 +453,6 @@ Item {
                     RailItem { icon: "\ueb51"; label: "Sound"; pageIndex: 7 }         // volume
                     RailItem { icon: "\uef8e"; label: "System"; pageIndex: 10 }       // cpu
                     RailItem { icon: "\ueb1d"; label: "Updates"; pageIndex: 11 }      // download
-                    RailItem { icon: "\ueae5"; label: "Users"; pageIndex: 20 }        // user
                     
                     Item { Layout.fillHeight: true } // spacer
                     
