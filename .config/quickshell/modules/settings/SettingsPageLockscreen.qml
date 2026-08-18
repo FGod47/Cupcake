@@ -217,16 +217,68 @@ Item {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: 2
 
-                                Text {
+                                Item {
+                                    id: prevGlassDate
+                                    width: prevDateMaskText.implicitWidth
+                                    height: prevDateMaskText.implicitHeight
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    text: Qt.formatDate(new Date(), "ddd MMM d")
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 13
-                                    font.weight: Font.Medium
-                                    color: "#ffffff"
-                                    opacity: 0.95
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.45)
+
+                                    Item {
+                                        anchors.fill: parent
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask { maskSource: prevDateMaskText }
+
+                                        Image {
+                                            width: heroLockWallImg.width
+                                            height: heroLockWallImg.height
+                                            x: -prevGlassDate.x - (prevClockCol.x)
+                                            y: -prevGlassDate.y - (prevClockCol.y)
+                                            source: heroLockWallImg.source
+                                            fillMode: Image.PreserveAspectCrop
+                                            smooth: true
+
+                                            layer.enabled: true
+                                            layer.effect: FastBlur {
+                                                radius: 24
+                                                cached: true
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            gradient: Gradient {
+                                                orientation: Gradient.Vertical
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.55) }
+                                                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        id: prevDateMaskText
+                                        anchors.centerIn: parent
+                                        text: Qt.formatDate(new Date(), "ddd MMM d")
+                                        font.family: previewClockFont.name || "Open Sans"
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        font.letterSpacing: 0.5
+                                        color: "#ffffff"
+                                        visible: false
+                                    }
+
+                                    Text {
+                                        id: prevDateLabel
+                                        anchors.centerIn: parent
+                                        text: Qt.formatDate(new Date(), "ddd MMM d")
+                                        font.family: previewClockFont.name || "Open Sans"
+                                        font.pixelSize: 13
+                                        font.weight: Font.DemiBold
+                                        font.letterSpacing: 0.5
+                                        color: Qt.rgba(1, 1, 1, 0.18)
+                                        style: Text.Outline
+                                        styleColor: Qt.rgba(255, 255, 255, 0.40)
+                                    }
                                 }
 
                                 Item {

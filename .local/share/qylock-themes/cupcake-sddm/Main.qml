@@ -235,18 +235,73 @@ Rectangle {
             anchors.centerIn: parent
             spacing: -6
 
-            // Date Text ("Thu May 7")
-            Text {
-                id: dateLabel
-                text: Qt.formatDate(new Date(), "ddd MMM d")
-                font.family: fontName
-                font.pixelSize: 24
-                font.weight: Font.Medium
-                color: "#ffffff"
-                opacity: 0.95
+            // True Frosted Glass Blurred Date ("Thu May 7")
+            Item {
+                id: glassDateContainer
+                width: dateMaskText.implicitWidth
+                height: dateMaskText.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.45)
+
+                Item {
+                    anchors.fill: parent
+                    layer.enabled: true
+                    layer.effect: OpacityMask { maskSource: dateMaskText }
+
+                    // 1. Pixel-aligned blurred wallpaper layer
+                    Image {
+                        width: root.width
+                        height: root.height
+                        x: -( (root.width - glassDateContainer.width)/2 + (root.width * 0.02) )
+                        y: -( clockSection.y + clockColumn.y + glassDateContainer.y )
+                        source: bgImage.source
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+
+                        layer.enabled: true
+                        layer.effect: FastBlur {
+                            radius: 36
+                            cached: true
+                        }
+                    }
+
+                    // 2. Frosted milky specular glass gradient
+                    Rectangle {
+                        anchors.fill: parent
+                        gradient: Gradient {
+                            orientation: Gradient.Vertical
+                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.55) }
+                            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
+                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
+                        }
+                    }
+                }
+
+                // 3. Alpha Mask Source
+                Text {
+                    id: dateMaskText
+                    anchors.centerIn: parent
+                    text: Qt.formatDate(new Date(), "ddd MMM d")
+                    font.family: root.clockFontFamily
+                    font.pixelSize: 24
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: 0.5
+                    color: "#ffffff"
+                    visible: false
+                }
+
+                // 4. Subtle Specular Outline Rim
+                Text {
+                    id: dateLabel
+                    anchors.centerIn: parent
+                    text: Qt.formatDate(new Date(), "ddd MMM d")
+                    font.family: root.clockFontFamily
+                    font.pixelSize: 24
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: 0.5
+                    color: Qt.rgba(1, 1, 1, 0.18)
+                    style: Text.Outline
+                    styleColor: Qt.rgba(255, 255, 255, 0.40)
+                }
             }
 
             // True Frosted Glass Blurred Clock
@@ -753,8 +808,12 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
-            timeLabel.text = get12HourTime();
-            dateLabel.text = Qt.formatDate(new Date(), "ddd MMM d");
+            var t = get12HourTime();
+            var d = Qt.formatDate(new Date(), "ddd MMM d");
+            timeLabel.text = t;
+            timeMaskText.text = t;
+            dateLabel.text = d;
+            dateMaskText.text = d;
         }
     }
 }
