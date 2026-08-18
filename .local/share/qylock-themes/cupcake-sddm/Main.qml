@@ -26,8 +26,8 @@ Rectangle {
     property int realNameRole: Qt.UserRole + 2
     property int sessionNameRole: Qt.UserRole + 4
 
-    property string currentUsername: (userModel && userModel.count > 0) ? (userModel.data(userModel.index(currentUsersIndex, 0), usernameRole) || "cupcake") : "cupcake"
-    property string currentRealName: (userModel && userModel.count > 0) ? (userModel.data(userModel.index(currentUsersIndex, 0), realNameRole) || currentUsername) : "Debojyoti Chakraborty"
+    property string currentUsername: (userModel && userModel.count > 0) ? (userModel.data(userModel.index(currentUsersIndex, 0), usernameRole) || "zero") : "zero"
+    property string currentRealName: (userModel && userModel.count > 0) ? (userModel.data(userModel.index(currentUsersIndex, 0), realNameRole) || currentUsername) : "Zero"
     property string currentSession: (sessionModel && sessionModel.rowCount() > 0) ? (sessionModel.data(sessionModel.index(currentSessionsIndex, 0), sessionNameRole) || "Hyprland") : "Hyprland"
 
     function sessionsCycleSelectNext() {

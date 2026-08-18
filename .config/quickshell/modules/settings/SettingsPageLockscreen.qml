@@ -25,10 +25,22 @@ Item {
     property bool blurLockScreen: true
     property string idleTimeout: "10 minutes"
     property string lockTheme: "cupcake-sddm"
+    property string currentRealName: "Zero"
 
     FontLoader {
         id: previewClockFont
         source: "file://" + Theme.homeDir + "/.local/share/fonts/Nunito.ttf"
+    }
+
+    // Read real user name from system
+    Process {
+        command: ["bash", "-c", "getent passwd $USER | cut -d: -f5 | cut -d, -f1 || whoami"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim().length > 0) root.currentRealName = text.trim();
+            }
+        }
     }
 
     // Read blur lockscreen preference
@@ -338,7 +350,7 @@ Item {
 
                                 Text {
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    text: "Debojyoti Chakraborty"
+                                    text: root.currentRealName
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 11
                                     font.weight: Font.DemiBold
