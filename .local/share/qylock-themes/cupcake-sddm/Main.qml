@@ -18,6 +18,7 @@ Rectangle {
     property bool cfgShowSession: (config && config.showSession !== undefined) ? (config.showSession === "true" || config.showSession === true) : true
     property bool cfgShowPower: (config && config.showPower !== undefined) ? (config.showPower === "true" || config.showPower === true) : true
     property bool cfgShowAvatar: (config && config.showAvatar !== undefined) ? (config.showAvatar === "true" || config.showAvatar === true) : true
+    property bool cfgShowNotifications: (config && config.showNotifications !== undefined) ? (config.showNotifications === "true" || config.showNotifications === true) : true
     property bool cfgTime24h: (config && config.timeFormat24h !== undefined) ? (config.timeFormat24h === "true" || config.timeFormat24h === true) : false
 
     FontLoader {
@@ -408,10 +409,147 @@ Rectangle {
         height: 150
 
         Column {
+            id: loginColumn
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 8
+            spacing: 12
             width: parent.width
+
+            // ── Frosted Glass Notifications Pod (Above Avatar) ──
+            Item {
+                id: notifPodContainer
+                visible: root.cfgShowNotifications && (typeof notificationModel !== "undefined" && notificationModel && notificationModel.count > 0) && !root.isLoginPromptVisible
+                width: 320
+                height: visible ? (Math.min(notificationModel.count, 2) * 58 + ((Math.min(notificationModel.count, 2) - 1) * 6)) : 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 250 } }
+                clip: true
+
+                Column {
+                    anchors.fill: parent
+                    spacing: 6
+
+                    Repeater {
+                        model: (typeof notificationModel !== "undefined" && notificationModel) ? Math.min(notificationModel.count, 2) : 0
+                        delegate: Item {
+                            id: notifItem
+                            width: notifPodContainer.width
+                            height: 58
+
+                            // 1. Frosted Glass Blurred Layer
+                            Item {
+                                anchors.fill: parent
+                                layer.enabled: true
+                                layer.effect: OpacityMask { maskSource: notifMask }
+
+                                Image {
+                                    width: root.width
+                                    height: root.height
+                                    x: -( (root.width - notifPodContainer.width)/2 + (root.width * 0.02) )
+                                    y: -( userLoginSection.y + loginColumn.y + notifPodContainer.y + notifItem.y )
+                                    source: bgImage.source
+                                    fillMode: Image.PreserveAspectCrop
+                                    smooth: true
+
+                                    layer.enabled: true
+                                    layer.effect: FastBlur {
+                                        radius: root.cfgClockBlurRadius
+                                        cached: true
+                                    }
+                                }
+
+                                Rectangle {
+                                    anchors.fill: parent
+                                    gradient: Gradient {
+                                        orientation: Gradient.Vertical
+                                        GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.45) }
+                                        GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.18) }
+                                        GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.32) }
+                                    }
+                                    border.width: 1.5
+                                    border.color: notifHoverArea.containsMouse ? Qt.rgba(1, 1, 1, 0.70) : Qt.rgba(1, 1, 1, 0.35)
+                                    radius: 16
+                                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                                }
+                            }
+
+                            Rectangle {
+                                id: notifMask
+                                anchors.fill: parent
+                                radius: 16
+                                visible: false
+                            }
+
+                            // 2. Notification Content
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                spacing: 10
+
+                                // App Icon / Category Disc
+                                Rectangle {
+                                    width: 34; height: 34; radius: 17
+                                    color: Qt.rgba(1, 1, 1, 0.18)
+                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "\uea35"
+                                        font.family: "tabler-icons"
+                                        font.pixelSize: 16
+                                        color: "#ffffff"
+                                    }
+                                }
+
+                                // Text Stack (Title + Snippet)
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 1
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        Text {
+                                            text: (notificationModel && notificationModel.get(index)) ? (notificationModel.get(index).summary || notificationModel.get(index).appName || "Notification") : "Notification"
+                                            font.family: root.fontName
+                                            font.pixelSize: 12
+                                            font.weight: Font.Bold
+                                            color: "#ffffff"
+                                            elide: Text.ElideRight
+                                            Layout.fillWidth: true
+                                        }
+                                        Text {
+                                            text: (notificationModel && notificationModel.get(index) && notificationModel.get(index).timeStr) ? notificationModel.get(index).timeStr : "now"
+                                            font.family: root.fontName
+                                            font.pixelSize: 10
+                                            color: Qt.rgba(1, 1, 1, 0.65)
+                                        }
+                                    }
+
+                                    Text {
+                                        text: (notificationModel && notificationModel.get(index)) ? (notificationModel.get(index).body || "") : ""
+                                        font.family: root.fontName
+                                        font.pixelSize: 11
+                                        color: Qt.rgba(1, 1, 1, 0.85)
+                                        elide: Text.ElideRight
+                                        Layout.fillWidth: true
+                                        maximumLineCount: 1
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                id: notifHoverArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (!root.isLoginPromptVisible) root.showLoginPrompt();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             // User Avatar
             Rectangle {

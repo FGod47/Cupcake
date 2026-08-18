@@ -30,12 +30,13 @@ Item {
     property int glassSheen: 48
 
     // Typography & Component Customization
-    property string clockFontFile: "OpenSans.ttf"
+    property string clockFontFile: "OpenSans-Bold.ttf"
     property int clockFontSize: 124
     property bool showDate: true
     property bool showSession: true
     property bool showPower: true
     property bool showAvatar: true
+    property bool showNotifications: true
 
     FontLoader {
         id: previewClockFont
@@ -62,6 +63,7 @@ Item {
                 "echo '" + (root.showSession ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_session; " +
                 "echo '" + (root.showPower ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_power; " +
                 "echo '" + (root.showAvatar ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_avatar; " +
+                "echo '" + (root.showNotifications ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_notifications; " +
                 "echo '" + (root.use24h ? "true" : "false") + "' > ~/.config/cupcake/.clock_24h; " +
                 "~/.config/cupcake/scripts/update-lock-settings.sh"
             ]);
@@ -90,12 +92,13 @@ Item {
             "cat ~/.config/cupcake/.lock_clock_blur 2>/dev/null || echo '48'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_bg_blur 2>/dev/null || echo '42'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_glass_sheen 2>/dev/null || echo '48'; echo '---'; " +
-            "cat ~/.config/cupcake/.lock_clock_font 2>/dev/null || echo 'OpenSans.ttf'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_clock_font 2>/dev/null || echo 'OpenSans-Bold.ttf'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_clock_size 2>/dev/null || echo '124'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_show_date 2>/dev/null || echo 'true'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_show_session 2>/dev/null || echo 'true'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_show_power 2>/dev/null || echo 'true'; echo '---'; " +
             "cat ~/.config/cupcake/.lock_show_avatar 2>/dev/null || echo 'true'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_show_notifications 2>/dev/null || echo 'true'; echo '---'; " +
             "cat ~/.config/cupcake/.clock_24h 2>/dev/null || echo 'false'"
         ]
         running: true
@@ -112,7 +115,8 @@ Item {
                     if (parts[6] && parts[6].trim() !== "") root.showSession = (parts[6].trim() !== "false");
                     if (parts[7] && parts[7].trim() !== "") root.showPower = (parts[7].trim() !== "false");
                     if (parts[8] && parts[8].trim() !== "") root.showAvatar = (parts[8].trim() !== "false");
-                    if (parts[9] && parts[9].trim() !== "") root.use24h = (parts[9].trim() === "true");
+                    if (parts[9] && parts[9].trim() !== "") root.showNotifications = (parts[9].trim() !== "false");
+                    if (parts[10] && parts[10].trim() !== "") root.use24h = (parts[10].trim() === "true");
                 }
             }
         }
@@ -191,7 +195,7 @@ Item {
                     // Live Interactive Stage
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 310
+                        Layout.preferredHeight: 330
                         radius: 14
                         color: "#0a0a0c"
                         border.width: 1
@@ -265,7 +269,7 @@ Item {
                             Column {
                                 id: prevClockCol
                                 anchors.top: parent.top
-                                anchors.topMargin: root.isPreviewUnlocked ? 18 : 24
+                                anchors.topMargin: root.isPreviewUnlocked ? 14 : 20
                                 Behavior on anchors.topMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: 2
@@ -417,18 +421,94 @@ Item {
 
                             // Frosted Glass Avatar & Interactive Slide-Up Login Section
                             Column {
+                                id: prevLoginCol
                                 anchors.bottom: parent.bottom
-                                anchors.bottomMargin: root.isPreviewUnlocked ? 34 : 16
+                                anchors.bottomMargin: root.isPreviewUnlocked ? 28 : 12
                                 Behavior on anchors.bottomMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                spacing: root.isPreviewUnlocked ? 6 : 3
+                                spacing: root.isPreviewUnlocked ? 6 : 4
                                 Behavior on spacing { NumberAnimation { duration: 250 } }
+
+                                // ── Preview Frosted Glass Notification Pod (Above Avatar) ──
+                                Item {
+                                    id: prevNotifPod
+                                    visible: root.showNotifications && !root.isPreviewUnlocked
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: 190
+                                    height: 38
+                                    opacity: root.showNotifications && !root.isPreviewUnlocked ? 1.0 : 0.0
+                                    Behavior on opacity { NumberAnimation { duration: 250 } }
+
+                                    Item {
+                                        anchors.fill: parent
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask { maskSource: prevNotifMask }
+
+                                        Image {
+                                            width: heroLockWallImg.width
+                                            height: heroLockWallImg.height
+                                            x: -(heroLockWallImg.width - prevNotifPod.width) / 2
+                                            y: -(prevLoginCol.y + prevNotifPod.y)
+                                            source: heroLockWallImg.source
+                                            fillMode: Image.PreserveAspectCrop
+                                            smooth: true
+
+                                            layer.enabled: true
+                                            layer.effect: FastBlur {
+                                                radius: Math.max(8, Math.round(root.clockBlurRadius * 0.5))
+                                                cached: true
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            gradient: Gradient {
+                                                orientation: Gradient.Vertical
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.35) }
+                                                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.15) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.25) }
+                                            }
+                                            border.width: 1.5
+                                            border.color: Qt.rgba(255, 255, 255, 0.40)
+                                            radius: 12
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id: prevNotifMask
+                                        anchors.fill: parent
+                                        radius: 12
+                                        visible: false
+                                    }
+
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 6
+                                        spacing: 6
+
+                                        Rectangle {
+                                            width: 22; height: 22; radius: 11
+                                            color: Qt.rgba(1, 1, 1, 0.20)
+                                            Text { anchors.centerIn: parent; text: "💬"; font.pixelSize: 11 }
+                                        }
+
+                                        ColumnLayout {
+                                            Layout.fillWidth: true; spacing: 0
+                                            RowLayout {
+                                                Layout.fillWidth: true
+                                                Text { text: "Messages • Antigravity"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff"; elide: Text.ElideRight; Layout.fillWidth: true }
+                                                Text { text: "now"; font.family: Theme.defaultFontFamily; font.pixelSize: 8; color: Qt.rgba(1, 1, 1, 0.65) }
+                                            }
+                                            Text { text: "Ready to pair program with you!"; font.family: Theme.defaultFontFamily; font.pixelSize: 8; color: Qt.rgba(1, 1, 1, 0.85); elide: Text.ElideRight; Layout.fillWidth: true }
+                                        }
+                                    }
+                                }
 
                                 Rectangle {
                                     id: prevAvatarCircle
                                     visible: root.showAvatar
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    width: root.isPreviewUnlocked ? 34 : 38
+                                    width: root.isPreviewUnlocked ? 30 : 34
                                     height: width
                                     radius: width / 2
                                     Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
@@ -767,22 +847,22 @@ Item {
                         Layout.fillWidth: true
                         spacing: 10
 
-                        // 1. Open Sans (Astronaut Theme)
+                        // 1. Open Sans Bold (Astronaut Theme)
                         Rectangle {
                             Layout.fillWidth: true
                             height: 48; radius: 10
-                            color: root.clockFontFile === "OpenSans.ttf" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            color: root.clockFontFile.indexOf("OpenSans") !== -1 ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
                             border.width: 1.5
-                            border.color: root.clockFontFile === "OpenSans.ttf" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            border.color: root.clockFontFile.indexOf("OpenSans") !== -1 ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
                             ColumnLayout {
                                 anchors.centerIn: parent; spacing: 2
-                                Text { text: "Open Sans"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile === "OpenSans.ttf" ? Theme.colPrimary : Theme.colOnSurface }
-                                Text { text: "Astronaut Default"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
+                                Text { text: "Open Sans Bold"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile.indexOf("OpenSans") !== -1 ? Theme.colPrimary : Theme.colOnSurface }
+                                Text { text: "Astronaut Signature"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    root.clockFontFile = "OpenSans.ttf";
+                                    root.clockFontFile = "OpenSans-Bold.ttf";
                                     root.saveLockSettings();
                                 }
                             }
@@ -953,7 +1033,28 @@ Item {
             NCard {
                 sectionTitle: "Component customization"
 
-                // Show Session Switcher
+                // Show Notifications Pod (Above Avatar)
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea35" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Lock screen notifications"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display frosted glass notification cards right before user profile avatar"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.showNotifications
+                        onToggled: {
+                            root.showNotifications = checked;
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Show Session Switcher (SDDM only)
                 NRow {
                     RowLayout {
                         spacing: 12
@@ -961,7 +1062,7 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Session switcher pill"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Show top-right frosted glass capsule with desktop session selection"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Show top-right frosted glass capsule for session selection on SDDM startup"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
@@ -974,7 +1075,7 @@ Item {
                     }
                 }
 
-                // Show Power Controls
+                // Show Power Controls (SDDM only)
                 NRow {
                     RowLayout {
                         spacing: 12
@@ -982,7 +1083,7 @@ Item {
                         ColumnLayout {
                             spacing: 1
                             Text { text: "Power & reboot buttons"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Display bottom-right frosted glass restart and shutdown action discs"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Display bottom-right frosted glass restart and shutdown action discs on SDDM"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }

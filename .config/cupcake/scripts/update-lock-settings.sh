@@ -16,6 +16,7 @@ SHOW_DATE=$(cat "$CONF_DIR/.lock_show_date" 2>/dev/null || echo "true")
 SHOW_SESSION=$(cat "$CONF_DIR/.lock_show_session" 2>/dev/null || echo "true")
 SHOW_POWER=$(cat "$CONF_DIR/.lock_show_power" 2>/dev/null || echo "true")
 SHOW_AVATAR=$(cat "$CONF_DIR/.lock_show_avatar" 2>/dev/null || echo "true")
+SHOW_NOTIFICATIONS=$(cat "$CONF_DIR/.lock_show_notifications" 2>/dev/null || echo "true")
 USE_24H=$(cat "$CONF_DIR/.clock_24h" 2>/dev/null || echo "false")
 
 mkdir -p "$SDDM_DIR" "$REPO_SDDM_DIR"
@@ -33,6 +34,7 @@ showDate=$SHOW_DATE
 showSession=$SHOW_SESSION
 showPower=$SHOW_POWER
 showAvatar=$SHOW_AVATAR
+showNotifications=$SHOW_NOTIFICATIONS
 timeFormat24h=$USE_24H
 basicTextColor=#ffffff
 passwordMask=true
