@@ -421,6 +421,7 @@ Item {
                     RailItem { icon: "\uf28e"; label: "Dock"; pageIndex: 4 }          // layout-navbar-expand
                     RailItem { icon: "\uebc5"; label: "Fonts"; pageIndex: 2 }         // typography
                     RailItem { icon: "\ueb20"; label: "General"; pageIndex: 0 }       // settings
+                    RailItem { icon: "\ueae2"; label: "Lock screen"; pageIndex: 24 }  // lock
                     RailItem { icon: "\ueb0a"; label: "Wallpaper"; pageIndex: 5 }     // photo
                     
                     GroupLabel { label: "Machine" }
@@ -510,6 +511,7 @@ Item {
                             case 19: return { title: "AI", path: "settings › ai" };
                             case 20: return { title: "User", path: "settings › user" };
                             case 21: return { title: "About", path: "settings › about" };
+                            case 24: return { title: "Lock screen", path: "settings › lock screen" };
                             default: return { title: "Settings", path: "settings" };
                         }
                     }
@@ -614,6 +616,7 @@ Item {
                                     case 18: return "SettingsPageDisplay.qml";
                                     case 22: return "SettingsPageBluetooth.qml";
                                     case 23: return "SettingsPageHotspot.qml";
+                                    case 24: return "SettingsPageLockscreen.qml";
                                     default: return "";
                                 }
                             }
