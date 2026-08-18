@@ -275,9 +275,7 @@ Item {
                                         font.pixelSize: 13
                                         font.weight: Font.DemiBold
                                         font.letterSpacing: 0.5
-                                        color: Qt.rgba(1, 1, 1, 0.18)
-                                        style: Text.Outline
-                                        styleColor: Qt.rgba(255, 255, 255, 0.40)
+                                        color: Qt.rgba(1, 1, 1, 0.15)
                                     }
                                 }
 
@@ -352,9 +350,7 @@ Item {
                                         font.pixelSize: 54
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.2
-                                        color: Qt.rgba(1, 1, 1, 0.15)
-                                        style: Text.Outline
-                                        styleColor: Qt.rgba(255, 255, 255, 0.35)
+                                        color: Qt.rgba(1, 1, 1, 0.12)
                                     }
                                 }
                             }
@@ -406,8 +402,6 @@ Item {
                                     font.pixelSize: 11
                                     font.weight: Font.DemiBold
                                     color: "#ffffff"
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.40)
                                 }
 
                                 // Fixed-Height Action Slot (Smooth Cross-Fade)
@@ -433,8 +427,6 @@ Item {
                                             font.pixelSize: 9
                                             font.weight: Font.Medium
                                             color: "#ffffff"
-                                            style: Text.Outline
-                                            styleColor: Qt.rgba(0, 0, 0, 0.35)
                                         }
                                     }
 

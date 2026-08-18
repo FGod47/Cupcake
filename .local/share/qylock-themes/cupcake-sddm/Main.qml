@@ -289,7 +289,7 @@ Rectangle {
                     visible: false
                 }
 
-                // 4. Subtle Specular Outline Rim
+                // 4. Clean Specular Overlay
                 Text {
                     id: dateLabel
                     anchors.centerIn: parent
@@ -298,9 +298,7 @@ Rectangle {
                     font.pixelSize: 24
                     font.weight: Font.DemiBold
                     font.letterSpacing: 0.5
-                    color: Qt.rgba(1, 1, 1, 0.18)
-                    style: Text.Outline
-                    styleColor: Qt.rgba(255, 255, 255, 0.40)
+                    color: Qt.rgba(1, 1, 1, 0.15)
                 }
             }
 
@@ -360,7 +358,7 @@ Rectangle {
                     visible: false
                 }
 
-                // 4. Subtle Outer Bevel / Edge Rim & Crisp Stroke Outline
+                // 4. Clean Specular Overlay
                 Text {
                     id: timeLabel
                     anchors.centerIn: parent
@@ -369,9 +367,7 @@ Rectangle {
                     font.pixelSize: 124
                     font.weight: Font.Bold
                     font.letterSpacing: -2.0
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    style: Text.Outline
-                    styleColor: Qt.rgba(255, 255, 255, 0.35)
+                    color: Qt.rgba(1, 1, 1, 0.12)
                 }
             }
         }
@@ -454,8 +450,6 @@ Rectangle {
                 font.weight: Font.DemiBold
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.95
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.40)
 
                 MouseArea {
                     anchors.fill: parent
