@@ -137,7 +137,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 36
         spacing: 12
-        visible: root.cfgShowSession
+        visible: root.cfgShowSession && !(sddm && sddm.isLockScreen === true)
 
         // Frosted Glass Session Pill (e.g. Hyprland)
         Item {
@@ -694,7 +694,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 36
         spacing: 12
-        visible: root.cfgShowPower
+        visible: root.cfgShowPower && !(sddm && sddm.isLockScreen === true)
 
         // Frosted Glass Reboot Button
         Item {
