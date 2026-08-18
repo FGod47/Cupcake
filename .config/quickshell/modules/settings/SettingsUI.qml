@@ -446,6 +446,7 @@ Item {
                     RailItem { icon: "\ueb0a"; label: "Wallpaper"; pageIndex: 5 }     // photo
                     
                     GroupLabel { label: "Machine" }
+                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }        // info-circle
                     RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }    // bluetooth
                     RailItem { icon: "\uea89"; label: "Displays"; pageIndex: 18 }     // device-desktop
                     RailItem { icon: "\ueb52"; label: "Network"; pageIndex: 17 }      // wifi
@@ -456,8 +457,6 @@ Item {
                     
                     Item { Layout.fillHeight: true } // spacer
                     
-                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }        // info-circle
-                    
                     // FOOTER
                     Rectangle {
                         id: footerUserCard
@@ -467,14 +466,6 @@ Item {
                         color: (root.currentIndex === 20 || userFooterMa.containsMouse) ? cSurfaceHover : "transparent"
                         radius: 10
                         Behavior on color { ColorAnimation { duration: 140 } }
-                        
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            height: 1
-                            color: cBorderSoft
-                        }
                         
                         RowLayout {
                             anchors.fill: parent
