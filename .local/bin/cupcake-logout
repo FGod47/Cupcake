@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 # Cupcake Clean Session Logout Script for Hyprland + SDDM
 
-# 1. Kill background daemons so Hyprland session unblocks instantly
+# 1. Switch seat to SDDM VT (VT 2) immediately to hide VT 1 terminal console
+gdbus call --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1/seat/seat0 --method org.freedesktop.login1.Seat.SwitchTo 2 2>/dev/null || true
+
+# 2. Terminate background daemons
 killall -9 quickshell awww-daemon mpvpaper hyprsunset hypridle cliphist wl-paste nm-applet udiskie polkit-gnome-authentication-agent-1 2>/dev/null || true
 pkill -9 -f "battery-warning.sh" 2>/dev/null || true
 
-# 2. Dispatch Hyprland exit
+# 3. Cleanly exit Hyprland
 hyprctl dispatch exit 2>/dev/null || true
-
-# 3. Instant seat handoff to SDDM greeter (VT 2)
-gdbus call --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1/seat/seat0 --method org.freedesktop.login1.Seat.SwitchTo 2 2>/dev/null || true
-
-# 4. Immediate compositor exit to eliminate any delay
 killall -9 Hyprland 2>/dev/null || true
