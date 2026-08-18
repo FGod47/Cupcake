@@ -371,7 +371,7 @@ Item {
                                         }
                                     }
 
-                                    // Active State: Password Input Pill
+                                    // Active State: Password Input Pill with Animated Dots
                                     Rectangle {
                                         id: prevPasswordContainer
                                         anchors.fill: parent
@@ -386,10 +386,25 @@ Item {
                                         Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                         Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
-                                        RowLayout {
-                                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
-                                            Text { text: "••••••••"; color: Qt.rgba(255, 255, 255, 0.8); font.family: Theme.monoFontFamily; font.pixelSize: 11; Layout.fillWidth: true }
-                                            Text { text: "➔"; color: Theme.colPrimary; font.pixelSize: 11 }
+                                        Row {
+                                            anchors.centerIn: parent
+                                            spacing: 5
+                                            Repeater {
+                                                model: 6
+                                                delegate: Rectangle {
+                                                    id: prevDot
+                                                    width: 6; height: 6; radius: 3
+                                                    color: "#ffffff"
+                                                    scale: root.isPreviewUnlocked ? 1.0 : 0.0
+                                                    Behavior on scale {
+                                                        NumberAnimation {
+                                                            duration: 200 + (index * 40)
+                                                            easing.type: Easing.OutBack
+                                                            easing.overshoot: 1.4
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }

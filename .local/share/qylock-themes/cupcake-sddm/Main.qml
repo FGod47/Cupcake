@@ -431,7 +431,7 @@ Rectangle {
                     }
                 }
 
-                // Active State: Pill Password Input Field
+                // Active State: Pill Password Input Field with Animated Pop-in Dots
                 Rectangle {
                     id: passwordContainer
                     anchors.fill: parent
@@ -459,6 +459,7 @@ Rectangle {
                         ColorAnimation { target: passwordContainer; property: "border.color"; from: "#ff5555"; to: "#30ffffff"; duration: 600 }
                     }
 
+                    // Invisible TextInput handling physical keyboard input
                     TextInput {
                         id: passwordInput
                         anchors.fill: parent
@@ -468,10 +469,9 @@ Rectangle {
                         horizontalAlignment: TextInput.AlignHCenter
                         font.family: fontName
                         font.pixelSize: 13
-                        color: "#ffffff"
-                        echoMode: TextInput.Password
-                        passwordCharacter: "•"
-                        cursorVisible: activeFocus && text.length > 0
+                        color: "transparent"
+                        echoMode: TextInput.Normal
+                        cursorVisible: false
                         clip: true
                         enabled: root.isLoginPromptVisible
 
@@ -482,6 +482,7 @@ Rectangle {
                         }
                     }
 
+                    // Placeholder text when empty
                     Text {
                         id: placeholderText
                         text: "Enter Password"
@@ -491,6 +492,47 @@ Rectangle {
                         font.pixelSize: 11
                         font.weight: Font.Normal
                         visible: passwordInput.text === "" && root.isLoginPromptVisible
+                    }
+
+                    // Dynamic Animated Pop-In Password Dots
+                    Row {
+                        id: dotsRow
+                        anchors.centerIn: parent
+                        spacing: 7
+                        visible: passwordInput.text.length > 0 && root.isLoginPromptVisible
+
+                        Repeater {
+                            model: passwordInput.text.length
+
+                            delegate: Rectangle {
+                                id: passDot
+                                width: 8
+                                height: 8
+                                radius: 4
+                                color: "#ffffff"
+
+                                Component.onCompleted: dotSpringAnim.restart()
+
+                                SequentialAnimation {
+                                    id: dotSpringAnim
+                                    NumberAnimation {
+                                        target: passDot
+                                        property: "scale"
+                                        from: 0.1
+                                        to: 1.35
+                                        duration: 110
+                                        easing.type: Easing.OutQuad
+                                    }
+                                    NumberAnimation {
+                                        target: passDot
+                                        property: "scale"
+                                        to: 1.0
+                                        duration: 90
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     MouseArea {
