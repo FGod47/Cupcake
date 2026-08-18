@@ -128,16 +128,51 @@ Rectangle {
         anchors.rightMargin: 36
         spacing: 12
 
-        // Session Pill (e.g. Hyprland)
-        Rectangle {
-            height: 30
-            width: sessionRow.implicitWidth + 24
-            radius: 15
-            color: sessionMa.containsMouse ? "#45000000" : "#28000000"
-            border.width: 1
-            border.color: sessionMa.containsMouse ? "#50ffffff" : "#25ffffff"
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Behavior on border.color { ColorAnimation { duration: 150 } }
+        // Frosted Glass Session Pill (e.g. Hyprland)
+        Item {
+            id: sessionPill
+            height: 32
+            width: sessionRow.implicitWidth + 26
+
+            // Frosted Glass Blurred Layer
+            Item {
+                anchors.fill: parent
+                layer.enabled: true
+                layer.effect: OpacityMask { maskSource: sessionMask }
+
+                Image {
+                    width: root.width
+                    height: root.height
+                    x: -(root.width - sessionPill.width - 36)
+                    y: -24
+                    source: bgImage.source
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
+
+                    layer.enabled: true
+                    layer.effect: FastBlur {
+                        radius: 36
+                        cached: true
+                    }
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: sessionMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
+                    border.width: 1
+                    border.color: sessionMa.containsMouse ? Qt.rgba(1, 1, 1, 0.45) : Qt.rgba(1, 1, 1, 0.22)
+                    radius: 16
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                }
+            }
+
+            Rectangle {
+                id: sessionMask
+                anchors.fill: parent
+                radius: 16
+                visible: false
+            }
 
             Row {
                 id: sessionRow
@@ -149,7 +184,7 @@ Rectangle {
                     width: 14
                     height: 14
                     anchors.verticalCenter: parent.verticalCenter
-                    opacity: 0.8
+                    opacity: 0.9
                 }
 
                 Text {
@@ -159,7 +194,7 @@ Rectangle {
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     anchors.verticalCenter: parent.verticalCenter
-                    opacity: 0.9
+                    opacity: 0.95
                 }
             }
 
@@ -430,23 +465,56 @@ Rectangle {
                     }
                 }
 
-                // Active State: Pill Password Input Field with Animated Pop-in Dots
-                Rectangle {
+                // Active State: Frosted Glass Pill Password Input Field
+                Item {
                     id: passwordContainer
                     anchors.fill: parent
-                    radius: 17
-                    clip: true
                     opacity: root.isLoginPromptVisible ? 1.0 : 0.0
                     y: root.isLoginPromptVisible ? 0 : 8
                     scale: root.isLoginPromptVisible ? 1.0 : 0.92
-                    color: passwordInput.activeFocus ? "#48000000" : "#30000000"
-                    border.width: 1
-                    border.color: passwordInput.activeFocus ? "#60ffffff" : "#30ffffff"
                     Behavior on opacity { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
                     Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                     Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                    Behavior on color { ColorAnimation { duration: 150 } }
-                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                    // Frosted Glass Blur Layer
+                    Item {
+                        anchors.fill: parent
+                        layer.enabled: true
+                        layer.effect: OpacityMask { maskSource: passPillMask }
+
+                        Image {
+                            width: root.width
+                            height: root.height
+                            x: -( (root.width - 190)/2 + (root.width * 0.02) )
+                            y: -( root.height - (root.isLoginPromptVisible ? (root.height * 0.12) : (root.height * 0.065)) - 34 )
+                            source: bgImage.source
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+
+                            layer.enabled: true
+                            layer.effect: FastBlur {
+                                radius: 42
+                                cached: true
+                            }
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: passwordInput.activeFocus ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
+                            border.width: 1
+                            border.color: passwordInput.activeFocus ? Qt.rgba(1, 1, 1, 0.60) : Qt.rgba(1, 1, 1, 0.28)
+                            radius: 17
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                            Behavior on border.color { ColorAnimation { duration: 150 } }
+                        }
+                    }
+
+                    Rectangle {
+                        id: passPillMask
+                        anchors.fill: parent
+                        radius: 17
+                        visible: false
+                    }
 
                     SequentialAnimation {
                         id: failAnimation
@@ -554,23 +622,57 @@ Rectangle {
         anchors.rightMargin: 36
         spacing: 12
 
-        // Reboot Button
-        Rectangle {
-            width: 36
-            height: 36
-            radius: 18
-            color: rebootMa.containsMouse ? "#45000000" : "#22000000"
-            border.width: 1
-            border.color: rebootMa.containsMouse ? "#50ffffff" : "#20ffffff"
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Behavior on border.color { ColorAnimation { duration: 150 } }
+        // Frosted Glass Reboot Button
+        Item {
+            id: rebootBtn
+            width: 38
+            height: 38
+
+            Item {
+                anchors.fill: parent
+                layer.enabled: true
+                layer.effect: OpacityMask { maskSource: rebootMask }
+
+                Image {
+                    width: root.width
+                    height: root.height
+                    x: -(root.width - 36 - 38 - 12 - 38)
+                    y: -(root.height - 28 - 38)
+                    source: bgImage.source
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
+
+                    layer.enabled: true
+                    layer.effect: FastBlur {
+                        radius: 36
+                        cached: true
+                    }
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: rebootMa.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.12)
+                    border.width: 1
+                    border.color: rebootMa.containsMouse ? Qt.rgba(1, 1, 1, 0.50) : Qt.rgba(1, 1, 1, 0.22)
+                    radius: 19
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                }
+            }
+
+            Rectangle {
+                id: rebootMask
+                anchors.fill: parent
+                radius: 19
+                visible: false
+            }
 
             Image {
                 source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'></path><polyline points='3 3 3 8 8 8'></polyline></svg>"
                 width: 16
                 height: 16
                 anchors.centerIn: parent
-                opacity: 0.85
+                opacity: rebootMa.containsMouse ? 1.0 : 0.85
             }
 
             MouseArea {
@@ -582,23 +684,57 @@ Rectangle {
             }
         }
 
-        // Power Off Button
-        Rectangle {
-            width: 36
-            height: 36
-            radius: 18
-            color: powerMa.containsMouse ? "#45000000" : "#22000000"
-            border.width: 1
-            border.color: powerMa.containsMouse ? "#50ffffff" : "#20ffffff"
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Behavior on border.color { ColorAnimation { duration: 150 } }
+        // Frosted Glass Power Off Button
+        Item {
+            id: powerBtn
+            width: 38
+            height: 38
+
+            Item {
+                anchors.fill: parent
+                layer.enabled: true
+                layer.effect: OpacityMask { maskSource: powerMask }
+
+                Image {
+                    width: root.width
+                    height: root.height
+                    x: -(root.width - 36 - 38)
+                    y: -(root.height - 28 - 38)
+                    source: bgImage.source
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
+
+                    layer.enabled: true
+                    layer.effect: FastBlur {
+                        radius: 36
+                        cached: true
+                    }
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: powerMa.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.12)
+                    border.width: 1
+                    border.color: powerMa.containsMouse ? Qt.rgba(1, 1, 1, 0.50) : Qt.rgba(1, 1, 1, 0.22)
+                    radius: 19
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                }
+            }
+
+            Rectangle {
+                id: powerMask
+                anchors.fill: parent
+                radius: 19
+                visible: false
+            }
 
             Image {
                 source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18.36 6.64a9 9 0 1 1-12.73 0'></path><line x1='12' y1='2' x2='12' y2='12'></line></svg>"
                 width: 16
                 height: 16
                 anchors.centerIn: parent
-                opacity: 0.85
+                opacity: powerMa.containsMouse ? 1.0 : 0.85
             }
 
             MouseArea {

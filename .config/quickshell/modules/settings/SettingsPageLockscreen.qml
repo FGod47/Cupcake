@@ -432,15 +432,49 @@ Item {
                                 anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 12
                                 spacing: 6
                                 Rectangle {
-                                    height: 22; radius: 11
-                                    width: sddmBadgeRow.implicitWidth + 16
-                                    color: Qt.rgba(0, 0, 0, 0.72)
-                                    border.width: 1; border.color: Theme.colPrimary
+                                    height: 20; radius: 10
+                                    width: sddmBadgeRow.implicitWidth + 14
+                                    color: Qt.rgba(0, 0, 0, 0.45)
+                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.2)
                                     RowLayout {
-                                        id: sddmBadgeRow; anchors.centerIn: parent; spacing: 5
-                                        Text { text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 11; color: Theme.colPrimary }
-                                        Text { text: "SDDM & HYPRLOCK"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
+                                        id: sddmBadgeRow; anchors.centerIn: parent; spacing: 4
+                                        Text { text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 10; color: Theme.colPrimary }
+                                        Text { text: "SDDM"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
                                     }
+                                }
+                            }
+
+                            // Top Right: Frosted Glass Session Pill
+                            Rectangle {
+                                anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 12
+                                height: 20; radius: 10
+                                width: prevSessionRow.implicitWidth + 14
+                                color: Qt.rgba(255, 255, 255, 0.15)
+                                border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                RowLayout {
+                                    id: prevSessionRow; anchors.centerIn: parent; spacing: 4
+                                    Text { text: "🖥"; font.pixelSize: 8 }
+                                    Text { text: "Hyprland"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Medium; color: "#ffffff" }
+                                }
+                            }
+
+                            // Bottom Right: Frosted Glass Power Buttons
+                            Row {
+                                anchors.bottom: parent.bottom; anchors.right: parent.right; anchors.margins: 12
+                                spacing: 6
+
+                                Rectangle {
+                                    width: 22; height: 22; radius: 11
+                                    color: Qt.rgba(255, 255, 255, 0.15)
+                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                    Text { anchors.centerIn: parent; text: "🔄"; font.pixelSize: 8 }
+                                }
+
+                                Rectangle {
+                                    width: 22; height: 22; radius: 11
+                                    color: Qt.rgba(255, 255, 255, 0.15)
+                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.3)
+                                    Text { anchors.centerIn: parent; text: "⏻"; font.pixelSize: 9; color: "#ffffff" }
                                 }
                             }
                         }
