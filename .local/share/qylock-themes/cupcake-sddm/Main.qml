@@ -177,6 +177,7 @@ Rectangle {
     }
 
     // ── 4. LOCKSCREEN DATE & CLOCK ──────────────────────────────────────
+    // ── 4. LOCKSCREEN DATE & CLOCK (Frosted Glassy Translucent Typography) ─
     Item {
         id: clockSection
         z: 8
@@ -185,8 +186,8 @@ Rectangle {
         Behavior on anchors.topMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
-        width: 320
-        height: 170
+        width: 380
+        height: 180
 
         Column {
             anchors.centerIn: parent
@@ -197,7 +198,7 @@ Rectangle {
                 id: dateLabel
                 text: Qt.formatDate(new Date(), "ddd MMM d")
                 font.family: fontName
-                font.pixelSize: 23
+                font.pixelSize: 24
                 font.weight: Font.Medium
                 color: "#ffffff"
                 opacity: 0.92
@@ -206,19 +207,73 @@ Rectangle {
                 styleColor: "#40000000"
             }
 
-            // Big Lockscreen Time ("4:52" / 12-Hour)
-            Text {
-                id: timeLabel
-                text: get12HourTime()
-                font.family: fontName
-                font.pixelSize: 114
-                font.weight: Font.DemiBold
-                font.letterSpacing: -2.5
-                color: "#ffffff"
-                opacity: 0.88
+            // Frosted Glass Big Lockscreen Time ("4:52")
+            Item {
+                id: glassClockContainer
+                width: timeLabel.implicitWidth
+                height: timeLabel.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
-                style: Text.Raised
-                styleColor: "#50000000"
+
+                // 1. Frosted Blurred Wallpaper Layer clipped to digits
+                Item {
+                    anchors.fill: parent
+                    layer.enabled: true
+                    layer.effect: OpacityMask { maskSource: timeMaskItem }
+
+                    Image {
+                        id: clockBgCrop
+                        width: root.width
+                        height: root.height
+                        x: -clockSection.x - (clockSection.width - glassClockContainer.width)/2
+                        y: -clockSection.y - 20
+                        source: config.background || "background.png"
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+
+                        layer.enabled: true
+                        layer.effect: FastBlur {
+                            radius: 36
+                            cached: true
+                        }
+                    }
+
+                    // Glass milky tint inside digits
+                    Rectangle {
+                        anchors.fill: parent
+                        color: Qt.rgba(1, 1, 1, 0.45)
+                    }
+                }
+
+                // 2. Alpha Mask for the digits
+                Item {
+                    id: timeMaskItem
+                    anchors.fill: parent
+                    visible: false
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: root.get12HourTime()
+                        font.family: fontName
+                        font.pixelSize: 116
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: -2.5
+                        color: "#ffffff"
+                    }
+                }
+
+                // 3. Specular Glass Specular Sheen & Soft Rim
+                Text {
+                    id: timeLabel
+                    anchors.centerIn: parent
+                    text: root.get12HourTime()
+                    font.family: fontName
+                    font.pixelSize: 116
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: -2.5
+                    color: Qt.rgba(1, 1, 1, 0.35)
+                    style: Text.Raised
+                    styleColor: Qt.rgba(0, 0, 0, 0.25)
+                }
             }
         }
     }

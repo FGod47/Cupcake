@@ -191,7 +191,7 @@ Item {
                                 }
                             }
 
-                            // iOS Style Lockscreen Clock & Date
+                            // iOS Style Frosted Glassy Lockscreen Clock & Date
                             Column {
                                 anchors.top: parent.top
                                 anchors.topMargin: root.isPreviewUnlocked ? 20 : 26
@@ -209,20 +209,80 @@ Item {
                                     opacity: 0.9
                                 }
 
-                                Text {
+                                Item {
+                                    id: prevGlassClock
+                                    width: prevTimeLabel.implicitWidth
+                                    height: prevTimeLabel.implicitHeight
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    text: {
-                                        if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                        let d = new Date();
-                                        let h = d.getHours() % 12 || 12;
-                                        let m = d.getMinutes();
-                                        return h + ":" + (m < 10 ? "0" + m : m);
+
+                                    // Frosted blurred background clipped to digits
+                                    Item {
+                                        anchors.fill: parent
+                                        layer.enabled: true
+                                        layer.effect: OpacityMask { maskSource: prevTimeMaskItem }
+
+                                        Image {
+                                            width: heroLockWallImg.width
+                                            height: heroLockWallImg.height
+                                            x: -prevGlassClock.x - (parent.parent.x)
+                                            y: -prevGlassClock.y - (parent.parent.y)
+                                            source: heroLockWallImg.source
+                                            fillMode: Image.PreserveAspectCrop
+                                            smooth: true
+
+                                            layer.enabled: true
+                                            layer.effect: FastBlur {
+                                                radius: 20
+                                                cached: true
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            color: Qt.rgba(1, 1, 1, 0.45)
+                                        }
                                     }
-                                    font.family: Theme.defaultFontFamily
-                                    font.pixelSize: 52
-                                    font.weight: Font.Bold
-                                    font.letterSpacing: -1.5
-                                    color: "#ffffff"
+
+                                    Item {
+                                        id: prevTimeMaskItem
+                                        anchors.fill: parent
+                                        visible: false
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: {
+                                                if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                                let d = new Date();
+                                                let h = d.getHours() % 12 || 12;
+                                                let m = d.getMinutes();
+                                                return h + ":" + (m < 10 ? "0" + m : m);
+                                            }
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 52
+                                            font.weight: Font.Bold
+                                            font.letterSpacing: -1.5
+                                            color: "#ffffff"
+                                        }
+                                    }
+
+                                    Text {
+                                        id: prevTimeLabel
+                                        anchors.centerIn: parent
+                                        text: {
+                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                            let d = new Date();
+                                            let h = d.getHours() % 12 || 12;
+                                            let m = d.getMinutes();
+                                            return h + ":" + (m < 10 ? "0" + m : m);
+                                        }
+                                        font.family: Theme.defaultFontFamily
+                                        font.pixelSize: 52
+                                        font.weight: Font.Bold
+                                        font.letterSpacing: -1.5
+                                        color: Qt.rgba(1, 1, 1, 0.35)
+                                        style: Text.Raised
+                                        styleColor: Qt.rgba(0, 0, 0, 0.25)
+                                    }
                                 }
                             }
 
