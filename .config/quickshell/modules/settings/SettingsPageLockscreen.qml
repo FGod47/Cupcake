@@ -191,144 +191,40 @@ Item {
                                 }
                             }
 
-                            // iOS Style Frosted Glassy Lockscreen Clock & Date
+                            // iOS Style Glassy Translucent Lockscreen Clock & Date
                             Column {
                                 anchors.top: parent.top
-                                anchors.topMargin: root.isPreviewUnlocked ? 20 : 26
+                                anchors.topMargin: root.isPreviewUnlocked ? 18 : 24
                                 Behavior on anchors.topMargin { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                spacing: 2
+                                spacing: -1
 
                                 Text {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     text: Qt.formatDate(new Date(), "ddd MMM d")
                                     font.family: Theme.defaultFontFamily
                                     font.pixelSize: 13
-                                    font.weight: Font.DemiBold
+                                    font.weight: Font.Medium
                                     color: "#ffffff"
-                                    opacity: 0.9
+                                    opacity: 0.95
                                 }
 
-                                Item {
-                                    id: prevGlassClock
-                                    width: prevTimeLabel.implicitWidth
-                                    height: prevTimeLabel.implicitHeight
+                                Text {
                                     anchors.horizontalCenter: parent.horizontalCenter
-
-                                    // Frosted blurred background with specular glass gradient
-                                    Item {
-                                        anchors.fill: parent
-                                        layer.enabled: true
-                                        layer.effect: OpacityMask { maskSource: prevTimeMaskItem }
-
-                                        Image {
-                                            width: heroLockWallImg.width
-                                            height: heroLockWallImg.height
-                                            x: -prevGlassClock.x - (parent.parent.x)
-                                            y: -prevGlassClock.y - (parent.parent.y)
-                                            source: heroLockWallImg.source
-                                            fillMode: Image.PreserveAspectCrop
-                                            smooth: true
-
-                                            layer.enabled: true
-                                            layer.effect: FastBlur {
-                                                radius: 28
-                                                cached: true
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            anchors.fill: parent
-                                            gradient: Gradient {
-                                                orientation: Gradient.Vertical
-                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.50) }
-                                                GradientStop { position: 0.22; color: Qt.rgba(1, 1, 1, 0.18) }
-                                                GradientStop { position: 0.65; color: Qt.rgba(1, 1, 1, 0.10) }
-                                                GradientStop { position: 0.88; color: Qt.rgba(1, 1, 1, 0.22) }
-                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
-                                            }
-                                        }
+                                    text: {
+                                        if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
+                                        let d = new Date();
+                                        let h = d.getHours() % 12 || 12;
+                                        let m = d.getMinutes();
+                                        return h + ":" + (m < 10 ? "0" + m : m);
                                     }
-
-                                    Item {
-                                        id: prevTimeMaskItem
-                                        anchors.fill: parent
-                                        visible: false
-
-                                        Text {
-                                            anchors.centerIn: parent
-                                            text: {
-                                                if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                                let d = new Date();
-                                                let h = d.getHours() % 12 || 12;
-                                                let m = d.getMinutes();
-                                                return h + ":" + (m < 10 ? "0" + m : m);
-                                            }
-                                            font.family: Theme.defaultFontFamily
-                                            font.pixelSize: 52
-                                            font.weight: Font.Bold
-                                            font.letterSpacing: -1.5
-                                            color: "#ffffff"
-                                        }
-                                    }
-
-                                    // Top-edge Specular Catchlight
-                                    Text {
-                                        anchors.centerIn: parent
-                                        anchors.verticalCenterOffset: -0.8
-                                        text: {
-                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                            let d = new Date();
-                                            let h = d.getHours() % 12 || 12;
-                                            let m = d.getMinutes();
-                                            return h + ":" + (m < 10 ? "0" + m : m);
-                                        }
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 52
-                                        font.weight: Font.Bold
-                                        font.letterSpacing: -1.5
-                                        color: Qt.rgba(1, 1, 1, 0.65)
-                                        opacity: 0.75
-                                    }
-
-                                    // Bottom-edge Refraction Shadow
-                                    Text {
-                                        anchors.centerIn: parent
-                                        anchors.verticalCenterOffset: 1.0
-                                        text: {
-                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                            let d = new Date();
-                                            let h = d.getHours() % 12 || 12;
-                                            let m = d.getMinutes();
-                                            return h + ":" + (m < 10 ? "0" + m : m);
-                                        }
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 52
-                                        font.weight: Font.Bold
-                                        font.letterSpacing: -1.5
-                                        color: Qt.rgba(0, 0, 0, 0.40)
-                                        opacity: 0.65
-                                    }
-
-                                    // Translucent Glass Face
-                                    Text {
-                                        id: prevTimeLabel
-                                        anchors.centerIn: parent
-                                        text: {
-                                            if (root.use24h) return Qt.formatTime(new Date(), "hh:mm");
-                                            let d = new Date();
-                                            let h = d.getHours() % 12 || 12;
-                                            let m = d.getMinutes();
-                                            return h + ":" + (m < 10 ? "0" + m : m);
-                                        }
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 52
-                                        font.weight: Font.Bold
-                                        font.letterSpacing: -1.5
-                                        color: Qt.rgba(1, 1, 1, 0.20)
-                                        style: Text.Raised
-                                        styleColor: Qt.rgba(1, 1, 1, 0.50)
-                                    }
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 56
+                                    font.weight: Font.DemiBold
+                                    font.letterSpacing: -1.8
+                                    color: Qt.rgba(1, 1, 1, 0.52)
+                                    style: Text.Raised
+                                    styleColor: Qt.rgba(0, 0, 0, 0.22)
                                 }
                             }
 

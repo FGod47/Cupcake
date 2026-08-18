@@ -177,7 +177,7 @@ Rectangle {
     }
 
     // ── 4. LOCKSCREEN DATE & CLOCK ──────────────────────────────────────
-    // ── 4. LOCKSCREEN DATE & CLOCK (Frosted Glassy Translucent Typography) ─
+    // ── 4. LOCKSCREEN DATE & CLOCK (iOS Glassy Translucent Typography) ─
     Item {
         id: clockSection
         z: 8
@@ -186,12 +186,12 @@ Rectangle {
         Behavior on anchors.topMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
-        width: 380
+        width: 420
         height: 180
 
         Column {
             anchors.centerIn: parent
-            spacing: -4
+            spacing: -6
 
             // Date Text ("Thu May 7")
             Text {
@@ -201,130 +201,24 @@ Rectangle {
                 font.pixelSize: 24
                 font.weight: Font.Medium
                 color: "#ffffff"
-                opacity: 0.92
+                opacity: 0.95
                 anchors.horizontalCenter: parent.horizontalCenter
                 style: Text.Raised
                 styleColor: "#40000000"
             }
 
-            // Frosted Glass Big Lockscreen Time ("4:52" / Physical Glass Shader)
-            Item {
-                id: glassClockContainer
-                width: timeLabel.implicitWidth
-                height: timeLabel.implicitHeight
+            // Glassy Translucent Clock ("4:52")
+            Text {
+                id: timeLabel
+                text: root.get12HourTime()
+                font.family: fontName
+                font.pixelSize: 124
+                font.weight: Font.DemiBold
+                font.letterSpacing: -3.0
+                color: Qt.rgba(1, 1, 1, 0.52)
                 anchors.horizontalCenter: parent.horizontalCenter
-
-                // 0. Soft Ambient Drop Shadow under the glass digits
-                Item {
-                    anchors.fill: parent
-                    layer.enabled: true
-                    layer.effect: DropShadow {
-                        radius: 20
-                        samples: 24
-                        color: "#50000000"
-                        verticalOffset: 6
-                        horizontalOffset: 0
-                    }
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "transparent"
-                    }
-                }
-
-                // 1. Frosted Blurred Wallpaper Layer with Glass Refraction Gradient
-                Item {
-                    anchors.fill: parent
-                    layer.enabled: true
-                    layer.effect: OpacityMask { maskSource: timeMaskItem }
-
-                    Image {
-                        id: clockBgCrop
-                        width: root.width
-                        height: root.height
-                        x: -clockSection.x - (clockSection.width - glassClockContainer.width)/2
-                        y: -clockSection.y - 20
-                        source: config.background || "background.png"
-                        fillMode: Image.PreserveAspectCrop
-                        smooth: true
-
-                        layer.enabled: true
-                        layer.effect: FastBlur {
-                            radius: 48
-                            cached: true
-                        }
-                    }
-
-                    // Multi-stop Specular Glass Gradient
-                    Rectangle {
-                        anchors.fill: parent
-                        gradient: Gradient {
-                            orientation: Gradient.Vertical
-                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.50) }
-                            GradientStop { position: 0.22; color: Qt.rgba(1, 1, 1, 0.18) }
-                            GradientStop { position: 0.65; color: Qt.rgba(1, 1, 1, 0.10) }
-                            GradientStop { position: 0.88; color: Qt.rgba(1, 1, 1, 0.22) }
-                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
-                        }
-                    }
-                }
-
-                // 2. Alpha Mask for the digits
-                Item {
-                    id: timeMaskItem
-                    anchors.fill: parent
-                    visible: false
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: root.get12HourTime()
-                        font.family: fontName
-                        font.pixelSize: 118
-                        font.weight: Font.DemiBold
-                        font.letterSpacing: -2.5
-                        color: "#ffffff"
-                    }
-                }
-
-                // 3. Top-Edge Specular Glass Catchlight (Simulating light hitting rounded top glass bevel)
-                Text {
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -1.2
-                    anchors.horizontalCenterOffset: -0.5
-                    text: root.get12HourTime()
-                    font.family: fontName
-                    font.pixelSize: 118
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: -2.5
-                    color: Qt.rgba(1, 1, 1, 0.65)
-                    opacity: 0.75
-                }
-
-                // 4. Bottom-Edge Refraction Shadow (Simulating light trapped in bottom glass thickness)
-                Text {
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: 1.8
-                    text: root.get12HourTime()
-                    font.family: fontName
-                    font.pixelSize: 118
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: -2.5
-                    color: Qt.rgba(0, 0, 0, 0.40)
-                    opacity: 0.65
-                }
-
-                // 5. Translucent Glass Face with Soft Raised Bevel
-                Text {
-                    id: timeLabel
-                    anchors.centerIn: parent
-                    text: root.get12HourTime()
-                    font.family: fontName
-                    font.pixelSize: 118
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: -2.5
-                    color: Qt.rgba(1, 1, 1, 0.20)
-                    style: Text.Raised
-                    styleColor: Qt.rgba(1, 1, 1, 0.50)
-                }
+                style: Text.Raised
+                styleColor: Qt.rgba(0, 0, 0, 0.22)
             }
         }
     }
