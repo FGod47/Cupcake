@@ -293,26 +293,25 @@ Rectangle {
         id: userLoginSection
         z: 8
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.isLoginPromptVisible ? (parent.height * 0.11) : (parent.height * 0.055)
+        anchors.bottomMargin: root.isLoginPromptVisible ? (parent.height * 0.12) : (parent.height * 0.065)
         Behavior on anchors.bottomMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
         width: 260
-        height: 200
+        height: 150
 
         Column {
-            anchors.centerIn: parent
-            spacing: root.isLoginPromptVisible ? 10 : 8
-            Behavior on spacing { NumberAnimation { duration: 250 } }
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 8
             width: parent.width
 
             // User Avatar
             Rectangle {
                 id: avatarCircle
-                width: root.isLoginPromptVisible ? 56 : 64
-                height: width
-                radius: width / 2
-                Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                width: 58
+                height: 58
+                radius: 29
                 color: "#25000000"
                 border.width: 1.5
                 border.color: avatarMa.containsMouse ? "#80ffffff" : "#45ffffff"
@@ -322,7 +321,7 @@ Rectangle {
                 Rectangle {
                     id: avatarMask
                     anchors.fill: parent
-                    radius: parent.radius
+                    radius: 29
                     visible: false
                 }
 
@@ -362,13 +361,12 @@ Rectangle {
                 text: currentRealName
                 color: "#ffffff"
                 font.family: fontName
-                font.pixelSize: root.isLoginPromptVisible ? 13 : 14
+                font.pixelSize: 13
                 font.weight: Font.DemiBold
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.95
                 style: Text.Raised
                 styleColor: "#40000000"
-                Behavior on font.pixelSize { NumberAnimation { duration: 200 } }
 
                 MouseArea {
                     anchors.fill: parent
@@ -383,124 +381,124 @@ Rectangle {
                 }
             }
 
-            // Upward Chevron / Unlock Hint (Visible when Resting)
+            // Fixed-Height Action Slot (Smooth Cross-Fade & Float)
             Item {
-                id: unlockHint
+                id: actionSlot
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 140
-                height: root.isLoginPromptVisible ? 0 : 32
-                clip: true
-                opacity: root.isLoginPromptVisible ? 0.0 : 0.85
-                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                width: 190
+                height: 34
 
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 2
+                // Resting State: Swipe Up / Press Enter Hint
+                Item {
+                    id: unlockHint
+                    anchors.fill: parent
+                    opacity: root.isLoginPromptVisible ? 0.0 : 0.85
+                    y: root.isLoginPromptVisible ? -8 : 0
+                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
-                    // Up Arrow Icon
-                    Image {
-                        source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='18 15 12 9 6 15'></polyline></svg>"
-                        width: 16
-                        height: 16
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        opacity: hintMa.containsMouse ? 1.0 : 0.75
-                        
-                        SequentialAnimation on y {
-                            loops: Animation.Infinite
-                            running: !root.isLoginPromptVisible
-                            NumberAnimation { to: -3; duration: 600; easing.type: Easing.InOutSine }
-                            NumberAnimation { to: 1; duration: 600; easing.type: Easing.InOutSine }
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 2
+
+                        // Up Arrow Icon
+                        Image {
+                            source: "data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='18 15 12 9 6 15'></polyline></svg>"
+                            width: 16
+                            height: 16
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            opacity: hintMa.containsMouse ? 1.0 : 0.75
+                        }
+
+                        Text {
+                            text: "Swipe up or press Enter"
+                            font.family: fontName
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                            color: "#ffffff"
+                            opacity: hintMa.containsMouse ? 0.95 : 0.65
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                    }
+
+                    MouseArea {
+                        id: hintMa
+                        anchors.fill: parent
+                        enabled: !root.isLoginPromptVisible
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.showLoginPrompt()
+                    }
+                }
+
+                // Active State: Pill Password Input Field
+                Rectangle {
+                    id: passwordContainer
+                    anchors.fill: parent
+                    radius: 17
+                    clip: true
+                    opacity: root.isLoginPromptVisible ? 1.0 : 0.0
+                    y: root.isLoginPromptVisible ? 0 : 8
+                    scale: root.isLoginPromptVisible ? 1.0 : 0.92
+                    color: passwordInput.activeFocus ? "#48000000" : "#30000000"
+                    border.width: 1
+                    border.color: passwordInput.activeFocus ? "#60ffffff" : "#30ffffff"
+                    Behavior on opacity { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
+                    Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                    Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                    SequentialAnimation {
+                        id: failAnimation
+                        NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; from: 0; to: -10; duration: 45; easing.type: Easing.OutQuad }
+                        NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 10; duration: 45; easing.type: Easing.InOutQuad }
+                        NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: -8; duration: 45; easing.type: Easing.InOutQuad }
+                        NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 8; duration: 45; easing.type: Easing.InOutQuad }
+                        NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 0; duration: 45; easing.type: Easing.OutQuad }
+                        ColorAnimation { target: passwordContainer; property: "border.color"; from: "#ff5555"; to: "#30ffffff"; duration: 600 }
+                    }
+
+                    TextInput {
+                        id: passwordInput
+                        anchors.fill: parent
+                        anchors.leftMargin: 16
+                        anchors.rightMargin: 16
+                        verticalAlignment: TextInput.AlignVCenter
+                        horizontalAlignment: TextInput.AlignHCenter
+                        font.family: fontName
+                        font.pixelSize: 13
+                        color: "#ffffff"
+                        echoMode: TextInput.Password
+                        passwordCharacter: "•"
+                        cursorVisible: activeFocus && text.length > 0
+                        clip: true
+                        enabled: root.isLoginPromptVisible
+
+                        onAccepted: {
+                            if (text !== "") {
+                                sddm.login(currentUsername, text, currentSessionsIndex);
+                            }
                         }
                     }
 
                     Text {
-                        text: "Swipe up or press Enter"
+                        id: placeholderText
+                        text: "Enter Password"
+                        anchors.centerIn: parent
+                        color: "#90ffffff"
                         font.family: fontName
-                        font.pixelSize: 10
-                        font.weight: Font.Medium
-                        color: "#ffffff"
-                        opacity: hintMa.containsMouse ? 0.95 : 0.65
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pixelSize: 11
+                        font.weight: Font.Normal
+                        visible: passwordInput.text === "" && root.isLoginPromptVisible
                     }
-                }
 
-                MouseArea {
-                    id: hintMa
-                    anchors.fill: parent
-                    enabled: !root.isLoginPromptVisible
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.showLoginPrompt()
-                }
-            }
-
-            // Pill Password Input Field (Revealed on Slide-Up)
-            Rectangle {
-                id: passwordContainer
-                width: 180
-                height: root.isLoginPromptVisible ? 34 : 0
-                radius: 17
-                clip: true
-                opacity: root.isLoginPromptVisible ? 1.0 : 0.0
-                scale: root.isLoginPromptVisible ? 1.0 : 0.9
-                color: passwordInput.activeFocus ? "#48000000" : "#30000000"
-                border.width: 1
-                border.color: passwordInput.activeFocus ? "#60ffffff" : "#30ffffff"
-                anchors.horizontalCenter: parent.horizontalCenter
-                Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                Behavior on color { ColorAnimation { duration: 150 } }
-                Behavior on border.color { ColorAnimation { duration: 150 } }
-
-                SequentialAnimation {
-                    id: failAnimation
-                    NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; from: 0; to: -10; duration: 45; easing.type: Easing.OutQuad }
-                    NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 10; duration: 45; easing.type: Easing.InOutQuad }
-                    NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: -8; duration: 45; easing.type: Easing.InOutQuad }
-                    NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 8; duration: 45; easing.type: Easing.InOutQuad }
-                    NumberAnimation { target: passwordContainer; property: "anchors.horizontalCenterOffset"; to: 0; duration: 45; easing.type: Easing.OutQuad }
-                    ColorAnimation { target: passwordContainer; property: "border.color"; from: "#ff5555"; to: "#30ffffff"; duration: 600 }
-                }
-
-                TextInput {
-                    id: passwordInput
-                    anchors.fill: parent
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: 16
-                    verticalAlignment: TextInput.AlignVCenter
-                    horizontalAlignment: TextInput.AlignHCenter
-                    font.family: fontName
-                    font.pixelSize: 13
-                    color: "#ffffff"
-                    echoMode: TextInput.Password
-                    passwordCharacter: "•"
-                    cursorVisible: activeFocus && text.length > 0
-                    clip: true
-
-                    onAccepted: {
-                        if (text !== "") {
-                            sddm.login(currentUsername, text, currentSessionsIndex);
-                        }
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: root.isLoginPromptVisible
+                        cursorShape: Qt.IBeamCursor
+                        onClicked: passwordInput.forceActiveFocus()
                     }
-                }
-
-                Text {
-                    id: placeholderText
-                    text: "Enter Password"
-                    anchors.centerIn: parent
-                    color: "#90ffffff"
-                    font.family: fontName
-                    font.pixelSize: 11
-                    font.weight: Font.Normal
-                    visible: passwordInput.text === ""
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.IBeamCursor
-                    onClicked: passwordInput.forceActiveFocus()
                 }
             }
         }

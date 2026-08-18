@@ -345,45 +345,52 @@ Item {
                                     color: "#ffffff"
                                 }
 
-                                // Upward Arrow Hint
+                                // Fixed-Height Action Slot (Smooth Cross-Fade)
                                 Item {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    width: 100
-                                    height: root.isPreviewUnlocked ? 0 : 18
-                                    clip: true
-                                    opacity: root.isPreviewUnlocked ? 0.0 : 0.85
-                                    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "▲  Click to unlock"
-                                        font.family: Theme.defaultFontFamily
-                                        font.pixelSize: 9
-                                        font.weight: Font.Medium
-                                        color: "#ffffff"
-                                    }
-                                }
-
-                                // Password Input Pill
-                                Rectangle {
+                                    id: prevActionSlot
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: 140
-                                    height: root.isPreviewUnlocked ? 26 : 0
-                                    radius: 13
-                                    clip: true
-                                    opacity: root.isPreviewUnlocked ? 1.0 : 0.0
-                                    scale: root.isPreviewUnlocked ? 1.0 : 0.9
-                                    color: Qt.rgba(255, 255, 255, 0.15)
-                                    border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.35)
-                                    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                                    Behavior on opacity { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-                                    Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                    height: 26
 
-                                    RowLayout {
-                                        anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
-                                        Text { text: "••••••••"; color: Qt.rgba(255, 255, 255, 0.8); font.family: Theme.monoFontFamily; font.pixelSize: 11; Layout.fillWidth: true }
-                                        Text { text: "➔"; color: Theme.colPrimary; font.pixelSize: 11 }
+                                    // Resting State: Click to unlock Hint
+                                    Item {
+                                        id: prevUnlockHint
+                                        anchors.fill: parent
+                                        opacity: root.isPreviewUnlocked ? 0.0 : 0.85
+                                        y: root.isPreviewUnlocked ? -6 : 0
+                                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                                        Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "▲  Click to unlock"
+                                            font.family: Theme.defaultFontFamily
+                                            font.pixelSize: 9
+                                            font.weight: Font.Medium
+                                            color: "#ffffff"
+                                        }
+                                    }
+
+                                    // Active State: Password Input Pill
+                                    Rectangle {
+                                        id: prevPasswordContainer
+                                        anchors.fill: parent
+                                        radius: 13
+                                        clip: true
+                                        opacity: root.isPreviewUnlocked ? 1.0 : 0.0
+                                        y: root.isPreviewUnlocked ? 0 : 6
+                                        scale: root.isPreviewUnlocked ? 1.0 : 0.92
+                                        color: Qt.rgba(255, 255, 255, 0.15)
+                                        border.width: 1; border.color: Qt.rgba(255, 255, 255, 0.35)
+                                        Behavior on opacity { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
+                                        Behavior on y { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+                                        Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+
+                                        RowLayout {
+                                            anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 8
+                                            Text { text: "••••••••"; color: Qt.rgba(255, 255, 255, 0.8); font.family: Theme.monoFontFamily; font.pixelSize: 11; Layout.fillWidth: true }
+                                            Text { text: "➔"; color: Theme.colPrimary; font.pixelSize: 11 }
+                                        }
                                     }
                                 }
                             }
