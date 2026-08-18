@@ -324,15 +324,14 @@ PanelWindow {
                         Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
                         Behavior on border.color { ColorAnimation { duration: 250 } }
 
-                        // 1. Header & Controls Row (Clean RowLayout - 100% immune to collisions!)
+                        // 1. Header & Controls Row (Clean RowLayout with fixed full width for instant unmasking!)
                         RowLayout {
                             id: headerRow
                             anchors.left: parent.left
-                            anchors.right: parent.right
                             anchors.top: parent.top
+                            width: notifDetachedPod.fullW - 26
                             height: notifWindow.barHeight
                             anchors.leftMargin: Math.round(13 * notifWindow.notifExpandProgress + ((notifWindow.barHeight - 6) / 2) * (1.0 - notifWindow.notifExpandProgress))
-                            anchors.rightMargin: 13
                             spacing: 8
 
                             Item {
@@ -372,7 +371,6 @@ PanelWindow {
                                 font.letterSpacing: 1.4
                                 color: Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.55)
                                 Layout.alignment: Qt.AlignVCenter
-                                opacity: notifWindow.notifExpandProgress
                             }
 
                             // Compact Preview Text (Saved • 08-16-09-27-43.png)
@@ -386,8 +384,8 @@ PanelWindow {
                                 font.weight: Font.DemiBold
                                 color: notifWindow.fg
                                 elide: Text.ElideRight
-                                opacity: cardItem.isCardHovered ? 0.0 : notifWindow.notifExpandProgress
-                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                                opacity: cardItem.isCardHovered ? 0.0 : 1.0
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
 
                             // Circle Countdown Timer Ring
@@ -397,8 +395,8 @@ PanelWindow {
                                 Layout.alignment: Qt.AlignVCenter
                                 layer.enabled: true
                                 layer.samples: 4
-                                opacity: cardItem.isCardHovered ? 0.35 : (0.9 * notifWindow.notifExpandProgress)
-                                Behavior on opacity { NumberAnimation { duration: 250 } }
+                                opacity: cardItem.isCardHovered ? 0.35 : 0.9
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
 
                                 ShapePath {
                                     strokeColor: Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.15)
@@ -441,7 +439,6 @@ PanelWindow {
                                 color: dismissCardMa.containsMouse ? Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.16) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 Layout.alignment: Qt.AlignVCenter
-                                opacity: notifWindow.notifExpandProgress
 
                                 Text {
                                     anchors.centerIn: parent
