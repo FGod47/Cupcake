@@ -461,24 +461,24 @@ Item {
                     Rectangle {
                         id: footerUserCard
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 50
-                        Layout.topMargin: 10
+                        Layout.preferredHeight: 48
+                        Layout.topMargin: 8
                         color: (root.currentIndex === 20) 
                                ? (Theme.isDark ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.16) : Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.12))
                                : (userFooterMa.containsMouse ? (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06))
-                                                             : (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05) : Qt.rgba(0, 0, 0, 0.04)))
-                        radius: 25
+                                                             : (Theme.isDark ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.04) : Qt.rgba(0, 0, 0, 0.03)))
+                        radius: 10
                         border.width: 1
                         border.color: (root.currentIndex === 20) 
                                       ? Theme.colPrimary 
-                                      : (userFooterMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.16) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.08))
-                        Behavior on color { ColorAnimation { duration: 150 } }
-                        Behavior on border.color { ColorAnimation { duration: 150 } }
+                                      : (userFooterMa.containsMouse ? Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.14) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.07))
+                        Behavior on color { ColorAnimation { duration: 140 } }
+                        Behavior on border.color { ColorAnimation { duration: 140 } }
                         
                         RowLayout {
                             anchors.fill: parent
-                            anchors.leftMargin: 9
-                            anchors.rightMargin: 14
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
                             spacing: 10
                             
                             // User Avatar
