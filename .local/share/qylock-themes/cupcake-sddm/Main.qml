@@ -10,8 +10,13 @@ Rectangle {
     color: "#121214"
     focus: true
 
+    FontLoader {
+        id: astronautClockFont
+        source: "fonts/Orbitron-Black.ttf"
+    }
+
     property string fontName: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
-    property string clockFontFamily: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
+    property string clockFontFamily: astronautClockFont.name || "Orbitron"
     property color textColor: "#ffffff"
     property bool isLoginPromptVisible: false
 
@@ -259,9 +264,8 @@ Rectangle {
                         anchors.centerIn: parent
                         text: root.get12HourTime()
                         font.family: root.clockFontFamily
-                        font.pixelSize: 124
-                        font.weight: Font.DemiBold
-                        font.letterSpacing: -3.5
+                        font.pixelSize: 112
+                        font.letterSpacing: -0.5
                         color: "#ffffff"
                     }
                 }
@@ -272,9 +276,8 @@ Rectangle {
                     anchors.centerIn: parent
                     text: root.get12HourTime()
                     font.family: root.clockFontFamily
-                    font.pixelSize: 124
-                    font.weight: Font.DemiBold
-                    font.letterSpacing: -3.5
+                    font.pixelSize: 112
+                    font.letterSpacing: -0.5
                     color: Qt.rgba(1, 1, 1, 0.18)
                     style: Text.Raised
                     styleColor: Qt.rgba(0, 0, 0, 0.22)

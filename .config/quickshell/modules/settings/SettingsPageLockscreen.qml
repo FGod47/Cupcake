@@ -29,7 +29,7 @@ Item {
 
     FontLoader {
         id: previewClockFont
-        source: "file://" + Theme.homeDir + "/.local/share/fonts/Nunito.ttf"
+        source: "file://" + Theme.homeDir + "/.local/share/fonts/Orbitron-Black.ttf"
     }
 
     // Read real user name from system
@@ -279,10 +279,9 @@ Item {
                                                 let m = d.getMinutes();
                                                 return h + ":" + (m < 10 ? "0" + m : m);
                                             }
-                                            font.family: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
-                                            font.pixelSize: 56
-                                            font.weight: Font.DemiBold
-                                            font.letterSpacing: -2.0
+                                            font.family: previewClockFont.name || "Orbitron"
+                                            font.pixelSize: 50
+                                            font.letterSpacing: -0.5
                                             color: "#ffffff"
                                         }
                                     }
@@ -297,10 +296,9 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: "Inter Display, Inter, SF Pro Display, -apple-system, sans-serif"
-                                        font.pixelSize: 56
-                                        font.weight: Font.DemiBold
-                                        font.letterSpacing: -2.0
+                                        font.family: previewClockFont.name || "Orbitron"
+                                        font.pixelSize: 50
+                                        font.letterSpacing: -0.5
                                         color: Qt.rgba(1, 1, 1, 0.18)
                                         style: Text.Raised
                                         styleColor: Qt.rgba(0, 0, 0, 0.22)
