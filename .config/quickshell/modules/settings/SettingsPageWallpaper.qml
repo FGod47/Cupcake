@@ -14,6 +14,8 @@ Item {
 
     property string wallDir: Theme.homeDir + "/.config/cupcake/walls"
     property string currentWall: ""
+    property string currentLockWall: ""
+    property bool syncLockscreen: false
     property string fitMode: "Fill"
     property bool perMonitor: false
     property string selectedMonitor: "Global"
@@ -43,7 +45,7 @@ Item {
         }
     }
 
-    // Read current wallpaper from the cache file (set-theme writes here)
+    // Read current desktop wallpaper from cache file
     Process {
         id: wallProcess
         command: ["bash", "-c", "cat ~/.cache/current_wallpaper 2>/dev/null || echo ''"]
@@ -56,18 +58,43 @@ Item {
         }
     }
 
+    // Read current lockscreen wallpaper
+    Process {
+        id: lockWallProcess
+        command: ["bash", "-c", "cat ~/.config/cupcake/.lock_wallpaper_path 2>/dev/null || echo ''"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let p = text.trim();
+                if (p !== "") root.currentLockWall = p;
+            }
+        }
+    }
+
+    // Read sync lockscreen preference
+    Process {
+        command: ["cat", Theme.homeDir + "/.config/cupcake/.sync_lock_wall"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text) root.syncLockscreen = (text.trim() === "true");
+            }
+        }
+    }
+
     // Auto-generate missing thumbnails on page load
     Component.onCompleted: {
         Quickshell.execDetached([Theme.homeDir + "/.local/bin/cupcake-generate-thumbnails"]);
     }
 
-    // Refresh wallpaper path every 5s (only if process isn't already running)
+    // Refresh wallpaper paths periodically
     Timer {
         interval: 5000
         repeat: true
         running: true
         onTriggered: {
             if (!wallProcess.running) wallProcess.running = true;
+            if (!lockWallProcess.running) lockWallProcess.running = true;
         }
     }
 
@@ -244,6 +271,179 @@ Item {
                 }
             }
 
+            // ── Lock screen & SDDM wallpaper ───────────────────────────────
+            NCard {
+                sectionTitle: "Lock screen & SDDM wallpaper"
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.topMargin: 4
+                    Layout.bottomMargin: 16
+                    spacing: 20
+
+                    Rectangle {
+                        width: 180; height: 120; radius: 10
+                        color: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.06)
+                        clip: true
+
+                        Rectangle {
+                            id: lockPreviewMask
+                            anchors.fill: parent
+                            radius: 10
+                            visible: false
+                        }
+
+                        // Lock Wallpaper Thumbnail Preview
+                        Image {
+                            id: lockPreviewImg
+                            anchors.fill: parent
+                            visible: (root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall)) !== ""
+                            source: {
+                                var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
+                                if (wall === "") return "";
+                                var parts = wall.split("/");
+                                var filename = parts[parts.length - 1];
+                                return "file://" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + filename + ".png";
+                            }
+                            sourceSize: Qt.size(360, 240)
+                            fillMode: Image.PreserveAspectCrop
+                            asynchronous: true
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: lockPreviewMask
+                            }
+                            onStatusChanged: {
+                                if (status === Image.Error) {
+                                    var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
+                                    if (wall !== "") source = "file://" + wall;
+                                }
+                            }
+                        }
+
+                        // Lock screen icon badge overlay
+                        Rectangle {
+                            width: 26; height: 26; radius: 13
+                            color: Qt.rgba(0, 0, 0, 0.65)
+                            anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 8
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 14
+                                color: "#ffffff"
+                            }
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            visible: (root.syncLockscreen ? root.currentWall : root.currentLockWall) === ""
+                            text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 32
+                            color: Theme.colOnSurfaceVariant; opacity: 0.3
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        RowLayout {
+                            spacing: 8
+                            Text {
+                                text: {
+                                    var wall = root.syncLockscreen ? root.currentWall : (root.currentLockWall || root.currentWall);
+                                    return wall !== "" ? wall.split("/").pop().replace(/\.[^.]+$/, "") : "Default Theme Wallpaper";
+                                }
+                                color: Theme.colOnSurface; font.family: Theme.monoFontFamily
+                                font.pixelSize: 16; font.weight: Font.Bold
+                                elide: Text.ElideRight; Layout.fillWidth: true
+                            }
+
+                            Rectangle {
+                                width: lockStatusTxt.implicitWidth + 14; height: 20; radius: 10
+                                color: root.syncLockscreen ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.2) : Qt.rgba(Theme.colOnSurfaceVariant.r, Theme.colOnSurfaceVariant.g, Theme.colOnSurfaceVariant.b, 0.2)
+                                border.color: root.syncLockscreen ? Theme.colPrimary : Qt.rgba(Theme.colOnSurfaceVariant.r, Theme.colOnSurfaceVariant.g, Theme.colOnSurfaceVariant.b, 0.4)
+                                border.width: 1
+                                Text {
+                                    id: lockStatusTxt
+                                    anchors.centerIn: parent
+                                    text: root.syncLockscreen ? "SYNCED WITH DESKTOP" : "CUSTOM LOCKSCREEN"
+                                    font.family: Theme.defaultFontFamily
+                                    font.pixelSize: 10
+                                    font.weight: Font.Bold
+                                    color: root.syncLockscreen ? Theme.colPrimary : Theme.colOnSurface
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Applied to SDDM Login & Hyprland Lockscreen (Super + L)"
+                            color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily
+                            font.pixelSize: 12; opacity: 0.8
+                        }
+
+                        RowLayout {
+                            spacing: 20
+                            Layout.topMargin: 4
+
+                            Rectangle {
+                                color: "transparent"
+                                implicitWidth: lockBrowseRow.implicitWidth
+                                implicitHeight: lockBrowseRow.implicitHeight
+                                RowLayout { id: lockBrowseRow; spacing: 6
+                                    Text { text: "\uea7b"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 15 }
+                                    Text { text: "Choose lock wallpaper"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: Quickshell.execDetached(["bash", "-c", "XDG_CURRENT_DESKTOP=gnome zenity --file-selection --file-filter='Supported Media | *.png *.jpg *.jpeg *.webp *.gif *.mp4 *.webm *.mkv *.mov' --file-filter='All Files | *' 2>/dev/null | xargs -I{} bash -c 'echo false > ~/.config/cupcake/.sync_lock_wall; ~/.local/bin/set-lock-wallpaper \"{}\"'"])
+                                }
+                            }
+
+                            Rectangle {
+                                visible: !root.syncLockscreen
+                                color: "transparent"
+                                implicitWidth: syncNowRow.implicitWidth
+                                implicitHeight: syncNowRow.implicitHeight
+                                RowLayout { id: syncNowRow; spacing: 6
+                                    Text { text: "\uea08"; color: Theme.colPrimary; font.family: "tabler-icons"; font.pixelSize: 15 }
+                                    Text { text: "Set to current desktop"; color: Theme.colPrimary; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                }
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (root.currentWall !== "") {
+                                            Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
+                                            root.currentLockWall = root.currentWall;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea08" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Sync with Desktop wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Automatically mirror desktop wallpaper changes to the lockscreen and SDDM"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.syncLockscreen
+                        onToggled: {
+                            root.syncLockscreen = checked;
+                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.sync_lock_wall"]);
+                            if (checked && root.currentWall !== "") {
+                                Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
+                            }
+                        }
+                    }
+                }
+            }
+
             // ── Wallpaper library ──────────────────────────────────────────
             NCard {
                 sectionTitle: "Wallpaper library"
@@ -355,7 +555,7 @@ Item {
                                         }
                                     }
 
-                                    // Active selected check
+                                    // Active selected check (Desktop)
                                     Rectangle {
                                         visible: root.currentWall === filePath
                                         width: 22; height: 22; radius: 11
@@ -395,6 +595,33 @@ Item {
                                             cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 Quickshell.execDetached(["bash", "-c", "rm '" + filePath + "' && rm -f '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + "' '" + Theme.homeDir + "/.cache/cupcake/wall_thumbs/" + fileName + ".png'"])
+                                            }
+                                        }
+                                    }
+
+                                    // Set as Lock Screen Wallpaper button (🔒)
+                                    Rectangle {
+                                        z: 1
+                                        width: 28; height: 28; radius: 14
+                                        anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 7; anchors.leftMargin: 39
+                                        color: (root.currentLockWall === filePath) ? Theme.colPrimary : Qt.rgba(0, 0, 0, 0.65)
+                                        opacity: (parent.hovered || root.currentLockWall === filePath) ? 1 : 0
+                                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "\ueae2"
+                                            color: (root.currentLockWall === filePath) ? Theme.colSurface : "white"
+                                            font.family: "tabler-icons"
+                                            font.pixelSize: 14
+                                        }
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                root.syncLockscreen = false;
+                                                root.currentLockWall = filePath;
+                                                Quickshell.execDetached(["bash", "-c", "echo false > ~/.config/cupcake/.sync_lock_wall; ~/.local/bin/set-lock-wallpaper '" + filePath + "'"]);
                                             }
                                         }
                                     }

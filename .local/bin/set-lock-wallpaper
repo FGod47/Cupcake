@@ -1,0 +1,24 @@
+#!/bin/bash
+WALL="$1"
+if [ -z "$WALL" ] || [ ! -f "$WALL" ]; then
+    echo "Usage: set-lock-wallpaper <path-to-image>"
+    exit 1
+fi
+
+mkdir -p "$HOME/.config/cupcake" "$HOME/.local/share/qylock-themes/cupcake-sddm" "/home/zero/Cupcake/.local/share/qylock-themes/cupcake-sddm"
+
+# Convert/Copy to lockscreen wallpaper location
+if [[ "$WALL" =~ \.(mp4|webm|mkv|mov)$ ]]; then
+    # For video, extract high-res frame
+    ffmpeg -y -ss 00:00:01 -i "$WALL" -vframes 1 "$HOME/.config/cupcake/lock_wallpaper.png" 2>/dev/null \
+        || ffmpeg -y -i "$WALL" -vframes 1 "$HOME/.config/cupcake/lock_wallpaper.png" 2>/dev/null
+else
+    # For image/gif, convert/copy to PNG cleanly
+    python3 -c "from PIL import Image; im = Image.open('$WALL'); im.save('$HOME/.config/cupcake/lock_wallpaper.png', format='PNG')" 2>/dev/null \
+        || cp -f "$WALL" "$HOME/.config/cupcake/lock_wallpaper.png"
+fi
+
+cp -f "$HOME/.config/cupcake/lock_wallpaper.png" "$HOME/.local/share/qylock-themes/cupcake-sddm/background.png" 2>/dev/null || true
+cp -f "$HOME/.config/cupcake/lock_wallpaper.png" "/home/zero/Cupcake/.local/share/qylock-themes/cupcake-sddm/background.png" 2>/dev/null || true
+echo "$WALL" > "$HOME/.config/cupcake/.lock_wallpaper_path"
+echo "Lockscreen wallpaper updated to $WALL"

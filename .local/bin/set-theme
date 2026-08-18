@@ -114,6 +114,15 @@ case "$EXT" in
         ;;
 esac
 
+# Update lockscreen wallpaper if sync is enabled
+SYNC_LOCK="false"
+if [ -f ~/.config/cupcake/.sync_lock_wall ]; then
+    SYNC_LOCK=$(cat ~/.config/cupcake/.sync_lock_wall)
+fi
+if [ "$SYNC_LOCK" = "true" ] && [ -x "$HOME/.local/bin/set-lock-wallpaper" ]; then
+    "$HOME/.local/bin/set-lock-wallpaper" "$WALLPAPER" &
+fi
+
 # Run matugen to generate themes
 # Ensure target directories for templates exist
 mkdir -p ~/.local/state/quickshell/user/generated ~/.cache ~/.config/gtk-3.0 ~/.config/gtk-4.0 ~/.config/kitty ~/.config/hypr
