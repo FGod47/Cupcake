@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Update Lockscreen and SDDM Configuration Script
+# Update Lockscreen and SDDM Configuration Script (No pkexec / No root prompts)
 
 CONF_DIR="$HOME/.config/cupcake"
 SDDM_DIR="$HOME/.local/share/qylock-themes/cupcake-sddm"
@@ -17,6 +17,8 @@ SHOW_SESSION=$(cat "$CONF_DIR/.lock_show_session" 2>/dev/null || echo "true")
 SHOW_POWER=$(cat "$CONF_DIR/.lock_show_power" 2>/dev/null || echo "true")
 SHOW_AVATAR=$(cat "$CONF_DIR/.lock_show_avatar" 2>/dev/null || echo "true")
 USE_24H=$(cat "$CONF_DIR/.clock_24h" 2>/dev/null || echo "false")
+
+mkdir -p "$SDDM_DIR" "$REPO_SDDM_DIR"
 
 cat <<EOF > "$SDDM_DIR/theme.conf"
 [General]
@@ -36,7 +38,10 @@ basicTextColor=#ffffff
 passwordMask=true
 EOF
 
-# Sync to repo and system SDDM
-mkdir -p "$REPO_SDDM_DIR"
+# Sync to local repo copy
 cp -f "$SDDM_DIR/theme.conf" "$REPO_SDDM_DIR/theme.conf" 2>/dev/null || true
-pkexec cp -f "$SDDM_DIR/theme.conf" "$SYS_SDDM_DIR/theme.conf" 2>/dev/null || sudo -n cp -f "$SDDM_DIR/theme.conf" "$SYS_SDDM_DIR/theme.conf" 2>/dev/null || true
+
+# If sys dir has write permissions or non-root, copy silently without prompting
+if [ -w "$SYS_SDDM_DIR/theme.conf" ] || [ -w "$SYS_SDDM_DIR" ]; then
+    cp -f "$SDDM_DIR/theme.conf" "$SYS_SDDM_DIR/theme.conf" 2>/dev/null || true
+fi

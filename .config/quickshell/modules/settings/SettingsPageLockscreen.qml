@@ -47,20 +47,29 @@ Item {
 
     property string activeClockFontFamily: (previewClockFont.name && previewClockFont.name !== "") ? previewClockFont.name : (root.clockFontFile === "Inter Display" ? "Inter Display, Inter, sans-serif" : "Open Sans, sans-serif")
 
+    Timer {
+        id: saveDebounceTimer
+        interval: 150
+        repeat: false
+        onTriggered: {
+            Quickshell.execDetached(["bash", "-c", 
+                "echo '" + root.clockBlurRadius + "' > ~/.config/cupcake/.lock_clock_blur; " +
+                "echo '" + root.bgBlurRadius + "' > ~/.config/cupcake/.lock_bg_blur; " +
+                "echo '" + root.glassSheen + "' > ~/.config/cupcake/.lock_glass_sheen; " +
+                "echo '" + root.clockFontFile + "' > ~/.config/cupcake/.lock_clock_font; " +
+                "echo '" + root.clockFontSize + "' > ~/.config/cupcake/.lock_clock_size; " +
+                "echo '" + (root.showDate ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_date; " +
+                "echo '" + (root.showSession ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_session; " +
+                "echo '" + (root.showPower ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_power; " +
+                "echo '" + (root.showAvatar ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_avatar; " +
+                "echo '" + (root.use24h ? "true" : "false") + "' > ~/.config/cupcake/.clock_24h; " +
+                "~/.config/cupcake/scripts/update-lock-settings.sh"
+            ]);
+        }
+    }
+
     function saveLockSettings() {
-        Quickshell.execDetached(["bash", "-c", 
-            "echo '" + root.clockBlurRadius + "' > ~/.config/cupcake/.lock_clock_blur; " +
-            "echo '" + root.bgBlurRadius + "' > ~/.config/cupcake/.lock_bg_blur; " +
-            "echo '" + root.glassSheen + "' > ~/.config/cupcake/.lock_glass_sheen; " +
-            "echo '" + root.clockFontFile + "' > ~/.config/cupcake/.lock_clock_font; " +
-            "echo '" + root.clockFontSize + "' > ~/.config/cupcake/.lock_clock_size; " +
-            "echo '" + (root.showDate ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_date; " +
-            "echo '" + (root.showSession ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_session; " +
-            "echo '" + (root.showPower ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_power; " +
-            "echo '" + (root.showAvatar ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_avatar; " +
-            "echo '" + (root.use24h ? "true" : "false") + "' > ~/.config/cupcake/.clock_24h; " +
-            "~/.config/cupcake/scripts/update-lock-settings.sh"
-        ]);
+        saveDebounceTimer.restart();
     }
 
     // Read real user name from system
