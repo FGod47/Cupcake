@@ -446,7 +446,6 @@ Item {
                     RailItem { icon: "\ueb0a"; label: "Wallpaper"; pageIndex: 5 }     // photo
                     
                     GroupLabel { label: "Machine" }
-                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }        // info-circle
                     RailItem { icon: "\uea37"; label: "Bluetooth"; pageIndex: 22 }    // bluetooth
                     RailItem { icon: "\uea89"; label: "Displays"; pageIndex: 18 }     // device-desktop
                     RailItem { icon: "\ueb52"; label: "Network"; pageIndex: 17 }      // wifi
@@ -454,6 +453,7 @@ Item {
                     RailItem { icon: "\ueb51"; label: "Sound"; pageIndex: 7 }         // volume
                     RailItem { icon: "\uef8e"; label: "System"; pageIndex: 10 }       // cpu
                     RailItem { icon: "\ueb1d"; label: "Updates"; pageIndex: 11 }      // download
+                    RailItem { icon: "\ueac5"; label: "About"; pageIndex: 21 }        // info-circle
                     
                     Item { Layout.fillHeight: true } // spacer
                     
