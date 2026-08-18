@@ -1,25 +1,5 @@
 #!/usr/bin/env bash
-# Cupcake Clean Session Logout Script for Hyprland + SDDM
+# Cupcake Clean Session Logout Script for Hyprland
 
-# 1. Cleanly terminate user session background processes
-killall -9 quickshell awww-daemon mpvpaper hyprsunset cliphist wl-paste nm-applet udiskie 2>/dev/null || true
-
-# 2. Terminate active logind sessions for current user
-if [ -n "$XDG_SESSION_ID" ]; then
-    loginctl terminate-session "$XDG_SESSION_ID" 2>/dev/null || true
-fi
-
-# Query any remaining sessions for this user
-SESSIONS=$(loginctl list-sessions --no-legend 2>/dev/null | grep "$USER" | awk '{print $1}')
-for s in $SESSIONS; do
-    loginctl terminate-session "$s" 2>/dev/null || true
-done
-
-# 3. Dispatch Hyprland exit
-hyprctl dispatch exit 2>/dev/null || true
-
-# 4. Final fallback: Terminate logind user session scope
-loginctl terminate-user "$USER" 2>/dev/null || true
-
-# 5. Kill any lingering Hyprland instance
-killall -9 Hyprland 2>/dev/null || true
+# Dispatch Hyprland exit cleanly
+hyprctl dispatch exit
