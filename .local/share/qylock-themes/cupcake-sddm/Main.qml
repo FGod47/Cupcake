@@ -10,9 +10,19 @@ Rectangle {
     color: "#121214"
     focus: true
 
+    property int cfgClockBlurRadius: (config && config.clockBlurRadius !== undefined && config.clockBlurRadius !== "") ? parseInt(config.clockBlurRadius) : 48
+    property int cfgBgBlurRadius: (config && config.blurRadius !== undefined && config.blurRadius !== "") ? parseInt(config.blurRadius) : 42
+    property real cfgGlassSheen: (config && config.glassSheen !== undefined && config.glassSheen !== "") ? (parseFloat(config.glassSheen) / 100.0) : 0.48
+    property int cfgClockFontSize: (config && config.clockFontSize !== undefined && config.clockFontSize !== "") ? parseInt(config.clockFontSize) : 124
+    property bool cfgShowDate: (config && config.showDate !== undefined) ? (config.showDate === "true" || config.showDate === true) : true
+    property bool cfgShowSession: (config && config.showSession !== undefined) ? (config.showSession === "true" || config.showSession === true) : true
+    property bool cfgShowPower: (config && config.showPower !== undefined) ? (config.showPower === "true" || config.showPower === true) : true
+    property bool cfgShowAvatar: (config && config.showAvatar !== undefined) ? (config.showAvatar === "true" || config.showAvatar === true) : true
+    property bool cfgTime24h: (config && config.timeFormat24h !== undefined) ? (config.timeFormat24h === "true" || config.timeFormat24h === true) : false
+
     FontLoader {
         id: astronautClockFont
-        source: "fonts/OpenSans.ttf"
+        source: "fonts/" + ((config && config.clockFont && config.clockFont !== "") ? config.clockFont : "OpenSans.ttf")
     }
 
     property string fontName: "Open Sans, Inter, sans-serif"
@@ -94,7 +104,7 @@ Rectangle {
             id: bgBlur
             anchors.fill: bgImage
             source: bgImage
-            radius: root.isLoginPromptVisible ? 42 : 0
+            radius: root.isLoginPromptVisible ? root.cfgBgBlurRadius : 0
             cached: true
             Behavior on radius { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         }
@@ -127,6 +137,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 36
         spacing: 12
+        visible: root.cfgShowSession
 
         // Frosted Glass Session Pill (e.g. Hyprland)
         Item {
@@ -208,13 +219,19 @@ Rectangle {
         }
     }
 
-    function get12HourTime() {
+    function getDisplayTime() {
         let d = new Date();
-        let hours = d.getHours();
-        let minutes = d.getMinutes();
-        let h12 = hours % 12 || 12;
-        let mStr = minutes < 10 ? ("0" + minutes) : minutes;
-        return h12 + ":" + mStr;
+        if (root.cfgTime24h) {
+            let h = d.getHours();
+            let m = d.getMinutes();
+            return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
+        } else {
+            let hours = d.getHours();
+            let minutes = d.getMinutes();
+            let h12 = hours % 12 || 12;
+            let mStr = minutes < 10 ? ("0" + minutes) : minutes;
+            return h12 + ":" + mStr;
+        }
     }
 
     // ── 4. LOCKSCREEN DATE & CLOCK ──────────────────────────────────────
@@ -238,6 +255,7 @@ Rectangle {
             // True Frosted Glass Blurred Date ("Thu May 7")
             Item {
                 id: glassDateContainer
+                visible: root.cfgShowDate
                 width: dateMaskText.implicitWidth
                 height: dateMaskText.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -259,7 +277,7 @@ Rectangle {
 
                         layer.enabled: true
                         layer.effect: FastBlur {
-                            radius: 36
+                            radius: root.cfgClockBlurRadius
                             cached: true
                         }
                     }
@@ -269,9 +287,9 @@ Rectangle {
                         anchors.fill: parent
                         gradient: Gradient {
                             orientation: Gradient.Vertical
-                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.55) }
-                            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
-                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
+                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 1.1) }
+                            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.45) }
+                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.75) }
                         }
                     }
                 }
@@ -282,7 +300,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Qt.formatDate(new Date(), "ddd MMM d")
                     font.family: root.clockFontFamily
-                    font.pixelSize: 24
+                    font.pixelSize: Math.round(root.cfgClockFontSize * 0.20)
                     font.weight: Font.DemiBold
                     font.letterSpacing: 0.5
                     color: "#ffffff"
@@ -295,7 +313,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Qt.formatDate(new Date(), "ddd MMM d")
                     font.family: root.clockFontFamily
-                    font.pixelSize: 24
+                    font.pixelSize: Math.round(root.cfgClockFontSize * 0.20)
                     font.weight: Font.DemiBold
                     font.letterSpacing: 0.5
                     color: Qt.rgba(1, 1, 1, 0.15)
@@ -327,7 +345,7 @@ Rectangle {
 
                         layer.enabled: true
                         layer.effect: FastBlur {
-                            radius: 48
+                            radius: root.cfgClockBlurRadius
                             cached: true
                         }
                     }
@@ -337,10 +355,10 @@ Rectangle {
                         anchors.fill: parent
                         gradient: Gradient {
                             orientation: Gradient.Vertical
-                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.48) }
-                            GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, 0.18) }
-                            GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, 0.12) }
-                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.32) }
+                            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen) }
+                            GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.38) }
+                            GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.25) }
+                            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, root.cfgGlassSheen * 0.65) }
                         }
                     }
                 }
@@ -349,9 +367,9 @@ Rectangle {
                 Text {
                     id: timeMaskText
                     anchors.centerIn: parent
-                    text: root.get12HourTime()
+                    text: root.getDisplayTime()
                     font.family: root.clockFontFamily
-                    font.pixelSize: 124
+                    font.pixelSize: root.cfgClockFontSize
                     font.weight: Font.Bold
                     font.letterSpacing: -2.0
                     color: "#ffffff"
@@ -362,9 +380,9 @@ Rectangle {
                 Text {
                     id: timeLabel
                     anchors.centerIn: parent
-                    text: root.get12HourTime()
+                    text: root.getDisplayTime()
                     font.family: root.clockFontFamily
-                    font.pixelSize: 124
+                    font.pixelSize: root.cfgClockFontSize
                     font.weight: Font.Bold
                     font.letterSpacing: -2.0
                     color: Qt.rgba(1, 1, 1, 0.12)
@@ -394,6 +412,7 @@ Rectangle {
             // User Avatar
             Rectangle {
                 id: avatarCircle
+                visible: root.cfgShowAvatar
                 width: 58
                 height: 58
                 radius: 29
@@ -664,12 +683,14 @@ Rectangle {
 
     // ── 6. BOTTOM RIGHT POWER CONTROLS ───────────────────────────────────
     Row {
+        id: powerControlsRow
         z: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 28
         anchors.right: parent.right
         anchors.rightMargin: 36
         spacing: 12
+        visible: root.cfgShowPower
 
         // Frosted Glass Reboot Button
         Item {
@@ -802,7 +823,7 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
-            var t = get12HourTime();
+            var t = getDisplayTime();
             var d = Qt.formatDate(new Date(), "ddd MMM d");
             timeLabel.text = t;
             timeMaskText.text = t;

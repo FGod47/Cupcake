@@ -15,21 +15,52 @@ Item {
     property color cAccent: Theme.colPrimary
     property color cBgElevated: Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
 
+    // Wallpaper & Session state
     property string currentWall: ""
     property string currentLockWall: ""
     property bool syncLockscreen: true
     property bool use24h: false
-    property bool showSeconds: false
     property bool isPreviewUnlocked: false
     property bool lockOnSleep: true
-    property bool blurLockScreen: true
-    property string idleTimeout: "10 minutes"
-    property string lockTheme: "cupcake-sddm"
     property string currentRealName: "Zero"
+
+    // Live Adjustable Blur & Glass properties
+    property int clockBlurRadius: 48
+    property int bgBlurRadius: 42
+    property int glassSheen: 48
+
+    // Typography & Component Customization
+    property string clockFontFile: "OpenSans.ttf"
+    property int clockFontSize: 124
+    property bool showDate: true
+    property bool showSession: true
+    property bool showPower: true
+    property bool showAvatar: true
 
     FontLoader {
         id: previewClockFont
-        source: "file://" + Theme.homeDir + "/.local/share/fonts/OpenSans.ttf"
+        source: {
+            if (root.clockFontFile === "Inter Display" || root.clockFontFile === "Inter" || root.clockFontFile === "SF Pro Display") return "";
+            return "file://" + Theme.homeDir + "/.local/share/fonts/" + root.clockFontFile;
+        }
+    }
+
+    property string activeClockFontFamily: (previewClockFont.name && previewClockFont.name !== "") ? previewClockFont.name : (root.clockFontFile === "Inter Display" ? "Inter Display, Inter, sans-serif" : "Open Sans, sans-serif")
+
+    function saveLockSettings() {
+        Quickshell.execDetached(["bash", "-c", 
+            "echo '" + root.clockBlurRadius + "' > ~/.config/cupcake/.lock_clock_blur; " +
+            "echo '" + root.bgBlurRadius + "' > ~/.config/cupcake/.lock_bg_blur; " +
+            "echo '" + root.glassSheen + "' > ~/.config/cupcake/.lock_glass_sheen; " +
+            "echo '" + root.clockFontFile + "' > ~/.config/cupcake/.lock_clock_font; " +
+            "echo '" + root.clockFontSize + "' > ~/.config/cupcake/.lock_clock_size; " +
+            "echo '" + (root.showDate ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_date; " +
+            "echo '" + (root.showSession ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_session; " +
+            "echo '" + (root.showPower ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_power; " +
+            "echo '" + (root.showAvatar ? "true" : "false") + "' > ~/.config/cupcake/.lock_show_avatar; " +
+            "echo '" + (root.use24h ? "true" : "false") + "' > ~/.config/cupcake/.clock_24h; " +
+            "~/.config/cupcake/scripts/update-lock-settings.sh"
+        ]);
     }
 
     // Read real user name from system
@@ -43,13 +74,37 @@ Item {
         }
     }
 
-    // Read blur lockscreen preference
+    // Read saved configuration state
     Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.blur_lockscreen"]
+        id: initLockSettings
+        command: ["bash", "-c", 
+            "cat ~/.config/cupcake/.lock_clock_blur 2>/dev/null || echo '48'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_bg_blur 2>/dev/null || echo '42'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_glass_sheen 2>/dev/null || echo '48'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_clock_font 2>/dev/null || echo 'OpenSans.ttf'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_clock_size 2>/dev/null || echo '124'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_show_date 2>/dev/null || echo 'true'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_show_session 2>/dev/null || echo 'true'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_show_power 2>/dev/null || echo 'true'; echo '---'; " +
+            "cat ~/.config/cupcake/.lock_show_avatar 2>/dev/null || echo 'true'; echo '---'; " +
+            "cat ~/.config/cupcake/.clock_24h 2>/dev/null || echo 'false'"
+        ]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
-                if (text) root.blurLockScreen = (text.trim() === "true");
+                if (text) {
+                    let parts = text.trim().split('---');
+                    if (parts[0] && parts[0].trim() !== "") root.clockBlurRadius = parseInt(parts[0].trim()) || 48;
+                    if (parts[1] && parts[1].trim() !== "") root.bgBlurRadius = parseInt(parts[1].trim()) || 42;
+                    if (parts[2] && parts[2].trim() !== "") root.glassSheen = parseInt(parts[2].trim()) || 48;
+                    if (parts[3] && parts[3].trim() !== "") root.clockFontFile = parts[3].trim();
+                    if (parts[4] && parts[4].trim() !== "") root.clockFontSize = parseInt(parts[4].trim()) || 124;
+                    if (parts[5] && parts[5].trim() !== "") root.showDate = (parts[5].trim() !== "false");
+                    if (parts[6] && parts[6].trim() !== "") root.showSession = (parts[6].trim() !== "false");
+                    if (parts[7] && parts[7].trim() !== "") root.showPower = (parts[7].trim() !== "false");
+                    if (parts[8] && parts[8].trim() !== "") root.showAvatar = (parts[8].trim() !== "false");
+                    if (parts[9] && parts[9].trim() !== "") root.use24h = (parts[9].trim() === "true");
+                }
             }
         }
     }
@@ -91,18 +146,7 @@ Item {
         }
     }
 
-    // Read clock 24h preference
-    Process {
-        command: ["cat", Theme.homeDir + "/.config/cupcake/.clock_24h"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text) root.use24h = (text.trim() === "true");
-            }
-        }
-    }
-
-    // Refresh every 5s
+    // Refresh wallpaper every 5s
     Timer {
         interval: 5000
         repeat: true
@@ -127,9 +171,9 @@ Item {
             width: parent.width
             spacing: 20
 
-            // ── 1. HERO SHOWCASE: LIVE LOCKSCREEN PREVIEW ──────────────────
+            // ── 1. HERO SHOWCASE: LIVE LOCKSCREEN & SDDM PREVIEW ─────────
             NCard {
-                sectionTitle: "Lock screen & SDDM Greeter"
+                sectionTitle: "Live interactive preview"
 
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -138,7 +182,7 @@ Item {
                     // Live Interactive Stage
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 300
+                        Layout.preferredHeight: 310
                         radius: 14
                         color: "#0a0a0c"
                         border.width: 1
@@ -180,11 +224,11 @@ Item {
                                 }
                             }
 
-                            // Dynamic Blur on Wallpaper
+                            // Dynamic Blur on Wallpaper (Uses root.bgBlurRadius)
                             FastBlur {
                                 anchors.fill: heroLockWallImg
                                 source: heroLockWallImg
-                                radius: root.isPreviewUnlocked ? 28 : 0
+                                radius: root.isPreviewUnlocked ? (root.bgBlurRadius * 0.7) : 0
                                 cached: true
                                 Behavior on radius { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
                             }
@@ -208,7 +252,7 @@ Item {
                                 }
                             }
 
-                            // iOS Style Frosted Glassy Lockscreen Clock & Date
+                            // Frosted Glass Lockscreen Clock & Date
                             Column {
                                 id: prevClockCol
                                 anchors.top: parent.top
@@ -217,8 +261,10 @@ Item {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 spacing: 2
 
+                                // Frosted Date
                                 Item {
                                     id: prevGlassDate
+                                    visible: root.showDate
                                     width: prevDateMaskText.implicitWidth
                                     height: prevDateMaskText.implicitHeight
                                     anchors.horizontalCenter: parent.horizontalCenter
@@ -239,7 +285,7 @@ Item {
 
                                             layer.enabled: true
                                             layer.effect: FastBlur {
-                                                radius: 24
+                                                radius: Math.max(8, Math.round(root.clockBlurRadius * 0.5))
                                                 cached: true
                                             }
                                         }
@@ -248,9 +294,9 @@ Item {
                                             anchors.fill: parent
                                             gradient: Gradient {
                                                 orientation: Gradient.Vertical
-                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.55) }
-                                                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 0.22) }
-                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.38) }
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 1.1) }
+                                                GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.45) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.75) }
                                             }
                                         }
                                     }
@@ -259,8 +305,8 @@ Item {
                                         id: prevDateMaskText
                                         anchors.centerIn: parent
                                         text: Qt.formatDate(new Date(), "ddd MMM d")
-                                        font.family: previewClockFont.name || "Open Sans"
-                                        font.pixelSize: 13
+                                        font.family: root.activeClockFontFamily
+                                        font.pixelSize: Math.max(10, Math.round(root.clockFontSize * 0.11))
                                         font.weight: Font.DemiBold
                                         font.letterSpacing: 0.5
                                         color: "#ffffff"
@@ -271,14 +317,15 @@ Item {
                                         id: prevDateLabel
                                         anchors.centerIn: parent
                                         text: Qt.formatDate(new Date(), "ddd MMM d")
-                                        font.family: previewClockFont.name || "Open Sans"
-                                        font.pixelSize: 13
+                                        font.family: root.activeClockFontFamily
+                                        font.pixelSize: Math.max(10, Math.round(root.clockFontSize * 0.11))
                                         font.weight: Font.DemiBold
                                         font.letterSpacing: 0.5
                                         color: Qt.rgba(1, 1, 1, 0.15)
                                     }
                                 }
 
+                                // Frosted Clock Digits
                                 Item {
                                     id: prevGlassClock
                                     width: prevTimeMaskText.implicitWidth
@@ -301,7 +348,7 @@ Item {
 
                                             layer.enabled: true
                                             layer.effect: FastBlur {
-                                                radius: 32
+                                                radius: Math.max(10, Math.round(root.clockBlurRadius * 0.65))
                                                 cached: true
                                             }
                                         }
@@ -310,10 +357,10 @@ Item {
                                             anchors.fill: parent
                                             gradient: Gradient {
                                                 orientation: Gradient.Vertical
-                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.48) }
-                                                GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, 0.18) }
-                                                GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, 0.12) }
-                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.32) }
+                                                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0)) }
+                                                GradientStop { position: 0.4; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.38) }
+                                                GradientStop { position: 0.8; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.25) }
+                                                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, (root.glassSheen / 100.0) * 0.65) }
                                             }
                                         }
                                     }
@@ -328,8 +375,8 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: previewClockFont.name || "Open Sans"
-                                        font.pixelSize: 54
+                                        font.family: root.activeClockFontFamily
+                                        font.pixelSize: Math.round(root.clockFontSize * 0.45)
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.2
                                         color: "#ffffff"
@@ -346,8 +393,8 @@ Item {
                                             let m = d.getMinutes();
                                             return h + ":" + (m < 10 ? "0" + m : m);
                                         }
-                                        font.family: previewClockFont.name || "Open Sans"
-                                        font.pixelSize: 54
+                                        font.family: root.activeClockFontFamily
+                                        font.pixelSize: Math.round(root.clockFontSize * 0.45)
                                         font.weight: Font.Bold
                                         font.letterSpacing: -1.2
                                         color: Qt.rgba(1, 1, 1, 0.12)
@@ -366,6 +413,7 @@ Item {
 
                                 Rectangle {
                                     id: prevAvatarCircle
+                                    visible: root.showAvatar
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     width: root.isPreviewUnlocked ? 34 : 38
                                     height: width
@@ -489,13 +537,14 @@ Item {
                                     RowLayout {
                                         id: sddmBadgeRow; anchors.centerIn: parent; spacing: 4
                                         Text { text: "\ueae2"; font.family: "tabler-icons"; font.pixelSize: 10; color: Theme.colPrimary }
-                                        Text { text: "SDDM"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
+                                        Text { text: "SDDM & LOCK"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; font.weight: Font.Bold; color: "#ffffff" }
                                     }
                                 }
                             }
 
                             // Top Right: Frosted Glass Session Pill
                             Rectangle {
+                                visible: root.showSession
                                 anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 12
                                 height: 20; radius: 10
                                 width: prevSessionRow.implicitWidth + 14
@@ -510,6 +559,7 @@ Item {
 
                             // Bottom Right: Frosted Glass Power Buttons
                             Row {
+                                visible: root.showPower
                                 anchors.bottom: parent.bottom; anchors.right: parent.right; anchors.margins: 12
                                 spacing: 6
 
@@ -598,38 +648,224 @@ Item {
                 }
             }
 
-            // ── 2. WALLPAPER & SYNC OPTIONS ────────────────────────────────
+            // ── 2. FROSTED GLASS & BLUR CUSTOMIZATION ─────────────────────
             NCard {
-                sectionTitle: "Wallpaper synchronization"
+                sectionTitle: "Frosted glass & blur effects"
 
+                // Clock Frosted Blur Radius
                 NRow {
                     RowLayout {
                         spacing: 12
-                        NIconBadge { icon: "\uea08" }
+                        NIconBadge { icon: "\ueb04" }
                         ColumnLayout {
                             spacing: 1
-                            Text { text: "Mirror desktop wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Automatically update SDDM and lockscreen whenever desktop wallpaper changes"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            Text { text: "Clock & date backdrop blur"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Controls the optical blur radius behind the clock and date characters (" + root.clockBlurRadius + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
                         }
                     }
                     Item { Layout.fillWidth: true }
-                    NToggle {
-                        checked: root.syncLockscreen
-                        onToggled: {
-                            root.syncLockscreen = checked;
-                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.sync_lock_wall"]);
-                            if (checked && root.currentWall !== "") {
-                                Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
-                            }
+                    StyledSlider {
+                        implicitWidth: 160
+                        from: 0
+                        to: 64
+                        stepSize: 2
+                        value: root.clockBlurRadius
+                        onMoved: {
+                            root.clockBlurRadius = Math.round(value);
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Wallpaper Blur on Unlock
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb29" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Wallpaper blur on unlock prompt"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Smooth depth-of-field blur applied to the wallpaper when sliding up (" + root.bgBlurRadius + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSlider {
+                        implicitWidth: 160
+                        from: 0
+                        to: 80
+                        stepSize: 2
+                        value: root.bgBlurRadius
+                        onMoved: {
+                            root.bgBlurRadius = Math.round(value);
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Glass Sheen & Reflection
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea6d" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Glass reflection intensity"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Adjusts the specular gradient sheen and glassy opacity (" + root.glassSheen + "%)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSlider {
+                        implicitWidth: 160
+                        from: 10
+                        to: 90
+                        stepSize: 2
+                        value: root.glassSheen
+                        onMoved: {
+                            root.glassSheen = Math.round(value);
+                            root.saveLockSettings();
                         }
                     }
                 }
             }
 
-            // ── 3. CLOCK & DISPLAY OPTIONS ─────────────────────────────────
+            // ── 3. TYPOGRAPHY & CLOCK STYLE ───────────────────────────────
             NCard {
-                sectionTitle: "Clock & typography"
+                sectionTitle: "Typography & clock style"
 
+                // Clock Font Family Selector
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    NRow {
+                        RowLayout {
+                            spacing: 12
+                            NIconBadge { icon: "\ueaf4" }
+                            ColumnLayout {
+                                spacing: 1
+                                Text { text: "Clock font preset"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                                Text { text: "Choose from authentic astronaut themes and modern clean sans typefaces"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                            }
+                        }
+                    }
+
+                    // Font Preset Cards Grid
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 10
+
+                        // 1. Open Sans (Astronaut Theme)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 48; radius: 10
+                            color: root.clockFontFile === "OpenSans.ttf" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            border.width: 1.5
+                            border.color: root.clockFontFile === "OpenSans.ttf" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            ColumnLayout {
+                                anchors.centerIn: parent; spacing: 2
+                                Text { text: "Open Sans"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile === "OpenSans.ttf" ? Theme.colPrimary : Theme.colOnSurface }
+                                Text { text: "Astronaut Default"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.clockFontFile = "OpenSans.ttf";
+                                    root.saveLockSettings();
+                                }
+                            }
+                        }
+
+                        // 2. Orbitron (Astronaut Sci-Fi)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 48; radius: 10
+                            color: root.clockFontFile === "Orbitron-Black.ttf" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            border.width: 1.5
+                            border.color: root.clockFontFile === "Orbitron-Black.ttf" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            ColumnLayout {
+                                anchors.centerIn: parent; spacing: 2
+                                Text { text: "Orbitron"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile === "Orbitron-Black.ttf" ? Theme.colPrimary : Theme.colOnSurface }
+                                Text { text: "Sci-Fi Cyber"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.clockFontFile = "Orbitron-Black.ttf";
+                                    root.saveLockSettings();
+                                }
+                            }
+                        }
+
+                        // 3. Inter Display (Modern Swiss)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 48; radius: 10
+                            color: root.clockFontFile === "Inter Display" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            border.width: 1.5
+                            border.color: root.clockFontFile === "Inter Display" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            ColumnLayout {
+                                anchors.centerIn: parent; spacing: 2
+                                Text { text: "Inter Display"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile === "Inter Display" ? Theme.colPrimary : Theme.colOnSurface }
+                                Text { text: "Clean Swiss"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.clockFontFile = "Inter Display";
+                                    root.saveLockSettings();
+                                }
+                            }
+                        }
+
+                        // 4. Pixelon (Retro Arcade)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 48; radius: 10
+                            color: root.clockFontFile === "pixelon.regular.ttf" ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.18) : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.05)
+                            border.width: 1.5
+                            border.color: root.clockFontFile === "pixelon.regular.ttf" ? Theme.colPrimary : Qt.rgba(Theme.colOnSurface.r, Theme.colOnSurface.g, Theme.colOnSurface.b, 0.12)
+                            ColumnLayout {
+                                anchors.centerIn: parent; spacing: 2
+                                Text { text: "Pixelon"; font.family: Theme.defaultFontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: root.clockFontFile === "pixelon.regular.ttf" ? Theme.colPrimary : Theme.colOnSurface }
+                                Text { text: "8-Bit Retro"; font.family: Theme.defaultFontFamily; font.pixelSize: 9; color: Theme.colOnSurfaceVariant; opacity: 0.8 }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.clockFontFile = "pixelon.regular.ttf";
+                                    root.saveLockSettings();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Clock Font Size
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueaf4" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Clock font size"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display scale for lockscreen clock numbers (" + root.clockFontSize + "px)"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    StyledSlider {
+                        implicitWidth: 160
+                        from: 80
+                        to: 160
+                        stepSize: 4
+                        value: root.clockFontSize
+                        onMoved: {
+                            root.clockFontSize = Math.round(value);
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Time Format 12h / 24h
                 NRow {
                     RowLayout {
                         spacing: 12
@@ -658,7 +894,7 @@ Item {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         root.use24h = false;
-                                        Quickshell.execDetached(["bash", "-c", "echo false > ~/.config/cupcake/.clock_24h"]);
+                                        root.saveLockSettings();
                                     }
                                 }
                             }
@@ -670,18 +906,130 @@ Item {
                                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         root.use24h = true;
-                                        Quickshell.execDetached(["bash", "-c", "echo true > ~/.config/cupcake/.clock_24h"]);
+                                        root.saveLockSettings();
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                // Show Date & Month
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea53" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Show date & day"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display frosted date header above clock digits"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.showDate
+                        onToggled: {
+                            root.showDate = checked;
+                            root.saveLockSettings();
+                        }
+                    }
+                }
             }
 
-            // ── 4. SECURITY & SESSION LOCK ─────────────────────────────────
+            // ── 4. SDDM & LOCKSCREEN COMPONENT TOGGLES ────────────────────
             NCard {
-                sectionTitle: "Security & auto-lock"
+                sectionTitle: "Component customization"
+
+                // Show Session Switcher
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb2b" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Session switcher pill"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show top-right frosted glass capsule with desktop session selection"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.showSession
+                        onToggled: {
+                            root.showSession = checked;
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Show Power Controls
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb0d" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Power & reboot buttons"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Display bottom-right frosted glass restart and shutdown action discs"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.showPower
+                        onToggled: {
+                            root.showPower = checked;
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+
+                // Show User Avatar
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb4d" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "User profile avatar"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Show user profile picture in frosted glass circular ring"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.showAvatar
+                        onToggled: {
+                            root.showAvatar = checked;
+                            root.saveLockSettings();
+                        }
+                    }
+                }
+            }
+
+            // ── 5. WALLPAPER & AUTO-LOCK ──────────────────────────────────
+            NCard {
+                sectionTitle: "Wallpaper synchronization & security"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\uea08" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Mirror desktop wallpaper"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Automatically update SDDM and lockscreen whenever desktop wallpaper changes"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    NToggle {
+                        checked: root.syncLockscreen
+                        onToggled: {
+                            root.syncLockscreen = checked;
+                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.sync_lock_wall"]);
+                            if (checked && root.currentWall !== "") {
+                                Quickshell.execDetached([Theme.homeDir + "/.local/bin/set-lock-wallpaper", root.currentWall]);
+                            }
+                        }
+                    }
+                }
 
                 NRow {
                     RowLayout {
@@ -697,26 +1045,6 @@ Item {
                     NToggle {
                         checked: root.lockOnSleep
                         onToggled: root.lockOnSleep = checked
-                    }
-                }
-
-                NRow {
-                    RowLayout {
-                        spacing: 12
-                        NIconBadge { icon: "\ueb04" }
-                        ColumnLayout {
-                            spacing: 1
-                            Text { text: "Blur on lock screen"; color: Theme.colOnSurface; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
-                            Text { text: "Apply a frosted blur effect behind the lockscreen interface"; color: Theme.colOnSurfaceVariant; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
-                        }
-                    }
-                    Item { Layout.fillWidth: true }
-                    NToggle {
-                        checked: root.blurLockScreen
-                        onToggled: {
-                            root.blurLockScreen = checked;
-                            Quickshell.execDetached(["bash", "-c", "echo " + (checked ? "true" : "false") + " > ~/.config/cupcake/.blur_lockscreen"]);
-                        }
                     }
                 }
 
