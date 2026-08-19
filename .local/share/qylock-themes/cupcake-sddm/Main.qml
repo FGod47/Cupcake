@@ -21,6 +21,7 @@ Rectangle {
     property bool cfgShowAvatar: (config && config.showAvatar !== undefined) ? (config.showAvatar === "true" || config.showAvatar === true) : true
     property bool cfgShowNotifications: (config && config.showNotifications !== undefined) ? (config.showNotifications === "true" || config.showNotifications === true) : true
     property bool cfgTime24h: (config && config.timeFormat24h !== undefined) ? (config.timeFormat24h === "true" || config.timeFormat24h === true) : false
+    property var notificationModel: (typeof sddmShim !== "undefined" && sddmShim.notificationModel) ? sddmShim.notificationModel : null
 
     FontLoader {
         id: astronautClockFont
@@ -402,26 +403,27 @@ Rectangle {
         id: userLoginSection
         z: 8
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.isLoginPromptVisible ? (parent.height * 0.12) : (parent.height * 0.065)
+        anchors.bottomMargin: root.isLoginPromptVisible ? (parent.height * 0.12) : (parent.height * 0.055)
         Behavior on anchors.bottomMargin { NumberAnimation { duration: 380; easing.type: Easing.OutCubic } }
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: parent.width * 0.02
-        width: 260
-        height: 150
+        width: 340
+        height: loginColumn.implicitHeight
 
         Column {
             id: loginColumn
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 12
+            spacing: 10
             width: parent.width
 
             // ── Frosted Glass Notifications Pod (Above Avatar) ──
             Item {
                 id: notifPodContainer
-                visible: root.cfgShowNotifications && (typeof notificationModel !== "undefined" && notificationModel && notificationModel.count > 0) && !root.isLoginPromptVisible
+                visible: root.cfgShowNotifications && (notificationModel !== null && notificationModel !== undefined && notificationModel.count > 0)
+                opacity: (!root.isLoginPromptVisible && visible) ? 1.0 : 0.0
                 width: 320
-                height: visible ? (Math.min(notificationModel.count, 2) * 58 + ((Math.min(notificationModel.count, 2) - 1) * 6)) : 0
+                height: (visible && notificationModel && notificationModel.count > 0) ? (Math.min(notificationModel.count, 2) * 58 + ((Math.min(notificationModel.count, 2) - 1) * 6)) : 0
                 anchors.horizontalCenter: parent.horizontalCenter
                 Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                 Behavior on opacity { NumberAnimation { duration: 250 } }
@@ -432,11 +434,13 @@ Rectangle {
                     spacing: 6
 
                     Repeater {
-                        model: (typeof notificationModel !== "undefined" && notificationModel) ? Math.min(notificationModel.count, 2) : 0
+                        model: (notificationModel && notificationModel.count > 0) ? Math.min(notificationModel.count, 2) : 0
                         delegate: Item {
                             id: notifItem
                             width: notifPodContainer.width
                             height: 58
+
+                            property var notifData: (notificationModel && typeof notificationModel.get === "function") ? notificationModel.get(index) : null
 
                             // 1. Frosted Glass Blurred Layer
                             Item {
@@ -510,7 +514,7 @@ Rectangle {
                                     RowLayout {
                                         Layout.fillWidth: true
                                         Text {
-                                            text: (notificationModel && notificationModel.get(index)) ? (notificationModel.get(index).summary || notificationModel.get(index).appName || "Notification") : "Notification"
+                                            text: notifData ? (notifData.summary || notifData.appName || "Notification") : "Notification"
                                             font.family: root.fontName
                                             font.pixelSize: 12
                                             font.weight: Font.Bold
@@ -519,7 +523,7 @@ Rectangle {
                                             Layout.fillWidth: true
                                         }
                                         Text {
-                                            text: (notificationModel && notificationModel.get(index) && notificationModel.get(index).timeStr) ? notificationModel.get(index).timeStr : "now"
+                                            text: notifData ? (notifData.timeStr || "now") : "now"
                                             font.family: root.fontName
                                             font.pixelSize: 10
                                             color: Qt.rgba(1, 1, 1, 0.65)
@@ -527,7 +531,7 @@ Rectangle {
                                     }
 
                                     Text {
-                                        text: (notificationModel && notificationModel.get(index)) ? (notificationModel.get(index).body || "") : ""
+                                        text: notifData ? (notifData.body || "") : ""
                                         font.family: root.fontName
                                         font.pixelSize: 11
                                         color: Qt.rgba(1, 1, 1, 0.85)
