@@ -480,8 +480,26 @@ ShellRoot {
                 } else {
                     globalState.popups = [notif].concat(globalState.popups.filter(p => p !== notif));
                 }
+                syncLockscreenNotifications();
             }
         }
+    }
+
+    function syncLockscreenNotifications() {
+        let notifs = [];
+        for (let i = 0; i < Math.min(globalState.popups.length, 5); i++) {
+            let p = globalState.popups[i];
+            if (p) {
+                notifs.push({
+                    summary: (p.summary || "").trim(),
+                    body: (p.body || "").trim(),
+                    appName: (p.appName || "Notification").trim(),
+                    timeStr: Qt.formatTime(new Date(), "hh:mm")
+                });
+            }
+        }
+        let jsonStr = JSON.stringify(notifs).replace(/'/g, "'\\''");
+        Quickshell.execDetached(["bash", "-c", "mkdir -p ~/.cache/cupcake && echo '" + jsonStr + "' > ~/.cache/cupcake/active_notifications.json"]);
     }
 
     // ── Clipboard Notification Watcher ──
