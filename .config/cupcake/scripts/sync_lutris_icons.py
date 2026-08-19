@@ -54,26 +54,22 @@ def sync_icons():
                 break
 
         if source_img:
-            # Check if target already exists and is newer than source
-            if target_128.exists() and target_128.stat().st_mtime >= source_img.stat().st_mtime:
-                continue
-
             for d in [HOME / ".local/share/icons/hicolor/256x256/apps", HOME / ".local/share/icons/hicolor/128x128/apps"]:
                 out = d / f"{icon_name}.png"
                 size = 256 if "256" in str(d) else 128
-                # Supersample at 2x and apply circular mask for ultra-smooth antialiasing
                 ss_size = size * 2
                 radius = ss_size // 2
                 subprocess.run([
                     "magick", str(source_img),
+                    "-background", "none",
                     "-resize", f"{ss_size}x{ss_size}^",
                     "-gravity", "center",
                     "-extent", f"{ss_size}x{ss_size}",
                     "(", "-size", f"{ss_size}x{ss_size}", "xc:none",
                     "-fill", "white", "-draw", f"circle {radius},{radius} {radius},1", ")",
-                    "-compose", "DstIn", "-composite",
+                    "-alpha", "off", "-compose", "CopyOpacity", "-composite",
                     "-resize", f"{size}x{size}",
-                    str(out)
+                    f"PNG32:{out}"
                 ], check=False)
 
             for d in ICON_DIRS:
