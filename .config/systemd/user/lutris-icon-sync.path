@@ -1,0 +1,11 @@
+[Unit]
+Description=Watch for new Lutris desktop shortcuts and game files
+
+[Path]
+PathModified=%h/.local/share/applications
+PathModified=%h/.local/share/lutris/games
+PathModified=%h/.local/share/lutris/coverart
+PathModified=%h/.local/share/lutris/banners
+
+[Install]
+WantedBy=default.target

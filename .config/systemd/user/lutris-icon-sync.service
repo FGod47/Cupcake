@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync Lutris game icons to desktop icon themes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/.config/cupcake/scripts/sync_lutris_icons.py
