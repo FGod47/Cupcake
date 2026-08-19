@@ -20,5 +20,6 @@ fi
 if pgrep -f "quickshell.*AppLauncher.*\.qml" > /dev/null; then
     pkill -f "quickshell.*AppLauncher.*\.qml"
 else
+    python3 ~/.config/cupcake/scripts/sync_lutris_icons.py &
     quickshell --daemonize -p ~/.config/quickshell/$TARGET
 fi

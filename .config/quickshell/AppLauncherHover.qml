@@ -607,8 +607,15 @@ PanelWindow {
                             asynchronous: true
                             source: {
                                 let icn = delegateItem.modelData?.icon ?? "";
-                                if (icn.startsWith("http://") || icn.startsWith("https://")) {
+                                if (!icn || icn === "") return Quickshell.iconPath("application-x-executable");
+                                if (icn.startsWith("http://") || icn.startsWith("https://") || icn.startsWith("file://") || icn.startsWith("/")) {
                                     return icn;
+                                }
+                                let p = Quickshell.iconPath(icn, "");
+                                if (p && p !== "") return p;
+                                if (icn.startsWith("lutris_") || icn.startsWith("net.lutris")) {
+                                    let home = Quickshell.env("HOME");
+                                    return "file://" + home + "/.local/share/icons/hicolor/128x128/apps/" + icn + ".png";
                                 }
                                 return Quickshell.iconPath(icn, "application-x-executable");
                             }
