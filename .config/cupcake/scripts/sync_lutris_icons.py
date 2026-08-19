@@ -60,12 +60,19 @@ def sync_icons():
 
             for d in [HOME / ".local/share/icons/hicolor/256x256/apps", HOME / ".local/share/icons/hicolor/128x128/apps"]:
                 out = d / f"{icon_name}.png"
-                size = "256x256" if "256" in str(d) else "128x128"
+                size = 256 if "256" in str(d) else 128
+                # Supersample at 2x and apply circular mask for ultra-smooth antialiasing
+                ss_size = size * 2
+                radius = ss_size // 2
                 subprocess.run([
                     "magick", str(source_img),
-                    "-resize", f"{size}^",
+                    "-resize", f"{ss_size}x{ss_size}^",
                     "-gravity", "center",
-                    "-extent", size,
+                    "-extent", f"{ss_size}x{ss_size}",
+                    "(", "-size", f"{ss_size}x{ss_size}", "xc:none",
+                    "-fill", "white", "-draw", f"circle {radius},{radius} {radius},1", ")",
+                    "-compose", "DstIn", "-composite",
+                    "-resize", f"{size}x{size}",
                     str(out)
                 ], check=False)
 
