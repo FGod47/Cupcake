@@ -486,21 +486,30 @@ ShellRoot {
         }
     }
 
-    function syncLockscreenNotifications() {
-        let notifs = [];
-        for (let i = 0; i < Math.min(globalState.popups.length, 5); i++) {
-            let p = globalState.popups[i];
-            if (p) {
-                notifs.push({
-                    summary: (p.summary || "").trim(),
-                    body: (p.body || "").trim(),
-                    appName: (p.appName || "Notification").trim(),
-                    timeStr: Qt.formatTime(new Date(), "hh:mm")
-                });
+    Timer {
+        id: syncLockTimer
+        interval: 300
+        repeat: false
+        onTriggered: {
+            let notifs = [];
+            for (let i = 0; i < Math.min(globalState.popups.length, 5); i++) {
+                let p = globalState.popups[i];
+                if (p) {
+                    notifs.push({
+                        summary: (p.summary || "").trim(),
+                        body: (p.body || "").trim(),
+                        appName: (p.appName || "Notification").trim(),
+                        timeStr: Qt.formatTime(new Date(), "hh:mm")
+                    });
+                }
             }
+            let jsonStr = JSON.stringify(notifs).replace(/'/g, "'\\''");
+            Quickshell.execDetached(["bash", "-c", "mkdir -p ~/.cache/cupcake && echo '" + jsonStr + "' > ~/.cache/cupcake/active_notifications.json"]);
         }
-        let jsonStr = JSON.stringify(notifs).replace(/'/g, "'\\''");
-        Quickshell.execDetached(["bash", "-c", "mkdir -p ~/.cache/cupcake && echo '" + jsonStr + "' > ~/.cache/cupcake/active_notifications.json"]);
+    }
+
+    function syncLockscreenNotifications() {
+        syncLockTimer.restart();
     }
 
     // ── Clipboard Notification Watcher ──
