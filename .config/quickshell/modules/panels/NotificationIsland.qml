@@ -45,8 +45,9 @@ PanelWindow {
     readonly property string fontName: Theme.appFontMono !== "" ? Theme.appFontMono : (globalState ? globalState.tablerIconsFamily : "tabler-icons")
 
     // Dynamic Island Notification state & Synchronized Multi-Stage Motion
+    property var globalState: null
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
-    property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
+    property bool hasNotifPopup: notifPopups.length > 0 && (globalState ? !globalState.hideIsland : true)
 
     // ── TWO-STAGE CHOREOGRAPHY: YELLOW DOT FADES IN PLACE -> CARD BLOOMS ──
     property real notifDotProgress: 0.0
@@ -54,8 +55,8 @@ PanelWindow {
     readonly property real notifProgress: notifExpandProgress
 
     onNotifProgressChanged: {
-        if (globalState) {
-            globalState.notifProgress = notifProgress;
+        if (notifWindow.globalState) {
+            notifWindow.globalState.notifProgress = notifProgress;
         }
     }
 
@@ -65,15 +66,17 @@ PanelWindow {
         ScriptAction {
             script: {
                 notifCloseSeq.stop();
-                notifWindow.notifDotProgress = 0.0;
-                notifWindow.notifExpandProgress = 0.0;
+                if (notifWindow.notifExpandProgress < 0.2) {
+                    notifWindow.notifDotProgress = 0.0;
+                    notifWindow.notifExpandProgress = 0.0;
+                }
             }
         }
         // 1. Snappy dot pill entrance
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
-            from: 0.0
+            from: notifWindow.notifDotProgress
             to: 1.0
             duration: 120
             easing.type: Easing.OutCubic
@@ -84,7 +87,7 @@ PanelWindow {
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
-            from: 0.0
+            from: notifWindow.notifExpandProgress
             to: 1.0
             duration: 220
             easing.type: Easing.OutCubic
@@ -102,6 +105,7 @@ PanelWindow {
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
+            from: notifWindow.notifExpandProgress
             to: 0.0
             duration: 160
             easing.type: Easing.InCubic
@@ -109,6 +113,7 @@ PanelWindow {
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
+            from: notifWindow.notifDotProgress
             to: 0.0
             duration: 90
             easing.type: Easing.InQuad
@@ -118,7 +123,12 @@ PanelWindow {
     onHasNotifPopupChanged: {
         if (hasNotifPopup) {
             notifCloseSeq.stop();
-            notifOpenSeq.restart();
+            if (notifWindow.notifExpandProgress < 0.3) {
+                notifOpenSeq.restart();
+            } else {
+                notifWindow.notifDotProgress = 1.0;
+                notifWindow.notifExpandProgress = 1.0;
+            }
         } else {
             notifOpenSeq.stop();
             notifCloseSeq.restart();
@@ -462,7 +472,7 @@ PanelWindow {
                                         } catch (e) {}
                                         let curList = notifDetachedPod.popupsList.slice();
                                         curList.splice(cardItem.itemIdx, 1);
-                                        if (globalState) globalState.popups = curList;
+                                        if (notifWindow.globalState) notifWindow.globalState.popups = curList;
                                     }
                                 }
                             }
@@ -607,8 +617,8 @@ PanelWindow {
                                     try {
                                         if (targetNotif && typeof targetNotif.dismiss === "function") targetNotif.dismiss();
                                     } catch(e) {}
-                                    if (globalState && globalState.popups) {
-                                        globalState.popups = globalState.popups.filter(p => p !== targetNotif);
+                                    if (notifWindow.globalState && notifWindow.globalState.popups) {
+                                        notifWindow.globalState.popups = notifWindow.globalState.popups.filter(p => p !== targetNotif);
                                     }
                                 }
                             }
@@ -679,7 +689,7 @@ PanelWindow {
                             for (let i = 0; i < notifDetachedPod.effectivePopups.length; i++) {
                                 try { if (notifDetachedPod.effectivePopups[i] && typeof notifDetachedPod.effectivePopups[i].dismiss === "function") notifDetachedPod.effectivePopups[i].dismiss(); } catch(e){}
                             }
-                            if (globalState) globalState.popups = [];
+                            if (notifWindow.globalState) notifWindow.globalState.popups = [];
                         }
                     }
                 }
