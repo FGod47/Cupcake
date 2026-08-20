@@ -254,6 +254,9 @@ PanelWindow {
         }
         
         function brightness(bright: int): void {
+            if (globalState) {
+                globalState.brightness = bright.toString();
+            }
             osdWindow.osdValue = bright
             osdWindow.osdIcon = ["\uf1c3", "\uf1c3", "\ueb51", "\ueb51", "\ueb4f", "\ueb4f", "\ueb4f"][Math.min(6, Math.floor(bright / 15))]
             

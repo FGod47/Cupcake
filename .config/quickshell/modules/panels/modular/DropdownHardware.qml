@@ -237,7 +237,13 @@ Item {
                             property int targetValue: 100
                             onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
                         }
-                        onMoved: { ddDdcTimer.targetValue = value; ddDdcTimer.restart(); bar.brightStr = Math.round(value).toString() }
+                        onMoved: {
+                            ddDdcTimer.targetValue = value;
+                            ddDdcTimer.restart();
+                            let s = Math.round(value).toString();
+                            bar.brightStr = s;
+                            if (globalState) globalState.brightness = s;
+                        }
                     }
                 }
 

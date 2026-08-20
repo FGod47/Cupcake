@@ -229,7 +229,7 @@ PanelWindow {
     property string swapStr: "0"
     property string tempStr: "0"
     property string volStr: "0"
-    property string brightStr: "0"
+    property string brightStr: (globalState && globalState.brightness !== undefined && globalState.brightness !== "") ? globalState.brightness : "50"
     property string batStr: "100"
     property string netStr: "0 KB/s"
     property string netRxStr: "0 KB/s"
@@ -1517,10 +1517,21 @@ PanelWindow {
     Timer { interval: 2000; running: true; repeat: true; onTriggered: volProc.running = true }
 
     Process {
-        id: lightProc; running: false
-        command: ["bash", "-c", "ddcutil getvcp 10 --terse 2>/dev/null | awk '{print $4}'"]
-        stdout: StdioCollector { onStreamFinished: { if (text) bar.brightStr = text.trim().split('\n').pop() } }
+        id: lightProc; running: true
+        command: ["bash", "-c", "if ls /sys/class/backlight/* 1>/dev/null 2>&1; then brightnessctl -m | head -n 1 | awk -F, '{print $4}' | tr -d '%'; else VAL=$(ddcutil getvcp 10 --terse 2>/dev/null | awk '{print $4}'); if [ -n \"$VAL\" ]; then echo \"$VAL\"; fi; fi"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim() !== "") {
+                    let v = text.trim().split('\n').pop();
+                    if (v !== "" && !isNaN(parseInt(v))) {
+                        bar.brightStr = v;
+                        if (globalState) globalState.brightness = v;
+                    }
+                }
+            }
+        }
     }
+    Timer { interval: 15000; running: true; repeat: true; onTriggered: if (!lightProc.running) lightProc.running = true }
 
     Process {
         id: batProc; running: true

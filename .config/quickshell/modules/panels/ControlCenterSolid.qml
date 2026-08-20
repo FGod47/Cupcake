@@ -31,7 +31,7 @@ PanelWindow {
         onClicked: globalState.ccOpen = false
     }
 
-    property string brightStr: "0"
+    property string brightStr: (globalState && globalState.brightness !== undefined && globalState.brightness !== "") ? globalState.brightness : "50"
     property string volStr: "0"
 
     Process {
@@ -160,7 +160,13 @@ PanelWindow {
                         property int targetValue: 100
                         onTriggered: Quickshell.execDetached(["ddcutil", "setvcp", "10", Math.round(targetValue).toString(), "--noverify"])
                     }
-                    onMoved: { ddDdcTimer.targetValue = value; ddDdcTimer.restart(); brightStr = Math.round(value).toString() }
+                    onMoved: {
+                        ddDdcTimer.targetValue = value;
+                        ddDdcTimer.restart();
+                        let s = Math.round(value).toString();
+                        brightStr = s;
+                        if (globalState) globalState.brightness = s;
+                    }
                     onPressedChanged: {
                         if (!pressed) {
                             ddDdcTimer.stop()

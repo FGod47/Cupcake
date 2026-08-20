@@ -143,6 +143,7 @@ ShellRoot {
         property real dimOverlay: 0.0
         property real notifPanelOpacity: 0.90
         property bool popupHovered: false
+        property string brightness: "50"
         onPopupHoveredChanged: {
             if (popupHovered) {
                 islandTimer.stop();
