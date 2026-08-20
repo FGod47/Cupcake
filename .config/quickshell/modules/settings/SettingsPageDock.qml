@@ -71,16 +71,16 @@ Item {
     property bool magnificationEnabled: false
     
     property string dockPosition: "Bottom"
-    property int iconSize: 50
-    property int mainAxisPadding: 0
-    property int crossAxisPadding: 5
-    property int itemSpacing: 11
-    property int endsMargin: 10
-    property int edgeMargin: 10
+    property int iconSize: 48
+    property int mainAxisPadding: 6
+    property int crossAxisPadding: 2
+    property int itemSpacing: 0
+    property int endsMargin: 0
+    property int edgeMargin: 13
     
-    property int cornerRadius: 20
+    property int cornerRadius: 35
     
-    property int bgOpacity: 60
+    property int bgOpacity: 100
     property bool shadowEnabled: true
     
     property real activeIconScale: 1.1
@@ -91,10 +91,10 @@ Item {
     
     property bool pinnedAppsEnabled: true
     property var pinnedApps: [
-        { appId: "firefox", exec: "firefox", name: "Firefox" },
-        { appId: "kitty", exec: "kitty", name: "Terminal" },
-        { appId: "org.gnome.Nautilus", exec: "nautilus", name: "Files" },
-        { appId: "code", exec: "code", name: "Code" }
+        { appId: "org.gnome.Nautilus", exec: "nautilus --new-window", name: "Files" },
+        { appId: "google-chrome", exec: "/usr/bin/google-chrome-stable", name: "Google Chrome" },
+        { appId: "kitty", exec: "kitty", name: "kitty" },
+        { appId: "antigravity-ide", exec: "/usr/bin/antigravity-ide", name: "Antigravity IDE" }
     ]
 
     function savePinnedApps() {
@@ -552,13 +552,13 @@ Item {
                         label: "Reset Defaults"
                         active: false
                         onClicked: {
-                            root.iconSize = 50;
-                            root.mainAxisPadding = 0;
-                            root.crossAxisPadding = 5;
-                            root.itemSpacing = 11;
-                            root.endsMargin = 10;
-                            root.edgeMargin = 10;
-                            bashProcess.command = ["bash", "-c", "echo 50 > ~/.config/cupcake/.dock_icon_size; echo 0 > ~/.config/cupcake/.dock_main_axis_padding; echo 5 > ~/.config/cupcake/.dock_cross_axis_padding; echo 11 > ~/.config/cupcake/.dock_item_spacing; echo 10 > ~/.config/cupcake/.dock_ends_margin; echo 10 > ~/.config/cupcake/.dock_edge_margin; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize 50; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding 0; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding 5; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing 11; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin 10; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin 10"];
+                            root.iconSize = 48;
+                            root.mainAxisPadding = 6;
+                            root.crossAxisPadding = 2;
+                            root.itemSpacing = 0;
+                            root.endsMargin = 0;
+                            root.edgeMargin = 13;
+                            bashProcess.command = ["bash", "-c", "echo 48 > ~/.config/cupcake/.dock_icon_size; echo 6 > ~/.config/cupcake/.dock_main_axis_padding; echo 2 > ~/.config/cupcake/.dock_cross_axis_padding; echo 0 > ~/.config/cupcake/.dock_item_spacing; echo 0 > ~/.config/cupcake/.dock_ends_margin; echo 13 > ~/.config/cupcake/.dock_edge_margin; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockIconSize 48; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockMainAxisPadding 6; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockCrossAxisPadding 2; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockItemSpacing 0; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEndsMargin 0; quickshell ipc -p ~/.config/quickshell/shell.qml call dock setDockEdgeMargin 13"];
                             bashProcess.running = true;
                         }
                     }

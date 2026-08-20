@@ -107,20 +107,20 @@ ShellRoot {
         property bool dockShowDots: true
         property bool dockPinnedAppsEnabled: true
         property var dockPinnedApps: [
-            { appId: "firefox", exec: "firefox", name: "Firefox" },
-            { appId: "kitty", exec: "kitty", name: "Terminal" },
-            { appId: "org.gnome.Nautilus", exec: "nautilus", name: "Files" },
-            { appId: "code", exec: "code", name: "Code" }
+            { appId: "org.gnome.Nautilus", exec: "nautilus --new-window", name: "Files" },
+            { appId: "google-chrome", exec: "/usr/bin/google-chrome-stable", name: "Google Chrome" },
+            { appId: "kitty", exec: "kitty", name: "kitty" },
+            { appId: "antigravity-ide", exec: "/usr/bin/antigravity-ide", name: "Antigravity IDE" }
         ]
         property bool dockMagnificationEnabled: false
         property real dockMagnificationScale: 1.5
-        property var dockRadius: 20
-        property int dockIconSize: 50
-        property int dockMainAxisPadding: 0
-        property int dockCrossAxisPadding: 5
-        property int dockItemSpacing: 11
-        property int dockEndsMargin: 10
-        property int dockEdgeMargin: 10
+        property var dockRadius: 35
+        property int dockIconSize: 48
+        property int dockMainAxisPadding: 6
+        property int dockCrossAxisPadding: 2
+        property int dockItemSpacing: 0
+        property int dockEndsMargin: 0
+        property int dockEdgeMargin: 13
         property bool aiPanelVisible: false
         property bool notifPanelVisible: false
         property bool powerMenuOpen: false
