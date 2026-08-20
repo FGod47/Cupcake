@@ -40,9 +40,7 @@ ShellRoot {
     // Standalone Notification Island (Always on Top Right of the screen)
     Variants {
         model: Quickshell.screens
-        delegate: NotificationIsland {
-            globalState: root.globalState
-        }
+        delegate: NotificationIsland {}
     }
 
     // Control Center for solid bar
