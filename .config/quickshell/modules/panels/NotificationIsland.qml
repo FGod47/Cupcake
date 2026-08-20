@@ -345,7 +345,7 @@ PanelWindow {
                         }
                         
                         Layout.fillWidth: true
-                        Layout.preferredHeight: isCardHovered ? (notifWindow.barHeight + expandedDetailsCol.implicitHeight + 14) : notifWindow.barHeight
+                        Layout.preferredHeight: isCardHovered ? (notifWindow.barHeight + expandedDetailsCol.implicitHeight + 16) : notifWindow.barHeight
                         implicitHeight: Layout.preferredHeight
                         radius: notifWindow.notifExpandProgress > 0.6 ? (isCardHovered ? 15 : notifWindow.startRadius) : (notifWindow.barHeight / 2)
                         color: notifDetachedPod.cardBg
@@ -368,9 +368,9 @@ PanelWindow {
                             id: headerRow
                             anchors.left: parent.left
                             anchors.top: parent.top
-                            width: notifDetachedPod.fullW - 26
+                            width: notifDetachedPod.fullW - 24
                             height: notifWindow.barHeight
-                            anchors.leftMargin: Math.round(13 * notifWindow.notifExpandProgress + ((notifWindow.barHeight - 6) / 2) * (1.0 - notifWindow.notifExpandProgress))
+                            anchors.leftMargin: Math.round(14 * notifWindow.notifExpandProgress + ((notifWindow.barHeight - 6) / 2) * (1.0 - notifWindow.notifExpandProgress))
                             spacing: 8
 
                             Item {
@@ -449,15 +449,15 @@ PanelWindow {
                                     PathAngleArc {
                                         centerX: 7
                                         centerY: 7
-                                        radiusX: 5
-                                        radiusY: 5
-                                        startAngle: 0
+                                        radiusX: 5.5
+                                        radiusY: 5.5
+                                        startAngle: -90
                                         sweepAngle: 360
                                     }
                                 }
 
                                 ShapePath {
-                                    strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : Theme.colPrimary
+                                    strokeColor: (cardItem.notifData && cardItem.notifData.urgency === 2) ? "#E06C75" : ((cardItem.notifData && cardItem.notifData.urgency === 0) ? "#98C379" : notifWindow.fg)
                                     strokeWidth: 1.5
                                     fillColor: "transparent"
                                     capStyle: ShapePath.RoundCap
@@ -465,18 +465,19 @@ PanelWindow {
                                     PathAngleArc {
                                         centerX: 7
                                         centerY: 7
-                                        radiusX: 5
-                                        radiusY: 5
+                                        radiusX: 5.5
+                                        radiusY: 5.5
                                         startAngle: -90
-                                        sweepAngle: -360 * (cardItem.notifData && cardItem.notifData.progress !== undefined ? cardItem.notifData.progress : 1.0)
+                                        sweepAngle: 360 * (1.0 - cardItem.timeProgress)
                                     }
                                 }
                             }
 
                             // Dismiss button (✕)
                             Rectangle {
-                                width: 16
-                                height: 16
+                                id: dismissBtn
+                                width: 18
+                                height: 18
                                 radius: 8
                                 color: dismissCardMa.containsMouse ? Qt.rgba(notifWindow.fg.r, notifWindow.fg.g, notifWindow.fg.b, 0.16) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 120 } }
@@ -517,10 +518,10 @@ PanelWindow {
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.top: headerRow.bottom
-                            anchors.leftMargin: 13
-                            anchors.rightMargin: 13
-                            anchors.topMargin: 2
-                            spacing: 6
+                            anchors.leftMargin: 14
+                            anchors.rightMargin: 14
+                            anchors.topMargin: 0
+                            spacing: 4
                             visible: opacity > 0.01
                             opacity: cardItem.isCardHovered ? 1.0 : 0.0
                             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
