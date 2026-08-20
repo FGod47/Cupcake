@@ -48,20 +48,15 @@ PanelWindow {
     property var notifPopups: (globalState && globalState.popups) ? globalState.popups : []
     property bool hasNotifPopup: notifPopups.length > 0 && !globalState.hideIsland
 
-    // ── TWO-STAGE CHOREOGRAPHY: YELLOW DOT FADES IN PLACE -> CARD BLOOMS ──
+    // ── TWO-STAGE CHOREOGRAPHY: BAR CONTRACTS -> DOT FADES IN -> CARD BLOOMS ──
+    property real barShrinkProgress: 0.0
     property real notifDotProgress: 0.0
     property real notifExpandProgress: 0.0
-    readonly property real notifProgress: Math.max(notifDotProgress, notifExpandProgress)
+    readonly property real notifProgress: barShrinkProgress
 
-    onNotifDotProgressChanged: {
+    onBarShrinkProgressChanged: {
         if (globalState) {
-            globalState.notifProgress = Math.max(notifDotProgress, notifExpandProgress);
-        }
-    }
-
-    onNotifExpandProgressChanged: {
-        if (globalState) {
-            globalState.notifProgress = Math.max(notifDotProgress, notifExpandProgress);
+            globalState.notifProgress = barShrinkProgress;
         }
     }
 
@@ -72,29 +67,40 @@ PanelWindow {
             script: {
                 notifCloseSeq.stop();
                 if (notifWindow.notifExpandProgress < 0.2) {
+                    notifWindow.barShrinkProgress = 0.0;
                     notifWindow.notifDotProgress = 0.0;
                     notifWindow.notifExpandProgress = 0.0;
                 }
             }
         }
-        // 1. Smooth dot pill entrance
-        NumberAnimation {
-            target: notifWindow
-            property: "notifDotProgress"
-            from: notifWindow.notifDotProgress
-            to: 1.0
-            duration: 500
-            easing.type: Easing.OutCubic
+        // 1. Bar smoothly contracts out of the way & dot fades in together into cleared space
+        ParallelAnimation {
+            NumberAnimation {
+                target: notifWindow
+                property: "barShrinkProgress"
+                from: notifWindow.barShrinkProgress
+                to: 1.0
+                duration: 400
+                easing.type: Easing.OutQuart
+            }
+            NumberAnimation {
+                target: notifWindow
+                property: "notifDotProgress"
+                from: notifWindow.notifDotProgress
+                to: 1.0
+                duration: 450
+                easing.type: Easing.OutCubic
+            }
         }
         // 2. Gentle pause
-        PauseAnimation { duration: 250 }
-        // 3. Fluid, graceful expansion outward into full notification card
+        PauseAnimation { duration: 200 }
+        // 3. Fluid, graceful expansion outward left-to-right into full notification card
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 1.0
-            duration: 850
+            duration: 750
             easing.type: Easing.OutQuart
         }
     }
@@ -107,21 +113,32 @@ PanelWindow {
                 notifOpenSeq.stop();
             }
         }
+        // 1. Card collapses cleanly back to the dot on the left
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 0.0
-            duration: 550
+            duration: 400
             easing.type: Easing.InCubic
         }
+        // 2. Dot completely fades out (bar stays contracted out of the way!)
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
             from: notifWindow.notifDotProgress
             to: 0.0
-            duration: 350
+            duration: 200
             easing.type: Easing.InQuad
+        }
+        // 3. ONLY after dot is 100% gone, bar smoothly expands back to full width!
+        NumberAnimation {
+            target: notifWindow
+            property: "barShrinkProgress"
+            from: notifWindow.barShrinkProgress
+            to: 0.0
+            duration: 400
+            easing.type: Easing.OutQuart
         }
     }
 
@@ -131,6 +148,7 @@ PanelWindow {
             if (notifWindow.notifExpandProgress < 0.3) {
                 notifOpenSeq.restart();
             } else {
+                notifWindow.barShrinkProgress = 1.0;
                 notifWindow.notifDotProgress = 1.0;
                 notifWindow.notifExpandProgress = 1.0;
             }
