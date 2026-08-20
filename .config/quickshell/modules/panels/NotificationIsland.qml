@@ -178,6 +178,7 @@ PanelWindow {
 
         width: currentW
         height: (hasNotif || notifWindow.notifExpandProgress > 0.01) ? (notifWindow.barHeight + (targetTotalH - notifWindow.barHeight) * notifWindow.notifExpandProgress) : notifWindow.barHeight
+        Behavior on height { NumberAnimation { duration: 650; easing.type: Easing.OutQuart } }
         y: notifWindow.topMargin
         anchors.right: parent.right
         anchors.rightMargin: notifWindow.rightMargin
@@ -195,6 +196,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             height: notifDetachedPod.targetListH
+            Behavior on height { NumberAnimation { duration: 650; easing.type: Easing.OutQuart } }
             contentWidth: width
             contentHeight: notifStackCol.implicitHeight
             boundsBehavior: Flickable.StopAtBounds
@@ -330,12 +332,12 @@ PanelWindow {
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
-                                duration: 350
-                                easing.type: Easing.OutCubic
+                                duration: 650
+                                easing.type: Easing.OutQuart
                             }
                         }
-                        Behavior on radius { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
-                        Behavior on border.color { ColorAnimation { duration: 220 } }
+                        Behavior on radius { NumberAnimation { duration: 500; easing.type: Easing.OutQuart } }
+                        Behavior on border.color { ColorAnimation { duration: 350 } }
 
                         // 1. Header & Controls Row (Clean RowLayout with fixed full width for instant unmasking!)
                         RowLayout {
@@ -497,7 +499,7 @@ PanelWindow {
                             spacing: 6
                             visible: opacity > 0.01
                             opacity: cardItem.isCardHovered ? 1.0 : 0.0
-                            Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                            Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
                             // Category Heading (e.g. "Screenshot Saved" or Notification Title)
                             Text {
