@@ -463,64 +463,33 @@ ShellRoot {
             let isScreenshot = summary.toLowerCase().includes("screenshot") || body.includes("/Screenshot/");
             let timeoutMs = (notif.expireTimeout && notif.expireTimeout > 0) ? notif.expireTimeout : 5000;
 
-            // Check for duplicate / burst notification to group
-            let existingIdx = -1;
-            for (let i = 0; i < globalState.popups.length; i++) {
-                let p = globalState.popups[i];
-                if (p) {
-                    if (isScreenshot && (p.isScreenshot || (p.summary && p.summary.toLowerCase().includes("screenshot")) || (p.body && p.body.includes("/Screenshot/")))) {
-                        existingIdx = i;
-                        break;
-                    } else if (p.appName === appName && p.summary === summary) {
-                        existingIdx = i;
-                        break;
-                    }
-                }
+            let newItem = {
+                id: ++globalState._notifIdCounter,
+                rawNotif: notif,
+                appName: appName,
+                summary: summary,
+                body: body,
+                icon: (notif.icon || notif.appIcon || "").toString().trim(),
+                urgency: (notif.urgency !== undefined ? notif.urgency : 1),
+                receivedAt: Date.now(),
+                timeout: timeoutMs,
+                progress: 1.0,
+                isHovered: false,
+                isScreenshot: isScreenshot,
+                groupCount: 1,
+                history: [body],
+                defaultAction: notif.defaultAction,
+                actions: notif.actions ? notif.actions : []
+            };
+
+            // Automatically clean up when rawNotif closes
+            if (notif.closed) {
+                notif.closed.connect(() => {
+                    globalState.popups = globalState.popups.filter(p => p.rawNotif !== notif && p !== newItem);
+                });
             }
 
-            if (existingIdx !== -1) {
-                let existing = globalState.popups[existingIdx];
-                existing.groupCount = (existing.groupCount || 1) + 1;
-                existing.body = body;
-                existing.rawNotif = notif;
-                existing.receivedAt = Date.now();
-                existing.progress = 1.0;
-                existing.timeout = timeoutMs;
-                if (!existing.history) existing.history = [];
-                existing.history.push(body);
-
-                // Move existing to front of stack
-                let rest = globalState.popups.filter((_, idx) => idx !== existingIdx);
-                globalState.popups = [existing].concat(rest);
-            } else {
-                let newItem = {
-                    id: ++globalState._notifIdCounter,
-                    rawNotif: notif,
-                    appName: appName,
-                    summary: summary,
-                    body: body,
-                    icon: (notif.icon || notif.appIcon || "").toString().trim(),
-                    urgency: (notif.urgency !== undefined ? notif.urgency : 1),
-                    receivedAt: Date.now(),
-                    timeout: timeoutMs,
-                    progress: 1.0,
-                    isHovered: false,
-                    isScreenshot: isScreenshot,
-                    groupCount: 1,
-                    history: [body],
-                    defaultAction: notif.defaultAction,
-                    actions: notif.actions ? notif.actions : []
-                };
-
-                // Automatically clean up when rawNotif closes
-                if (notif.closed) {
-                    notif.closed.connect(() => {
-                        globalState.popups = globalState.popups.filter(p => p.rawNotif !== notif && p !== newItem);
-                    });
-                }
-
-                globalState.popups = [newItem].concat(globalState.popups);
-            }
+            globalState.popups = [newItem].concat(globalState.popups);
 
             syncLockscreenNotifications();
         }
