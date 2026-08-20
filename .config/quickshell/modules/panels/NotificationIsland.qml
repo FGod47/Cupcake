@@ -156,14 +156,14 @@ PanelWindow {
             ));
         }
         property bool showAllNotifs: false
-        readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(10, effectivePopups.length)) : 0
+        readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (notifWindow.screen && notifWindow.screen.height > 0) ? (notifWindow.screen.height - notifWindow.topMargin - 60) : 1000
         readonly property real fullW: 320
         readonly property real minW: notifWindow.barHeight
         readonly property real currentW: minW + (fullW - minW) * notifWindow.notifExpandProgress
 
-        readonly property real footerH: (effectivePopups.length > 10) ? 34 : 0
+        readonly property real footerH: (effectivePopups.length > 3) ? 34 : 0
         readonly property real maxListH: maxScreenH - footerH
         readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
         readonly property real targetTotalH: targetListH + ((hasNotif || notifWindow.notifExpandProgress > 0.01) ? footerH : 0)
@@ -651,7 +651,7 @@ PanelWindow {
                 anchors.rightMargin: 14
 
                 Text {
-                    text: notifDetachedPod.showAllNotifs ? "Show Less" : ("+ " + (notifDetachedPod.effectivePopups.length - 10) + " more")
+                    text: notifDetachedPod.showAllNotifs ? "Show Less" : ("+ " + (notifDetachedPod.effectivePopups.length - 3) + " more")
                     font.family: Theme.appFontMono
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
