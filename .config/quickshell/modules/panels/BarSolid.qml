@@ -383,7 +383,7 @@ PanelWindow {
 
     // Dynamic Island Notification state (Driven by standalone NotificationIsland)
     readonly property real notifIslandW: 340
-    readonly property real notifIslandGap: 14
+    readonly property real notifIslandGap: 8
     readonly property real notifRightMargin: Math.max(8, bar.midY)
     readonly property real notifRestW: Math.max(100, (bar.screenW - notifIslandW - notifIslandGap - notifRightMargin) - bar.barX)
     readonly property real notifProgress: (globalState && globalState.notifProgress !== undefined) ? globalState.notifProgress : 0.0
