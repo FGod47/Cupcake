@@ -656,6 +656,63 @@ Item {
                 }
             }
 
+            // =========================================================
+            // 5. SHORTCUTS & KEYBINDINGS
+            // =========================================================
+            NCard {
+                sectionTitle: "Keyboard Shortcuts"
+
+                NRow {
+                    RowLayout {
+                        spacing: 12
+                        NIconBadge { icon: "\ueb71" }
+                        ColumnLayout {
+                            spacing: 1
+                            Text { text: "Shortcuts Manager"; color: root.cText; font.family: Theme.defaultFontFamily; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: "Customize, reprogram and manage all Hyprland keybindings"; color: root.cTextDim; font.family: Theme.defaultFontFamily; font.pixelSize: 11; opacity: 0.8 }
+                        }
+                    }
+                    Item { Layout.fillWidth: true }
+                    Rectangle {
+                        width: 140
+                        height: 32
+                        radius: 8
+                        color: btnMa.containsMouse ? Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.25) : Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.15)
+                        border.width: 1
+                        border.color: Qt.rgba(Theme.colPrimary.r, Theme.colPrimary.g, Theme.colPrimary.b, 0.4)
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Text {
+                                text: "\uea4f"
+                                font.family: "tabler-icons"
+                                font.pixelSize: 13
+                                color: Theme.colPrimary
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            Text {
+                                text: "Edit Shortcuts";
+                                color: Theme.colPrimary;
+                                font.family: Theme.defaultFontFamily;
+                                font.pixelSize: 12;
+                                font.weight: Font.DemiBold
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        MouseArea {
+                            id: btnMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Quickshell.execDetached(["quickshell", "-p", Quickshell.env("HOME") + "/.config/quickshell/ShortcutsManager.qml"])
+                        }
+                    }
+                }
+            }
+
             Item { height: 16 }
         }
     }

@@ -108,3 +108,5 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Settings App
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("quickshell -p " .. HOME .. "/.config/quickshell/Settings.qml"))
+-- Shortcuts Manager App
+hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd("quickshell -p " .. HOME .. "/.config/quickshell/ShortcutsManager.qml"))
