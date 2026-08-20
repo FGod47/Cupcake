@@ -126,6 +126,7 @@ ShellRoot {
         property bool powerMenuOpen: false
         property var notifications: notifServer.trackedNotifications
         property var popups: []
+        property int _notifIdCounter: 0
         property var activePopup: null
         property real activeNotifWidth: 352
         property real notifProgress: 0.0
@@ -439,49 +440,131 @@ ShellRoot {
     // Initialize Quickshell services
     NotificationServer {
         id: notifServer
+        actionsSupported: true
+        bodyHyperlinksSupported: true
+        bodyImagesSupported: true
+        bodyMarkupSupported: true
+        bodySupported: true
+        imageSupported: true
+        keepOnReload: false
+        persistenceSupported: true
+
         onNotification: notif => {
             notif.tracked = true;
-            notif._receivedAt = Date.now();
             globalState.closingIsland = false;
             globalState.hideIsland = false;
 
-            // Automatically clean up popup reference when closed/dismissed
-            if (notif.closed) {
-                notif.closed.connect(() => {
-                    let cur = globalState.popups.filter(p => p !== notif);
-                    globalState.popups = cur;
-                });
-            }
-
-            // Only queue notifications with actual content (filters out blank ghosts)
             let summary = (notif.summary || "").trim();
             let body = (notif.body || "").trim();
             let appName = (notif.appName || "").trim();
             let hasContent = summary.length > 0 || body.length > 0 || appName.length > 0;
+            if (!hasContent) return;
 
-            if (hasContent) {
-                // Deduplicate: If an identical notification already exists in popups, dismiss and replace it
-                let existingIdx = -1;
-                for (let i = 0; i < globalState.popups.length; i++) {
-                    let p = globalState.popups[i];
-                    if (p && (p.summary || "").trim() === summary && (p.body || "").trim() === body) {
+            let isScreenshot = summary.toLowerCase().includes("screenshot") || body.includes("/Screenshot/");
+            let timeoutMs = (notif.expireTimeout && notif.expireTimeout > 0) ? notif.expireTimeout : 5000;
+
+            // Check for duplicate / burst notification to group
+            let existingIdx = -1;
+            for (let i = 0; i < globalState.popups.length; i++) {
+                let p = globalState.popups[i];
+                if (p) {
+                    if (isScreenshot && (p.isScreenshot || (p.summary && p.summary.toLowerCase().includes("screenshot")) || (p.body && p.body.includes("/Screenshot/")))) {
+                        existingIdx = i;
+                        break;
+                    } else if (p.appName === appName && p.summary === summary) {
                         existingIdx = i;
                         break;
                     }
                 }
+            }
 
-                if (existingIdx !== -1) {
-                    try {
-                        let oldNotif = globalState.popups[existingIdx];
-                        if (oldNotif && typeof oldNotif.dismiss === "function") oldNotif.dismiss();
-                    } catch(e) {}
-                    let updated = globalState.popups.slice();
-                    updated.splice(existingIdx, 1);
-                    globalState.popups = [notif].concat(updated);
-                } else {
-                    globalState.popups = [notif].concat(globalState.popups.filter(p => p !== notif));
+            if (existingIdx !== -1) {
+                let existing = globalState.popups[existingIdx];
+                existing.groupCount = (existing.groupCount || 1) + 1;
+                existing.body = body;
+                existing.rawNotif = notif;
+                existing.receivedAt = Date.now();
+                existing.progress = 1.0;
+                existing.timeout = timeoutMs;
+                if (!existing.history) existing.history = [];
+                existing.history.push(body);
+
+                // Move existing to front of stack
+                let rest = globalState.popups.filter((_, idx) => idx !== existingIdx);
+                globalState.popups = [existing].concat(rest);
+            } else {
+                let newItem = {
+                    id: ++globalState._notifIdCounter,
+                    rawNotif: notif,
+                    appName: appName,
+                    summary: summary,
+                    body: body,
+                    icon: (notif.icon || notif.appIcon || "").toString().trim(),
+                    urgency: (notif.urgency !== undefined ? notif.urgency : 1),
+                    receivedAt: Date.now(),
+                    timeout: timeoutMs,
+                    progress: 1.0,
+                    isHovered: false,
+                    isScreenshot: isScreenshot,
+                    groupCount: 1,
+                    history: [body],
+                    defaultAction: notif.defaultAction,
+                    actions: notif.actions ? notif.actions : []
+                };
+
+                // Automatically clean up when rawNotif closes
+                if (notif.closed) {
+                    notif.closed.connect(() => {
+                        globalState.popups = globalState.popups.filter(p => p.rawNotif !== notif && p !== newItem);
+                    });
                 }
-                syncLockscreenNotifications();
+
+                globalState.popups = [newItem].concat(globalState.popups);
+            }
+
+            syncLockscreenNotifications();
+        }
+    }
+
+    // Central Headless Notification Engine Timer (Smooth 20fps countdown & timeout)
+    Timer {
+        id: notifEngineTimer
+        interval: 50
+        running: globalState.popups && globalState.popups.length > 0
+        repeat: true
+        onTriggered: {
+            let now = Date.now();
+            let changed = false;
+            let nextPopups = [];
+            for (let i = 0; i < globalState.popups.length; i++) {
+                let item = globalState.popups[i];
+                if (!item) continue;
+                if (item.isHovered) {
+                    // Freeze countdown while card is hovered by adjusting receivedAt
+                    item.receivedAt += 50;
+                    item.progress = Math.max(0.0, 1.0 - ((now - item.receivedAt) / item.timeout));
+                    nextPopups.push(item);
+                } else {
+                    let elapsed = now - item.receivedAt;
+                    item.progress = Math.max(0.0, 1.0 - (elapsed / item.timeout));
+                    if (elapsed < item.timeout) {
+                        nextPopups.push(item);
+                    } else {
+                        // Time reached: dismiss cleanly from queue
+                        changed = true;
+                        try {
+                            if (item.rawNotif && typeof item.rawNotif.dismiss === "function") {
+                                item.rawNotif.dismiss();
+                            }
+                        } catch(e) {}
+                    }
+                }
+            }
+            if (changed || nextPopups.length !== globalState.popups.length) {
+                globalState.popups = nextPopups;
+            } else {
+                // Trigger property change updates in QML
+                globalState.popups = globalState.popups.slice();
             }
         }
     }

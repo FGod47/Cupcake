@@ -242,9 +242,15 @@ PanelWindow {
                             let summary = (notif.summary || "").toLowerCase();
                             let body = (notif.body || "").toLowerCase();
                             let app = (notif.appName || "").trim();
-                            if (summary.includes("screenshot") || body.includes("/screenshot/")) return "SCREENSHOT";
-                            if (app.toLowerCase() === "notify-send" || app === "") return "SYSTEM";
-                            return app.toUpperCase();
+                            let tag = "SYSTEM";
+                            if (summary.includes("screenshot") || body.includes("/screenshot/")) tag = "SCREENSHOT";
+                            else if (app.toLowerCase() === "notify-send" || app === "") tag = "SYSTEM";
+                            else tag = app.toUpperCase();
+
+                            if (notif.groupCount && notif.groupCount > 1) {
+                                tag += " (" + notif.groupCount + ")";
+                            }
+                            return tag;
                         }
 
                         function getCompactPreview(notif) {
@@ -436,7 +442,7 @@ PanelWindow {
                                         radiusX: 5
                                         radiusY: 5
                                         startAngle: -90
-                                        sweepAngle: -360 * cardItem.timerProgress
+                                        sweepAngle: -360 * (cardItem.notifData && cardItem.notifData.progress !== undefined ? cardItem.notifData.progress : 1.0)
                                     }
                                 }
                             }
@@ -467,11 +473,13 @@ PanelWindow {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         try {
-                                            if (cardItem.notifData && typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss();
+                                            if (cardItem.notifData && cardItem.notifData.rawNotif && typeof cardItem.notifData.rawNotif.dismiss === "function") {
+                                                cardItem.notifData.rawNotif.dismiss();
+                                            }
                                         } catch (e) {}
-                                        let curList = notifDetachedPod.popupsList.slice();
-                                        curList.splice(cardItem.itemIdx, 1);
-                                        if (globalState) globalState.popups = curList;
+                                        if (globalState && globalState.popups) {
+                                            globalState.popups = globalState.popups.filter(p => p !== cardItem.notifData);
+                                        }
                                     }
                                 }
                             }
@@ -579,6 +587,12 @@ PanelWindow {
                             }
                         }
 
+                        onIsCardHoveredChanged: {
+                            if (cardItem.notifData) {
+                                cardItem.notifData.isHovered = cardItem.isCardHovered;
+                            }
+                        }
+
                         // MouseArea for card hover & click action
                         MouseArea {
                             id: cardMa
@@ -589,35 +603,18 @@ PanelWindow {
                                 if (cardItem.notifData) {
                                     if (cardItem.notifData.defaultAction) {
                                         cardItem.notifData.defaultAction.invoke();
+                                    } else if (cardItem.notifData.rawNotif && cardItem.notifData.rawNotif.defaultAction) {
+                                        cardItem.notifData.rawNotif.defaultAction.invoke();
+                                    } else if (cardItem.notifData.body && cardItem.notifData.body.startsWith("/")) {
+                                        Quickshell.execDetached(["xdg-open", cardItem.notifData.body]);
                                     }
-                                    try { if (typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss(); } catch(e){}
-                                }
-                            }
-                        }
-
-                        // Individual countdown timer tracking each notification's unique lifetime
-                        property real timerProgress: 1.0
-                        Timer {
-                            id: cardCountdownTimer
-                            interval: 50
-                            running: notifDetachedPod.hasNotif && !cardItem.isCardHovered && cardItem.notifData !== null
-                            repeat: true
-                            onTriggered: {
-                                if (!cardItem.notifData) return;
-                                if (!cardItem.notifData._receivedAt) {
-                                    cardItem.notifData._receivedAt = Date.now();
-                                }
-                                let totalMs = (cardItem.notifData.timeout > 0) ? cardItem.notifData.timeout : 5000;
-                                let elapsed = Date.now() - cardItem.notifData._receivedAt;
-                                cardItem.timerProgress = Math.max(0.0, 1.0 - (elapsed / totalMs));
-                                if (elapsed >= totalMs) {
-                                    cardCountdownTimer.stop();
-                                    let targetNotif = cardItem.notifData;
                                     try {
-                                        if (targetNotif && typeof targetNotif.dismiss === "function") targetNotif.dismiss();
-                                    } catch(e) {}
+                                        if (cardItem.notifData.rawNotif && typeof cardItem.notifData.rawNotif.dismiss === "function") {
+                                            cardItem.notifData.rawNotif.dismiss();
+                                        }
+                                    } catch(e){}
                                     if (globalState && globalState.popups) {
-                                        globalState.popups = globalState.popups.filter(p => p !== targetNotif);
+                                        globalState.popups = globalState.popups.filter(p => p !== cardItem.notifData);
                                     }
                                 }
                             }
@@ -686,7 +683,12 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             for (let i = 0; i < notifDetachedPod.effectivePopups.length; i++) {
-                                try { if (notifDetachedPod.effectivePopups[i] && typeof notifDetachedPod.effectivePopups[i].dismiss === "function") notifDetachedPod.effectivePopups[i].dismiss(); } catch(e){}
+                                let item = notifDetachedPod.effectivePopups[i];
+                                try {
+                                    if (item && item.rawNotif && typeof item.rawNotif.dismiss === "function") {
+                                        item.rawNotif.dismiss();
+                                    }
+                                } catch(e){}
                             }
                             if (globalState) globalState.popups = [];
                         }
