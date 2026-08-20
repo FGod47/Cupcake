@@ -51,11 +51,17 @@ PanelWindow {
     // ── TWO-STAGE CHOREOGRAPHY: YELLOW DOT FADES IN PLACE -> CARD BLOOMS ──
     property real notifDotProgress: 0.0
     property real notifExpandProgress: 0.0
-    readonly property real notifProgress: notifExpandProgress
+    readonly property real notifProgress: Math.max(notifDotProgress, notifExpandProgress)
 
-    onNotifProgressChanged: {
+    onNotifDotProgressChanged: {
         if (globalState) {
-            globalState.notifProgress = notifProgress;
+            globalState.notifProgress = Math.max(notifDotProgress, notifExpandProgress);
+        }
+    }
+
+    onNotifExpandProgressChanged: {
+        if (globalState) {
+            globalState.notifProgress = Math.max(notifDotProgress, notifExpandProgress);
         }
     }
 
@@ -159,7 +165,7 @@ PanelWindow {
         readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (notifWindow.screen && notifWindow.screen.height > 0) ? (notifWindow.screen.height - notifWindow.topMargin - 60) : 1000
-        readonly property real fullW: 320
+        readonly property real fullW: 340
         readonly property real minW: notifWindow.barHeight
         readonly property real currentW: minW + (fullW - minW) * notifWindow.notifExpandProgress
 

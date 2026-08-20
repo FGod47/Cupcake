@@ -382,6 +382,10 @@ PanelWindow {
     }
 
     // Dynamic Island Notification state (Driven by standalone NotificationIsland)
+    readonly property real notifIslandW: 340
+    readonly property real notifIslandGap: 14
+    readonly property real notifRightMargin: Math.max(8, bar.midY)
+    readonly property real notifRestW: Math.max(100, (bar.screenW - notifIslandW - notifIslandGap - notifRightMargin) - bar.barX)
     readonly property real notifProgress: (globalState && globalState.notifProgress !== undefined) ? globalState.notifProgress : 0.0
 
     // ─────────────────────────────────────────────────────
@@ -393,9 +397,8 @@ PanelWindow {
         id: solidBar
         y: bar.isBottom ? (bar.height - (expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight) - bar.midY) : bar.midY
         Behavior on y { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
-        readonly property real notifRestW: Math.max(100, (bar.screenW - 320 - Math.max(8, bar.midY) - 8) - bar.barX)
         x: expandAnim.running ? bar.startX : bar.barX
-        width: bar.isBottom ? bar.barW : (bar.barW - Math.max(0, (bar.barW - notifRestW) * bar.notifProgress))
+        width: bar.isBottom ? bar.barW : (bar.barW - Math.max(0, (bar.barW - bar.notifRestW) * bar.notifProgress))
         height: expandAnim.running ? (bar.baseHeight + bar.extraHeight) : bar.barHeight
         Behavior on height { enabled: !expandAnim.running; NumberAnimation { duration: 400; easing.type: Easing.OutQuart } }
         clip: false
@@ -1430,9 +1433,8 @@ PanelWindow {
             });
             solidBar.width = Qt.binding(function() {
                 if (bar.isBottom) return bar.barW;
-                let notifRestW = Math.max(100, (bar.screenW - 320 - Math.max(8, bar.midY) - 8) - bar.barX);
-                let progress = (globalState && globalState.notifProgress !== undefined) ? globalState.notifProgress : 0.0;
-                return bar.barW - Math.max(0, (bar.barW - notifRestW) * progress);
+                let p = (globalState && globalState.notifProgress !== undefined) ? globalState.notifProgress : 0.0;
+                return bar.barW - Math.max(0, (bar.barW - bar.notifRestW) * p);
             });
             contentLayout.opacity = 1.0;
         }
