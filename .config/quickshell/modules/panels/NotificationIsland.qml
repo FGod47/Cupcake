@@ -69,26 +69,25 @@ PanelWindow {
                 notifWindow.notifExpandProgress = 0.0;
             }
         }
-        // 1. Yellow dot pill slowly fades and blooms in place
+        // 1. Snappy dot pill entrance
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
             from: 0.0
             to: 1.0
-            duration: 900
+            duration: 120
             easing.type: Easing.OutCubic
         }
-        // 2. Deliberate pause so the glowing yellow dot pill is admired
-        PauseAnimation { duration: 650 }
-        // 3. Fluidly bloom and expand outward into full notification
+        // 2. Micro pause
+        PauseAnimation { duration: 40 }
+        // 3. Snappy fluid expansion outward into full notification
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
             from: 0.0
             to: 1.0
-            duration: 1100
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+            duration: 220
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -104,14 +103,14 @@ PanelWindow {
             target: notifWindow
             property: "notifExpandProgress"
             to: 0.0
-            duration: 750
-            easing.type: Easing.InOutCubic
+            duration: 160
+            easing.type: Easing.InCubic
         }
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
             to: 0.0
-            duration: 450
+            duration: 90
             easing.type: Easing.InQuad
         }
     }
@@ -316,13 +315,12 @@ PanelWindow {
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
-                                duration: 720
-                                easing.type: Easing.BezierSpline
-                                easing.bezierCurve: [0.16, 1.0, 0.3, 1.0, 1.0, 1.0]
+                                duration: 180
+                                easing.type: Easing.OutCubic
                             }
                         }
-                        Behavior on radius { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-                        Behavior on border.color { ColorAnimation { duration: 250 } }
+                        Behavior on radius { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                        Behavior on border.color { ColorAnimation { duration: 120 } }
 
                         // 1. Header & Controls Row (Clean RowLayout with fixed full width for instant unmasking!)
                         RowLayout {
@@ -596,7 +594,7 @@ PanelWindow {
                             running: notifDetachedPod.hasNotif && !cardItem.isCardHovered
                             repeat: true
                             onTriggered: {
-                                let totalMs = (cardItem.notifData && cardItem.notifData.timeout > 0) ? cardItem.notifData.timeout : 7000;
+                                let totalMs = (cardItem.notifData && cardItem.notifData.timeout > 0) ? cardItem.notifData.timeout : 4000;
                                 cardItem.timerProgress = Math.max(0.0, cardItem.timerProgress - (50 / totalMs));
                                 if (cardItem.timerProgress <= 0.001) {
                                     cardCountdownTimer.stop();
