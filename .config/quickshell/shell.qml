@@ -441,6 +441,7 @@ ShellRoot {
         id: notifServer
         onNotification: notif => {
             notif.tracked = true;
+            notif._receivedAt = Date.now();
             globalState.closingIsland = false;
             globalState.hideIsland = false;
 

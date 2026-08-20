@@ -147,14 +147,14 @@ PanelWindow {
             ));
         }
         property bool showAllNotifs: false
-        readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(3, effectivePopups.length)) : 0
+        readonly property int cardCount: (effectivePopups.length > 0 && notifWindow.notifDotProgress > 0.01) ? (showAllNotifs ? effectivePopups.length : Math.min(5, effectivePopups.length)) : 0
 
         readonly property real maxScreenH: (notifWindow.screen && notifWindow.screen.height > 0) ? (notifWindow.screen.height - notifWindow.topMargin - 60) : 700
         readonly property real fullW: 320
         readonly property real minW: notifWindow.barHeight
         readonly property real currentW: minW + (fullW - minW) * notifWindow.notifExpandProgress
 
-        readonly property real footerH: (effectivePopups.length > 3) ? 34 : 0
+        readonly property real footerH: (effectivePopups.length > 5) ? 34 : 0
         readonly property real maxListH: maxScreenH - footerH
         readonly property real targetListH: Math.min(maxListH, notifStackCol.implicitHeight)
         readonly property real targetTotalH: targetListH + ((hasNotif || notifWindow.notifExpandProgress > 0.01) ? footerH : 0)
@@ -586,19 +586,30 @@ PanelWindow {
                             }
                         }
 
-                        // Local countdown timer
+                        // Individual countdown timer tracking each notification's unique lifetime
                         property real timerProgress: 1.0
                         Timer {
                             id: cardCountdownTimer
                             interval: 50
-                            running: notifDetachedPod.hasNotif && !cardItem.isCardHovered
+                            running: notifDetachedPod.hasNotif && !cardItem.isCardHovered && cardItem.notifData !== null
                             repeat: true
                             onTriggered: {
-                                let totalMs = (cardItem.notifData && cardItem.notifData.timeout > 0) ? cardItem.notifData.timeout : 4000;
-                                cardItem.timerProgress = Math.max(0.0, cardItem.timerProgress - (50 / totalMs));
-                                if (cardItem.timerProgress <= 0.001) {
+                                if (!cardItem.notifData) return;
+                                if (!cardItem.notifData._receivedAt) {
+                                    cardItem.notifData._receivedAt = Date.now();
+                                }
+                                let totalMs = (cardItem.notifData.timeout > 0) ? cardItem.notifData.timeout : 5000;
+                                let elapsed = Date.now() - cardItem.notifData._receivedAt;
+                                cardItem.timerProgress = Math.max(0.0, 1.0 - (elapsed / totalMs));
+                                if (elapsed >= totalMs) {
                                     cardCountdownTimer.stop();
-                                    try { if (cardItem.notifData && typeof cardItem.notifData.dismiss === "function") cardItem.notifData.dismiss(); } catch(e){}
+                                    let targetNotif = cardItem.notifData;
+                                    try {
+                                        if (targetNotif && typeof targetNotif.dismiss === "function") targetNotif.dismiss();
+                                    } catch(e) {}
+                                    if (globalState && globalState.popups) {
+                                        globalState.popups = globalState.popups.filter(p => p !== targetNotif);
+                                    }
                                 }
                             }
                         }
@@ -607,7 +618,7 @@ PanelWindow {
             }
         }
 
-        // 2. FOOTER ROW (Shown when more than 3 notifications are queued)
+        // 2. FOOTER ROW (Shown when more than 5 notifications are queued)
         Rectangle {
             id: notifFooter
             anchors.left: parent.left
@@ -634,7 +645,7 @@ PanelWindow {
                 anchors.rightMargin: 14
 
                 Text {
-                    text: notifDetachedPod.showAllNotifs ? "Show Less" : ("+ " + (notifDetachedPod.effectivePopups.length - 3) + " more")
+                    text: notifDetachedPod.showAllNotifs ? "Show Less" : ("+ " + (notifDetachedPod.effectivePopups.length - 5) + " more")
                     font.family: Theme.appFontMono
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
