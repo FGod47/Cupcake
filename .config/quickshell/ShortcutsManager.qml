@@ -1,6 +1,7 @@
 //@ pragma UseQApplication
 import QtQuick
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
 import "theme"
@@ -13,7 +14,7 @@ Window {
     height: 820
     minimumWidth: 880
     minimumHeight: 650
-    title: "Panacea • Shortcuts"
+    title: "Cupcake • Shortcuts"
     color: "transparent"
     flags: Qt.Window | Qt.FramelessWindowHint
 
@@ -159,12 +160,30 @@ Window {
                 spacing: 4
                 Layout.fillWidth: true
 
-                Text {
-                    text: "Panacea • Shortcuts"
-                    font.family: Theme.defaultFontFamily
-                    font.pixelSize: 18
-                    font.weight: Font.DemiBold
-                    color: shortcutsWindow.fg
+                RowLayout {
+                    spacing: 8
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+
+                    Image {
+                        id: headerLogo
+                        source: "file://" + Quickshell.env("HOME") + "/.config/quickshell/assets/cupcake-word-" + (Theme.isDark ? "light" : "dark") + ".svg"
+                        sourceSize.height: 20
+                        height: 20
+                        width: Math.round(62 * (height / 20))
+                        fillMode: Image.PreserveAspectFit
+                        Layout.alignment: Qt.AlignVCenter
+                        layer.enabled: true
+                        layer.effect: ColorOverlay { color: shortcutsWindow.fg }
+                    }
+
+                    Text {
+                        text: "•  Shortcuts"
+                        font.family: Theme.defaultFontFamily
+                        font.pixelSize: 18
+                        font.weight: Font.DemiBold
+                        color: shortcutsWindow.fg
+                        Layout.alignment: Qt.AlignVCenter
+                    }
                 }
 
                 Text {
