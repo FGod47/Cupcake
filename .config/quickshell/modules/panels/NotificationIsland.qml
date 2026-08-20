@@ -71,24 +71,24 @@ PanelWindow {
                 }
             }
         }
-        // 1. Snappy dot pill entrance
+        // 1. Smooth dot pill entrance
         NumberAnimation {
             target: notifWindow
             property: "notifDotProgress"
             from: notifWindow.notifDotProgress
             to: 1.0
-            duration: 120
+            duration: 400
             easing.type: Easing.OutCubic
         }
-        // 2. Micro pause
-        PauseAnimation { duration: 40 }
-        // 3. Snappy fluid expansion outward into full notification
+        // 2. Gentle pause
+        PauseAnimation { duration: 150 }
+        // 3. Fluid expansion outward into full notification card
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 1.0
-            duration: 220
+            duration: 500
             easing.type: Easing.OutCubic
         }
     }
@@ -106,7 +106,7 @@ PanelWindow {
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 0.0
-            duration: 160
+            duration: 350
             easing.type: Easing.InCubic
         }
         NumberAnimation {
@@ -114,7 +114,7 @@ PanelWindow {
             property: "notifDotProgress"
             from: notifWindow.notifDotProgress
             to: 0.0
-            duration: 90
+            duration: 250
             easing.type: Easing.InQuad
         }
     }
@@ -330,12 +330,12 @@ PanelWindow {
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
-                                duration: 180
+                                duration: 260
                                 easing.type: Easing.OutCubic
                             }
                         }
-                        Behavior on radius { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                        Behavior on border.color { ColorAnimation { duration: 120 } }
+                        Behavior on radius { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                        Behavior on border.color { ColorAnimation { duration: 180 } }
 
                         // 1. Header & Controls Row (Clean RowLayout with fixed full width for instant unmasking!)
                         RowLayout {

@@ -461,7 +461,7 @@ ShellRoot {
             if (!hasContent) return;
 
             let isScreenshot = summary.toLowerCase().includes("screenshot") || body.includes("/Screenshot/");
-            let timeoutMs = (notif.expireTimeout && notif.expireTimeout > 0) ? notif.expireTimeout : 5000;
+            let timeoutMs = (notif.expireTimeout && notif.expireTimeout > 0) ? notif.expireTimeout : 7000;
 
             let newItem = {
                 id: ++globalState._notifIdCounter,
