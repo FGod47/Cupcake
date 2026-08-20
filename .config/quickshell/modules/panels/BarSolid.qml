@@ -811,7 +811,7 @@ PanelWindow {
                         
                         Row {
                             height: 20
-                            spacing: bMouse.containsMouse ? 4 : 0
+                            spacing: (bar.dropdownOpen || bMouse.containsMouse) ? 4 : 0
                             Behavior on spacing { NumberAnimation { duration: 200 } }
 
                             Text {
@@ -828,7 +828,7 @@ PanelWindow {
                                 font.pixelSize: 12
                                 font.weight: Theme.defaultFontWeight
                                 color: Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                                width: bMouse.containsMouse ? implicitWidth : 0
+                                width: (bar.dropdownOpen || bMouse.containsMouse) ? implicitWidth : 0
                                 clip: true
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                             }
@@ -854,7 +854,7 @@ PanelWindow {
                         
                         Row {
                             height: 20
-                            spacing: vMouse.containsMouse ? 4 : 0
+                            spacing: (bar.dropdownOpen || vMouse.containsMouse) ? 4 : 0
                             Behavior on spacing { NumberAnimation { duration: 200 } }
 
                             Text {
@@ -871,7 +871,7 @@ PanelWindow {
                                 font.pixelSize: 12
                                 font.weight: Theme.defaultFontWeight
                                 color: bar.isVolMuted ? Theme.colError : Qt.rgba(fg.r, fg.g, fg.b, 0.7)
-                                width: vMouse.containsMouse ? implicitWidth : 0
+                                width: (bar.dropdownOpen || vMouse.containsMouse) ? implicitWidth : 0
                                 clip: true
                                 Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
                             }
@@ -1014,7 +1014,7 @@ PanelWindow {
                 Rectangle {
                     anchors.fill: parent
                     radius: 11
-                    color: globalState.solidBoardOpen
+                    color: (globalState.solidBoardOpen || bar.dropdownOpen)
                            ? Qt.rgba(fg.r, fg.g, fg.b, 0.16)
                            : (clockMouse.containsMouse ? Qt.rgba(fg.r, fg.g, fg.b, 0.08) : "transparent")
                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -1038,7 +1038,7 @@ PanelWindow {
                     id: clockRow
                     height: 20
                     anchors.centerIn: parent
-                    spacing: clockMouse.containsMouse ? 6 : 0
+                    spacing: (globalState.solidBoardOpen || bar.dropdownOpen || clockMouse.containsMouse) ? 6 : 0
                     Behavior on spacing { NumberAnimation { duration: 200 } }
 
                     Text {
@@ -1054,7 +1054,7 @@ PanelWindow {
                     Row {
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 6
-                        width: clockMouse.containsMouse ? implicitWidth : 0
+                        width: (globalState.solidBoardOpen || bar.dropdownOpen || clockMouse.containsMouse) ? implicitWidth : 0
                         clip: true
                         Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutSine } }
 
