@@ -181,11 +181,11 @@ PanelWindow {
         Behavior on height { NumberAnimation { duration: 650; easing.type: Easing.OutQuart } }
         y: notifWindow.topMargin
         anchors.right: parent.right
-        anchors.rightMargin: notifWindow.rightMargin
+        anchors.rightMargin: notifWindow.rightMargin + (fullW - width)
 
         opacity: notifWindow.notifDotProgress
         scale: 0.85 + 0.15 * notifWindow.notifDotProgress
-        transformOrigin: Item.Right
+        transformOrigin: Item.Left
         visible: notifWindow.notifDotProgress > 0.001
         clip: true
 
