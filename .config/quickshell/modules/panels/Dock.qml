@@ -95,8 +95,6 @@ PanelWindow {
                             }
                         }
                     }
-
-                    Rectangle { width: 2; height: 32; color: Theme.colSurfaceVariant; radius: 1 }
                 }
 
                 // Pinned Apps
@@ -168,28 +166,6 @@ PanelWindow {
                     }
                 }
 
-                // Secondary Divider (Only visible if there are unpinned running apps)
-                Rectangle {
-                    width: 2; height: 32; radius: 1
-                    color: Theme.colSurfaceVariant
-                    visible: {
-                        var hasUnpinned = false;
-                        var pinnedIds = [];
-                        if (globalState.dockPinnedAppsEnabled) {
-                            for (var j = 0; j < globalState.dockPinnedApps.length; j++) {
-                                pinnedIds.push(globalState.dockPinnedApps[j].appId);
-                            }
-                        }
-                        for (var i = 0; i < ToplevelManager.toplevels.length; i++) {
-                            if (!pinnedIds.includes(ToplevelManager.toplevels[i].appId)) {
-                                hasUnpinned = true;
-                                break;
-                            }
-                        }
-                        return hasUnpinned;
-                    }
-                }
-
                 // Running Apps (Unpinned)
                 Repeater {
                     model: ToplevelManager.toplevels
@@ -248,8 +224,6 @@ PanelWindow {
                 RowLayout {
                     visible: globalState.dockLauncherPosition === "End"
                     spacing: globalState.dockItemSpacing
-
-                    Rectangle { width: 2; height: Math.max(16, globalState.dockIconSize - 16); color: Theme.colSurfaceVariant; radius: 1 }
 
                     Item {
                         width: globalState.dockIconSize; height: globalState.dockIconSize
