@@ -77,19 +77,19 @@ PanelWindow {
             property: "notifDotProgress"
             from: notifWindow.notifDotProgress
             to: 1.0
-            duration: 400
+            duration: 500
             easing.type: Easing.OutCubic
         }
         // 2. Gentle pause
-        PauseAnimation { duration: 150 }
-        // 3. Fluid expansion outward into full notification card
+        PauseAnimation { duration: 250 }
+        // 3. Fluid, graceful expansion outward into full notification card
         NumberAnimation {
             target: notifWindow
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 1.0
-            duration: 500
-            easing.type: Easing.OutCubic
+            duration: 850
+            easing.type: Easing.OutQuart
         }
     }
 
@@ -106,7 +106,7 @@ PanelWindow {
             property: "notifExpandProgress"
             from: notifWindow.notifExpandProgress
             to: 0.0
-            duration: 350
+            duration: 550
             easing.type: Easing.InCubic
         }
         NumberAnimation {
@@ -114,7 +114,7 @@ PanelWindow {
             property: "notifDotProgress"
             from: notifWindow.notifDotProgress
             to: 0.0
-            duration: 250
+            duration: 350
             easing.type: Easing.InQuad
         }
     }
@@ -330,12 +330,12 @@ PanelWindow {
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
-                                duration: 260
+                                duration: 350
                                 easing.type: Easing.OutCubic
                             }
                         }
-                        Behavior on radius { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-                        Behavior on border.color { ColorAnimation { duration: 180 } }
+                        Behavior on radius { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+                        Behavior on border.color { ColorAnimation { duration: 220 } }
 
                         // 1. Header & Controls Row (Clean RowLayout with fixed full width for instant unmasking!)
                         RowLayout {
