@@ -45,8 +45,9 @@ hl.bind(aMod .. " + SHIFT + S", hl.dsp.exec_cmd("bash -c 'mkdir -p $HOME/Picture
 hl.bind(sMod .. " + J", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/record-screen.sh"))
 hl.bind(sMod .. " + K", hl.dsp.exec_cmd("pkill wf-recorder"))
 
+-- Restart quickshell
+hl.bind("ALT + SHIFT + W", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/restart_quickshell.sh"))
 -- Toggle bar
-hl.bind("ALT + SHIFT + W", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_bar.sh"))
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(HOME .. "/.config/cupcake/scripts/toggle_bar.sh"))
 
 -- Task Manager
